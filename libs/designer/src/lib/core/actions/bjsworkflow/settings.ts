@@ -1,5 +1,4 @@
 import Constants from '../../../common/constants';
-import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
@@ -99,7 +98,7 @@ export interface Settings {
   uploadChunk?: SettingData<UploadChunk>;
   downloadChunkSize?: SettingData<number>;
   runAfter?: SettingData<GraphEdge[]>;
-  invokerConnection?: SettingData<SimpleSetting<ConnectionReferences>>;
+  invokerConnection?: SettingData<SimpleSetting<boolean>>;
 }
 
 /**
@@ -118,8 +117,7 @@ export const getOperationSettings = (
   nodeOutputs: NodeOutputs,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
-  operation?: LogicAppsV2.OperationDefinition,
-  rootNodeId?: string
+  operation?: LogicAppsV2.OperationDefinition
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -192,8 +190,8 @@ export const getOperationSettings = (
       value: getRunAfter(operation),
     },
     invokerConnection: {
-      isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
-      value: invokerConnection(isTrigger, nodeType, rootNodeId, operationInfo.connectorId),
+      isSupported: false,
+      value: { enabled: false },
     },
   };
 };
@@ -515,7 +513,7 @@ const getSplitOnValue = (
   operationId?: string,
   definition?: LogicAppsV2.TriggerDefinition
 ): string | undefined => {
-  if (definition?.splitOn) {
+  if (definition) {
     return definition.splitOn;
   } else {
     if (manifest) {
@@ -565,7 +563,7 @@ const isSplitOnSupported = (
   definition?: LogicAppsV2.OperationDefinition
 ): boolean => {
   const existingSplitOn = getSplitOn(manifest, swagger, operationId, definition);
-  return isTrigger && (getSplitOnOptions(nodeOutputs).length > 0 || existingSplitOn.enabled);
+  return isTrigger && (getSplitOnOptions(nodeOutputs, !!manifest).length > 0 || existingSplitOn.enabled);
 };
 
 const getTimeout = (
@@ -861,28 +859,4 @@ const isSettingSupportedFromOperationManifest = <T>(
     (!operationManifestSetting.scopes ||
       operationManifestSetting.scopes.findIndex((scope) => equals(scope, isTrigger ? SettingScope.Trigger : SettingScope.Action)) >= 0)
   );
-};
-
-const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, rootNodeId: string | undefined): boolean => {
-  if (!isTrigger && rootNodeId === Constants.INVOKER_CONNECTION.DATAVERSE_CUD_TRIGGER) {
-    const supportedTypes = [Constants.NODE.TYPE.OPEN_API_CONNECTION];
-    return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
-  } else {
-    return false;
-  }
-};
-
-const invokerConnection = (
-  isTrigger: boolean,
-  nodeType: string,
-  rootNodeId: string | undefined,
-  connectorId: string
-): SimpleSetting<ConnectionReferences> | undefined => {
-  if (
-    isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId) &&
-    connectorId === Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID
-  ) {
-    return { enabled: false };
-  }
-  return { enabled: true };
 };

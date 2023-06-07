@@ -25,8 +25,8 @@ const dropdownMenuStyles: Partial<IContextualMenuStyles> = {
 };
 
 const textFieldStyles: Partial<ITextFieldStyles> = {
-  fieldGroup: { height: 30, width: '100%', fontSize: 14 },
-  wrapper: { width: '100%', maxHeight: 40, alignItems: 'center' },
+  fieldGroup: { width: '100%', fontSize: 14, minHeight: 30 },
+  wrapper: { width: '100%', alignItems: 'center', paddingBottom: 14 },
 };
 
 export enum SchemaPropertyValueType {
@@ -210,6 +210,10 @@ export const PropertyEditorItem = ({
           value={propertyValueText}
           onChange={(_e, newVal) => setPropertyValueText(newVal ?? '')}
           onBlur={() => updateWithNewValue()}
+          multiline
+          autoAdjustHeight
+          resizable={false}
+          rows={1}
         />
       )}
     </div>

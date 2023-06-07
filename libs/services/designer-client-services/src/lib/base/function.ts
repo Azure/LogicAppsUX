@@ -1,4 +1,5 @@
 import type { IFunctionService } from '../function';
+import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { ArgumentException } from '@microsoft/utils-logic-apps';
 
@@ -31,21 +32,23 @@ export class BaseFunctionService implements IFunctionService {
       queryParameters: { 'api-version': this.options.apiVersion },
     });
 
-    const apps = functionAppsResponse.value.filter((app: any) => app.kind === 'functionapp');
+    const apps = functionAppsResponse.value.filter((app: any) => isFunctionContainer(app.kind));
     return apps;
   }
 
   async fetchFunctionAppsFunctions(functionAppId: string) {
+    const { baseUrl } = this.options;
     const functionsResponse = await this.options.httpClient.get<any>({
-      uri: `https://management.azure.com/${functionAppId}/functions`,
+      uri: `${baseUrl}/${functionAppId}/functions`,
       queryParameters: { 'api-version': this.options.apiVersion },
     });
     return functionsResponse?.value ?? [];
   }
 
   async fetchFunctionKey(functionId: string) {
+    const { baseUrl } = this.options;
     const keysResponse = await this.options.httpClient.post<any, any>({
-      uri: `https://management.azure.com/${functionId}/listkeys`,
+      uri: `${baseUrl}/${functionId}/listkeys`,
       queryParameters: { 'api-version': this.options.apiVersion },
     });
     return keysResponse?.default ?? 'NotFound';

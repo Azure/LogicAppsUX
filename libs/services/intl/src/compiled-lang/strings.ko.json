@@ -83,6 +83,12 @@
       "value": "페이지 매김"
     }
   ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
   "//nQG4": [
     {
       "type": 0,
@@ -215,10 +221,38 @@
       "value": "트리거"
     }
   ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Error code: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', Message: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
       "value": "전달된 문자열 타임스탬프에 시간 단위의 시작을 반환합니다."
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
     }
   ],
   "09B9CU": [
@@ -1030,6 +1064,16 @@
       "value": "Enter a valid double."
     }
   ],
+  "5FINOY": [
+    {
+      "type": 0,
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1042,6 +1086,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1052,6 +1102,20 @@
     {
       "type": 0,
       "value": "전달된 배열 또는 문자열의 첫 번째 요소를 반환합니다."
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Unsupported 'in' value : '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' in Parameter"
     }
   ],
   "5b0sKi": [
@@ -1248,6 +1312,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 하위 문자열을 가져온 문자열입니다."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schema Validation"
     }
   ],
   "7WVgiU": [
@@ -1450,12 +1520,6 @@
       "value": "전달된 문자열 타임스탬프에 정수 일 수를 더합니다."
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1478,24 +1542,6 @@
     {
       "type": 0,
       "value": "File"
-    }
-  ],
-  "92OUl9": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " is missing required property "
-    },
-    {
-      "type": 1,
-      "value": "property"
     }
   ],
   "93Gj/n": [
@@ -1550,6 +1596,20 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Invalid split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', cannot find in outputs."
     }
   ],
   "9YGcT2": [
@@ -1610,6 +1670,12 @@
     {
       "type": 0,
       "value": "인증 유형"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Empty value"
     }
   ],
   "AGCm1p": [
@@ -1861,6 +1927,12 @@
       "value": "Number"
     }
   ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatic Decompression"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1877,6 +1949,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
     }
   ],
   "BuYrD3": [
@@ -2009,6 +2087,20 @@
       "value": "Select a value"
     }
   ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Option + click to download '"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2043,6 +2135,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -2141,12 +2239,6 @@
     {
       "type": 0,
       "value": "Add an action"
-    }
-  ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "저장하지 못했습니다."
     }
   ],
   "EYqGxA": [
@@ -2271,6 +2363,12 @@
     {
       "type": 0,
       "value": "(UTC+05:45) 카트만두"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -2510,6 +2608,16 @@
       "value": "File Content"
     }
   ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Workflow has settings validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2552,12 +2660,6 @@
       "value": "Month"
     }
   ],
-  "HJIZrG": [
-    {
-      "type": 0,
-      "value": "추가 진단 정보: x-ms-client-request-id는 {clientRequestId}입니다."
-    }
-  ],
   "HOchry": [
     {
       "type": 0,
@@ -2574,12 +2676,6 @@
     {
       "type": 0,
       "value": "Headers"
-    }
-  ],
-  "HXLutF": [
-    {
-      "type": 0,
-      "value": "키"
     }
   ],
   "Hbqlzk": [
@@ -2696,6 +2792,16 @@
       "value": "전달된 문자열 타임스탬프를 UTC에서 대상 표준 시간대로 변환합니다."
     }
   ],
+  "IX1OiA": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "IXy91L": [
     {
       "type": 0,
@@ -2706,6 +2812,20 @@
     {
       "type": 0,
       "value": "Error Code"
+    }
+  ],
+  "IjEKvh": [
+    {
+      "type": 0,
+      "value": "Error executing the api '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "IjZFjQ": [
@@ -2935,6 +3055,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3019,12 +3145,6 @@
       "value": "만드는 중..."
     }
   ],
-  "LOwePI": [
-    {
-      "type": 0,
-      "value": "{splitOn} 분할 유형이 잘못되었습니다. 분할이 배열에 없습니다."
-    }
-  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3071,6 +3191,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3265,6 +3391,12 @@
       "value": "Headers"
     }
   ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
@@ -3335,6 +3467,12 @@
     {
       "type": 0,
       "value": "값의 이진 표현을 반환합니다."
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
     }
   ],
   "O27gKq": [
@@ -3671,6 +3809,16 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Key"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3856,10 +4004,24 @@
       "value": "issue"
     }
   ],
-  "S8P4N5": [
+  "Rq2U5n": [
     {
       "type": 0,
-      "value": "삭제"
+      "value": "Unrecognized expression '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -4086,12 +4248,6 @@
     {
       "type": 0,
       "value": "클라이언트 요청 ID"
-    }
-  ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4484,6 +4640,16 @@
       "value": "필수 사항으로, 배열의 첫 번째 정수입니다."
     }
   ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Workflow has invalid connections on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -4652,10 +4818,30 @@
       "value": "Count"
     }
   ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "Xj0Gr/": [
     {
       "type": 0,
       "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
     }
   ],
   "XkBxv5": [
@@ -4712,16 +4898,16 @@
       "value": "추가 정보"
     }
   ],
-  "Y7yyKD": [
-    {
-      "type": 0,
-      "value": "잘못된 표현식 유형 {type}."
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
       "value": "데이터 URI의 이진 표현을 반환합니다."
+    }
+  ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
     }
   ],
   "YCFhzp": [
@@ -4752,6 +4938,12 @@
       "value": "문자열"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -4762,6 +4954,18 @@
     {
       "type": 0,
       "value": "PFX 입력"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -4780,6 +4984,12 @@
     {
       "type": 0,
       "value": "이 함수에 전달되는 배열 또는 개체에 포함된 모든 요소를 사용해서 단일 배열 또는 개체를 반환합니다. 이 함수에 대한 매개 변수는 개체 집합 또는 배열 집합(둘 중 하나만 포함)일 수 있습니다. 이름이 같은 두 개체가 최종 출력에 있는 경우 해당 이름의 마지막 개체가 최종 개체로 나타납니다."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -4922,12 +5132,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) 톰스크"
-    }
-  ],
-  "Zr0yTE": [
-    {
-      "type": 0,
-      "value": "지원되지 않는 'in' 값: 매개변수의 {value}"
     }
   ],
   "a7j3gS": [
@@ -5178,6 +5382,12 @@
       "value": "패널"
     }
   ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+    }
+  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -5232,6 +5442,12 @@
       "value": "ID를 선택하세요."
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5268,6 +5484,12 @@
       "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
     }
   ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
+    }
+  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5278,6 +5500,12 @@
     {
       "type": 0,
       "value": "Schema is missing required inputs"
+    }
+  ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "dDYCuU": [
@@ -5296,6 +5524,12 @@
     {
       "type": 0,
       "value": "업데이트"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5342,6 +5576,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
     }
   ],
   "dgAu27": [
@@ -5410,6 +5650,12 @@
       "value": "Clear"
     }
   ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5456,6 +5702,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5586,12 +5838,6 @@
       "value": "Email"
     }
   ],
-  "g0a4Qe": [
-    {
-      "type": 0,
-      "value": "값"
-    }
-  ],
   "g1zwch": [
     {
       "type": 0,
@@ -5658,6 +5904,12 @@
       "value": "연결 이름"
     }
   ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
@@ -5688,6 +5940,12 @@
       "value": "Time Zone"
     }
   ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
@@ -5716,12 +5974,6 @@
     {
       "type": 0,
       "value": "Delete"
-    }
-  ],
-  "gpbgjJ": [
-    {
-      "type": 0,
-      "value": "{splitOn} 분할 값이 잘못되었습니다. 출력에서 찾을 수 없습니다."
     }
   ],
   "gu9o9z": [
@@ -5791,12 +6043,6 @@
     {
       "type": 0,
       "value": "두 숫자를 뺀 결과를 반환합니다."
-    }
-  ],
-  "hdnZ9Y": [
-    {
-      "type": 0,
-      "value": "{displayName}을(를) 다운로드하려면 Alt/Option + 클릭하세요."
     }
   ],
   "hic23z": [
@@ -5999,12 +6245,6 @@
       "value": "테스트"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6107,12 +6347,6 @@
       "value": "스키마를 생성할 수 없음"
     }
   ],
-  "jjYA4u": [
-    {
-      "type": 0,
-      "value": "지원되지 않는 매니페스트 연결 참조 형식: {referenceKeyFormat}"
-    }
-  ],
   "juR40n": [
     {
       "type": 0,
@@ -6129,12 +6363,6 @@
     {
       "type": 0,
       "value": "필수 사항으로, base64로 인코딩된 문자열입니다."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6281,6 +6509,12 @@
       "value": "분"
     }
   ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "lFve22": [
     {
       "type": 0,
@@ -6309,6 +6543,12 @@
     {
       "type": 0,
       "value": "Functions"
+    }
+  ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
     }
   ],
   "lZT0JI": [
@@ -6373,22 +6613,10 @@
       "value": "Select an action type"
     }
   ],
-  "lzBHHT": [
+  "lwlg2K": [
     {
       "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " has unknown property "
-    },
-    {
-      "type": 1,
-      "value": "property"
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -6433,6 +6661,16 @@
       "value": "함수가 삭제되었습니다."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -6455,6 +6693,20 @@
     {
       "type": 0,
       "value": "URL로 입력 문자열을 인코딩합니다."
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', split on not in array."
     }
   ],
   "mQotIu": [
@@ -6503,6 +6755,16 @@
     {
       "type": 0,
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -6777,12 +7039,6 @@
       "value": "(UTC+13:00) 사모아"
     }
   ],
-  "p7YGxW": [
-    {
-      "type": 0,
-      "value": "API {parameters}을(를) 실행하는 동안 오류가 발생했습니다."
-    }
-  ],
   "pC2nr2": [
     {
       "type": 0,
@@ -6903,10 +7159,36 @@
       "value": "전달된 문자열 타임스탬프에 정수 초 수를 더합니다."
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+    }
+  ],
   "q9hf8i": [
     {
       "type": 0,
       "value": "(UTC+04:00) 아스트라한, 울랴노브스크"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -6943,12 +7225,6 @@
     {
       "type": 0,
       "value": "필수"
-    }
-  ],
-  "qTqSqD": [
-    {
-      "type": 0,
-      "value": "오류 코드: {errorCode}, 메시지: {message}."
     }
   ],
   "qUMXpq": [
@@ -7110,6 +7386,12 @@
       "value": "값의 URI로 인코딩된 표현을 반환합니다."
     }
   ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7254,6 +7536,20 @@
       "value": "클라이언트 인증서"
     }
   ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic inputs. Error details: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -7326,6 +7622,12 @@
       "value": "이 함수는 런타임에 워크플로 자체에 대한 정보를 제공합니다."
     }
   ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Invalid connection, please update your connection to load complete details"
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
@@ -7336,6 +7638,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 노보시비르스크"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [
@@ -7960,6 +8268,20 @@
     {
       "type": 0,
       "value": "값 선택"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Invalid expression type '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "yoCi15": [

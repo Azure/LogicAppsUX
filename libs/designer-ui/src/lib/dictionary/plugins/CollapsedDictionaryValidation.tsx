@@ -39,7 +39,7 @@ export const CollapsedDictionaryValidation = ({
       let newValiditity = true;
       if (!editorString.trim().length || editorString === '{}') {
         setIsValid(newValiditity);
-        setItems([{ key: [], value: [] }]);
+        setItems([{ key: [], value: [], id: guid() }]);
         setCollapsedValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: editorString }]);
       } else {
         newValiditity = isValidDictionary(editorString);

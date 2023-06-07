@@ -184,6 +184,8 @@ export default {
     STRING: 'string',
     TABLE: 'table',
     VARIABLE_NAME: 'variablename',
+    HTML: 'html',
+    RECURRENCE: 'recurrence',
   },
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
@@ -248,10 +250,6 @@ export default {
   INT_MAX: 2147483647,
   INT_MIN: -2147483648,
   INTEGRATION_ACCOUNT_ARTIFACT_LOOKUP_ARTIFACT_TYPES: ['Schema', 'Map', 'Partner', 'Agreement'],
-  INVOKER_CONNECTION: {
-    DATAVERSE_CUD_TRIGGER: 'When_a_row_is_added,_modified_or_deleted',
-    DATAVERSE_CONNECTOR_ID: '/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps',
-  },
   ITEM: 'item()',
   LINKS: {
     CUSTOM_API: 'http://aka.ms/logicapps-customapi',
@@ -326,6 +324,7 @@ export default {
       ELSE: 'else',
       SWITCH_CASE: 'switchcase',
       SWITCH_DEFAULT: 'switchdefault',
+      PLACEHOLDER_TRIGGER: 'builtin:newWorkflowTrigger',
       // Action and trigger types.
       API_CONNECTION_WEBHOOK: 'apiconnectionwebhook',
       API_CONNECTION: 'apiconnection',
@@ -896,7 +895,6 @@ export default {
   WEBHOOK_PATH_POSTFIX: '/$subscriptions',
   WILD_INDEX_SEGMENT: '[*]',
   WORKFLOW: 'workflow',
-  X_MS_USER_AGENT: 'x-ms-user-agent',
   STATUS_CODES: {
     NO_CONTENT: 204,
     OK: 200,

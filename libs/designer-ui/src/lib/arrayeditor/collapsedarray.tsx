@@ -1,4 +1,4 @@
-import type { SimpleArrayItem, ComplexArrayItems } from '.';
+import type { SimpleArrayItem, ComplexArrayItems, ArrayItemSchema } from '.';
 import type { ValueSegment } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
@@ -12,9 +12,8 @@ export interface CollapsedArrayProps {
   isValid?: boolean;
   collapsedValue: ValueSegment[];
   readOnly?: boolean;
-  isTrigger?: boolean;
-  itemSchema?: unknown;
-  dimensionalSchema: unknown[];
+  itemSchema: ArrayItemSchema;
+  isComplex: boolean;
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
@@ -27,8 +26,8 @@ export const CollapsedArray = ({
   isValid = true,
   collapsedValue,
   readOnly,
-  isTrigger,
   itemSchema,
+  isComplex,
   getTokenPicker,
   setItems,
   setIsValid,
@@ -68,7 +67,6 @@ export const CollapsedArray = ({
             tabbable: true,
           }}
           readonly={readOnly}
-          isTrigger={isTrigger}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
           onBlur={onBlur}
@@ -80,6 +78,7 @@ export const CollapsedArray = ({
             isValid={isValid}
             collapsedValue={collapsedValue}
             itemSchema={itemSchema}
+            isComplex={isComplex}
             setCollapsedValue={setCollapsedValue}
             setIsValid={setIsValid}
             setItems={setItems}

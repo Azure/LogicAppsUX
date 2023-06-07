@@ -7,16 +7,20 @@ export interface HttpOptions {
   baseUrl?: string;
   apiHubBaseUrl?: string;
   accessToken?: string;
+  hostVersion?: string;
 }
 
 export class HttpClient implements IHttpClient {
   private _baseUrl: string | undefined;
   private _accessToken: string | undefined;
   private _apihubBaseUrl: string | undefined;
+  private _extraHeaders: Record<string, string>;
+
   constructor(options: HttpOptions) {
     this._baseUrl = options.baseUrl;
     this._accessToken = options.accessToken;
     this._apihubBaseUrl = options.apiHubBaseUrl;
+    this._extraHeaders = getExtraHeaders(options.hostVersion ?? '');
   }
 
   dispose(): void {}
@@ -27,6 +31,7 @@ export class HttpClient implements IHttpClient {
       ...options,
       url: this.getRequestUrl(options),
       headers: {
+        ...this._extraHeaders,
         ...options.headers,
         Authorization: `${isArmId ? this._accessToken : ''}`,
       },
@@ -45,6 +50,7 @@ export class HttpClient implements IHttpClient {
       ...options,
       url: this.getRequestUrl(options),
       headers: {
+        ...this._extraHeaders,
         ...options.headers,
         Authorization: `${isArmId ? this._accessToken : ''} `,
         'Content-Type': 'application/json',
@@ -74,6 +80,7 @@ export class HttpClient implements IHttpClient {
       ...options,
       url: this.getRequestUrl(options),
       headers: {
+        ...this._extraHeaders,
         ...options.headers,
         Authorization: `${isArmId ? this._accessToken : ''} `,
         'Content-Type': 'application/json',
@@ -101,6 +108,7 @@ export class HttpClient implements IHttpClient {
     const request = {
       ...options,
       headers: {
+        ...this._extraHeaders,
         ...options.headers,
         Authorization: `${this._accessToken} `,
       },
@@ -133,6 +141,12 @@ export class HttpClient implements IHttpClient {
 
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.indexOf('/subscriptions/') !== -1 : false;
+}
+
+function getExtraHeaders(hostVersion: string): Record<string, string> {
+  return {
+    'x-ms-user-agent': `LogicAppsDesigner/(host vscode ${hostVersion})`,
+  };
 }
 
 function isUrl(uri: string): boolean {

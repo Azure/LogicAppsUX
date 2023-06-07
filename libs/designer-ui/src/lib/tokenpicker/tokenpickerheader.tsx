@@ -58,7 +58,7 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
   };
   return (
     <div className="msla-token-picker-header">
-      <div className="msla-token-picker-header-close">
+      <div className="msla-token-picker-header-close" data-automation-id="msla-token-picker-header-close">
         {closeTokenPicker ? (
           <IconButton
             iconProps={{ iconName: 'Cancel' }}
@@ -69,7 +69,7 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
           />
         ) : null}
       </div>
-      <div className="msla-token-picker-header-expand">
+      <div className="msla-token-picker-header-expand" data-automation-id="msla-token-picker-header-expand">
         <IconButton
           iconProps={{ iconName: fullScreen ? 'BackToWindow' : 'FullScreen' }}
           title={fullScreen ? fullScreenExitMessage : fullScreenMessage}
@@ -78,12 +78,14 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
           styles={buttonStyles}
         />
       </div>
-      <div className="msla-token-picker-header-info">
+      <div className="msla-token-picker-header-info" data-automation-id="msla-token-picker-header-info">
         <IconButton
           iconProps={{ iconName: 'Info' }}
           title={infoMessage}
           ariaLabel={infoMessage}
-          onClick={() => console.log('info')}
+          onClick={() =>
+            window.open('https://learn.microsoft.com/en-us/azure/logic-apps/workflow-definition-language-functions-reference', '_blank')
+          }
           styles={buttonStyles}
         />
       </div>

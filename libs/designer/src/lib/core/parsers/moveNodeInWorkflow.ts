@@ -4,6 +4,7 @@ import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInt
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { containsIdTag } from '@microsoft/utils-logic-apps';
 
 export interface MoveNodePayload {
   nodeId: string;
@@ -88,7 +89,7 @@ export const moveNodeInWorkflow = (
 
   // Update metadata
   const newGraphId = newWorkflowGraph.id;
-  const isNewRoot = parentId?.includes('-#');
+  const isNewRoot = containsIdTag(parentId ?? '');
   const parentNodeId = newGraphId !== 'root' ? newGraphId : undefined;
 
   nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot: isNewRoot };

@@ -2,7 +2,7 @@ name: Correct package-lock.json Version Check
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, dev/*, hotfix/*]
 
 jobs:
   build:

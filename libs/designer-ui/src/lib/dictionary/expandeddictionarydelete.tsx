@@ -1,6 +1,7 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { IIconProps } from '@fluentui/react';
 import { css, IconButton, TooltipHost } from '@fluentui/react';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 const deleteButtonIconProps: IIconProps = {
@@ -22,7 +23,8 @@ export const DictionaryDeleteButton = ({ items, index, setItems }: DictionaryDel
   });
 
   const handleDeleteItem = () => {
-    const newItems = items.filter((_, i) => i !== index);
+    // remove the item at the index and reassign the ids to rerender remaining items
+    const newItems = items.filter((_, i) => i !== index).map((item) => ({ ...item, id: guid() }));
     setItems(newItems);
   };
 

@@ -170,10 +170,11 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected _getRequestForCreateConnectionWithAlternativeParameters(
     connectorId: string,
-    connectionName: string,
-    properties: ConnectionCreationInfo
+    _connectionName: string,
+    connectionInfo: ConnectionCreationInfo
   ): any {
-    const alternativeParameterValues = properties?.internalAlternativeParameterValues;
+    const alternativeParameterValues = connectionInfo?.alternativeParameterValues ?? {};
+    const displayName = connectionInfo?.displayName;
     const {
       apiHubServiceDetails: { location },
     } = this.options;
@@ -185,7 +186,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         },
         parameterValueType: 'Alternative',
         alternativeParameterValues,
-        displayName: properties?.displayName,
+        displayName,
       },
       kind: this._vVersion,
       location,
@@ -201,14 +202,10 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected async testConnection(connection: Connection): Promise<void> {
     let response: HttpResponse<any> | undefined = undefined;
-    try {
-      const testLinks = connection.properties?.testLinks;
-      if (!testLinks || testLinks.length === 0) return;
-      response = await this.requestTestConnection(connection);
-      if (response) this.handleTestConnectionResponse(response);
-    } catch (error: any) {
-      return Promise.reject(error);
-    }
+    const testLinks = connection.properties?.testLinks;
+    if (!testLinks || testLinks.length === 0) return;
+    response = await this.requestTestConnection(connection);
+    if (response) this.handleTestConnectionResponse(response);
   }
 
   protected async requestTestConnection(connection: Connection): Promise<HttpResponse<any> | undefined> {
@@ -227,7 +224,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       else if (equals(method, HTTP_METHODS.DELETE)) response = await httpClient.delete<any>(requestOptions);
       return response;
     } catch (error: any) {
-      return Promise.reject(error);
+      return Promise.reject(error?.content ?? error);
     }
   }
 

@@ -5,6 +5,7 @@ import {
   changeSourceSchemaFilename,
   changeTargetSchemaFilename,
   changeUseExpandedFunctionCards,
+  changeXsltContent,
   changeXsltFilename,
 } from './state/DataMapDataLoader';
 import type { AppDispatch } from './state/Store';
@@ -50,8 +51,9 @@ export const WebViewMsgHandler = ({ children }: WebViewMsgHandlerProps) => {
       case 'showAvailableSchemas':
         dispatch(changeSchemaList(msg.data));
         break;
-      case 'setXsltFilename':
-        dispatch(changeXsltFilename(msg.data));
+      case 'setXsltData':
+        dispatch(changeXsltFilename(msg.data.filename));
+        dispatch(changeXsltContent(msg.data.fileContents));
         break;
       case 'getConfigurationSetting':
         dispatch(changeUseExpandedFunctionCards(msg.data));

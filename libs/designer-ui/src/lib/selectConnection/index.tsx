@@ -77,11 +77,13 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   // Assign connection on initial load
   useEffect(() => {
     if (currentConnectionId) {
-      setSelect((currentSelect) => {
-        const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
-        currentSelect.setIndexSelected(index, true, false);
-        return currentSelect;
-      });
+      const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
+      if (index >= 0) {
+        setSelect((currentSelect) => {
+          currentSelect.setIndexSelected(index, true, false);
+          return currentSelect;
+        });
+      }
     }
   }, [connections, currentConnectionId]);
 
@@ -119,7 +121,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
         description: 'aria label description for connection display name',
       }),
       fieldName: 'displayName',
-      minWidth: 200,
+      minWidth: 180,
       maxWidth: 200,
       isResizable: true,
     },
@@ -139,7 +141,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
         description: 'aria label description for connection name',
       }),
       fieldName: 'name',
-      minWidth: 100,
+      minWidth: 80,
       maxWidth: 100,
       isResizable: true,
     },
@@ -154,7 +156,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
         description: 'aria label description for connection gateway',
       }),
       fieldName: 'gateway',
-      minWidth: 100,
+      minWidth: 80,
       maxWidth: 100,
     },
   ];

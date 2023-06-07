@@ -17,10 +17,12 @@ export interface Token {
     format?: string;
     source?: string;
     isSecure?: boolean;
+    isDynamic?: boolean;
     arrayDetails?: {
       itemSchema?: OpenAPIV2.SchemaObject;
       parentArray?: string;
     };
+    schema?: OpenAPIV2.SchemaObject;
     actionName?: string;
     functionName?: string; // For now, the only allowed values are 'variables' and 'parameters'.
     functionArguments?: string[]; //For now, the only allowed values are 'variables' and 'parameters'.

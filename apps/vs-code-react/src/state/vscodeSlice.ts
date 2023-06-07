@@ -13,6 +13,7 @@ export interface InitializePayload {
   workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
   reviewContent?: IValidationData;
+  hostVersion?: string;
 }
 
 export enum Status {
@@ -34,6 +35,7 @@ export interface InitializedVscodeState {
   statuses?: string[];
   finalStatus?: Status;
   reviewContent?: IValidationData;
+  hostVersion?: string;
 }
 
 interface UninitializedVscodeState {
@@ -52,7 +54,8 @@ export const vscodeSlice = createSlice({
   initialState: initialState as VscodeState,
   reducers: {
     initialize: (state: VscodeState, action: PayloadAction<InitializePayload>) => {
-      const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project, reviewContent, cloudHost } = action.payload;
+      const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project, reviewContent, cloudHost, hostVersion } =
+        action.payload;
       state.initialized = true;
       const initializedState = state as InitializedVscodeState;
       initializedState.project = project;
@@ -81,6 +84,7 @@ export const vscodeSlice = createSlice({
         },
         selectedAdvanceOptions: [AdvancedOptionsTypes.generateInfrastructureTemplates],
       };
+      initializedState.hostVersion = hostVersion;
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;

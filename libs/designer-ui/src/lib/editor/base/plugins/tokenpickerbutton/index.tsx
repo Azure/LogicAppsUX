@@ -57,7 +57,12 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
         const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
         if (anchorElement?.childNodes[0]?.nodeName === 'BR') {
-          boxElem.style.top = `${top - 15}px`;
+          // some of our editors have smaller heights, so we need to adjust the position of the tokenpicker button
+          if (rootElement.clientHeight === 24) {
+            boxElem.style.top = `${top - 16}px`;
+          } else {
+            boxElem.style.top = `${top - 15}px`;
+          }
         } else {
           boxElem.style.top = `${top - 20}px`;
         }
@@ -108,6 +113,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
               iconProps={dynamicContentIconProps}
               styles={{ root: 'top-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
+              data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
               onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
             />
           </TooltipHost>
@@ -116,6 +122,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
               iconProps={expressionButtonProps}
               styles={{ root: 'bottom-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
+              data-automation-id="msla-token-picker-entrypoint-button-expression"
               onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
             />
           </TooltipHost>

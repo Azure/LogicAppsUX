@@ -9,6 +9,7 @@ export interface WorkflowLoadingState {
   resourcePath?: string;
   appId?: string;
   workflowName?: string;
+  runId?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   connections: ConnectionReferences;
@@ -17,6 +18,7 @@ export interface WorkflowLoadingState {
   darkMode: boolean;
   consumption: boolean;
   isLocalSelected: boolean;
+  showChatBot?: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -29,6 +31,7 @@ const initialState: WorkflowLoadingState = {
   darkMode: false,
   consumption: false,
   isLocalSelected: false,
+  showChatBot: false,
 };
 
 type WorkflowPayload = {
@@ -70,12 +73,16 @@ export const workflowLoadingSlice = createSlice({
     changeWorkflowName: (state, action: PayloadAction<string>) => {
       state.workflowName = action.payload;
     },
+    changeRunId: (state, action: PayloadAction<string>) => {
+      state.runId = action.payload;
+    },
     changeResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
     },
     clearWorkflowDetails: (state) => {
       state.appId = undefined;
       state.workflowName = undefined;
+      state.runId = undefined;
       state.resourcePath = '';
     },
     setReadOnly: (state, action: PayloadAction<boolean>) => {
@@ -95,6 +102,9 @@ export const workflowLoadingSlice = createSlice({
     },
     setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
       state.isLocalSelected = action.payload;
+    },
+    setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
+      state.showChatBot = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -126,6 +136,8 @@ export const {
   setDarkMode,
   setConsumption,
   setIsLocalSelected,
+  setIsChatBotEnabled,
+  changeRunId,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;
