@@ -159,7 +159,8 @@ export default class DataMapperPanel {
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       readdirSync(absolutePath).forEach((childFileName) => {
-        this.getNestedSchemas(childFileName, fileName, filesToDisplay);
+        const relativePath = path.join(parentPath, fileName);
+        this.getNestedSchemas(childFileName, relativePath, filesToDisplay);
       });
     } else {
       const fileExt = path.extname(fileName).toLowerCase();
