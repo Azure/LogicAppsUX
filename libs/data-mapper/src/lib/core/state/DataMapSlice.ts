@@ -610,28 +610,32 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
 };
 
 // Exported to be tested
-export const deleteNodeFromConnections = (connections: ConnectionDictionary, keyToDelete: string) => {
-  if (connections[keyToDelete]) {
+export const deleteNodeFromConnections = (connections: ConnectionDictionary, keyToDelete: string): ConnectionDictionary => {
+  const newConnections = { ...connections };
+
+  if (newConnections[keyToDelete]) {
     // Step through all the connected inputs and delete the selected key from their outputs
-    flattenInputs(connections[keyToDelete].inputs).forEach((input) => {
+    flattenInputs(newConnections[keyToDelete].inputs).forEach((input) => {
       if (isConnectionUnit(input)) {
-        connections[input.reactFlowKey].outputs = connections[input.reactFlowKey].outputs.filter(
+        newConnections[input.reactFlowKey].outputs = newConnections[input.reactFlowKey].outputs.filter(
           (output) => output.reactFlowKey !== keyToDelete
         );
       }
     });
 
     // Step through all the outputs and delete the selected key from their inputs
-    connections[keyToDelete].outputs.forEach((outputConnection) => {
-      Object.values(connections[outputConnection.reactFlowKey].inputs).forEach((outputConnectionInput, index) => {
-        connections[outputConnection.reactFlowKey].inputs[index] = outputConnectionInput.filter((input) =>
+    newConnections[keyToDelete].outputs.forEach((outputConnection) => {
+      Object.values(newConnections[outputConnection.reactFlowKey].inputs).forEach((outputConnectionInput, index) => {
+        newConnections[outputConnection.reactFlowKey].inputs[index] = outputConnectionInput.filter((input) =>
           isConnectionUnit(input) ? input.reactFlowKey !== keyToDelete : true
         );
       });
     });
   }
 
-  delete connections[keyToDelete];
+  delete newConnections[keyToDelete];
+
+  return newConnections;
 };
 
 export const deleteConnectionFromConnections = (
@@ -785,13 +789,17 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
       functionMultipleLocations = true;
     }
 
-    deleteNodeFromConnections(currentDataMap.dataMapConnections, reactFlowKey);
+    const newConnections = deleteNodeFromConnections(currentDataMap.dataMapConnections, reactFlowKey);
 
     currentDataMap.selectedItemKey = undefined;
     currentDataMap.selectedItemKeyParts = undefined;
     currentDataMap.selectedItemConnectedNodes = [];
 
-    doDataMapOperation(curDataMapState, { ...currentDataMap, functionNodes: newFunctionsState }, 'Delete function by key');
+    doDataMapOperation(
+      curDataMapState,
+      { ...currentDataMap, functionNodes: newFunctionsState, dataMapConnections: newConnections },
+      'Delete function by key'
+    );
 
     functionMultipleLocations
       ? (curDataMapState.notificationData = {
