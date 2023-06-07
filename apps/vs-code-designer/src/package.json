@@ -71,6 +71,7 @@
         "command": "azureLogicAppsStandard.createNewCodeProject",
         "title": "Create workspace for custom logic app...",
         "category": "Azure Logic Apps",
+        "preview": true,
         "icon": {
           "light": "assets/light/CreateNewCodeProject.svg",
           "dark": "assets/dark/CreateNewCodeProject.svg"

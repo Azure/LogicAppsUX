@@ -170,7 +170,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
   private async writeTasksJson(context: IProjectWizardContext, vscodePath: string): Promise<void> {
     const newTasks: TaskDefinition[] = this.getTasks();
     const versionMismatchError: Error = new Error(
-      localize('versionMismatchError', 'To work with Azure Functions, your '{0}' file must have the version set to '{1}'.', tasksFileName, tasksVersion)
+      localize('versionMismatchError', 'The version in your {0} must be "{1}" to work with Azure Functions.', tasksFileName, tasksVersion)
     );
 
     // Use the Visual Studio Code API to update config, if the folder is open and isn't a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235).
@@ -267,7 +267,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
       const versionMismatchError: Error = new Error(
         localize(
           'versionMismatchError',
-          'To work with Azure Functions, your '{0}' file must have the version set to '{1}'.',
+          'The version in your {0} must be "{1}" to work with Azure Functions.',
           launchFileName,
           launchVersion
         )

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../constants';
 import { localize } from '../../../localize';
+import * as packageJson from '../../../package.json';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
@@ -12,7 +13,7 @@ import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeP
 import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
 import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
 import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
-import { setNameSpace } from './createCodeProjectSteps/createFunction/setNameSpace';
+import { setNamespace } from './createCodeProjectSteps/createFunction/setNamepSpace';
 import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -45,6 +46,7 @@ export async function createNewCodeProjectFromCommand(
 
 export async function createNewCodeProjectInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
   addLocalFuncTelemetry(context);
+  showPreviewWarning(); //Show warning if command is set to preview
 
   const language: ProjectLanguage | undefined = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
@@ -72,7 +74,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
       new FolderListStep(),
       new setWorkspaceName(),
       new setMethodName(),
-      new setNameSpace(),
+      new setNamespace(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
       new OpenBehaviorStep(),
     ],
@@ -90,4 +92,13 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
 async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
+}
+
+function showPreviewWarning() {
+  const createNewCodeProjectCommand = packageJson.contributes.commands.find(
+    (command) => command.command === 'azureLogicAppsStandard.createNewCodeProject'
+  );
+  if (createNewCodeProjectCommand.preview) {
+    window.showInformationMessage('The "Create workspace for custom logic app" command is a preview feature and may be subject to change.');
+  }
 }

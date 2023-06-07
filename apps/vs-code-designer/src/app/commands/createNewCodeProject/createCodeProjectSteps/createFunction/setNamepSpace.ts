@@ -6,12 +6,12 @@ import { localize } from '../../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 
-export class setNameSpace extends AzureWizardPromptStep<IProjectWizardContext> {
+export class setNamespace extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.namespaceName = await context.ui.showInputBox({
-      placeHolder: localize('setNameSpace', 'nameSpace'),
+      placeHolder: localize('setNamespace', 'namespace'),
       prompt: localize('methodNamePrompt', 'Provide a namespace for functions app project'),
     });
   }
