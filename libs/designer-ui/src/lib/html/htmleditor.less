@@ -251,11 +251,7 @@ img.chevron-down {
   width: 1px;
   background-color: #eee;
   margin: 0 4px;
-  &.inverted {
-    background-color: #777;
-  }
 }
-
 .msla-colorpicker-input-wrapper {
   display: flex;
   flex-direction: row;
@@ -278,9 +274,6 @@ img.chevron-down {
   font-size: 16px;
   border-radius: 5px;
   min-width: 0;
-  &.inverted {
-    background-color: #696969;
-  }
 }
 
 .color-picker-wrapper {
@@ -395,9 +388,6 @@ img.chevron-down {
       max-width: 78%;
     }
   }
-  &.inverted {
-    background-color: rgb(27, 26, 25);
-  }
 }
 
 .msla-theme-dark {
@@ -406,6 +396,25 @@ img.chevron-down {
 
     .toolbar-item:hover:not([disabled]) {
       background-color: #696969;
+    }
+  }
+}
+
+.msla-theme-dark {
+  .msla-toolbar-divider {
+    background-color: @ms-color-neutralTertiaryAlt;
+  }
+  .msla-colorpicker-input {
+    background-color: @ms-color-neutralLight;
+  }
+  .msla-html-link-editor {
+    background-color: @ms-color-primaryBackground;
+  }
+  .msla-html-editor-toolbar {
+    .toolbar-item {
+      .text {
+        color: @ms-color-neutralTertiaryAlt;
+      }
     }
   }
 }
