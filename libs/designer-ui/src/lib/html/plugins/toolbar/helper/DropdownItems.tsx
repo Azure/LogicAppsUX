@@ -1,3 +1,4 @@
+import { css, useTheme } from '@fluentui/react';
 import type { RefObject } from 'react';
 import { createContext, useEffect, useMemo, useCallback, useState } from 'react';
 
@@ -15,6 +16,7 @@ export type DropDownContextType = {
 export const DropDownContext = createContext<DropDownContextType | null>(null);
 
 export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onClose }: DropdownItemsProps) => {
+  const { isInverted } = useTheme();
   const [items, setItems] = useState<RefObject<HTMLButtonElement>[]>();
   const [highlightedItem, setHighlightedItem] = useState<RefObject<HTMLButtonElement>>();
 
@@ -72,7 +74,7 @@ export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onC
   return (
     <DropDownContext.Provider value={contextValue}>
       <div
-        className="msla-html-editor-dropdown-items-container"
+        className={css('msla-html-editor-dropdown-items-container', isInverted && 'inverted')}
         ref={dropDownRef}
         onKeyDown={handleKeyDown}
         onClick={() => {
