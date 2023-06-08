@@ -949,7 +949,7 @@ const Resources = {
     description: 'Label for description of custom actions Function',
   }),
   TOKEN_PARAMETER_ACTIONS_ACTIONNAME: intl.formatMessage({
-    defaultMessage: 'Required. The name of the action whose values you want.',
+    defaultMessage: 'Required. The name of the action that has the values you want.',
     description: 'Required string parameter to determine action wanted',
   }),
   TOKEN_FUNCTION_REFERENCE_OUTPUTS: intl.formatMessage({
