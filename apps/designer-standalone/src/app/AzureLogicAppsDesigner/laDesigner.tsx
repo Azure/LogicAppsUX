@@ -24,6 +24,7 @@ import { Chatbot } from '@microsoft/chatbot';
 import {
   ApiManagementInstanceService,
   BaseAppServiceService,
+  BaseFunctionService,
   BaseGatewayService,
   BaseOAuthService,
   StandardConnectionService,
@@ -387,6 +388,13 @@ const getDesignerServices = (
     isExplicitAuthRequiredForManagedIdentity: () => true,
   };
 
+  const functionService = new BaseFunctionService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
+
   // const loggerService = new Stan({
   //   resourceID: workflowId,
   //   designerVersion: packagejson.dependencies['@microsoft/logic-apps-designer'],
@@ -411,6 +419,7 @@ const getDesignerServices = (
     oAuthService,
     workflowService,
     apimService,
+    functionService,
     runService,
   };
 };
