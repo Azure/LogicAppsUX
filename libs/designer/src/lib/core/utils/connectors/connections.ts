@@ -101,8 +101,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     });
 
     const apisLabel = intl.formatMessage({
-      defaultMessage: 'Select an api from apim instance',
-      description: 'Label for api selection',
+      defaultMessage: 'Select an API from an API Management instance',
+      description: 'Label for API selection',
     });
 
     const getColumns = (apimInstance: any) => [apimInstance?.name, apimInstance?.id.split('/')[4], apimInstance?.location];
