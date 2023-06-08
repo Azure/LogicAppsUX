@@ -52,7 +52,6 @@ export const ConfigPanel = ({
     async () => {
       if (selectedSourceSchema) {
         const [fileName, filePath] = getFileNameAndPath(selectedSourceSchema);
-        console.log('file name: ' + fileName + '; filePath: ' + filePath);
         return await getSelectedSchema(fileName ?? '', filePath);
       } else return await getSelectedSchema(selectedSourceSchema ?? '', '');
     },
@@ -67,7 +66,6 @@ export const ConfigPanel = ({
     async () => {
       if (selectedTargetSchema) {
         const [fileName, filePath] = getFileNameAndPath(selectedTargetSchema);
-        console.log('file name: ' + fileName + '; filePath: ' + filePath);
 
         return await getSelectedSchema(fileName ?? '', filePath);
       } else return await getSelectedSchema(selectedTargetSchema ?? '', '');
