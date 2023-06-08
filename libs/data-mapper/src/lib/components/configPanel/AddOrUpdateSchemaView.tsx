@@ -86,9 +86,6 @@ export const AddOrUpdateSchemaView = ({
     [setUploadType]
   );
 
-  // eslint-disable-next-line no-param-reassign
-  errorMessage = 'this is an error';
-
   const uploadSchemaOptions: IChoiceGroupOption[] = useMemo(
     () => [
       { key: UploadSchemaTypes.UploadNew, text: addNewLoc },
