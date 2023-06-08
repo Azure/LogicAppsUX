@@ -1,29 +1,16 @@
 import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
-import { getFileNameAndPath } from '../../utils';
-import { PrimaryButton, Stack, TextField, ChoiceGroup, MessageBar, MessageBarType } from '@fluentui/react';
-import type { IChoiceGroupOption, IStackTokens } from '@fluentui/react';
-import type { ComboboxProps } from '@fluentui/react-components';
-import { makeStyles, shorthands, tokens, Combobox, Option, Text } from '@fluentui/react-components';
-import React, { useCallback, useMemo, useRef } from 'react';
+import { SelectExistingSchema } from './SelectExistingSchema';
+import { UploadNewSchema } from './UploadNewSchema';
+import { ChoiceGroup, MessageBar, MessageBarType } from '@fluentui/react';
+import type { IChoiceGroupOption } from '@fluentui/react';
+import { Text } from '@fluentui/react-components';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
 const acceptedSchemaFileInputExtensions = '.xsd';
-
-const useStyles = makeStyles({
-  option: {
-    ...shorthands.borderBottom('.5px', 'solid', tokens.colorNeutralStroke1),
-  },
-  combobox: {
-    ...shorthands.border('0.8px', 'solid', '#d1d1d1'),
-
-    ...shorthands.outline('0px'),
-    paddingRight: '10px',
-    width: '290px',
-  },
-});
 
 export enum UploadSchemaTypes {
   UploadNew = 'upload-new',
@@ -60,33 +47,14 @@ export const AddOrUpdateSchemaView = ({
   setUploadType,
 }: AddOrUpdateSchemaViewProps) => {
   const intl = useIntl();
-  const schemaFileInputRef = useRef<HTMLInputElement>(null);
   const { sourceSchema: curSourceSchema, targetSchema: curTargetSchema } = useSelector(
     (state: RootState) => state.dataMap.curDataMapOperation
   );
   const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
-  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
-
-  const styles = useStyles();
 
   const replaceSchemaWarningLoc = intl.formatMessage({
     defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
     description: 'Message bar warning about replacing existing schema',
-  });
-
-  const uploadMessage = intl.formatMessage({
-    defaultMessage: 'Select a file to upload',
-    description: 'Placeholder for input to load a schema file',
-  });
-
-  const dropdownAriaLabel = intl.formatMessage({
-    defaultMessage: 'Select the schema for dropdown',
-    description: 'Schema dropdown aria label',
-  });
-
-  const browseLoc = intl.formatMessage({
-    defaultMessage: 'Browse',
-    description: 'Browse for file',
   });
 
   const addNewLoc = intl.formatMessage({
@@ -109,39 +77,6 @@ export const AddOrUpdateSchemaView = ({
     description: 'Header to update target schema',
   });
 
-  const [addOrSelectSchemaMsg, schemaDropdownPlaceholder] = useMemo(() => {
-    if (schemaType === SchemaType.Source) {
-      return [
-        intl.formatMessage({
-          defaultMessage: 'Add or select a source schema to use for your map.',
-          description: 'label to inform to upload or select source schema to be used',
-        }),
-        intl.formatMessage({
-          defaultMessage: 'Select a source schema',
-          description: 'Source schema dropdown placeholder',
-        }),
-      ];
-    } else {
-      return [
-        intl.formatMessage({
-          defaultMessage: 'Add or select a target schema to use for your map.',
-          description: 'label to inform to upload or select target schema to be used',
-        }),
-        intl.formatMessage({
-          defaultMessage: 'Select a target schema',
-          description: 'Target schema dropdown placeholder',
-        }),
-      ];
-    }
-  }, [intl, schemaType]);
-
-  const onSelectOption = useCallback(
-    (option?: string) => {
-      setSelectedSchema(option);
-    },
-    [setSelectedSchema]
-  );
-
   const onChangeUploadType = useCallback(
     (option?: IChoiceGroupOption) => {
       if (option) {
@@ -151,21 +86,8 @@ export const AddOrUpdateSchemaView = ({
     [setUploadType]
   );
 
-  const onSelectSchemaFile = (event: React.FormEvent<HTMLInputElement>) => {
-    if (!event?.currentTarget?.files) {
-      console.error('Files array is empty');
-      return;
-    }
-
-    const schemaFile = event.currentTarget.files[0] as FileWithVsCodePath;
-    if (!schemaFile.path) {
-      console.log('Path property is missing from file (should only occur in browser/standalone)');
-    } else if (!schemaType) {
-      console.error('Missing schemaType');
-    } else {
-      setSelectedSchemaFile({ name: schemaFile.name, path: schemaFile.path, type: schemaType });
-    }
-  };
+  // eslint-disable-next-line no-param-reassign
+  errorMessage = 'this is an error';
 
   const uploadSchemaOptions: IChoiceGroupOption[] = useMemo(
     () => [
@@ -175,33 +97,28 @@ export const AddOrUpdateSchemaView = ({
     [addNewLoc, selectExistingLoc]
   );
 
-  const dataMapDropdownOptions = useMemo(() => availableSchemaList ?? [], [availableSchemaList]);
-
-  const [matchingOptions, setMatchingOptions] = React.useState([...dataMapDropdownOptions]);
-
   const isOverwritingSchema = useMemo(
     () => (schemaType === SchemaType.Source ? !!curSourceSchema : !!curTargetSchema),
     [schemaType, curSourceSchema, curTargetSchema]
   );
 
-  const updateOptions: ComboboxProps['onChange'] = (event) => {
-    const value = event.target.value.trim();
-    if (value && value.length > 0) {
-      const matches = dataMapDropdownOptions.filter((o) => o.toLowerCase().indexOf(value?.toLowerCase()) === 0);
-      setMatchingOptions(matches);
+  const [addOrSelectSchemaMsg] = useMemo(() => {
+    if (schemaType === SchemaType.Source) {
+      return [
+        intl.formatMessage({
+          defaultMessage: 'Add or select a source schema to use for your map.',
+          description: 'label to inform to upload or select source schema to be used',
+        }),
+      ];
+    } else {
+      return [
+        intl.formatMessage({
+          defaultMessage: 'Add or select a target schema to use for your map.',
+          description: 'label to inform to upload or select target schema to be used',
+        }),
+      ];
     }
-    if (value.length === 0) {
-      setMatchingOptions(dataMapDropdownOptions);
-    }
-    onSelectOption(value);
-  };
-
-  const sortedOptions: string[] = matchingOptions;
-  const formattedOptions =
-    sortedOptions.length !== 0
-      ? sortedOptions.map((option) => optionWithPath(option))
-      : dataMapDropdownOptions.map((option) => optionWithPath(option));
-  console.log(errorMessage); // danielle need to find a place to put this
+  }, [intl, schemaType]);
 
   return (
     <div>
@@ -230,55 +147,16 @@ export const AddOrUpdateSchemaView = ({
       />
 
       {uploadType === UploadSchemaTypes.UploadNew && (
-        <div>
-          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept={acceptedSchemaFileInputExtensions} hidden />
-          <Stack horizontal>
-            <TextField value={selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
-            <PrimaryButton onClick={() => schemaFileInputRef.current?.click()} style={{ marginLeft: 8 }}>
-              {browseLoc}
-            </PrimaryButton>
-          </Stack>
-        </div>
+        <UploadNewSchema
+          acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
+          selectedSchemaFile={selectedSchemaFile}
+          setSelectedSchemaFile={setSelectedSchemaFile}
+        />
       )}
 
       {uploadType === UploadSchemaTypes.SelectFrom && (
-        <Combobox
-          aria-label={dropdownAriaLabel}
-          placeholder={schemaDropdownPlaceholder}
-          onChange={updateOptions}
-          onOptionSelect={(e, data) => setSelectedSchema(data.optionValue)}
-          freeform={true}
-          autoComplete="on"
-          className={styles.combobox}
-          appearance="outline"
-          //errorMessage={errorMessage}
-          //selectedKey={selectedSchema}
-        >
-          {formattedOptions}
-        </Combobox>
+        <SelectExistingSchema errorMessage={errorMessage} schemaType={schemaType} setSelectedSchema={setSelectedSchema} />
       )}
     </div>
-  );
-};
-
-const optionWithPath: React.FC<string> = (option: string) => {
-  const [fileName, filePath] = getFileNameAndPath(option);
-
-  // styling
-  const stackTokens: IStackTokens = {
-    childrenGap: 5,
-  };
-
-  // danielle fix
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const styles = useStyles();
-
-  return (
-    <Option text={option} value={option} className={styles.option}>
-      <Stack tokens={stackTokens} style={{ width: '100%' }}>
-        <Text size={200}>{fileName}</Text>
-        {filePath.length !== 0 && <Text size={100}>{filePath}</Text>}
-      </Stack>
-    </Option>
   );
 };
