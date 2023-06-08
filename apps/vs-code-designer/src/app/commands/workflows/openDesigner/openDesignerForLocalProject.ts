@@ -300,10 +300,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       if (error.statusCode !== 404) {
         const errorMessage = localize('workflowValidationFailed', 'Workflow validation failed: ') + error.message;
         await window.showErrorMessage(errorMessage, localize('OK', 'OK'));
-      } else {
-        const errorMessage = localize('workflowValidationError', 'Unable to validate workflow. {0}', error.message);
-        window.showErrorMessage(errorMessage);
-        throw new Error(errorMessage);
       }
     }
   }
