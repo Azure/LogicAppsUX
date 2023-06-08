@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.24.5](https://github.com/Azure/LogicAppsUX/compare/v2.24.4...v2.24.5) (2023-06-08)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed HTML editor parameter value initialization ([#2708](https://github.com/Azure/LogicAppsUX/issues/2708)) ([70ed9f2](https://github.com/Azure/LogicAppsUX/commit/70ed9f25d5be67473be8c7d8e5b4c821483f9840))
+* **designer:** Parameter location should be read only from top level in property ([#2697](https://github.com/Azure/LogicAppsUX/issues/2697)) ([eed47f0](https://github.com/Azure/LogicAppsUX/commit/eed47f04181009a8f4a5770a43e5330c2e1a7955))
+
 ### [2.24.4](https://github.com/Azure/LogicAppsUX/compare/v2.24.3...v2.24.4) (2023-06-07)
 
 
