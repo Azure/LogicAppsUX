@@ -49,8 +49,12 @@ export async function isConnectionReferenceValid(
     return false;
   }
 
-  const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
-  return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
+  try {
+    const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
+    return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
+  } catch (error: any) {
+    return false;
+  }
 }
 
 export function getAssistedConnectionProps(connector: Connector, manifest?: OperationManifest): AssistedConnectionProps | undefined {
