@@ -50,7 +50,7 @@ const STATIC_RESULT_VALIDATION_ERROR_MESSAGE = intl.formatMessage({
   description: 'The title of the message field in the static result parseJson action',
 });
 const STATIC_RESULT_ERROR_LINE_NUMBER = intl.formatMessage({
-  defaultMessage: 'Line Number',
+  defaultMessage: 'Line number',
   description: 'The title of the line number field in the static result parseJson action',
 });
 const STATIC_RESULT_ERROR_LINE_POSITION = intl.formatMessage({
