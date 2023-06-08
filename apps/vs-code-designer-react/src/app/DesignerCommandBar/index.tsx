@@ -115,12 +115,12 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     [allOperationErrors, allInputErrors, allWorkflowParameterErrors]
   );
 
-  const saveIsDisabled = isSaving || haveErrors || !designerIsDirty;
+  const isSaveDisabled = isSaving || haveErrors || !designerIsDirty;
 
   const desingerItems: ICommandBarItemProps[] = [
     {
       key: 'Save',
-      disabled: saveIsDisabled,
+      disabled: isSaveDisabled,
       text: Resources.DESIGNER_SAVE,
       onRenderIcon: () => {
         return isSaving ? (
@@ -129,7 +129,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
           <FontIcon
             aria-label={Resources.DESIGNER_SAVE}
             iconName="Save"
-            className={saveIsDisabled ? classNames.disableGrey : classNames.azureBlue}
+            className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue}
           />
         );
       },
