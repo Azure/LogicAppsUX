@@ -1,4 +1,39 @@
 # Logic Apps Designer
+## [2.26.0](https://github.com/Azure/LogicAppsUX/compare/v2.25.0...v2.26.0) (2023-06-08)
+
+
+### Features
+
+* **Data Mapper:** Functions will remain during navigation ([#2665](https://github.com/Azure/LogicAppsUX/issues/2665)) ([d9ef24c](https://github.com/Azure/LogicAppsUX/commit/d9ef24c9e66defae2ee15a72914dbfaef052721c))
+* **Designer:** Browse View - Hiding connectors with no valid actions/triggers ([#2654](https://github.com/Azure/LogicAppsUX/issues/2654)) ([2aa81af](https://github.com/Azure/LogicAppsUX/commit/2aa81afd82b5e14617bdd36a79668c48d87725d4))
+* **designer:** Initial setup work of the chatbot ([#2691](https://github.com/Azure/LogicAppsUX/issues/2691)) ([aaf33c0](https://github.com/Azure/LogicAppsUX/commit/aaf33c0972a61ac173887b72534faa719aafea9a))
+
+
+### Bug Fixes
+
+* **Data Mapper:** breakpoints work for vs-code-data-mapper ([#2684](https://github.com/Azure/LogicAppsUX/issues/2684)) ([c5f38a6](https://github.com/Azure/LogicAppsUX/commit/c5f38a6e2d68d9e2843d4fb4e98159fffe8a5c0e))
+* **Data Mapper:** Fix undo and function deletion ([#2688](https://github.com/Azure/LogicAppsUX/issues/2688)) ([1b4bcbc](https://github.com/Azure/LogicAppsUX/commit/1b4bcbc0fb35b3b7a7e3a01c464947385e3eba70))
+* **Data Mapper:** Shift toolbar functions down into view and over to not overlap schemas ([#2642](https://github.com/Azure/LogicAppsUX/issues/2642)) ([e08df0e](https://github.com/Azure/LogicAppsUX/commit/e08df0e888c390b340d60ce46ddcda3acf7d42b5))
+* **designer:** Adding Preview tag for operations marked as preview in release status ([#2648](https://github.com/Azure/LogicAppsUX/issues/2648)) ([30c8846](https://github.com/Azure/LogicAppsUX/commit/30c884659aa5bc3197825750120dddfc1fa180e5))
+* **designer:** Allow copying of tokens and allow select all/copy of monitoring view ([#2675](https://github.com/Azure/LogicAppsUX/issues/2675)) ([a8033bd](https://github.com/Azure/LogicAppsUX/commit/a8033bd4f949b42ab6f6ae00ac7c69a49ea440b6))
+* **designer:** Allow drag and drop of nodes in/out of scopes ([#2658](https://github.com/Azure/LogicAppsUX/issues/2658)) ([44263cf](https://github.com/Azure/LogicAppsUX/commit/44263cf4bdc3164ccb31b4d560816295e0a8119c))
+* **Designer:** Connection request errors now show in UI ([#2710](https://github.com/Azure/LogicAppsUX/issues/2710)) ([4d34ad1](https://github.com/Azure/LogicAppsUX/commit/4d34ad197585eb8c637b745f63890341d0203735))
+* **Designer:** Fixed HTML editor parameter value initialization ([#2706](https://github.com/Azure/LogicAppsUX/issues/2706)) ([70e7c4f](https://github.com/Azure/LogicAppsUX/commit/70e7c4fa1f9f5ac6ce8dc562c98c91007158e149))
+* **Designer:** Fixes Mooncake function app service issue ([#2694](https://github.com/Azure/LogicAppsUX/issues/2694)) ([e2fe250](https://github.com/Azure/LogicAppsUX/commit/e2fe2501b9146e89f1a745cf96d526ee0bc20d1f))
+* **designer:** Fixing the visibility of internal and important parameters ([#2663](https://github.com/Azure/LogicAppsUX/issues/2663)) ([e97b037](https://github.com/Azure/LogicAppsUX/commit/e97b0377283ec8c719463f98e822612c3b4db35c))
+* **designer:** focus editor with clicking x to delete token ([#2660](https://github.com/Azure/LogicAppsUX/issues/2660)) ([7465727](https://github.com/Azure/LogicAppsUX/commit/7465727d060ea63d8d9f99d77d1e36d2e214ddf7))
+* **designer:** Parameter location should be read only from top level in property ([#2697](https://github.com/Azure/LogicAppsUX/issues/2697)) ([2effd6b](https://github.com/Azure/LogicAppsUX/commit/2effd6bbbc7e167594361555c50971a0d564bd84))
+* **designer:** Persist pagination toggle setting info in store ([#2645](https://github.com/Azure/LogicAppsUX/issues/2645)) ([3af4a63](https://github.com/Azure/LogicAppsUX/commit/3af4a635b534b9eb22a8915489b306df9871d613))
+* **designer:** Preserve original definition to read values during serialization ([#2651](https://github.com/Azure/LogicAppsUX/issues/2651)) ([2051fbd](https://github.com/Azure/LogicAppsUX/commit/2051fbd92246d395c1a5fd922e6d5b0ab75465f8))
+* **designer:** Show error message when using invalid payload in schema editor ([#2666](https://github.com/Azure/LogicAppsUX/issues/2666)) ([535400c](https://github.com/Azure/LogicAppsUX/commit/535400c75e1dc0e9fa04625c9fc84e502e823f1c))
+* **designer:** Showing error message when apim swagger is invalid ([#2668](https://github.com/Azure/LogicAppsUX/issues/2668)) ([71b3805](https://github.com/Azure/LogicAppsUX/commit/71b3805f86c338cb791ac824bcb05b9abe69570c))
+* **designer:** Skip trigger serialization when Add operation panel is open for trigger ([#2685](https://github.com/Azure/LogicAppsUX/issues/2685)) ([bf64563](https://github.com/Azure/LogicAppsUX/commit/bf645633be279e5516c459a9aa8a9402e34391ef))
+* **designer:** Support for dark mode in html editor ([#2678](https://github.com/Azure/LogicAppsUX/issues/2678)) ([47ea312](https://github.com/Azure/LogicAppsUX/commit/47ea312245600f967ab18c3dda5a798f8b9dace0))
+* **designer:** Typo and text formatting ([#2689](https://github.com/Azure/LogicAppsUX/issues/2689)) ([5066208](https://github.com/Azure/LogicAppsUX/commit/5066208b1074ad7f28d7dd94447ecf41067cb3ec))
+* **vscode:** Copy/Paste commands in vscode for Mac ([#2653](https://github.com/Azure/LogicAppsUX/issues/2653)) ([5010b8e](https://github.com/Azure/LogicAppsUX/commit/5010b8e7707c331eadb320b966586e3ab3d215ae))
+* **vscode:** Create an OAuth connection to Key vault ([#2657](https://github.com/Azure/LogicAppsUX/issues/2657)) ([7f2f505](https://github.com/Azure/LogicAppsUX/commit/7f2f50531a11fe5bb158bfe95f2a0bb2e647c7bf))
+* **vscode:** Resources image path in readme ([#2698](https://github.com/Azure/LogicAppsUX/issues/2698)) ([20dc4a8](https://github.com/Azure/LogicAppsUX/commit/20dc4a82c4e4174715b835e88593ad202066f903))
+
 ## [2.25.0](https://github.com/Azure/LogicAppsUX/compare/v2.24.0...v2.25.0) (2023-06-01)
 
 
