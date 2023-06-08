@@ -14,6 +14,7 @@ export enum NotificationTypes {
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
   TargetNodeCannotDelete = 'targetNodeCannotDelete',
   RepeatingConnectionCannotDelete = 'repeatingConnectionCannotDelete',
+  FunctionNodePartiallyDeleted = 'functionNodePartiallyDeleted',
   FunctionNodeDeleted = 'functionNodeDeleted',
   ConnectionDeleted = 'connectionDeleted',
   ArrayConnectionAdded = 'arrayConnectionAdded',
@@ -93,6 +94,7 @@ export const Notification = (props: NotificationProps) => {
       // Delete icon
       case NotificationTypes.SourceNodeRemoved:
       case NotificationTypes.ConnectionDeleted:
+      case NotificationTypes.FunctionNodePartiallyDeleted:
       case NotificationTypes.FunctionNodeDeleted:
         return <Delete20Regular style={{ color: tokens.colorNeutralForeground1, marginRight: 8 }} />;
 
@@ -161,6 +163,10 @@ export const Notification = (props: NotificationProps) => {
       [NotificationTypes.TargetNodeCannotDelete]: intl.formatMessage({
         defaultMessage: `Target schema element cannot be deleted.`,
         description: 'Message informing that target element cannot be removed',
+      }),
+      [NotificationTypes.FunctionNodePartiallyDeleted]: intl.formatMessage({
+        defaultMessage: `Function was removed from the current location and currently exists elsewhere.`,
+        description: 'Message to show when deleting a connection that exists in multiple places.',
       }),
       [NotificationTypes.FunctionNodeDeleted]: intl.formatMessage({
         defaultMessage: `Function deleted.`,

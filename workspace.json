@@ -1,6 +1,7 @@
 {
   "version": 2,
   "projects": {
+    "chatbot": "libs/chatbot",
     "data-mapper": "libs/data-mapper",
     "data-mapper-standalone": "apps/data-mapper-standalone",
     "designer": "libs/designer",

@@ -241,7 +241,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       description: 'Note text',
     });
     const disabledCommentAction = intl.formatMessage({
-      defaultMessage: 'Notes can only be added while editing the inputs of a step.',
+      defaultMessage: "You can add notes only when you edit a step's inputs.",
       description: 'Text to tell users why notes are disabled',
     });
     const commentAdd = intl.formatMessage({
@@ -316,6 +316,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const layerProps = {
     hostId: 'msla-layer-host',
+    eventBubblingEnabled: true,
   };
 
   const commonPanelProps: CommonPanelProps = {

@@ -84,7 +84,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
@@ -112,7 +112,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   });
 
   const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
-    defaultMessage: `Input node type does not match the schema node's type`,
+    defaultMessage: `The input node type doesn't match the schema node's type.`,
     description: 'Error message for when input node type does not match schema node type',
   });
 
@@ -207,7 +207,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     // Create connection
-    const source = isSelectedInputFunction ? functionNodeDictionary[selectedInputKey] : sourceSchemaDictionary[selectedInputKey];
+    const source = isSelectedInputFunction
+      ? functionNodeDictionary[selectedInputKey].functionData
+      : sourceSchemaDictionary[selectedInputKey];
     const srcConUnit: ConnectionUnit = {
       node: source,
       reactFlowKey: selectedInputKey,
@@ -329,19 +331,20 @@ export const InputDropdown = (props: InputDropdownProps) => {
           .filter((value) => !!value) as string[];
       }
 
-      const inputs = connectionDictionary[key].inputs[0];
+      const inputs = connectionDictionary[key]?.inputs[0];
       const sourceNode = inputs && inputs[0];
+      const nodeData = node.functionData;
       let nodeName: string;
-      if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+      if (nodeData.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
         nodeName = calculateIndexValue(sourceNode.node);
-      } else if (node.key === directAccessPseudoFunctionKey) {
+      } else if (nodeData.key === directAccessPseudoFunctionKey) {
         const functionValues = getInputValues(connectionDictionary[key], connectionDictionary);
         nodeName =
           functionValues.length === 3
             ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
-            : getFunctionOutputValue(fnInputValues, node.functionName);
+            : getFunctionOutputValue(fnInputValues, nodeData.functionName);
       } else {
-        nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
+        nodeName = getFunctionOutputValue(fnInputValues, nodeData.functionName);
       }
 
       newAvailableInputOptions.push({
@@ -349,7 +352,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         text: nodeName,
         data: {
           isFunction: true,
-          type: node.outputValueType,
+          type: nodeData.outputValueType,
         },
       });
     });

@@ -16,8 +16,8 @@ import type {
 } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel, updateErrorDetails, initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
-import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
-import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
+import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';
@@ -234,13 +234,13 @@ export const initializeOperationDetailsForManifest = async (
     }
 
     return;
-  } catch (error) {
+  } catch (error: any) {
     const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
       message,
-      error: error instanceof Error ? error : undefined,
+      error,
     });
 
     dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));

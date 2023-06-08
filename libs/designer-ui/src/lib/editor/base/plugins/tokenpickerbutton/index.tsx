@@ -90,7 +90,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
   }, [anchorKey, editor, updatePosition]);
 
   const dynamicContentButtonText = intl.formatMessage({
-    defaultMessage: `Insert data from previous step (You can also add by typing / in the editor)`,
+    defaultMessage: `Enter the data from previous step. You can also add data by typing the '/' character.`,
     description: 'Label for button to open dynamic content token picker',
   });
 

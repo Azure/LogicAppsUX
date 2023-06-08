@@ -24,7 +24,7 @@ import {
   clearDynamicInputs,
   updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
-import type { VariableDeclaration } from '../../state/tokensSlice';
+import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
@@ -338,7 +338,7 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
 }
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
-  return !parameter.required && getVisibility(parameter) !== constants.VISIBILITY.IMPORTANT;
+  return !parameter.required && !equals(getVisibility(parameter), constants.VISIBILITY.IMPORTANT);
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {

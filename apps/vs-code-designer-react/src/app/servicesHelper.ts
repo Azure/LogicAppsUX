@@ -19,6 +19,7 @@ import type {
   IHostService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
+import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
 import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
@@ -201,7 +202,7 @@ export const getDesignerServices = (
   });
 
   const functionService = new BaseFunctionService({
-    baseUrl,
+    baseUrl: armUrl,
     apiVersion,
     httpClient,
     subscriptionId,
@@ -231,6 +232,14 @@ export const getDesignerServices = (
         });
       }
     },
+    getAppIdentity: () => {
+      return {
+        principalId: '00000000-0000-0000-0000-000000000000',
+        tenantId: '00000000-0000-0000-0000-000000000000',
+        type: 'SystemAssigned',
+      } as ManagedIdentity;
+    },
+    isExplicitAuthRequiredForManagedIdentity: () => true,
   };
 
   const hostService: IHostService = {

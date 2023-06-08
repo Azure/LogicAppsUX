@@ -11,8 +11,8 @@ import {
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
-import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
-import { updateVariableInfo } from '../../../../core/state/tokensSlice';
+import type { VariableDeclaration } from '../../../../core/state/tokens/tokensSlice';
+import { updateVariableInfo } from '../../../../core/state/tokens/tokensSlice';
 import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
@@ -105,8 +105,8 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {operationInfo && connectionName.isLoading === false && showConnectionDisplay ? (
-        <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />
+      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
+        <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} isLoading={connectionName.isLoading} />
       ) : null}
       {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
