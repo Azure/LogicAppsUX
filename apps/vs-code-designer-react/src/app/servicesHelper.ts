@@ -202,7 +202,7 @@ export const getDesignerServices = (
   });
 
   const functionService = new BaseFunctionService({
-    baseUrl,
+    baseUrl: armUrl,
     apiVersion,
     httpClient,
     subscriptionId,
