@@ -7,8 +7,8 @@ import { type ValidationError, ValidationWarningKeys } from '../../core/state/se
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
-import type { IButtonStyles } from '@fluentui/react';
-import { Separator, useTheme, Icon, IconButton, TooltipHost, Dropdown } from '@fluentui/react';
+import type { IButtonStyles, IDropdownOption } from '@fluentui/react';
+import { SearchBox, DropdownMenuItemType, Separator, useTheme, Icon, IconButton, TooltipHost, Dropdown } from '@fluentui/react';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
   isHighContrastBlack,
@@ -45,6 +45,7 @@ import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import './settingsection.less';
 
 type SettingBase = {
   visible?: boolean;
@@ -227,13 +228,6 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
     [settings]
   );
 
-  const [conditionalVisibilityTempArray, setConditionalVisibilityTempArray] = useState<string[]>([]);
-
-  const addNewParamText = intl.formatMessage({
-    defaultMessage: 'Add new parameters',
-    description: 'Text for add new parameter button',
-  });
-
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
@@ -325,34 +319,97 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       })}
 
       {conditionallyInvisibleSettings.length > 0 && !readOnly ? (
-        <div style={{ paddingTop: '5px' }}>
-          <Dropdown
-            placeholder={addNewParamText}
-            multiSelect
-            options={conditionallyInvisibleSettings.map((setting) => ({
-              key: (setting.settingProp as any).id,
-              text: (setting.settingProp as any).label,
-            }))}
-            style={{ margin: '24px auto 0 auto' }}
-            selectedKeys={conditionalVisibilityTempArray}
-            onChange={(_e: any, item: any) => {
-              if (item?.key) {
-                setConditionalVisibilityTempArray(
-                  conditionalVisibilityTempArray.includes(item.key)
-                    ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
-                    : [...conditionalVisibilityTempArray, item.key]
-                );
-              }
-            }}
-            onDismiss={() => {
-              conditionalVisibilityTempArray.forEach((parameterId) => {
-                dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: true }));
-              });
-              setConditionalVisibilityTempArray([]);
-            }}
-          />
-        </div>
+        <SearchableParametersDropdown
+          conditionallyInvisibleSettings={conditionallyInvisibleSettings}
+          groupId={id}
+          nodeId={nodeId}
+        />
       ) : null}
+    </div>
+  );
+};
+
+interface SearchableParametersDropdownProps {
+  conditionallyInvisibleSettings: Settings[];
+  groupId: string | undefined;
+  nodeId: string;
+}
+
+const SearchableParametersDropdown: FC<SearchableParametersDropdownProps> = ({
+  conditionallyInvisibleSettings,
+  groupId,
+  nodeId,
+}): JSX.Element => {
+  const showFilterInputItemThreshold = 4;
+  const headerKey = 'FilterHeader';
+
+  const intl = useIntl();
+  const dispatch = useDispatch();
+
+  const [conditionalVisibilityTempArray, setConditionalVisibilityTempArray] = useState<string[]>([]);
+  const [filterText, setFilterText] = useState('');
+
+  const addNewParamText = intl.formatMessage({
+    defaultMessage: 'Add new parameters',
+    description: 'Text for add new parameter button',
+  });
+
+  const searchOperation = intl.formatMessage({
+    defaultMessage: 'Search',
+    description: 'Placeholder for search box that searches conditional parameters',
+  });
+
+  const options = conditionallyInvisibleSettings.map((setting): IDropdownOption => ({
+    key: (setting.settingProp as any).id,
+    text: (setting.settingProp as any).label ?? '',
+  })).filter((option) => option.text.toLowerCase().includes(filterText.toLowerCase()));
+
+  if (conditionallyInvisibleSettings.length >= showFilterInputItemThreshold) {
+    options.unshift(
+      { key: headerKey, text: '', itemType: DropdownMenuItemType.Header },
+      { key: 'FilterDivider', text: '-', itemType: DropdownMenuItemType.Divider },
+    );
+  }
+
+  return (
+    <div style={{ paddingTop: '5px' }}>
+      <Dropdown
+        className="msla-conditional-parameter-dropdown"
+        placeholder={addNewParamText}
+        multiSelect
+        options={options}
+        selectedKeys={conditionalVisibilityTempArray}
+        onChange={(_e: any, item: any) => {
+          if (item?.key) {
+            setConditionalVisibilityTempArray(
+              conditionalVisibilityTempArray.includes(item.key)
+                ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
+                : [...conditionalVisibilityTempArray, item.key]
+            );
+          }
+        }}
+        onDismiss={() => {
+          conditionalVisibilityTempArray.forEach((parameterId) => {
+            dispatch(updateParameterConditionalVisibility({ nodeId, groupId: groupId ?? '', parameterId, value: true }));
+          });
+          setConditionalVisibilityTempArray([]);
+          setFilterText('');
+        }}
+        onRenderItem={(item, defaultRenderer) => {
+          if (item?.key === headerKey) {
+            return (
+              <SearchBox
+                autoFocus={true}
+                className="msla-conditional-parameter-dropdown-search"
+                onChange={(e, newValue) => setFilterText(newValue ?? '')}
+                placeholder={searchOperation}
+              />
+            );
+          }
+
+          return defaultRenderer?.(item) ?? null;
+        }}
+      />
     </div>
   );
 };
