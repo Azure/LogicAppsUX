@@ -195,8 +195,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const opQuery = useOperationQuery(id);
 
   const isLoading = useMemo(
-    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading || connectionResult.isLoading,
-    [opQuery.isLoading, connectionResult.isLoading, isRepetitionLoading, isRepetitionRefetching]
+    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading,
+    [opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
   );
 
   const opManifestErrorText = intl.formatMessage({
