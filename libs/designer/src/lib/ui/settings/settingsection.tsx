@@ -45,7 +45,6 @@ import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import './settingsection.less';
 
 type SettingBase = {
   visible?: boolean;
