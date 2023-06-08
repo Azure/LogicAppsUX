@@ -104,7 +104,7 @@ export const ConfigPanel = ({
   });
 
   const genericErrorMsg = intl.formatMessage({
-    defaultMessage: 'Failed loading the schema. Please try again.',
+    defaultMessage: 'Failed to load the schema. Please try again.',
     description: 'Load schema error message',
   });
 
