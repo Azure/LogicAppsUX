@@ -45,7 +45,7 @@ export const WebViewMsgHandler = ({ children }: WebViewMsgHandlerProps) => {
       case 'loadDataMap':
         // NOTE: DataMapDataProvider ensures the functions and schemas are loaded before loading the mapDefinition connections
         dispatch(changeSourceSchemaFilename(msg.data.sourceSchemaFileName));
-        dispatch(changeTargetSchemaFilename(msg.data.targetSchemaFileName)); // danielle look here
+        dispatch(changeTargetSchemaFilename(msg.data.targetSchemaFileName));
         dispatch(changeMapDefinition(msg.data.mapDefinition));
         break;
       case 'showAvailableSchemas':

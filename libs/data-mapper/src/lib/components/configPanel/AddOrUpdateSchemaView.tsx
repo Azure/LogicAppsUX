@@ -10,9 +10,20 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-// import {sortPaths } from 'sort-paths'
-
 const acceptedSchemaFileInputExtensions = '.xsd';
+
+const useStyles = makeStyles({
+  option: {
+    ...shorthands.borderBottom('.5px', 'solid', tokens.colorNeutralStroke1),
+  },
+  combobox: {
+    ...shorthands.border('0.8px', 'solid', '#d1d1d1'),
+
+    ...shorthands.outline('0px'),
+    paddingRight: '10px',
+    width: '290px',
+  },
+});
 
 export enum UploadSchemaTypes {
   UploadNew = 'upload-new',
@@ -41,7 +52,6 @@ export interface AddOrUpdateSchemaViewProps {
 
 export const AddOrUpdateSchemaView = ({
   schemaType,
-  selectedSchema,
   selectedSchemaFile,
   setSelectedSchema,
   setSelectedSchemaFile,
@@ -56,6 +66,8 @@ export const AddOrUpdateSchemaView = ({
   );
   const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
+
+  const styles = useStyles();
 
   const replaceSchemaWarningLoc = intl.formatMessage({
     defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
@@ -189,13 +201,7 @@ export const AddOrUpdateSchemaView = ({
     sortedOptions.length !== 0
       ? sortedOptions.map((option) => optionWithPath(option))
       : dataMapDropdownOptions.map((option) => optionWithPath(option));
-  // danielle sort options
   console.log(errorMessage); // danielle need to find a place to put this
-  console.log(selectedSchema);
-
-  // const sortOptionsByPath = (fileNames: { key: string; text: string }[]) => {
-  //   console.log(fileNames);
-  // };
 
   return (
     <div>
@@ -243,9 +249,10 @@ export const AddOrUpdateSchemaView = ({
           onOptionSelect={(e, data) => setSelectedSchema(data.optionValue)}
           freeform={true}
           autoComplete="on"
+          className={styles.combobox}
+          appearance="outline"
           //errorMessage={errorMessage}
           //selectedKey={selectedSchema}
-          //dropdownWidth={200}
         >
           {formattedOptions}
         </Combobox>
@@ -253,12 +260,6 @@ export const AddOrUpdateSchemaView = ({
     </div>
   );
 };
-
-const useStyles = makeStyles({
-  option: {
-    ...shorthands.borderBottom('.5px', 'solid', tokens.colorNeutralStroke1),
-  },
-});
 
 const optionWithPath: React.FC<string> = (option: string) => {
   const [fileName, filePath] = getFileNameAndPath(option);

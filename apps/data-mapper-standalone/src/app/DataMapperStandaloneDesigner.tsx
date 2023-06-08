@@ -27,7 +27,6 @@ const workflowSchemaFilenames = [
   'a/b.json',
   'a/b/c.json',
 ];
-// danielle test for space and special characters in path
 
 export const DataMapperStandaloneDesigner = () => {
   const dispatch = useDispatch<AppDispatch>();
