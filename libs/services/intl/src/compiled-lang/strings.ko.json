@@ -1086,6 +1086,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1666,6 +1672,12 @@
       "value": "인증 유형"
     }
   ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Empty value"
+    }
+  ],
   "AGCm1p": [
     {
       "type": 0,
@@ -2229,12 +2241,6 @@
       "value": "Add an action"
     }
   ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "저장하지 못했습니다."
-    }
-  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -2357,6 +2363,12 @@
     {
       "type": 0,
       "value": "(UTC+05:45) 카트만두"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -3043,6 +3055,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3173,6 +3191,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3365,6 +3389,12 @@
     {
       "type": 0,
       "value": "Headers"
+    }
+  ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
     }
   ],
   "NPUFgH": [
@@ -3972,6 +4002,26 @@
     {
       "type": 0,
       "value": "issue"
+    }
+  ],
+  "Rq2U5n": [
+    {
+      "type": 0,
+      "value": "Unrecognized expression '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -4854,6 +4904,12 @@
       "value": "데이터 URI의 이진 표현을 반환합니다."
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -4882,6 +4938,12 @@
       "value": "문자열"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -4892,6 +4954,12 @@
     {
       "type": 0,
       "value": "PFX 입력"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -4916,6 +4984,12 @@
     {
       "type": 0,
       "value": "이 함수에 전달되는 배열 또는 개체에 포함된 모든 요소를 사용해서 단일 배열 또는 개체를 반환합니다. 이 함수에 대한 매개 변수는 개체 집합 또는 배열 집합(둘 중 하나만 포함)일 수 있습니다. 이름이 같은 두 개체가 최종 출력에 있는 경우 해당 이름의 마지막 개체가 최종 개체로 나타납니다."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5368,6 +5442,12 @@
       "value": "ID를 선택하세요."
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5404,6 +5484,12 @@
       "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
     }
   ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
+    }
+  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5414,6 +5500,12 @@
     {
       "type": 0,
       "value": "Schema is missing required inputs"
+    }
+  ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "dDYCuU": [
@@ -5432,6 +5524,12 @@
     {
       "type": 0,
       "value": "업데이트"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5478,6 +5576,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
     }
   ],
   "dgAu27": [
@@ -5546,6 +5650,12 @@
       "value": "Clear"
     }
   ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5592,6 +5702,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5786,6 +5902,12 @@
     {
       "type": 0,
       "value": "연결 이름"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6423,6 +6545,12 @@
       "value": "Functions"
     }
   ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -6483,6 +6611,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -7051,6 +7185,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7244,6 +7384,12 @@
     {
       "type": 0,
       "value": "값의 URI로 인코딩된 표현을 반환합니다."
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
     }
   ],
   "rsdJcV": [
@@ -7492,6 +7638,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 노보시비르스크"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [

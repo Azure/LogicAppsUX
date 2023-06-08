@@ -37,14 +37,15 @@ const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSeg
       const attributes = Array.from(element.attributes);
       for (let j = 0; j < attributes.length; j++) {
         const attribute = attributes[j];
-        if (attribute.name !== 'id' && attribute.name !== 'style') {
+        if (attribute.name !== 'id' && attribute.name !== 'style' && attribute.name !== 'href') {
           element.removeAttribute(attribute.name);
         }
       }
     }
 
     // Get the cleaned HTML string
-    const cleanedHtmlString = tempElement.innerHTML;
+    let cleanedHtmlString = tempElement.innerHTML;
+    cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
 
     // Regular expression pattern to match <span id="..."></span>
     const spanIdPattern = /<span id="(.*?)"><\/span>/g;

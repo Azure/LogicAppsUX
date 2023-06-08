@@ -1085,6 +1085,12 @@
       "value": "invalidNodes"
     }
   ],
+  "5HGtu7": [
+    {
+      "type": 0,
+      "value": "Function removed from current location. Function exists elsewhere."
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1095,6 +1101,12 @@
     {
       "type": 0,
       "value": "Line Number"
+    }
+  ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "5SAQOb": [
@@ -1677,6 +1689,12 @@
       "value": "Authentication Type"
     }
   ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Empty value"
+    }
+  ],
   "AGCm1p": [
     {
       "type": 0,
@@ -1723,6 +1741,16 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "AbZRJ7": [
+    {
+      "type": 0,
+      "value": "select all text in "
+    },
+    {
+      "type": 1,
+      "value": "label"
     }
   ],
   "AcdX+2": [
@@ -2251,12 +2279,6 @@
       "value": "Add an action"
     }
   ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "Failed to save."
-    }
-  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -2379,6 +2401,12 @@
     {
       "type": 0,
       "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -3087,6 +3115,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3219,6 +3253,12 @@
       "value": "Bullet List"
     }
   ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -3253,6 +3293,20 @@
     {
       "type": 0,
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+    }
+  ],
+  "LxPh9u": [
+    {
+      "type": 0,
+      "value": "copy value of "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " to clipboard"
     }
   ],
   "M/F2/O": [
@@ -3409,6 +3463,12 @@
     {
       "type": 0,
       "value": "Headers"
+    }
+  ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
     }
   ],
   "NPUFgH": [
@@ -4031,6 +4091,26 @@
     {
       "type": 0,
       "value": "issue"
+    }
+  ],
+  "Rq2U5n": [
+    {
+      "type": 0,
+      "value": "Unrecognized expression '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -4913,6 +4993,12 @@
       "value": "Returns a binary representation of a data URI"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -4941,6 +5027,12 @@
       "value": "String"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -4951,6 +5043,12 @@
     {
       "type": 0,
       "value": "Enter Pfx"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -4975,6 +5073,12 @@
     {
       "type": 0,
       "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5291,6 +5395,12 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
+  "bsgS8m": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "bv9QPA": [
     {
       "type": 0,
@@ -5427,6 +5537,12 @@
       "value": "Please select an identity"
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5463,6 +5579,12 @@
       "value": "Required. The collection to skip the first Count objects from."
     }
   ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
+    }
+  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5473,6 +5595,12 @@
     {
       "type": 0,
       "value": "Schema is missing required inputs"
+    }
+  ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "dDYCuU": [
@@ -5491,6 +5619,12 @@
     {
       "type": 0,
       "value": "Update"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5541,6 +5675,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
     }
   ],
   "dgAu27": [
@@ -5609,6 +5749,12 @@
       "value": "Clear"
     }
   ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5655,6 +5801,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5849,6 +6001,12 @@
     {
       "type": 0,
       "value": "Connection name"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6501,6 +6659,12 @@
       "value": "Functions"
     }
   ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -6561,6 +6725,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -7129,6 +7299,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7333,6 +7509,12 @@
     {
       "type": 0,
       "value": "Returns a URI encoded representation of a value"
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
     }
   ],
   "rsdJcV": [
@@ -7581,6 +7763,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [

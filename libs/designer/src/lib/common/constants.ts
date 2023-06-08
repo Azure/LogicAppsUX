@@ -185,6 +185,7 @@ export default {
     TABLE: 'table',
     VARIABLE_NAME: 'variablename',
     HTML: 'html',
+    RECURRENCE: 'recurrence',
   },
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
@@ -323,6 +324,7 @@ export default {
       ELSE: 'else',
       SWITCH_CASE: 'switchcase',
       SWITCH_DEFAULT: 'switchdefault',
+      PLACEHOLDER_TRIGGER: 'builtin:newWorkflowTrigger',
       // Action and trigger types.
       API_CONNECTION_WEBHOOK: 'apiconnectionwebhook',
       API_CONNECTION: 'apiconnection',

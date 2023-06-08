@@ -186,7 +186,7 @@ export const applyCustomLayout = async (
   const xInterval = (useExpandedFunctionCards ? expandedFunctionCardMaxWidth : simpleFunctionCardDiameter) * 1.5;
   const yInterval = simpleFunctionCardDiameter * 1.5;
   const maxFunctionsPerToolbarRow = 4;
-  const functionToolbarStartY = -1 * simpleFunctionCardDiameter * 2;
+  const functionToolbarStartY = -1 * simpleFunctionCardDiameter;
   const nodeCollisionXThreshold = (useExpandedFunctionCards ? expandedFunctionCardMaxWidth : simpleFunctionCardDiameter) * 1.25;
   const nodeCollisionYThreshold = simpleFunctionCardDiameter * 1.2;
 
@@ -284,7 +284,7 @@ export const applyCustomLayout = async (
     if (compiledInputPositions.length === 0) {
       if (numOutputs === 0) {
         // Completely unconnected nodes -> place in next toolbar slot
-        fnNodeXPos = nextAvailableToolbarSpot[0] * xInterval;
+        fnNodeXPos = nextAvailableToolbarSpot[0] * xInterval + fnStartX;
         fnNodeYPos = functionToolbarStartY - nextAvailableToolbarSpot[1] * yInterval;
         isGoingOnToolbar = true;
 

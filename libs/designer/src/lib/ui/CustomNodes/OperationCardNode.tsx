@@ -129,7 +129,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         isDragging: monitor.isDragging(),
       }),
     }),
-    [readOnly, metadata]
+    [readOnly, metadata, dependencies]
   );
 
   const selected = useIsNodeSelected(id);
@@ -190,7 +190,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     };
   };
 
-  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()]; // danielle look here
+  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
   const opQuery = useOperationQuery(id);
 

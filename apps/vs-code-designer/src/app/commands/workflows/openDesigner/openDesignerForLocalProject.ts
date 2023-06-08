@@ -176,6 +176,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             isMonitoringView: this.isMonitoringView,
             workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
+            hostVersion: ext.extensionVersion,
           },
         });
         break;
@@ -237,23 +238,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         const definitionToSave: any = definition;
         const parametersFromDefinition = parameters;
 
-        if (connectionReferences) {
-          const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
-            this.context,
-            filePath,
-            connectionReferences,
-            azureTenantId,
-            workflowBaseManagementUri,
-            parametersFromDefinition
-          );
-
-          await saveConnectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
-
-          if (containsApiHubConnectionReference(connectionReferences)) {
-            window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
-          }
-        }
-
         if (parametersFromDefinition) {
           delete parametersFromDefinition.$connections;
           for (const parameterKey of Object.keys(parametersFromDefinition)) {
@@ -265,6 +249,22 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
 
         workflow.definition = definitionToSave;
+
+        if (connectionReferences) {
+          const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
+            this.context,
+            filePath,
+            connectionReferences,
+            azureTenantId,
+            workflowBaseManagementUri
+          );
+
+          await saveConnectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
+
+          if (containsApiHubConnectionReference(connectionReferences)) {
+            window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
+          }
+        }
 
         writeFileSync(filePath, JSON.stringify(workflow, null, 4));
       } catch (error) {

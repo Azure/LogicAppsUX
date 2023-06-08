@@ -44,7 +44,7 @@ export const FunctionList = () => {
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
   const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
-  const currentFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const functionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
@@ -63,10 +63,10 @@ export const FunctionList = () => {
 
       const source = reactFlowSource.startsWith(sourcePrefix)
         ? flattenedSourceSchema[reactFlowSource]
-        : currentFunctionNodes[reactFlowSource];
+        : functionNodes[reactFlowSource].functionData;
       const destination = reactFlowDestination.startsWith(targetPrefix)
         ? flattenedTargetSchema[reactFlowDestination]
-        : currentFunctionNodes[reactFlowDestination];
+        : functionNodes[reactFlowDestination].functionData;
 
       dispatch(deleteConnection({ inputKey: reactFlowSource, outputKey: reactFlowDestination, port: reactFlowDestinationPort }));
 
@@ -117,7 +117,7 @@ export const FunctionList = () => {
 
         // Create dictionary for Function Categories
         Object.values(FunctionCategory).forEach((category) => {
-          const categoryItem = {} as FunctionDataTreeItem;
+          const categoryItem = { isExpanded: false } as FunctionDataTreeItem;
           categoryItem.children = [];
           categoryItem.key = `${functionCategoryItemKeyPrefix}${category}`;
 

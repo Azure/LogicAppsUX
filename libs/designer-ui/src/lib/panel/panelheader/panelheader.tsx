@@ -1,4 +1,5 @@
 import type { MenuItemOption } from '../../card/types';
+import { convertUIElementNameToAutomationId } from '../../utils';
 import { PanelLocation, PanelScope } from '../panelUtil';
 import { PanelHeaderComment } from './panelheadercomment';
 import type { TitleChangeHandler } from './panelheadertitle';
@@ -162,6 +163,7 @@ export const PanelHeader = ({
       onClick: item.onClick,
       iconOnly: true,
       disabled: item.disabled,
+      'data-automation-id': `msla-panel-overflow-${convertUIElementNameToAutomationId(item.title)}`,
     }));
 
     return (
@@ -199,10 +201,12 @@ export const PanelHeader = ({
       defaultMessage: 'More commands',
       description: 'Label for commands in panel header',
     });
+
     return (
       <TooltipHost calloutProps={calloutProps} content={PanelHeaderMenuCommands}>
         <IconButton
           ariaLabel={PanelHeaderMenuCommands}
+          data-automation-id="msla-panel-header-more-options"
           styles={overflowStyle}
           componentRef={menuButtonRef}
           menuIconProps={menuIconProps}
@@ -222,6 +226,7 @@ export const PanelHeader = ({
             iconProps={{ iconName: getCollapseIconName }}
             styles={collapseIconStyle}
             onClick={toggleCollapse}
+            data-automation-id="msla-panel-header-collapse-nav"
           />
         </TooltipHost>
       </div>

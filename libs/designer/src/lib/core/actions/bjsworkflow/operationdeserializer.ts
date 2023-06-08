@@ -16,8 +16,8 @@ import type {
 } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel, updateErrorDetails, initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
-import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
-import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
+import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';
@@ -107,7 +107,7 @@ export const initializeOperationMetadata = async (
   }
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
-  const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, allNodeData, nodesMetadata);
+  const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
   updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos);
   dispatch(
     initializeNodes(
@@ -445,6 +445,7 @@ const initializeVariables = (
 
 const initializeRepetitionInfos = async (
   triggerNodeId: string,
+  allOperations: Operations,
   nodesData: NodeDataWithOperationMetadata[],
   nodesMetadata: NodesMetadata
 ): Promise<Record<string, RepetitionContext>> => {
@@ -464,8 +465,14 @@ const initializeRepetitionInfos = async (
     { operationInfos: {}, inputs: {}, settings: {} }
   );
 
+  const splitOn = settings[triggerNodeId]
+    ? settings[triggerNodeId].splitOn?.value?.enabled
+      ? (settings[triggerNodeId].splitOn?.value?.value as string)
+      : undefined
+    : (allOperations[triggerNodeId] as LogicAppsV2.Trigger)?.splitOn;
+
   const getNodeRepetition = async (nodeId: string, includeSelf: boolean): Promise<{ id: string; repetition: RepetitionContext }> => {
-    const repetition = await getRepetitionContext(nodeId, triggerNodeId, operationInfos, inputs, settings, nodesMetadata, includeSelf);
+    const repetition = await getRepetitionContext(nodeId, operationInfos, inputs, nodesMetadata, includeSelf, splitOn);
     return { id: nodeId, repetition };
   };
 

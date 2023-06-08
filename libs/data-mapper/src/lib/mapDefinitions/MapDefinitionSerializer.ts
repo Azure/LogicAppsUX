@@ -42,10 +42,16 @@ export const convertToMapDefinition = (
       generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     }
 
-    generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+    generateMapDefinitionBody(mapDefinition, connections);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
-    return yaml.dump(mapDefinition, { replacer: yamlReplacer }).replaceAll(/'"|"'/g, '"');
+    return yaml
+      .dump(mapDefinition, {
+        replacer: yamlReplacer,
+        noRefs: true,
+        sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray),
+      })
+      .replaceAll(/'"|"'/g, '"');
   }
 
   return '';
@@ -81,22 +87,16 @@ export const generateMapDefinitionHeader = (
 };
 
 // Exported for testing purposes
-export const generateMapDefinitionBody = (
-  mapDefinition: MapDefinitionEntry,
-  connections: ConnectionDictionary,
-  targetSchemaSortArray: string[]
-): void => {
+export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
-  const targetSchemaConnections = Object.entries(connections)
-    .filter(([key, connection]) => {
-      const selfNode = connection.self.node;
-      if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
-        return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
-      } else {
-        return false;
-      }
-    })
-    .sort((nodeA, nodeB) => targetSchemaSortArray.indexOf(nodeA[0]) - targetSchemaSortArray.indexOf(nodeB[0]));
+  const targetSchemaConnections = Object.entries(connections).filter(([key, connection]) => {
+    const selfNode = connection.self.node;
+    if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
+      return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
+    } else {
+      return false;
+    }
+  });
 
   targetSchemaConnections.forEach(([_key, connection]) => {
     const flattenedInputs = flattenInputs(connection.inputs);
@@ -388,4 +388,25 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
 
     return true;
   });
+};
+
+const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[]): number => {
+  const potentialKeyObjects = targetSchemaSortArray.filter((node, _index, origArray) => {
+    if (node.endsWith(nameA)) {
+      const trimmedNode = node.substring(0, node.indexOf(nameA) - 1);
+      const hasNodeB = origArray.find((nodeB) => nodeB === `${trimmedNode}/${nameB}`);
+
+      return !!hasNodeB;
+    }
+
+    return false;
+  });
+
+  if (potentialKeyObjects.length === 0) {
+    return 0;
+  }
+
+  const keyA = potentialKeyObjects[0];
+  const trimmedNode = keyA.substring(0, keyA.indexOf(nameA) - 1);
+  return targetSchemaSortArray.indexOf(keyA) - targetSchemaSortArray.indexOf(`${trimmedNode}/${nameB}`);
 };

@@ -119,7 +119,7 @@ const CreateConnectionTab = () => {
 
       if (selectedParameterSet) {
         const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
-          ([, parameter]) => parameter?.uiDefinition.constraints?.required
+          ([, parameter]) => parameter?.uiDefinition.constraints?.required === 'true'
         );
         requiredParameters?.forEach(([key, parameter]) => {
           if (!outputParameterValues?.[key]) {
@@ -146,6 +146,7 @@ const CreateConnectionTab = () => {
             return acc;
           }, {}),
         };
+
         const connectionInfo: ConnectionCreationInfo = {
           displayName,
           connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
@@ -184,7 +185,7 @@ const CreateConnectionTab = () => {
           setErrorMessage(String(err));
         }
       } catch (error: any) {
-        setErrorMessage(String(error?.responseText));
+        setErrorMessage(String(error?.responseText ?? error?.message));
         const message = `Failed to create connection: ${error}`;
         LoggerService().log({
           level: LogEntryLevel.Error,

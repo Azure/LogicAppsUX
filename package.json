@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.17.0",
+  "version": "2.25.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -22,8 +22,10 @@
     "build:parsers": "nx run parsers:build",
     "build:vscode-react": "nx run vs-code-react:build",
     "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-designer-react:build && nx run vs-code-react:build",
+    "build:vscode-datamapper": "nx run vs-code-data-mapper:build && nx run vs-code-data-mapper-react:build",
     "build:utils": "nx run utils:build",
     "build:docs": "nx build logic-apps-ux-docs",
+    "start:docs": "nx serve logic-apps-ux-docs",
     "bump": "standard-version --no-verify",
     "vscode:designer:pack:step1": "cd ./dist/apps/vs-code-designer && npm install",
     "vscode:designer:pack:step2": "node extension-copy-svgs.js designer",
@@ -36,7 +38,8 @@
     "fixLineEndings": "prettier --write \"**/*.json\"",
     "testgen": "playwright codegen https://localhost:4200",
     "postinstall": "node init.js",
-    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/designer-standalone/src/environments/armToken.json"
+    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/designer-standalone/src/environments/armToken.json",
+    "start:arm": "npm run generateArmToken && npm run start"
   },
   "engines": {
     "node": ">=16",
@@ -55,6 +58,7 @@
     "@fluentui/react-components": "^9.18.2",
     "@fluentui/react-focus": "8.8.19",
     "@fluentui/react-hooks": "8.6.20",
+    "@fluentui/react-migration-v8-v9": "^9.2.16",
     "@fluentui/react-portal-compat": "^9.0.45",
     "@fluentui/style-utilities": "8.9.6",
     "@fluentui/theme": "2.6.25",

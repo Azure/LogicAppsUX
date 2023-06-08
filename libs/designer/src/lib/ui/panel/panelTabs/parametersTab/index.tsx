@@ -11,8 +11,8 @@ import {
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
-import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
-import { updateVariableInfo } from '../../../../core/state/tokensSlice';
+import type { VariableDeclaration } from '../../../../core/state/tokens/tokensSlice';
+import { updateVariableInfo } from '../../../../core/state/tokens/tokensSlice';
 import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
@@ -98,7 +98,6 @@ export const ParametersTab = () => {
           <ParameterSection
             key={selectedNodeId}
             nodeId={selectedNodeId}
-            nodeType={nodeType}
             group={inputs.parameterGroups[sectionName]}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
@@ -116,14 +115,12 @@ export const ParametersTab = () => {
 
 const ParameterSection = ({
   nodeId,
-  nodeType,
   group,
   readOnly,
   tokenGroup,
   expressionGroup,
 }: {
   nodeId: string;
-  nodeType?: string;
   group: ParameterGroup;
   readOnly: boolean | undefined;
   tokenGroup: TokenGroup[];
@@ -143,6 +140,7 @@ const ParameterSection = ({
     operationDefinition,
     connectionReference,
     idReplacements,
+    workflowParameters,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -156,6 +154,7 @@ const ParameterSection = ({
       operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
       idReplacements: state.workflow.idReplacements,
+      workflowParameters: state.workflowParameters.definitions,
     };
   });
   const rootState = useSelector((state: RootState) => state);
@@ -226,7 +225,8 @@ const ParameterSection = ({
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
-        idReplacements
+        idReplacements,
+        workflowParameters
       );
     }
   };
@@ -238,12 +238,12 @@ const ParameterSection = ({
     getDisplayValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
       const propertyPath = dependency.filePickerInfo?.fullTitlePath ?? dependency.filePickerInfo?.browse.itemFullTitlePath;
-      return selectedItem[propertyPath ?? ''];
+      return getPropertyValue(selectedItem, propertyPath ?? '');
     },
     getValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
       const propertyPath = dependency.filePickerInfo?.valuePath ?? dependency.filePickerInfo?.browse.itemValuePath;
-      return selectedItem[propertyPath ?? ''];
+      return getPropertyValue(selectedItem, propertyPath ?? '');
     },
     onFolderNavigation: (selectedItem: any | undefined): void => {
       loadDynamicTreeItemsForParameter(
@@ -258,7 +258,8 @@ const ParameterSection = ({
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
-        idReplacements
+        idReplacements,
+        workflowParameters
       );
     },
   });
@@ -266,9 +267,10 @@ const ParameterSection = ({
   const getValueSegmentFromToken = async (
     parameterId: string,
     token: OutputToken,
-    addImplicitForeachIfNeeded: boolean
+    addImplicitForeachIfNeeded: boolean,
+    addLatestActionName: boolean
   ): Promise<ValueSegment> => {
-    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, rootState, dispatch);
+    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
   };
 
   const getTokenPicker = (
@@ -300,7 +302,9 @@ const ParameterSection = ({
             token.key === constants.FOREACH_CURRENT_ITEM_KEY
           );
         }
-        return supportedTypes.some((supportedType) => equals(supportedType, token.type));
+        return supportedTypes.some((supportedType) => {
+          return !Array.isArray(token.type) && equals(supportedType, token.type);
+        });
       }),
     }));
 
@@ -314,7 +318,7 @@ const ParameterSection = ({
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
-          getValueSegmentFromToken(parameterId, token, addImplicitForeach)
+          getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
         }
         tokenClickedCallback={tokenClickedCallback}
         closeTokenPicker={closeTokenPicker}
@@ -347,8 +351,6 @@ const ParameterSection = ({
           editor,
           editorOptions,
           tokenEditor: true,
-          isTrigger,
-          isCallback: nodeType?.toLowerCase() === constants.NODE.TYPE.HTTP_WEBHOOK,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,

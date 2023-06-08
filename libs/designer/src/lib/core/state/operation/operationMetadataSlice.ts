@@ -404,6 +404,8 @@ export const operationMetadataSlice = createSlice({
         delete state.staticResults[id];
         delete state.settings[id];
         delete state.actionMetadata[id];
+        delete state.repetitionInfos[id];
+        delete state.errors[id];
       }
     },
   },

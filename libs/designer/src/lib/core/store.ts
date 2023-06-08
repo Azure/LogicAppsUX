@@ -5,7 +5,7 @@ import operationMetadataReducer from './state/operation/operationMetadataSlice';
 import panelReducer from './state/panel/panelSlice';
 import settingsReducer from './state/setting/settingSlice';
 import staticResultsSchemasReducer from './state/staticresultschema/staticresultsSlice';
-import tokens from './state/tokensSlice';
+import tokens from './state/tokens/tokensSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
 import { configureStore } from '@reduxjs/toolkit';

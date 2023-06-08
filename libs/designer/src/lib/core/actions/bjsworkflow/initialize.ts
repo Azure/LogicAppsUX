@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -6,14 +5,14 @@ import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/c
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
-import type { UpdateUpstreamNodesPayload } from '../../state/tokensSlice';
-import { updateTokens, updateUpstreamNodes } from '../../state/tokensSlice';
+import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
+import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
+import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
@@ -80,7 +79,7 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 };
 
 export const getInputParametersFromManifest = (
-  nodeId: string,
+  _nodeId: string,
   manifest: OperationManifest,
   customSwagger?: SwaggerParser,
   stepDefinition?: any
@@ -191,7 +190,7 @@ export const getOutputParametersFromManifest = (
       };
     }, {});
 
-    manifestToParse = getUpdatedManifestForSpiltOn(manifestToParse, splitOnValue);
+    manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
   }
 
   const operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
@@ -294,7 +293,7 @@ export const updateOutputsAndTokens = async (
 
   // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
   if (shouldProcessSettings && isTrigger) {
-    const isSplitOnSupported = getSplitOnOptions(nodeOutputs).length > 0;
+    const isSplitOnSupported = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
     if (settings.splitOn?.isSupported !== isSplitOnSupported) {
       dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
     }

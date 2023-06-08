@@ -5,7 +5,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaType } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended, getFileNameAndPath } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
@@ -47,15 +47,36 @@ export const ConfigPanel = ({
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
-  const fetchedSourceSchema = useQuery([selectedSourceSchema], async () => await getSelectedSchema(selectedSourceSchema ?? ''), {
-    ...schemaFileQuerySettings,
-    enabled: selectedSourceSchema !== undefined,
-  });
+  const fetchedSourceSchema = useQuery(
+    [selectedSourceSchema],
+    async () => {
+      if (selectedSourceSchema) {
+        const [fileName, filePath] = getFileNameAndPath(selectedSourceSchema);
+        console.log('file name: ' + fileName + '; filePath: ' + filePath);
+        return await getSelectedSchema(fileName ?? '', filePath);
+      } else return await getSelectedSchema(selectedSourceSchema ?? '', '');
+    },
+    {
+      ...schemaFileQuerySettings,
+      enabled: selectedSourceSchema !== undefined,
+    }
+  );
 
-  const fetchedTargetSchema = useQuery([selectedTargetSchema], async () => await getSelectedSchema(selectedTargetSchema ?? ''), {
-    ...schemaFileQuerySettings,
-    enabled: selectedTargetSchema !== undefined,
-  });
+  const fetchedTargetSchema = useQuery(
+    [selectedTargetSchema],
+    async () => {
+      if (selectedTargetSchema) {
+        const [fileName, filePath] = getFileNameAndPath(selectedTargetSchema);
+        console.log('file name: ' + fileName + '; filePath: ' + filePath);
+
+        return await getSelectedSchema(fileName ?? '', filePath);
+      } else return await getSelectedSchema(selectedTargetSchema ?? '', '');
+    },
+    {
+      ...schemaFileQuerySettings,
+      enabled: selectedTargetSchema !== undefined,
+    }
+  );
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',

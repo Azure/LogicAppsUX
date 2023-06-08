@@ -13,6 +13,7 @@ export interface DataMapLoadingState {
   targetSchema?: Schema;
   schemaFileList?: string[];
   xsltFilename: string;
+  xsltContent: string;
   fetchedFunctions?: FunctionData[];
   useExpandedFunctionCards: boolean;
 }
@@ -20,6 +21,7 @@ export interface DataMapLoadingState {
 const initialState: DataMapLoadingState = {
   loadingMethod: 'file',
   xsltFilename: '',
+  xsltContent: '',
   useExpandedFunctionCards: true,
 };
 
@@ -38,6 +40,9 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeXsltFilename: (state, action: PayloadAction<string>) => {
       state.xsltFilename = action.payload;
+    },
+    changeXsltContent: (state, action: PayloadAction<string>) => {
+      state.xsltContent = action.payload;
     },
     changeMapDefinition: (state, action: PayloadAction<MapDefinitionEntry>) => {
       state.mapDefinition = action.payload;
@@ -71,6 +76,7 @@ export const {
   changeArmToken,
   changeLoadingMethod,
   changeXsltFilename,
+  changeXsltContent,
   changeMapDefinition,
   changeSourceSchemaFilename,
   changeSourceSchema,

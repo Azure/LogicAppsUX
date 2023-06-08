@@ -227,6 +227,7 @@ export function TokenPicker({
                 onChange={(_, newValue) => {
                   setSearchQuery(newValue ?? '');
                 }}
+                data-automation-id="msla-token-picker-search"
               />
             </div>
             <TokenPickerSection
@@ -240,7 +241,7 @@ export function TokenPicker({
               setExpression={setExpression}
               getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
-              noDynamicContent={!isDynamicContentAvailable(tokenGroup ?? [])}
+              noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
               expressionEditorCurrentHeight={expressionEditorCurrentHeight}
             />
             {initialMode === TokenPickerMode.EXPRESSION ? (
