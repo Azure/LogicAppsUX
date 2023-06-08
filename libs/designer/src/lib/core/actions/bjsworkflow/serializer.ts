@@ -113,7 +113,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         SerializationErrorCode.INVALID_PARAMETERS,
         intl.formatMessage(
           {
-            defaultMessage: 'Workflow has parameter validation errors on the following operations: {invalidNodes}',
+            defaultMessage: 'The workflow has parameter validation errors in the following operations: {invalidNodes}',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }

@@ -92,7 +92,7 @@ export const General = ({
     description: 'description of concurrency setting',
   });
   const triggerConditionsTitle = intl.formatMessage({
-    defaultMessage: 'Trigger Conditions',
+    defaultMessage: 'Trigger conditions',
     description: 'title for trigger conditions setting',
   });
   const triggerConditionsTooltipText = intl.formatMessage({

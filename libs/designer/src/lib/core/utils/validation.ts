@@ -179,7 +179,7 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
   switch (parameterFormat.toLowerCase()) {
     case Constants.SWAGGER.FORMAT.DOUBLE:
       if (!regex.double.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid double.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid Double number.', description: 'Error validation message' });
       }
       break;
 

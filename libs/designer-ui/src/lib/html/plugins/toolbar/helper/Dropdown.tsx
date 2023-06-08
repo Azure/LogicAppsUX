@@ -76,8 +76,8 @@ export const DropDown = ({
   });
 
   const altTextForChevronDown = intl.formatMessage({
-    defaultMessage: 'alt text for chevron down',
-    description: 'alt text for chevron down',
+    defaultMessage: 'Alt text for down chevron',
+    description: 'Alt text for down chevron',
   });
 
   return (

@@ -559,7 +559,7 @@ const STATIC_RESULT_OPERATION_ERROR_TITLE = intl.formatMessage({
   description: 'The title of the error property in the static result schema',
 });
 const STATIC_RESULT_ERROR_OBJECT_CODE_TITLE = intl.formatMessage({
-  defaultMessage: 'Error Code',
+  defaultMessage: 'Error code',
   description: 'The title of the error code property within Error in the static result schema',
 });
 

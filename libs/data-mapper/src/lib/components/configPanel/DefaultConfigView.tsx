@@ -42,7 +42,7 @@ export const DefaultConfigView = ({ setFunctionDisplayExpanded, useExpandedFunct
   });
 
   const noSchemaAddedLoc = intl.formatMessage({
-    defaultMessage: 'No schema is added',
+    defaultMessage: 'No schema is added.',
     description: 'Placeholder when no schema has been added',
   });
 

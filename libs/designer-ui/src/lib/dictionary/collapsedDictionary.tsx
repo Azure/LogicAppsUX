@@ -29,7 +29,7 @@ export const CollapsedDictionary = ({
   const intl = useIntl();
 
   const errorMessage = intl.formatMessage({
-    defaultMessage: 'Please enter a valid dictionary',
+    defaultMessage: 'Enter a valid dictionary.',
     description: 'Error Message for Invalid Dictionary',
   });
 

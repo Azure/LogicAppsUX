@@ -94,8 +94,8 @@ function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedPa
       });
     case DynamicallyAddedParameterType.Email:
       return intl.formatMessage({
-        defaultMessage: 'Please enter an e-mail address',
-        description: 'Placeholder description for a newly inserted Email parameter',
+        defaultMessage: 'Enter an email address.',
+        description: "The placeholder description for a newly inserted 'Email' parameter.",
       });
     case DynamicallyAddedParameterType.Number:
       return intl.formatMessage({
@@ -191,7 +191,7 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
 }
 
 export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean) {
-  let rootObject: {type: string, properties: unknown, required: string[]} = {
+  let rootObject: { type: string; properties: unknown; required: string[] } = {
     type: 'object',
     properties: {},
     required: [],
@@ -276,20 +276,20 @@ function convertDynamicallyAddedSchemaKeyToTitle(name: string, itemType: Dynamic
 }
 
 const rootObjectWithStaticInputs = {
-  type: "object",
+  type: 'object',
   properties: {
-    "key-button-date": {
-      title: "Date",
-      type: "string",
-      "x-ms-dynamically-added": false
+    'key-button-date': {
+      title: 'Date',
+      type: 'string',
+      'x-ms-dynamically-added': false,
     },
     location: {
-      type: "object",
+      type: 'object',
       properties: {
         fullAddress: {
-          title: "Full address",
-          type: "string",
-          "x-ms-dynamically-added": false
+          title: 'Full address',
+          type: 'string',
+          'x-ms-dynamically-added': false,
         },
         address: {
           type: 'object',
@@ -320,16 +320,10 @@ const rootObjectWithStaticInputs = {
               'x-ms-dynamically-added': false,
             },
           },
-          required: [
-              "countryOrRegion",
-              "city",
-              "state",
-              "street",
-              "postalCode"
-          ]
+          required: ['countryOrRegion', 'city', 'state', 'street', 'postalCode'],
         },
         coordinates: {
-          type: "object",
+          type: 'object',
           properties: {
             latitude: {
               title: 'Latitude',
@@ -342,16 +336,10 @@ const rootObjectWithStaticInputs = {
               'x-ms-dynamically-added': false,
             },
           },
-          required: [
-              "latitude",
-              "longitude"
-          ]
-        }
-      }
+          required: ['latitude', 'longitude'],
+        },
+      },
     },
   },
-  required: [
-    "key-button-date",
-    "location",
-  ],
+  required: ['key-button-date', 'location'],
 };
