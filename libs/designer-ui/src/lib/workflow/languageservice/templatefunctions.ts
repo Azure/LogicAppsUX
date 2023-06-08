@@ -39,7 +39,7 @@ const Resources = {
     description: 'Label for combining strings together',
   }),
   TOKEN_PARAMETER_CONCAT_ALL: intl.formatMessage({
-    defaultMessage: 'Required. The string to combine into a single string.',
+    defaultMessage: 'Required. One of the strings to combine into a single string.',
     description: 'Required string parameter required to combine strings',
   }),
   TOKEN_FUNCTION_FUNCTION_SUBSTRING: intl.formatMessage({
