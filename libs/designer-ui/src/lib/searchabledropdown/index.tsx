@@ -7,13 +7,15 @@ import { useIntl } from 'react-intl';
 export interface SearchableDropdownProps {
   dropdownProps: Pick<IDropdownProps, 'options'> & Partial<Omit<IDropdownProps, 'onChange' | 'onDismiss' | 'onRenderItem'>>;
   onItemSelectionChanged: (id: string, isSelected: boolean) => void;
-  showFilterItemThreshold?: number;
+  searchPlaceholderText?: string;
+  showSearchItemThreshold?: number;
 }
 
 export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   dropdownProps,
   onItemSelectionChanged,
-  showFilterItemThreshold,
+  searchPlaceholderText,
+  showSearchItemThreshold: showFilterItemThreshold,
 }): JSX.Element => {
   const showFilterInputItemThreshold = showFilterItemThreshold ?? 4;
   const headerKey = 'FilterHeader';
@@ -23,17 +25,19 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   const [conditionalVisibilityTempArray, setConditionalVisibilityTempArray] = useState<string[]>([]);
   const [filterText, setFilterText] = useState('');
 
-  const searchOperation = intl.formatMessage({
-    defaultMessage: 'Search',
-    description: 'Placeholder for search box that searches conditional parameters',
-  });
+  const searchOperation =
+    searchPlaceholderText ??
+    intl.formatMessage({
+      defaultMessage: 'Search',
+      description: 'Default placeholder for search box that searches dropdown options',
+    });
 
   const options = dropdownProps.options.filter((option) => option.text.toLowerCase().includes(filterText.toLowerCase()));
 
   if (dropdownProps.options.length >= showFilterInputItemThreshold) {
     options.unshift(
       { key: headerKey, text: '', itemType: DropdownMenuItemType.Header },
-      { key: 'FilterDivider', text: '-', itemType: DropdownMenuItemType.Divider },
+      { key: 'FilterDivider', text: '-', itemType: DropdownMenuItemType.Divider }
     );
   }
 
