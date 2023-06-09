@@ -54,7 +54,6 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
 
     // Create the local.settings.json file
     const localSettingsJsonPath: string = path.join(context.projectPath, localSettingsFileName);
-    const logicAppFolderPath = context.logicAppFolderPath;
     if (await confirmOverwriteFile(context, localSettingsJsonPath)) {
       const localSettingsJson: ILocalSettingsJson = {
         IsEncrypted: false,
@@ -63,7 +62,6 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
           FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated',
           WORKFLOWS_SUBSCRIPTION_ID: '',
           AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
-          ProjectDirectoryPath: path.join(logicAppFolderPath),
         },
       };
 
