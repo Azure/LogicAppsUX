@@ -4,7 +4,7 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { type ValidationError, ValidationWarningKeys } from '../../core/state/setting/settingSlice';
-import { SearchableParametersDropdown } from './parameters';
+import { SearchableSettingsDropdown } from './settingdropdown';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
@@ -319,7 +319,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       })}
 
       {conditionallyInvisibleSettings.length > 0 && !readOnly ? (
-        <SearchableParametersDropdown
+        <SearchableSettingsDropdown
           conditionallyInvisibleSettings={conditionallyInvisibleSettings}
           groupId={id}
           nodeId={nodeId}

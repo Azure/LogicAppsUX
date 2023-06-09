@@ -1,6 +1,6 @@
 import { store } from '../../../core/store';
-import type { SearchableParametersDropdownProps } from '../parameters';
-import { SearchableParametersDropdown } from '../parameters';
+import type { SearchableSettingsDropdownProps } from '../settingdropdown';
+import { SearchableSettingsDropdown } from '../settingdropdown';
 import type { SettingTextFieldProps } from '@microsoft/designer-ui';
 import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
@@ -10,9 +10,9 @@ jest.mock('@fluentui/react', () => ({
   Dropdown: 'Dropdown',
 }));
 
-describe('ui/settings/parameters', () => {
-  it('should create a dropdown without a search box for 3 parameters', () => {
-    const props: SearchableParametersDropdownProps = {
+describe('ui/settings/settingdropdown', () => {
+  it('should create a dropdown without a search box for 3 settings', () => {
+    const props: SearchableSettingsDropdownProps = {
       conditionallyInvisibleSettings: [
         { settingProp: { id: 'foo', label: 'Foo' } as SettingTextFieldProps, settingType: 'SettingTextField' },
         { settingProp: { id: 'bar', label: 'Bar' } as SettingTextFieldProps, settingType: 'SettingTextField' },
@@ -23,15 +23,15 @@ describe('ui/settings/parameters', () => {
     };
     const component = (
       <Provider store={store}>
-        <SearchableParametersDropdown {...props} />
+        <SearchableSettingsDropdown {...props} />
       </Provider>
     );
     const renderedComponent = renderer.create(component).toJSON();
     expect(renderedComponent).toMatchSnapshot();
   });
 
-  it('should create a dropdown with a search box for 5 parameters', () => {
-    const props: SearchableParametersDropdownProps = {
+  it('should create a dropdown with a search box for 5 settings', () => {
+    const props: SearchableSettingsDropdownProps = {
       conditionallyInvisibleSettings: [
         { settingProp: { id: 'foo', label: 'Foo' } as SettingTextFieldProps, settingType: 'SettingTextField' },
         { settingProp: { id: 'bar', label: 'Bar' } as SettingTextFieldProps, settingType: 'SettingTextField' },
@@ -44,7 +44,7 @@ describe('ui/settings/parameters', () => {
     };
     const component = (
       <Provider store={store}>
-        <SearchableParametersDropdown {...props} />
+        <SearchableSettingsDropdown {...props} />
       </Provider>
     );
     const renderedComponent = renderer.create(component).toJSON();

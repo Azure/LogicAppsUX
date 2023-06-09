@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ui/settings/parameters should create a dropdown with a search box for 5 parameters 1`] = `
+exports[`ui/settings/settingdropdown should create a dropdown with a search box for 5 settings 1`] = `
 <div
   style={
     Object {
@@ -54,7 +54,7 @@ exports[`ui/settings/parameters should create a dropdown with a search box for 5
 </div>
 `;
 
-exports[`ui/settings/parameters should create a dropdown without a search box for 3 parameters 1`] = `
+exports[`ui/settings/settingdropdown should create a dropdown without a search box for 3 settings 1`] = `
 <div
   style={
     Object {

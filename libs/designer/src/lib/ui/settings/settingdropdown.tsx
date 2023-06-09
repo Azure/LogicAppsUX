@@ -7,13 +7,13 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-export interface SearchableParametersDropdownProps {
+export interface SearchableSettingsDropdownProps {
   conditionallyInvisibleSettings: Settings[];
   groupId: string | undefined;
   nodeId: string;
 }
 
-export const SearchableParametersDropdown: FC<SearchableParametersDropdownProps> = ({
+export const SearchableSettingsDropdown: FC<SearchableSettingsDropdownProps> = ({
   conditionallyInvisibleSettings,
   groupId,
   nodeId,
