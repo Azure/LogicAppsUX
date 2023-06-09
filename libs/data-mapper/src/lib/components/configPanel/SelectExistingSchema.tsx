@@ -31,6 +31,11 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   const styles = useStyles();
   // intl
   const intl = useIntl();
+
+  const folderLocationLabel = intl.formatMessage({
+    defaultMessage: 'Existing schemas from',
+    description: 'Schema dropdown aria label',
+  });
   const dropdownAriaLabel = intl.formatMessage({
     defaultMessage: 'Select the schema for dropdown',
     description: 'Schema dropdown aria label',
@@ -84,6 +89,7 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
 
   return (
     <>
+      <Text size={200}>{`${folderLocationLabel} /Artifacts/Schemas`}</Text>
       <Text className={styles.errorMessage}>{props.errorMessage}</Text>
       <Combobox
         aria-label={dropdownAriaLabel}

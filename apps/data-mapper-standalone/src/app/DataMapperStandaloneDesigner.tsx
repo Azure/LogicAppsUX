@@ -23,6 +23,7 @@ const workflowSchemaFilenames = [
   'Target.xsd',
   'SourceJson.json',
   'folder/TargetJson.json',
+  'folder 2/file.json',
   'a/a.json',
   'a/b.json',
   'a/b/c.json',
