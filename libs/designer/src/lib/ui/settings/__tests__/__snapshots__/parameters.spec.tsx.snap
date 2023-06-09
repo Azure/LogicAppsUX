@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/settings/parameters should create a dropdown with a search box for 5 parameters 1`] = `
+<div
+  style={
+    Object {
+      "paddingTop": "5px",
+    }
+  }
+>
+  <Dropdown
+    className="msla-setting-section-parameter-dropdown"
+    multiSelect={true}
+    onChange={[Function]}
+    onDismiss={[Function]}
+    onRenderItem={[Function]}
+    options={
+      Array [
+        Object {
+          "itemType": 2,
+          "key": "FilterHeader",
+          "text": "",
+        },
+        Object {
+          "itemType": 1,
+          "key": "FilterDivider",
+          "text": "-",
+        },
+        Object {
+          "key": "foo",
+          "text": "Foo",
+        },
+        Object {
+          "key": "bar",
+          "text": "Bar",
+        },
+        Object {
+          "key": "baz",
+          "text": "Baz",
+        },
+        Object {
+          "key": "qux",
+          "text": "Qux",
+        },
+        Object {
+          "key": "qoz",
+          "text": "Qoz",
+        },
+      ]
+    }
+    placeholder="Add new parameters"
+    selectedKeys={Array []}
+  />
+</div>
+`;
+
+exports[`ui/settings/parameters should create a dropdown without a search box for 3 parameters 1`] = `
+<div
+  style={
+    Object {
+      "paddingTop": "5px",
+    }
+  }
+>
+  <Dropdown
+    className="msla-setting-section-parameter-dropdown"
+    multiSelect={true}
+    onChange={[Function]}
+    onDismiss={[Function]}
+    onRenderItem={[Function]}
+    options={
+      Array [
+        Object {
+          "key": "foo",
+          "text": "Foo",
+        },
+        Object {
+          "key": "bar",
+          "text": "Bar",
+        },
+        Object {
+          "key": "baz",
+          "text": "Baz",
+        },
+      ]
+    }
+    placeholder="Add new parameters"
+    selectedKeys={Array []}
+  />
+</div>
+`;
