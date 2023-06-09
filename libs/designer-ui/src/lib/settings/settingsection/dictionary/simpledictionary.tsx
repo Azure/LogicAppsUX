@@ -81,8 +81,8 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
 
   //TODO: Move this to a proper setting
   const trackedPropertiesString = intl.formatMessage({
-    defaultMessage: 'Tracked Properties',
-    description: 'Label for the Tracked Properties field in the settings section',
+    defaultMessage: 'Tracked properties',
+    description: 'Label for the Tracked properties field in the settings section',
   });
   return (
     <>
