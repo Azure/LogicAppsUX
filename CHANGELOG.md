@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.24.6](https://github.com/Azure/LogicAppsUX/compare/v2.24.5...v2.24.6) (2023-06-09)
+
+
+### Bug Fixes
+
+* **Designer:** Connection request errors now show in UI ([#2712](https://github.com/Azure/LogicAppsUX/issues/2712)) ([4437a7c](https://github.com/Azure/LogicAppsUX/commit/4437a7cb1aa03fd4efc4d034b8343ed20b1c9ca8)), closes [#2710](https://github.com/Azure/LogicAppsUX/issues/2710)
+
 ### [2.24.5](https://github.com/Azure/LogicAppsUX/compare/v2.24.4...v2.24.5) (2023-06-08)
 
 
