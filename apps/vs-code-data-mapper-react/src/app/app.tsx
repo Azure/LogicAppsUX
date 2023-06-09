@@ -73,7 +73,7 @@ export const App = () => {
     });
   }, [sendMsgToVsix]);
 
-  const saveMapDefinitionCall = (dataMapDefinition: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string, _mapMetadata: string) => {
     sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,

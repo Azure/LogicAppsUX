@@ -40,9 +40,12 @@ export const DataMapperStandaloneDesigner = () => {
     accessToken: armToken,
   });
 
-  const saveMapDefinitionCall = (dataMapDefinition: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     console.log('Map Definition\n===============');
     console.log(dataMapDefinition);
+
+    console.log('Map Metadata\n===============');
+    console.log(mapMetadata);
   };
 
   const saveXsltCall = (dataMapXslt: string) => {
