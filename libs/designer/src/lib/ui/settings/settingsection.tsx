@@ -4,6 +4,7 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { type ValidationError, ValidationWarningKeys } from '../../core/state/setting/settingSlice';
+import { SearchableParametersDropdown } from './parameters';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
@@ -45,7 +46,6 @@ import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { SearchableParametersDropdown } from './parameters';
 
 type SettingBase = {
   visible?: boolean;
