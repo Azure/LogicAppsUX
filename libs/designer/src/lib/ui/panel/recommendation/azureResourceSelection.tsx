@@ -40,8 +40,8 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     description: 'Select a Function App resource',
   });
   const manualWorkflowTitleText = intl.formatMessage({
-    defaultMessage: 'Select a Manual Workflow resource',
-    description: 'Select a Manual Workflow resource',
+    defaultMessage: "Select workflow with 'manual' trigger",
+    description: "Select workflow with 'manual' trigger",
   });
   const batchWorkflowTitleText = intl.formatMessage({
     defaultMessage: 'Select a Batch Workflow resource',

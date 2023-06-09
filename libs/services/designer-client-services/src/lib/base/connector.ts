@@ -267,7 +267,7 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: "Error executing the api ''{parameters}''.",
+                  defaultMessage: "Error occurred while executing the following API parameters: ''{parameters}''",
                   description:
                     'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
                 },

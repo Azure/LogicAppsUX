@@ -32,551 +32,551 @@ export const getFrequencyValues = (intl: IntlShape) => {
 export const getTimezoneValues = (intl: IntlShape) => {
   return [
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-12:00) International Date Line West', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-12:00) International Date Line West', description: 'Time zone value ' }),
       value: 'Dateline Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-11:00) Coordinated Universal Time-11', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-11:00) Coordinated Universal Time-11', description: 'Time zone value ' }),
       value: 'UTC-11',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-10:00) Aleutian Islands', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-10:00) Aleutian Islands', description: 'Time zone value ' }),
       value: 'Aleutian Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-10:00) Hawaii', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-10:00) Hawaii', description: 'Time zone value ' }),
       value: 'Hawaiian Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-09:30) Marquesas Islands', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-09:30) Marquesas Islands', description: 'Time zone value ' }),
       value: 'Marquesas Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-09:00) Alaska', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-09:00) Alaska', description: 'Time zone value ' }),
       value: 'Alaskan Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-09:00) Coordinated Universal Time-09', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-09:00) Coordinated Universal Time-09', description: 'Time zone value ' }),
       value: 'UTC-09',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-08:00) Baja California', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-08:00) Baja California', description: 'Time zone value ' }),
       value: 'Pacific Standard Time (Mexico)',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-08:00) Coordinated Universal Time-08', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-08:00) Coordinated Universal Time-08', description: 'Time zone value ' }),
       value: 'UTC-08',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-08:00) Pacific Time (US & Canada)', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-08:00) Pacific Time (US & Canada)', description: 'Time zone value ' }),
       value: 'Pacific Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-07:00) Arizona', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-07:00) Arizona', description: 'Time zone value ' }),
       value: 'US Mountain Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-07:00) Chihuahua, La Paz, Mazatlan', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-07:00) Chihuahua, La Paz, Mazatlan', description: 'Time zone value ' }),
       value: 'Mountain Standard Time (Mexico)',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-07:00) Mountain Time (US & Canada)', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-07:00) Mountain Time (US & Canada)', description: 'Time zone value ' }),
       value: 'Mountain Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Central America', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Central America', description: 'Time zone value ' }),
       value: 'Central America Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Central Time (US & Canada)', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Central Time (US & Canada)', description: 'Time zone value ' }),
       value: 'Central Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Easter Island', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Easter Island', description: 'Time zone value ' }),
       value: 'Easter Island Standard Time',
     },
     {
       displayName: intl.formatMessage({
         defaultMessage: '(UTC-06:00) Guadalajara, Mexico City, Monterrey',
-        description: 'Timezone value ',
+        description: 'Time zone value ',
       }),
       value: 'Central Standard Time (Mexico)',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Saskatchewan', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Saskatchewan', description: 'Time zone value ' }),
       value: 'Canada Central Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Bogota, Lima, Quito, Rio Branco', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Bogota, Lima, Quito, Rio Branco', description: 'Time zone value ' }),
       value: 'SA Pacific Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Chetumal', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Chetumal', description: 'Time zone value ' }),
       value: 'Eastern Standard Time (Mexico)',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Eastern Time (US & Canada)', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Eastern Time (US & Canada)', description: 'Time zone value ' }),
       value: 'Eastern Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Haiti', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Haiti', description: 'Time zone value ' }),
       value: 'Haiti Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Havana', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Havana', description: 'Time zone value ' }),
       value: 'Cuba Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Indiana (East)', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-05:00) Indiana (East)', description: 'Time zone value ' }),
       value: 'US Eastern Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Asuncion', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Asuncion', description: 'Time zone value ' }),
       value: 'Paraguay Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Atlantic Time (Canada)', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Atlantic Time (Canada)', description: 'Time zone value ' }),
       value: 'Atlantic Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Caracas', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Caracas', description: 'Time zone value ' }),
       value: 'Venezuela Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Cuiaba', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Cuiaba', description: 'Time zone value ' }),
       value: 'Central Brazilian Standard Time',
     },
     {
       displayName: intl.formatMessage({
         defaultMessage: '(UTC-04:00) Georgetown, La Paz, Manaus, San Juan',
-        description: 'Timezone value ',
+        description: 'Time zone value ',
       }),
       value: 'SA Western Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Santiago', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Santiago', description: 'Time zone value ' }),
       value: 'Pacific SA Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Turks and Caicos', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-04:00) Turks and Caicos', description: 'Time zone value ' }),
       value: 'Turks And Caicos Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:30) Newfoundland', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:30) Newfoundland', description: 'Time zone value ' }),
       value: 'Newfoundland Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Araguaina', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Araguaina', description: 'Time zone value ' }),
       value: 'Tocantins Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Brasilia', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Brasilia', description: 'Time zone value ' }),
       value: 'E. South America Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Cayenne, Fortaleza', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Cayenne, Fortaleza', description: 'Time zone value ' }),
       value: 'SA Eastern Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) City of Buenos Aires', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) City of Buenos Aires', description: 'Time zone value ' }),
       value: 'Argentina Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Greenland', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Greenland', description: 'Time zone value ' }),
       value: 'Greenland Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Montevideo', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Montevideo', description: 'Time zone value ' }),
       value: 'Montevideo Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Saint Pierre and Miquelon', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Saint Pierre and Miquelon', description: 'Time zone value ' }),
       value: 'Saint Pierre Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Salvador', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-03:00) Salvador', description: 'Time zone value ' }),
       value: 'Bahia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-02:00) Coordinated Universal Time-02', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-02:00) Coordinated Universal Time-02', description: 'Time zone value ' }),
       value: 'UTC-02',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-02:00) Mid-Atlantic - Old', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-02:00) Mid-Atlantic - Old', description: 'Time zone value ' }),
       value: 'Mid-Atlantic Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-01:00) Azores', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-01:00) Azores', description: 'Time zone value ' }),
       value: 'Azores Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC-01:00) Cabo Verde Is.', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC-01:00) Cabo Verde Is.', description: 'Time zone value ' }),
       value: 'Cape Verde Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC) Coordinated Universal Time', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC) Coordinated Universal Time', description: 'Time zone value ' }),
       value: 'UTC',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+00:00) Casablanca', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+00:00) Casablanca', description: 'Time zone value ' }),
       value: 'Morocco Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+00:00) Dublin, Edinburgh, Lisbon, London', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+00:00) Dublin, Edinburgh, Lisbon, London', description: 'Time zone value ' }),
       value: 'GMT Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+00:00) Monrovia, Reykjavik', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+00:00) Monrovia, Reykjavik', description: 'Time zone value ' }),
       value: 'Greenwich Standard Time',
     },
     {
       displayName: intl.formatMessage({
         defaultMessage: '(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
-        description: 'Timezone value ',
+        description: 'Time zone value ',
       }),
       value: 'W. Europe Standard Time',
     },
     {
       displayName: intl.formatMessage({
         defaultMessage: '(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague',
-        description: 'Timezone value ',
+        description: 'Time zone value ',
       }),
       value: 'Central Europe Standard Time',
     },
     {
       displayName: intl.formatMessage({
         defaultMessage: '(UTC+01:00) Brussels, Copenhagen, Madrid, Paris',
-        description: 'Timezone value ',
+        description: 'Time zone value ',
       }),
       value: 'Romance Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb', description: 'Time zone value ' }),
       value: 'Central European Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+01:00) West Central Africa', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+01:00) West Central Africa', description: 'Time zone value ' }),
       value: 'W. Central Africa Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+01:00) Windhoek', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+01:00) Windhoek', description: 'Time zone value ' }),
       value: 'Namibia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Amman', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Amman', description: 'Time zone value ' }),
       value: 'Jordan Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Athens, Bucharest', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Athens, Bucharest', description: 'Time zone value ' }),
       value: 'GTB Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Beirut', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Beirut', description: 'Time zone value ' }),
       value: 'Middle East Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Cairo', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Cairo', description: 'Time zone value ' }),
       value: 'Egypt Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Chisinau', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Chisinau', description: 'Time zone value ' }),
       value: 'E. Europe Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Damascus', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Damascus', description: 'Time zone value ' }),
       value: 'Syria Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Gaza, Hebron', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Gaza, Hebron', description: 'Time zone value ' }),
       value: 'West Bank Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Harare, Pretoria', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Harare, Pretoria', description: 'Time zone value ' }),
       value: 'South Africa Standard Time',
     },
     {
       displayName: intl.formatMessage({
         defaultMessage: '(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius',
-        description: 'Timezone value ',
+        description: 'Time zone value ',
       }),
       value: 'FLE Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Istanbul', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Istanbul', description: 'Time zone value ' }),
       value: 'Turkey Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Jerusalem', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Jerusalem', description: 'Time zone value ' }),
       value: 'Israel Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Kaliningrad', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Kaliningrad', description: 'Time zone value ' }),
       value: 'Kaliningrad Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Tripoli', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+02:00) Tripoli', description: 'Time zone value ' }),
       value: 'Libya Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Baghdad', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Baghdad', description: 'Time zone value ' }),
       value: 'Arabic Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Kuwait, Riyadh', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Kuwait, Riyadh', description: 'Time zone value ' }),
       value: 'Arab Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Minsk', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Minsk', description: 'Time zone value ' }),
       value: 'Belarus Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Moscow, St. Petersburg, Volgograd', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Moscow, St. Petersburg, Volgograd', description: 'Time zone value ' }),
       value: 'Russian Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Nairobi', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:00) Nairobi', description: 'Time zone value ' }),
       value: 'E. Africa Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:30) Tehran', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+03:30) Tehran', description: 'Time zone value ' }),
       value: 'Iran Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Abu Dhabi, Muscat', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Abu Dhabi, Muscat', description: 'Time zone value ' }),
       value: 'Arabian Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Astrakhan, Ulyanovsk', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Astrakhan, Ulyanovsk', description: 'Time zone value ' }),
       value: 'Astrakhan Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Baku', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Baku', description: 'Time zone value ' }),
       value: 'Azerbaijan Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Izhevsk, Samara', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Izhevsk, Samara', description: 'Time zone value ' }),
       value: 'Russia Time Zone 3',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Port Louis', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Port Louis', description: 'Time zone value ' }),
       value: 'Mauritius Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Tbilisi', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Tbilisi', description: 'Time zone value ' }),
       value: 'Georgian Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Yerevan', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:00) Yerevan', description: 'Time zone value ' }),
       value: 'Caucasus Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:30) Kabul', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+04:30) Kabul', description: 'Time zone value ' }),
       value: 'Afghanistan Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:00) Ashgabat, Tashkent', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:00) Ashgabat, Tashkent', description: 'Time zone value ' }),
       value: 'West Asia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:00) Ekaterinburg', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:00) Ekaterinburg', description: 'Time zone value ' }),
       value: 'Ekaterinburg Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:00) Islamabad, Karachi', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:00) Islamabad, Karachi', description: 'Time zone value ' }),
       value: 'Pakistan Standard Time',
     },
     {
       displayName: intl.formatMessage({
         defaultMessage: '(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi',
-        description: 'Timezone value ',
+        description: 'Time zone value ',
       }),
       value: 'India Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:30) Sri Jayawardenepura', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:30) Sri Jayawardenepura', description: 'Time zone value ' }),
       value: 'Sri Lanka Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:45) Kathmandu', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+05:45) Kathmandu', description: 'Time zone value ' }),
       value: 'Nepal Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+06:00) Astana', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+06:00) Astana', description: 'Time zone value ' }),
       value: 'Central Asia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+06:00) Dhaka', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+06:00) Dhaka', description: 'Time zone value ' }),
       value: 'Bangladesh Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+06:00) Novosibirsk', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+06:00) Novosibirsk', description: 'Time zone value ' }),
       value: 'N. Central Asia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+06:30) Yangon (Rangoon)', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+06:30) Yangon (Rangoon)', description: 'Time zone value ' }),
       value: 'Myanmar Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Bangkok, Hanoi, Jakarta', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Bangkok, Hanoi, Jakarta', description: 'Time zone value ' }),
       value: 'SE Asia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Barnaul, Gorno-Altaysk', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Barnaul, Gorno-Altaysk', description: 'Time zone value ' }),
       value: 'Altai Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Hovd', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Hovd', description: 'Time zone value ' }),
       value: 'W. Mongolia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Krasnoyarsk', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Krasnoyarsk', description: 'Time zone value ' }),
       value: 'North Asia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Tomsk', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+07:00) Tomsk', description: 'Time zone value ' }),
       value: 'Tomsk Standard Time',
     },
     {
       displayName: intl.formatMessage({
         defaultMessage: '(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi',
-        description: 'Timezone value ',
+        description: 'Time zone value ',
       }),
       value: 'China Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Irkutsk', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Irkutsk', description: 'Time zone value ' }),
       value: 'North Asia East Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Kuala Lumpur, Singapore', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Kuala Lumpur, Singapore', description: 'Time zone value ' }),
       value: 'Singapore Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Perth', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Perth', description: 'Time zone value ' }),
       value: 'W. Australia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Taipei', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Taipei', description: 'Time zone value ' }),
       value: 'Taipei Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Ulaanbaatar', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:00) Ulaanbaatar', description: 'Time zone value ' }),
       value: 'Ulaanbaatar Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:30) Pyongyang', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:30) Pyongyang', description: 'Time zone value ' }),
       value: 'North Korea Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:45) Eucla', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+08:45) Eucla', description: 'Time zone value ' }),
       value: 'Aus Central W. Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:00) Chita', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:00) Chita', description: 'Time zone value ' }),
       value: 'Transbaikal Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:00) Osaka, Sapporo, Tokyo', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:00) Osaka, Sapporo, Tokyo', description: 'Time zone value ' }),
       value: 'Tokyo Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:00) Seoul', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:00) Seoul', description: 'Time zone value ' }),
       value: 'Korea Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:00) Yakutsk', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:00) Yakutsk', description: 'Time zone value ' }),
       value: 'Yakutsk Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:30) Adelaide', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:30) Adelaide', description: 'Time zone value ' }),
       value: 'Cen. Australia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:30) Darwin', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+09:30) Darwin', description: 'Time zone value ' }),
       value: 'AUS Central Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Brisbane', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Brisbane', description: 'Time zone value ' }),
       value: 'E. Australia Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Canberra, Melbourne, Sydney', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Canberra, Melbourne, Sydney', description: 'Time zone value ' }),
       value: 'AUS Eastern Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Guam, Port Moresby', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Guam, Port Moresby', description: 'Time zone value ' }),
       value: 'West Pacific Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Hobart', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Hobart', description: 'Time zone value ' }),
       value: 'Tasmania Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Vladivostok', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:00) Vladivostok', description: 'Time zone value ' }),
       value: 'Vladivostok Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:30) Lord Howe Island', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+10:30) Lord Howe Island', description: 'Time zone value ' }),
       value: 'Lord Howe Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Bougainville Island', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Bougainville Island', description: 'Time zone value ' }),
       value: 'Bougainville Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Chokurdakh', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Chokurdakh', description: 'Time zone value ' }),
       value: 'Russia Time Zone 10',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Magadan', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Magadan', description: 'Time zone value ' }),
       value: 'Magadan Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Norfolk Island', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Norfolk Island', description: 'Time zone value ' }),
       value: 'Norfolk Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Sakhalin', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Sakhalin', description: 'Time zone value ' }),
       value: 'Sakhalin Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Solomon Is., New Caledonia', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+11:00) Solomon Is., New Caledonia', description: 'Time zone value ' }),
       value: 'Central Pacific Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky', description: 'Time zone value ' }),
       value: 'Russia Time Zone 11',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Auckland, Wellington', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Auckland, Wellington', description: 'Time zone value ' }),
       value: 'New Zealand Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Coordinated Universal Time+12', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Coordinated Universal Time+12', description: 'Time zone value ' }),
       value: 'UTC+12',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Fiji', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Fiji', description: 'Time zone value ' }),
       value: 'Fiji Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Petropavlovsk-Kamchatsky - Old', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:00) Petropavlovsk-Kamchatsky - Old', description: 'Time zone value ' }),
       value: 'Kamchatka Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:45) Chatham Islands', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+12:45) Chatham Islands', description: 'Time zone value ' }),
       value: 'Chatham Islands Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: "(UTC+13:00) Nuku'alofa", description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: "(UTC+13:00) Nuku'alofa", description: 'Time zone value ' }),
       value: 'Tonga Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+13:00) Samoa', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+13:00) Samoa', description: 'Time zone value ' }),
       value: 'Samoa Standard Time',
     },
     {
-      displayName: intl.formatMessage({ defaultMessage: '(UTC+14:00) Kiritimati Island', description: 'Timezone value ' }),
+      displayName: intl.formatMessage({ defaultMessage: '(UTC+14:00) Kiritimati Island', description: 'Time zone value ' }),
       value: 'Line Islands Standard Time',
     },
   ];

@@ -11,100 +11,42 @@
       "value": "Function display"
     }
   ],
-  "+20fdv": [
+  "+Uvo/p": [
     {
       "type": 0,
-      "value": "인증 유형 {1}에 대한 속성 {0}이(가) 잘못되었습니다."
+      "value": "Alt text for down chevron"
     }
   ],
-  "+3efoo": [
+  "+ZSBrq": [
     {
       "type": 0,
-      "value": "No schema is added"
+      "value": "Context menu for "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " card"
     }
   ],
-  "+DxBpE": [
+  "+mAJR3": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
     }
   ],
-  "+JCU+Y": [
+  "+powfX": [
     {
       "type": 0,
-      "value": "Select this if you are configuring an on-prem connection"
+      "value": "Time zone"
     }
   ],
-  "+W2vTp": [
+  "/EU/oJ": [
     {
       "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
-  "+W9fkq": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) 콸라룸푸르, 싱가포르"
-    }
-  ],
-  "+dlOgj": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) 아이티"
-    }
-  ],
-  "+g+mch": [
-    {
-      "type": 0,
-      "value": "작업의 다중 부분 출력에서 한 부분의 본문을 반환합니다."
-    }
-  ],
-  "+iMTt7": [
-    {
-      "type": 0,
-      "value": "이 연결을 선택하려면 선택합니다."
-    }
-  ],
-  "+jnjtp": [
-    {
-      "type": 0,
-      "value": "Select a Manual Workflow resource"
-    }
-  ],
-  "+lpuMl": [
-    {
-      "type": 0,
-      "value": "필수 항목으로, 식이 'false'인 경우 반환할 값입니다."
-    }
-  ],
-  "+xiT4Q": [
-    {
-      "type": 0,
-      "value": "페이지 매김"
-    }
-  ],
-  "+ym4nO": [
-    {
-      "type": 0,
-      "value": "Tracked Properties"
-    }
-  ],
-  "//nQG4": [
-    {
-      "type": 0,
-      "value": "Select an api from apim instance"
-    }
-  ],
-  "/AtN16": [
-    {
-      "type": 0,
-      "value": "(UTC+09:30) 다윈"
-    }
-  ],
-  "/B2CTz": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) 베이징, 충칭, 홍콩, 우루무치"
+      "value": "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'."
     }
   ],
   "/I/U8L": [
@@ -113,22 +55,28 @@
       "value": "본문"
     }
   ],
-  "/Igb36": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) 브리즈번"
-    }
-  ],
   "/NDLmg": [
     {
       "type": 0,
       "value": "대기 중"
     }
   ],
+  "/NtebP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Islamabad, Karachi"
+    }
+  ],
   "/QqADs": [
     {
       "type": 0,
       "value": "개수 인덱스부터 시작하여 배열의 요소를 반환합니다."
+    }
+  ],
+  "/RS9F7": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
     }
   ],
   "/ULFwg": [
@@ -155,6 +103,12 @@
       "value": "입력을 배열로 변환합니다."
     }
   ],
+  "/km5eO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asuncion"
+    }
+  ],
   "/mjH84": [
     {
       "type": 0,
@@ -177,18 +131,6 @@
     {
       "type": 0,
       "value": "0"
-    }
-  ],
-  "/rjP4U": [
-    {
-      "type": 0,
-      "value": "(UTC) 협정 세계시"
-    }
-  ],
-  "/sMQhI": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) 인디애나(동부)"
     }
   ],
   "/ut0u7": [
@@ -221,6 +163,12 @@
       "value": "트리거"
     }
   ],
+  "03RO5d": [
+    {
+      "type": 0,
+      "value": "Edit parameter"
+    }
+  ],
   "04AwK7": [
     {
       "type": 0,
@@ -243,10 +191,22 @@
       "value": "'."
     }
   ],
+  "06zKZg": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tbilisi"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
       "value": "전달된 문자열 타임스탬프에 시간 단위의 시작을 반환합니다."
+    }
+  ],
+  "07oZoX": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
     }
   ],
   "08e2rO": [
@@ -261,10 +221,10 @@
       "value": "트리거 또는 작업을 호출할 URL을 반환합니다. 참고: 이 함수는 httpWebhook 및 apiConnectionWebhook에서만 사용할 수 있고 수동, 되풀이, http 또는 apiConnection에는 사용할 수 없습니다."
     }
   ],
-  "09oqLb": [
+  "0B5xDu": [
     {
       "type": 0,
-      "value": "(UTC+04:00) 바쿠"
+      "value": "(UTC+05:30) Sri Jayawardenepura"
     }
   ],
   "0CvRZW": [
@@ -333,12 +293,6 @@
       "value": "성공했지만 다시 시도해야 함"
     }
   ],
-  "0hxr5j": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) 체투말"
-    }
-  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -349,12 +303,6 @@
     {
       "type": 0,
       "value": "Value"
-    }
-  ],
-  "0meqK1": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) 보고타, 리마, 키토, 리오 브랑코"
     }
   ],
   "0oebOm": [
@@ -401,6 +349,12 @@
     {
       "type": 0,
       "value": "every day"
+    }
+  ],
+  "0xLWzG": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid. Update the name before you continue."
     }
   ],
   "0y5eia": [
@@ -451,16 +405,16 @@
       "value": "필수 사항으로, URI로 인코딩된 문자열입니다."
     }
   ],
+  "1KFpTX": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
   "1NBvKu": [
     {
       "type": 0,
       "value": "매개 변수 인수를 부동 소수점 숫자로 변환합니다."
-    }
-  ],
-  "1Ogj/V": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 예루살렘"
     }
   ],
   "1R6Vaa": [
@@ -528,10 +482,28 @@
       "value": "구성 후 각 실행에는 하나 이상의 상태가 선택되어 있어야 합니다."
     }
   ],
+  "1dlfUe": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data, communicate between systems, or run other tasks."
+    }
+  ],
+  "1eKQwo": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
       "value": "보안 입력"
+    }
+  ],
+  "1hHFdx": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azores"
     }
   ],
   "1htSs7": [
@@ -576,12 +548,6 @@
       "value": "해제"
     }
   ],
-  "1zmMYu": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) 카라카스"
-    }
-  ],
   "20oqsp": [
     {
       "type": 0,
@@ -604,6 +570,12 @@
     {
       "type": 0,
       "value": "전역 검색"
+    }
+  ],
+  "27Nhhv": [
+    {
+      "type": 0,
+      "value": "Select an API from an API Management instance"
     }
   ],
   "2CXCOt": [
@@ -636,12 +608,6 @@
       "value": "검색"
     }
   ],
-  "2NYPLt": [
-    {
-      "type": 0,
-      "value": "(UTC-03:30) 뉴펀들랜드"
-    }
-  ],
   "2Noh96": [
     {
       "type": 0,
@@ -660,12 +626,6 @@
       "value": "기존 항목 선택"
     }
   ],
-  "2b1yD3": [
-    {
-      "type": 0,
-      "value": "(UTC+12:00) 오클랜드, 웰링턴"
-    }
-  ],
   "2cVEMV": [
     {
       "type": 0,
@@ -676,6 +636,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 양식 데이터 또는 양식 인코딩 응답이 있는 작업의 이름입니다."
+    }
+  ],
+  "2hrQOL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
     }
   ],
   "2kWLLc": [
@@ -700,12 +666,6 @@
       "value": "parentName"
     }
   ],
-  "2ri1Kf": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 다마스쿠스"
-    }
-  ],
   "2tTQ0A": [
     {
       "type": 0,
@@ -718,16 +678,16 @@
       "value": "Add Action"
     }
   ],
-  "2xhbE1": [
-    {
-      "type": 0,
-      "value": "(UTC+11:00) 마가단"
-    }
-  ],
   "2y24a/": [
     {
       "type": 0,
       "value": "Save"
+    }
+  ],
+  "3+TQMa": [
+    {
+      "type": 0,
+      "value": "Loading connection..."
     }
   ],
   "30njcn": [
@@ -772,12 +732,6 @@
       "value": "서비스 약관"
     }
   ],
-  "3FoqCK": [
-    {
-      "type": 0,
-      "value": "(UTC+04:00) 트빌리시"
-    }
-  ],
   "3GINhd": [
     {
       "type": 0,
@@ -798,6 +752,12 @@
       "value": "` first."
     }
   ],
+  "3MTSYZ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -810,22 +770,10 @@
       "value": "사용할 수 있는 콘텐츠가 없음"
     }
   ],
-  "3PgHCT": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 키시네프"
-    }
-  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "기존 스키마를 호환되지 않는 스키마로 바꾸면 맵에 오류가 발생할 수 있습니다."
-    }
-  ],
-  "3TD2V5": [
-    {
-      "type": 0,
-      "value": "(UTC+06:00) 다카"
     }
   ],
   "3X4FHS": [
@@ -848,12 +796,6 @@
       "value": "이(가) 설정되지 않았거나 잘못되었습니다."
     }
   ],
-  "3afjx+": [
-    {
-      "type": 0,
-      "value": "(UTC+09:00) 치타"
-    }
-  ],
   "3cZZKj": [
     {
       "type": 0,
@@ -870,12 +812,6 @@
     {
       "type": 0,
       "value": "입력한 ID가 이 논리 앱과 연결되어 있지 않습니다."
-    }
-  ],
-  "3jlz+B": [
-    {
-      "type": 0,
-      "value": "(UTC+03:30) 테헤란"
     }
   ],
   "3jwMBm": [
@@ -906,10 +842,10 @@
       "value": "오류"
     }
   ],
-  "3qG1VT": [
+  "3n5pnv": [
     {
       "type": 0,
-      "value": "추적된 속성"
+      "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
   "3rzrWf": [
@@ -936,10 +872,10 @@
       "value": "3"
     }
   ],
-  "4/kJ8D": [
+  "43xObP": [
     {
       "type": 0,
-      "value": "(UTC+04:00) 예레반"
+      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
     }
   ],
   "45ubha": [
@@ -992,12 +928,6 @@
     {
       "type": 0,
       "value": "새 연결 추가"
-    }
-  ],
-  "4XdZNj": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) 서중앙 아프리카"
     }
   ],
   "4YKQAF": [
@@ -1058,32 +988,22 @@
       "value": "14"
     }
   ],
-  "5+MuPz": [
+  "5+P3ef": [
     {
       "type": 0,
-      "value": "Enter a valid double."
+      "value": "(UTC+08:45) Eucla"
     }
   ],
-  "5FINOY": [
+  "595Baw": [
     {
       "type": 0,
-      "value": "Workflow has parameter validation errors on the following operations: "
-    },
-    {
-      "type": 1,
-      "value": "invalidNodes"
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
     }
   ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "필수 항목으로, 평가할 XPath 식입니다."
-    }
-  ],
-  "5MWmiO": [
-    {
-      "type": 0,
-      "value": "Line Number"
     }
   ],
   "5OvGgn": [
@@ -1096,12 +1016,6 @@
     {
       "type": 0,
       "value": "기관"
-    }
-  ],
-  "5aa76N": [
-    {
-      "type": 0,
-      "value": "전달된 배열 또는 문자열의 첫 번째 요소를 반환합니다."
     }
   ],
   "5akc1Q": [
@@ -1184,12 +1098,6 @@
       "value": "필수 항목으로, 비교 중인 값보다 큰지 확인할 개체입니다."
     }
   ],
-  "65FlWi": [
-    {
-      "type": 0,
-      "value": "(UTC+08:45) 유클라"
-    }
-  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1202,10 +1110,10 @@
       "value": "취소"
     }
   ],
-  "6XR3FS": [
+  "6fDYzG": [
     {
       "type": 0,
-      "value": "(UTC+09:30) 애들레이드"
+      "value": "Failed to load the schema. Please try again."
     }
   ],
   "6gZ4I3": [
@@ -1252,12 +1160,6 @@
       "value": "이전"
     }
   ],
-  "6pd1bE": [
-    {
-      "type": 0,
-      "value": "(UTC-07:00) 애리조나"
-    }
-  ],
   "6qkBwz": [
     {
       "type": 0,
@@ -1276,6 +1178,12 @@
       "value": "Update source schema"
     }
   ],
+  "7EZ2oY": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Turks and Caicos"
+    }
+  ],
   "7Fyq1F": [
     {
       "type": 0,
@@ -1286,12 +1194,6 @@
     {
       "type": 0,
       "value": "확인"
-    }
-  ],
-  "7KxCGX": [
-    {
-      "type": 0,
-      "value": "(UTC+10:30) 로드하우 섬"
     }
   ],
   "7LmpNN": [
@@ -1306,6 +1208,12 @@
     {
       "type": 0,
       "value": "\"을(를) 찾을 수 없습니다."
+    }
+  ],
+  "7PtWvu": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Eastern Time (US & Canada)"
     }
   ],
   "7QymrD": [
@@ -1384,6 +1292,12 @@
     {
       "type": 0,
       "value": "Specify the interval."
+    }
+  ],
+  "83PYuA": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central Time (US & Canada)"
     }
   ],
   "84D91Y": [
@@ -1468,6 +1382,12 @@
       "value": "목요일"
     }
   ],
+  "8ZfbyZ": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
   "8baaNC": [
     {
       "type": 0,
@@ -1476,6 +1396,12 @@
     {
       "type": 1,
       "value": "expressions"
+    }
+  ],
+  "8eKf/c": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
     }
   ],
   "8eTWaf": [
@@ -1496,10 +1422,14 @@
       "value": "Create Connection Reference"
     }
   ],
-  "8pPivj": [
+  "8mDG0V": [
     {
       "type": 0,
-      "value": "(UTC+11:00) 노퍽 섬"
+      "value": "The workflow has parameter validation errors in the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
     }
   ],
   "8ubEPi": [
@@ -1526,12 +1456,6 @@
       "value": "전달된 배열 또는 개체의 공통 요소가 포함된 단일 배열 또는 개체를 반환합니다."
     }
   ],
-  "9/vdrb": [
-    {
-      "type": 0,
-      "value": "(UTC+07:00) 호브드"
-    }
-  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1554,12 +1478,6 @@
     {
       "type": 0,
       "value": "논리 앱에 시스템 할당 관리 ID가 사용하도록 설정되어 있는 경우 사용자 ID가 지원되지 않습니다."
-    }
-  ],
-  "949s+r": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) 울란바토르"
     }
   ],
   "99vsJy": [
@@ -1590,6 +1508,12 @@
     {
       "type": 0,
       "value": "추가적인 속성 값 쌍을 사용하여 개체 반환"
+    }
+  ],
+  "9LLnyJ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasilia"
     }
   ],
   "9SuA/E": [
@@ -1636,18 +1560,6 @@
       "value": "두 숫자를 더한 결과를 반환합니다."
     }
   ],
-  "9pdXmX": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) 암스테르담, 베를린, 베른, 로마, 스톡홀름, 빈"
-    }
-  ],
-  "9pl7QP": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) 대서양 표준시(캐나다)"
-    }
-  ],
   "9u/Ae3": [
     {
       "type": 0,
@@ -1664,6 +1576,20 @@
     {
       "type": 0,
       "value": "Source element removed from view."
+    }
+  ],
+  "A8l+k7": [
+    {
+      "type": 0,
+      "value": "Error occurred while executing the following API parameters: '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "ADM1Z8": [
@@ -1690,74 +1616,28 @@
       "value": "작업 필터링"
     }
   ],
-  "AIL7WX": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 가자, 헤브론"
-    }
-  ],
-  "ALImBL": [
-    {
-      "type": 0,
-      "value": "(UTC+00:00) 몬로비아, 레이캬비크"
-    }
-  ],
-  "ANbEeQ": [
-    {
-      "type": 0,
-      "value": "필수 사항으로, 값을 원하는 작업의 이름입니다."
-    }
-  ],
   "AO6T9u": [
     {
       "type": 0,
       "value": "완료"
     }
   ],
-  "AX7dq3": [
+  "AQ7Zxc": [
     {
       "type": 0,
-      "value": "Input node type does not match the schema node's type"
+      "value": "Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture)."
     }
   ],
-  "AYaqW/": [
+  "Af+Ve0": [
     {
       "type": 0,
-      "value": "(UTC+06:30) 양곤"
-    }
-  ],
-  "AcdX+2": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step (You can also add by typing / in the editor)"
-    }
-  ],
-  "Aci186": [
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": " Add dynamic data pressing Alt + /"
-    }
-  ],
-  "AgrMqq": [
-    {
-      "type": 0,
-      "value": "{0}의 형식은 {1}입니다."
+      "value": "(UTC+11:00) Bougainville Island"
     }
   ],
   "AheXMN": [
     {
       "type": 0,
       "value": "Select frequency."
-    }
-  ],
-  "Amz9+m": [
-    {
-      "type": 0,
-      "value": "대상 그룹 입력"
     }
   ],
   "AnX5yC": [
@@ -1843,12 +1723,6 @@
       "value": "Line deleted."
     }
   ],
-  "BAgRzO": [
-    {
-      "type": 0,
-      "value": "(UTC-08:00) 협정 세계시-08"
-    }
-  ],
   "BBD8Em": [
     {
       "type": 0,
@@ -1897,12 +1771,6 @@
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
     }
   ],
-  "BSHFiw": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) 퍼스"
-    }
-  ],
   "BSgavq": [
     {
       "type": 0,
@@ -1913,12 +1781,6 @@
     {
       "type": 0,
       "value": "Expant list of sibling elements"
-    }
-  ],
-  "BVOUxP": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) 아바나"
     }
   ],
   "BYrP8F": [
@@ -1933,6 +1795,12 @@
       "value": "Automatic Decompression"
     }
   ],
+  "Bl4Iv0": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulaanbaatar"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1943,6 +1811,12 @@
     {
       "type": 0,
       "value": "축소"
+    }
+  ],
+  "BogxJl": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Izhevsk, Samara"
     }
   ],
   "BrWQ0Z": [
@@ -1987,6 +1861,30 @@
       "value": "연결 필요"
     }
   ],
+  "CaajcD": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "Cb6IEq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havana"
+    }
+  ],
+  "Cb8pv0": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Mid-Atlantic - Old"
+    }
+  ],
+  "Ci41Od": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -2011,10 +1909,10 @@
       "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
-  "Cy9qeQ": [
+  "Cy0pyB": [
     {
       "type": 0,
-      "value": "(UTC+02:00) 헬싱키, 키예프, 리가, 소피아, 탈린, 빌뉴스"
+      "value": "(UTC+09:30) Adelaide"
     }
   ],
   "CypYLs": [
@@ -2075,6 +1973,12 @@
       "value": "노드"
     }
   ],
+  "DEu7oK": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
   "DGMwU4": [
     {
       "type": 0,
@@ -2113,6 +2017,12 @@
       "value": "클라이언트 ID 입력"
     }
   ],
+  "DYXoEM": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chisinau"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2123,12 +2033,6 @@
     {
       "type": 0,
       "value": "Custom value does not match the schema node's type"
-    }
-  ],
-  "DfS13/": [
-    {
-      "type": 0,
-      "value": "(UTC-10:00) 알루샨 열도"
     }
   ],
   "Dhu3IS": [
@@ -2153,12 +2057,6 @@
     {
       "type": 0,
       "value": "트리거 조건은 비워 둘 수 없습니다."
-    }
-  ],
-  "DuXV2M": [
-    {
-      "type": 0,
-      "value": "(UTC-01:00) 아조레스"
     }
   ],
   "DuoHXI": [
@@ -2205,10 +2103,10 @@
       "value": "' has an input with a mismatched type"
     }
   ],
-  "E9OS+9": [
+  "E8iqLl": [
     {
       "type": 0,
-      "value": "(UTC-09:00) 협정 세계시-09"
+      "value": "(UTC+11:00) Sakhalin"
     }
   ],
   "ECZC6Y": [
@@ -2241,12 +2139,6 @@
       "value": "Add an action"
     }
   ],
-  "EYqGxA": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 아테네, 부카레스트"
-    }
-  ],
   "EZz5q7": [
     {
       "type": 0,
@@ -2265,6 +2157,12 @@
     {
       "type": 0,
       "value": " days"
+    }
+  ],
+  "EaTGcN": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) West Central Africa"
     }
   ],
   "EdzoIs": [
@@ -2293,12 +2191,6 @@
       "value": "암호"
     }
   ],
-  "Eqgm4v": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) 동부 표준시(미국과 캐나다)"
-    }
-  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2321,12 +2213,6 @@
     {
       "type": 0,
       "value": "필수 사항으로, 더할 지정된 시간 단위의 수입니다."
-    }
-  ],
-  "F489Vg": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) 이르쿠츠크"
     }
   ],
   "F9dR1Q": [
@@ -2359,12 +2245,6 @@
       "value": "실패함"
     }
   ],
-  "FHsP9y": [
-    {
-      "type": 0,
-      "value": "(UTC+05:45) 카트만두"
-    }
-  ],
   "FIL1Nt": [
     {
       "type": 0,
@@ -2375,6 +2255,12 @@
     {
       "type": 0,
       "value": "20"
+    }
+  ],
+  "FL/0Zp": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
   "FN5zHQ": [
@@ -2419,18 +2305,6 @@
       "value": "기본값"
     }
   ],
-  "FVavKy": [
-    {
-      "type": 0,
-      "value": "전달된 문자열 타임스탬프에 하루 시작을 반환합니다."
-    }
-  ],
-  "FXC0Zi": [
-    {
-      "type": 0,
-      "value": "(UTC+03:00) 바그다드"
-    }
-  ],
   "FXLR5M": [
     {
       "offset": 0,
@@ -2452,16 +2326,16 @@
       "value": "hours"
     }
   ],
-  "Fgq3Db": [
+  "FYtDP0": [
     {
       "type": 0,
-      "value": "필수 항목으로, 마지막 개체를 가져올 원본 컬렉션입니다."
+      "value": "Enter an email address."
     }
   ],
-  "Fh2HDb": [
+  "FaBEfQ": [
     {
       "type": 0,
-      "value": "문자열 내에서 값의 첫 번째 인덱스를 반환합니다(대/소문자 구분 안 함, 고정 문화권)."
+      "value": "Tracked properties"
     }
   ],
   "FiyQjU": [
@@ -2474,6 +2348,12 @@
     {
       "type": 0,
       "value": "상태"
+    }
+  ],
+  "FxQ2Ts": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripoli"
     }
   ],
   "G/CC5/": [
@@ -2512,6 +2392,12 @@
       "value": "권한 입력"
     }
   ],
+  "GE14Xd": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) City of Buenos Aires"
+    }
+  ],
   "GEB1on": [
     {
       "type": 0,
@@ -2528,6 +2414,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, Within 컬렉션 내에서 찾을 개체입니다."
+    }
+  ],
+  "GMkbFM": [
+    {
+      "type": 0,
+      "value": "Trigger conditions"
     }
   ],
   "GXXLuT": [
@@ -2678,6 +2570,12 @@
       "value": "Headers"
     }
   ],
+  "HYhDYB": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Coordinated Universal Time-02"
+    }
+  ],
   "Hbqlzk": [
     {
       "type": 0,
@@ -2746,6 +2644,12 @@
       "value": "동적 콘텐츠는 인증의 속성으로 지원되지 않습니다."
     }
   ],
+  "I41vZ/": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Coordinated Universal Time-11"
+    }
+  ],
   "I7/+er": [
     {
       "type": 0,
@@ -2758,6 +2662,12 @@
       "value": "22"
     }
   ],
+  "IAmvpa": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Coordinated Universal Time-08"
+    }
+  ],
   "IHMd3X": [
     {
       "type": 0,
@@ -2768,10 +2678,10 @@
       "value": "url"
     }
   ],
-  "IPbBB2": [
+  "IPwWgu": [
     {
       "type": 0,
-      "value": "(UTC+12:00) 피지"
+      "value": "(UTC+02:00) Jerusalem"
     }
   ],
   "IQyOth": [
@@ -2780,10 +2690,10 @@
       "value": "사용 가능한 경우 동적 콘텐츠는 흐름에 대해 선택한 커넥터 및 작업에서 자동으로 생성됩니다."
     }
   ],
-  "IUE/lQ": [
+  "IS4vNX": [
     {
       "type": 0,
-      "value": "(UTC-01:00) 카보베르데"
+      "value": "(UTC-12:00) International Date Line West"
     }
   ],
   "IW2MjQ": [
@@ -2792,26 +2702,26 @@
       "value": "전달된 문자열 타임스탬프를 UTC에서 대상 표준 시간대로 변환합니다."
     }
   ],
-  "IX1OiA": [
-    {
-      "type": 0,
-      "value": "Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
-    },
-    {
-      "type": 1,
-      "value": "message"
-    }
-  ],
   "IXy91L": [
     {
       "type": 0,
       "value": "Add a target schema"
     }
   ],
-  "IbGIq3": [
+  "IdOhPY": [
+    {
+      "type": 1,
+      "value": "label"
+    },
     {
       "type": 0,
-      "value": "Error Code"
+      "value": " To add dynamic data, press the Alt + '/' keys."
+    }
+  ],
+  "If+p6C": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
     }
   ],
   "IjEKvh": [
@@ -2828,10 +2738,10 @@
       "value": "'."
     }
   ],
-  "IjZFjQ": [
+  "Io48jC": [
     {
       "type": 0,
-      "value": "(UTC+07:00) 바르나울, 고르노알타이스크"
+      "value": "The {0} properties are invalid for the {1} authentication type."
     }
   ],
   "IooQu1": [
@@ -2840,22 +2750,16 @@
       "value": "고급 옵션"
     }
   ],
-  "Ip7Iax": [
-    {
-      "type": 0,
-      "value": "문자열 내에서 n번째로 나타나는 값의 인덱스를 반환합니다(대소문자를 구분하지 않는 고정 문화권)."
-    }
-  ],
-  "IpVwYT": [
-    {
-      "type": 0,
-      "value": "전달된 인수에서 Null이 아닌 첫 번째 개체를 반환합니다."
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
       "value": "No properties"
+    }
+  ],
+  "IxWip7": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
     }
   ],
   "J/Kz1j": [
@@ -2984,16 +2888,16 @@
       "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
-  "JpthWY": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) 몬테비데오"
-    }
-  ],
   "Jq2Y/o": [
     {
       "type": 0,
       "value": "숫자 형식 문자열입니다."
+    }
+  ],
+  "JzRzVp": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
     }
   ],
   "JzqgNM": [
@@ -3014,16 +2918,16 @@
       "value": "Output"
     }
   ],
-  "K90YEU": [
-    {
-      "type": 0,
-      "value": "문자열에서 문자의 하위 집합을 반환합니다."
-    }
-  ],
   "KBaGkS": [
     {
       "type": 0,
       "value": "Change connection reference"
+    }
+  ],
+  "KP0Rr2": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
     }
   ],
   "KX1poC": [
@@ -3067,28 +2971,10 @@
       "value": "Cancel"
     }
   ],
-  "Khc8lS": [
+  "KlDW+5": [
     {
       "type": 0,
-      "value": "(UTC-09:30) 마키저스 제도"
-    }
-  ],
-  "KlvTze": [
-    {
-      "type": 0,
-      "value": "(UTC+05:30) 스리자야와르데네푸라"
-    }
-  ],
-  "KoBDbT": [
-    {
-      "type": 0,
-      "value": "(UTC-02:00) 협정 세계시-02"
-    }
-  ],
-  "Kw3bWO": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 이스탄불"
+      "value": "(UTC+02:00) Beirut"
     }
   ],
   "KwGA+K": [
@@ -3127,6 +3013,12 @@
       "value": "워크플로 그래프 삭제"
     }
   ],
+  "LCRHQ9": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fiji"
+    }
+  ],
   "LCXZLM": [
     {
       "type": 0,
@@ -3163,10 +3055,22 @@
       "value": "Loading Api Management service instances..."
     }
   ],
+  "LV3k48": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+    }
+  ],
   "LZm3ze": [
     {
       "type": 0,
       "value": "병렬 분기 추가"
+    }
+  ],
+  "LdITnG": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cayenne, Fortaleza"
     }
   ],
   "Lft/is": [
@@ -3229,28 +3133,16 @@
       "value": "게이트웨이"
     }
   ],
-  "Lwe7tQ": [
+  "Lx8HRl": [
     {
       "type": 0,
-      "value": "(UTC+00:00) 더블린, 에든버러, 리스본, 런던"
-    }
-  ],
-  "M/F2/O": [
-    {
-      "type": 0,
-      "value": "Notes can only be added while editing the inputs of a step."
+      "value": "(UTC+02:00) Damascus"
     }
   ],
   "M0xrm+": [
     {
       "type": 0,
       "value": "코드 보기"
-    }
-  ],
-  "M48CGd": [
-    {
-      "type": 0,
-      "value": "(UTC+11:00) 솔로몬 제도, 뉴칼레도니아"
     }
   ],
   "M4H0gh": [
@@ -3305,6 +3197,18 @@
     {
       "type": 0,
       "value": "관리 ID"
+    }
+  ],
+  "MOsuw2": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guam, Port Moresby"
+    }
+  ],
+  "MPPyI6": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
     }
   ],
   "MTR4Vg": [
@@ -3391,10 +3295,28 @@
       "value": "Headers"
     }
   ],
+  "N7E9hd": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NGJ00e": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
+    }
+  ],
   "NHnG2S": [
     {
       "type": 0,
       "value": "The generated XSLT does not match the current mapping."
+    }
+  ],
+  "NMpFs6": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
     }
   ],
   "NPUFgH": [
@@ -3407,18 +3329,6 @@
     {
       "type": 0,
       "value": "Enter unique property name"
-    }
-  ],
-  "NeyUAh": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) 부에노스아이레스 시"
-    }
-  ],
-  "NkUgXU": [
-    {
-      "type": 0,
-      "value": "(UTC+03:00) 민스크"
     }
   ],
   "NnD8gF": [
@@ -3439,6 +3349,12 @@
       "value": "pathTemplate"
     }
   ],
+  "NnrHK3": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
   "No6CS+": [
     {
       "type": 0,
@@ -3449,12 +3365,6 @@
     {
       "type": 0,
       "value": "ID를 선택하세요."
-    }
-  ],
-  "NvANon": [
-    {
-      "type": 0,
-      "value": "(UTC-09:00) 알래스카"
     }
   ],
   "NvJDn/": [
@@ -3481,22 +3391,16 @@
       "value": "Loading Files..."
     }
   ],
-  "O36+wl": [
-    {
-      "type": 0,
-      "value": "매개 변수 편집"
-    }
-  ],
   "O9ZExg": [
     {
       "type": 0,
       "value": "확인"
     }
   ],
-  "OD8igU": [
+  "ODQCKj": [
     {
       "type": 0,
-      "value": "필수 사항으로, 원본 표준 시간대의 표준 시간대 이름을 포함하는 문자열입니다. 자세한 내용은 https://msdn.microsoft.com/ko-kr/library/gg154758.aspx를 참조하세요."
+      "value": "Converts the input to a JSON type value."
     }
   ],
   "OEEuUu": [
@@ -3509,12 +3413,6 @@
     {
       "type": 0,
       "value": "작업 옵션:"
-    }
-  ],
-  "OGUVGd": [
-    {
-      "type": 0,
-      "value": "(UTC+11:00) 부건빌 섬"
     }
   ],
   "OH94j3": [
@@ -3565,6 +3463,12 @@
       "value": "메모"
     }
   ],
+  "OSP9JY": [
+    {
+      "type": 0,
+      "value": "Enter the audience."
+    }
+  ],
   "OVvieE": [
     {
       "type": 0,
@@ -3581,6 +3485,18 @@
     {
       "type": 0,
       "value": "Enable Static Result"
+    }
+  ],
+  "OgJ9eG": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipei"
+    }
+  ],
+  "OhbvXz": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Norfolk Island"
     }
   ],
   "Oib1mL": [
@@ -3631,6 +3547,18 @@
       "value": "PFX"
     }
   ],
+  "P/S+q5": [
+    {
+      "type": 0,
+      "value": "Required. One of the strings to combine into a single string."
+    }
+  ],
+  "P/dnfK": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dhaka"
+    }
+  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -3659,12 +3587,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 첫 번째 개체를 가져올 원본 컬렉션입니다."
-    }
-  ],
-  "PBvR9Q": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) 아라구아이나"
     }
   ],
   "PE1tsI": [
@@ -3743,28 +3665,40 @@
       "value": "중단됨"
     }
   ],
-  "PeLrFb": [
-    {
-      "type": 0,
-      "value": "(UTC+03:00) 모스코바, 상트페테르부르크, 볼고그라드"
-    }
-  ],
   "PfCJlN": [
     {
       "type": 0,
       "value": "워크플로 함수"
     }
   ],
-  "PmB0J7": [
+  "PjBcG3": [
     {
       "type": 0,
-      "value": "(UTC-04:00) 터크스 케이커스"
+      "value": "(UTC+02:00) Amman"
+    }
+  ],
+  "Pk4cb+": [
+    {
+      "type": 0,
+      "value": "Tracked properties"
+    }
+  ],
+  "Pq+4a+": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Cairo"
     }
   ],
   "PtqSHp": [
     {
       "type": 0,
       "value": "값이 없으면 생성 안 함"
+    }
+  ],
+  "Pudllg": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
     }
   ],
   "PvWTxR": [
@@ -3779,10 +3713,10 @@
       "value": "입력 문자열의 base 64 표현을 반환합니다."
     }
   ],
-  "Q+oELo": [
+  "Q+ZZHI": [
     {
       "type": 0,
-      "value": "(UTC+04:00) 이젭스크, 사마라"
+      "value": "(UTC-10:00) Hawaii"
     }
   ],
   "Q/7unA": [
@@ -3809,6 +3743,12 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8HCYK": [
+    {
+      "type": 0,
+      "value": "No items"
+    }
+  ],
   "Q8zxeb": [
     {
       "type": 1,
@@ -3819,38 +3759,10 @@
       "value": " Key"
     }
   ],
-  "QEp3C8": [
-    {
-      "type": 0,
-      "value": "입력을 JSON 형식 값으로 변환합니다."
-    }
-  ],
   "QGbUXX": [
     {
       "type": 0,
       "value": "상태 코드"
-    }
-  ],
-  "QIOOQU": [
-    {
-      "type": 0,
-      "value": "No Items"
-    }
-  ],
-  "QQYzHC": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": " 카드에 대한 상황에 맞는 메뉴"
-    }
-  ],
-  "QZ5DZl": [
-    {
-      "type": 0,
-      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -3941,16 +3853,22 @@
       "value": "트리거를 삭제할 수 없습니다."
     }
   ],
+  "R/aiRy": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Coordinated Universal Time+12"
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
       "value": "이름"
     }
   ],
-  "RPSKbr": [
+  "RJes1w": [
     {
       "type": 0,
-      "value": "대상 그룹 입력"
+      "value": "(UTC+04:00) Yerevan"
     }
   ],
   "RX2Shm": [
@@ -4004,6 +3922,18 @@
       "value": "issue"
     }
   ],
+  "Ro4+PC": [
+    {
+      "type": 0,
+      "value": "You can add notes only when you edit a step's inputs."
+    }
+  ],
+  "Rp5pHU": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monrovia, Reykjavik"
+    }
+  ],
   "Rq2U5n": [
     {
       "type": 0,
@@ -4018,16 +3948,22 @@
       "value": "'"
     }
   ],
+  "RvpHdu": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+    }
+  ],
+  "RxGxr+": [
+    {
+      "type": 0,
+      "value": "Line number"
+    }
+  ],
   "S138/4": [
     {
       "type": 0,
       "value": "Format text as bold. Shortcut: ⌘B"
-    }
-  ],
-  "SADSSs": [
-    {
-      "type": 0,
-      "value": "(UTC+12:00) 페트로파블로프스크-캄차스키 - 사용하지 않음"
     }
   ],
   "SCCE6s": [
@@ -4052,6 +3988,12 @@
     {
       "type": 0,
       "value": "매개 변수를 정수로 변환합니다."
+    }
+  ],
+  "SKy5tj": [
+    {
+      "type": 0,
+      "value": "The input node type doesn't match the schema node's type."
     }
   ],
   "SLJkRn": [
@@ -4178,12 +4120,6 @@
       "value": "금요일"
     }
   ],
-  "TNzcrv": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) 블라디보스토크"
-    }
-  ],
   "TO7qos": [
     {
       "type": 0,
@@ -4262,22 +4198,22 @@
       "value": "사용자 지정"
     }
   ],
+  "TjMkDP": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Easter Island"
+    }
+  ],
+  "TlX98E": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
   "Tmr/9e": [
     {
       "type": 0,
       "value": "Invalid parameters"
-    }
-  ],
-  "ToPmjE": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) 쿠이아바"
-    }
-  ],
-  "TqPfth": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) 브뤼셀, 코펜하겐, 마드리드, 파리"
     }
   ],
   "Ts5Pzr": [
@@ -4310,10 +4246,10 @@
       "value": "Target schema element"
     }
   ],
-  "U1NiVg": [
+  "U0I10w": [
     {
       "type": 0,
-      "value": "(UTC-06:00) 중앙 아메리카"
+      "value": "(UTC+05:00) Ekaterinburg"
     }
   ],
   "U3guPp": [
@@ -4344,12 +4280,6 @@
     {
       "type": 1,
       "value": "onDays"
-    }
-  ],
-  "U56j9a": [
-    {
-      "type": 0,
-      "value": "(UTC-06:00) 이스터 섬"
     }
   ],
   "U7yRwM": [
@@ -4394,6 +4324,18 @@
       "value": "보안 구성으로 인해 콘텐츠가 표시되지 않습니다."
     }
   ],
+  "UT2ozj": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+    }
+  ],
+  "UVAfYj": [
+    {
+      "type": 0,
+      "value": "Required. The collection to take the last object from."
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4436,6 +4378,12 @@
     {
       "type": 0,
       "value": " weeks"
+    }
+  ],
+  "Unc2tG": [
+    {
+      "type": 0,
+      "value": "Returns true if two values are equal."
     }
   ],
   "UnrrzF": [
@@ -4486,12 +4434,6 @@
       "value": "앱 내"
     }
   ],
-  "VE3cxq": [
-    {
-      "type": 0,
-      "value": "(UTC-07:00) 산지 표준시(미국과 캐나다)"
-    }
-  ],
   "VHm1Sr": [
     {
       "type": 0,
@@ -4530,6 +4472,12 @@
     {
       "type": 0,
       "value": "Source schema"
+    }
+  ],
+  "VPh9Jo": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
     }
   ],
   "VUH9aj": [
@@ -4622,16 +4570,20 @@
       "value": "지우기"
     }
   ],
-  "WLj8DH": [
+  "WK6hZX": [
     {
       "type": 0,
-      "value": "유효한 디렉터리를 입력하세요."
+      "value": "Select all text in "
+    },
+    {
+      "type": 1,
+      "value": "label"
     }
   ],
-  "WOOYW1": [
+  "WR1K3z": [
     {
       "type": 0,
-      "value": "작업은 데이터에 대한 작업을 수행하거나 실행할 시스템 간에 통신합니다."
+      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
     }
   ],
   "WS9kXD": [
@@ -4678,6 +4630,12 @@
     {
       "type": 0,
       "value": "Minute"
+    }
+  ],
+  "X2idLs": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
     }
   ],
   "X4gDhV": [
@@ -4744,16 +4702,22 @@
       "value": "var"
     }
   ],
-  "XN9RvJ": [
+  "XOAcjQ": [
     {
       "type": 0,
-      "value": "(UTC-08:00) 바하 캘리포니아"
+      "value": "(UTC+03:00) Nairobi"
     }
   ],
   "XOzn/3": [
     {
       "type": 0,
       "value": "연결 이름"
+    }
+  ],
+  "XQ4OCV": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Baghdad"
     }
   ],
   "XRK+gt": [
@@ -4770,10 +4734,10 @@
       "value": "' has an non-terminating connection chain"
     }
   ],
-  "XTYYks": [
+  "XTeLIw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) 서울"
+      "value": "(UTC+07:00) Krasnoyarsk"
     }
   ],
   "XTuxmH": [
@@ -4798,18 +4762,6 @@
     {
       "type": 0,
       "value": "Interval"
-    }
-  ],
-  "XX1ioe": [
-    {
-      "type": 0,
-      "value": "(UTC+03:00) 쿠웨이트, 리야드"
-    }
-  ],
-  "XaS4ds": [
-    {
-      "type": 0,
-      "value": "(UTC-08:00) 태평양 표준시(미국 및 캐나다)"
     }
   ],
   "XbtEq9": [
@@ -4878,6 +4830,12 @@
     {
       "type": 0,
       "value": "수식 함수"
+    }
+  ],
+  "Xv5CGN": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (East)"
     }
   ],
   "Xx/naD": [
@@ -4980,10 +4938,22 @@
       "value": "Numbered List"
     }
   ],
+  "YZ5Kwe": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Atlantic Time (Canada)"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
       "value": "이 함수에 전달되는 배열 또는 개체에 포함된 모든 요소를 사용해서 단일 배열 또는 개체를 반환합니다. 이 함수에 대한 매개 변수는 개체 집합 또는 배열 집합(둘 중 하나만 포함)일 수 있습니다. 이름이 같은 두 개체가 최종 출력에 있는 경우 해당 이름의 마지막 개체가 최종 개체로 나타납니다."
+    }
+  ],
+  "Ybzoim": [
+    {
+      "type": 0,
+      "value": "Required. The name of the action that has the values you want."
     }
   ],
   "YdQw4/": [
@@ -4998,10 +4968,22 @@
       "value": "검색 팁"
     }
   ],
+  "YgU88A": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
   "Yh5OVd": [
     {
       "type": 0,
       "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
+  "YiOybp": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
     }
   ],
   "YlesUQ": [
@@ -5074,12 +5056,6 @@
       "value": "문자열 타임스탬프의 월간 일자 구성 요소를 반환합니다."
     }
   ],
-  "ZQ4lji": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) 캔버라, 멜버른, 시드니"
-    }
-  ],
   "ZRdkFN": [
     {
       "type": 0,
@@ -5128,22 +5104,10 @@
       "value": "동적 콘텐츠에 대해 자세히 알아보세요."
     }
   ],
-  "ZnGRMP": [
-    {
-      "type": 0,
-      "value": "(UTC+07:00) 톰스크"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
       "value": "필수 사항으로, 제수로 나눌 숫자입니다."
-    }
-  ],
-  "a7x6VI": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) 타이베이"
     }
   ],
   "aAXnqw": [
@@ -5158,12 +5122,6 @@
       "value": "필수 항목으로, 컬렉션 맨 앞부터 제거할 개체의 수입니다. 양의 정수여야 합니다."
     }
   ],
-  "aH9SV7": [
-    {
-      "type": 0,
-      "value": "(UTC+05:00) 아슈하바트, 타슈켄트"
-    }
-  ],
   "aJxefp": [
     {
       "type": 0,
@@ -5174,6 +5132,12 @@
     {
       "type": 0,
       "value": "데이터 처리"
+    }
+  ],
+  "aP1wk9": [
+    {
+      "type": 0,
+      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
     }
   ],
   "aSnCCB": [
@@ -5258,12 +5222,6 @@
       "value": "구독"
     }
   ],
-  "bS5DyV": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 칼리닌그라드"
-    }
-  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5300,10 +5258,10 @@
       "value": "숫자의 입력 배열에서 최대값을 반환합니다."
     }
   ],
-  "bnStSJ": [
+  "bsgS8m": [
     {
       "type": 0,
-      "value": "(UTC+05:30) 첸나이, 콜카타, 뭄바이, 뉴델리"
+      "value": "Preview"
     }
   ],
   "bv9QPA": [
@@ -5320,12 +5278,6 @@
     {
       "type": 0,
       "value": " 다음에 실행"
-    }
-  ],
-  "bx3qeC": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) 브라질리아"
     }
   ],
   "bxhkTi": [
@@ -5352,16 +5304,16 @@
       "value": "수행"
     }
   ],
-  "c1XmvN": [
-    {
-      "type": 0,
-      "value": "(UTC+13:00) 누크알로파"
-    }
-  ],
   "c2XklE": [
     {
       "type": 0,
       "value": "검색"
+    }
+  ],
+  "c3FLox": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
     }
   ],
   "c3G/zq": [
@@ -5394,6 +5346,12 @@
       "value": "동적 콘텐츠는 다른 원본에서도 추가할 수 있습니다."
     }
   ],
+  "cHiBAn": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seoul"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -5418,22 +5376,22 @@
       "value": "Discard changes"
     }
   ],
-  "cT2MlP": [
+  "cUW5m8": [
     {
       "type": 0,
-      "value": "(UTC+11:00) 초쿠르다흐"
-    }
-  ],
-  "cVIZTQ": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 트리폴리"
+      "value": "Select the checkbox to choose this connection."
     }
   ],
   "ca/QIc": [
     {
       "type": 0,
       "value": "Error Message"
+    }
+  ],
+  "ceVB5l": [
+    {
+      "type": 0,
+      "value": "Returns the body for a part in a multipart output from an action."
     }
   ],
   "cgq/+y": [
@@ -5490,10 +5448,28 @@
       "value": "Generate XSLT first before attempting to test mappings."
     }
   ],
-  "d4xMIx": [
+  "cvp9VP": [
     {
       "type": 0,
-      "value": "(UTC+02:00) 하라레, 프리토리아"
+      "value": "Error code"
+    }
+  ],
+  "cyEBus": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiaba"
+    }
+  ],
+  "d+MjsE": [
+    {
+      "type": 0,
+      "value": "Enter a valid dictionary."
+    }
+  ],
+  "d020eg": [
+    {
+      "type": 0,
+      "value": "Returns the first element from the passed-in array or string."
     }
   ],
   "dBWIjR": [
@@ -5544,22 +5520,10 @@
       "value": "HTTP를 통해 콘텐츠를 전송하기 위한 동작 및 기능을 지정합니다. 큰 메시지는 큰 메시지 업로드를 허용하기 위해 커넥터에 대한 작은 요청으로 분할될 수 있습니다. 자세한 내용은 http://aka.ms/logicapps-chunk#upload-content-in-chunks에서 확인할 수 있습니다."
     }
   ],
-  "dUZi34": [
-    {
-      "type": 0,
-      "value": "(UTC+12:45) 체텀 제도"
-    }
-  ],
   "dWFyfN": [
     {
       "type": 0,
       "value": "작업의 입력을 보안 설정합니다."
-    }
-  ],
-  "dWx21B": [
-    {
-      "type": 0,
-      "value": "(UTC+11:00) 사할린"
     }
   ],
   "daoo3l": [
@@ -5582,12 +5546,6 @@
     {
       "type": 0,
       "value": "Italic (Ctrl+I)"
-    }
-  ],
-  "dgAu27": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) 그린란드"
     }
   ],
   "dhvk0u": [
@@ -5638,6 +5596,12 @@
       "value": "얼마나 자주 항목을 확인하시겠습니까?"
     }
   ],
+  "e4JZEY": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
@@ -5662,10 +5626,10 @@
       "value": "Action Tracking ID"
     }
   ],
-  "eGa1Wa": [
+  "eFnLWK": [
     {
       "type": 0,
-      "value": "(UTC+05:00) 예카테린부르크"
+      "value": "(UTC-06:00) Central America"
     }
   ],
   "eHgfpz": [
@@ -5782,10 +5746,10 @@
       "value": "Please select file or image"
     }
   ],
-  "faSDuD": [
+  "fVG5aD": [
     {
       "type": 0,
-      "value": "(UTC+04:00) 포트루이스"
+      "value": "(UTC-05:00) Haiti"
     }
   ],
   "faUrud": [
@@ -5814,16 +5778,22 @@
       "value": "논리 함수"
     }
   ],
+  "fifSPb": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Newfoundland"
+    }
+  ],
   "fmm7Ik": [
     {
       "type": 0,
       "value": "Function"
     }
   ],
-  "froV/0": [
+  "fp8Ry3": [
     {
       "type": 0,
-      "value": "(UTC+04:30) 카불"
+      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
   "ftwXvc": [
@@ -5856,12 +5826,6 @@
       "value": "Runtime"
     }
   ],
-  "g5mMuM": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) 생피에르앤드미클롱"
-    }
-  ],
   "g7my78": [
     {
       "type": 0,
@@ -5886,12 +5850,6 @@
       "value": "두 숫자를 나눈 결과를 반환합니다."
     }
   ],
-  "gF+0/N": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 암만"
-    }
-  ],
   "gIK0WG": [
     {
       "type": 0,
@@ -5910,16 +5868,16 @@
       "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
+  "gKEaXI": [
+    {
+      "type": 0,
+      "value": "Copy the value of {label} to the clipboard"
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "이전 항목 실패"
-    }
-  ],
-  "gMhc5o": [
-    {
-      "type": 0,
-      "value": "필수 항목으로, 단일 문자열에 결합할 문자열입니다."
     }
   ],
   "gQt/0f": [
@@ -5934,22 +5892,10 @@
       "value": "Info"
     }
   ],
-  "gTXyUo": [
+  "gWyYg0": [
     {
       "type": 0,
-      "value": "Time Zone"
-    }
-  ],
-  "gUp23R": [
-    {
-      "type": 0,
-      "value": "The name already exists or is invalid, please update it before proceeding."
-    }
-  ],
-  "gWRF8m": [
-    {
-      "type": 0,
-      "value": "트리거 조건"
+      "value": "(UTC+05:00) Ashgabat, Tashkent"
     }
   ],
   "gc6v4X": [
@@ -5964,16 +5910,22 @@
       "value": "Email"
     }
   ],
-  "gg0j4S": [
+  "ginGIZ": [
     {
       "type": 0,
-      "value": "(UTC-06:00) 서스캐처원"
+      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
   "gkY5ya": [
     {
       "type": 0,
       "value": "Delete"
+    }
+  ],
+  "gpUphl": [
+    {
+      "type": 0,
+      "value": "Enter the audience."
     }
   ],
   "gu9o9z": [
@@ -6012,12 +5964,6 @@
       "value": "Add a source schema first, then select elements to build your map"
     }
   ],
-  "hBLPXK": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) 조지타운, 라파스, 마나우스, 산후안"
-    }
-  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6043,6 +5989,12 @@
     {
       "type": 0,
       "value": "두 숫자를 뺀 결과를 반환합니다."
+    }
+  ],
+  "hZqQdt": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
   "hic23z": [
@@ -6087,6 +6039,12 @@
       "value": "대상"
     }
   ],
+  "hza/cT": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
+    }
+  ],
   "i/SguY": [
     {
       "type": 0,
@@ -6103,6 +6061,12 @@
     {
       "type": 0,
       "value": "Search for operation"
+    }
+  ],
+  "i1EQYm": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
   "i1Tufp": [
@@ -6187,6 +6151,12 @@
       "value": "관리 ID"
     }
   ],
+  "iTKrs8": [
+    {
+      "type": 0,
+      "value": "Pagination"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -6239,16 +6209,16 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
+  "ixhS47": [
+    {
+      "type": 0,
+      "value": "Returns the start of the day to a string timestamp passed in"
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,
       "value": "테스트"
-    }
-  ],
-  "j1VU25": [
-    {
-      "type": 0,
-      "value": "(UTC+14:00) 키리티마티 섬"
     }
   ],
   "j2MU0b": [
@@ -6303,6 +6273,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 문자열로 변환되는 값입니다."
+    }
+  ],
+  "jQ7UzV": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Aleutian Islands"
     }
   ],
   "jQjteB": [
@@ -6389,12 +6365,6 @@
       "value": "Duplicate property name"
     }
   ],
-  "kDsud+": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) 카옌, 포르탈레자"
-    }
-  ],
   "kEI2xx": [
     {
       "type": 0,
@@ -6431,6 +6401,18 @@
       "value": "입력 based64 문자열의 문자열 표현을 반환합니다."
     }
   ],
+  "kSK9Pq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "kVwJXt": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
@@ -6443,34 +6425,10 @@
       "value": "월요일"
     }
   ],
-  "kZuYgD": [
-    {
-      "type": 0,
-      "value": "첫 번째 인수가 두 번째 인수보다 작은 경우 true를 반환합니다."
-    }
-  ],
-  "kc5Mui": [
-    {
-      "type": 0,
-      "value": "(UTC-02:00) 중부-대서양 - 사용하지 않음"
-    }
-  ],
-  "keb4r1": [
-    {
-      "type": 0,
-      "value": "두 값이 같은 경우 true를 반환합니다."
-    }
-  ],
   "klpJg1": [
     {
       "type": 0,
       "value": "사용자 이름 입력"
-    }
-  ],
-  "kneb9/": [
-    {
-      "type": 0,
-      "value": "(UTC-12:00) 날짜 변경선 서쪽"
     }
   ],
   "knylNW": [
@@ -6489,6 +6447,12 @@
     {
       "type": 0,
       "value": "Enter a valid json."
+    }
+  ],
+  "l/9YHQ": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
     }
   ],
   "l36V56": [
@@ -6515,16 +6479,10 @@
       "value": "Managed Identity"
     }
   ],
-  "lFve22": [
+  "lM9qrG": [
     {
       "type": 0,
-      "value": "(UTC+01:00) 사라예보, 스코페, 바르샤바, 자그레브"
-    }
-  ],
-  "lIPWQ6": [
-    {
-      "type": 0,
-      "value": "(UTC+07:00) 방콕, 하노이, 자카르타"
+      "value": "(UTC+13:00) Nuku'alofa"
     }
   ],
   "lPTdSf": [
@@ -6549,6 +6507,12 @@
     {
       "type": 0,
       "value": "Return"
+    }
+  ],
+  "lUvgiW": [
+    {
+      "type": 0,
+      "value": "The type for {0} is {1}."
     }
   ],
   "lZT0JI": [
@@ -6649,6 +6613,12 @@
       "value": "배열 입력"
     }
   ],
+  "mCKsFw": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -6721,12 +6691,6 @@
       "value": "인증 유형 'ActiveDirectoryOAuth'에 필요한 'secret' 또는 'pfx' 및 'password' 속성이 없습니다."
     }
   ],
-  "mZCHKf": [
-    {
-      "type": 0,
-      "value": "(UTC+12:00) 아나디리, 페트로파블로프스크-캄차스키"
-    }
-  ],
   "mZRMD9": [
     {
       "type": 0,
@@ -6743,6 +6707,12 @@
     {
       "type": 0,
       "value": "Empty property name"
+    }
+  ],
+  "mej02C": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
     }
   ],
   "mjS/k1": [
@@ -6797,6 +6767,12 @@
       "value": "필수 항목으로, 부동 소수점 숫자로 변환되는 값입니다."
     }
   ],
+  "n42uAO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
   "n4V2Hi": [
     {
       "type": 0,
@@ -6825,6 +6801,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 미래의 원하는 시간에 대한 시간 단위 수입니다."
+    }
+  ],
+  "nNWAAh": [
+    {
+      "type": 0,
+      "value": "No schema is added."
     }
   ],
   "nOWGAV": [
@@ -6857,6 +6839,12 @@
       "value": "필수 항목으로, 제거할 속성의 이름입니다."
     }
   ],
+  "nVDG00": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Kiritimati Island"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -6869,10 +6857,22 @@
       "value": "필수 항목으로, 비교하는 개체보다 작은지 확인할 개체입니다."
     }
   ],
+  "njGstq": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
   "nkk1mu": [
     {
       "type": 0,
       "value": "전달된 문자열 타임스탬프에 정수 분 수를 더합니다."
+    }
+  ],
+  "no/SMg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
     }
   ],
   "nx25nq": [
@@ -6891,6 +6891,12 @@
     {
       "type": 0,
       "value": "전달된 배열 또는 문자열의 마지막 요소를 반환합니다."
+    }
+  ],
+  "o/FgET": [
+    {
+      "type": 0,
+      "value": "Function was removed from the current location and currently exists elsewhere."
     }
   ],
   "o14STH": [
@@ -6925,6 +6931,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o7bd1o": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Tehran"
+    }
+  ],
   "o8ohVV": [
     {
       "type": 0,
@@ -6949,6 +6961,12 @@
       "value": "콘텐츠 전송"
     }
   ],
+  "oO12r6": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
   "oQjIWf": [
     {
       "type": 0,
@@ -6959,12 +6977,6 @@
     {
       "type": 0,
       "value": "Invalid integer value"
-    }
-  ],
-  "oRvVIW": [
-    {
-      "type": 0,
-      "value": "(UTC+07:00) 크라스노야르스크"
     }
   ],
   "oTBkbU": [
@@ -6991,12 +7003,6 @@
       "value": "응답 본문"
     }
   ],
-  "ol+TkT": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) 살바도르"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -7009,10 +7015,10 @@
       "value": "Enter a valid JSON"
     }
   ],
-  "oxH1L/": [
+  "oxXV4+": [
     {
       "type": 0,
-      "value": "(UTC-07:00) 치와와, 라파스, 마사틀란"
+      "value": "Returns the first non-null object in the passed-in argument values."
     }
   ],
   "p/0r2N": [
@@ -7027,16 +7033,22 @@
       "value": "헤더"
     }
   ],
+  "p1IEXb": [
+    {
+      "type": 0,
+      "value": "Enter the data from previous step. You can also add data by typing the '/' character."
+    }
+  ],
   "p1Qtm5": [
     {
       "type": 0,
       "value": "앱 내"
     }
   ],
-  "p5tz8/": [
+  "p5ZID0": [
     {
       "type": 0,
-      "value": "(UTC+13:00) 사모아"
+      "value": "(UTC+03:00) Kuwait, Riyadh"
     }
   ],
   "pC2nr2": [
@@ -7067,12 +7079,6 @@
     {
       "type": 0,
       "value": "필수 사항으로, 배열로 결합할 값입니다."
-    }
-  ],
-  "pUeUDw": [
-    {
-      "type": 0,
-      "value": "(UTC+09:00) 오사카, 삿포로, 도쿄"
     }
   ],
   "pXmFGf": [
@@ -7153,6 +7159,18 @@
       "value": "매개 변수를 문자열로 변환합니다."
     }
   ],
+  "q4ChjK": [
+    {
+      "type": 0,
+      "value": "Select workflow with 'manual' trigger"
+    }
+  ],
+  "q5TkqE": [
+    {
+      "type": 0,
+      "value": "Required. The value to return if the expression is false."
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -7163,12 +7181,6 @@
     {
       "type": 0,
       "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
-    }
-  ],
-  "q9hf8i": [
-    {
-      "type": 0,
-      "value": "(UTC+04:00) 아스트라한, 울랴노브스크"
     }
   ],
   "qAlTD5": [
@@ -7276,12 +7288,6 @@
       "value": "필수 항목으로, 정수로 변환되는 값입니다."
     }
   ],
-  "qq/bq0": [
-    {
-      "type": 0,
-      "value": "(UTC+09:00) 야쿠츠크"
-    }
-  ],
   "qr1lLG": [
     {
       "type": 0,
@@ -7306,12 +7312,6 @@
     {
       "type": 0,
       "value": "Enter a value"
-    }
-  ],
-  "r1FQhf": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) 빈트후크"
     }
   ],
   "r43nMc": [
@@ -7368,6 +7368,12 @@
       "value": "연결이 잘못되었습니다."
     }
   ],
+  "rNi5Y3": [
+    {
+      "type": 0,
+      "value": "Select this checkbox if you're setting up an on-premises connection."
+    }
+  ],
   "rSIBjh": [
     {
       "type": 0,
@@ -7398,16 +7404,22 @@
       "value": "Select source schema elements to build your map"
     }
   ],
-  "rstpaK": [
-    {
-      "type": 0,
-      "value": "(UTC-06:00) 중부 표준시(미국과 캐나다)"
-    }
-  ],
   "rv0Pn+": [
     {
       "type": 0,
       "value": "새로 추가"
+    }
+  ],
+  "rxIJfD": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "rxMXmZ": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
     }
   ],
   "s+4LEa": [
@@ -7432,6 +7444,12 @@
     {
       "type": 0,
       "value": "양식 데이터 또는 양식 인코딩 트리거 출력의 키 이름과 일치하는 값의 배열을 반환합니다."
+    }
+  ],
+  "sFbnCs": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
     }
   ],
   "sFwHQc": [
@@ -7464,6 +7482,12 @@
       "value": "필수 사항으로, 더할 간격에 지정된 시간 단위를 포함하는 문자열입니다."
     }
   ],
+  "sZHTQV": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
   "sbPZ9S": [
     {
       "type": 0,
@@ -7486,12 +7510,6 @@
     {
       "type": 0,
       "value": "키"
-    }
-  ],
-  "siYGSo": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 베이루트"
     }
   ],
   "soqP+Z": [
@@ -7574,12 +7592,6 @@
       "value": "트리거 또는 작업을 호출하는 URL을 반환합니다."
     }
   ],
-  "tELkSC": [
-    {
-      "type": 0,
-      "value": "(UTC-06:00) 과달라하라, 멕시코시티, 몬테레이"
-    }
-  ],
   "tH2pT1": [
     {
       "type": 0,
@@ -7634,16 +7646,16 @@
       "value": "종류"
     }
   ],
-  "tP+5fA": [
-    {
-      "type": 0,
-      "value": "(UTC+06:00) 노보시비르스크"
-    }
-  ],
   "tUCptx": [
     {
       "type": 0,
       "value": "Insert Link"
+    }
+  ],
+  "tUU4ak": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
     }
   ],
   "tUYXRA": [
@@ -7672,6 +7684,12 @@
       "value": " every hour"
     }
   ],
+  "tZIlCA": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7684,16 +7702,16 @@
       "value": "필수 사항으로, 추가할 시간 값입니다. 시간을 빼려는 경우 음수일 수 있습니다."
     }
   ],
+  "tarDYT": [
+    {
+      "type": 0,
+      "value": "Returns true if the first argument is less than the second."
+    }
+  ],
   "td5//c": [
     {
       "type": 0,
       "value": "Collapse tree node"
-    }
-  ],
-  "teZwo6": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) 호바트"
     }
   ],
   "ti5TEd": [
@@ -7702,22 +7720,22 @@
       "value": "취소"
     }
   ],
+  "tqqUHX": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Chatham Islands"
+    }
+  ],
   "tsmuoF": [
     {
       "type": 0,
       "value": "표시 이름"
     }
   ],
-  "u/KSPz": [
+  "u81zB9": [
     {
       "type": 0,
-      "value": "(UTC-04:00) 산티아고"
-    }
-  ],
-  "u6Gdft": [
-    {
-      "type": 0,
-      "value": "(UTC+04:00) 아부다비, 무스카트"
+      "value": "(UTC-09:00) Coordinated Universal Time-09"
     }
   ],
   "u9tr3k": [
@@ -7730,6 +7748,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "uE0A0s": [
+    {
+      "type": 0,
+      "value": "(UTC) Coordinated Universal Time"
     }
   ],
   "uIurld": [
@@ -7750,16 +7774,26 @@
       "value": "확인"
     }
   ],
+  "uNHpGB": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+    }
+  ],
+  "uOWkHS": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "uR9WuI": [
     {
       "type": 0,
       "value": "필수 항목으로, 평가할 컬렉션입니다. 컬렉션에 나타나는 개체는 결과에도 나타납니다."
-    }
-  ],
-  "uRurmg": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) 괌, 포트모르즈비"
     }
   ],
   "uUlBZ8": [
@@ -7798,16 +7832,16 @@
       "value": "필수 항목으로, 값을 포함할 수 있는 문자열입니다."
     }
   ],
-  "udNlco": [
-    {
-      "type": 0,
-      "value": "(UTC-11:00) 협정 세계시-11"
-    }
-  ],
   "uesaee": [
     {
       "type": 0,
       "value": "Expression"
+    }
+  ],
+  "uh/+ZN": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Greenland"
     }
   ],
   "ui7GCl": [
@@ -7828,10 +7862,22 @@
       "value": "4"
     }
   ],
+  "usCZ7R": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "기본값"
+    }
+  ],
+  "uwuGU0": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
   "uzsleE": [
@@ -7856,12 +7902,6 @@
     {
       "type": 0,
       "value": "각 작업은 구성 후 하나 이상의 실행이 있어야 합니다."
-    }
-  ],
-  "vD2lQy": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) 아순시온"
     }
   ],
   "vEBhDX": [
@@ -7900,22 +7940,10 @@
       "value": "대상"
     }
   ],
-  "vXwYXe": [
-    {
-      "type": 0,
-      "value": "(UTC+06:00) 아스타나"
-    }
-  ],
   "va40BJ": [
     {
       "type": 0,
       "value": "필수 사항으로, 출력을 원하는 작업의 이름입니다."
-    }
-  ],
-  "vb/okJ": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) 카이로"
     }
   ],
   "vcBAuU": [
@@ -8102,6 +8130,18 @@
       "value": "콜백 URL:"
     }
   ],
+  "wtj07J": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Marquesas Islands"
+    }
+  ],
+  "wxaQwD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabul"
+    }
+  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -8124,6 +8164,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x3dWOL": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
     }
   ],
   "x8kTAX": [
@@ -8150,6 +8196,12 @@
       "value": "URI로 인코딩된 문자열의 문자열 표현을 반환합니다."
     }
   ],
+  "xJQeeC": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istanbul"
+    }
+  ],
   "xLF2Zr": [
     {
       "type": 0,
@@ -8174,6 +8226,12 @@
       "value": "Show raw inputs"
     }
   ],
+  "xSSfKC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+    }
+  ],
   "xV/oyK": [
     {
       "type": 0,
@@ -8190,18 +8248,6 @@
     {
       "type": 0,
       "value": "URI에서 경로를 반환합니다. 경로를 지정하지 않으면 '/'가 반환됩니다."
-    }
-  ],
-  "xZhieP": [
-    {
-      "type": 0,
-      "value": "(UTC+05:00) 이슬라마바드, 카라치"
-    }
-  ],
-  "xb/DIr": [
-    {
-      "type": 0,
-      "value": "(UTC+12:00) 협정 세계시+12"
     }
   ],
   "xt5TeT": [
@@ -8252,10 +8298,16 @@
       "value": "필수 사항으로, 배열로 변환되는 값입니다."
     }
   ],
-  "yIZP4R": [
+  "yF2R//": [
     {
       "type": 0,
-      "value": "(UTC-10:00) 하와이"
+      "value": "Returns a subset of characters from a string."
+    }
+  ],
+  "yVFIAQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde Is."
     }
   ],
   "yVh9kr": [
@@ -8290,12 +8342,6 @@
       "value": "기존 연결을 선택하거나 새 연결을 만듭니다."
     }
   ],
-  "yph4eq": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) 베오그라드, 브라티슬라바, 부다페스트, 류블랴나, 프라하"
-    }
-  ],
   "yqRrQ/": [
     {
       "type": 0,
@@ -8314,10 +8360,10 @@
       "value": "Please enter a number"
     }
   ],
-  "yxsn7s": [
+  "yucvJE": [
     {
       "type": 0,
-      "value": "(UTC+00:00) 카사블랑카"
+      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
     }
   ],
   "yyYtZV": [
@@ -8376,6 +8422,12 @@
       "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
     }
   ],
+  "zOvGF8": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Athens, Bucharest"
+    }
+  ],
   "zTKAc9": [
     {
       "type": 0,
@@ -8388,22 +8440,16 @@
       "value": "사용자 지정 값 지우기"
     }
   ],
-  "zbtUQ/": [
+  "zViEGr": [
     {
       "type": 0,
-      "value": "(UTC+08:30) 평양"
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
     }
   ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "선택적으로 로캘과 형식을 사용하여 문자열을 날짜로 변환합니다."
-    }
-  ],
-  "zggBvC": [
-    {
-      "type": 0,
-      "value": "(UTC+03:00) 나이로비"
     }
   ],
   "ziXw25": [
@@ -8422,6 +8468,12 @@
     {
       "type": 0,
       "value": "부동"
+    }
+  ],
+  "zkeKWE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
     }
   ],
   "znGyyU": [

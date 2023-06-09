@@ -21,6 +21,70 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
       role="textbox"
       tabIndex={0}
     >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in display-name"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                Object {
+                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of {label} to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                Object {
+                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
       <pre
         className="prism-code language-json"
         style={
@@ -70,6 +134,70 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
       role="textbox"
       tabIndex={0}
     >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in display-name"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                Object {
+                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of {label} to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                Object {
+                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
       <pre
         className="prism-code language-json"
         style={
