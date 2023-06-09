@@ -88,7 +88,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   const designerIsDirty = useIsDesignerDirty();
 
-  const allOperationErrors = useSelector((state: RootState) => Object.entries(state.operations.errors) ?? []);
   const allInputErrors = useSelector((state: RootState) => {
     return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
       Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
@@ -110,10 +109,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     return validationErrorToShow;
   });
 
-  const haveErrors = useMemo(
-    () => allOperationErrors.length > 0 || allInputErrors.length > 0 || !!allWorkflowParameterErrors,
-    [allOperationErrors, allInputErrors, allWorkflowParameterErrors]
-  );
+  const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
 
   const isSaveDisabled = isSaving || haveErrors || !designerIsDirty;
 
