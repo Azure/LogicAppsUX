@@ -66,7 +66,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
@@ -274,7 +274,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             onClick={nodeClick}
             selected={selected}
             contextMenuOptions={contextMenuOptions}
-            runData={{ status: statusRun, duration: durationRun }}
+            runData={runData}
           />
           {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
             <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />

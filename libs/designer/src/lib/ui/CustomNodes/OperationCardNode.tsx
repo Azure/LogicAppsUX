@@ -69,7 +69,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
@@ -279,7 +279,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isDragging={isDragging}
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
-          runData={{ status: statusRun, duration: durationRun }}
+          runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}
           selected={selected}
