@@ -228,6 +228,11 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
     [settings]
   );
 
+  const addNewParamText = intl.formatMessage({
+    defaultMessage: 'Add new parameters',
+    description: 'Text for add new parameter button',
+  });
+
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
@@ -319,52 +324,24 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       })}
 
       {conditionallyInvisibleSettings.length > 0 && !readOnly ? (
-        <SearchableSettingsDropdown
-          conditionallyInvisibleSettings={conditionallyInvisibleSettings}
-          groupId={id}
-          nodeId={nodeId}
-        />
+        <div style={{ paddingTop: '5px' }}>
+          <SearchableDropdown
+            dropdownProps={{
+              multiSelect: true,
+              options: conditionallyInvisibleSettings.map(
+                (setting): IDropdownOption => ({
+                  key: (setting.settingProp as any).id,
+                  text: (setting.settingProp as any).label ?? '',
+                })
+              ),
+              placeholder: addNewParamText,
+            }}
+            onItemSelectionChanged={(parameterId, value) => {
+              dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value }));
+            }}
+          />
+        </div>
       ) : null}
-    </div>
-  );
-};
-
-interface SearchableSettingsDropdownProps {
-  conditionallyInvisibleSettings: Settings[];
-  groupId: string | undefined;
-  nodeId: string;
-}
-
-const SearchableSettingsDropdown: FC<SearchableSettingsDropdownProps> = ({
-  conditionallyInvisibleSettings,
-  groupId,
-  nodeId,
-}): JSX.Element => {
-  const intl = useIntl();
-  const dispatch = useDispatch();
-
-  const addNewParamText = intl.formatMessage({
-    defaultMessage: 'Add new parameters',
-    description: 'Text for add new parameter button',
-  });
-
-  const options = conditionallyInvisibleSettings.map((setting): IDropdownOption => ({
-    key: (setting.settingProp as any).id,
-    text: (setting.settingProp as any).label ?? '',
-  }));
-
-  return (
-    <div style={{ paddingTop: '5px' }}>
-      <SearchableDropdown
-        dropdownProps={{
-          multiSelect: true,
-          options,
-          placeholder: addNewParamText,
-        }}
-        onItemSelectionChanged={(parameterId, value) => {
-          dispatch(updateParameterConditionalVisibility({ nodeId, groupId: groupId ?? '', parameterId, value }));
-        }}
-      />
     </div>
   );
 };
