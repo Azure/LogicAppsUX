@@ -4,11 +4,10 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { type ValidationError, ValidationWarningKeys } from '../../core/state/setting/settingSlice';
-import { SearchableSettingsDropdown } from './settingdropdown';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
-import type { IButtonStyles } from '@fluentui/react';
+import type { IButtonStyles, IDropdownOption } from '@fluentui/react';
 import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
@@ -25,6 +24,7 @@ import {
   SettingDictionary,
   SettingTokenField,
   SettingDropdown,
+  SearchableDropdown,
 } from '@microsoft/designer-ui';
 import type {
   MultiSelectSettingProps,
@@ -325,6 +325,46 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
           nodeId={nodeId}
         />
       ) : null}
+    </div>
+  );
+};
+
+interface SearchableSettingsDropdownProps {
+  conditionallyInvisibleSettings: Settings[];
+  groupId: string | undefined;
+  nodeId: string;
+}
+
+const SearchableSettingsDropdown: FC<SearchableSettingsDropdownProps> = ({
+  conditionallyInvisibleSettings,
+  groupId,
+  nodeId,
+}): JSX.Element => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
+
+  const addNewParamText = intl.formatMessage({
+    defaultMessage: 'Add new parameters',
+    description: 'Text for add new parameter button',
+  });
+
+  const options = conditionallyInvisibleSettings.map((setting): IDropdownOption => ({
+    key: (setting.settingProp as any).id,
+    text: (setting.settingProp as any).label ?? '',
+  }));
+
+  return (
+    <div style={{ paddingTop: '5px' }}>
+      <SearchableDropdown
+        dropdownProps={{
+          multiSelect: true,
+          options,
+          placeholder: addNewParamText,
+        }}
+        onItemSelectionChanged={(parameterId, value) => {
+          dispatch(updateParameterConditionalVisibility({ nodeId, groupId: groupId ?? '', parameterId, value }));
+        }}
+      />
     </div>
   );
 };
