@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import { useSelectedNodeId } from '../../../core';
+import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { RetryPanel } from '@microsoft/designer-ui';
