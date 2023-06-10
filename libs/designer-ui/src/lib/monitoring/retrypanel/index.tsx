@@ -74,7 +74,7 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
           maxLength={2}
           min={1}
           pagerTitleText={Resources.RETRY_PAGER_TITLE}
-          readonlyPagerInput={false}
+          readonlyPagerInput={true}
           onChange={handlePagerChange}
         />
       </div>
