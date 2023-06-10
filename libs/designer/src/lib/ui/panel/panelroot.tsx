@@ -36,6 +36,7 @@ import { getCreateConnectionTab } from './panelTabs/createConnectionTab';
 import { loadingTab } from './panelTabs/loadingTab';
 import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
+import { monitorRetryTab } from './panelTabs/retryTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { getSelectConnectionTab } from './panelTabs/selectConnectionTab';
 import { settingsTab } from './panelTabs/settingsTab';
@@ -117,7 +118,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       });
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];
+    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab, monitorRetryTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }

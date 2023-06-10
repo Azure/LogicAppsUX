@@ -8,5 +8,5 @@ export const settingsTab: PanelTab = {
   description: 'Request Settings',
   visible: true,
   content: <SettingsPanel />,
-  order: 0,
+  order: 2,
 };

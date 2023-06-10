@@ -42,6 +42,6 @@ export const aboutTab: PanelTab = {
   description: 'About Tab',
   visible: true,
   content: <AboutTab />,
-  order: 0,
+  order: 10,
   icon: 'Info',
 };

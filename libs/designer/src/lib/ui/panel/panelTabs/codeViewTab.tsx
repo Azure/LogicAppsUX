@@ -34,6 +34,6 @@ export const codeViewTab: PanelTab = {
   description: 'Code View Tab',
   visible: true,
   content: <CodeViewTab />,
-  order: 1,
+  order: 3,
   icon: 'Info',
 };

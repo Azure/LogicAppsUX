@@ -54,6 +54,6 @@ export const testingTab: PanelTab = {
   description: 'Static Testing Tab',
   visible: true,
   content: <TestingPanel />,
-  order: 0,
+  order: 5,
   icon: 'Info',
 };
