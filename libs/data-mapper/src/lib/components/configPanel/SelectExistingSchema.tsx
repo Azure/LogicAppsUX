@@ -72,7 +72,7 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   const updateOptions: ComboboxProps['onChange'] = (event) => {
     const value = event.target.value.trim();
     if (value && value.length > 0) {
-      const matches = dataMapDropdownOptions.filter((o) => o.toLowerCase().indexOf(value?.toLowerCase()) === 0);
+      const matches = dataMapDropdownOptions.filter((o) => o.toLowerCase().indexOf(value?.toLowerCase()) !== -1);
       setMatchingOptions(matches);
     }
     if (value.length === 0) {
@@ -84,8 +84,8 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   const sortedOptions: string[] = matchingOptions;
   const formattedOptions =
     sortedOptions.length !== 0
-      ? sortedOptions.map((option) => optionWithPath(option))
-      : dataMapDropdownOptions.map((option) => optionWithPath(option));
+      ? sortedOptions.map((option) => OptionWithPath(option))
+      : dataMapDropdownOptions.map((option) => OptionWithPath(option));
 
   return (
     <>
@@ -107,7 +107,7 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   );
 };
 
-const optionWithPath: React.FC<string> = (option: string) => {
+const OptionWithPath: React.FC<string> = (option: string) => {
   const [fileName, filePath] = getFileNameAndPath(option);
 
   // styling
@@ -115,8 +115,6 @@ const optionWithPath: React.FC<string> = (option: string) => {
     childrenGap: 5,
   };
 
-  // danielle fix
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const styles = useStyles();
 
   return (
