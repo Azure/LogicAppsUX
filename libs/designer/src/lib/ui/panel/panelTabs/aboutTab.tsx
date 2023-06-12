@@ -42,6 +42,6 @@ export const aboutTab: PanelTabFn = (intl) => ({
   description: intl.formatMessage({ defaultMessage: 'About Tab', description: 'An accessability label that describes the about tab' }),
   visible: true,
   content: <AboutTab />,
-  order: 0,
+  order: 10,
   icon: 'Info',
 });

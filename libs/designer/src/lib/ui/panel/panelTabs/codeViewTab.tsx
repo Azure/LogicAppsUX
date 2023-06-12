@@ -37,6 +37,6 @@ export const codeViewTab: PanelTabFn = (intl) => ({
   }),
   visible: true,
   content: <CodeViewTab />,
-  order: 1,
+  order: 3,
   icon: 'Info',
 });
