@@ -54,6 +54,6 @@ export const testingTab: PanelTabFn = (intl) => ({
   description: intl.formatMessage({ defaultMessage: 'Testing Tab', description: 'An accessability label that describes the testing tab' }),
   visible: true,
   content: <TestingPanel />,
-  order: 0,
+  order: 5,
   icon: 'Info',
 });

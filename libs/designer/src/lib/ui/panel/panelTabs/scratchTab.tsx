@@ -396,6 +396,6 @@ export const scratchTab: PanelTab = {
   description: 'To be removed',
   visible: true,
   content: <ScratchTab />,
-  order: 0,
+  order: 10000000,
   icon: 'Rerun',
 };
