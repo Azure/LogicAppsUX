@@ -12,4 +12,4 @@ export const settingsTab: PanelTabFn = (intl) => ({
   visible: true,
   content: <SettingsPanel />,
   order: 2,
-};
+});
