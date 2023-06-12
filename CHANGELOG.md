@@ -1,5 +1,19 @@
 # Logic Apps Designer
 
+## [2.27.0](https://github.com/Azure/LogicAppsUX/compare/v2.26.0...v2.27.0) (2023-06-12)
+
+### Features
+
+- **Data Mapper:** Start the map metadata generation ([#2709](https://github.com/Azure/LogicAppsUX/issues/2709)) ([0b29d70](https://github.com/Azure/LogicAppsUX/commit/0b29d702d004c96802253180383944a85c255891))
+- **vscode:** Update logic to disable save button in designer ([#2713](https://github.com/Azure/LogicAppsUX/issues/2713)) ([2a93672](https://github.com/Azure/LogicAppsUX/commit/2a9367217a1cbd5a271e5b93cd43b4a1bd786e25))
+
+### Bug Fixes
+
+- **Designer:** Monitoring - StatusPill component `duration` in tooltip ([#2719](https://github.com/Azure/LogicAppsUX/issues/2719)) ([1d9ae8d](https://github.com/Azure/LogicAppsUX/commit/1d9ae8de797dd7993925bc72e8b565b665c63306))
+- **vscode:** Validation and save of local workflow ([#2649](https://github.com/Azure/LogicAppsUX/issues/2649)) ([d193d41](https://github.com/Azure/LogicAppsUX/commit/d193d416b0a750f9f17942dad90f0bcb1f1558f8))
+
+## [2.26.0](https://github.com/Azure/LogicAppsUX/compare/v2.25.0...v2.26.0) (2023-06-08)
+
 ## [2.26.0](https://github.com/Azure/LogicAppsUX/compare/v2.25.0...v2.26.0) (2023-06-08)
 
 ### Features
