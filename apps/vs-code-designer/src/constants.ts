@@ -91,6 +91,7 @@ export enum extensionCommand {
   switchToDotnetProject = 'azureLogicAppsStandard.switchToDotnetProject',
   openInPortal = 'azureLogicAppsStandard.openInPortal',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
+  azureFunctionsInstallOrUpdateFuncCoreTools = 'azureFunctions.installOrUpdateFuncCoreTools',
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
@@ -127,6 +128,8 @@ export enum extensionCommand {
   reportIssue = 'azureLogicAppsStandard.reportIssue',
   installDotNetSDK = 'azureLogicAppsStandard.installDotNetSDK',
   uninstallDotNetSDK = 'azureLogicAppsStandard.uninstallDotNetSDK',
+  installOrUpdateFuncCoreToolsLA = 'azureLogicAppsStandard.installOrUpdateFuncCoreTools',
+  uninstallFuncCoreToolsLA = 'azureLogicAppsStandard.uninstallFuncCoreTools',
 }
 
 // Context

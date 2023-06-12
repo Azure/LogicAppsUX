@@ -54,7 +54,7 @@ export async function tryGetInstalledFuncCoreToolsBrewPackageName(version: FuncV
  * @param {string} packageName - Package name.
  * @returns {Promise<boolean>} Returns true if the package is installed, otherwise returns false.
  */
-async function isBrewPackageInstalled(packageName: string): Promise<boolean> {
+export async function isBrewPackageInstalled(packageName: string): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, 'brew', 'ls', packageName);
     return true;

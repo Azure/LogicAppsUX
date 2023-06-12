@@ -28,6 +28,8 @@ import { viewCommitInGitHub } from './deployments/viewCommitInGitHub';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
 import { installDotNetSDK } from './dotNetSDK/installDotNetSDK';
 import { uninstallDotNetSDK } from './dotNetSDK/uninstallDotNetSDK';
+import { installOrUpdateFuncCoreTools } from './funcCoreTools/installOrUpdateFuncCoreTools';
+import { uninstallFuncCoreTools } from './funcCoreTools/uninstallFuncCoreTools';
 import { initProjectForVSCode } from './initProjectForVSCode/initProjectForVSCode';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
@@ -127,4 +129,6 @@ export function registerCommands(): void {
 
   registerCommandWithTreeNodeUnwrapping(extensionCommand.installDotNetSDK, installDotNetSDK);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.uninstallDotNetSDK, uninstallDotNetSDK);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.installOrUpdateFuncCoreToolsLA, installOrUpdateFuncCoreTools);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.uninstallFuncCoreToolsLA, uninstallFuncCoreTools);
 }

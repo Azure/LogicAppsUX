@@ -15,7 +15,7 @@ export async function installDotNetSDK(context: IActionContext): Promise<void> {
 
   switch (process.platform) {
     case Platform.windows:
-      await executeCommand(ext.outputChannel, undefined, 'winget', 'install', `${dotNetPackageName}.${dotNetSDKMajorVersion}`);
+      await executeCommand(ext.outputChannel, undefined, 'winget', 'install', '--silent', `${dotNetPackageName}.${dotNetSDKMajorVersion}`);
       break;
 
     case Platform.linux: {

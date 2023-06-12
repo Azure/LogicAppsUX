@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand, PackageManager, wingetFuncPackageName } from '../../../constants';
+import { extensionCommand, wingetFuncPackageName, PackageManager } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
@@ -10,15 +10,9 @@ import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
 
-export async function uninstallFuncCoreTools(context: IActionContext, packageManagers?: PackageManager[]): Promise<void> {
-  context.telemetry.properties.uninstallFuncCoreTools = 'true';
-
-  if (context.telemetry.properties.multiFunc) {
-    // azureFunctionsUninstallFuncCoreTools only supports brew/npm
-    // Remove winget from PackageManagers
-    // This does not give users the choice
-    packageManagers.splice(packageManagers.indexOf(PackageManager.winget), 1);
-  }
+export async function installOrUpdateFuncCoreTools(context: IActionContext, packageManagers: PackageManager[]): Promise<void> {
+  ext.outputChannel.show();
+  context.telemetry.properties.installOrUpdateFuncCoreTools = 'true';
 
   let packageManager = packageManagers ? packageManagers[0] : null;
   if (packageManager == undefined || packageManager == null) {
@@ -29,13 +23,13 @@ export async function uninstallFuncCoreTools(context: IActionContext, packageMan
 
   switch (packageManager) {
     case PackageManager.winget:
-      await executeCommand(ext.outputChannel, undefined, 'winget', 'uninstall', '--silent', `${wingetFuncPackageName}`);
+      await executeCommand(ext.outputChannel, undefined, 'winget', 'install', '--silent', `${wingetFuncPackageName}`);
       break;
     case PackageManager.brew:
     case PackageManager.npm:
-      await commands.executeCommand(extensionCommand.azureFunctionsUninstallFuncCoreTools, packageManagers);
+      await commands.executeCommand(extensionCommand.azureFunctionsInstallOrUpdateFuncCoreTools);
       break;
     default:
-      throw new RangeError(localize('invalidPackageManager', 'Invalid package manager "{0}".', packageManagers[0]));
+      throw new RangeError(localize('invalidPackageManager', 'Invalid package manager "{0}".', packageManager));
   }
 }

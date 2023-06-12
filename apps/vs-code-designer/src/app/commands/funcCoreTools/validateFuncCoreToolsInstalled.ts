@@ -3,17 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { PackageManager } from '../../../constants';
-import { validateFuncCoreToolsSetting, funcVersionSetting } from '../../../constants';
+import { validateFuncCoreToolsSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
-import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { installFuncCoreTools } from './installFuncCoreTools';
+import { installOrUpdateFuncCoreTools } from './installOrUpdateFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion } from '@microsoft/vscode-extension';
 import type { MessageItem } from 'vscode';
 
 /**
@@ -39,6 +37,7 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
     } else {
       const items: MessageItem[] = [];
       const packageManagers: PackageManager[] = await getFuncPackageManagers(false /* isFuncInstalled */);
+
       if (packageManagers.length > 0) {
         items.push(install);
       } else {
@@ -50,8 +49,7 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
       innerContext.telemetry.properties.dialogResult = input.title;
 
       if (input === install) {
-        const version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, fsPath));
-        await installFuncCoreTools(innerContext, packageManagers, version);
+        await installOrUpdateFuncCoreTools(innerContext, packageManagers);
         installed = true;
       } else if (input === DialogResponses.learnMore) {
         await openUrl('https://aka.ms/Dqur4e');

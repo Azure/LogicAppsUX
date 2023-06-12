@@ -12,8 +12,8 @@ import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
 import { getFuncCoreToolsBrewPackageName } from '../../utils/packageManagers/getBrewPackageName';
 import { sendRequestWithExtTimeout } from '../../utils/requestUtils';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { installOrUpdateFuncCoreTools } from './installOrUpdateFuncCoreTools';
 import { uninstallFuncCoreTools } from './uninstallFuncCoreTools';
-import { updateFuncCoreTools } from './updateFuncCoreTools';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -46,11 +46,11 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
 
         if (showMultiCoreToolsWarning) {
           const message: string = localize('multipleInstalls', 'Detected multiple installs of the func cli.');
-          const selectUninstall: MessageItem = { title: localize('selectUninstall', 'Select version to uninstall') };
+          const selectUninstall: MessageItem = { title: localize('selectUninstall', 'Select cli to uninstall') };
           const result: MessageItem = await context.ui.showWarningMessage(message, selectUninstall, DialogResponses.dontWarnAgain);
 
           if (result === selectUninstall) {
-            await executeOnFunctions(uninstallFuncCoreTools, context, packageManagers);
+            await executeOnFunctions(uninstallFuncCoreTools, context, context, packageManagers);
           } else if (result === DialogResponses.dontWarnAgain) {
             await updateGlobalSetting(showMultiCoreToolsWarningKey, false);
           }
@@ -97,7 +97,7 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
             if (result === DialogResponses.learnMore) {
               await openUrl('https://aka.ms/azFuncOutdated');
             } else if (result === update) {
-              await updateFuncCoreTools(context, packageManager, versionFromSetting);
+              await installOrUpdateFuncCoreTools(context, packageManagers);
             } else if (result === DialogResponses.dontWarnAgain) {
               await updateGlobalSetting(showCoreToolsWarningKey, false);
             }

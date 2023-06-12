@@ -2,39 +2,73 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcPackageName, PackageManager, Platform } from '../../../constants';
-import { tryGetInstalledBrewPackageName } from '../packageManagers/getBrewPackageName';
+import { funcPackageName, PackageManager, Platform, wingetFuncPackageName } from '../../../constants';
+import {
+  getFuncCoreToolsBrewPackageName,
+  isBrewPackageInstalled,
+  tryGetInstalledBrewPackageName,
+} from '../packageManagers/getBrewPackageName';
 import { executeCommand } from './cpUtils';
 import { FuncVersion } from '@microsoft/vscode-extension';
 
 /**
  * Gets package managers installed in the system.
+ * Determines which package manager installed functions core tools.
  * @param {boolean} isFuncInstalled - Is functions core tools installed.
  * @returns {Promise<PackageManager[]>} Returns array of package managers.
  */
 export async function getFuncPackageManagers(isFuncInstalled: boolean): Promise<PackageManager[]> {
   const result: PackageManager[] = [];
-  switch (process.platform) {
-    case 'linux':
-      // https://github.com/Microsoft/vscode-azurefunctions/issues/311
-      break;
-    case Platform.windows:
-      result.push(PackageManager.winget);
-      break;
-    case 'darwin':
-      if (await hasBrew(isFuncInstalled)) {
+  if (isFuncInstalled) {
+    if (process.platform == Platform.windows) {
+      const response = await executeCommand(undefined, undefined, 'winget', 'list', wingetFuncPackageName);
+      // winget response includes headers if package is installed
+      if (response.length > 2) {
+        result.push(PackageManager.winget);
+      }
+    }
+
+    if (process.platform == Platform.mac) {
+      if (
+        isBrewPackageInstalled(getFuncCoreToolsBrewPackageName(FuncVersion.v4)) ||
+        isBrewPackageInstalled(getFuncCoreToolsBrewPackageName(FuncVersion.v3)) ||
+        isBrewPackageInstalled(getFuncCoreToolsBrewPackageName(FuncVersion.v2)) ||
+        isBrewPackageInstalled(getFuncCoreToolsBrewPackageName(FuncVersion.v1))
+      ) {
         result.push(PackageManager.brew);
       }
-    // fall through to check npm on mac
-    default:
-      try {
-        isFuncInstalled
-          ? await executeCommand(undefined, undefined, 'npm', 'ls', '-g', funcPackageName)
-          : await executeCommand(undefined, undefined, 'npm', '--version');
-        result.push(PackageManager.npm);
-      } catch (error) {
-        // an error indicates no npm
+    }
+    // https://github.com/Microsoft/vscode-azurefunctions/issues/311
+    // fall through to check npm on windows, mac and linux
+    try {
+      await executeCommand(undefined, undefined, 'npm', 'ls', '-g', funcPackageName);
+      result.push(PackageManager.npm);
+    } catch (error) {
+      // an error indicates no npm
+    }
+  } else {
+    if (process.platform == Platform.windows) {
+      result.push(PackageManager.winget);
+    }
+
+    if (process.platform == Platform.mac) {
+      if (hasBrew(isFuncInstalled)) {
+        result.push(PackageManager.brew);
       }
+    }
+
+    if (process.platform == Platform.linux) {
+      // https://github.com/Microsoft/vscode-azurefunctions/issues/311
+      result.push(PackageManager.wget);
+    }
+
+    // fall through to check npm on windows, mac and linux
+    try {
+      await executeCommand(undefined, undefined, 'npm', '-v');
+      result.push(PackageManager.npm);
+    } catch (error) {
+      // an error indicates no npm
+    }
   }
   return result;
 }

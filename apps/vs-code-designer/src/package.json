@@ -305,6 +305,16 @@
         "command": "azureLogicAppsStandard.uninstallDotNetSDK",
         "title": "Uninstall .NET SDK 6",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.installOrUpdateFuncCoreTools",
+        "title": "Install or Update Azure Functions Core Tools",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.uninstallFuncCoreTools",
+        "title": "Uninstall Azure Functions Core Tools",
+        "category": "Azure Logic Apps"
       }
     ],
     "menus": {
