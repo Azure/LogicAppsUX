@@ -50,14 +50,14 @@ body:
         - Generally Available
     validations:
       required: true
-      
+
   - type: dropdown
     id: tsgchecked
     attributes:
       label: Did you refer to the TSG before filing this issue? https://aka.ms/lauxtsg
       options:
-        - "Yes"
-        - "No"
+        - 'Yes'
+        - 'No'
     validations:
       required: true
 
