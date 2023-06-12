@@ -110,9 +110,8 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
 export const LocalDesigner = () => {
-  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance, showChatBot } = useSelector(
-    (state: RootState) => state.workflowLoader
-  );
+  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance, showChatBot, language } =
+    useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: {
       connectionService,
@@ -133,7 +132,7 @@ export const LocalDesigner = () => {
   };
 
   return (
-    <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
+    <DesignerProvider locale={language} options={{ ...designerProviderProps }}>
       {workflowDefinition ? (
         <BJSWorkflowProvider
           workflow={{
