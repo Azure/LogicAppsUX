@@ -30,6 +30,14 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
   return extendedSchema;
 };
 
+export const getFileNameAndPath = (fullPath: string): [string, string] => {
+  const normalizedPath = fullPath.replaceAll(`\\`, '/');
+  const lastIndexOfSlash = normalizedPath.lastIndexOf('/');
+  const fileName = lastIndexOfSlash !== -1 ? normalizedPath.slice(lastIndexOfSlash + 1, normalizedPath.length + 1) : normalizedPath;
+  const filePath = normalizedPath.slice(0, lastIndexOfSlash + 1);
+  return [fileName, filePath];
+};
+
 const convertSchemaNodeToSchemaNodeExtended = (
   schemaNode: SchemaNode,
   parentKey: string | undefined,

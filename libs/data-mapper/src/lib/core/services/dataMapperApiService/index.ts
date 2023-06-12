@@ -13,7 +13,7 @@ export const defaultDataMapperApiServiceOptions = {
 
 export interface IDataMapperApiService {
   getFunctionsManifest(): Promise<FunctionManifest>;
-  getSchemaFile(schemaName: string): Promise<any>;
+  getSchemaFile(schemaName: string, schemaFilePath: string): Promise<any>;
   generateDataMapXslt(dataMapDefinition: string): Promise<string>;
   testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<TestMapResponse>;
 }
