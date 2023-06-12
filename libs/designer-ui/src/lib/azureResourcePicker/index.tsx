@@ -158,8 +158,6 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
     staleTime: 1000 * 60 * 60 * 24,
   });
 
-  console.log('### subResourcesQuery', subResourcesQuery.data);
-
   const selected = resource.selected;
   const expanded = useMemo(() => selected && hasSubResources, [hasSubResources, selected]);
   const selectedSubResourceId = useMemo(() => resource.selectedSubresource, [resource.selectedSubresource]);

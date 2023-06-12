@@ -15,6 +15,7 @@ import { inlineCodeManifest } from './manifests/inlinecode';
 import { integrationAccountArtifactLookupManifest } from './manifests/integrationaccountartifactlookup';
 import { invokeWorkflowManifest } from './manifests/invokeWorkflow';
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
+import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 
@@ -95,6 +96,7 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [appservice, appServiceActionManifest],
   [appservicetrigger, appServiceTriggerManifest],
   ['azurefunction', selectFunctionManifest],
+  ['azureswaggerfunction', selectSwaggerFunctionManifest],
   [invokeworkflow, invokeWorkflowManifest],
   [sendtobatch, selectBatchWorkflowManifest],
   // [sendtobatchtrigger, selectBatchWorkflowTriggerManifest]

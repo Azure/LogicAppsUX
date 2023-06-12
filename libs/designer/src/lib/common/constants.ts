@@ -900,6 +900,7 @@ export default {
     SELECT_APPSERVICE_ACTION: 'appservice',
     SELECT_APPSERVICE_TRIGGER: 'appservicetrigger',
     SELECT_FUNCTION_ACTION: 'azurefunction',
+    SELECT_SWAGGER_FUNCTION_ACTION: 'azureswaggerfunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',

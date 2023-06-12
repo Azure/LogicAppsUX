@@ -15,21 +15,38 @@ export const functionGroup = {
   },
 };
 
+const api = {
+  id: 'connectionProviders/function',
+  name: 'connectionProviders/function',
+  displayName: 'Azure Functions',
+  iconUri,
+  brandColor,
+  description: 'Azure Functions',
+};
+
 export const functionOperation = {
   id: 'azureFunction',
   name: 'azureFunction',
   type: 'azureFunction',
   properties: {
-    api: {
-      id: 'connectionProviders/function',
-      name: 'connectionProviders/function',
-      displayName: 'Azure Functions',
-      iconUri,
-      brandColor,
-      description: 'Azure Functions',
-    },
+    api,
     summary: 'Choose an Azure function',
     description: 'Show Azure Functions in my subscription',
+    visibility: 'Important',
+    operationType: 'function',
+    brandColor,
+    iconUri,
+  },
+};
+
+export const swaggerFunctionOperation = {
+  id: 'azureSwaggerFunction',
+  name: 'azureSwaggerFunction',
+  type: 'azureFunction',
+  properties: {
+    api,
+    summary: 'Choose an Azure swagger function',
+    description: 'Show Azure Swagger Functions in my subscription',
     visibility: 'Important',
     operationType: 'function',
     brandColor,

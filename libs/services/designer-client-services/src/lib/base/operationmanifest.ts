@@ -128,6 +128,7 @@ const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 
 const azurefunction = 'azurefunction';
+const azureswaggerfunction = 'azureswaggerfunction';
 const appservice = 'appservice';
 const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
@@ -220,6 +221,7 @@ export abstract class BaseOperationManifestService implements IOperationManifest
 }
 
 export function isBuiltInOperation(definition: any): boolean {
+  console.log('### isBuiltInOperation', definition?.type?.toLowerCase());
   switch (definition?.type?.toLowerCase()) {
     case apimanagement:
     case as2Decode:
@@ -413,10 +415,11 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         operationId: isTrigger ? appservicetrigger : appservice,
       };
 
-    case azurefunction:
+    case function_:
+      console.log('### azurefunction', definition);
       return {
         connectorId: azureFunctionConnectorId,
-        operationId: azurefunction,
+        operationId: definition?.inputs?.uri ? azureswaggerfunction : azurefunction,
       };
 
     case workflow:
@@ -487,10 +490,6 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [foreach]: {
     connectorId: controlConnectorId,
     operationId: foreach,
-  },
-  [function_]: {
-    connectorId: azureFunctionConnectorId,
-    operationId: 'azureFunction',
   },
   [initializevariable]: {
     connectorId: variableConnectorId,

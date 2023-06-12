@@ -60,6 +60,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       AzureResourceOperationsData.appServiceActionOperation,
       AzureResourceOperationsData.appServiceTriggerOperation,
       AzureResourceOperationsData.functionOperation,
+      AzureResourceOperationsData.swaggerFunctionOperation,
       AzureResourceOperationsData.invokeWorkflowOperation,
       AzureResourceOperationsData.selectBatchWorkflowOperation,
       // AzureResourceOperationsData.selectBatchWorkflowTriggerOperation,

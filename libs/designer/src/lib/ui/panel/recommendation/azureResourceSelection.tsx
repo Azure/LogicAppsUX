@@ -39,6 +39,10 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     defaultMessage: 'Select a Function App resource',
     description: 'Select a Function App resource',
   });
+  const swaggerFunctionAppTitleText = intl.formatMessage({
+    defaultMessage: 'Select a Swagger Function App resource',
+    description: 'Select a Swagger Function App resource',
+  });
   const manualWorkflowTitleText = intl.formatMessage({
     defaultMessage: "Select workflow with 'manual' trigger",
     description: "Select workflow with 'manual' trigger",
@@ -141,20 +145,27 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setResourceTypes(['functionApp', 'function']);
         setGetResourcesCallbacks(() => [
           () => FunctionService().fetchFunctionApps(),
-          (functionApp?: any) => {
-            const functions = FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
-            const swaggerFunctions = FunctionService().fetchFunctionAppsSwaggerFunctions(functionApp.id ?? '');
-            return Promise.all([functions, swaggerFunctions]).then(([functions, swaggerFunctions]) => {
-              console.log('### Functions', { functions, swaggerFunctions });
-              return functions.concat(swaggerFunctions);
-            });
-          },
+          (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
           addResourceOperation({
             name: getObjectName(selectedResources[1]),
             presetParameterValues: {
               'function.id': selectedResources[1].id,
+            },
+          });
+        });
+        break;
+
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_SWAGGER_FUNCTION_ACTION:
+        setTitleText(swaggerFunctionAppTitleText);
+        setResourceTypes(['functionApp']);
+        setGetResourcesCallbacks(() => [() => FunctionService().fetchFunctionApps()]);
+        setSubmitCallback(() => async () => {
+          addResourceOperation({
+            name: getObjectName(selectedResources[0]),
+            presetParameterValues: {
+              'functionApp.id': selectedResources[0].id,
             },
           });
         });

@@ -1,7 +1,8 @@
+import type { ListDynamicValue } from '../connector';
 import type { IFunctionService } from '../function';
 import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
-import { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, unmap } from '@microsoft/utils-logic-apps';
 
 export interface BaseFunctionServiceOptions {
@@ -34,6 +35,7 @@ export class BaseFunctionService implements IFunctionService {
     });
 
     const apps = functionAppsResponse.value.filter((app: any) => isFunctionContainer(app.kind));
+    console.log('### apps', apps);
     return apps;
   }
 
@@ -55,7 +57,7 @@ export class BaseFunctionService implements IFunctionService {
     return keysResponse?.default ?? 'NotFound';
   }
 
-  private async fetchApiDefinitionUrl(functionAppId: string) {
+  public async fetchApiDefinitionUrl(functionAppId: string) {
     const response = await this.options.httpClient.get<any>({
       uri: `https://management.azure.com/${functionAppId}/config/web`,
       queryParameters: { 'api-version': this.options.apiVersion },
@@ -83,7 +85,6 @@ export class BaseFunctionService implements IFunctionService {
   async fetchFunctionAppsSwaggerFunctions(functionAppId: string) {
     try {
       const swagger = await this.fetchFunctionAppSwagger(functionAppId);
-
       const functions = swagger.getOperations();
 
       return unmap(functions).map((swaggerFunction: any) => ({
@@ -96,5 +97,95 @@ export class BaseFunctionService implements IFunctionService {
       console.error(error);
       return [];
     }
+  }
+
+  public async getOperationSchema(functionAppId: string, operationId: string, isInput: boolean): Promise<any> {
+    const swagger = await this.fetchFunctionAppSwagger(functionAppId);
+    if (!operationId) return Promise.resolve();
+    const operation = swagger.getOperationByOperationId(operationId);
+    if (!operation) throw new Error('Operation not found');
+
+    const paths = swagger.api.paths[operation.path];
+    const rawOperation = paths[operation.method];
+    const schema = { type: 'object', properties: {} as any, required: [] as string[] };
+
+    if (isInput) {
+      const baseUrl = swagger.api.host
+        ? swagger.api.schemes?.length
+          ? `${swagger.api.schemes.at(-1)}://${swagger.api.host}`
+          : `http://${swagger.api.host}`
+        : 'NotFound';
+      schema.properties = {
+        method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
+        uri: {
+          type: 'string',
+          default: `${baseUrl}${operation.path}`,
+          'x-ms-visibility': 'hideInUI',
+          'x-ms-serialization': { property: { type: 'pathtemplate', parameterReference: 'operationDetails.pathParameters' } },
+        },
+      };
+      schema.required = ['method', 'uri'];
+      for (const parameter of rawOperation.parameters ?? []) {
+        this._addParameterInSchema(schema, parameter);
+      }
+    } else {
+      const { responses } = rawOperation;
+      let response: any = {};
+
+      if (responses[ResponseCodes.$200]) response = responses[ResponseCodes.$200];
+      else if (responses[ResponseCodes.$201]) response = responses[ResponseCodes.$201];
+      else if (responses[ResponseCodes.$default]) response = responses[ResponseCodes.$default];
+
+      if (response.schema) schema.properties['body'] = response.schema;
+      if (response.headers) schema.properties['headers'] = response.headers;
+    }
+
+    return schema;
+  }
+
+  private _addParameterInSchema(finalSchema: any, parameter: any) {
+    const schemaProperties = finalSchema.properties;
+    const { in: $in, name, required, schema } = parameter;
+    switch ($in) {
+      case 'header':
+      case 'query': {
+        const property = $in === 'header' ? 'headers' : 'queries';
+        if (!schemaProperties[property]) schemaProperties[property] = { type: 'object', properties: {}, required: [] };
+        schemaProperties[property].properties[name] = parameter;
+        if (required) schemaProperties[property].required.push(name);
+        break;
+      }
+      case 'path': {
+        const pathProperty = 'pathParameters';
+        if (!finalSchema.properties[pathProperty]) {
+          // eslint-disable-next-line no-param-reassign
+          finalSchema.properties[pathProperty] = { type: 'object', properties: {}, required: [] };
+          finalSchema.required.push(pathProperty);
+        }
+
+        schemaProperties[pathProperty].properties[name] = {
+          ...parameter,
+          'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: `operationDetails.uri` },
+        };
+        if (required) schemaProperties[pathProperty].required.push(name);
+        break;
+      }
+      default: {
+        // eslint-disable-next-line no-param-reassign
+        finalSchema.properties[$in] = schema;
+        break;
+      }
+    }
+  }
+
+  async getOperations(functionAppId: string): Promise<ListDynamicValue[]> {
+    const swagger = await this.fetchFunctionAppSwagger(functionAppId);
+    const operations = swagger.getOperations();
+
+    return unmap(operations).map((operation: any) => ({
+      value: operation.operationId,
+      displayName: operation.summary ?? operation.operationId,
+      description: operation.description,
+    }));
   }
 }
