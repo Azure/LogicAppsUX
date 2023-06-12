@@ -46,7 +46,7 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
 
         if (showMultiCoreToolsWarning) {
           const message: string = localize('multipleInstalls', 'Detected multiple installs of the func cli.');
-          const selectUninstall: MessageItem = { title: localize('selectUninstall', 'Select cli to uninstall') };
+          const selectUninstall: MessageItem = { title: localize('selectUninstall', 'Select version to uninstall') };
           const result: MessageItem = await context.ui.showWarningMessage(message, selectUninstall, DialogResponses.dontWarnAgain);
 
           if (result === selectUninstall) {
