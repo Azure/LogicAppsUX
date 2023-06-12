@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { PanelTab } from '@microsoft/designer-ui';
+import type { PanelTabFn } from '@microsoft/designer-ui';
 import { RetryPanel } from '@microsoft/designer-ui';
 
 export const RetryPanelTab = () => {
@@ -27,12 +27,18 @@ export const RetryPanelTab = () => {
   return <RetryPanel retryHistories={histories} />;
 };
 
-export const monitorRetryTab: PanelTab = {
-  title: 'Retry',
+export const monitorRetryTab: PanelTabFn = (intl) => ({
+  title: intl.formatMessage({
+    defaultMessage: 'Retry History',
+    description: 'The tab label for the retry history tab on the operation panel',
+  }),
   name: constants.PANEL_TAB_NAMES.RETRY_HISTORY,
-  description: 'Retry History',
+  description: intl.formatMessage({
+    defaultMessage: 'Retry History',
+    description: 'An accessability label that describes the retry history tab',
+  }),
   visible: true,
   content: <RetryPanelTab />,
   order: 0,
   icon: 'Rerun',
-};
+});

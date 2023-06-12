@@ -8,7 +8,7 @@ import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import { ErrorSection } from '@microsoft/designer-ui';
-import type { PanelTab } from '@microsoft/designer-ui';
+import type { PanelTabFn } from '@microsoft/designer-ui';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
@@ -63,12 +63,18 @@ export const MonitoringPanel: React.FC = () => {
   );
 };
 
-export const monitoringTab: PanelTab = {
-  title: 'Parameters',
+export const monitoringTab: PanelTabFn = (intl) => ({
+  title: intl.formatMessage({
+    defaultMessage: 'Parameters',
+    description: 'The tab label for the monitoring parameters tab on the operation panel',
+  }),
   name: constants.PANEL_TAB_NAMES.MONITORING,
-  description: 'Monitoring View Tab',
+  description: intl.formatMessage({
+    defaultMessage: 'Monitoring Tab',
+    description: 'An accessability label that describes the monitoring tab',
+  }),
   visible: true,
   content: <MonitoringPanel />,
   order: 0,
   icon: 'Info',
-};
+});

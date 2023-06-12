@@ -117,13 +117,21 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       });
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];
+    const tabs = [
+      monitoringTab(intl),
+      parametersTab(intl),
+      settingsTab(intl),
+      codeViewTab(intl),
+      testingTab(intl),
+      aboutTab(intl),
+      loadingTab(intl),
+    ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
     dispatch(clearPanel());
-  }, [dispatch]);
+  }, [dispatch, intl]);
 
   useEffect(() => {
     const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
