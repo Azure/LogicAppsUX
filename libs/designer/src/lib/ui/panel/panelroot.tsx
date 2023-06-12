@@ -36,6 +36,7 @@ import { getCreateConnectionTab } from './panelTabs/createConnectionTab';
 import { loadingTab } from './panelTabs/loadingTab';
 import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
+import { monitorRetryTab } from './panelTabs/retryTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { getSelectConnectionTab } from './panelTabs/selectConnectionTab';
 import { settingsTab } from './panelTabs/settingsTab';
@@ -125,6 +126,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       testingTab(intl),
       aboutTab(intl),
       loadingTab(intl),
+      monitorRetryTab(intl),
     ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
