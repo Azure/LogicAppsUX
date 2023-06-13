@@ -72,13 +72,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
     const functionAppsCallback = () => FunctionService().fetchFunctionApps();
-    const fetchSubResourcesCallback = (functionApp?: any) => {
-      const functions = FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
-      const swaggerFunctions = FunctionService().fetchFunctionAppsSwaggerFunctions(functionApp.id ?? '');
-      return Promise.all([functions, swaggerFunctions]).then(([functions, swaggerFunctions]) => {
-        return functions.concat(swaggerFunctions);
-      });
-    };
+    const fetchSubResourcesCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
     const functionAppsLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Function Apps...',
       description: 'Text for loading function apps',
@@ -91,9 +85,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
 
     const getColumns = (functionApp: any) => [getObjectName(functionApp), functionApp?.properties?.resourceGroup, functionApp?.location];
 
-    const getSubResourceName = (azureFunction: any) => {
-      return getObjectName(azureFunction).split('/').slice(1).join('/');
-    };
+    const getSubResourceName = (azureFunction: any) => getObjectName(azureFunction).split('/').slice(1).join('/');
 
     return {
       resourceType: 'functionApps',

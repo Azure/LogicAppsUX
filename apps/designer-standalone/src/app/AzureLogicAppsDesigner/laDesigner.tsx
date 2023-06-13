@@ -305,7 +305,6 @@ const getDesignerServices = (
       ['connectionProviders/http', 'httpswaggertrigger'],
     ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
     getConfiguration,
-    swaggerClient: {},
     schemaClient: {
       getWorkflowSwagger: (args: any) => childWorkflowService.getWorkflowTriggerSchema(args.parameters.name),
       getApimOperationSchema: (args: any) => {

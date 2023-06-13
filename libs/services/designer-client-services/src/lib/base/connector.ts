@@ -24,7 +24,7 @@ export interface BaseConnectorServiceOptions {
   httpClient: IHttpClient;
   clientSupportedOperations: OperationInfo[];
   getConfiguration: GetConfigurationFunction;
-  swaggerClient: Record<string, GetSwaggerUrlFunction>;
+  swaggerClient?: Record<string, GetSwaggerUrlFunction>;
   schemaClient: Record<string, GetSchemaFunction>;
   valuesClient: Record<string, GetValuesFunction>;
   apiHubServiceDetails: {
@@ -38,7 +38,7 @@ export interface BaseConnectorServiceOptions {
 
 export abstract class BaseConnectorService implements IConnectorService {
   constructor(protected readonly options: BaseConnectorServiceOptions) {
-    const { apiVersion, baseUrl, httpClient, clientSupportedOperations, swaggerClient, schemaClient, valuesClient } = options;
+    const { apiVersion, baseUrl, httpClient, clientSupportedOperations, schemaClient, valuesClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
     } else if (!baseUrl) {
@@ -47,8 +47,6 @@ export abstract class BaseConnectorService implements IConnectorService {
       throw new ArgumentException('httpClient required');
     } else if (!clientSupportedOperations) {
       throw new ArgumentException('clientSupportedOperations required');
-    } else if (!swaggerClient) {
-      throw new ArgumentException('swaggerClient required');
     } else if (!schemaClient) {
       throw new ArgumentException('schemaClient required');
     } else if (!valuesClient) {
@@ -102,13 +100,13 @@ export abstract class BaseConnectorService implements IConnectorService {
   }
 
   async getDynamicSwaggerUrl(connectorId: string, operationId: string, dynamicOperationId: string, definition: any): Promise<string> {
-    if (this._isClientSupportedOperation(connectorId, operationId)) {
-      if (!this.options.swaggerClient?.[dynamicOperationId]) {
-        throw new UnsupportedException(`Operation ${dynamicOperationId} is not implemented by the swagger url client.`);
-      }
-      return this.options.swaggerClient?.[dynamicOperationId]({ operationId: dynamicOperationId, definition });
+    if (!this._isClientSupportedOperation(connectorId, operationId)) {
+      throw new UnsupportedException(`Operation ${operationId} is not supported by the swagger url client.`);
     }
-    throw new UnsupportedException(`Operation ${operationId} is not supported by the swagger url client.`);
+    if (!this.options.swaggerClient?.[dynamicOperationId]) {
+      throw new UnsupportedException(`Operation ${dynamicOperationId} is not implemented by the swagger url client.`);
+    }
+    return this.options.swaggerClient?.[dynamicOperationId]({ operationId: dynamicOperationId, definition });
   }
 
   async getDynamicSchema(
