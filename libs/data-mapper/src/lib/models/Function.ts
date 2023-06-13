@@ -487,5 +487,30 @@ export const functionMock: FunctionData[] = [
     category: FunctionCategory.Logical,
     description: 'Evaluates the condition and returns corresponding value.',
   },
+  {
+    key: 'sort',
+    maxNumberOfInputs: 2,
+    functionName: 'sort',
+    outputValueType: NormalizedDataType.Complex,
+    inputs: [
+      {
+        name: 'Scope',
+        allowedTypes: [NormalizedDataType.Complex, NormalizedDataType.Object],
+        isOptional: false,
+        allowCustomInput: false,
+        placeHolder: 'The source sequence',
+      },
+      {
+        name: 'Sort property',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: false,
+        placeHolder: 'The property to sort on',
+      },
+    ],
+    displayName: 'Sort',
+    category: FunctionCategory.Collection,
+    description: 'Sort the sequence by a given property',
+  },
   ...pseudoFunctions,
 ];
