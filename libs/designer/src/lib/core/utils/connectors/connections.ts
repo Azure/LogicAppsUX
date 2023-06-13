@@ -76,7 +76,6 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       const functions = FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
       const swaggerFunctions = FunctionService().fetchFunctionAppsSwaggerFunctions(functionApp.id ?? '');
       return Promise.all([functions, swaggerFunctions]).then(([functions, swaggerFunctions]) => {
-        console.log('### Functions', { functions, swaggerFunctions });
         return functions.concat(swaggerFunctions);
       });
     };

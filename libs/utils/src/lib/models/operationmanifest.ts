@@ -193,7 +193,8 @@ export interface OperationManifestProperties {
   };
 
   customSwagger?: {
-    location: string[];
+    location?: string[];
+    operationId?: string;
   };
 
   /*

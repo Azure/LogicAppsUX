@@ -7,7 +7,7 @@ const iconUri =
 const brandColor = '#3999C6';
 
 const connector = {
-  id: 'connectionProviders/function',
+  id: '/connectionProviders/function',
   name: 'connectionProviders/function',
   properties: {
     displayName: 'Azure Swagger Functions',
@@ -40,6 +40,7 @@ export const selectSwaggerFunctionManifest = {
             },
           },
         },
+
         // Dynamic params
         operationId: {
           required: true,
@@ -49,7 +50,7 @@ export const selectSwaggerFunctionManifest = {
           'x-ms-serialization': { skip: true },
           'x-ms-deserialization': {
             type: 'swaggeroperationid',
-            parameterReference: 'operationDetails.uri',
+            parameterReference: 'operationId',
             options: {
               swaggerOperation: {
                 methodPath: ['operationDetails', 'method'],
@@ -97,26 +98,57 @@ export const selectSwaggerFunctionManifest = {
       required: ['operationId'],
     },
     inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
+    inputsLocation: ['inputs'],
     isInputsOptional: false,
 
     outputs: {
-      'x-ms-dynamic-properties': {
-        dynamicState: {
-          extension: {
-            operationId: 'getSwaggerFunctionOperationSchema',
-          },
-        },
-        parameters: {
-          type: 'object',
-          operationId: {
-            parameterReference: 'operationId',
-            required: true,
+      type: 'object',
+      required: [],
+      properties: {
+        body: {
+          title: 'Body',
+          'x-ms-dynamic-properties': {
+            dynamicState: {
+              extension: {
+                operationId: 'getSwaggerFunctionOperationSchema',
+              },
+            },
+            parameters: {
+              type: 'object',
+              operationId: {
+                parameterReference: 'operationId',
+                required: true,
+              },
+              functionAppId: {
+                parameterReference: 'functionApp.id',
+                required: true,
+              },
+            },
           },
         },
       },
     },
     isOutputsOptional: false,
     includeRootOutputs: true,
+
+    customSwagger: {
+      // location: ['metadata', 'apiDefinitionUrl'],
+      operationId: 'getSwaggerFunctionUrl',
+      // 'x-ms-dynamic-properties': {
+      //   dynamicState: {
+      //     extension: {
+      //       operationId: 'getSwaggerFunctionUrl',
+      //     },
+      //   },
+      //   parameters: {
+      //     type: 'object',
+      //     functionAppId: {
+      //       parameterReference: 'functionApp.id',
+      //       required: true,
+      //     },
+      //   },
+      // },
+    },
 
     connector,
 

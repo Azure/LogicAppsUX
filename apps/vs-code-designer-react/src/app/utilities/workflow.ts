@@ -32,7 +32,7 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
     };
   }
 
-  const functionConnectorId = '/connectionProviders/azureFunctionOperation';
+  const functionConnectorId = '/connectionProviders/function';
   for (const connectionKey of Object.keys(functionConnections)) {
     references[connectionKey] = {
       connection: { id: `${functionConnectorId}/connections/${connectionKey}` },

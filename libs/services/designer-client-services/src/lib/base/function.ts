@@ -34,9 +34,7 @@ export class BaseFunctionService implements IFunctionService {
       queryParameters: { 'api-version': this.options.apiVersion },
     });
 
-    const apps = functionAppsResponse.value.filter((app: any) => isFunctionContainer(app.kind));
-    console.log('### apps', apps);
-    return apps;
+    return functionAppsResponse.value.filter((app: any) => isFunctionContainer(app.kind));
   }
 
   async fetchFunctionAppsFunctions(functionAppId: string) {
@@ -68,18 +66,18 @@ export class BaseFunctionService implements IFunctionService {
     return response?.properties?.apiDefinition?.url ?? '';
   }
 
-  private async fetchApiDefinition(apiDefinitionUrl: string) {
+  private async fetchFunctionSwagger(swaggerUrl: string) {
     const response = await this.options.httpClient.get<any>({
-      uri: apiDefinitionUrl,
+      uri: swaggerUrl,
+      headers: { 'Access-Control-Allow-Origin': '*' },
     });
-    return response;
+    const swaggerDoc = await SwaggerParser.parse(response);
+    return new SwaggerParser(swaggerDoc);
   }
 
   private async fetchFunctionAppSwagger(functionAppId: string) {
     const apiDefinitionUrl = await this.fetchApiDefinitionUrl(functionAppId);
-    const response = await this.fetchApiDefinition(apiDefinitionUrl);
-    const swaggerDoc = await SwaggerParser.parse(response);
-    return new SwaggerParser(swaggerDoc);
+    return this.fetchFunctionSwagger(apiDefinitionUrl);
   }
 
   async fetchFunctionAppsSwaggerFunctions(functionAppId: string) {

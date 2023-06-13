@@ -37,7 +37,13 @@ import type {
   IOAuthService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  WorkflowService,
+  LoggerService,
+  LogEntryLevel,
+  OperationManifestService,
+  ConnectorService,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { SchemaProperty, InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
@@ -433,15 +439,26 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
 };
 
 export const getCustomSwaggerIfNeeded = async (
+  operationId: string,
   manifestProperties: OperationManifestProperties,
   stepDefinition?: any
 ): Promise<SwaggerParser | undefined> => {
   const swaggerUrlLocation = manifestProperties.customSwagger?.location;
-  if (!swaggerUrlLocation || !stepDefinition) {
-    return undefined;
+  if (swaggerUrlLocation && stepDefinition) {
+    return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
+  }
+  const swaggerFetchOperationId = manifestProperties.customSwagger?.operationId;
+  if (swaggerFetchOperationId && stepDefinition) {
+    const url = await ConnectorService().getDynamicSwaggerUrl(
+      manifestProperties?.connector?.id ?? '',
+      operationId,
+      swaggerFetchOperationId,
+      stepDefinition
+    );
+    return getSwaggerFromEndpoint(url);
   }
 
-  return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
+  return undefined;
 };
 
 export const updateInvokerSettings = (

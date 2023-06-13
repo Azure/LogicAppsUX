@@ -13,6 +13,7 @@ import {
 } from '@microsoft/utils-logic-apps';
 import type { IntlShape } from 'react-intl';
 
+type GetSwaggerUrlFunction = (args: Record<string, any>) => Promise<string>;
 type GetSchemaFunction = (args: Record<string, any>) => Promise<OpenAPIV2.SchemaObject>;
 type GetValuesFunction = (args: Record<string, any>) => Promise<ListDynamicValue[]>;
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
@@ -23,6 +24,7 @@ export interface BaseConnectorServiceOptions {
   httpClient: IHttpClient;
   clientSupportedOperations: OperationInfo[];
   getConfiguration: GetConfigurationFunction;
+  swaggerClient: Record<string, GetSwaggerUrlFunction>;
   schemaClient: Record<string, GetSchemaFunction>;
   valuesClient: Record<string, GetValuesFunction>;
   apiHubServiceDetails: {
@@ -36,7 +38,7 @@ export interface BaseConnectorServiceOptions {
 
 export abstract class BaseConnectorService implements IConnectorService {
   constructor(protected readonly options: BaseConnectorServiceOptions) {
-    const { apiVersion, baseUrl, httpClient, clientSupportedOperations, schemaClient, valuesClient } = options;
+    const { apiVersion, baseUrl, httpClient, clientSupportedOperations, swaggerClient, schemaClient, valuesClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
     } else if (!baseUrl) {
@@ -45,6 +47,8 @@ export abstract class BaseConnectorService implements IConnectorService {
       throw new ArgumentException('httpClient required');
     } else if (!clientSupportedOperations) {
       throw new ArgumentException('clientSupportedOperations required');
+    } else if (!swaggerClient) {
+      throw new ArgumentException('swaggerClient required');
     } else if (!schemaClient) {
       throw new ArgumentException('schemaClient required');
     } else if (!valuesClient) {
@@ -77,10 +81,10 @@ export abstract class BaseConnectorService implements IConnectorService {
     const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
-      if (!this.options.valuesClient[dynamicOperation]) {
+      if (!this.options.valuesClient?.[dynamicOperation]) {
         throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the values client.`);
       }
-      return this.options.valuesClient[dynamicOperation]({
+      return this.options.valuesClient?.[dynamicOperation]({
         operationId,
         parameters: invokeParameters,
         configuration,
@@ -95,6 +99,16 @@ export abstract class BaseConnectorService implements IConnectorService {
       content: { parameters: invokeParameters, configuration },
     });
     return this._getResponseFromDynamicApi(response, uri);
+  }
+
+  async getDynamicSwaggerUrl(connectorId: string, operationId: string, dynamicOperationId: string, definition: any): Promise<string> {
+    if (this._isClientSupportedOperation(connectorId, operationId)) {
+      if (!this.options.swaggerClient?.[dynamicOperationId]) {
+        throw new UnsupportedException(`Operation ${dynamicOperationId} is not implemented by the swagger url client.`);
+      }
+      return this.options.swaggerClient?.[dynamicOperationId]({ operationId: dynamicOperationId, definition });
+    }
+    throw new UnsupportedException(`Operation ${operationId} is not supported by the swagger url client.`);
   }
 
   async getDynamicSchema(
@@ -116,10 +130,10 @@ export abstract class BaseConnectorService implements IConnectorService {
     const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
-      if (!this.options.schemaClient[dynamicOperation]) {
+      if (!this.options.schemaClient?.[dynamicOperation]) {
         throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the schema client.`);
       }
-      return this.options.schemaClient[dynamicOperation]({
+      return this.options.schemaClient?.[dynamicOperation]({
         operationId,
         parameters: invokeParameters,
         configuration,

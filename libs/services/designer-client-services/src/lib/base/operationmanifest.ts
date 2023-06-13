@@ -112,7 +112,7 @@ const xslttransform = 'xslttransform';
 const datamapper = 'datamapper';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
-export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
+export const azureFunctionConnectorId = '/connectionProviders/function';
 export const appServiceConnectorId = '/connectionProviders/appService';
 export const batchConnectorId = '/connectionProviders/batch';
 export const workflowConnectorId = '/connectionProviders/workflow';
@@ -221,7 +221,6 @@ export abstract class BaseOperationManifestService implements IOperationManifest
 }
 
 export function isBuiltInOperation(definition: any): boolean {
-  console.log('### isBuiltInOperation', definition?.type?.toLowerCase());
   switch (definition?.type?.toLowerCase()) {
     case apimanagement:
     case as2Decode:
@@ -416,7 +415,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       };
 
     case function_:
-      console.log('### azurefunction', definition);
       return {
         connectorId: azureFunctionConnectorId,
         operationId: definition?.inputs?.uri ? azureswaggerfunction : azurefunction,

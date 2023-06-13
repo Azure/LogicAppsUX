@@ -7,7 +7,7 @@ const iconUri =
 const brandColor = '#3999C6';
 
 const connector = {
-  id: 'connectionProviders/function',
+  id: '/connectionProviders/function',
   name: 'connectionProviders/function',
   properties: {
     displayName: 'Azure Functions',
