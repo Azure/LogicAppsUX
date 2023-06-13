@@ -62,6 +62,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   labelProps,
   itemSchema,
   placeholder,
+  dataAutomationId,
   getTokenPicker,
   onChange,
   castParameter,
@@ -125,7 +126,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   };
 
   return (
-    <div className="msla-array-editor-container">
+    <div className="msla-array-editor-container" data-automation-id={dataAutomationId}>
       {collapsed ? (
         <CollapsedArray
           labelProps={labelProps}
