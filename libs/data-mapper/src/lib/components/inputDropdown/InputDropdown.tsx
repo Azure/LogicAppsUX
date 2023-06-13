@@ -67,7 +67,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
@@ -124,7 +124,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
         }
 
         // Create connection
-        const source = isSelectedInputFunction ? functionNodeDictionary[selectedInputKey] : sourceSchemaDictionary[selectedInputKey];
+        const source = isSelectedInputFunction
+          ? functionNodeDictionary[selectedInputKey].functionData
+          : sourceSchemaDictionary[selectedInputKey];
         const srcConUnit: ConnectionUnit = {
           node: source,
           reactFlowKey: selectedInputKey,
@@ -176,7 +178,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       }
 
       // Compile Function's input values (if any)
-      const nodeName = functionDropDownItemText(key, node, connectionDictionary);
+      const nodeName = functionDropDownItemText(key, node.functionData, connectionDictionary);
 
       options.push({
         key,
@@ -184,7 +186,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         value: key,
         isSchema: false,
         isFunction: true,
-        type: node.outputValueType,
+        type: node.functionData.outputValueType,
       });
     });
 
