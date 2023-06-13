@@ -11,7 +11,7 @@ import {
 import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
-import { copyFileSync, existsSync as fileExistsSync, promises as fs, unlinkSync as removeFileSync } from 'fs';
+import { copyFileSync, existsSync as fileExistsSync, promises as fs, unlinkSync as removeFileSync, statSync, readdirSync } from 'fs';
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
 import { RelativePattern, Uri, window, workspace } from 'vscode';
@@ -154,15 +154,33 @@ export default class DataMapperPanel {
     }
   }
 
+  public getNestedSchemas(fileName: string, parentPath: string, filesToDisplay: string[]) {
+    const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
+    const absolutePath = path.join(rootPath, parentPath, fileName);
+    if (statSync(absolutePath).isDirectory()) {
+      readdirSync(absolutePath).forEach((childFileName) => {
+        const relativePath = path.join(parentPath, fileName);
+        this.getNestedSchemas(childFileName, relativePath, filesToDisplay);
+      });
+    } else {
+      const fileExt = path.extname(fileName).toLowerCase();
+      if (fileExt === '.xsd' || fileExt === '.json') {
+        const relativePath = path.join(parentPath, fileName);
+        filesToDisplay.push(relativePath);
+      }
+    }
+  }
+
   public handleReadSchemaFileOptions() {
     fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath)).then((result) => {
-      this.sendMsgToWebview({
-        command: 'showAvailableSchemas',
-        data: result.filter((file) => {
-          const fileExt = path.extname(file).toLowerCase();
-          return fileExt === '.xsd' || fileExt === '.json';
-        }),
-      });
+      const filesToDisplay: string[] = [];
+      result.forEach((file) => {
+        this.getNestedSchemas(file, '', filesToDisplay);
+      }),
+        this.sendMsgToWebview({
+          command: 'showAvailableSchemas',
+          data: filesToDisplay,
+        });
     });
   }
 

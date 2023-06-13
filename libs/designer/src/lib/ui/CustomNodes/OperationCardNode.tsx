@@ -34,6 +34,7 @@ import {
   useParentRunIndex,
   useRunInstance,
   useShouldNodeFocus,
+  useRetryHistory,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -68,7 +69,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
-
+  const runHistory = useRetryHistory(id);
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
@@ -143,8 +144,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema }));
-  }, [dispatch, hasSchema, id, isMonitoringView]);
+    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
+  }, [dispatch, hasSchema, id, isMonitoringView, runHistory]);
 
   const brandColor = useBrandColor(id);
   const iconUri = useIconUri(id);
@@ -190,7 +191,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     };
   };
 
-  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()]; // danielle look here
+  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
   const opQuery = useOperationQuery(id);
 
