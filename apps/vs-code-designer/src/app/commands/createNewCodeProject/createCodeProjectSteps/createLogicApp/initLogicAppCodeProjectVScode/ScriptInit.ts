@@ -56,7 +56,5 @@ export class ScriptInit extends InitCodeProject {
         this.preDeployTask = extInstallTaskName;
       }
     }
-
-    this.setDeploySubpath(context, '.');
   }
 }

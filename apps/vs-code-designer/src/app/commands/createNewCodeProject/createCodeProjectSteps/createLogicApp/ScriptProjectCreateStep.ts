@@ -64,7 +64,6 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
           AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
         },
       };
-
       await writeFormattedJson(localSettingsJsonPath, localSettingsJson);
     }
 
