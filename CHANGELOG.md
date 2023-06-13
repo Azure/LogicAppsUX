@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [2.28.0](https://github.com/Azure/LogicAppsUX/compare/v2.27.0...v2.28.0) (2023-06-13)
+
+
+### Features
+
+* **Data Mapper:** Able to select schemas from folders within 'Schemas' folder ([#2700](https://github.com/Azure/LogicAppsUX/issues/2700)) ([3999cd3](https://github.com/Azure/LogicAppsUX/commit/3999cd312d414e2a915ace6a65c0cda46d64db87))
+* **Data Mapper:** XML sequence serialization ([#2731](https://github.com/Azure/LogicAppsUX/issues/2731)) ([c2e7189](https://github.com/Azure/LogicAppsUX/commit/c2e7189c55629b61d0f2608cdf5a3d4c75af1f1c))
+* **designer:** Add 'search' function for conditional param dropdown ([#2718](https://github.com/Azure/LogicAppsUX/issues/2718)) ([aad4d33](https://github.com/Azure/LogicAppsUX/commit/aad4d3349f725568762825f5ab9f88dab3290bda))
+* **designer:** Add retry history panel to the monitoring view ([#2721](https://github.com/Azure/LogicAppsUX/issues/2721)) ([4ca69f7](https://github.com/Azure/LogicAppsUX/commit/4ca69f75cf94fd9c3f7e5a46b59dd623a6d55c35))
+
+
+### Bug Fixes
+
+* **designer:** dictionary and array editor collapsed views erroring ([#2733](https://github.com/Azure/LogicAppsUX/issues/2733)) ([7bca872](https://github.com/Azure/LogicAppsUX/commit/7bca87278f2ea634de3cff7a0894130b6a1bedde))
+* **designer:** Localize panel tab labels ([#2722](https://github.com/Azure/LogicAppsUX/issues/2722)) ([5cf8eb1](https://github.com/Azure/LogicAppsUX/commit/5cf8eb1a5a626c7a58658c63fd6c579579f54fa4))
 
 ## [2.27.0](https://github.com/Azure/LogicAppsUX/compare/v2.26.0...v2.27.0) (2023-06-12)
 
