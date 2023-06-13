@@ -364,12 +364,10 @@ export interface SerializedParameter extends ParameterInfo {
 
 const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
-  return getOperationInputParameters(rootState, operationId).map((input) => {
-    return {
-      ...input,
-      value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements),
-    };
-  });
+  return getOperationInputParameters(rootState, operationId).map((input) => ({
+    ...input,
+    value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements),
+  }));
 };
 
 const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {

@@ -9,7 +9,6 @@ export interface EditorCollapseToggleProps {
   collapsed: boolean;
   disabled?: boolean;
   label?: string;
-  disabledText?: string;
   toggleCollapsed: () => void;
 }
 
