@@ -216,6 +216,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     appServiceTitleText,
     batchWorkflowTitleText,
     functionAppTitleText,
+    swaggerFunctionAppTitleText,
     getOptionsFromPaths,
     manualWorkflowTitleText,
     operation.id,

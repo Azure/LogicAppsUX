@@ -80,23 +80,6 @@ export class BaseFunctionService implements IFunctionService {
     return this.fetchFunctionSwagger(apiDefinitionUrl);
   }
 
-  async fetchFunctionAppsSwaggerFunctions(functionAppId: string) {
-    try {
-      const swagger = await this.fetchFunctionAppSwagger(functionAppId);
-      const functions = swagger.getOperations();
-
-      return unmap(functions).map((swaggerFunction: any) => ({
-        id: swaggerFunction.operationId,
-        // value: swaggerFunction.operationId,
-        name: swaggerFunction.summary ?? swaggerFunction.operationId,
-        // description: swaggerFunction.description,
-      }));
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  }
-
   public async getOperationSchema(functionAppId: string, operationId: string, isInput: boolean): Promise<any> {
     const swagger = await this.fetchFunctionAppSwagger(functionAppId);
     if (!operationId) return Promise.resolve();

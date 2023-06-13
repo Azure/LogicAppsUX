@@ -4,7 +4,6 @@ export interface IFunctionService {
   fetchFunctionApps(): Promise<any>;
   fetchFunctionAppsFunctions(functionAppId: string): Promise<any>;
   fetchFunctionKey(functionId: string): Promise<any>;
-  fetchFunctionAppsSwaggerFunctions(functionAppId: string): Promise<any>;
   fetchApiDefinitionUrl(functionAppId: string): Promise<string>;
   getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any>;
   getOperations(swaggerUrl: string): Promise<any>;
