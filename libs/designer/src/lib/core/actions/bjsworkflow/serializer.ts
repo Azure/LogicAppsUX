@@ -141,7 +141,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       ...rootState.workflow.originalDefinition,
       actions: await getActions(rootState, options),
       ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
-      triggers: rootState.panel.addingTrigger ? {} : await getTrigger(rootState, options),
+      triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
     parameters: getWorkflowParameters(rootState.workflowParameters.definitions),
@@ -179,6 +179,9 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
 
 const getTrigger = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Triggers> => {
   const rootNodeId = getTriggerNodeId(rootState.workflow);
+  if (rootNodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
+    return {}; // Placeholder trigger was found, return empty object
+  }
   const idReplacements = rootState.workflow.idReplacements;
   return rootNodeId
     ? {
