@@ -10,7 +10,7 @@ import {
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
-import type { FunctionData } from '../models/Function';
+import type { FunctionData, FunctionDictionary } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
@@ -81,13 +81,19 @@ export const functionInputHasInputs = (fnInputReactFlowKey: string, connections:
   return !!fnInputConnection && Object.values(fnInputConnection.inputs).some((inputConArr) => inputConArr.length > 0);
 };
 
-export const getIndexValueForCurrentConnection = (currentConnection: Connection): string => {
-  const inputNode =
-    isConnectionUnit(currentConnection.inputs[0][0]) && isSchemaNodeExtended(currentConnection.inputs[0][0].node)
-      ? currentConnection.inputs[0][0].node
-      : undefined;
-  if (inputNode) {
-    return calculateIndexValue(inputNode);
+export const getIndexValueForCurrentConnection = (currentConnection: Connection, connections: ConnectionDictionary): string => {
+  const firstInput = currentConnection.inputs[0][0];
+
+  if (isCustomValue(firstInput)) {
+    return firstInput;
+  } else if (isConnectionUnit(firstInput)) {
+    const node = firstInput.node;
+    if (isSchemaNodeExtended(node)) {
+      return calculateIndexValue(node);
+    } else {
+      // Function, try moving back the chain to find the source
+      return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
+    }
   } else {
     LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
       message: `Didn't find inputNode to make index value`,
