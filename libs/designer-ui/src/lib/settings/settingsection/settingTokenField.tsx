@@ -88,6 +88,7 @@ const TokenField = ({
   getTokenPicker,
 }: SettingTokenFieldProps & { labelId: string }) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
+  const labelForAutomationId = convertUIElementNameToAutomationId(label);
 
   switch (editor?.toLowerCase()) {
     case 'copyable':
@@ -103,7 +104,7 @@ const TokenField = ({
           multiSelect={!!editorOptions?.multiSelect}
           serialization={editorOptions?.serialization}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-dropdowneditor-${convertUIElementNameToAutomationId(label)}`}
+          dataAutomationId={`msla-setting-token-editor-dropdowneditor-${labelForAutomationId}`}
         />
       );
 
@@ -135,7 +136,7 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
-          dataAutomationId={`msla-setting-token-editor-combobox-${convertUIElementNameToAutomationId(label)}`}
+          dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
         />
       );
 
@@ -153,7 +154,7 @@ const TokenField = ({
           valueType={editorOptions?.valueType}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${convertUIElementNameToAutomationId(label)}`}
+          dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${labelForAutomationId}`}
         />
       );
 
@@ -171,7 +172,7 @@ const TokenField = ({
           types={editorOptions?.columns?.types}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-tableditor-${convertUIElementNameToAutomationId(label)}`}
+          dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
         />
       );
 
@@ -180,7 +181,7 @@ const TokenField = ({
         <ArrayEditor
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
-          labelProps={{ text: label ? `${convertUIElementNameToAutomationId(label)} Item` : 'Array Item' }}
+          labelProps={{ text: label ? `${labelForAutomationId} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
@@ -188,7 +189,7 @@ const TokenField = ({
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-arrayeditor-${convertUIElementNameToAutomationId(label)}`}
+          dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
         />
       );
 
@@ -260,7 +261,7 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
-          dataAutomationId={`msla-setting-token-editor-filepickereditor-${convertUIElementNameToAutomationId(label)}`}
+          dataAutomationId={`msla-setting-token-editor-filepickereditor-${labelForAutomationId}`}
         />
       );
     case 'html':
@@ -272,7 +273,7 @@ const TokenField = ({
           readonly={readOnly}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-htmleditor-${convertUIElementNameToAutomationId(label)}`}
+          dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
         />
       );
     case 'floatingactionmenu': {
@@ -298,7 +299,7 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
-          dataAutomationId={`msla-setting-token-editor-stringeditor-${convertUIElementNameToAutomationId(label)}`}
+          dataAutomationId={`msla-setting-token-editor-stringeditor-${labelForAutomationId}`}
         />
       );
   }
