@@ -1375,6 +1375,12 @@
       "value": "Cannot render designer due to multiple triggers in definition."
     }
   ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "Switch to code view mode"
+    }
+  ],
   "8ND+Yc": [
     {
       "type": 0,
@@ -2205,6 +2211,12 @@
       "value": "(UTC+01:00) West Central Africa"
     }
   ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "EdzoIs": [
     {
       "type": 0,
@@ -2643,6 +2655,12 @@
     {
       "type": 0,
       "value": "Insert Expression"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
     }
   ],
   "HfrUId": [
@@ -3963,12 +3981,6 @@
       "value": "Required. The string that is split."
     }
   ],
-  "RZ1MIN": [
-    {
-      "type": 0,
-      "value": "Switch to input entire array"
-    }
-  ],
   "RbJNVk": [
     {
       "type": 0,
@@ -4599,12 +4611,6 @@
     {
       "type": 0,
       "value": "Comment"
-    }
-  ],
-  "VXQbMw": [
-    {
-      "type": 0,
-      "value": "Switch to detail inputs for array item"
     }
   ],
   "VZHick": [
@@ -5575,12 +5581,6 @@
       "value": "(UTC-04:00) Cuiaba"
     }
   ],
-  "d+MjsE": [
-    {
-      "type": 0,
-      "value": "Enter a valid dictionary."
-    }
-  ],
   "d020eg": [
     {
       "type": 0,
@@ -5597,6 +5597,12 @@
     {
       "type": 0,
       "value": "Add a trigger"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "Switch to key value mode"
     }
   ],
   "dDYCuU": [
@@ -6679,12 +6685,6 @@
       "value": "is skipped"
     }
   ],
-  "lcxLiq": [
-    {
-      "type": 0,
-      "value": "Please enter a valid array"
-    }
-  ],
   "lexzgJ": [
     {
       "type": 0,
@@ -7455,6 +7455,12 @@
     {
       "type": 1,
       "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "Switch to default view mode"
     }
   ],
   "qnI4Y1": [
@@ -8445,6 +8451,12 @@
     {
       "type": 0,
       "value": "Code"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "Switch to text mode"
     }
   ],
   "xYyPR8": [
