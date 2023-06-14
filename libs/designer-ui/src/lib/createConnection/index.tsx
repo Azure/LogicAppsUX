@@ -30,6 +30,7 @@ import {
   ConnectionParameterTypes,
   SERVICE_PRINCIPLE_CONSTANTS,
   connectorContainsAllServicePrinicipalConnectionParameters,
+  getPropertyValue,
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
 } from '@microsoft/utils-logic-apps';
@@ -185,8 +186,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
       if (legacyManagedIdentitySelected) return false; // TODO: Riley - Only show the managed identity parameters (which is none for now)
       if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
-      const dependencyParam = constraints?.dependentParameter;
-      if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
+      const dependentParam = constraints?.dependentParameter;
+      if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) return false;
       return true;
@@ -392,8 +393,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   });
 
   const gatewayTooltipText = intl.formatMessage({
-    defaultMessage: 'Select this if you are configuring an on-prem connection',
-    description: 'Tooltip for on-prem gateway connection checkbox',
+    defaultMessage: "Select this checkbox if you're setting up an on-premises connection.",
+    description: 'Tooltip for the on-premises data gateway connection checkbox',
   });
 
   const legacyMultiAuthLabelText = intl.formatMessage({

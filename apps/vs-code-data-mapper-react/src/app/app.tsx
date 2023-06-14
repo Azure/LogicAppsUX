@@ -3,6 +3,7 @@ import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeU
 import type { AppDispatch, RootState } from '../state/Store';
 import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
+  getFileNameAndPath,
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
@@ -34,6 +35,7 @@ export const App = () => {
   const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
+  const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
   const sourceSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchemaFilename);
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
@@ -44,6 +46,13 @@ export const App = () => {
   const useExpandedFunctionCards = useSelector((state: RootState) => state.dataMapDataLoader.useExpandedFunctionCards);
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
+
+  if (runtimePort) {
+    InitDataMapperApiService({
+      ...defaultDataMapperApiServiceOptions,
+      port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
+    });
+  }
 
   const sendMsgToVsix = useCallback(
     (msg: MessageToVsix) => {
@@ -65,7 +74,7 @@ export const App = () => {
     });
   }, [sendMsgToVsix]);
 
-  const saveMapDefinitionCall = (dataMapDefinition: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string, _mapMetadata: string) => {
     sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
@@ -162,11 +171,13 @@ export const App = () => {
     const getSelectedSchemaTrees = async () => {
       try {
         if (sourceSchemaFilename) {
-          dispatch(changeSourceSchema(await getSelectedSchema(sourceSchemaFilename)));
+          const [fileName, filePath] = getFileNameAndPath(sourceSchemaFilename);
+          dispatch(changeSourceSchema(await getSelectedSchema(fileName, filePath)));
         }
 
         if (targetSchemaFilename) {
-          dispatch(changeTargetSchema(await getSelectedSchema(targetSchemaFilename)));
+          const [fileName, filePath] = getFileNameAndPath(targetSchemaFilename);
+          dispatch(changeTargetSchema(await getSelectedSchema(fileName, filePath)));
         }
       } catch (error) {
         handleRscLoadError(error);
@@ -192,6 +203,7 @@ export const App = () => {
     >
       <DataMapDataProvider
         xsltFilename={xsltFilename}
+        xsltContent={xsltContent}
         mapDefinition={mapDefinition}
         sourceSchema={sourceSchema}
         targetSchema={targetSchema}

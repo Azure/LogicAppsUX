@@ -37,7 +37,7 @@ import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { removeIdTag, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -48,7 +48,7 @@ import type { NodeProps } from 'reactflow';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const scopeId = id.split('-#')[0];
+  const scopeId = removeIdTag(id);
 
   const node = useActionMetadata(scopeId);
   const operationsInfo = useAllOperations();
@@ -66,7 +66,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
@@ -274,7 +274,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             onClick={nodeClick}
             selected={selected}
             contextMenuOptions={contextMenuOptions}
-            runData={{ status: statusRun, duration: durationRun }}
+            runData={runData}
           />
           {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
             <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />

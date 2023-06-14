@@ -50,6 +50,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
   const handleTokenDeleteClicked = () => {
     if (nodeKey) {
+      editor.focus();
       editor.dispatchCommand(DELETE_TOKEN_NODE, nodeKey);
     }
   };
@@ -64,6 +65,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         title={tokenDelete}
         aria-label={tokenDelete}
         className="msla-button msla-token-delete"
+        data-automation-id={`msla-token-delete-${title}`}
         onClick={handleTokenDeleteClicked}
         onMouseDown={(e) => {
           e.preventDefault();
@@ -80,7 +82,12 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   };
 
   return (
-    <div className="msla-token msla-input-token" onClick={handleTokenClicked} style={tokenStyle}>
+    <div
+      className="msla-token msla-input-token"
+      data-automation-id={`msla-token msla-input-token-${title}`}
+      onClick={handleTokenClicked}
+      style={tokenStyle}
+    >
       <div className="msla-token-title" title={value}>
         {title}
       </div>

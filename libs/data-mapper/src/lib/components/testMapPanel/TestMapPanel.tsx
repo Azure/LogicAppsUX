@@ -1,14 +1,14 @@
 import type { TestMapResponse } from '../../core';
-import { testDataMap } from '../../core/queries/datamap';
+import { generateDataMapXslt, testDataMap } from '../../core/queries/datamap';
 import type { RootState } from '../../core/state/Store';
 import { SchemaFileFormat } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Text } from '@fluentui/react';
+import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Stack, StackItem, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import { guid } from '@microsoft/utils-logic-apps';
-import { useMemo, useState } from 'react';
+import { guid, isNullOrEmpty } from '@microsoft/utils-logic-apps';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -54,16 +54,18 @@ const useStyles = makeStyles({
 });
 
 export interface TestMapPanelProps {
+  mapDefinition: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
+export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
   const currentTheme = useSelector((state: RootState) => state.app.theme);
-  const dataMapXsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
+  const fileXslt = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltContent);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
 
@@ -71,7 +73,9 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
   const [selectedPivotItem, setSelectedPivotItem] = useState<PanelPivotItems>(PanelPivotItems.Input);
   const [testMapInput, setTestMapInput] = useState<string>('');
   const [testMapResponse, setTestMapResponse] = useState<TestMapResponse | undefined>(undefined);
+  const [currentXslt, setCurrentXslt] = useState<string>(fileXslt);
 
+  //#region Loc
   const testMapLoc = intl.formatMessage({
     defaultMessage: 'Test map',
     description: 'Test map panel header',
@@ -117,11 +121,36 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
     description: 'Response body for test map API',
   });
 
+  const noXsltLoc = intl.formatMessage({
+    defaultMessage: 'Generate XSLT first before attempting to test mappings.',
+    description: 'Message on missing XSLT and attempting to test maps',
+  });
+
+  const mismatchedXsltLoc = intl.formatMessage({
+    defaultMessage: 'The generated XSLT does not match the current mapping.',
+    description: 'Message on mismatched XSLT and attempting to test maps',
+  });
+  //#endregion
+
   const inputDataOptions = useMemo(() => [{ key: 'pasteSample', text: pasteFromSampleLoc }], [pasteFromSampleLoc]);
 
-  const testMap = () => {
+  const testMap = async () => {
     if (!testMapInput) {
       return;
+    }
+
+    if (!xsltFilename) {
+      LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
+        message: 'Missing XSLT filename',
+      });
+
+      return;
+    }
+
+    if (isMismatchedXslt) {
+      LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
+        message: 'Mismatched XSLT content',
+      });
     }
 
     setSelectedPivotItem(PanelPivotItems.Output);
@@ -135,7 +164,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
       },
     });
 
-    testDataMap(dataMapXsltFilename, testMapInput)
+    testDataMap(xsltFilename, testMapInput)
       .then((response) => {
         setTestMapResponse(response);
 
@@ -160,16 +189,51 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
       });
   };
 
-  const getFooterContent = () => {
+  useEffect(() => {
+    const generateXsltAsync = async () => {
+      let generatedXslt = '';
+      if (isOpen && !isNullOrEmpty(mapDefinition)) {
+        try {
+          generatedXslt = await generateDataMapXslt(mapDefinition);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      setCurrentXslt(generatedXslt);
+    };
+
+    generateXsltAsync();
+  }, [isOpen, mapDefinition]);
+
+  const isMismatchedXslt = currentXslt && fileXslt !== currentXslt;
+
+  const getFooterContent = useCallback(() => {
     return (
-      <div>
-        <PrimaryButton onClick={testMap} style={{ marginRight: 8 }} disabled={!testMapInput}>
-          {testLoc}
-        </PrimaryButton>
-        <DefaultButton onClick={onClose}>{closeLoc}</DefaultButton>
-      </div>
+      <Stack horizontal={false} tokens={{ childrenGap: '8px' }}>
+        <StackItem>
+          {!fileXslt ? (
+            <Text variant={'mediumPlus'} style={{ color: '#d13438' /*tokens.colorPaletteRedBackground3*/ }}>
+              {noXsltLoc}
+            </Text>
+          ) : isMismatchedXslt ? (
+            <Text variant={'mediumPlus'} style={{ color: '#e4cc00' /*tokens.colorPaletteYellowForeground1*/ }}>
+              {mismatchedXsltLoc}
+            </Text>
+          ) : (
+            <Text variant={'mediumPlus'}>{/*Space holding*/}</Text>
+          )}
+        </StackItem>
+        <StackItem>
+          <PrimaryButton onClick={testMap} style={{ marginRight: 8 }} disabled={!testMapInput || !fileXslt}>
+            {testLoc}
+          </PrimaryButton>
+          <DefaultButton onClick={onClose}>{closeLoc}</DefaultButton>
+        </StackItem>
+      </Stack>
     );
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileXslt, isMismatchedXslt]);
 
   return (
     <Panel

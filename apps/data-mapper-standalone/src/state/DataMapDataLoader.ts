@@ -18,6 +18,7 @@ export interface DataMapLoadingState {
   loadingMethod: LoadingMethod;
   mapDefinition: MapDefinitionEntry;
   xsltFilename: string;
+  xsltContent: string;
   fetchedFunctions?: FunctionData[];
 }
 
@@ -26,6 +27,7 @@ const initialState: DataMapLoadingState = {
   loadingMethod: LoadingMethod.File,
   mapDefinition: {},
   xsltFilename: '',
+  xsltContent: '',
   fetchedFunctions: [...functionMock],
 };
 
@@ -63,6 +65,9 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeXsltFilename: (state, action: PayloadAction<string>) => {
       state.xsltFilename = action.payload;
+    },
+    changeXsltContent: (state, action: PayloadAction<string>) => {
+      state.xsltContent = action.payload;
     },
     changeFetchedFunctions: (state, action: PayloadAction<FunctionData[]>) => {
       state.fetchedFunctions = action.payload;

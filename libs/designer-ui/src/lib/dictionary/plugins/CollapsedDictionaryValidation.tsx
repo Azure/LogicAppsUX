@@ -14,7 +14,6 @@ import { $getRoot } from 'lexical';
 export interface CollapsedDictionaryValidationProps {
   className?: string;
   tokensEnabled?: boolean;
-  errorMessage: string;
   isValid?: boolean;
   collapsedValue?: ValueSegment[];
   setIsValid: (b: boolean) => void;
@@ -25,7 +24,6 @@ export interface CollapsedDictionaryValidationProps {
 export const CollapsedDictionaryValidation = ({
   className,
   isValid,
-  errorMessage,
   setIsValid,
   setItems,
   collapsedValue,
@@ -61,7 +59,6 @@ export const CollapsedDictionaryValidation = ({
       )}
     >
       <OnChangePlugin ignoreSelectionChange onChange={onChange} />
-      {errorMessage}
     </div>
   );
 };

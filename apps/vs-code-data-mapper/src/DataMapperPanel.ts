@@ -11,7 +11,7 @@ import {
 import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
-import { copyFileSync, existsSync as fileExistsSync, promises as fs, unlinkSync as removeFileSync } from 'fs';
+import { copyFileSync, existsSync as fileExistsSync, promises as fs, unlinkSync as removeFileSync, statSync, readdirSync } from 'fs';
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
 import { RelativePattern, Uri, window, workspace } from 'vscode';
@@ -148,21 +148,39 @@ export default class DataMapperPanel {
         data: this.mapDefinitionData,
       });
 
-      this.checkForAndSetXsltFilename();
+      this.checkAndSetXslt();
 
       this.mapDefinitionData = undefined;
     }
   }
 
+  public getNestedSchemas(fileName: string, parentPath: string, filesToDisplay: string[]) {
+    const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
+    const absolutePath = path.join(rootPath, parentPath, fileName);
+    if (statSync(absolutePath).isDirectory()) {
+      readdirSync(absolutePath).forEach((childFileName) => {
+        const relativePath = path.join(parentPath, fileName);
+        this.getNestedSchemas(childFileName, relativePath, filesToDisplay);
+      });
+    } else {
+      const fileExt = path.extname(fileName).toLowerCase();
+      if (fileExt === '.xsd' || fileExt === '.json') {
+        const relativePath = path.join(parentPath, fileName);
+        filesToDisplay.push(relativePath);
+      }
+    }
+  }
+
   public handleReadSchemaFileOptions() {
     fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath)).then((result) => {
-      this.sendMsgToWebview({
-        command: 'showAvailableSchemas',
-        data: result.filter((file) => {
-          const fileExt = path.extname(file).toLowerCase();
-          return fileExt === '.xsd' || fileExt === '.json';
-        }),
-      });
+      const filesToDisplay: string[] = [];
+      result.forEach((file) => {
+        this.getNestedSchemas(file, '', filesToDisplay);
+      }),
+        this.sendMsgToWebview({
+          command: 'showAvailableSchemas',
+          data: filesToDisplay,
+        });
     });
   }
 
@@ -255,7 +273,7 @@ export default class DataMapperPanel {
               }
             });
 
-            this.checkForAndSetXsltFilename();
+            this.checkAndSetXslt();
           });
         })
         .catch(DataMapperExt.showError);
@@ -268,7 +286,7 @@ export default class DataMapperPanel {
     const filePath = path.join(dataMapDefFolderPath, mapDefileName);
 
     // Mkdir as extra insurance that directory exists so file can be written
-    // - harmless if directory already exists
+    // Harmless if directory already exists
     fs.mkdir(dataMapDefFolderPath, { recursive: true })
       .then(() => {
         fs.writeFile(filePath, mapDefFileContents, 'utf8');
@@ -287,13 +305,18 @@ export default class DataMapperPanel {
     }
   }
 
-  public checkForAndSetXsltFilename() {
+  public checkAndSetXslt() {
     const expectedXsltPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
 
     if (fileExistsSync(expectedXsltPath)) {
-      this.sendMsgToWebview({
-        command: 'setXsltFilename',
-        data: this.dataMapName,
+      fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
+        this.sendMsgToWebview({
+          command: 'setXsltData',
+          data: {
+            filename: this.dataMapName,
+            fileContents,
+          },
+        });
       });
     } else {
       DataMapperExt.showWarning(`XSLT file not detected for ${this.dataMapName}`);

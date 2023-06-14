@@ -37,6 +37,7 @@ import { getCreateConnectionTab } from './panelTabs/createConnectionTab';
 import { loadingTab } from './panelTabs/loadingTab';
 import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
+import { monitorRetryTab } from './panelTabs/retryTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { getSelectConnectionTab } from './panelTabs/selectConnectionTab';
 import { settingsTab } from './panelTabs/settingsTab';
@@ -122,13 +123,22 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   }, [dispatch, panelLocation]);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];
+    const tabs = [
+      monitoringTab(intl),
+      parametersTab(intl),
+      settingsTab(intl),
+      codeViewTab(intl),
+      testingTab(intl),
+      aboutTab(intl),
+      loadingTab(intl),
+      monitorRetryTab(intl),
+    ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
     dispatch(clearPanel());
-  }, [dispatch]);
+  }, [dispatch, intl]);
 
   useEffect(() => {
     const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
@@ -246,7 +256,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       description: 'Note text',
     });
     const disabledCommentAction = intl.formatMessage({
-      defaultMessage: 'Notes can only be added while editing the inputs of a step.',
+      defaultMessage: "You can add notes only when you edit a step's inputs.",
       description: 'Text to tell users why notes are disabled',
     });
     const commentAdd = intl.formatMessage({
@@ -321,6 +331,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const layerProps = {
     hostId: 'msla-layer-host',
+    eventBubblingEnabled: true,
   };
 
   const commonPanelProps: CommonPanelProps = {

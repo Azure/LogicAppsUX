@@ -190,6 +190,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Duration"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -246,6 +310,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Start time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -397,6 +525,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in End time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -594,7 +786,7 @@ Array [
           </button>
           <div
             hidden={true}
-            id="tooltip8"
+            id="tooltip26"
             style={
               Object {
                 "border": 0,
@@ -670,7 +862,7 @@ Array [
           </button>
           <div
             hidden={true}
-            id="tooltip12"
+            id="tooltip30"
             style={
               Object {
                 "border": 0,
@@ -726,6 +918,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Duration"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -782,6 +1038,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Start time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -933,6 +1253,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in End time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -1101,6 +1485,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Method"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -1147,6 +1595,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in URI"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -1216,7 +1728,7 @@ Array [
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
+                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-128"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -1233,9 +1745,9 @@ Array [
                   >
                     <div
                       aria-label="Headers"
-                      className="ms-FocusZone css-139 ms-DetailsHeader root-123"
+                      className="ms-FocusZone css-146 ms-DetailsHeader root-130"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone18"
+                      data-focuszone-id="FocusZone66"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
                       onMouseDownCapture={[Function]}
@@ -1245,7 +1757,7 @@ Array [
                       <div
                         aria-label="Key"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-140"
+                        className="ms-DetailsHeader-cell is-actionable root-147"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -1259,17 +1771,17 @@ Array [
                         }
                       >
                         <span
-                          className="cellTooltip-148"
+                          className="cellTooltip-155"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-146"
-                            id="header17-$key"
+                            className="ms-DetailsHeader-cellTitle cellTitle-153"
+                            id="header65-$key"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-147"
-                              id="header17-$key-name"
+                              className="ms-DetailsHeader-cellName cellName-154"
+                              id="header65-$key-name"
                             >
                               Key
                             </span>
@@ -1278,7 +1790,7 @@ Array [
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerStart-131"
+                        className="ms-DetailsHeader-cellSizer cellSizer-137 cellSizerStart-138"
                         data-is-focusable={false}
                         data-sizer-index={0}
                         onBlur={[Function]}
@@ -1289,7 +1801,7 @@ Array [
                       <div
                         aria-label="Value"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-140"
+                        className="ms-DetailsHeader-cell is-actionable root-147"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -1303,17 +1815,17 @@ Array [
                         }
                       >
                         <span
-                          className="cellTooltip-148"
+                          className="cellTooltip-155"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-146"
-                            id="header17-$value"
+                            className="ms-DetailsHeader-cellTitle cellTitle-153"
+                            id="header65-$value"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-147"
-                              id="header17-$value-name"
+                              className="ms-DetailsHeader-cellName cellName-154"
+                              id="header65-$value-name"
                             >
                               Value
                             </span>
@@ -1322,7 +1834,7 @@ Array [
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerEnd-132"
+                        className="ms-DetailsHeader-cellSizer cellSizer-137 cellSizerEnd-139"
                         data-is-focusable={false}
                         data-sizer-index={1}
                         onBlur={[Function]}
@@ -1350,8 +1862,8 @@ Array [
                       role="presentation"
                     >
                       <div
-                        className="ms-FocusZone css-139 focusZone-122"
-                        data-focuszone-id="FocusZone19"
+                        className="ms-FocusZone css-146 focusZone-129"
+                        data-focuszone-id="FocusZone67"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onKeyDown={[Function]}
@@ -1437,7 +1949,7 @@ Array [
           </button>
           <div
             hidden={true}
-            id="tooltip28"
+            id="tooltip94"
             style={
               Object {
                 "border": 0,
@@ -1513,7 +2025,7 @@ Array [
           </button>
           <div
             hidden={true}
-            id="tooltip32"
+            id="tooltip98"
             style={
               Object {
                 "border": 0,
@@ -1569,6 +2081,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Duration"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -1625,6 +2201,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Start time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -1776,6 +2416,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in End time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -1944,6 +2648,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Status code"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -1998,7 +2766,7 @@ Array [
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
+                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-128"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -2015,9 +2783,9 @@ Array [
                   >
                     <div
                       aria-label="Headers"
-                      className="ms-FocusZone css-139 ms-DetailsHeader root-123"
+                      className="ms-FocusZone css-146 ms-DetailsHeader root-130"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone38"
+                      data-focuszone-id="FocusZone128"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
                       onMouseDownCapture={[Function]}
@@ -2027,7 +2795,7 @@ Array [
                       <div
                         aria-label="Key"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-140"
+                        className="ms-DetailsHeader-cell is-actionable root-147"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -2041,17 +2809,17 @@ Array [
                         }
                       >
                         <span
-                          className="cellTooltip-148"
+                          className="cellTooltip-155"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-146"
-                            id="header37-$key"
+                            className="ms-DetailsHeader-cellTitle cellTitle-153"
+                            id="header127-$key"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-147"
-                              id="header37-$key-name"
+                              className="ms-DetailsHeader-cellName cellName-154"
+                              id="header127-$key-name"
                             >
                               Key
                             </span>
@@ -2060,7 +2828,7 @@ Array [
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerStart-131"
+                        className="ms-DetailsHeader-cellSizer cellSizer-137 cellSizerStart-138"
                         data-is-focusable={false}
                         data-sizer-index={0}
                         onBlur={[Function]}
@@ -2071,7 +2839,7 @@ Array [
                       <div
                         aria-label="Value"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-140"
+                        className="ms-DetailsHeader-cell is-actionable root-147"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -2085,17 +2853,17 @@ Array [
                         }
                       >
                         <span
-                          className="cellTooltip-148"
+                          className="cellTooltip-155"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-146"
-                            id="header37-$value"
+                            className="ms-DetailsHeader-cellTitle cellTitle-153"
+                            id="header127-$value"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-147"
-                              id="header37-$value-name"
+                              className="ms-DetailsHeader-cellName cellName-154"
+                              id="header127-$value-name"
                             >
                               Value
                             </span>
@@ -2104,7 +2872,7 @@ Array [
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerEnd-132"
+                        className="ms-DetailsHeader-cellSizer cellSizer-137 cellSizerEnd-139"
                         data-is-focusable={false}
                         data-sizer-index={1}
                         onBlur={[Function]}
@@ -2132,8 +2900,8 @@ Array [
                       role="presentation"
                     >
                       <div
-                        className="ms-FocusZone css-139 focusZone-122"
-                        data-focuszone-id="FocusZone39"
+                        className="ms-FocusZone css-146 focusZone-129"
+                        data-focuszone-id="FocusZone129"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onKeyDown={[Function]}
@@ -2173,6 +2941,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Body"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -2280,7 +3112,7 @@ Array [
           </button>
           <div
             hidden={true}
-            id="tooltip20"
+            id="tooltip68"
             style={
               Object {
                 "border": 0,
@@ -2356,7 +3188,7 @@ Array [
           </button>
           <div
             hidden={true}
-            id="tooltip24"
+            id="tooltip72"
             style={
               Object {
                 "border": 0,
@@ -2412,6 +3244,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Duration"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -2468,6 +3364,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Start time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -2619,6 +3579,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in End time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -2847,7 +3871,7 @@ Array [
           </button>
           <div
             hidden={true}
-            id="tooltip40"
+            id="tooltip136"
             style={
               Object {
                 "border": 0,
@@ -2923,7 +3947,7 @@ Array [
           </button>
           <div
             hidden={true}
-            id="tooltip44"
+            id="tooltip140"
             style={
               Object {
                 "border": 0,
@@ -2979,6 +4003,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Duration"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -3035,6 +4123,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in Start time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={
@@ -3186,6 +4338,70 @@ Array [
               role="textbox"
               tabIndex={0}
             >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in End time"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of {label} to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        Object {
+                          "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
               <pre
                 className="prism-code language-json"
                 style={

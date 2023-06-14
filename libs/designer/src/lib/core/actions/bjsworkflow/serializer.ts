@@ -113,7 +113,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         SerializationErrorCode.INVALID_PARAMETERS,
         intl.formatMessage(
           {
-            defaultMessage: 'Workflow has parameter validation errors on the following operations: {invalidNodes}',
+            defaultMessage: 'The workflow has parameter validation errors in the following operations: {invalidNodes}',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }
@@ -138,10 +138,8 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
 
   const serializedWorkflow: Workflow = {
     definition: {
-      $schema: Constants.SCHEMA.GA_20160601.URL,
+      ...rootState.workflow.originalDefinition,
       actions: await getActions(rootState, options),
-      contentVersion: '1.0.0.0',
-      outputs: {}, // TODO - Should get this from original definition
       ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
       triggers: await getTrigger(rootState, options),
     },
@@ -181,6 +179,9 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
 
 const getTrigger = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Triggers> => {
   const rootNodeId = getTriggerNodeId(rootState.workflow);
+  if (rootNodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
+    return {}; // Placeholder trigger was found, return empty object
+  }
   const idReplacements = rootState.workflow.idReplacements;
   return rootNodeId
     ? {
@@ -234,9 +235,6 @@ export const serializeOperation = async (
   }
 
   const operation = rootState.operations.operationInfo[operationId];
-
-  // TODO: Add logic to identify if this operation is in Recommendation phase.
-  // If in recommendation phase then return null;
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   if (OperationManifestService().isSupported(operation.type, operation.kind)) {

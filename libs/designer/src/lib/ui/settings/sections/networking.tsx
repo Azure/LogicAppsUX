@@ -9,6 +9,7 @@ export interface NetworkingSectionProps extends SectionProps {
   onAsyncResponseToggle: ToggleHandler;
   onRequestOptionsChange: TextChangeHandler;
   onSuppressHeadersToggle: ToggleHandler;
+  onPaginationToggle: ToggleHandler;
   onPaginationValueChange: TextChangeHandler;
   onHeadersOnResponseToggle: ToggleHandler;
   onContentTransferToggle: ToggleHandler;
@@ -34,6 +35,7 @@ export const Networking = ({
   onAsyncResponseToggle,
   onRequestOptionsChange,
   onSuppressHeadersToggle,
+  onPaginationToggle,
   onPaginationValueChange,
   onHeadersOnResponseToggle,
   onContentTransferToggle,
@@ -98,7 +100,7 @@ export const Networking = ({
   });
   const paginationTitle = intl.formatMessage({
     defaultMessage: 'Pagination',
-    description: 'title for pagination setting',
+    description: 'Title for pagination setting',
   });
   const paginationTooltipText = intl.formatMessage({
     defaultMessage:
@@ -284,10 +286,11 @@ export const Networking = ({
       settingProp: {
         readOnly,
         textFieldLabel: threshold,
-        textFieldValue: paging?.value?.toString() ?? '',
+        textFieldValue: paging?.value?.value?.toString() ?? '',
         checked: paging?.value?.enabled,
         onToggleLabel: onText,
         offToggleLabel: offText,
+        onToggleInputChange: (_, checked) => onPaginationToggle(!!checked),
         onValueChange: (_, newVal) => onPaginationValueChange(newVal as string),
         customLabel: () => pagingCustomLabel,
         ariaLabel: paginationTitle,

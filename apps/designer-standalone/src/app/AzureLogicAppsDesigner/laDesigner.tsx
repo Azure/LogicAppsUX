@@ -20,9 +20,11 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
+import { Chatbot } from '@microsoft/chatbot';
 import {
   ApiManagementInstanceService,
   BaseAppServiceService,
+  BaseFunctionService,
   BaseGatewayService,
   BaseOAuthService,
   StandardConnectionService,
@@ -54,6 +56,8 @@ const DesignerEditor = () => {
     monitoringView,
     runId,
     appId,
+    showChatBot,
+    language,
   } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -197,7 +201,7 @@ const DesignerEditor = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
+      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters }}
@@ -213,6 +217,7 @@ const DesignerEditor = () => {
                 isDarkMode={isDarkMode}
               />
               <Designer />
+              {showChatBot ? <Chatbot /> : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
@@ -384,6 +389,13 @@ const getDesignerServices = (
     isExplicitAuthRequiredForManagedIdentity: () => true,
   };
 
+  const functionService = new BaseFunctionService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
+
   // const loggerService = new Stan({
   //   resourceID: workflowId,
   //   designerVersion: packagejson.dependencies['@microsoft/logic-apps-designer'],
@@ -408,6 +420,7 @@ const getDesignerServices = (
     oAuthService,
     workflowService,
     apimService,
+    functionService,
     runService,
   };
 };

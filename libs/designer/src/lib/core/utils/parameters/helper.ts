@@ -24,7 +24,7 @@ import {
   clearDynamicInputs,
   updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
-import type { VariableDeclaration } from '../../state/tokensSlice';
+import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
@@ -338,7 +338,7 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
 }
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
-  return !parameter.required && getVisibility(parameter) !== constants.VISIBILITY.IMPORTANT;
+  return !parameter.required && !equals(getVisibility(parameter), constants.VISIBILITY.IMPORTANT);
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
@@ -2649,13 +2649,15 @@ export function updateTokenMetadata(
   if (token.arrayDetails && repetitionContext) {
     const repetitionReference = getRepetitionReference(repetitionContext, token.arrayDetails.loopSource);
     const repetitionValue = repetitionReference?.repetitionValue;
-    const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
-    token.arrayDetails = {
-      ...token.arrayDetails,
-      parentArrayKey: fullPath,
-      parentArrayName: path,
-    };
-    token.actionName = step;
+    if (repetitionValue) {
+      const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
+      token.arrayDetails = {
+        ...token.arrayDetails,
+        parentArrayKey: fullPath,
+        parentArrayName: path,
+      };
+      token.actionName = step;
+    }
 
     if (!token.arrayDetails.loopSource && equals(repetitionReference?.actionType, constants.NODE.TYPE.FOREACH)) {
       token.arrayDetails.loopSource = repetitionReference?.actionName;

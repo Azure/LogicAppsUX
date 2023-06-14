@@ -30,12 +30,14 @@ export const panelSlice = createSlice({
     collapsePanel: (state) => {
       state.collapsed = true;
       state.selectedOperationGroupId = '';
+      state.addingTrigger = false;
     },
     clearPanel: (state) => {
       state.collapsed = true;
       state.currentState = undefined;
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
+      state.addingTrigger = false;
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.panelLocation) {
@@ -48,6 +50,7 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload;
       state.currentState = undefined;
       state.selectedOperationGroupId = '';
+      state.addingTrigger = false;
     },
     expandDiscoveryPanel: (
       state,
@@ -71,6 +74,7 @@ export const panelSlice = createSlice({
       state.currentState = undefined;
       state.selectedOperationGroupId = '';
       state.selectedOperationId = action.payload;
+      state.addingTrigger = false;
     },
     switchToWorkflowParameters: (state) => {
       state.collapsed = false;
@@ -78,6 +82,7 @@ export const panelSlice = createSlice({
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
       state.selectedOperationId = '';
+      state.addingTrigger = false;
     },
     switchToNodeSearchPanel: (state) => {
       state.collapsed = false;
@@ -85,6 +90,7 @@ export const panelSlice = createSlice({
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
       state.selectedOperationId = '';
+      state.addingTrigger = false;
     },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
@@ -118,7 +124,9 @@ export const panelSlice = createSlice({
     },
     showDefaultTabs: (
       state,
-      action: PayloadAction<{ isScopeNode?: boolean; isMonitoringView?: boolean; hasSchema?: boolean } | undefined>
+      action: PayloadAction<
+        { isScopeNode?: boolean; isMonitoringView?: boolean; hasSchema?: boolean; showRunHistory?: boolean } | undefined
+      >
     ) => {
       const isMonitoringView = action.payload?.isMonitoringView;
       const isScopeNode = action.payload?.isScopeNode;
@@ -134,6 +142,9 @@ export const panelSlice = createSlice({
         ? defaultTabs.unshift(constants.PANEL_TAB_NAMES.MONITORING)
         : defaultTabs.unshift(constants.PANEL_TAB_NAMES.PARAMETERS);
 
+      if (isMonitoringView && action.payload?.showRunHistory) {
+        defaultTabs.unshift(constants.PANEL_TAB_NAMES.RETRY_HISTORY);
+      }
       if (hasSchema && !isMonitoringView) {
         defaultTabs.unshift(constants.PANEL_TAB_NAMES.TESTING);
       }

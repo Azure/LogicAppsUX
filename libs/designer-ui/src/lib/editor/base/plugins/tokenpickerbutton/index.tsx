@@ -104,7 +104,7 @@ export const TokenPickerButton = ({
   }, [anchorKey, editor, updatePosition]);
 
   const dynamicContentButtonText = intl.formatMessage({
-    defaultMessage: `Insert data from previous step (You can also add by typing / in the editor)`,
+    defaultMessage: `Enter the data from previous step. You can also add data by typing the '/' character.`,
     description: 'Label for button to open dynamic content token picker',
   });
 
@@ -127,6 +127,7 @@ export const TokenPickerButton = ({
               iconProps={dynamicContentIconProps}
               styles={{ root: 'top-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
+              data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
               onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
             />
           </TooltipHost>
@@ -135,6 +136,7 @@ export const TokenPickerButton = ({
               iconProps={expressionButtonProps}
               styles={{ root: 'bottom-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
+              data-automation-id="msla-token-picker-entrypoint-button-expression"
               onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
             />
           </TooltipHost>

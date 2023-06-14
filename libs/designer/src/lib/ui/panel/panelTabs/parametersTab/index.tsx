@@ -11,8 +11,8 @@ import {
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
-import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
-import { updateVariableInfo } from '../../../../core/state/tokensSlice';
+import type { VariableDeclaration } from '../../../../core/state/tokens/tokensSlice';
+import { updateVariableInfo } from '../../../../core/state/tokens/tokensSlice';
 import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
@@ -34,7 +34,7 @@ import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, PanelLocation, TokenPicker, TokenPickerButtonLocation, TokenType } from '@microsoft/designer-ui';
-import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
+import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -105,8 +105,8 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {operationInfo && connectionName.isLoading === false && showConnectionDisplay ? (
-        <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />
+      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
+        <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} isLoading={connectionName.isLoading} />
       ) : null}
       {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
@@ -432,12 +432,12 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
   return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
 
-export const parametersTab: PanelTab = {
-  title: 'Parameters',
+export const parametersTab: PanelTabFn = (intl) => ({
+  title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
   name: constants.PANEL_TAB_NAMES.PARAMETERS,
-  description: 'Request History',
+  description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
   visible: true,
   content: <ParametersTab />,
   order: 0,
   icon: 'Info',
-};
+});

@@ -18,6 +18,8 @@ export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 
+export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
+
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
@@ -64,7 +66,6 @@ export enum extensionCommand {
   viewContent = 'azureLogicAppsStandard.viewContent',
   openFile = 'azureLogicAppsStandard.openFile',
   createNewProject = 'azureLogicAppsStandard.createNewProject',
-  createNewCodeProject = 'azureLogicAppsStandard.createNewCodeProject',
   createCodeless = 'azureLogicAppsStandard.createCodeless',
   createLogicApp = 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced = 'azureLogicAppsStandard.createLogicAppAdvanced',

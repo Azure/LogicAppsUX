@@ -6,7 +6,7 @@ import { updateNodeSettings } from '../../core/state/operation/operationMetadata
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setTabError } from '../../core/state/panel/panelSlice';
 import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/setting/settingSlice';
-import { updateTokenSecureStatus } from '../../core/state/tokensSlice';
+import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
 import type { RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
@@ -377,6 +377,15 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     });
   };
 
+  const onPaginationToggle = (checked: boolean): void => {
+    updateSettings({
+      paging: {
+        isSupported: !!paging?.isSupported,
+        value: { ...paging?.value, enabled: checked },
+      },
+    });
+  };
+
   const onPaginationValueChange = (newVal: string): void => {
     updateSettings({
       paging: {
@@ -487,6 +496,7 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     onAsyncPatternToggle,
     onAsyncResponseToggle,
     onContentTransferToggle,
+    onPaginationToggle,
     onPaginationValueChange,
     onRequestOptionsChange,
     onHeadersOnResponseToggle,

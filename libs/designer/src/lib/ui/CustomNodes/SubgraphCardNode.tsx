@@ -6,7 +6,7 @@ import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
+import { changePanelNode, isolateTab, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import {
   useActionMetadata,
@@ -22,7 +22,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, SubgraphCard } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES, removeIdTag } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -31,7 +31,7 @@ import type { NodeProps } from 'reactflow';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const subgraphId = id.split('-#')[0];
+  const subgraphId = removeIdTag(id);
   const node = useActionMetadata(subgraphId);
 
   const intl = useIntl();
@@ -71,6 +71,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         dispatch(setFocusNode(newCaseId));
       } else {
         dispatch(changePanelNode(_id));
+        dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
         dispatch(showDefaultTabs({ isMonitoringView }));
       }
     },

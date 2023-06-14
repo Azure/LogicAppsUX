@@ -3,11 +3,11 @@ import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNo
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
-import { operationIsAction } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
+import Queue from 'yocto-queue';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -180,25 +180,49 @@ export const useNodeGraphId = (nodeId: string): string => {
   );
 };
 
-export const useGetAllAncestors = (nodeId: string) => {
+// BFS search for nodeId
+const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?: WorkflowNode) => {
+  if (!rootNode) return undefined;
+
+  const queue = new Queue<WorkflowNode>();
+  queue.enqueue(rootNode);
+
+  while (queue.size > 0) {
+    const current = queue.dequeue();
+    if (current && current.id === nodeId) return getAllChildren(current, childrenNodes);
+    if (current?.id === nodeId) {
+      return current;
+    }
+
+    if (current?.children) {
+      for (const child of current.children) {
+        queue.enqueue(child);
+      }
+    }
+  }
+
+  return undefined;
+};
+
+// Adds all childrenIds
+const getAllChildren = (currNode: WorkflowNode, childrenNodes: string[]) => {
+  if (currNode.children) {
+    for (const child of currNode.children) {
+      getAllChildren(child, childrenNodes);
+    }
+  } else if (currNode.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) {
+    childrenNodes.push(currNode.id);
+  }
+};
+
+// given a nodeId, return all operation nodes within if a scope
+export const useGetAllOperationNodesWithin = (nodeId: string) => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      const ancestors = new Set();
-      const operationData = state.operations[nodeId];
-      if (operationData && operationIsAction(operationData)) {
-        let currentParent = Object.keys(operationData?.runAfter ?? {});
-        while (currentParent.length) {
-          const currentChild = currentParent.pop();
-          ancestors.add(currentChild);
-          const parentOperation = currentChild ? state.operations[currentChild] : null;
-          if (parentOperation && operationIsAction(parentOperation)) {
-            const newAncestors = Object.keys(parentOperation?.runAfter ?? {});
-            currentParent = [...currentParent, ...newAncestors];
-          }
-        }
-      }
-
-      return ancestors;
+      const graphNodes = state.graph;
+      const childrenNodes: string[] = [];
+      getChildrenOfNodeId(childrenNodes, nodeId, graphNodes ?? undefined);
+      return childrenNodes;
     })
   );
 };
@@ -224,6 +248,14 @@ export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       return state.runInstance;
+    })
+  );
+};
+
+export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return state.runInstance?.properties.actions?.[id]?.retryHistory ?? state.runInstance?.properties.trigger?.retryHistory;
     })
   );
 };

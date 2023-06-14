@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { isBuiltInConnector, isCustomConnector } from '@microsoft/utils-logic-apps';
+import { equals, isBuiltInConnector, isCustomConnector } from '@microsoft/utils-logic-apps';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
@@ -14,7 +14,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
     return '--';
   }
 
-  const seconds = Math.round(Math.abs(milliseconds / 1000));
+  const seconds = Math.round(Math.abs(milliseconds / 100)) / 10;
   if (seconds < 60) {
     if (abbreviated) {
       return intl.formatMessage(
@@ -111,6 +111,19 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       }
     );
   }
+}
+
+/**
+ * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
+ * @arg {string} startTime - The start time of the duration
+ * @arg {string} endTime - The end time of the duration
+ * @arg {boolean} [abbreviated=true] - True if the string should be abbreviated, e.g., "s" instead of "second(s)".
+ */
+export function getDurationStringFromTimes(startTime: string, endTime: string, abbreviated = true): string {
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const duration = end.getTime() - start.getTime();
+  return getDurationString(duration, abbreviated);
 }
 
 /**
@@ -352,4 +365,14 @@ export const getConnectorCategoryString = (connectorId: string): string => {
   });
 
   return isBuiltInConnector(connectorId) ? builtInText : isCustomConnector(connectorId) ? customText : azureText;
+};
+
+export const convertUIElementNameToAutomationId = (uiElementName: string): string => {
+  return uiElementName?.replace(/\W/g, '_')?.toLowerCase();
+};
+
+export const getPreviewTag = (status: string | undefined): string | undefined => {
+  return equals(status, 'preview')
+    ? getIntl().formatMessage({ defaultMessage: 'Preview', description: 'Preview tag for preview connector' })
+    : undefined;
 };
