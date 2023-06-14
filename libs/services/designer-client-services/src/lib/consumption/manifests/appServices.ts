@@ -53,7 +53,7 @@ export const appServiceActionManifest = {
               'x-ms-serialization': { skip: true },
               'x-ms-deserialization': {
                 type: 'swaggeroperationid',
-                parameterReference: 'inputs.operationDetails.uri',
+                parameterReference: 'inputs.operationId',
                 options: {
                   swaggerOperation: {
                     methodPath: ['inputs', 'operationDetails', 'method'],
