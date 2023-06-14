@@ -16,6 +16,7 @@ import type {
   UploadChunkMetadata,
 } from '@microsoft/utils-logic-apps';
 import {
+  ConnectionReferenceKeyFormat,
   equals,
   getObjectPropertyValue,
   getPropertyValue,
