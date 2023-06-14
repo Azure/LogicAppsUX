@@ -26,3 +26,4 @@ export { BaseGatewayService } from './gateway';
 export type { BaseGatewayServiceOptions } from './gateway';
 // OAuth
 export { BaseOAuthService } from './oAuth';
+export * from './operations';

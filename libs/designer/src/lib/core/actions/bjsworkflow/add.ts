@@ -15,8 +15,7 @@ import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getBrandColorFromManifest, getIconUriFromConnector, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
-import { createLiteralValueSegment } from '../../utils/parameters/segment';
+import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
@@ -91,7 +90,7 @@ const initializeOperationDetails = async (
   operationInfo: NodeOperation,
   getState: () => RootState,
   dispatch: Dispatch,
-  parameterValues?: Record<string, any>,
+  presetParameterValues?: Record<string, any>,
   actionMetadata?: Record<string, any>
 ): Promise<void> => {
   const state = getState();
@@ -116,7 +115,7 @@ const initializeOperationDetails = async (
 
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, presetParameterValues);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
       isTrigger,
@@ -125,18 +124,6 @@ const initializeOperationDetails = async (
     );
     let updatedOutputs = nodeOutputs;
     parsedManifest = new ManifestParser(manifest);
-
-    if (parameterValues) {
-      // For actions with selected Azure Resources
-      Object.entries(parameterValues).forEach(([parameterName, parameterValue]) => {
-        const value = [createLiteralValueSegment(parameterValue)];
-        const parameter = getParameterFromName(nodeInputs, parameterName);
-        if (parameter) {
-          parameter.value = value;
-          parameter.preservedValue = parameterValue;
-        }
-      });
-    }
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
@@ -206,7 +193,6 @@ const initializeOperationDetails = async (
       undefined,
       initData.nodeDependencies,
       initData.nodeInputs,
-      initData.actionMetadata,
       initData.settings as Settings,
       getAllVariables(getState().tokens.variables),
       dispatch,

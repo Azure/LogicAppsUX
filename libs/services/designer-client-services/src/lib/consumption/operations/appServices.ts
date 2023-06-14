@@ -30,6 +30,7 @@ export const appServiceActionOperation = {
   type: 'appservice',
   properties: {
     api,
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose an Azure App Services action',
     description: 'Show APIs for App Services in my subscription',
     visibility: 'Important',
@@ -45,6 +46,7 @@ export const appServiceTriggerOperation = {
   type: 'appservice',
   properties: {
     api,
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose an Azure App Services trigger',
     description: 'Show APIs for App Services in my subscription',
     visibility: 'Important',

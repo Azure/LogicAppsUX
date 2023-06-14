@@ -408,7 +408,6 @@ export const loadDynamicOutputsInNode = async (
   connectionReference: ConnectionReference | undefined,
   outputDependencies: Record<string, DependencyInfo>,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   settings: Settings,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
   dispatch: Dispatch
@@ -425,7 +424,6 @@ export const loadDynamicOutputsInNode = async (
           const outputSchema = await getDynamicSchema(
             info,
             nodeInputs,
-            nodeMetadata,
             operationInfo,
             connectionReference,
             /* variables */ undefined,
