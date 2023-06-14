@@ -5,6 +5,8 @@ pool:
 
 steps:
   - task: OneLocBuild@2
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       locProj: 'Localize/LocProject.json'
       outDir: '$(Build.ArtifactStagingDirectory)'
@@ -14,7 +16,7 @@ steps:
       gitHubPatVariable: $(GithubPAT)
       gitHubPrMergeMethod: squash
       packageSourceAuth: 'patAuth'
-      patVariable: $(OneLocBuildPAT)
+      dependencyPackageSource: 'https://pkgs.dev.azure.com/azure-logic-apps-ux/logic-apps-ux/_packaging/designer/nuget/v3/index.json'
 
   - task: ComponentGovernanceComponentDetection@0
     displayName: Component Detection
