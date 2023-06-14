@@ -2,19 +2,19 @@
   "++ZVe/": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Test"
     }
   ],
   "+0yxlR": [
     {
       "type": 0,
-      "value": "Function display"
+      "value": "İşlev ekranı"
     }
   ],
   "+Uvo/p": [
     {
       "type": 0,
-      "value": "Alt text for down chevron"
+      "value": "Aşağı köşeli çift ayraç için alternatif metin"
     }
   ],
   "+ZSBrq": [
@@ -34,13 +34,13 @@
   "+mAJR3": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) Kuala Lumpur, Singapur"
     }
   ],
   "+powfX": [
     {
       "type": 0,
-      "value": "Time zone"
+      "value": "Saat dilimi"
     }
   ],
   "/EU/oJ": [
@@ -64,7 +64,7 @@
   "/NtebP": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Islamabad, Karachi"
+      "value": "(UTC+05:00) İslamabat, Karaçi"
     }
   ],
   "/QqADs": [
@@ -112,13 +112,13 @@
   "/mjH84": [
     {
       "type": 0,
-      "value": "Show raw outputs"
+      "value": "Ham çıkışları görüntüleyin"
     }
   ],
   "/n13VL": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Özellikler"
     }
   ],
   "/qchXQ": [
@@ -142,13 +142,13 @@
   "/vWMKW": [
     {
       "type": 0,
-      "value": "Missing required inputs"
+      "value": "Gerekli girişler eksik"
     }
   ],
   "/yYyOq": [
     {
       "type": 0,
-      "value": "Resource Group"
+      "value": "Kaynak Grubu"
     }
   ],
   "00xlpa": [
@@ -166,7 +166,7 @@
   "03RO5d": [
     {
       "type": 0,
-      "value": "Edit parameter"
+      "value": "Parametreyi düzenle"
     }
   ],
   "04AwK7": [
@@ -194,7 +194,7 @@
   "06zKZg": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Tbilisi"
+      "value": "(UTC+04:00) Tiflis"
     }
   ],
   "07ZsoY": [
@@ -242,7 +242,7 @@
   "0GT0SI": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "İptal"
     }
   ],
   "0GqNGo": [
@@ -254,7 +254,7 @@
   "0IRUjM": [
     {
       "type": 0,
-      "value": "Select a target schema node to start mapping"
+      "value": "Eşlemeyi başlatmak için bir hedef şema düğümü seçin"
     }
   ],
   "0JTHTZ": [
@@ -278,7 +278,7 @@
   "0SSwxD": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Paneli kapat"
     }
   ],
   "0Vzp0l": [
@@ -302,13 +302,13 @@
   "0m2Y1/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Değer"
     }
   ],
   "0oebOm": [
     {
       "type": 0,
-      "value": "Outputs"
+      "value": "Çıkışlar"
     }
   ],
   "0p+pJq": [
@@ -342,19 +342,19 @@
   "0upuCv": [
     {
       "type": 0,
-      "value": "Hour"
+      "value": "Saat"
     }
   ],
   "0vfdFS": [
     {
       "type": 0,
-      "value": "every day"
+      "value": "her gün"
     }
   ],
   "0xLWzG": [
     {
       "type": 0,
-      "value": "The name already exists or is invalid. Update the name before you continue."
+      "value": "Ad zaten var veya geçersiz. Devam etmeden önce adı güncelleştirin."
     }
   ],
   "0y5eia": [
@@ -378,7 +378,7 @@
   "11qu8f": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Geçerli bir tamsayı girin."
     }
   ],
   "14lYtE": [
@@ -478,7 +478,7 @@
   "1YEc9e": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Geçerli bir koşul girin."
     }
   ],
   "1ZDLZA": [
@@ -496,13 +496,13 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "Actions perform operations on data, communicate between systems, or run other tasks."
+      "value": "Eylemler veri üzerinde işlem gerçekleştirir, sistemler arasında iletişim kurma veya diğer görevleri çalıştırma."
     }
   ],
   "1eKQwo": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Perth"
+      "value": "(UTC+08:00) Pert"
     }
   ],
   "1ejxkP": [
@@ -514,7 +514,7 @@
   "1hHFdx": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00) Azorlar"
     }
   ],
   "1htSs7": [
@@ -532,7 +532,7 @@
   "1nODUD": [
     {
       "type": 0,
-      "value": "Hide functions"
+      "value": "İşlevleri gizle"
     }
   ],
   "1nvvw1": [
@@ -544,7 +544,7 @@
   "1pjO9s": [
     {
       "type": 0,
-      "value": "Hide source schema"
+      "value": "Kaynak şemasını gizle"
     }
   ],
   "1uGBLP": [
@@ -562,7 +562,7 @@
   "20oqsp": [
     {
       "type": 0,
-      "value": "Add children (recursive)"
+      "value": "Alt öğe ekle (özyinelemeli)"
     }
   ],
   "23fENy": [
@@ -586,7 +586,7 @@
   "27Nhhv": [
     {
       "type": 0,
-      "value": "Select an API from an API Management instance"
+      "value": "Bir api'yi bir API Management seçin"
     }
   ],
   "2CXCOt": [
@@ -604,7 +604,7 @@
   "2JA3gY": [
     {
       "type": 0,
-      "value": "Expand tree node"
+      "value": "Ağaç düğümünü genişlet"
     }
   ],
   "2K2fAj": [
@@ -658,25 +658,25 @@
   "2hrQOL": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lizbon, Londra"
     }
   ],
   "2kWLLc": [
     {
       "type": 0,
-      "value": "Start Time"
+      "value": "Başlangıç Saati"
     }
   ],
   "2pRsUf": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Geçerli bir dizi girin."
     }
   ],
   "2r30S9": [
     {
       "type": 0,
-      "value": "Insert a new step after "
+      "value": "Bu işlemden sonra yeni bir adım "
     },
     {
       "type": 1,
@@ -692,25 +692,25 @@
   "2vnYre": [
     {
       "type": 0,
-      "value": "Add Action"
+      "value": "Eylem Ekle"
     }
   ],
   "2y24a/": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Kaydet"
     }
   ],
   "3+TQMa": [
     {
       "type": 0,
-      "value": "Loading connection..."
+      "value": "Bağlantı yükleniyor..."
     }
   ],
   "30njcn": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Bağlantı Oluştur"
     }
   ],
   "33+WHG": [
@@ -722,7 +722,7 @@
   "34Nt/B": [
     {
       "type": 0,
-      "value": "alt text for button icon"
+      "value": "düğme simgesi için alternatif metin"
     }
   ],
   "36RiST": [
@@ -734,7 +734,7 @@
   "3AWwVl": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kod"
     }
   ],
   "3BZnxY": [
@@ -758,15 +758,7 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "` first."
+      "value": "Önce {nodeName} kaynak öğesi içindeki tüm eşlemeleri kaldırın."
     }
   ],
   "3MTSYZ": [
@@ -796,7 +788,7 @@
   "3X4FHS": [
     {
       "type": 0,
-      "value": "Choose the type of user input"
+      "value": "Kullanıcı girişi türünü seçin"
     }
   ],
   "3Y8a6G": [
@@ -816,13 +808,13 @@
   "3cZZKj": [
     {
       "type": 0,
-      "value": "Divider"
+      "value": "Ayırıcı"
     }
   ],
   "3eeli7": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Kaynak şema seçin"
     }
   ],
   "3ewBbk": [
@@ -862,7 +854,7 @@
   "3n5pnv": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) Lord Howe Adası"
     }
   ],
   "3rzrWf": [
@@ -874,7 +866,7 @@
   "3sJlV+": [
     {
       "type": 0,
-      "value": "Close code view"
+      "value": "Kod görünümünü kapat"
     }
   ],
   "3vCCY7": [
@@ -892,7 +884,7 @@
   "43xObP": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+      "value": "(UTC+10:00) Kanbera, Melbourne, Sidney"
     }
   ],
   "45ubha": [
@@ -910,7 +902,7 @@
   "4BH9uU": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Hatalar"
     }
   ],
   "4BrA0z": [
@@ -922,7 +914,7 @@
   "4D7H4R": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Çalıştırma "
     },
     {
       "type": 1,
@@ -932,13 +924,13 @@
   "4Ekn9t": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Geri Al"
     }
   ],
   "4IS4yp": [
     {
       "type": 0,
-      "value": "Retry Policy"
+      "value": "Yeniden Deneme İlkesi"
     }
   ],
   "4Q7WzU": [
@@ -956,7 +948,7 @@
   "4aaixN": [
     {
       "type": 0,
-      "value": "Tour"
+      "value": "Tur"
     }
   ],
   "4c0uPQ": [
@@ -984,7 +976,7 @@
     },
     {
       "type": 0,
-      "value": " is required."
+      "value": " gerekli."
     }
   ],
   "4vcnOA": [
@@ -1026,7 +1018,7 @@
   "5OvGgn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Gövde"
     }
   ],
   "5SAQOb": [
@@ -1070,13 +1062,13 @@
   "5dCAjy": [
     {
       "type": 0,
-      "value": "Day"
+      "value": "Gün"
     }
   ],
   "5hWg4V": [
     {
       "type": 0,
-      "value": "Select element"
+      "value": "Öğe seç"
     }
   ],
   "5qzZMo": [
@@ -1094,7 +1086,7 @@
   "5ytHcK": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Yükleniyor..."
     }
   ],
   "6+RwRp": [
@@ -1106,7 +1098,7 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+      "value": "Önceki adımdan veri ekle (Düzenleyiciye yazarak Alt + / da  ekleme)"
     }
   ],
   "62Ypnr": [
@@ -1142,7 +1134,7 @@
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "İşlev '"
     },
     {
       "type": 1,
@@ -1150,7 +1142,7 @@
     },
     {
       "type": 0,
-      "value": "' has too many inputs assigned to it"
+      "value": "' çok fazla giriş atanmış"
     }
   ],
   "6jiO7t": [
@@ -1192,25 +1184,25 @@
   "6ueRYm": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Başlangıç zamanı"
     }
   ],
   "73iM9+": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Kaynak şemayı güncelleştir"
     }
   ],
   "7EZ2oY": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) Turks ve Caicos"
     }
   ],
   "7Fyq1F": [
     {
       "type": 0,
-      "value": "No inputs"
+      "value": "Giriş yok"
     }
   ],
   "7GSk99": [
@@ -1236,7 +1228,7 @@
   "7PtWvu": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) Doğu Saati (ABD ve Kanada)"
     }
   ],
   "7QymrD": [
@@ -1248,13 +1240,13 @@
   "7S2wtE": [
     {
       "type": 0,
-      "value": "Schema Validation"
+      "value": "Şema Doğrulama"
     }
   ],
   "7WVgiU": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Yapılandır"
     }
   ],
   "7ZR1xr": [
@@ -1308,7 +1300,7 @@
   "8+0teU": [
     {
       "type": 0,
-      "value": "Parameter name already exists."
+      "value": "Parametre adı zaten var."
     }
   ],
   "83G5rr": [
@@ -1320,7 +1312,7 @@
   "83PYuA": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) Merkezi Saat (ABD ve Kanada)"
     }
   ],
   "84D91Y": [
@@ -1375,6 +1367,12 @@
       "value": "Tanımda birden çok tetikleyici olması nedeniyle tasarımcı işlenemiyor."
     }
   ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "Switch to code view mode"
+    }
+  ],
   "8ND+Yc": [
     {
       "type": 0,
@@ -1384,7 +1382,7 @@
   "8SxNQC": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "Genel Bakış"
     }
   ],
   "8U0KPg": [
@@ -1430,7 +1428,7 @@
   "8eTWaf": [
     {
       "type": 0,
-      "value": "Rename"
+      "value": "Yeniden adlandır"
     }
   ],
   "8j+a0n": [
@@ -1442,13 +1440,13 @@
   "8luJ2j": [
     {
       "type": 0,
-      "value": "Create Connection Reference"
+      "value": "Bağlantı Başvurusu Oluştur"
     }
   ],
   "8mDG0V": [
     {
       "type": 0,
-      "value": "The workflow has parameter validation errors in the following operations: "
+      "value": "İş akışında şu işlemde parametre doğrulama hataları var: "
     },
     {
       "type": 1,
@@ -1494,13 +1492,13 @@
   "90o7sB": [
     {
       "type": 0,
-      "value": "File"
+      "value": "Dosya"
     }
   ],
   "93Gj/n": [
     {
       "type": 0,
-      "value": "Line Position"
+      "value": "Satır Konumu"
     }
   ],
   "93svjx": [
@@ -1542,7 +1540,7 @@
   "9LLnyJ": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00) Brezilya"
     }
   ],
   "9SuA/E": [
@@ -1568,19 +1566,19 @@
   "9YGcT2": [
     {
       "type": 0,
-      "value": "ChildErrors"
+      "value": "Alt Öğe Sayısı"
     }
   ],
   "9YZ873": [
     {
       "type": 0,
-      "value": "Text"
+      "value": "Metin"
     }
   ],
   "9atGYe": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Ekle"
     }
   ],
   "9djnqI": [
@@ -1598,7 +1596,7 @@
   "9x8hg8": [
     {
       "type": 0,
-      "value": "Edit in basic mode"
+      "value": "Temel modda düzenle"
     }
   ],
   "A5Ferh": [
@@ -1610,7 +1608,7 @@
   "A8l+k7": [
     {
       "type": 0,
-      "value": "Error occurred while executing the following API parameters: '"
+      "value": "Şu API parametreleri yürütülürken hata oluştu: '"
     },
     {
       "type": 1,
@@ -1630,13 +1628,13 @@
   "AEguAy": [
     {
       "type": 0,
-      "value": "Empty value"
+      "value": "Boş değer "
     }
   ],
   "AGCm1p": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Ad"
     }
   ],
   "AHB418": [
@@ -1654,13 +1652,13 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture)."
+      "value": "Bir dizedeki değerin n. örneğinin dizinini döndürür (büyük/küçük harf duyarsız, sabit kültür)."
     }
   ],
   "Af+Ve0": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) Bougainville Adası"
     }
   ],
   "AheXMN": [
@@ -1678,7 +1676,7 @@
   "AoalgS": [
     {
       "type": 0,
-      "value": "Loading more results..."
+      "value": "Daha fazla sonuç yükleniyor..."
     }
   ],
   "ArTh0/": [
@@ -1690,7 +1688,7 @@
   "AsqIUa": [
     {
       "type": 0,
-      "value": "Maximum Interval"
+      "value": "En Uzun Aralık"
     }
   ],
   "Az0QvG": [
@@ -1742,7 +1740,7 @@
   "B/gCWM": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Hata"
     }
   ],
   "B2s0iG": [
@@ -1778,7 +1776,7 @@
   "BEZWxB": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Özel değeri temizle"
     }
   ],
   "BHe7qY": [
@@ -1790,7 +1788,7 @@
   "BJNUxN": [
     {
       "type": 0,
-      "value": "Path Parameters"
+      "value": "Yol Parametreleri"
     }
   ],
   "BKL0ZG": [
@@ -1814,19 +1812,19 @@
   "BSgavq": [
     {
       "type": 0,
-      "value": "Example: Monday, Friday"
+      "value": "Örnek: Pazartesi, Cuma"
     }
   ],
   "BUutcC": [
     {
       "type": 0,
-      "value": "Expant list of sibling elements"
+      "value": "Eşdüzey öğelerin açık listesi"
     }
   ],
   "BYrP8F": [
     {
       "type": 0,
-      "value": "Number"
+      "value": "Numara"
     }
   ],
   "BeqBP7": [
@@ -1838,7 +1836,7 @@
   "Bl4Iv0": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) Ulanbator"
     }
   ],
   "Bn8iTS": [
@@ -1862,13 +1860,13 @@
   "BrWQ0Z": [
     {
       "type": 0,
-      "value": "Select a managed identity"
+      "value": "Yönetilen kimlik seçin"
     }
   ],
   "BtL7UI": [
     {
       "type": 0,
-      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
+      "value": "Bu adım için ek bilgi gerekmiyor. Çıkışları sonraki adımlarda kullanabileceksiniz."
     }
   ],
   "BuYrD3": [
@@ -1886,7 +1884,7 @@
   "C1cy54": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Gövde"
     }
   ],
   "C4NQ1J": [
@@ -1916,7 +1914,7 @@
   "Cb8pv0": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) Orta Atlantik - Eski"
     }
   ],
   "Ci41Od": [
@@ -1934,7 +1932,7 @@
   "ClZW2r": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Değer"
     }
   ],
   "CsPY74": [
@@ -1946,7 +1944,7 @@
   "CvoqQ6": [
     {
       "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
+      "value": "Lütfen bir tarih girin veya seçin (YYYY-AA-GG)"
     }
   ],
   "Cy0pyB": [
@@ -1958,7 +1956,7 @@
   "CypYLs": [
     {
       "type": 0,
-      "value": "Insert a new step between "
+      "value": "Kullanıcı ve kullanıcı arasında yeni "
     },
     {
       "type": 1,
@@ -1966,7 +1964,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " "
     },
     {
       "type": 1,
@@ -1974,10 +1972,6 @@
     }
   ],
   "Czt6YV": [
-    {
-      "type": 0,
-      "value": "at "
-    },
     {
       "type": 1,
       "value": "times"
@@ -1992,7 +1986,7 @@
   "D/xTXV": [
     {
       "type": 0,
-      "value": "Show source schema"
+      "value": "Kaynak şemasını göster"
     }
   ],
   "D1lgsT": [
@@ -2028,7 +2022,7 @@
   "DJW8RE": [
     {
       "type": 0,
-      "value": "Select a value"
+      "value": "Bir değer seçin"
     }
   ],
   "DQV7aK": [
@@ -2048,7 +2042,7 @@
   "DWd9vy": [
     {
       "type": 0,
-      "value": "every week"
+      "value": "her hafta"
     }
   ],
   "DWsh56": [
@@ -2072,13 +2066,13 @@
   "DZc8wP": [
     {
       "type": 0,
-      "value": "Custom value does not match the schema node's type"
+      "value": "Özel değer şema düğümünün türüyle eşleşmiyor"
     }
   ],
   "Dhu3IS": [
     {
       "type": 0,
-      "value": "Show mini-map"
+      "value": "Mini haritayı göster"
     }
   ],
   "DjbVKU": [
@@ -2090,7 +2084,7 @@
   "DkF25I": [
     {
       "type": 0,
-      "value": "Expand Static Result"
+      "value": "Statik Sonucu Genişlet"
     }
   ],
   "DsPDVB": [
@@ -2102,7 +2096,7 @@
   "DuoHXI": [
     {
       "type": 0,
-      "value": "Add an input"
+      "value": "Giriş ekle"
     }
   ],
   "DyYcJZ": [
@@ -2126,13 +2120,13 @@
   "E+iim4": [
     {
       "type": 0,
-      "value": "Select timezone."
+      "value": "Saat dilimi seçin."
     }
   ],
   "E3+TAA": [
     {
       "type": 0,
-      "value": "Schema node '"
+      "value": "Şema '"
     },
     {
       "type": 1,
@@ -2140,7 +2134,7 @@
     },
     {
       "type": 0,
-      "value": "' has an input with a mismatched type"
+      "value": "', eşleşmeyen türe sahip bir girişe sahip"
     }
   ],
   "E8iqLl": [
@@ -2170,13 +2164,13 @@
   "ESZXfC": [
     {
       "type": 0,
-      "value": "At these minutes"
+      "value": "Şu dakikalarda"
     }
   ],
   "EUQDM6": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Eylem ekle"
     }
   ],
   "EZz5q7": [
@@ -2188,7 +2182,7 @@
   "Ea/fr+": [
     {
       "type": 0,
-      "value": "Every "
+      "value": "Her "
     },
     {
       "type": 1,
@@ -2196,13 +2190,19 @@
     },
     {
       "type": 0,
-      "value": " days"
+      "value": " günde bir"
     }
   ],
   "EaTGcN": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) Orta Batı Afrika"
+    }
+  ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
     }
   ],
   "EdzoIs": [
@@ -2236,13 +2236,13 @@
   "EurkzL": [
     {
       "type": 0,
-      "value": "Please select yes or no"
+      "value": "Lütfen Evet veya Hayır'ı seçin"
     }
   ],
   "Ex4U46": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Başlatıcının Bağlantısını Kullan"
     }
   ],
   "ExaACE": [
@@ -2260,13 +2260,13 @@
   "F9dR1Q": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Ekle"
     }
   ],
   "FBNevf": [
     {
       "type": 0,
-      "value": "Go To Operation"
+      "value": "İşleme Git"
     }
   ],
   "FDF4Qb": [
@@ -2326,13 +2326,13 @@
   "FS06y3": [
     {
       "type": 0,
-      "value": "Must provide name of parameter."
+      "value": "Parametrenin adı girilmelidir."
     }
   ],
   "FT3jt6": [
     {
       "type": 0,
-      "value": "Webhook reference information"
+      "value": "Web kancası başvuru bilgileri"
     }
   ],
   "FUhNu4": [
@@ -2382,7 +2382,7 @@
   "FYtDP0": [
     {
       "type": 0,
-      "value": "Enter an email address."
+      "value": "Bir e-posta adresi girin."
     }
   ],
   "FaBEfQ": [
@@ -2442,7 +2442,7 @@
   "GD3m4X": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Genişletildi"
     }
   ],
   "GDUGlm": [
@@ -2454,19 +2454,19 @@
   "GE14Xd": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) Buenos Aires"
     }
   ],
   "GEB1on": [
     {
       "type": 0,
-      "value": "This contains a value that is not between 0 and 59"
+      "value": "Bu, 0 ile 59 arasında olmayan bir değer içeriyor"
     }
   ],
   "GIUSQs": [
     {
       "type": 0,
-      "value": "Filter by data type"
+      "value": "Veri türüne göre filtrele"
     }
   ],
   "GLd3MU": [
@@ -2478,13 +2478,13 @@
   "GMkbFM": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Tetikleyici koşulları"
     }
   ],
   "GXXLuT": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Geçerli bir boole değeri girin."
     }
   ],
   "GYvF54": [
@@ -2514,13 +2514,13 @@
   "Gi7czD": [
     {
       "type": 0,
-      "value": "Source schema element"
+      "value": "Kaynak şema öğesi"
     }
   ],
   "Gl5khw": [
     {
       "type": 0,
-      "value": "At these hours"
+      "value": "Şu saatlerde"
     }
   ],
   "Gmya+V": [
@@ -2544,7 +2544,7 @@
   "GyUe4C": [
     {
       "type": 0,
-      "value": "Modify options regarding functions"
+      "value": "İşlevler ile ilgili seçenekleri değiştir"
     }
   ],
   "GzQQqH": [
@@ -2556,13 +2556,13 @@
   "Gziyq8": [
     {
       "type": 0,
-      "value": "File Content"
+      "value": "Dosya İçeriği"
     }
   ],
   "H/QVod": [
     {
       "type": 0,
-      "value": "Workflow has settings validation errors on the following operations: "
+      "value": "İş akışında şu işlemde ayar doğrulama hataları var: "
     },
     {
       "type": 1,
@@ -2584,13 +2584,13 @@
   "H2WdiZ": [
     {
       "type": 0,
-      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+      "value": "Geçerli dakika değerlerini (0-59) virgülle ayırarak girin. Örnek: 15,30"
     }
   ],
   "H5VikC": [
     {
       "type": 0,
-      "value": "Invalid connection, mapping must not form a closed loop."
+      "value": "Geçersiz bağlantı, eşleme kapalı bir döngü oluşturmaz."
     }
   ],
   "H8bEUn": [
@@ -2608,7 +2608,7 @@
   "HH970i": [
     {
       "type": 0,
-      "value": "Month"
+      "value": "Ay"
     }
   ],
   "HOchry": [
@@ -2626,19 +2626,25 @@
   "HSJLCu": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Üstbilgiler"
     }
   ],
   "HYhDYB": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) Eşgüdümlü Evrensel Saat-02"
     }
   ],
   "Hbqlzk": [
     {
       "type": 0,
       "value": "Insert Expression"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
     }
   ],
   "HfrUId": [
@@ -2650,19 +2656,19 @@
   "HmcHoE": [
     {
       "type": 0,
-      "value": "Error fetching manifest"
+      "value": "Bildirim getirilirken hata oluştu"
     }
   ],
   "HoQiVa": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Geçerli bir tarih saat girin."
     }
   ],
   "Hs5+Mk": [
     {
       "type": 0,
-      "value": "Enter a valid value for "
+      "value": "Uygulama için geçerli bir değer "
     },
     {
       "type": 1,
@@ -2686,7 +2692,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "Remove parameter \""
+      "value": "Parametre \""
     },
     {
       "type": 1,
@@ -2694,7 +2700,7 @@
     },
     {
       "type": 0,
-      "value": "\" and its value"
+      "value": "\" değerini kaldır"
     }
   ],
   "HzS2gJ": [
@@ -2706,13 +2712,13 @@
   "I41vZ/": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) Eşgüdümlü Evrensel Saat-11"
     }
   ],
   "I7/+er": [
     {
       "type": 0,
-      "value": "Global view"
+      "value": "Genel görünüm"
     }
   ],
   "IA+Ogm": [
@@ -2724,13 +2730,13 @@
   "IAmvpa": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) Eşgüdümlü Evrensel Saat-08"
     }
   ],
   "IHMd3X": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "Örnek: "
     },
     {
       "type": 1,
@@ -2746,7 +2752,7 @@
   "IPwWgu": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Kudüs"
     }
   ],
   "IQyOth": [
@@ -2758,7 +2764,7 @@
   "IS4vNX": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) Uluslararası Tarih Çizgisi Batı"
     }
   ],
   "IW2MjQ": [
@@ -2770,7 +2776,7 @@
   "IXy91L": [
     {
       "type": 0,
-      "value": "Add a target schema"
+      "value": "Hedef şema ekle"
     }
   ],
   "IdOhPY": [
@@ -2780,7 +2786,7 @@
     },
     {
       "type": 0,
-      "value": " To add dynamic data, press the Alt + '/' keys."
+      "value": " Dinamik veri eklemek için' Alt + '/' tuşlarına basın."
     }
   ],
   "If+p6C": [
@@ -2806,7 +2812,7 @@
   "Io48jC": [
     {
       "type": 0,
-      "value": "The {0} properties are invalid for the {1} authentication type."
+      "value": "Bu {0} kimlik doğrulama türü için {1} geçersiz."
     }
   ],
   "IooQu1": [
@@ -2818,13 +2824,13 @@
   "IsVhkH": [
     {
       "type": 0,
-      "value": "No properties"
+      "value": "Özellik yok"
     }
   ],
   "IxWip7": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) Moskova, St. Petersburg, Volgograd"
     }
   ],
   "J/Kz1j": [
@@ -2836,7 +2842,7 @@
   "J2Su6x": [
     {
       "type": 0,
-      "value": "Formatting options for font size"
+      "value": "Yazı tipi boyutu için biçimlendirme seçenekleri"
     }
   ],
   "J5/7vN": [
@@ -2862,13 +2868,13 @@
   "J9wWry": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametreler"
     }
   ],
   "JAIV0h": [
     {
       "type": 0,
-      "value": "The current map contains "
+      "value": "Geçerli harita "
     },
     {
       "type": 1,
@@ -2932,7 +2938,7 @@
   "Jil/Wa": [
     {
       "type": 0,
-      "value": "Invalid settings"
+      "value": "Geçersiz ayarlar"
     }
   ],
   "JjTfC7": [
@@ -2950,7 +2956,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Etkinleştirildiğinde, bu eylem Dataverse tetikleyicisinde \"Farklı çalıştır\" ayarından kullanıcıyla birlikte çalıştırılacak."
     }
   ],
   "Jq2Y/o": [
@@ -2980,13 +2986,13 @@
   "K7/DnZ": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Çıkış"
     }
   ],
   "KBaGkS": [
     {
       "type": 0,
-      "value": "Change connection reference"
+      "value": "Bağlantı başvurularını değiştir"
     }
   ],
   "KP0Rr2": [
@@ -3038,25 +3044,25 @@
   "KYX5Do": [
     {
       "type": 0,
-      "value": "Underline (⌘U)"
+      "value": "Altı Çizili (⌘U)"
     }
   ],
   "KZOa5l": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "İptal"
     }
   ],
   "KlDW+5": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00) Beyrut"
     }
   ],
   "KwGA+K": [
     {
       "type": 0,
-      "value": "Select a Function App resource"
+      "value": "İşlev Uygulaması kaynağı seçin"
     }
   ],
   "L+PY+j": [
@@ -3080,7 +3086,7 @@
   "LBH8UV": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Genişlet"
     }
   ],
   "LBbhCu": [
@@ -3098,7 +3104,7 @@
   "LCXZLM": [
     {
       "type": 0,
-      "value": "Loading Function Apps..."
+      "value": "İşlev Uygulamaları Yükleniyor..."
     }
   ],
   "LJmfmK": [
@@ -3116,7 +3122,7 @@
   "LR/3Lr": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Yapılandır"
     }
   ],
   "LS8rfZ": [
@@ -3128,13 +3134,13 @@
   "LV/BTE": [
     {
       "type": 0,
-      "value": "Loading Api Management service instances..."
+      "value": "API Management hizmeti örnekleri yükleniyor..."
     }
   ],
   "LV3k48": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) Belgrat, Bratislava, Budapeşte Ljubljana, Prag"
     }
   ],
   "LZm3ze": [
@@ -3170,13 +3176,13 @@
   "Lm9bnN": [
     {
       "type": 0,
-      "value": "Bullet List"
+      "value": "Madde İşareti Listesi"
     }
   ],
   "Lnqh6h": [
     {
       "type": 0,
-      "value": "Bold (Ctrl+B)"
+      "value": "Kalın (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3212,7 +3218,7 @@
   "Lx8HRl": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) Şam"
     }
   ],
   "M/gUE8": [
@@ -3260,7 +3266,7 @@
   "MCzWDc": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Önizleme"
     }
   ],
   "MDbmMw": [
@@ -3290,7 +3296,7 @@
   "MPPyI6": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Baku"
+      "value": "(UTC+04:00) Bakü"
     }
   ],
   "MTR4Vg": [
@@ -3302,7 +3308,7 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Geçerli bir dizi girin."
     }
   ],
   "MYgKHu": [
@@ -3326,13 +3332,13 @@
   "Mc6ITJ": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Ara"
     }
   ],
   "MfAdfx": [
     {
       "type": 0,
-      "value": "Edit in advanced mode"
+      "value": "Gelişmiş modda düzenle"
     }
   ],
   "Mgcs5s": [
@@ -3344,7 +3350,7 @@
   "MirIsS": [
     {
       "type": 0,
-      "value": "Show code"
+      "value": "Kodu göster"
     }
   ],
   "MmBfD1": [
@@ -3374,13 +3380,13 @@
   "N4dEVo": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Üstbilgiler"
     }
   ],
   "N7E9hd": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
     }
   ],
   "NGJ00e": [
@@ -3392,7 +3398,7 @@
   "NHnG2S": [
     {
       "type": 0,
-      "value": "The generated XSLT does not match the current mapping."
+      "value": "Oluşturulan XSLT geçerli eşlemeyle eşleşmiyor."
     }
   ],
   "NMpFs6": [
@@ -3410,7 +3416,7 @@
   "NWxGWN": [
     {
       "type": 0,
-      "value": "Enter unique property name"
+      "value": "Benzersiz özellik adı girin"
     }
   ],
   "NnD8gF": [
@@ -3464,13 +3470,13 @@
   "O/fh9A": [
     {
       "type": 0,
-      "value": "Service Principal"
+      "value": "Hizmet Sorumlusu"
     }
   ],
   "O27gKq": [
     {
       "type": 0,
-      "value": "Loading Files..."
+      "value": "Dosyalar Yükleniyor..."
     }
   ],
   "O9ZExg": [
@@ -3512,7 +3518,7 @@
   "OIOexo": [
     {
       "type": 0,
-      "value": "On these days"
+      "value": "Şu günlerde"
     }
   ],
   "OKszbi": [
@@ -3536,7 +3542,7 @@
   "OOUTdW": [
     {
       "type": 0,
-      "value": "Loading all connectors..."
+      "value": "Tüm bağlayıcılar yükleniyor..."
     }
   ],
   "OSHNZ2": [
@@ -3548,7 +3554,7 @@
   "OSP9JY": [
     {
       "type": 0,
-      "value": "Enter the audience."
+      "value": "Hedef kitleyi girin."
     }
   ],
   "OVvieE": [
@@ -3578,7 +3584,7 @@
   "OhbvXz": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) Norfolk Adası"
     }
   ],
   "Oib1mL": [
@@ -3620,7 +3626,7 @@
   "P+7G62": [
     {
       "type": 0,
-      "value": "Heading 3"
+      "value": "Başlık 3"
     }
   ],
   "P+mWgV": [
@@ -3632,13 +3638,13 @@
   "P/S+q5": [
     {
       "type": 0,
-      "value": "Required. One of the strings to combine into a single string."
+      "value": "Gerekli. Tek bir dizede birleştirilemedi."
     }
   ],
   "P/dnfK": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) Dakka"
     }
   ],
   "P2A5dB": [
@@ -3674,7 +3680,7 @@
   "PE1tsI": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Çıkış yok"
     }
   ],
   "PF87Ew": [
@@ -3692,7 +3698,7 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Çalıştırma "
     },
     {
       "type": 1,
@@ -3702,7 +3708,7 @@
   "PORNMZ": [
     {
       "type": 0,
-      "value": "Inputs"
+      "value": "Girişler"
     }
   ],
   "PP63jY": [
@@ -3726,7 +3732,7 @@
   "PSrCNL": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "İşlev"
     }
   ],
   "PXa0D4": [
@@ -3738,7 +3744,7 @@
   "PZgHf/": [
     {
       "type": 0,
-      "value": "Schema Uri"
+      "value": "Şema URI'si"
     }
   ],
   "PaPPLr": [
@@ -3768,7 +3774,7 @@
   "Pq+4a+": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00) Kahire"
     }
   ],
   "PtqSHp": [
@@ -3786,7 +3792,7 @@
   "PvWTxR": [
     {
       "type": 0,
-      "value": "Show functions"
+      "value": "İşlevleri göster"
     }
   ],
   "Pvm0xB": [
@@ -3822,13 +3828,13 @@
   "Q5w4Do": [
     {
       "type": 0,
-      "value": "Add dynamic data or expressions by inserting a /"
+      "value": "/ ekleyerek dinamik veri veya ifade ekleyin"
     }
   ],
   "Q8HCYK": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "Öğe yok"
     }
   ],
   "Q8zxeb": [
@@ -3886,7 +3892,7 @@
   "QiVbKW": [
     {
       "type": 0,
-      "value": "Exit Full Screen"
+      "value": "Tam Ekrandan Çık"
     }
   ],
   "QknZQ1": [
@@ -3910,7 +3916,7 @@
   "QpX2+j": [
     {
       "type": 0,
-      "value": "Location"
+      "value": "Konum"
     }
   ],
   "QrQDdp": [
@@ -3938,7 +3944,7 @@
   "R/aiRy": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) Eşgüdümlü Evrensel Saat+12"
     }
   ],
   "RFjYpH": [
@@ -3950,7 +3956,7 @@
   "RJes1w": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) Erivan"
     }
   ],
   "RX2Shm": [
@@ -3959,16 +3965,10 @@
       "value": "Gerekli. Bölünen dize."
     }
   ],
-  "RZ1MIN": [
-    {
-      "type": 0,
-      "value": "Tam dizi girişine geçiş yapın"
-    }
-  ],
   "RbJNVk": [
     {
       "type": 0,
-      "value": "Schema"
+      "value": "Şema"
     }
   ],
   "RhH4pF": [
@@ -4018,7 +4018,7 @@
   "Ro4+PC": [
     {
       "type": 0,
-      "value": "You can add notes only when you edit a step's inputs."
+      "value": "Yalnızca bir adımın girişlerini düzenleyemiyorken not  ekleyemezsiniz."
     }
   ],
   "Rp5pHU": [
@@ -4030,7 +4030,7 @@
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "Unrecognized expression '"
+      "value": "Tanınmayan ifade '"
     },
     {
       "type": 1,
@@ -4044,19 +4044,19 @@
   "RvpHdu": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Solomon Adl., Yeni Kaledonya"
     }
   ],
   "RxGxr+": [
     {
       "type": 0,
-      "value": "Line number"
+      "value": "Satır numarası"
     }
   ],
   "S138/4": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: ⌘B"
+      "value": "Metni kalın olarak biçimlendirin. Kısayol: ⌘B"
     }
   ],
   "SCCE6s": [
@@ -4068,13 +4068,13 @@
   "SGnTpt": [
     {
       "type": 0,
-      "value": "Heading 2"
+      "value": "Başlık 2"
     }
   ],
   "SJFVxf": [
     {
       "type": 0,
-      "value": "issues"
+      "value": "sorunlar"
     }
   ],
   "SKXopi": [
@@ -4086,13 +4086,13 @@
   "SKy5tj": [
     {
       "type": 0,
-      "value": "The input node type doesn't match the schema node's type."
+      "value": "Giriş düğümü türü şema düğümünün türüyle eşleşmiyor."
     }
   ],
   "SLJkRn": [
     {
       "type": 0,
-      "value": "Remove input"
+      "value": "Girişi kaldır"
     }
   ],
   "SLZ0n4": [
@@ -4126,7 +4126,7 @@
   "SgiTAh": [
     {
       "type": 0,
-      "value": "Please enter your input"
+      "value": "Lütfen girişinizi yazın"
     }
   ],
   "Sh10cw": [
@@ -4180,7 +4180,7 @@
   "T7Xwii": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Aralık"
     }
   ],
   "T7zcR6": [
@@ -4210,7 +4210,7 @@
   "TLHUMf": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Girişler yüklenirken hata oluştu"
     }
   ],
   "TNEttQ": [
@@ -4234,7 +4234,7 @@
   "TRpSCQ": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Eylem Türü"
     }
   ],
   "TUaunO": [
@@ -4252,13 +4252,13 @@
   "TY4HzZ": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Şemalarınızı ekleyin veya değiştirin."
     }
   ],
   "TZh8nV": [
     {
       "type": 0,
-      "value": "on "
+      "value": " "
     },
     {
       "type": 1,
@@ -4300,7 +4300,7 @@
   "TjMkDP": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) Paskalya Adası"
     }
   ],
   "TlX98E": [
@@ -4312,19 +4312,19 @@
   "Tmr/9e": [
     {
       "type": 0,
-      "value": "Invalid parameters"
+      "value": "Geçersiz parametreler"
     }
   ],
   "Ts5Pzr": [
     {
       "type": 0,
-      "value": "Note"
+      "value": "Not"
     }
   ],
   "Ttc0SM": [
     {
       "type": 0,
-      "value": "Heading 1"
+      "value": "Başlık 1"
     }
   ],
   "Twfck/": [
@@ -4342,7 +4342,7 @@
   "U086AA": [
     {
       "type": 0,
-      "value": "Target schema element"
+      "value": "Hedef şema öğesi"
     }
   ],
   "U0I10w": [
@@ -4366,7 +4366,7 @@
   "U4zovj": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Çalıştırma "
     },
     {
       "type": 1,
@@ -4384,7 +4384,7 @@
   "U7yRwM": [
     {
       "type": 0,
-      "value": "Validation Error"
+      "value": "Doğrulama Hatası"
     }
   ],
   "UCNM4L": [
@@ -4408,13 +4408,13 @@
   "UIWX6p": [
     {
       "type": 0,
-      "value": "Logical Name"
+      "value": "Mantıksal Ad"
     }
   ],
   "UR1CS5": [
     {
       "type": 0,
-      "value": "Hide code"
+      "value": "Kodu gizle"
     }
   ],
   "USVffu": [
@@ -4426,13 +4426,13 @@
   "UT2ozj": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) Dağ Saati (ABD ve Kanada)"
     }
   ],
   "UVAfYj": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Gerekli. Son nesnenin alınacağı koleksiyon."
     }
   ],
   "UYRIS/": [
@@ -4448,13 +4448,13 @@
   "UZiXVh": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Çıkış"
     }
   ],
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "Schema node '"
+      "value": "Şema düğümü '"
     },
     {
       "type": 1,
@@ -4462,13 +4462,13 @@
     },
     {
       "type": 0,
-      "value": "' has an non-terminating connection chain"
+      "value": "' sonlandır olmayan bir bağlantı zincirine sahip"
     }
   ],
   "Umpr3z": [
     {
       "type": 0,
-      "value": "Every "
+      "value": "Her "
     },
     {
       "type": 1,
@@ -4476,7 +4476,7 @@
     },
     {
       "type": 0,
-      "value": " weeks"
+      "value": " haftada bir"
     }
   ],
   "Unc2tG": [
@@ -4488,7 +4488,7 @@
   "UnrrzF": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Kaynak şema"
     }
   ],
   "Ur+wph": [
@@ -4524,7 +4524,7 @@
   "V5f3ha": [
     {
       "type": 0,
-      "value": "Week"
+      "value": "Hafta"
     }
   ],
   "VA7M1u": [
@@ -4536,7 +4536,7 @@
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "Select an App Service resource"
+      "value": "Bir kaynak App Service seçin"
     }
   ],
   "VI5Sa8": [
@@ -4564,13 +4564,13 @@
   "VL9wOu": [
     {
       "type": 0,
-      "value": "Must provide value for parameter."
+      "value": "Parametre için değer girilmelidir."
     }
   ],
   "VLc3FV": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Kaynak şema"
     }
   ],
   "VPh9Jo": [
@@ -4597,12 +4597,6 @@
       "value": "Yorum"
     }
   ],
-  "VXQbMw": [
-    {
-      "type": 0,
-      "value": "Dizi öğesi için ayrıntılı girişlere geçiş yapın"
-    }
-  ],
   "VZHick": [
     {
       "type": 0,
@@ -4624,7 +4618,7 @@
   "Vfce7b": [
     {
       "type": 0,
-      "value": "Error Type"
+      "value": "Hata Türü"
     }
   ],
   "VlvlX1": [
@@ -4672,7 +4666,7 @@
   "WK6hZX": [
     {
       "type": 0,
-      "value": "Select all text in "
+      "value": "Metindeki tüm metni "
     },
     {
       "type": 1,
@@ -4694,7 +4688,7 @@
   "WTZvGW": [
     {
       "type": 0,
-      "value": "Workflow has invalid connections on the following operations: "
+      "value": "İş akışının şu işlemler üzerinde geçersiz bağlantıları var: "
     },
     {
       "type": 1,
@@ -4716,7 +4710,7 @@
   "WcnIF8": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Kaldır"
     }
   ],
   "WgoP7R": [
@@ -4734,7 +4728,7 @@
   "X/7je+": [
     {
       "type": 0,
-      "value": "Minute"
+      "value": "Dakika"
     }
   ],
   "X2idLs": [
@@ -4752,7 +4746,7 @@
   "X7X5ew": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametreler"
     }
   ],
   "X8JjjT": [
@@ -4822,13 +4816,13 @@
   "XQ4OCV": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) Bağdat"
     }
   ],
   "XRK+gt": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "İşlev '"
     },
     {
       "type": 1,
@@ -4836,7 +4830,7 @@
     },
     {
       "type": 0,
-      "value": "' has an non-terminating connection chain"
+      "value": "' sonlandır olmayan bir bağlantı zincirine sahip"
     }
   ],
   "XTeLIw": [
@@ -4866,13 +4860,13 @@
   "XVTQT6": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Aralık"
     }
   ],
   "XbtEq9": [
     {
       "type": 0,
-      "value": "Count"
+      "value": "Sayı"
     }
   ],
   "Xew1Df": [
@@ -4892,25 +4886,25 @@
   "Xj0Gr/": [
     {
       "type": 0,
-      "value": "Target schema element cannot be deleted."
+      "value": "Hedef şema öğesi silinemiyor."
     }
   ],
   "Xj4xwI": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
+      "value": "Bu işlemle kullanılan yönetilen kimlik artık yok. Devam etmek için kullanılabilir bir kimlik seçin veya bağlantıyı değiştirin."
     }
   ],
   "XkBxv5": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Hedef şema seçin"
     }
   ],
   "Xkt2vD": [
     {
       "type": 0,
-      "value": "Select a function app function"
+      "value": "İşlev uygulaması işlevi seçin"
     }
   ],
   "Xnn0uj": [
@@ -4940,7 +4934,7 @@
   "Xv5CGN": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) Indiana (Doğu)"
     }
   ],
   "Xx/naD": [
@@ -4970,13 +4964,13 @@
   "YABOLz": [
     {
       "type": 0,
-      "value": "Body Item"
+      "value": "Gövde Öğesi"
     }
   ],
   "YCFhzp": [
     {
       "type": 0,
-      "value": "Add children"
+      "value": "Alt öğe ekle"
     }
   ],
   "YHsAKl": [
@@ -5004,7 +4998,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: Ctrl+U"
+      "value": "Metni altı çizili olarak biçimlendirin. Kısayol: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -5022,31 +5016,31 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: Ctrl+B"
+      "value": "Metni kalın olarak biçimlendirin. Kısayol: Ctrl+B"
     }
   ],
   "YRk271": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Kimlik Doğrulaması"
     }
   ],
   "YUbSFS": [
     {
       "type": 0,
-      "value": "Yes/No"
+      "value": "Evet/Hayır"
     }
   ],
   "YWOKlU": [
     {
       "type": 0,
-      "value": "Numbered List"
+      "value": "Numaralı Liste"
     }
   ],
   "YZ5Kwe": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) Atlantik Saati (Kanada)"
     }
   ],
   "YaFjJQ": [
@@ -5064,7 +5058,7 @@
   "YdQw4/": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: ⌘I"
+      "value": "Metni italik olarak biçimlendirin. Kısayol: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5076,25 +5070,25 @@
   "YgU88A": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) Chennai, Kolkata (Calcutta), Mumbai, Yeni Delhi"
     }
   ],
   "Yh5OVd": [
     {
       "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
+      "value": "Özel değer, bu giriş için izin verilen türlerden biriyle eşleşmiyor"
     }
   ],
   "YiOybp": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) Brüksel, Kopenhag, Madrid, Paris"
     }
   ],
   "YlesUQ": [
     {
       "type": 0,
-      "value": "Your map is in perfect condition"
+      "value": "Haritanız mükemmel bir durumda"
     }
   ],
   "YoQara": [
@@ -5118,7 +5112,7 @@
   "Z9PWl/": [
     {
       "type": 0,
-      "value": "Retry Policy count is invalid (Must be from "
+      "value": "Yeniden Deneme İlkesi sayısı geçersiz (Yeniden deneme "
     },
     {
       "type": 1,
@@ -5126,7 +5120,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " olmalıdır "
     },
     {
       "type": 1,
@@ -5140,13 +5134,13 @@
   "ZBJiuD": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Durum"
     }
   ],
   "ZCFMoe": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Gövde"
     }
   ],
   "ZM1mRy": [
@@ -5164,7 +5158,7 @@
   "ZRdkFN": [
     {
       "type": 0,
-      "value": "Collapse Static Result"
+      "value": "Statik Sonucu Daralt"
     }
   ],
   "ZUaz3Y": [
@@ -5194,13 +5188,13 @@
   "Zg3IjD": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Kapat"
     }
   ],
   "Zi9gQK": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Yeni öğe ekle"
     }
   ],
   "ZkjTbp": [
@@ -5230,7 +5224,7 @@
   "aJxefp": [
     {
       "type": 0,
-      "value": "Add new parameters"
+      "value": "Yeni parametreler ekle"
     }
   ],
   "aK4iLW": [
@@ -5242,25 +5236,25 @@
   "aP1wk9": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Bir dize içindeki bir değerin ilk dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
   "aSnCCB": [
     {
       "type": 0,
-      "value": "Location"
+      "value": "Konum"
     }
   ],
   "aV/nLS": [
     {
       "type": 0,
-      "value": "Second"
+      "value": "Saniye"
     }
   ],
   "ae7W0a": [
     {
       "type": 0,
-      "value": "Full Screen"
+      "value": "Tam Ekran"
     }
   ],
   "ahsVI/": [
@@ -5272,13 +5266,13 @@
   "amRYtC": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Geçerli bir kayan nokta girin."
     }
   ],
   "aoUT/3": [
     {
       "type": 0,
-      "value": "Loading resources..."
+      "value": "Kaynaklar yükleniyor..."
     }
   ],
   "auUI93": [
@@ -5306,7 +5300,7 @@
   "b9Rvl9": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Gövde"
     }
   ],
   "bG9rjv": [
@@ -5330,7 +5324,7 @@
   "bSZ0lL": [
     {
       "type": 0,
-      "value": "Callback url"
+      "value": "Geri çağırma url'si"
     }
   ],
   "bTrk+S": [
@@ -5348,7 +5342,7 @@
   "bXFGpe": [
     {
       "type": 0,
-      "value": "Info"
+      "value": "Bilgi"
     }
   ],
   "ba9yGJ": [
@@ -5372,13 +5366,13 @@
   "bsgS8m": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Önizleme"
     }
   ],
   "bv9QPA": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Tarih"
     }
   ],
   "bwfJdj": [
@@ -5400,7 +5394,7 @@
   "byTBrn": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Özel"
     }
   ],
   "bzF/qn": [
@@ -5436,7 +5430,7 @@
   "c4GQZE": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Açılan menü şemasını seçin"
     }
   ],
   "c6XbVI": [
@@ -5448,7 +5442,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+      "value": "GZip veya Deflate kullanılarak sıkıştırılırsa istek gövdesinin sıkıştırması açılır. Bu ayar yalnızca HTTP tetikleyicisi için uygulanabilir."
     }
   ],
   "c8UPLp": [
@@ -5460,7 +5454,7 @@
   "cHiBAn": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) Seul"
     }
   ],
   "cJm+ah": [
@@ -5478,25 +5472,25 @@
   "cP4UkW": [
     {
       "type": 0,
-      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
+      "value": "Yeniden Deneme İlkesi aralığı geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
     }
   ],
   "cR9RtV": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Değişiklikleri at"
     }
   ],
   "cUW5m8": [
     {
       "type": 0,
-      "value": "Select the checkbox to choose this connection."
+      "value": "Bu bağlantıyı seçmek için onay kutusunu seçin."
     }
   ],
   "ca/QIc": [
     {
       "type": 0,
-      "value": "Error Message"
+      "value": "Hata İletisi"
     }
   ],
   "ceVB5l": [
@@ -5514,7 +5508,7 @@
   "ciLkfU": [
     {
       "type": 0,
-      "value": "Bold (⌘B)"
+      "value": "Kalın (⌘B)"
     }
   ],
   "cj+kyo": [
@@ -5526,7 +5520,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
+      "value": "Giriş düğümü türü bu giriş için izin verilen türlerden biriyle eşleşmiyor"
     }
   ],
   "cmTCsW": [
@@ -5556,13 +5550,13 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "Generate XSLT first before attempting to test mappings."
+      "value": "Eşlemeleri test etmeden önce XSLT oluşturun."
     }
   ],
   "cvp9VP": [
     {
       "type": 0,
-      "value": "Error code"
+      "value": "Hata kodu"
     }
   ],
   "cyEBus": [
@@ -5571,28 +5565,28 @@
       "value": "(UTC-04:00) Cuiaba"
     }
   ],
-  "d+MjsE": [
-    {
-      "type": 0,
-      "value": "Enter a valid dictionary."
-    }
-  ],
   "d020eg": [
     {
       "type": 0,
-      "value": "Returns the first element from the passed-in array or string."
+      "value": "Geçirilen diziden veya dizeden ilk öğeyi döndürür."
     }
   ],
   "dBWIjR": [
     {
       "type": 0,
-      "value": "Schema is missing required inputs"
+      "value": "Şemada gerekli girişler eksik"
     }
   ],
   "dBxX0M": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Tetikleyici ekle"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "Switch to key value mode"
     }
   ],
   "dDYCuU": [
@@ -5604,7 +5598,7 @@
   "dL9V5t": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Yönetilen kimlik"
     }
   ],
   "dOpdsP": [
@@ -5616,13 +5610,13 @@
   "dPa7+6": [
     {
       "type": 0,
-      "value": "Generate"
+      "value": "Oluştur"
     }
   ],
   "dQmi91": [
     {
       "type": 0,
-      "value": "Frequency"
+      "value": "Sıklık"
     }
   ],
   "dSTRb/": [
@@ -5650,13 +5644,13 @@
   "dfNjw1": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Kapat"
     }
   ],
   "dfmH55": [
     {
       "type": 0,
-      "value": "Italic (Ctrl+I)"
+      "value": "İtalik (Ctrl+I)"
     }
   ],
   "dhvk0u": [
@@ -5686,7 +5680,7 @@
   "dwrqEc": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Uyarılar"
     }
   ],
   "dxh2CJ": [
@@ -5698,7 +5692,7 @@
   "e+GuGo": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Giriş"
     }
   ],
   "e00zot": [
@@ -5722,31 +5716,31 @@
   "e9OvzW": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Temizle"
     }
   ],
   "e9bIKh": [
     {
       "type": 0,
-      "value": "Failed to generate XSLT."
+      "value": "XSLT oluşturulamadı."
     }
   ],
   "eFet4K": [
     {
       "type": 0,
-      "value": "Action Tracking ID"
+      "value": "Eylem İzleme Kimliği"
     }
   ],
   "eFnLWK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) Orta Amerika"
     }
   ],
   "eHgfpz": [
     {
       "type": 0,
-      "value": "Please enter a valid URL"
+      "value": "Lütfen geçerli bir URL girin"
     }
   ],
   "eHgi14": [
@@ -5782,7 +5776,7 @@
   "elD6+N": [
     {
       "type": 0,
-      "value": "Italic (⌘I)"
+      "value": "İtalik (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5824,7 +5818,7 @@
   "f81ClO": [
     {
       "type": 0,
-      "value": "Empty dynamic content icon"
+      "value": "Boş dinamik içerik simgesi"
     }
   ],
   "fBQBw/": [
@@ -5842,7 +5836,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "Select an API Management resource"
+      "value": "Bir kaynak API Management seçin"
     }
   ],
   "fGcSFd": [
@@ -5854,7 +5848,7 @@
   "fKYuwf": [
     {
       "type": 0,
-      "value": "Please select file or image"
+      "value": "Lütfen dosya veya resim seçin"
     }
   ],
   "fVG5aD": [
@@ -5866,7 +5860,7 @@
   "faUrud": [
     {
       "type": 0,
-      "value": "Loading connection data..."
+      "value": "Bağlantı verileri yükleniyor..."
     }
   ],
   "fc1AV8": [
@@ -5898,7 +5892,7 @@
   "fmm7Ik": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "İşlev"
     }
   ],
   "fp8Ry3": [
@@ -5916,7 +5910,7 @@
   "g076bL": [
     {
       "type": 0,
-      "value": "Email"
+      "value": "E-posta"
     }
   ],
   "g1zwch": [
@@ -5934,7 +5928,7 @@
   "g5A6Bn": [
     {
       "type": 0,
-      "value": "Runtime"
+      "value": "Çalışma zamanı"
     }
   ],
   "g7my78": [
@@ -5976,13 +5970,13 @@
   "gIx5ys": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: Ctrl+I"
+      "value": "Metni italik olarak biçimlendirin. Kısayol: Ctrl+I"
     }
   ],
   "gKEaXI": [
     {
       "type": 0,
-      "value": "Copy the value of {label} to the clipboard"
+      "value": "Panoya {label} değerini kopyala"
     }
   ],
   "gKq3Jv": [
@@ -6000,43 +5994,43 @@
   "gRUmiA": [
     {
       "type": 0,
-      "value": "Info"
+      "value": "Bilgi"
     }
   ],
   "gWyYg0": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00) Aşkabad, Taşkent"
     }
   ],
   "gc6v4X": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Sistem tarafından atanan yönetilen kimlik"
     }
   ],
   "gfBWfH": [
     {
       "type": 0,
-      "value": "Email"
+      "value": "E-posta"
     }
   ],
   "ginGIZ": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+      "value": "(UTC-06:00) Guadalahara, Mexico City, Monterey"
     }
   ],
   "gkY5ya": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Sil"
     }
   ],
   "gpUphl": [
     {
       "type": 0,
-      "value": "Enter the audience."
+      "value": "Hedef kitleyi girin."
     }
   ],
   "gu9o9z": [
@@ -6048,13 +6042,13 @@
   "gvDMuq": [
     {
       "type": 0,
-      "value": "Select a Batch Workflow resource"
+      "value": "Toplu İş Akışı kaynağı seçin"
     }
   ],
   "h+W3VW": [
     {
       "type": 0,
-      "value": "Number"
+      "value": "Numara"
     }
   ],
   "h1lQDa": [
@@ -6066,13 +6060,13 @@
   "h40rpg": [
     {
       "type": 0,
-      "value": "Specify interval in ISO 8601 format."
+      "value": "Aralığı ISO 8601 biçiminde belirtin."
     }
   ],
   "h6vVbX": [
     {
       "type": 0,
-      "value": "Add a source schema first, then select elements to build your map"
+      "value": "Önce bir kaynak şema ekleyin, ardından haritanızı oluşturmak için öğeleri seçin"
     }
   ],
   "hN7iBP": [
@@ -6122,7 +6116,7 @@
   "hic23z": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Değer çok büyük."
     }
   ],
   "hq1mk6": [
@@ -6152,7 +6146,7 @@
   "htj+eZ": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Hedef şemayı güncelleştir"
     }
   ],
   "hvbclb": [
@@ -6164,7 +6158,7 @@
   "hza/cT": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Casablanca"
+      "value": "(UTC+00:00) Kazablanka"
     }
   ],
   "i/SguY": [
@@ -6212,7 +6206,7 @@
   "i4Om5O": [
     {
       "type": 0,
-      "value": "This contains an invalid value"
+      "value": "Bu geçersiz bir değer içeriyor"
     }
   ],
   "iB8YKD": [
@@ -6282,7 +6276,7 @@
   "iTKrs8": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Sayfalandırma"
     }
   ],
   "iU1OJh": [
@@ -6306,7 +6300,7 @@
   "iVMVAt": [
     {
       "type": 0,
-      "value": "Example: 0, 10"
+      "value": "Örnek: 0, 10"
     }
   ],
   "idQjOP": [
@@ -6340,13 +6334,13 @@
   "isnFBi": [
     {
       "type": 0,
-      "value": "Elements and mappings not connected to a target element are removed."
+      "value": "Hedef öğeye bağlı olmayan öğeler ve eşlemeler kaldırıldı."
     }
   ],
   "ixhS47": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Geçirilen bir dize zaman damgası için günün başlangıcını döndürür"
     }
   ],
   "iy8rNf": [
@@ -6370,7 +6364,7 @@
   "j5z8Vd": [
     {
       "type": 0,
-      "value": "Repeating"
+      "value": "Yine -lenen"
     }
   ],
   "jA6Wrp": [
@@ -6388,7 +6382,7 @@
   "jHKc3w": [
     {
       "type": 0,
-      "value": "Other"
+      "value": "Diğer"
     }
   ],
   "jKsMS6": [
@@ -6412,19 +6406,19 @@
   "jQ7UzV": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) Aleutian Adaları"
     }
   ],
   "jQjteB": [
     {
       "type": 0,
-      "value": "Add a source schema"
+      "value": "Kaynak şema ekle"
     }
   ],
   "jUDhbs": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Hedef şema"
     }
   ],
   "jVpanH": [
@@ -6436,7 +6430,7 @@
   "jZjgYZ": [
     {
       "type": 0,
-      "value": "No resources of this type found under this subscription."
+      "value": "Bu abonelik altında bu türde kaynak bulunamadı."
     }
   ],
   "jcA3Ig": [
@@ -6490,19 +6484,19 @@
   "kBOAkT": [
     {
       "type": 0,
-      "value": "Select Fields"
+      "value": "Alanları Seçin"
     }
   ],
   "kBSLfu": [
     {
       "type": 0,
-      "value": "Duplicate property name"
+      "value": "Yinelenen özellik adı"
     }
   ],
   "kEI2xx": [
     {
       "type": 0,
-      "value": "Message"
+      "value": "İleti"
     }
   ],
   "kHcCxH": [
@@ -6526,7 +6520,7 @@
   "kM+Mr0": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Yükleniyor..."
     }
   ],
   "kN6kce": [
@@ -6544,7 +6538,7 @@
   "kVwJXt": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) Abu Dabi, Muskat"
     }
   ],
   "kYivbS": [
@@ -6616,7 +6610,7 @@
   "l72gf4": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Yönetilen Kimlik"
     }
   ],
   "lM9qrG": [
@@ -6634,25 +6628,25 @@
   "lQNKUB": [
     {
       "type": 0,
-      "value": "A line for the parent element is added automatically."
+      "value": "Üst öğe için bir satır otomatik olarak eklenir."
     }
   ],
   "lR7V87": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "İşlevler"
     }
   ],
   "lUm6fl": [
     {
       "type": 0,
-      "value": "Return"
+      "value": "Dönüş"
     }
   ],
   "lUvgiW": [
     {
       "type": 0,
-      "value": "The type for {0} is {1}."
+      "value": "Bu öğenin {0} geçerli {1}."
     }
   ],
   "lZT0JI": [
@@ -6665,12 +6659,6 @@
     {
       "type": 0,
       "value": "atlandı"
-    }
-  ],
-  "lcxLiq": [
-    {
-      "type": 0,
-      "value": "Lütfen geçerli bir dizi girin"
     }
   ],
   "lexzgJ": [
@@ -6708,19 +6696,19 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "Insert Expression (You can also add by typing / in the editor)"
+      "value": "İfade Ekle (Düzenleyiciye / yazarak da  ekleme yapabilirsiniz)"
     }
   ],
   "lsKVU6": [
     {
       "type": 0,
-      "value": "Select an action type"
+      "value": "Eylem türü seçin"
     }
   ],
   "lwlg2K": [
     {
       "type": 0,
-      "value": "Underline (Ctrl+U)"
+      "value": "Altı Çizili (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -6732,7 +6720,7 @@
   "m/jJ/5": [
     {
       "type": 0,
-      "value": "Map checker"
+      "value": "Harita denetleyicisi"
     }
   ],
   "m7Y6Qf": [
@@ -6773,12 +6761,12 @@
   ],
   "mGPqAg": [
     {
-      "type": 0,
-      "value": "Delete "
-    },
-    {
       "type": 1,
       "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " öğesini sil"
     }
   ],
   "mGUdCO": [
@@ -6822,7 +6810,7 @@
   "mQotIu": [
     {
       "type": 0,
-      "value": "Select Connection"
+      "value": "Bağlantı Seçin"
     }
   ],
   "mYQFtf": [
@@ -6846,7 +6834,7 @@
   "meVkB6": [
     {
       "type": 0,
-      "value": "Empty property name"
+      "value": "Boş özellik adı"
     }
   ],
   "mej02C": [
@@ -6928,7 +6916,7 @@
   "nCa0KG": [
     {
       "type": 0,
-      "value": "Internal Errors"
+      "value": "İç Hatalar"
     }
   ],
   "nGds/r": [
@@ -6946,25 +6934,25 @@
   "nNWAAh": [
     {
       "type": 0,
-      "value": "No schema is added."
+      "value": "Şema eklenmedi."
     }
   ],
   "nOWGAV": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Bitiş zamanı"
     }
   ],
   "nOhve4": [
     {
       "type": 0,
-      "value": "Yes/No"
+      "value": "Evet/Hayır"
     }
   ],
   "nRpM02": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Özel"
     }
   ],
   "nSan4V": [
@@ -6982,7 +6970,7 @@
   "nVDG00": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) Kiritimati Adası"
     }
   ],
   "nZ4nLn": [
@@ -7024,7 +7012,7 @@
   "ny75Ly": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "Parametre için varsayılan değer girin."
     }
   ],
   "o/0SEj": [
@@ -7036,7 +7024,7 @@
   "o/FgET": [
     {
       "type": 0,
-      "value": "Function was removed from the current location and currently exists elsewhere."
+      "value": "İşlev geçerli konumdan kaldırıldı ve şu anda başka bir yerde var."
     }
   ],
   "o14STH": [
@@ -7062,25 +7050,25 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "Enter a valid uri."
+      "value": "Geçerli bir URI girin."
     }
   ],
   "o3SfI4": [
     {
       "type": 0,
-      "value": "Zoom to fit"
+      "value": "Sığacak kadar yakınlaştır"
     }
   ],
   "o7bd1o": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) Tahran"
     }
   ],
   "o8ohVV": [
     {
       "type": 0,
-      "value": "Schema Id"
+      "value": "Şema Kimliği"
     }
   ],
   "oAFcW6": [
@@ -7092,7 +7080,7 @@
   "oDHXKh": [
     {
       "type": 0,
-      "value": "Item"
+      "value": "Öğe"
     }
   ],
   "oLtwMw": [
@@ -7116,19 +7104,19 @@
   "oQjIWf": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Hatalar"
     }
   ],
   "oR2x4N": [
     {
       "type": 0,
-      "value": "Invalid integer value"
+      "value": "Geçersiz Tamsayı değeri"
     }
   ],
   "oTBkbU": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Çıkış"
     }
   ],
   "oV0xQ9": [
@@ -7140,7 +7128,7 @@
   "oVVPst": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Kaydedilmeyen tüm değişiklikleri atmak istiyor musunuz?"
     }
   ],
   "odQ554": [
@@ -7152,7 +7140,7 @@
   "onXUu0": [
     {
       "type": 0,
-      "value": "Add a note"
+      "value": "Not ekle"
     }
   ],
   "ox2Ou7": [
@@ -7164,7 +7152,7 @@
   "oxXV4+": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the passed-in argument values."
+      "value": "Geçirilen bağımsız değişken değerdeki ilk null olmayan nesneyi döndürür."
     }
   ],
   "p/0r2N": [
@@ -7182,7 +7170,7 @@
   "p1IEXb": [
     {
       "type": 0,
-      "value": "Enter the data from previous step. You can also add data by typing the '/' character."
+      "value": "Önceki adımdaki verileri girin. '/' karakterini yazarak veri de  ekabilirsiniz."
     }
   ],
   "p1Qtm5": [
@@ -7194,7 +7182,7 @@
   "p5ZID0": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) Kuveyt, Riyad"
     }
   ],
   "pC2nr2": [
@@ -7218,7 +7206,7 @@
   "pMms92": [
     {
       "type": 0,
-      "value": "Insert Dynamic Content"
+      "value": "Dinamik İçerik Ekle"
     }
   ],
   "pOTcUO": [
@@ -7236,7 +7224,7 @@
   "pYNzbj": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "Yol"
     }
   ],
   "pYtSyE": [
@@ -7248,7 +7236,7 @@
   "pcGqoB": [
     {
       "type": 0,
-      "value": "Error loading outputs"
+      "value": "Çıkışlar yüklenirken hata oluştu"
     }
   ],
   "pcuZKB": [
@@ -7314,7 +7302,7 @@
   "q4ChjK": [
     {
       "type": 0,
-      "value": "Select workflow with 'manual' trigger"
+      "value": "'Manual' tetikleyicisi olan iş akışını seçin"
     }
   ],
   "q5TkqE": [
@@ -7332,7 +7320,7 @@
   "q8vnZQ": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+      "value": "İstek gövdesini sağlanan şemayla doğrulayın. Bir uyumsuzluk olması durumunda, HTTP 400 döndürülür."
     }
   ],
   "qAlTD5": [
@@ -7352,7 +7340,7 @@
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: ⌘U"
+      "value": "Metni altı çizili olarak biçimlendirin. Kısayol: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7394,7 +7382,7 @@
   "qUMXpq": [
     {
       "type": 0,
-      "value": "Swagger Endpoint"
+      "value": "Swagger Uç Noktası"
     }
   ],
   "qUWBUX": [
@@ -7438,11 +7426,17 @@
   "qiIs4V": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "Örnek: "
     },
     {
       "type": 1,
       "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "Switch to default view mode"
     }
   ],
   "qnI4Y1": [
@@ -7454,7 +7448,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "İşlev '"
     },
     {
       "type": 1,
@@ -7462,7 +7456,7 @@
     },
     {
       "type": 0,
-      "value": "' has an input with a mismatched type"
+      "value": "', eşleşmeyen türe sahip bir girişe sahip"
     }
   ],
   "qrxi0L": [
@@ -7474,7 +7468,7 @@
   "r/n6/9": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Bir değer girin"
     }
   ],
   "r43nMc": [
@@ -7486,7 +7480,7 @@
   "r7vZ5a": [
     {
       "type": 0,
-      "value": "Minimum Interval"
+      "value": "En Kısa Aralık"
     }
   ],
   "r8aZXs": [
@@ -7534,7 +7528,7 @@
   "rNi5Y3": [
     {
       "type": 0,
-      "value": "Select this checkbox if you're setting up an on-premises connection."
+      "value": "Şirket içi bağlantı ayarlanıyorsa bu onay kutusunu seçin."
     }
   ],
   "rSIBjh": [
@@ -7558,13 +7552,13 @@
   "rd6fai": [
     {
       "type": 0,
-      "value": "Use left and right arrow keys to navigate between commands"
+      "value": "Komutlar arasında gezinmek için sol ve sağ ok tuşlarını kullanın"
     }
   ],
   "rsdJcV": [
     {
       "type": 0,
-      "value": "Select source schema elements to build your map"
+      "value": "Haritanızı oluşturmak için kaynak şema öğelerini seçin"
     }
   ],
   "rv0Pn+": [
@@ -7588,7 +7582,7 @@
   "s+4LEa": [
     {
       "type": 0,
-      "value": "Open folder"
+      "value": "Klasörü aç"
     }
   ],
   "s5RV9B": [
@@ -7642,7 +7636,7 @@
   "sYQDN+": [
     {
       "type": 0,
-      "value": "Formatting options for font family"
+      "value": "Yazı tipi ailesi için biçimlendirme seçenekleri"
     }
   ],
   "sZ0G/Z": [
@@ -7702,13 +7696,13 @@
   "sv+IcU": [
     {
       "type": 0,
-      "value": "Unable to generate data map definition"
+      "value": "Veri eşleme tanımı oluşturulamıyor"
     }
   ],
   "sw6EXK": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Durum"
     }
   ],
   "syiNc+": [
@@ -7726,7 +7720,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic inputs. Error details: '"
+      "value": "Dinamik girişler alınamadı. Hata ayrıntıları: '"
     },
     {
       "type": 1,
@@ -7746,13 +7740,13 @@
   "tAbbH8": [
     {
       "type": 0,
-      "value": "Too many inputs assigned"
+      "value": "Çok fazla giriş atandı"
     }
   ],
   "tAeKNh": [
     {
       "type": 0,
-      "value": "Simple"
+      "value": "Basit"
     }
   ],
   "tE7Zam": [
@@ -7788,7 +7782,7 @@
   "tJMHcJ": [
     {
       "type": 0,
-      "value": "Select Connection Reference"
+      "value": "Bağlantı Başvurusu Seç"
     }
   ],
   "tLZ9Sh": [
@@ -7806,7 +7800,7 @@
   "tMdcE1": [
     {
       "type": 0,
-      "value": "Invalid connection, please update your connection to load complete details"
+      "value": "Geçersiz bağlantı, ayrıntıların tamamlanmasını yüklemek için lütfen bağlantınızı güncelleştirin"
     }
   ],
   "tNoZx2": [
@@ -7830,7 +7824,7 @@
   "tUYXRA": [
     {
       "type": 0,
-      "value": "Example: 2017-03-24T15:00:00Z"
+      "value": "Örnek: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -7842,7 +7836,7 @@
   "tWV2mC": [
     {
       "type": 0,
-      "value": "at "
+      "value": "saatte "
     },
     {
       "type": 1,
@@ -7850,13 +7844,13 @@
     },
     {
       "type": 0,
-      "value": " every hour"
+      "value": " saatte bir"
     }
   ],
   "tZIlCA": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) Pasifik Saati (ABD ve Kanada)"
     }
   ],
   "tZj2Xn": [
@@ -7880,7 +7874,7 @@
   "td5//c": [
     {
       "type": 0,
-      "value": "Collapse tree node"
+      "value": "Ağaç düğümünü daralt"
     }
   ],
   "ti5TEd": [
@@ -7892,7 +7886,7 @@
   "tqqUHX": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) Chatham Adaları"
     }
   ],
   "tsmuoF": [
@@ -7904,7 +7898,7 @@
   "u81zB9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) Eşgüdümlü Evrensel Saat-09"
     }
   ],
   "u9tr3k": [
@@ -7916,19 +7910,19 @@
   "uDI1Um": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Durum Kodu"
     }
   ],
   "uE0A0s": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "(UTC) Eşgüdümlü Evrensel Saat"
     }
   ],
   "uIurld": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Kaydet"
     }
   ],
   "uM1i27": [
@@ -7946,13 +7940,13 @@
   "uNHpGB": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) Bangkok, Hanoi, Cakarta"
     }
   ],
   "uOWkHS": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: "
+      "value": "Dinamik çıkışlar alınamadı. Sonuç olarak, bu işlemin çıkışları sonraki eylemde görünür durumda olamaz. Hata ayrıntıları: "
     },
     {
       "type": 1,
@@ -7974,7 +7968,7 @@
   "uWf/I5": [
     {
       "type": 0,
-      "value": "Show me"
+      "value": "Göster"
     }
   ],
   "uZH8Qs": [
@@ -7992,7 +7986,7 @@
   "uc3ytS": [
     {
       "type": 0,
-      "value": "Select a runtime"
+      "value": "Çalışma zamanı seçin"
     }
   ],
   "uczA5c": [
@@ -8004,13 +7998,13 @@
   "uesaee": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "İfade"
     }
   ],
   "uh/+ZN": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) Grönland"
     }
   ],
   "ui7GCl": [
@@ -8064,7 +8058,7 @@
   "v+keTP": [
     {
       "type": 0,
-      "value": "Trigger date"
+      "value": "Tetikleyici tarihi"
     }
   ],
   "v0ENVA": [
@@ -8106,7 +8100,7 @@
   "vT0DCP": [
     {
       "type": 0,
-      "value": "Outputs"
+      "value": "Çıkışlar"
     }
   ],
   "vVJuus": [
@@ -8170,7 +8164,7 @@
   "vvSHR8": [
     {
       "type": 0,
-      "value": "Navigate to element and view children"
+      "value": "Öğeye gidin ve alt öğeleri görüntüleyin"
     }
   ],
   "vwH/XV": [
@@ -8182,7 +8176,7 @@
   "vxOc/M": [
     {
       "type": 0,
-      "value": "This contains a duplicate value"
+      "value": "Bu, yinelenen bir değer içeriyor"
     }
   ],
   "vz2gZC": [
@@ -8200,7 +8194,7 @@
   "w16qh+": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "Sorgular"
     }
   ],
   "w5Hhig": [
@@ -8212,7 +8206,7 @@
   "w8ijDZ": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Daralt"
     }
   ],
   "wEaGWn": [
@@ -8278,25 +8272,25 @@
   "wXJALc": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Menü"
     }
   ],
   "wkiETV": [
     {
       "type": 0,
-      "value": "Client Tracking ID"
+      "value": "İstemci İzleme Kimliği"
     }
   ],
   "wkvUUA": [
     {
       "type": 0,
-      "value": "Input type mismatch"
+      "value": "Giriş türü uyuşmazlığı"
     }
   ],
   "wl7X0l": [
     {
       "type": 0,
-      "value": "Hide mini-map"
+      "value": "Mini haritayı gizle"
     }
   ],
   "wmDUGV": [
@@ -8320,13 +8314,13 @@
   "wtj07J": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) Marquesas Adaları"
     }
   ],
   "wxaQwD": [
     {
       "type": 0,
-      "value": "(UTC+04:30) Kabul"
+      "value": "(UTC+04:30) Kabil"
     }
   ],
   "wzEneQ": [
@@ -8350,25 +8344,25 @@
   "x10E1p": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Durum Kodu"
     }
   ],
   "x3dWOL": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Roma, Stockholm, Viyana"
     }
   ],
   "x8kTAX": [
     {
       "type": 0,
-      "value": "Delete note"
+      "value": "Notu sil"
     }
   ],
   "xC1zg3": [
     {
       "type": 0,
-      "value": "Schemas"
+      "value": "Şemalar"
     }
   ],
   "xFQXAI": [
@@ -8386,7 +8380,7 @@
   "xJQeeC": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02:00) İstanbul"
     }
   ],
   "xLF2Zr": [
@@ -8410,13 +8404,13 @@
   "xSMbKr": [
     {
       "type": 0,
-      "value": "Show raw inputs"
+      "value": "Ham girişleri görüntüleyin"
     }
   ],
   "xSSfKC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) Saint Pierre ve Miquelon"
     }
   ],
   "xV/oyK": [
@@ -8428,7 +8422,13 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kod"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "Switch to text mode"
     }
   ],
   "xYyPR8": [
@@ -8500,7 +8500,7 @@
   "yVFIAQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) Cabo Verde Adaları"
     }
   ],
   "yVh9kr": [
@@ -8550,13 +8550,13 @@
   "yuJBmK": [
     {
       "type": 0,
-      "value": "Please enter a number"
+      "value": "Lütfen bir sayı girin"
     }
   ],
   "yucvJE": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) Saraybosna, Üsküp, Varşova, Zagreb"
     }
   ],
   "yyYtZV": [
@@ -8568,7 +8568,7 @@
   "z/UY4k": [
     {
       "type": 0,
-      "value": "Navigate to "
+      "value": "Bu klasöre "
     },
     {
       "type": 1,
@@ -8576,7 +8576,7 @@
     },
     {
       "type": 0,
-      "value": " folder"
+      "value": " git"
     }
   ],
   "z3VuE+": [
@@ -8612,13 +8612,13 @@
   "zNesUZ": [
     {
       "type": 0,
-      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
+      "value": "Yeniden deneme ilkeleri, bağlantı özel durumlarının yanı sıra 408, 429 ve 5xx HTTP durum kodları ile ifade edilen aralıklı hatalar için geçerlidir. Varsayılan ayar, 4 kez yeniden denemek üzere ayarlanmış bir üstel aralık ilkesidir."
     }
   ],
   "zOvGF8": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) Atina, Bükreş"
     }
   ],
   "zTKAc9": [
@@ -8636,7 +8636,7 @@
   "zViEGr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Eski"
     }
   ],
   "zcZpHT": [
@@ -8648,7 +8648,7 @@
   "ziXw25": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Sil"
     }
   ],
   "ziYCiA": [
@@ -8666,7 +8666,7 @@
   "zkeKWE": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Caracas"
+      "value": "(UTC-04:00) Karakas"
     }
   ],
   "znGyyU": [
