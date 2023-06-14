@@ -26,7 +26,7 @@ export const outputToken: OutputToken = {
   description: 'this is a description',
   value: 'triggerBody()',
   name: 'test',
-  type: 'token',
+  type: 'any',
   isAdvanced: false,
   outputInfo: {
     type: TokenType.OUTPUTS,
@@ -48,7 +48,7 @@ export const outputToken2: OutputToken = {
   title: 'Outputs',
   description: "Outputs('Execute_JavaScript_Code')",
   name: 'outputs',
-  type: 'token',
+  type: 'any',
   isAdvanced: false,
   value: 'outputs()',
   outputInfo: {
