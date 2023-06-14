@@ -644,7 +644,7 @@ const serializeHost = (
       return {
         host: {
           connection: {
-            name: "@parameters('$connections')[" + referenceKey + "]['connectionId']",
+            name: "@parameters('$connections')['" + referenceKey + "']['connectionId']",
           },
         },
       };

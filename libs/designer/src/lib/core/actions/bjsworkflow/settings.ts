@@ -16,6 +16,7 @@ import type {
   UploadChunkMetadata,
 } from '@microsoft/utils-logic-apps';
 import {
+  ConnectionReferenceKeyFormat,
   equals,
   getObjectPropertyValue,
   getPropertyValue,
@@ -521,7 +522,14 @@ const getSplitOnValue = (
         // TODO (3727460) - Consume top level required fields when available here.
         const { alias, propertyName, required } = getSplitOnArrayAliasMetadata(manifest.properties.outputs, /* propertyRequired */ true);
         const propertyPath = alias || propertyName;
-        if (propertyPath) {
+        // Hybrid triggers would need splitOn `@triggerBody()`
+        if (
+          propertyPath &&
+          manifest.properties.connectionReference?.referenceKeyFormat !== undefined &&
+          manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.HybridTrigger
+        ) {
+          return `@${Constants.TRIGGER_BODY_OUTPUT}[${convertToStringLiteral(propertyPath)}]`;
+        } else if (propertyPath) {
           return `@${Constants.TRIGGER_OUTPUTS_OUTPUT}${required ? '' : '?'}[${convertToStringLiteral(propertyPath)}]`;
         }
       }
