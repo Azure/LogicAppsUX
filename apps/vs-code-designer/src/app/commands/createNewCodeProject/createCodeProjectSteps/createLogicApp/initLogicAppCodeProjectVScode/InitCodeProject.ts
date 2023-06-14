@@ -6,7 +6,6 @@ import {
   func,
   projectLanguageSetting,
   funcVersionSetting,
-  deploySubpathSetting,
   tasksVersion,
   tasksFileName,
   launchVersion,
@@ -154,11 +153,6 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     if (await confirmOverwriteFile(context, tasksJsonPath)) {
       await fse.writeFile(tasksJsonPath, tasksJsonContent);
     }
-  }
-  protected setDeploySubpath(context: IProjectWizardContext, deploySubpath: string): string {
-    deploySubpath = this.addSubDir(context, deploySubpath);
-    this.settings.push({ key: deploySubpathSetting, value: deploySubpath });
-    return deploySubpath;
   }
 
   protected addSubDir(context: IProjectWizardContext, fsPath: string): string {

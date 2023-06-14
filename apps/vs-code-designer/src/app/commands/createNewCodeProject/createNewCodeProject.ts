@@ -69,7 +69,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   }
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('createNewCodeProject', 'Create workspace for custom logic app'),
+    title: localize('createNewCodeProject', 'Create new logic app workspace'),
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
@@ -99,6 +99,6 @@ function showPreviewWarning() {
     (command) => command.command === 'azureLogicAppsStandard.createNewCodeProject'
   );
   if (createNewCodeProjectCommand.preview) {
-    window.showInformationMessage('The "Create workspace for custom logic app" command is a preview feature and may be subject to change.');
+    window.showInformationMessage('The "Create new logic app workspace" command is a preview feature and may be subject to change.');
   }
 }
