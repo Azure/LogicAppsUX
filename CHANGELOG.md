@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.28.1](https://github.com/Azure/LogicAppsUX/compare/v2.28.0...v2.28.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed trigger serialization check  ([#2737](https://github.com/Azure/LogicAppsUX/issues/2737)) ([0273656](https://github.com/Azure/LogicAppsUX/commit/0273656e4f36179701cda873f46297abc4d2a8d8))
+
 ## [2.28.0](https://github.com/Azure/LogicAppsUX/compare/v2.27.0...v2.28.0) (2023-06-13)
 
 
