@@ -2,19 +2,19 @@
   "++ZVe/": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Testes"
     }
   ],
   "+0yxlR": [
     {
       "type": 0,
-      "value": "Function display"
+      "value": "Exibição de função"
     }
   ],
   "+Uvo/p": [
     {
       "type": 0,
-      "value": "Alt text for down chevron"
+      "value": "Texto alt para divisa inferior"
     }
   ],
   "+ZSBrq": [
@@ -34,13 +34,13 @@
   "+mAJR3": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) Kuala Lumpur, Singapura"
     }
   ],
   "+powfX": [
     {
       "type": 0,
-      "value": "Time zone"
+      "value": "Fuso horário"
     }
   ],
   "/EU/oJ": [
@@ -106,19 +106,19 @@
   "/km5eO": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04:00) Assunção"
     }
   ],
   "/mjH84": [
     {
       "type": 0,
-      "value": "Show raw outputs"
+      "value": "Mostrar saídas brutas"
     }
   ],
   "/n13VL": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Propriedades"
     }
   ],
   "/qchXQ": [
@@ -142,13 +142,13 @@
   "/vWMKW": [
     {
       "type": 0,
-      "value": "Missing required inputs"
+      "value": "Entradas necessárias ausentes"
     }
   ],
   "/yYyOq": [
     {
       "type": 0,
-      "value": "Resource Group"
+      "value": "Grupo de Recursos"
     }
   ],
   "00xlpa": [
@@ -166,7 +166,7 @@
   "03RO5d": [
     {
       "type": 0,
-      "value": "Edit parameter"
+      "value": "Editar parâmetro"
     }
   ],
   "04AwK7": [
@@ -242,7 +242,7 @@
   "0GT0SI": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "0GqNGo": [
@@ -254,7 +254,7 @@
   "0IRUjM": [
     {
       "type": 0,
-      "value": "Select a target schema node to start mapping"
+      "value": "Selecione um nó de esquema de destino para iniciar o mapeamento"
     }
   ],
   "0JTHTZ": [
@@ -278,7 +278,7 @@
   "0SSwxD": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Fechar o painel"
     }
   ],
   "0Vzp0l": [
@@ -302,13 +302,13 @@
   "0m2Y1/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valor"
     }
   ],
   "0oebOm": [
     {
       "type": 0,
-      "value": "Outputs"
+      "value": "Saídas"
     }
   ],
   "0p+pJq": [
@@ -342,19 +342,19 @@
   "0upuCv": [
     {
       "type": 0,
-      "value": "Hour"
+      "value": "Hora"
     }
   ],
   "0vfdFS": [
     {
       "type": 0,
-      "value": "every day"
+      "value": "todo dia"
     }
   ],
   "0xLWzG": [
     {
       "type": 0,
-      "value": "The name already exists or is invalid. Update the name before you continue."
+      "value": "O nome já existe ou é inválido. Atualize o nome antes de continuar."
     }
   ],
   "0y5eia": [
@@ -378,7 +378,7 @@
   "11qu8f": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Insira um inteiro válido."
     }
   ],
   "14lYtE": [
@@ -489,7 +489,7 @@
   "1YEc9e": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Insira uma condição válida."
     }
   ],
   "1ZDLZA": [
@@ -507,7 +507,7 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "Actions perform operations on data, communicate between systems, or run other tasks."
+      "value": "As ações executam operações em dados, se comunicam entre sistemas ou executam outras tarefas."
     }
   ],
   "1eKQwo": [
@@ -525,7 +525,7 @@
   "1hHFdx": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00) Açores"
     }
   ],
   "1htSs7": [
@@ -543,7 +543,7 @@
   "1nODUD": [
     {
       "type": 0,
-      "value": "Hide functions"
+      "value": "Ocultar funções"
     }
   ],
   "1nvvw1": [
@@ -555,7 +555,7 @@
   "1pjO9s": [
     {
       "type": 0,
-      "value": "Hide source schema"
+      "value": "Ocultar esquema de origem"
     }
   ],
   "1uGBLP": [
@@ -573,7 +573,7 @@
   "20oqsp": [
     {
       "type": 0,
-      "value": "Add children (recursive)"
+      "value": "Adicionar filhos (recursivo)"
     }
   ],
   "23fENy": [
@@ -597,7 +597,7 @@
   "27Nhhv": [
     {
       "type": 0,
-      "value": "Select an API from an API Management instance"
+      "value": "Selecione uma API de uma Gerenciamento de API instância"
     }
   ],
   "2CXCOt": [
@@ -615,7 +615,7 @@
   "2JA3gY": [
     {
       "type": 0,
-      "value": "Expand tree node"
+      "value": "Expandir nó de árvore"
     }
   ],
   "2K2fAj": [
@@ -669,25 +669,25 @@
   "2hrQOL": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) Dublin, Edimburgo, Lisboa, Londres"
     }
   ],
   "2kWLLc": [
     {
       "type": 0,
-      "value": "Start Time"
+      "value": "Hora de Início"
     }
   ],
   "2pRsUf": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Insira uma matriz válida."
     }
   ],
   "2r30S9": [
     {
       "type": 0,
-      "value": "Insert a new step after "
+      "value": "Inserir uma nova etapa após "
     },
     {
       "type": 1,
@@ -703,25 +703,25 @@
   "2vnYre": [
     {
       "type": 0,
-      "value": "Add Action"
+      "value": "Adicionar Ação"
     }
   ],
   "2y24a/": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Salvar"
     }
   ],
   "3+TQMa": [
     {
       "type": 0,
-      "value": "Loading connection..."
+      "value": "Carregando conexão..."
     }
   ],
   "30njcn": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Criar Conexão"
     }
   ],
   "33+WHG": [
@@ -733,7 +733,7 @@
   "34Nt/B": [
     {
       "type": 0,
-      "value": "alt text for button icon"
+      "value": "texto alt para ícone de botão"
     }
   ],
   "36RiST": [
@@ -745,7 +745,7 @@
   "3AWwVl": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Código"
     }
   ],
   "3BZnxY": [
@@ -769,15 +769,7 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "` first."
+      "value": "Remova todos os mapeamentos no elemento de origem {nodeName} primeiro."
     }
   ],
   "3MTSYZ": [
@@ -807,7 +799,7 @@
   "3X4FHS": [
     {
       "type": 0,
-      "value": "Choose the type of user input"
+      "value": "Escolher o tipo de entrada do usuário"
     }
   ],
   "3Y8a6G": [
@@ -827,13 +819,13 @@
   "3cZZKj": [
     {
       "type": 0,
-      "value": "Divider"
+      "value": "Divisor"
     }
   ],
   "3eeli7": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Selecionar um esquema de origem"
     }
   ],
   "3ewBbk": [
@@ -873,7 +865,7 @@
   "3n5pnv": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) Ilha Lord Howe"
     }
   ],
   "3rzrWf": [
@@ -885,7 +877,7 @@
   "3sJlV+": [
     {
       "type": 0,
-      "value": "Close code view"
+      "value": "Fechar modo de exibição de código"
     }
   ],
   "3vCCY7": [
@@ -903,7 +895,7 @@
   "43xObP": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+      "value": "(UTC+10:00) Camberra, Melbourne, Sydney"
     }
   ],
   "45ubha": [
@@ -921,7 +913,7 @@
   "4BH9uU": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Erros"
     }
   ],
   "4BrA0z": [
@@ -933,7 +925,7 @@
   "4D7H4R": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Execuções "
     },
     {
       "type": 1,
@@ -943,13 +935,13 @@
   "4Ekn9t": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Desfazer"
     }
   ],
   "4IS4yp": [
     {
       "type": 0,
-      "value": "Retry Policy"
+      "value": "Política de Repetição"
     }
   ],
   "4Q7WzU": [
@@ -995,7 +987,7 @@
     },
     {
       "type": 0,
-      "value": " is required."
+      "value": " é necessário."
     }
   ],
   "4vcnOA": [
@@ -1025,7 +1017,7 @@
   "595Baw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+      "value": "(UTC+09:00) Osaka, Sapporo, Tóquio"
     }
   ],
   "5J7j9k": [
@@ -1037,7 +1029,7 @@
   "5OvGgn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "5SAQOb": [
@@ -1081,13 +1073,13 @@
   "5dCAjy": [
     {
       "type": 0,
-      "value": "Day"
+      "value": "Dia"
     }
   ],
   "5hWg4V": [
     {
       "type": 0,
-      "value": "Select element"
+      "value": "Selecionar elemento"
     }
   ],
   "5qzZMo": [
@@ -1105,7 +1097,7 @@
   "5ytHcK": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Carregando..."
     }
   ],
   "6+RwRp": [
@@ -1117,7 +1109,7 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+      "value": "Inserir dados da etapa anterior (você também pode adicionar digitando Alt + / no editor)"
     }
   ],
   "62Ypnr": [
@@ -1153,7 +1145,7 @@
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "O '"
     },
     {
       "type": 1,
@@ -1161,7 +1153,7 @@
     },
     {
       "type": 0,
-      "value": "' has too many inputs assigned to it"
+      "value": "' função tem muitas entradas atribuídas a ela"
     }
   ],
   "6jiO7t": [
@@ -1203,25 +1195,25 @@
   "6ueRYm": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Hora de início"
     }
   ],
   "73iM9+": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Atualizar esquema de origem"
     }
   ],
   "7EZ2oY": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) Ilhas Turcas e Caicos"
     }
   ],
   "7Fyq1F": [
     {
       "type": 0,
-      "value": "No inputs"
+      "value": "Nenhuma entrada"
     }
   ],
   "7GSk99": [
@@ -1247,7 +1239,7 @@
   "7PtWvu": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) Hora do Leste (EUA e Canadá)"
     }
   ],
   "7QymrD": [
@@ -1259,13 +1251,13 @@
   "7S2wtE": [
     {
       "type": 0,
-      "value": "Schema Validation"
+      "value": "Validação de Esquema"
     }
   ],
   "7WVgiU": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Configurar"
     }
   ],
   "7ZR1xr": [
@@ -1319,7 +1311,7 @@
   "8+0teU": [
     {
       "type": 0,
-      "value": "Parameter name already exists."
+      "value": "O nome do parâmetro já existe."
     }
   ],
   "83G5rr": [
@@ -1331,7 +1323,7 @@
   "83PYuA": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) Hora Central (EUA e Canadá)"
     }
   ],
   "84D91Y": [
@@ -1382,6 +1374,12 @@
       "value": "Não é possível renderizar o designer devido à presença de vários gatilhos na definição."
     }
   ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "Switch to code view mode"
+    }
+  ],
   "8ND+Yc": [
     {
       "type": 0,
@@ -1391,7 +1389,7 @@
   "8SxNQC": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "Visão geral"
     }
   ],
   "8U0KPg": [
@@ -1437,7 +1435,7 @@
   "8eTWaf": [
     {
       "type": 0,
-      "value": "Rename"
+      "value": "Renomear"
     }
   ],
   "8j+a0n": [
@@ -1449,13 +1447,13 @@
   "8luJ2j": [
     {
       "type": 0,
-      "value": "Create Connection Reference"
+      "value": "Criar Referência de Conexão"
     }
   ],
   "8mDG0V": [
     {
       "type": 0,
-      "value": "The workflow has parameter validation errors in the following operations: "
+      "value": "O fluxo de trabalho tem erros de validação de parâmetro nas seguintes operações: "
     },
     {
       "type": 1,
@@ -1501,13 +1499,13 @@
   "90o7sB": [
     {
       "type": 0,
-      "value": "File"
+      "value": "Arquivo"
     }
   ],
   "93Gj/n": [
     {
       "type": 0,
-      "value": "Line Position"
+      "value": "Posição da Linha"
     }
   ],
   "93svjx": [
@@ -1549,7 +1547,7 @@
   "9LLnyJ": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00) Brasília"
     }
   ],
   "9SuA/E": [
@@ -1581,13 +1579,13 @@
   "9YZ873": [
     {
       "type": 0,
-      "value": "Text"
+      "value": "Texto"
     }
   ],
   "9atGYe": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Adicionar"
     }
   ],
   "9djnqI": [
@@ -1605,7 +1603,7 @@
   "9x8hg8": [
     {
       "type": 0,
-      "value": "Edit in basic mode"
+      "value": "Editar em modo básico"
     }
   ],
   "A5Ferh": [
@@ -1617,7 +1615,7 @@
   "A8l+k7": [
     {
       "type": 0,
-      "value": "Error occurred while executing the following API parameters: '"
+      "value": "Erro ao executar os seguintes parâmetros de API: '"
     },
     {
       "type": 1,
@@ -1637,13 +1635,13 @@
   "AEguAy": [
     {
       "type": 0,
-      "value": "Empty value"
+      "value": "Valor vazio"
     }
   ],
   "AGCm1p": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nome"
     }
   ],
   "AHB418": [
@@ -1661,13 +1659,13 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture)."
+      "value": "Retorna o índice para a n-th ocorrência de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)."
     }
   ],
   "Af+Ve0": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) Ilha Bougainville"
     }
   ],
   "AheXMN": [
@@ -1685,7 +1683,7 @@
   "AoalgS": [
     {
       "type": 0,
-      "value": "Loading more results..."
+      "value": "Carregando mais resultados..."
     }
   ],
   "ArTh0/": [
@@ -1697,7 +1695,7 @@
   "AsqIUa": [
     {
       "type": 0,
-      "value": "Maximum Interval"
+      "value": "Intervalo Máximo"
     }
   ],
   "Az0QvG": [
@@ -1760,7 +1758,7 @@
   "B/gCWM": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Erro"
     }
   ],
   "B2s0iG": [
@@ -1778,7 +1776,7 @@
   "B999mz": [
     {
       "type": 0,
-      "value": "Line deleted."
+      "value": "Linha excluída."
     }
   ],
   "BBD8Em": [
@@ -1796,7 +1794,7 @@
   "BEZWxB": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Limpar valor personalizado"
     }
   ],
   "BHe7qY": [
@@ -1808,7 +1806,7 @@
   "BJNUxN": [
     {
       "type": 0,
-      "value": "Path Parameters"
+      "value": "Parâmetros de Caminho"
     }
   ],
   "BKL0ZG": [
@@ -1832,19 +1830,19 @@
   "BSgavq": [
     {
       "type": 0,
-      "value": "Example: Monday, Friday"
+      "value": "Exemplo: segunda-feira, sexta-feira"
     }
   ],
   "BUutcC": [
     {
       "type": 0,
-      "value": "Expant list of sibling elements"
+      "value": "Lista expanta de elementos irmãos"
     }
   ],
   "BYrP8F": [
     {
       "type": 0,
-      "value": "Number"
+      "value": "Número"
     }
   ],
   "BeqBP7": [
@@ -1856,7 +1854,7 @@
   "Bl4Iv0": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) Ulan Bator"
     }
   ],
   "Bn8iTS": [
@@ -1880,13 +1878,13 @@
   "BrWQ0Z": [
     {
       "type": 0,
-      "value": "Select a managed identity"
+      "value": "Selecionar uma identidade gerenciada"
     }
   ],
   "BtL7UI": [
     {
       "type": 0,
-      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
+      "value": "Não é necessária qualquer informação adicional para esta etapa. Você poderá usar as saídas nas etapas subsequentes."
     }
   ],
   "BuYrD3": [
@@ -1904,7 +1902,7 @@
   "C1cy54": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "C4NQ1J": [
@@ -1934,7 +1932,7 @@
   "Cb8pv0": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) Atlântico Central - Antiga"
     }
   ],
   "Ci41Od": [
@@ -1952,7 +1950,7 @@
   "ClZW2r": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valor"
     }
   ],
   "CsPY74": [
@@ -1964,7 +1962,7 @@
   "CvoqQ6": [
     {
       "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
+      "value": "Insira ou selecione uma data (AAAA-MM-DD)"
     }
   ],
   "Cy0pyB": [
@@ -1976,7 +1974,7 @@
   "CypYLs": [
     {
       "type": 0,
-      "value": "Insert a new step between "
+      "value": "Inserir uma nova etapa entre "
     },
     {
       "type": 1,
@@ -1984,7 +1982,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " e "
     },
     {
       "type": 1,
@@ -1994,7 +1992,7 @@
   "Czt6YV": [
     {
       "type": 0,
-      "value": "at "
+      "value": "às "
     },
     {
       "type": 1,
@@ -2010,7 +2008,7 @@
   "D/xTXV": [
     {
       "type": 0,
-      "value": "Show source schema"
+      "value": "Mostrar esquema de origem"
     }
   ],
   "D1lgsT": [
@@ -2046,7 +2044,7 @@
   "DJW8RE": [
     {
       "type": 0,
-      "value": "Select a value"
+      "value": "Selecionar um valor"
     }
   ],
   "DQV7aK": [
@@ -2066,7 +2064,7 @@
   "DWd9vy": [
     {
       "type": 0,
-      "value": "every week"
+      "value": "toda semana"
     }
   ],
   "DWsh56": [
@@ -2090,13 +2088,13 @@
   "DZc8wP": [
     {
       "type": 0,
-      "value": "Custom value does not match the schema node's type"
+      "value": "O valor personalizado não corresponde ao tipo do nó do esquema"
     }
   ],
   "Dhu3IS": [
     {
       "type": 0,
-      "value": "Show mini-map"
+      "value": "Mostrar minimapa"
     }
   ],
   "DjbVKU": [
@@ -2108,7 +2106,7 @@
   "DkF25I": [
     {
       "type": 0,
-      "value": "Expand Static Result"
+      "value": "Expandir Resultado Estático"
     }
   ],
   "DsPDVB": [
@@ -2120,7 +2118,7 @@
   "DuoHXI": [
     {
       "type": 0,
-      "value": "Add an input"
+      "value": "Adicionar uma entrada"
     }
   ],
   "DyYcJZ": [
@@ -2144,13 +2142,13 @@
   "E+iim4": [
     {
       "type": 0,
-      "value": "Select timezone."
+      "value": "Selecione o fuso horário."
     }
   ],
   "E3+TAA": [
     {
       "type": 0,
-      "value": "Schema node '"
+      "value": "O nó de '"
     },
     {
       "type": 1,
@@ -2158,7 +2156,7 @@
     },
     {
       "type": 0,
-      "value": "' has an input with a mismatched type"
+      "value": "' tem uma entrada com um tipo incompatível"
     }
   ],
   "E8iqLl": [
@@ -2188,13 +2186,13 @@
   "ESZXfC": [
     {
       "type": 0,
-      "value": "At these minutes"
+      "value": "Nestes minutos"
     }
   ],
   "EUQDM6": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Adicionar uma ação"
     }
   ],
   "EZz5q7": [
@@ -2206,7 +2204,7 @@
   "Ea/fr+": [
     {
       "type": 0,
-      "value": "Every "
+      "value": "A cada "
     },
     {
       "type": 1,
@@ -2214,13 +2212,19 @@
     },
     {
       "type": 0,
-      "value": " days"
+      "value": " dias"
     }
   ],
   "EaTGcN": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) Centro-oeste da África"
+    }
+  ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
     }
   ],
   "EdzoIs": [
@@ -2258,13 +2262,13 @@
   "EurkzL": [
     {
       "type": 0,
-      "value": "Please select yes or no"
+      "value": "Selecione sim ou não"
     }
   ],
   "Ex4U46": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Usar Conexão do Chamador"
     }
   ],
   "ExaACE": [
@@ -2282,13 +2286,13 @@
   "F9dR1Q": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Adicionar"
     }
   ],
   "FBNevf": [
     {
       "type": 0,
-      "value": "Go To Operation"
+      "value": "Ir para a Operação"
     }
   ],
   "FDF4Qb": [
@@ -2324,7 +2328,7 @@
   "FL/0Zp": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlán"
     }
   ],
   "FN5zHQ": [
@@ -2348,13 +2352,13 @@
   "FS06y3": [
     {
       "type": 0,
-      "value": "Must provide name of parameter."
+      "value": "É necessário fornecer o nome do parâmetro."
     }
   ],
   "FT3jt6": [
     {
       "type": 0,
-      "value": "Webhook reference information"
+      "value": "Informações de referência do Webhook"
     }
   ],
   "FUhNu4": [
@@ -2415,7 +2419,7 @@
   "FYtDP0": [
     {
       "type": 0,
-      "value": "Enter an email address."
+      "value": "Insira um email."
     }
   ],
   "FaBEfQ": [
@@ -2445,7 +2449,7 @@
   "FxQ2Ts": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Tripoli"
+      "value": "(UTC +02:00) Trípoli"
     }
   ],
   "G/CC5/": [
@@ -2475,7 +2479,7 @@
   "GD3m4X": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Expandido"
     }
   ],
   "GDUGlm": [
@@ -2487,19 +2491,19 @@
   "GE14Xd": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) Cidade de Buenos Aires"
     }
   ],
   "GEB1on": [
     {
       "type": 0,
-      "value": "This contains a value that is not between 0 and 59"
+      "value": "Isso contém um valor que não está entre 0 e 59"
     }
   ],
   "GIUSQs": [
     {
       "type": 0,
-      "value": "Filter by data type"
+      "value": "Filtrar por tipo de dados"
     }
   ],
   "GLd3MU": [
@@ -2511,13 +2515,13 @@
   "GMkbFM": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Condições do gatilho"
     }
   ],
   "GXXLuT": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Insira um booliano válido."
     }
   ],
   "GYvF54": [
@@ -2547,13 +2551,13 @@
   "Gi7czD": [
     {
       "type": 0,
-      "value": "Source schema element"
+      "value": "Elemento de esquema de origem"
     }
   ],
   "Gl5khw": [
     {
       "type": 0,
-      "value": "At these hours"
+      "value": "Nestas horas"
     }
   ],
   "Gmya+V": [
@@ -2577,7 +2581,7 @@
   "GyUe4C": [
     {
       "type": 0,
-      "value": "Modify options regarding functions"
+      "value": "Modificar opções referentes a funções"
     }
   ],
   "GzQQqH": [
@@ -2589,13 +2593,13 @@
   "Gziyq8": [
     {
       "type": 0,
-      "value": "File Content"
+      "value": "Conteúdo do Arquivo"
     }
   ],
   "H/QVod": [
     {
       "type": 0,
-      "value": "Workflow has settings validation errors on the following operations: "
+      "value": "O fluxo de trabalho tem erros de validação de configurações nas seguintes operações: "
     },
     {
       "type": 1,
@@ -2617,13 +2621,13 @@
   "H2WdiZ": [
     {
       "type": 0,
-      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+      "value": "Insiras os valores de minutos válidos (de 0 a 59) separados por vírgula, ex.: 15,30"
     }
   ],
   "H5VikC": [
     {
       "type": 0,
-      "value": "Invalid connection, mapping must not form a closed loop."
+      "value": "Conexão inválida. O mapeamento não deve formar um loop fechado."
     }
   ],
   "H8bEUn": [
@@ -2641,7 +2645,7 @@
   "HH970i": [
     {
       "type": 0,
-      "value": "Month"
+      "value": "Mês"
     }
   ],
   "HOchry": [
@@ -2659,19 +2663,25 @@
   "HSJLCu": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Cabeçalhos"
     }
   ],
   "HYhDYB": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) Tempo Universal Coordenado-02"
     }
   ],
   "Hbqlzk": [
     {
       "type": 0,
       "value": "Insert Expression"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
     }
   ],
   "HfrUId": [
@@ -2683,19 +2693,19 @@
   "HmcHoE": [
     {
       "type": 0,
-      "value": "Error fetching manifest"
+      "value": "Erro ao buscar manifesto"
     }
   ],
   "HoQiVa": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Insira um datetime válido."
     }
   ],
   "Hs5+Mk": [
     {
       "type": 0,
-      "value": "Enter a valid value for "
+      "value": "Insira um valor válido para "
     },
     {
       "type": 1,
@@ -2719,7 +2729,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "Remove parameter \""
+      "value": "Remover parâmetro \""
     },
     {
       "type": 1,
@@ -2727,7 +2737,7 @@
     },
     {
       "type": 0,
-      "value": "\" and its value"
+      "value": "\" e seu valor"
     }
   ],
   "HzS2gJ": [
@@ -2739,13 +2749,13 @@
   "I41vZ/": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) Tempo Universal Coordenado-11"
     }
   ],
   "I7/+er": [
     {
       "type": 0,
-      "value": "Global view"
+      "value": "Exibição global"
     }
   ],
   "IA+Ogm": [
@@ -2757,13 +2767,13 @@
   "IAmvpa": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) Tempo Universal Coordenado-08"
     }
   ],
   "IHMd3X": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "Exemplo: "
     },
     {
       "type": 1,
@@ -2779,7 +2789,7 @@
   "IPwWgu": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jerusalém"
     }
   ],
   "IQyOth": [
@@ -2791,7 +2801,7 @@
   "IS4vNX": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) Linha de Data Internacional Oeste"
     }
   ],
   "IW2MjQ": [
@@ -2803,7 +2813,7 @@
   "IXy91L": [
     {
       "type": 0,
-      "value": "Add a target schema"
+      "value": "Adicionar um esquema de destino"
     }
   ],
   "IdOhPY": [
@@ -2813,7 +2823,7 @@
     },
     {
       "type": 0,
-      "value": " To add dynamic data, press the Alt + '/' keys."
+      "value": " Para adicionar dados dinâmicos, pressione as teclas Alt + '/'."
     }
   ],
   "If+p6C": [
@@ -2839,7 +2849,7 @@
   "Io48jC": [
     {
       "type": 0,
-      "value": "The {0} properties are invalid for the {1} authentication type."
+      "value": "As {0} não são válidas para o tipo {1} autenticação."
     }
   ],
   "IooQu1": [
@@ -2851,13 +2861,13 @@
   "IsVhkH": [
     {
       "type": 0,
-      "value": "No properties"
+      "value": "Nenhuma propriedade"
     }
   ],
   "IxWip7": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) Moscou, São Petersburgo, Volgogrado"
     }
   ],
   "J/Kz1j": [
@@ -2869,7 +2879,7 @@
   "J2Su6x": [
     {
       "type": 0,
-      "value": "Formatting options for font size"
+      "value": "Opções de formatação para o tamanho da fonte"
     }
   ],
   "J5/7vN": [
@@ -2895,13 +2905,13 @@
   "J9wWry": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parâmetros"
     }
   ],
   "JAIV0h": [
     {
       "type": 0,
-      "value": "The current map contains "
+      "value": "O mapa atual contém "
     },
     {
       "type": 1,
@@ -2965,7 +2975,7 @@
   "Jil/Wa": [
     {
       "type": 0,
-      "value": "Invalid settings"
+      "value": "Configurações inválidas"
     }
   ],
   "JjTfC7": [
@@ -2983,7 +2993,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Quando habilitada, esta ação será executada com o usuário na configuração \"Executar como\" no gatilho Dataverse."
     }
   ],
   "Jq2Y/o": [
@@ -2995,7 +3005,7 @@
   "JzRzVp": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Alaska"
+      "value": "(UTC-09:00) Alasca"
     }
   ],
   "JzqgNM": [
@@ -3013,19 +3023,19 @@
   "K7/DnZ": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Saída"
     }
   ],
   "KBaGkS": [
     {
       "type": 0,
-      "value": "Change connection reference"
+      "value": "Alterar referência de conexão"
     }
   ],
   "KP0Rr2": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Insira um número Duplo válido."
     }
   ],
   "KX1poC": [
@@ -3082,25 +3092,25 @@
   "KYX5Do": [
     {
       "type": 0,
-      "value": "Underline (⌘U)"
+      "value": "Sublinhado (⌘U)"
     }
   ],
   "KZOa5l": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "KlDW+5": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00) Beirute"
     }
   ],
   "KwGA+K": [
     {
       "type": 0,
-      "value": "Select a Function App resource"
+      "value": "Selecionar um recurso do Aplicativo de Funções"
     }
   ],
   "L+PY+j": [
@@ -3124,7 +3134,7 @@
   "LBH8UV": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "LBbhCu": [
@@ -3142,7 +3152,7 @@
   "LCXZLM": [
     {
       "type": 0,
-      "value": "Loading Function Apps..."
+      "value": "Carregando Aplicativos de Funções..."
     }
   ],
   "LJmfmK": [
@@ -3160,7 +3170,7 @@
   "LR/3Lr": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Configurar"
     }
   ],
   "LS8rfZ": [
@@ -3172,13 +3182,13 @@
   "LV/BTE": [
     {
       "type": 0,
-      "value": "Loading Api Management service instances..."
+      "value": "Carregando instâncias do serviço de Gerenciamento de API..."
     }
   ],
   "LV3k48": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) Belgrado, Bratislava, Budapeste, Liubliana, Praga"
     }
   ],
   "LZm3ze": [
@@ -3190,7 +3200,7 @@
   "LdITnG": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Cayenne, Fortaleza"
+      "value": "(UTC-03:00) Caiena, Fortaleza"
     }
   ],
   "Lft/is": [
@@ -3214,13 +3224,13 @@
   "Lm9bnN": [
     {
       "type": 0,
-      "value": "Bullet List"
+      "value": "Lista com Marcadores"
     }
   ],
   "Lnqh6h": [
     {
       "type": 0,
-      "value": "Bold (Ctrl+B)"
+      "value": "Negrito (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3256,7 +3266,7 @@
   "Lx8HRl": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) Damasco"
     }
   ],
   "M/gUE8": [
@@ -3304,7 +3314,7 @@
   "MCzWDc": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Prévia"
     }
   ],
   "MDbmMw": [
@@ -3346,7 +3356,7 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Insira uma matriz válida."
     }
   ],
   "MYgKHu": [
@@ -3370,13 +3380,13 @@
   "Mc6ITJ": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Pesquisar"
     }
   ],
   "MfAdfx": [
     {
       "type": 0,
-      "value": "Edit in advanced mode"
+      "value": "Editar no modo avançado"
     }
   ],
   "Mgcs5s": [
@@ -3388,7 +3398,7 @@
   "MirIsS": [
     {
       "type": 0,
-      "value": "Show code"
+      "value": "Mostrar o código"
     }
   ],
   "MmBfD1": [
@@ -3418,13 +3428,13 @@
   "N4dEVo": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Cabeçalhos"
     }
   ],
   "N7E9hd": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) Helsinque, Kiev, Riga, Sófia, Tallinn, Vilnius"
     }
   ],
   "NGJ00e": [
@@ -3436,13 +3446,13 @@
   "NHnG2S": [
     {
       "type": 0,
-      "value": "The generated XSLT does not match the current mapping."
+      "value": "O XSLT gerado não corresponde ao mapeamento atual."
     }
   ],
   "NMpFs6": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Araguaina"
+      "value": "(UTC-03:00) Araguaína"
     }
   ],
   "NPUFgH": [
@@ -3454,7 +3464,7 @@
   "NWxGWN": [
     {
       "type": 0,
-      "value": "Enter unique property name"
+      "value": "Insira um nome de propriedade exclusivo"
     }
   ],
   "NnD8gF": [
@@ -3508,13 +3518,13 @@
   "O/fh9A": [
     {
       "type": 0,
-      "value": "Service Principal"
+      "value": "Entidade de Serviço"
     }
   ],
   "O27gKq": [
     {
       "type": 0,
-      "value": "Loading Files..."
+      "value": "Carregando Arquivos..."
     }
   ],
   "O9ZExg": [
@@ -3556,7 +3566,7 @@
   "OIOexo": [
     {
       "type": 0,
-      "value": "On these days"
+      "value": "Nestes dias"
     }
   ],
   "OKszbi": [
@@ -3580,7 +3590,7 @@
   "OOUTdW": [
     {
       "type": 0,
-      "value": "Loading all connectors..."
+      "value": "Carregando todos os conectores..."
     }
   ],
   "OSHNZ2": [
@@ -3592,7 +3602,7 @@
   "OSP9JY": [
     {
       "type": 0,
-      "value": "Enter the audience."
+      "value": "Insira o público-alvo."
     }
   ],
   "OVvieE": [
@@ -3616,13 +3626,13 @@
   "OgJ9eG": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08:00) Taipé"
     }
   ],
   "OhbvXz": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) Ilha Norfolk"
     }
   ],
   "Oib1mL": [
@@ -3664,7 +3674,7 @@
   "P+7G62": [
     {
       "type": 0,
-      "value": "Heading 3"
+      "value": "Cabeçalho 3"
     }
   ],
   "P+mWgV": [
@@ -3676,13 +3686,13 @@
   "P/S+q5": [
     {
       "type": 0,
-      "value": "Required. One of the strings to combine into a single string."
+      "value": "Necessário. Uma das cadeias de caracteres a serem combinadas em uma única cadeia de caracteres."
     }
   ],
   "P/dnfK": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) Dacca"
     }
   ],
   "P2A5dB": [
@@ -3718,7 +3728,7 @@
   "PE1tsI": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Nenhuma saída"
     }
   ],
   "PF87Ew": [
@@ -3736,7 +3746,7 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Execuções "
     },
     {
       "type": 1,
@@ -3746,7 +3756,7 @@
   "PORNMZ": [
     {
       "type": 0,
-      "value": "Inputs"
+      "value": "Entradas"
     }
   ],
   "PP63jY": [
@@ -3770,7 +3780,7 @@
   "PSrCNL": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Função"
     }
   ],
   "PXa0D4": [
@@ -3782,7 +3792,7 @@
   "PZgHf/": [
     {
       "type": 0,
-      "value": "Schema Uri"
+      "value": "Uri do Esquema"
     }
   ],
   "PaPPLr": [
@@ -3800,7 +3810,7 @@
   "PjBcG3": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02:00) Amã"
     }
   ],
   "Pk4cb+": [
@@ -3830,7 +3840,7 @@
   "PvWTxR": [
     {
       "type": 0,
-      "value": "Show functions"
+      "value": "Mostrar funções"
     }
   ],
   "Pvm0xB": [
@@ -3842,7 +3852,7 @@
   "Q+ZZHI": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Hawaii"
+      "value": "(UTC-10:00) Havaí"
     }
   ],
   "Q/7unA": [
@@ -3866,13 +3876,13 @@
   "Q5w4Do": [
     {
       "type": 0,
-      "value": "Add dynamic data or expressions by inserting a /"
+      "value": "Adicionar dados dinâmicos ou expressões inserindo um /"
     }
   ],
   "Q8HCYK": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "Nenhum item"
     }
   ],
   "Q8zxeb": [
@@ -3930,7 +3940,7 @@
   "QiVbKW": [
     {
       "type": 0,
-      "value": "Exit Full Screen"
+      "value": "Sair da Tela Inteira"
     }
   ],
   "QknZQ1": [
@@ -3954,7 +3964,7 @@
   "QpX2+j": [
     {
       "type": 0,
-      "value": "Location"
+      "value": "Localização"
     }
   ],
   "QrQDdp": [
@@ -3982,7 +3992,7 @@
   "R/aiRy": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) Tempo Universal Coordenado+12"
     }
   ],
   "RFjYpH": [
@@ -3994,7 +4004,7 @@
   "RJes1w": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) Ierevan"
     }
   ],
   "RX2Shm": [
@@ -4003,16 +4013,10 @@
       "value": "Necessário. A cadeia de caracteres que é dividida."
     }
   ],
-  "RZ1MIN": [
-    {
-      "type": 0,
-      "value": "Mudar para a matriz de entrada integral"
-    }
-  ],
   "RbJNVk": [
     {
       "type": 0,
-      "value": "Schema"
+      "value": "Esquema"
     }
   ],
   "RhH4pF": [
@@ -4073,19 +4077,19 @@
   "Ro4+PC": [
     {
       "type": 0,
-      "value": "You can add notes only when you edit a step's inputs."
+      "value": "Você só pode adicionar anotações quando edita as entradas de uma etapa."
     }
   ],
   "Rp5pHU": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Monrovia, Reykjavik"
+      "value": "(UTC+00:00) Monróvia, Reykjavik"
     }
   ],
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "Unrecognized expression '"
+      "value": "Expressão não reconhecida '"
     },
     {
       "type": 1,
@@ -4099,19 +4103,19 @@
   "RvpHdu": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Ilhas Salomão, Nova Caledônia"
     }
   ],
   "RxGxr+": [
     {
       "type": 0,
-      "value": "Line number"
+      "value": "Número da linha"
     }
   ],
   "S138/4": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: ⌘B"
+      "value": "Formatar texto como negrito. Atalho: ⌘B"
     }
   ],
   "SCCE6s": [
@@ -4123,13 +4127,13 @@
   "SGnTpt": [
     {
       "type": 0,
-      "value": "Heading 2"
+      "value": "Cabeçalho 2"
     }
   ],
   "SJFVxf": [
     {
       "type": 0,
-      "value": "issues"
+      "value": "problemas"
     }
   ],
   "SKXopi": [
@@ -4141,13 +4145,13 @@
   "SKy5tj": [
     {
       "type": 0,
-      "value": "The input node type doesn't match the schema node's type."
+      "value": "O tipo de nó de entrada não corresponde ao tipo do nó do esquema."
     }
   ],
   "SLJkRn": [
     {
       "type": 0,
-      "value": "Remove input"
+      "value": "Remover entrada"
     }
   ],
   "SLZ0n4": [
@@ -4181,7 +4185,7 @@
   "SgiTAh": [
     {
       "type": 0,
-      "value": "Please enter your input"
+      "value": "Insira sua entrada"
     }
   ],
   "Sh10cw": [
@@ -4235,7 +4239,7 @@
   "T7Xwii": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Intervalo"
     }
   ],
   "T7zcR6": [
@@ -4265,7 +4269,7 @@
   "TLHUMf": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Erro ao carregar entradas"
     }
   ],
   "TNEttQ": [
@@ -4289,7 +4293,7 @@
   "TRpSCQ": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Tipo de Ação"
     }
   ],
   "TUaunO": [
@@ -4307,13 +4311,13 @@
   "TY4HzZ": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Adicione ou substitua seus esquemas."
     }
   ],
   "TZh8nV": [
     {
       "type": 0,
-      "value": "on "
+      "value": "no "
     },
     {
       "type": 1,
@@ -4355,31 +4359,31 @@
   "TjMkDP": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) Ilha de Páscoa"
     }
   ],
   "TlX98E": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Kaliningrad"
+      "value": "(UTC+02:00) Kaliningrado"
     }
   ],
   "Tmr/9e": [
     {
       "type": 0,
-      "value": "Invalid parameters"
+      "value": "Parâmetros inválidos"
     }
   ],
   "Ts5Pzr": [
     {
       "type": 0,
-      "value": "Note"
+      "value": "Observação"
     }
   ],
   "Ttc0SM": [
     {
       "type": 0,
-      "value": "Heading 1"
+      "value": "Cabeçalho 1"
     }
   ],
   "Twfck/": [
@@ -4397,13 +4401,13 @@
   "U086AA": [
     {
       "type": 0,
-      "value": "Target schema element"
+      "value": "Elemento de esquema de destino"
     }
   ],
   "U0I10w": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05:00) Ecaterimburgo"
     }
   ],
   "U3guPp": [
@@ -4421,7 +4425,7 @@
   "U4zovj": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Execuções "
     },
     {
       "type": 1,
@@ -4439,7 +4443,7 @@
   "U7yRwM": [
     {
       "type": 0,
-      "value": "Validation Error"
+      "value": "Erro de Validação"
     }
   ],
   "UCNM4L": [
@@ -4463,13 +4467,13 @@
   "UIWX6p": [
     {
       "type": 0,
-      "value": "Logical Name"
+      "value": "Nome Lógico"
     }
   ],
   "UR1CS5": [
     {
       "type": 0,
-      "value": "Hide code"
+      "value": "Ocultar o código"
     }
   ],
   "USVffu": [
@@ -4481,13 +4485,13 @@
   "UT2ozj": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) Hora das Montanhas (EUA e Canadá)"
     }
   ],
   "UVAfYj": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Necessário. A coleção da qual tirar o último objeto."
     }
   ],
   "UYRIS/": [
@@ -4503,13 +4507,13 @@
   "UZiXVh": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Saída"
     }
   ],
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "Schema node '"
+      "value": "O nó de '"
     },
     {
       "type": 1,
@@ -4517,13 +4521,13 @@
     },
     {
       "type": 0,
-      "value": "' has an non-terminating connection chain"
+      "value": "' tem uma cadeia de conexão não terminando"
     }
   ],
   "Umpr3z": [
     {
       "type": 0,
-      "value": "Every "
+      "value": "A cada "
     },
     {
       "type": 1,
@@ -4531,7 +4535,7 @@
     },
     {
       "type": 0,
-      "value": " weeks"
+      "value": " semanas"
     }
   ],
   "Unc2tG": [
@@ -4543,7 +4547,7 @@
   "UnrrzF": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Esquema de origem"
     }
   ],
   "Ur+wph": [
@@ -4579,7 +4583,7 @@
   "V5f3ha": [
     {
       "type": 0,
-      "value": "Week"
+      "value": "Semana"
     }
   ],
   "VA7M1u": [
@@ -4591,7 +4595,7 @@
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "Select an App Service resource"
+      "value": "Selecione um recurso Serviço de Aplicativo servidor"
     }
   ],
   "VI5Sa8": [
@@ -4619,13 +4623,13 @@
   "VL9wOu": [
     {
       "type": 0,
-      "value": "Must provide value for parameter."
+      "value": "Deve fornecer valor para parâmetro."
     }
   ],
   "VLc3FV": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Esquema de origem"
     }
   ],
   "VPh9Jo": [
@@ -4652,12 +4656,6 @@
       "value": "Comentar"
     }
   ],
-  "VXQbMw": [
-    {
-      "type": 0,
-      "value": "Mudar para entradas detalhadas do item da matriz"
-    }
-  ],
   "VZHick": [
     {
       "type": 0,
@@ -4679,7 +4677,7 @@
   "Vfce7b": [
     {
       "type": 0,
-      "value": "Error Type"
+      "value": "Tipo de Erro"
     }
   ],
   "VlvlX1": [
@@ -4727,7 +4725,7 @@
   "WK6hZX": [
     {
       "type": 0,
-      "value": "Select all text in "
+      "value": "Select all texto em "
     },
     {
       "type": 1,
@@ -4749,7 +4747,7 @@
   "WTZvGW": [
     {
       "type": 0,
-      "value": "Workflow has invalid connections on the following operations: "
+      "value": "O fluxo de trabalho tem conexões inválidas nas seguintes operações: "
     },
     {
       "type": 1,
@@ -4771,7 +4769,7 @@
   "WcnIF8": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Remover"
     }
   ],
   "WgoP7R": [
@@ -4789,13 +4787,13 @@
   "X/7je+": [
     {
       "type": 0,
-      "value": "Minute"
+      "value": "Minuto"
     }
   ],
   "X2idLs": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Montevideo"
+      "value": "(UTC-03:00) Montevidéu"
     }
   ],
   "X4gDhV": [
@@ -4807,7 +4805,7 @@
   "X7X5ew": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parâmetros"
     }
   ],
   "X8JjjT": [
@@ -4865,7 +4863,7 @@
   "XOAcjQ": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Nairobi"
+      "value": "(UTC+03:00) Nairóbi"
     }
   ],
   "XOzn/3": [
@@ -4877,13 +4875,13 @@
   "XQ4OCV": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) Bagdá"
     }
   ],
   "XRK+gt": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "O '"
     },
     {
       "type": 1,
@@ -4891,7 +4889,7 @@
     },
     {
       "type": 0,
-      "value": "' has an non-terminating connection chain"
+      "value": "' função tem uma cadeia de conexão não terminando"
     }
   ],
   "XTeLIw": [
@@ -4921,13 +4919,13 @@
   "XVTQT6": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Intervalo"
     }
   ],
   "XbtEq9": [
     {
       "type": 0,
-      "value": "Count"
+      "value": "Contagem"
     }
   ],
   "Xew1Df": [
@@ -4947,25 +4945,25 @@
   "Xj0Gr/": [
     {
       "type": 0,
-      "value": "Target schema element cannot be deleted."
+      "value": "O elemento de esquema de destino não pode ser excluído."
     }
   ],
   "Xj4xwI": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
+      "value": "A identidade gerenciada usada com esta operação não existe mais. Para continuar, selecione uma identidade disponível ou altere a conexão."
     }
   ],
   "XkBxv5": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Selecionar um esquema de destino"
     }
   ],
   "Xkt2vD": [
     {
       "type": 0,
-      "value": "Select a function app function"
+      "value": "Selecionar uma função de aplicativo de funções"
     }
   ],
   "Xnn0uj": [
@@ -4995,7 +4993,7 @@
   "Xv5CGN": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) Indiana (Leste)"
     }
   ],
   "Xx/naD": [
@@ -5025,13 +5023,13 @@
   "YABOLz": [
     {
       "type": 0,
-      "value": "Body Item"
+      "value": "Item de Corpo"
     }
   ],
   "YCFhzp": [
     {
       "type": 0,
-      "value": "Add children"
+      "value": "Adicionar filhos"
     }
   ],
   "YHsAKl": [
@@ -5059,7 +5057,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: Ctrl+U"
+      "value": "Formatar texto como sublinhado. Atalho: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -5077,31 +5075,31 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: Ctrl+B"
+      "value": "Formatar texto como negrito. Atalho: Ctrl+B"
     }
   ],
   "YRk271": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Autenticação"
     }
   ],
   "YUbSFS": [
     {
       "type": 0,
-      "value": "Yes/No"
+      "value": "Sim/Não"
     }
   ],
   "YWOKlU": [
     {
       "type": 0,
-      "value": "Numbered List"
+      "value": "Lista Numerada"
     }
   ],
   "YZ5Kwe": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) Hora do Atlântico (Canadá)"
     }
   ],
   "YaFjJQ": [
@@ -5119,7 +5117,7 @@
   "YdQw4/": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: ⌘I"
+      "value": "Formatar texto como itálico. Atalho: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5137,19 +5135,19 @@
   "Yh5OVd": [
     {
       "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
+      "value": "O valor personalizado não corresponde a um dos tipos permitidos para esta entrada"
     }
   ],
   "YiOybp": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) Bruxelas, Copenhague, Madri, Paris"
     }
   ],
   "YlesUQ": [
     {
       "type": 0,
-      "value": "Your map is in perfect condition"
+      "value": "Seu mapa está em condição perfeita"
     }
   ],
   "YoQara": [
@@ -5173,7 +5171,7 @@
   "Z9PWl/": [
     {
       "type": 0,
-      "value": "Retry Policy count is invalid (Must be from "
+      "value": "A contagem da Política de Repetição é inválida (deve ser de "
     },
     {
       "type": 1,
@@ -5181,7 +5179,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " a "
     },
     {
       "type": 1,
@@ -5201,7 +5199,7 @@
   "ZCFMoe": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "ZM1mRy": [
@@ -5219,7 +5217,7 @@
   "ZRdkFN": [
     {
       "type": 0,
-      "value": "Collapse Static Result"
+      "value": "Recolher Resultado Estático"
     }
   ],
   "ZUaz3Y": [
@@ -5249,13 +5247,13 @@
   "Zg3IjD": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Fechar"
     }
   ],
   "Zi9gQK": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Adicionar novo item"
     }
   ],
   "ZkjTbp": [
@@ -5285,7 +5283,7 @@
   "aJxefp": [
     {
       "type": 0,
-      "value": "Add new parameters"
+      "value": "Adicionar novos parâmetros"
     }
   ],
   "aK4iLW": [
@@ -5297,25 +5295,25 @@
   "aP1wk9": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Retorna o primeiro índice de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)"
     }
   ],
   "aSnCCB": [
     {
       "type": 0,
-      "value": "Location"
+      "value": "Localização"
     }
   ],
   "aV/nLS": [
     {
       "type": 0,
-      "value": "Second"
+      "value": "Segundo"
     }
   ],
   "ae7W0a": [
     {
       "type": 0,
-      "value": "Full Screen"
+      "value": "Tela Inteira"
     }
   ],
   "ahsVI/": [
@@ -5327,13 +5325,13 @@
   "amRYtC": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Insira um float válido."
     }
   ],
   "aoUT/3": [
     {
       "type": 0,
-      "value": "Loading resources..."
+      "value": "Carregando recursos..."
     }
   ],
   "auUI93": [
@@ -5361,7 +5359,7 @@
   "b9Rvl9": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "bG9rjv": [
@@ -5385,7 +5383,7 @@
   "bSZ0lL": [
     {
       "type": 0,
-      "value": "Callback url"
+      "value": "URL de retorno de chamada"
     }
   ],
   "bTrk+S": [
@@ -5403,7 +5401,7 @@
   "bXFGpe": [
     {
       "type": 0,
-      "value": "Info"
+      "value": "Informações"
     }
   ],
   "ba9yGJ": [
@@ -5427,13 +5425,13 @@
   "bsgS8m": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Prévia"
     }
   ],
   "bv9QPA": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Data"
     }
   ],
   "bwfJdj": [
@@ -5455,7 +5453,7 @@
   "byTBrn": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Personalizado"
     }
   ],
   "bzF/qn": [
@@ -5491,7 +5489,7 @@
   "c4GQZE": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Selecione o esquema para o menu suspenso"
     }
   ],
   "c6XbVI": [
@@ -5503,7 +5501,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+      "value": "Descompacte o corpo da solicitação se estiver compactado usando GZip ou Deflate. Esta configuração só é aplicável ao gatilho HTTP."
     }
   ],
   "c8UPLp": [
@@ -5515,7 +5513,7 @@
   "cHiBAn": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) Seul"
     }
   ],
   "cJm+ah": [
@@ -5533,25 +5531,25 @@
   "cP4UkW": [
     {
       "type": 0,
-      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
+      "value": "O intervalo da Política de Repetição é inválido, deve corresponder ao formato de duração ISO 8601"
     }
   ],
   "cR9RtV": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Descartar alterações"
     }
   ],
   "cUW5m8": [
     {
       "type": 0,
-      "value": "Select the checkbox to choose this connection."
+      "value": "Marque a caixa de seleção para escolher esta conexão."
     }
   ],
   "ca/QIc": [
     {
       "type": 0,
-      "value": "Error Message"
+      "value": "Mensagem de Erro"
     }
   ],
   "ceVB5l": [
@@ -5569,7 +5567,7 @@
   "ciLkfU": [
     {
       "type": 0,
-      "value": "Bold (⌘B)"
+      "value": "Negrito (⌘B)"
     }
   ],
   "cj+kyo": [
@@ -5581,7 +5579,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
+      "value": "O tipo de nó de entrada não corresponde a um dos tipos permitidos para esta entrada"
     }
   ],
   "cmTCsW": [
@@ -5611,43 +5609,43 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "Generate XSLT first before attempting to test mappings."
+      "value": "Gerar XSLT primeiro antes de tentar testar mapeamentos."
     }
   ],
   "cvp9VP": [
     {
       "type": 0,
-      "value": "Error code"
+      "value": "Código de erro"
     }
   ],
   "cyEBus": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Cuiaba"
-    }
-  ],
-  "d+MjsE": [
-    {
-      "type": 0,
-      "value": "Enter a valid dictionary."
+      "value": "(UTC-04:00) Cuiabá"
     }
   ],
   "d020eg": [
     {
       "type": 0,
-      "value": "Returns the first element from the passed-in array or string."
+      "value": "Retorna o primeiro elemento da matriz ou cadeia de caracteres passada."
     }
   ],
   "dBWIjR": [
     {
       "type": 0,
-      "value": "Schema is missing required inputs"
+      "value": "O esquema não tem as entradas necessárias"
     }
   ],
   "dBxX0M": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Adicionar um gatilho"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "Switch to key value mode"
     }
   ],
   "dDYCuU": [
@@ -5659,7 +5657,7 @@
   "dL9V5t": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identidade gerenciada"
     }
   ],
   "dOpdsP": [
@@ -5671,13 +5669,13 @@
   "dPa7+6": [
     {
       "type": 0,
-      "value": "Generate"
+      "value": "Gerar"
     }
   ],
   "dQmi91": [
     {
       "type": 0,
-      "value": "Frequency"
+      "value": "Frequência"
     }
   ],
   "dSTRb/": [
@@ -5709,13 +5707,13 @@
   "dfNjw1": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Fechar"
     }
   ],
   "dfmH55": [
     {
       "type": 0,
-      "value": "Italic (Ctrl+I)"
+      "value": "Itálico (Ctrl+I)"
     }
   ],
   "dhvk0u": [
@@ -5745,7 +5743,7 @@
   "dwrqEc": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Avisos"
     }
   ],
   "dxh2CJ": [
@@ -5757,7 +5755,7 @@
   "e+GuGo": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Entrada"
     }
   ],
   "e00zot": [
@@ -5781,19 +5779,19 @@
   "e9OvzW": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Limpar"
     }
   ],
   "e9bIKh": [
     {
       "type": 0,
-      "value": "Failed to generate XSLT."
+      "value": "Falha ao gerar XSLT."
     }
   ],
   "eFet4K": [
     {
       "type": 0,
-      "value": "Action Tracking ID"
+      "value": "ID de Rastreamento de Ação"
     }
   ],
   "eFnLWK": [
@@ -5805,7 +5803,7 @@
   "eHgfpz": [
     {
       "type": 0,
-      "value": "Please enter a valid URL"
+      "value": "Insira uma URL válida"
     }
   ],
   "eHgi14": [
@@ -5841,7 +5839,7 @@
   "elD6+N": [
     {
       "type": 0,
-      "value": "Italic (⌘I)"
+      "value": "Itálico (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5883,7 +5881,7 @@
   "f81ClO": [
     {
       "type": 0,
-      "value": "Empty dynamic content icon"
+      "value": "Ícone de conteúdo dinâmico vazio"
     }
   ],
   "fBQBw/": [
@@ -5901,7 +5899,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "Select an API Management resource"
+      "value": "Selecione um recurso Gerenciamento de API recurso"
     }
   ],
   "fGcSFd": [
@@ -5913,7 +5911,7 @@
   "fKYuwf": [
     {
       "type": 0,
-      "value": "Please select file or image"
+      "value": "Selecione arquivo ou imagem"
     }
   ],
   "fVG5aD": [
@@ -5925,7 +5923,7 @@
   "faUrud": [
     {
       "type": 0,
-      "value": "Loading connection data..."
+      "value": "Carregando dados de conexão..."
     }
   ],
   "fc1AV8": [
@@ -5951,13 +5949,13 @@
   "fifSPb": [
     {
       "type": 0,
-      "value": "(UTC-03:30) Newfoundland"
+      "value": "(UTC-03:30) Terra Nova"
     }
   ],
   "fmm7Ik": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Função"
     }
   ],
   "fp8Ry3": [
@@ -6035,13 +6033,13 @@
   "gIx5ys": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: Ctrl+I"
+      "value": "Formatar texto como itálico. Atalho: Ctrl+I"
     }
   ],
   "gKEaXI": [
     {
       "type": 0,
-      "value": "Copy the value of {label} to the clipboard"
+      "value": "Copiar o valor do {label} para a área de transferência"
     }
   ],
   "gKq3Jv": [
@@ -6059,7 +6057,7 @@
   "gRUmiA": [
     {
       "type": 0,
-      "value": "Info"
+      "value": "Informações"
     }
   ],
   "gWyYg0": [
@@ -6071,7 +6069,7 @@
   "gc6v4X": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Identidade gerenciada atribuída pelo sistema"
     }
   ],
   "gfBWfH": [
@@ -6083,19 +6081,19 @@
   "ginGIZ": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+      "value": "(UTC-06:00) Guadalajara, Cidade do México, Monterrey"
     }
   ],
   "gkY5ya": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Excluir"
     }
   ],
   "gpUphl": [
     {
       "type": 0,
-      "value": "Enter the audience."
+      "value": "Insira o público-alvo."
     }
   ],
   "gu9o9z": [
@@ -6107,13 +6105,13 @@
   "gvDMuq": [
     {
       "type": 0,
-      "value": "Select a Batch Workflow resource"
+      "value": "Selecionar um recurso de Fluxo de Trabalho em Lotes"
     }
   ],
   "h+W3VW": [
     {
       "type": 0,
-      "value": "Number"
+      "value": "Número"
     }
   ],
   "h1lQDa": [
@@ -6125,13 +6123,13 @@
   "h40rpg": [
     {
       "type": 0,
-      "value": "Specify interval in ISO 8601 format."
+      "value": "Especifique o intervalo no formato ISO 8601."
     }
   ],
   "h6vVbX": [
     {
       "type": 0,
-      "value": "Add a source schema first, then select elements to build your map"
+      "value": "Adicione um esquema de origem primeiro e, em seguida, selecione elementos para compilar o mapa"
     }
   ],
   "hN7iBP": [
@@ -6192,7 +6190,7 @@
   "hic23z": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "O valor é muito grande."
     }
   ],
   "hq1mk6": [
@@ -6222,7 +6220,7 @@
   "htj+eZ": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Atualizar esquema de destino"
     }
   ],
   "hvbclb": [
@@ -6234,7 +6232,7 @@
   "hza/cT": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Casablanca"
+      "value": "(UTC +00:00h) Casablanca"
     }
   ],
   "i/SguY": [
@@ -6258,7 +6256,7 @@
   "i1EQYm": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Harare, Pretoria"
+      "value": "(UTC+02:00) Harare, Pretória"
     }
   ],
   "i1Tufp": [
@@ -6282,7 +6280,7 @@
   "i4Om5O": [
     {
       "type": 0,
-      "value": "This contains an invalid value"
+      "value": "Isso contém um valor inválido"
     }
   ],
   "iB8YKD": [
@@ -6356,7 +6354,7 @@
   "iTKrs8": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Paginação"
     }
   ],
   "iU1OJh": [
@@ -6380,7 +6378,7 @@
   "iVMVAt": [
     {
       "type": 0,
-      "value": "Example: 0, 10"
+      "value": "Exemplo: 0, 10"
     }
   ],
   "idQjOP": [
@@ -6414,13 +6412,13 @@
   "isnFBi": [
     {
       "type": 0,
-      "value": "Elements and mappings not connected to a target element are removed."
+      "value": "Elementos e mapeamentos não conectados a um elemento de destino são removidos."
     }
   ],
   "ixhS47": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Retorna o início do dia para um carimbo de data/hora de cadeia de caracteres passado"
     }
   ],
   "iy8rNf": [
@@ -6444,7 +6442,7 @@
   "j5z8Vd": [
     {
       "type": 0,
-      "value": "Repeating"
+      "value": "Repetindo"
     }
   ],
   "jA6Wrp": [
@@ -6462,7 +6460,7 @@
   "jHKc3w": [
     {
       "type": 0,
-      "value": "Other"
+      "value": "Outro"
     }
   ],
   "jKsMS6": [
@@ -6486,19 +6484,19 @@
   "jQ7UzV": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) Ilhas Aleutas"
     }
   ],
   "jQjteB": [
     {
       "type": 0,
-      "value": "Add a source schema"
+      "value": "Adicionar um esquema de origem"
     }
   ],
   "jUDhbs": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Esquema de destino"
     }
   ],
   "jVpanH": [
@@ -6510,7 +6508,7 @@
   "jZjgYZ": [
     {
       "type": 0,
-      "value": "No resources of this type found under this subscription."
+      "value": "Nenhum recurso desse tipo encontrado nessa assinatura."
     }
   ],
   "jcA3Ig": [
@@ -6564,19 +6562,19 @@
   "kBOAkT": [
     {
       "type": 0,
-      "value": "Select Fields"
+      "value": "Selecionar Campos"
     }
   ],
   "kBSLfu": [
     {
       "type": 0,
-      "value": "Duplicate property name"
+      "value": "Nome de propriedade duplicado"
     }
   ],
   "kEI2xx": [
     {
       "type": 0,
-      "value": "Message"
+      "value": "Mensagem"
     }
   ],
   "kHcCxH": [
@@ -6600,7 +6598,7 @@
   "kM+Mr0": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Carregando..."
     }
   ],
   "kN6kce": [
@@ -6612,13 +6610,13 @@
   "kSK9Pq": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+      "value": "(UTC-05:00) Bogotá, Lima, Quito, Rio Branco"
     }
   ],
   "kVwJXt": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) Abu Dhabi, Mascate"
     }
   ],
   "kYivbS": [
@@ -6690,13 +6688,13 @@
   "l72gf4": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Identidade Gerenciada"
     }
   ],
   "lM9qrG": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Nuku'alofa"
+      "value": "(UTC+13:00) Nucualofa"
     }
   ],
   "lPTdSf": [
@@ -6708,25 +6706,25 @@
   "lQNKUB": [
     {
       "type": 0,
-      "value": "A line for the parent element is added automatically."
+      "value": "Uma linha para o elemento pai é adicionada automaticamente."
     }
   ],
   "lR7V87": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "Funções"
     }
   ],
   "lUm6fl": [
     {
       "type": 0,
-      "value": "Return"
+      "value": "Retornar"
     }
   ],
   "lUvgiW": [
     {
       "type": 0,
-      "value": "The type for {0} is {1}."
+      "value": "O tipo para {0} é {1}."
     }
   ],
   "lZT0JI": [
@@ -6739,12 +6737,6 @@
     {
       "type": 0,
       "value": "foi ignorado"
-    }
-  ],
-  "lcxLiq": [
-    {
-      "type": 0,
-      "value": "Insira uma matriz válida"
     }
   ],
   "lexzgJ": [
@@ -6782,19 +6774,19 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "Insert Expression (You can also add by typing / in the editor)"
+      "value": "Inserir Expressão (Você também pode adicionar digitando/no editor)"
     }
   ],
   "lsKVU6": [
     {
       "type": 0,
-      "value": "Select an action type"
+      "value": "Selecione um tipo de ação"
     }
   ],
   "lwlg2K": [
     {
       "type": 0,
-      "value": "Underline (Ctrl+U)"
+      "value": "Sublinhado (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -6806,7 +6798,7 @@
   "m/jJ/5": [
     {
       "type": 0,
-      "value": "Map checker"
+      "value": "Verificador de mapa"
     }
   ],
   "m7Y6Qf": [
@@ -6848,7 +6840,7 @@
   "mGPqAg": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "Excluir "
     },
     {
       "type": 1,
@@ -6896,7 +6888,7 @@
   "mQotIu": [
     {
       "type": 0,
-      "value": "Select Connection"
+      "value": "Selecionar Conexão"
     }
   ],
   "mYQFtf": [
@@ -6920,7 +6912,7 @@
   "meVkB6": [
     {
       "type": 0,
-      "value": "Empty property name"
+      "value": "Nome de propriedade vazio"
     }
   ],
   "mej02C": [
@@ -7002,7 +6994,7 @@
   "nCa0KG": [
     {
       "type": 0,
-      "value": "Internal Errors"
+      "value": "Erros Internos"
     }
   ],
   "nGds/r": [
@@ -7020,25 +7012,25 @@
   "nNWAAh": [
     {
       "type": 0,
-      "value": "No schema is added."
+      "value": "Nenhum esquema foi adicionado."
     }
   ],
   "nOWGAV": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Hora de término"
     }
   ],
   "nOhve4": [
     {
       "type": 0,
-      "value": "Yes/No"
+      "value": "Sim/Não"
     }
   ],
   "nRpM02": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Personalizado"
     }
   ],
   "nSan4V": [
@@ -7056,7 +7048,7 @@
   "nVDG00": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) Ilha de Kiritimati"
     }
   ],
   "nZ4nLn": [
@@ -7074,7 +7066,7 @@
   "njGstq": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05:45) Katmandu"
     }
   ],
   "nkk1mu": [
@@ -7098,7 +7090,7 @@
   "ny75Ly": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "Insira um valor padrão para o parâmetro."
     }
   ],
   "o/0SEj": [
@@ -7110,7 +7102,7 @@
   "o/FgET": [
     {
       "type": 0,
-      "value": "Function was removed from the current location and currently exists elsewhere."
+      "value": "A função foi removida do local atual e, no momento, existe em outro lugar."
     }
   ],
   "o14STH": [
@@ -7136,25 +7128,25 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "Enter a valid uri."
+      "value": "Insira um URI válido."
     }
   ],
   "o3SfI4": [
     {
       "type": 0,
-      "value": "Zoom to fit"
+      "value": "Zoom para caber"
     }
   ],
   "o7bd1o": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) Teerã"
     }
   ],
   "o8ohVV": [
     {
       "type": 0,
-      "value": "Schema Id"
+      "value": "ID do Esquema"
     }
   ],
   "oAFcW6": [
@@ -7190,19 +7182,19 @@
   "oQjIWf": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Erros"
     }
   ],
   "oR2x4N": [
     {
       "type": 0,
-      "value": "Invalid integer value"
+      "value": "Valor inteiro inválido"
     }
   ],
   "oTBkbU": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Saída"
     }
   ],
   "oV0xQ9": [
@@ -7214,7 +7206,7 @@
   "oVVPst": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Deseja descartar todas as alterações não salvas?"
     }
   ],
   "odQ554": [
@@ -7226,7 +7218,7 @@
   "onXUu0": [
     {
       "type": 0,
-      "value": "Add a note"
+      "value": "Adicionar uma nota"
     }
   ],
   "ox2Ou7": [
@@ -7238,7 +7230,7 @@
   "oxXV4+": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the passed-in argument values."
+      "value": "Retorna o primeiro objeto não nulo nos valores de argumento passados."
     }
   ],
   "p/0r2N": [
@@ -7256,7 +7248,7 @@
   "p1IEXb": [
     {
       "type": 0,
-      "value": "Enter the data from previous step. You can also add data by typing the '/' character."
+      "value": "Insira os dados da etapa anterior. Você também pode adicionar dados digitando o caractere '/'."
     }
   ],
   "p1Qtm5": [
@@ -7268,7 +7260,7 @@
   "p5ZID0": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) Kuwait, Riad"
     }
   ],
   "pC2nr2": [
@@ -7292,7 +7284,7 @@
   "pMms92": [
     {
       "type": 0,
-      "value": "Insert Dynamic Content"
+      "value": "Inserir Conteúdo Dinâmico"
     }
   ],
   "pOTcUO": [
@@ -7310,7 +7302,7 @@
   "pYNzbj": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "Caminho"
     }
   ],
   "pYtSyE": [
@@ -7322,7 +7314,7 @@
   "pcGqoB": [
     {
       "type": 0,
-      "value": "Error loading outputs"
+      "value": "Erro ao carregar saídas"
     }
   ],
   "pcuZKB": [
@@ -7388,7 +7380,7 @@
   "q4ChjK": [
     {
       "type": 0,
-      "value": "Select workflow with 'manual' trigger"
+      "value": "Selecionar fluxo de trabalho com gatilho 'manual'"
     }
   ],
   "q5TkqE": [
@@ -7406,7 +7398,7 @@
   "q8vnZQ": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+      "value": "Valide o corpo da solicitação em relação ao esquema fornecido. Caso haja uma incompatibilidade, HTTP 400 será retornado."
     }
   ],
   "qAlTD5": [
@@ -7426,7 +7418,7 @@
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: ⌘U"
+      "value": "Formatar texto como sublinhado. Atalho: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7468,7 +7460,7 @@
   "qUMXpq": [
     {
       "type": 0,
-      "value": "Swagger Endpoint"
+      "value": "Ponto de Extremidade do Swagger"
     }
   ],
   "qUWBUX": [
@@ -7523,11 +7515,17 @@
   "qiIs4V": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "Exemplo: "
     },
     {
       "type": 1,
       "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "Switch to default view mode"
     }
   ],
   "qnI4Y1": [
@@ -7539,7 +7537,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "O '"
     },
     {
       "type": 1,
@@ -7547,7 +7545,7 @@
     },
     {
       "type": 0,
-      "value": "' has an input with a mismatched type"
+      "value": "' função tem uma entrada com um tipo incompatível"
     }
   ],
   "qrxi0L": [
@@ -7559,7 +7557,7 @@
   "r/n6/9": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Inserir um valor"
     }
   ],
   "r43nMc": [
@@ -7571,7 +7569,7 @@
   "r7vZ5a": [
     {
       "type": 0,
-      "value": "Minimum Interval"
+      "value": "Intervalo Mínimo"
     }
   ],
   "r8aZXs": [
@@ -7619,7 +7617,7 @@
   "rNi5Y3": [
     {
       "type": 0,
-      "value": "Select this checkbox if you're setting up an on-premises connection."
+      "value": "Marque esta caixa de seleção se você estiver configurando uma conexão local."
     }
   ],
   "rSIBjh": [
@@ -7643,13 +7641,13 @@
   "rd6fai": [
     {
       "type": 0,
-      "value": "Use left and right arrow keys to navigate between commands"
+      "value": "Use as teclas de seta esquerda e direita para navegar entre comandos"
     }
   ],
   "rsdJcV": [
     {
       "type": 0,
-      "value": "Select source schema elements to build your map"
+      "value": "Selecione os elementos de esquema de origem para compilar o mapa"
     }
   ],
   "rv0Pn+": [
@@ -7673,7 +7671,7 @@
   "s+4LEa": [
     {
       "type": 0,
-      "value": "Open folder"
+      "value": "Abrir a pasta"
     }
   ],
   "s5RV9B": [
@@ -7727,7 +7725,7 @@
   "sYQDN+": [
     {
       "type": 0,
-      "value": "Formatting options for font family"
+      "value": "Opções de formatação para a família de fontes"
     }
   ],
   "sZ0G/Z": [
@@ -7787,7 +7785,7 @@
   "sv+IcU": [
     {
       "type": 0,
-      "value": "Unable to generate data map definition"
+      "value": "Não é possível gerar a definição do mapa de dados"
     }
   ],
   "sw6EXK": [
@@ -7811,7 +7809,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic inputs. Error details: '"
+      "value": "Falha ao recuperar entradas dinâmicas. Detalhes do erro: '"
     },
     {
       "type": 1,
@@ -7831,13 +7829,13 @@
   "tAbbH8": [
     {
       "type": 0,
-      "value": "Too many inputs assigned"
+      "value": "Muitas entradas atribuídas"
     }
   ],
   "tAeKNh": [
     {
       "type": 0,
-      "value": "Simple"
+      "value": "Simples"
     }
   ],
   "tE7Zam": [
@@ -7873,7 +7871,7 @@
   "tJMHcJ": [
     {
       "type": 0,
-      "value": "Select Connection Reference"
+      "value": "Selecionar Referência de Conexão"
     }
   ],
   "tLZ9Sh": [
@@ -7891,7 +7889,7 @@
   "tMdcE1": [
     {
       "type": 0,
-      "value": "Invalid connection, please update your connection to load complete details"
+      "value": "Conexão inválida. Atualize sua conexão para carregar detalhes completos"
     }
   ],
   "tNoZx2": [
@@ -7903,7 +7901,7 @@
   "tUCptx": [
     {
       "type": 0,
-      "value": "Insert Link"
+      "value": "Inserir link"
     }
   ],
   "tUU4ak": [
@@ -7915,7 +7913,7 @@
   "tUYXRA": [
     {
       "type": 0,
-      "value": "Example: 2017-03-24T15:00:00Z"
+      "value": "Exemplo: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -7927,7 +7925,7 @@
   "tWV2mC": [
     {
       "type": 0,
-      "value": "at "
+      "value": "às "
     },
     {
       "type": 1,
@@ -7935,13 +7933,13 @@
     },
     {
       "type": 0,
-      "value": " every hour"
+      "value": " a cada hora"
     }
   ],
   "tZIlCA": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) Hora do Pacífico (EUA e Canadá)"
     }
   ],
   "tZj2Xn": [
@@ -7965,7 +7963,7 @@
   "td5//c": [
     {
       "type": 0,
-      "value": "Collapse tree node"
+      "value": "Recolher nó de árvore"
     }
   ],
   "ti5TEd": [
@@ -7977,7 +7975,7 @@
   "tqqUHX": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) Ilhas Chatham"
     }
   ],
   "tsmuoF": [
@@ -7989,7 +7987,7 @@
   "u81zB9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) Tempo Universal Coordenado-09"
     }
   ],
   "u9tr3k": [
@@ -8001,19 +7999,19 @@
   "uDI1Um": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Código de Status"
     }
   ],
   "uE0A0s": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "(UTC) Tempo Universal Coordenado"
     }
   ],
   "uIurld": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Salvar"
     }
   ],
   "uM1i27": [
@@ -8031,13 +8029,13 @@
   "uNHpGB": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) Bancoc, Hanói, Jacarta"
     }
   ],
   "uOWkHS": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: "
+      "value": "Falha ao recuperar saídas dinâmicas. Como resultado, as saídas desta operação podem não estar visíveis nas ações subsequentes. Detalhes do erro: "
     },
     {
       "type": 1,
@@ -8059,7 +8057,7 @@
   "uWf/I5": [
     {
       "type": 0,
-      "value": "Show me"
+      "value": "Mostre-me"
     }
   ],
   "uZH8Qs": [
@@ -8077,7 +8075,7 @@
   "uc3ytS": [
     {
       "type": 0,
-      "value": "Select a runtime"
+      "value": "Selecione um runtime"
     }
   ],
   "uczA5c": [
@@ -8089,13 +8087,13 @@
   "uesaee": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Expressão"
     }
   ],
   "uh/+ZN": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) Groenlândia"
     }
   ],
   "ui7GCl": [
@@ -8149,7 +8147,7 @@
   "v+keTP": [
     {
       "type": 0,
-      "value": "Trigger date"
+      "value": "Data de disparo"
     }
   ],
   "v0ENVA": [
@@ -8191,7 +8189,7 @@
   "vT0DCP": [
     {
       "type": 0,
-      "value": "Outputs"
+      "value": "Saídas"
     }
   ],
   "vVJuus": [
@@ -8259,7 +8257,7 @@
   "vvSHR8": [
     {
       "type": 0,
-      "value": "Navigate to element and view children"
+      "value": "Navegar para elemento e exibir filhos"
     }
   ],
   "vwH/XV": [
@@ -8271,7 +8269,7 @@
   "vxOc/M": [
     {
       "type": 0,
-      "value": "This contains a duplicate value"
+      "value": "Isso contém um valor duplicado"
     }
   ],
   "vz2gZC": [
@@ -8289,7 +8287,7 @@
   "w16qh+": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "Consultas"
     }
   ],
   "w5Hhig": [
@@ -8301,7 +8299,7 @@
   "w8ijDZ": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Recolher"
     }
   ],
   "wEaGWn": [
@@ -8373,19 +8371,19 @@
   "wkiETV": [
     {
       "type": 0,
-      "value": "Client Tracking ID"
+      "value": "ID de Rastreamento do Cliente"
     }
   ],
   "wkvUUA": [
     {
       "type": 0,
-      "value": "Input type mismatch"
+      "value": "Incompatibilidade de tipo de entrada"
     }
   ],
   "wl7X0l": [
     {
       "type": 0,
-      "value": "Hide mini-map"
+      "value": "Ocultar o minimapa"
     }
   ],
   "wmDUGV": [
@@ -8409,13 +8407,13 @@
   "wtj07J": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) Ilhas Marquesas"
     }
   ],
   "wxaQwD": [
     {
       "type": 0,
-      "value": "(UTC+04:30) Kabul"
+      "value": "(UTC+04:30) Cabul"
     }
   ],
   "wzEneQ": [
@@ -8439,25 +8437,25 @@
   "x10E1p": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Código de Status"
     }
   ],
   "x3dWOL": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) Amsterdã, Berlim, Berna, Roma, Estocolmo, Viena"
     }
   ],
   "x8kTAX": [
     {
       "type": 0,
-      "value": "Delete note"
+      "value": "Excluir a nota"
     }
   ],
   "xC1zg3": [
     {
       "type": 0,
-      "value": "Schemas"
+      "value": "Esquemas"
     }
   ],
   "xFQXAI": [
@@ -8475,7 +8473,7 @@
   "xJQeeC": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02:00) Istambul"
     }
   ],
   "xLF2Zr": [
@@ -8499,13 +8497,13 @@
   "xSMbKr": [
     {
       "type": 0,
-      "value": "Show raw inputs"
+      "value": "Mostrar entradas brutas"
     }
   ],
   "xSSfKC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) São Pedro e Miquelon"
     }
   ],
   "xV/oyK": [
@@ -8517,7 +8515,13 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Código"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "Switch to text mode"
     }
   ],
   "xYyPR8": [
@@ -8589,7 +8593,7 @@
   "yVFIAQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) Cabo Verde"
     }
   ],
   "yVh9kr": [
@@ -8639,13 +8643,13 @@
   "yuJBmK": [
     {
       "type": 0,
-      "value": "Please enter a number"
+      "value": "Insira um número"
     }
   ],
   "yucvJE": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) Sarajevo, Skopje, Varsóvia, Zagreb"
     }
   ],
   "yyYtZV": [
@@ -8657,7 +8661,7 @@
   "z/UY4k": [
     {
       "type": 0,
-      "value": "Navigate to "
+      "value": "Navegar para "
     },
     {
       "type": 1,
@@ -8665,7 +8669,7 @@
     },
     {
       "type": 0,
-      "value": " folder"
+      "value": " pasta"
     }
   ],
   "z3VuE+": [
@@ -8701,13 +8705,13 @@
   "zNesUZ": [
     {
       "type": 0,
-      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
+      "value": "Uma política de repetição se aplica a falhas intermitentes, caracterizadas como códigos de status HTTP 408, 429 e 5xx, além de quaisquer exceções de conectividade. O padrão é uma política de intervalo exponencial definida para tentar novamente 4 vezes."
     }
   ],
   "zOvGF8": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) Atenas, Bucareste"
     }
   ],
   "zTKAc9": [
@@ -8725,7 +8729,7 @@
   "zViEGr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antiga"
     }
   ],
   "zcZpHT": [
@@ -8737,7 +8741,7 @@
   "ziXw25": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Excluir"
     }
   ],
   "ziYCiA": [

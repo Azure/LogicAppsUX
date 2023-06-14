@@ -2,19 +2,19 @@
   "++ZVe/": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Testování"
     }
   ],
   "+0yxlR": [
     {
       "type": 0,
-      "value": "Function display"
+      "value": "Zobrazení funkce"
     }
   ],
   "+Uvo/p": [
     {
       "type": 0,
-      "value": "Alt text for down chevron"
+      "value": "Alternativní text pro dvojitou šipku dolů"
     }
   ],
   "+ZSBrq": [
@@ -34,13 +34,13 @@
   "+mAJR3": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) Kuala Lumpur, Singapur"
     }
   ],
   "+powfX": [
     {
       "type": 0,
-      "value": "Time zone"
+      "value": "Časové pásmo"
     }
   ],
   "/EU/oJ": [
@@ -64,7 +64,7 @@
   "/NtebP": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Islamabad, Karachi"
+      "value": "(UTC+05:00) Islámábád, Karáčí"
     }
   ],
   "/QqADs": [
@@ -106,19 +106,19 @@
   "/km5eO": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04:00) Asunción"
     }
   ],
   "/mjH84": [
     {
       "type": 0,
-      "value": "Show raw outputs"
+      "value": "Zobrazit nezpracované výstupy"
     }
   ],
   "/n13VL": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Vlastnosti"
     }
   ],
   "/qchXQ": [
@@ -142,13 +142,13 @@
   "/vWMKW": [
     {
       "type": 0,
-      "value": "Missing required inputs"
+      "value": "Chybí požadované vstupy."
     }
   ],
   "/yYyOq": [
     {
       "type": 0,
-      "value": "Resource Group"
+      "value": "Skupina prostředků"
     }
   ],
   "00xlpa": [
@@ -166,7 +166,7 @@
   "03RO5d": [
     {
       "type": 0,
-      "value": "Edit parameter"
+      "value": "Upravit parametr"
     }
   ],
   "04AwK7": [
@@ -206,7 +206,7 @@
   "07oZoX": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamčatskij"
     }
   ],
   "08e2rO": [
@@ -224,7 +224,7 @@
   "0B5xDu": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Sri Jayawardenepura"
+      "value": "(UTC+05:30) Šrí Džajavardanapura"
     }
   ],
   "0CvRZW": [
@@ -242,7 +242,7 @@
   "0GT0SI": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "0GqNGo": [
@@ -254,7 +254,7 @@
   "0IRUjM": [
     {
       "type": 0,
-      "value": "Select a target schema node to start mapping"
+      "value": "Pokud chcete spustit mapování, vyberte cílový uzel schématu."
     }
   ],
   "0JTHTZ": [
@@ -278,7 +278,7 @@
   "0SSwxD": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Zavřít panel"
     }
   ],
   "0Vzp0l": [
@@ -302,13 +302,13 @@
   "0m2Y1/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Hodnota"
     }
   ],
   "0oebOm": [
     {
       "type": 0,
-      "value": "Outputs"
+      "value": "Výstupy"
     }
   ],
   "0p+pJq": [
@@ -342,19 +342,19 @@
   "0upuCv": [
     {
       "type": 0,
-      "value": "Hour"
+      "value": "Hodina"
     }
   ],
   "0vfdFS": [
     {
       "type": 0,
-      "value": "every day"
+      "value": "každý den"
     }
   ],
   "0xLWzG": [
     {
       "type": 0,
-      "value": "The name already exists or is invalid. Update the name before you continue."
+      "value": "Název již existuje nebo je neplatný. Než budete pokračovat, aktualizujte název."
     }
   ],
   "0y5eia": [
@@ -378,7 +378,7 @@
   "11qu8f": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Zadejte platné celé číslo."
     }
   ],
   "14lYtE": [
@@ -512,7 +512,7 @@
   "1YEc9e": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Zadejte platnou podmínku."
     }
   ],
   "1ZDLZA": [
@@ -530,7 +530,7 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "Actions perform operations on data, communicate between systems, or run other tasks."
+      "value": "Akce provádějí operace s daty, komunikují mezi systémy nebo spouštějí jiné úlohy."
     }
   ],
   "1eKQwo": [
@@ -548,7 +548,7 @@
   "1hHFdx": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00) Azory"
     }
   ],
   "1htSs7": [
@@ -566,7 +566,7 @@
   "1nODUD": [
     {
       "type": 0,
-      "value": "Hide functions"
+      "value": "Skrýt funkce"
     }
   ],
   "1nvvw1": [
@@ -578,7 +578,7 @@
   "1pjO9s": [
     {
       "type": 0,
-      "value": "Hide source schema"
+      "value": "Skrýt zdrojové schéma"
     }
   ],
   "1uGBLP": [
@@ -596,7 +596,7 @@
   "20oqsp": [
     {
       "type": 0,
-      "value": "Add children (recursive)"
+      "value": "Přidat podřízené položky (rekurzivní)"
     }
   ],
   "23fENy": [
@@ -620,7 +620,7 @@
   "27Nhhv": [
     {
       "type": 0,
-      "value": "Select an API from an API Management instance"
+      "value": "Vyberte rozhraní API z instance API Management."
     }
   ],
   "2CXCOt": [
@@ -638,7 +638,7 @@
   "2JA3gY": [
     {
       "type": 0,
-      "value": "Expand tree node"
+      "value": "Rozbalit uzel stromu"
     }
   ],
   "2K2fAj": [
@@ -692,25 +692,25 @@
   "2hrQOL": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisabon, Londýn"
     }
   ],
   "2kWLLc": [
     {
       "type": 0,
-      "value": "Start Time"
+      "value": "Počáteční čas"
     }
   ],
   "2pRsUf": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Zadejte platné pole."
     }
   ],
   "2r30S9": [
     {
       "type": 0,
-      "value": "Insert a new step after "
+      "value": "Vložit nový krok za "
     },
     {
       "type": 1,
@@ -726,25 +726,25 @@
   "2vnYre": [
     {
       "type": 0,
-      "value": "Add Action"
+      "value": "Přidat akci"
     }
   ],
   "2y24a/": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Uložit"
     }
   ],
   "3+TQMa": [
     {
       "type": 0,
-      "value": "Loading connection..."
+      "value": "Načítá se připojení..."
     }
   ],
   "30njcn": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Vytvořit připojení"
     }
   ],
   "33+WHG": [
@@ -756,7 +756,7 @@
   "34Nt/B": [
     {
       "type": 0,
-      "value": "alt text for button icon"
+      "value": "alternativní text pro ikonu tlačítka"
     }
   ],
   "36RiST": [
@@ -768,7 +768,7 @@
   "3AWwVl": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kód"
     }
   ],
   "3BZnxY": [
@@ -792,7 +792,7 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "Remove all mappings within source element `"
+      "value": "Odeberte všechna mapování ve zdrojovém elementu"
     },
     {
       "type": 1,
@@ -800,7 +800,7 @@
     },
     {
       "type": 0,
-      "value": "` first."
+      "value": "' jako první."
     }
   ],
   "3MTSYZ": [
@@ -830,7 +830,7 @@
   "3X4FHS": [
     {
       "type": 0,
-      "value": "Choose the type of user input"
+      "value": "Zvolit typ vstupu uživatele"
     }
   ],
   "3Y8a6G": [
@@ -850,13 +850,13 @@
   "3cZZKj": [
     {
       "type": 0,
-      "value": "Divider"
+      "value": "Oddělovač"
     }
   ],
   "3eeli7": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Vyberte zdrojové schéma."
     }
   ],
   "3ewBbk": [
@@ -896,7 +896,7 @@
   "3n5pnv": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) Ostrov Lorda Howa"
     }
   ],
   "3rzrWf": [
@@ -908,7 +908,7 @@
   "3sJlV+": [
     {
       "type": 0,
-      "value": "Close code view"
+      "value": "Zavřít zobrazení kódu"
     }
   ],
   "3vCCY7": [
@@ -944,7 +944,7 @@
   "4BH9uU": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Chyby"
     }
   ],
   "4BrA0z": [
@@ -956,7 +956,7 @@
   "4D7H4R": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Spuštění "
     },
     {
       "type": 1,
@@ -966,13 +966,13 @@
   "4Ekn9t": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Zpět"
     }
   ],
   "4IS4yp": [
     {
       "type": 0,
-      "value": "Retry Policy"
+      "value": "Zásady opakování"
     }
   ],
   "4Q7WzU": [
@@ -990,7 +990,7 @@
   "4aaixN": [
     {
       "type": 0,
-      "value": "Tour"
+      "value": "Prohlídka"
     }
   ],
   "4c0uPQ": [
@@ -1013,12 +1013,16 @@
   ],
   "4sYR0J": [
     {
+      "type": 0,
+      "value": "vyžaduje se "
+    },
+    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": " is required."
+      "value": "."
     }
   ],
   "4vcnOA": [
@@ -1048,7 +1052,7 @@
   "595Baw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+      "value": "(UTC+09:00) Ósaka, Sapporo, Tokio"
     }
   ],
   "5J7j9k": [
@@ -1060,7 +1064,7 @@
   "5OvGgn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Obsah"
     }
   ],
   "5SAQOb": [
@@ -1104,13 +1108,13 @@
   "5dCAjy": [
     {
       "type": 0,
-      "value": "Day"
+      "value": "Den"
     }
   ],
   "5hWg4V": [
     {
       "type": 0,
-      "value": "Select element"
+      "value": "Vybrat element"
     }
   ],
   "5qzZMo": [
@@ -1128,7 +1132,7 @@
   "5ytHcK": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Načítání…"
     }
   ],
   "6+RwRp": [
@@ -1140,7 +1144,7 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+      "value": "Vložit data z předchozího kroku (Můžete také přidat zadáním Alt + / v editoru)"
     }
   ],
   "62Ypnr": [
@@ -1176,7 +1180,7 @@
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "K '"
     },
     {
       "type": 1,
@@ -1184,7 +1188,7 @@
     },
     {
       "type": 0,
-      "value": "' has too many inputs assigned to it"
+      "value": "' funkce je přiřazeno příliš mnoho vstupů."
     }
   ],
   "6jiO7t": [
@@ -1226,25 +1230,25 @@
   "6ueRYm": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Čas zahájení"
     }
   ],
   "73iM9+": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Aktualizovat zdrojové schéma"
     }
   ],
   "7EZ2oY": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) Turks a Caicos"
     }
   ],
   "7Fyq1F": [
     {
       "type": 0,
-      "value": "No inputs"
+      "value": "Žádné vstupy"
     }
   ],
   "7GSk99": [
@@ -1270,7 +1274,7 @@
   "7PtWvu": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) Východ USA a Kanady"
     }
   ],
   "7QymrD": [
@@ -1282,13 +1286,13 @@
   "7S2wtE": [
     {
       "type": 0,
-      "value": "Schema Validation"
+      "value": "Ověřování schématu"
     }
   ],
   "7WVgiU": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Nakonfigurovat"
     }
   ],
   "7ZR1xr": [
@@ -1342,7 +1346,7 @@
   "8+0teU": [
     {
       "type": 0,
-      "value": "Parameter name already exists."
+      "value": "Název parametru už existuje."
     }
   ],
   "83G5rr": [
@@ -1354,7 +1358,7 @@
   "83PYuA": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) Střed USA a Kanady"
     }
   ],
   "84D91Y": [
@@ -1421,6 +1425,12 @@
       "value": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger."
     }
   ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "Switch to code view mode"
+    }
+  ],
   "8ND+Yc": [
     {
       "type": 0,
@@ -1430,7 +1440,7 @@
   "8SxNQC": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "Přehled"
     }
   ],
   "8U0KPg": [
@@ -1476,7 +1486,7 @@
   "8eTWaf": [
     {
       "type": 0,
-      "value": "Rename"
+      "value": "Přejmenovat"
     }
   ],
   "8j+a0n": [
@@ -1488,13 +1498,13 @@
   "8luJ2j": [
     {
       "type": 0,
-      "value": "Create Connection Reference"
+      "value": "Vytvořit odkaz na připojení"
     }
   ],
   "8mDG0V": [
     {
       "type": 0,
-      "value": "The workflow has parameter validation errors in the following operations: "
+      "value": "Pracovní postup obsahuje chyby ověřování parametrů v následujících operacích: "
     },
     {
       "type": 1,
@@ -1540,13 +1550,13 @@
   "90o7sB": [
     {
       "type": 0,
-      "value": "File"
+      "value": "Soubor"
     }
   ],
   "93Gj/n": [
     {
       "type": 0,
-      "value": "Line Position"
+      "value": "Pozice na řádku"
     }
   ],
   "93svjx": [
@@ -1588,7 +1598,7 @@
   "9LLnyJ": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00) Brazílie"
     }
   ],
   "9SuA/E": [
@@ -1614,7 +1624,7 @@
   "9YGcT2": [
     {
       "type": 0,
-      "value": "ChildErrors"
+      "value": "Chyby podřízení"
     }
   ],
   "9YZ873": [
@@ -1626,7 +1636,7 @@
   "9atGYe": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Přidat"
     }
   ],
   "9djnqI": [
@@ -1644,7 +1654,7 @@
   "9x8hg8": [
     {
       "type": 0,
-      "value": "Edit in basic mode"
+      "value": "Upravit v základním režimu"
     }
   ],
   "A5Ferh": [
@@ -1656,7 +1666,7 @@
   "A8l+k7": [
     {
       "type": 0,
-      "value": "Error occurred while executing the following API parameters: '"
+      "value": "Při provádění následujících parametrů rozhraní API došlo k chybě: '"
     },
     {
       "type": 1,
@@ -1676,13 +1686,13 @@
   "AEguAy": [
     {
       "type": 0,
-      "value": "Empty value"
+      "value": "Prázdná hodnota"
     }
   ],
   "AGCm1p": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "AHB418": [
@@ -1700,13 +1710,13 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture)."
+      "value": "Vrátí index n-tého výskytu hodnoty v řetězci (nerozlišuje velká a malá písmena, invariantní jazyková verze)."
     }
   ],
   "Af+Ve0": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) Bougainville"
     }
   ],
   "AheXMN": [
@@ -1724,7 +1734,7 @@
   "AoalgS": [
     {
       "type": 0,
-      "value": "Loading more results..."
+      "value": "Načítají se další výsledky..."
     }
   ],
   "ArTh0/": [
@@ -1736,7 +1746,7 @@
   "AsqIUa": [
     {
       "type": 0,
-      "value": "Maximum Interval"
+      "value": "Maximální interval"
     }
   ],
   "Az0QvG": [
@@ -1810,7 +1820,7 @@
   "B/gCWM": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Chyba"
     }
   ],
   "B2s0iG": [
@@ -1828,7 +1838,7 @@
   "B999mz": [
     {
       "type": 0,
-      "value": "Line deleted."
+      "value": "Řádek byl odstraněn."
     }
   ],
   "BBD8Em": [
@@ -1846,7 +1856,7 @@
   "BEZWxB": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Vymazat vlastní hodnotu"
     }
   ],
   "BHe7qY": [
@@ -1858,7 +1868,7 @@
   "BJNUxN": [
     {
       "type": 0,
-      "value": "Path Parameters"
+      "value": "Parametry cesty"
     }
   ],
   "BKL0ZG": [
@@ -1882,7 +1892,7 @@
   "BSgavq": [
     {
       "type": 0,
-      "value": "Example: Monday, Friday"
+      "value": "Příklad: pondělí, úterý"
     }
   ],
   "BUutcC": [
@@ -1894,7 +1904,7 @@
   "BYrP8F": [
     {
       "type": 0,
-      "value": "Number"
+      "value": "Počet"
     }
   ],
   "BeqBP7": [
@@ -1906,7 +1916,7 @@
   "Bl4Iv0": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) Ulánbátar"
     }
   ],
   "Bn8iTS": [
@@ -1924,19 +1934,19 @@
   "BogxJl": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Izhevsk, Samara"
+      "value": "(UTC+04:00) Iževsk, Samara"
     }
   ],
   "BrWQ0Z": [
     {
       "type": 0,
-      "value": "Select a managed identity"
+      "value": "Vyberte spravovanou identitu"
     }
   ],
   "BtL7UI": [
     {
       "type": 0,
-      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
+      "value": "Pro tento krok nejsou potřeba žádné další informace. V následujících krocích už výstupy budete moct používat."
     }
   ],
   "BuYrD3": [
@@ -1954,7 +1964,7 @@
   "C1cy54": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Obsah"
     }
   ],
   "C4NQ1J": [
@@ -1984,7 +1994,7 @@
   "Cb8pv0": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) Střední Atlantik – starý čas"
     }
   ],
   "Ci41Od": [
@@ -2002,7 +2012,7 @@
   "ClZW2r": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Hodnota"
     }
   ],
   "CsPY74": [
@@ -2014,7 +2024,7 @@
   "CvoqQ6": [
     {
       "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
+      "value": "Zadejte nebo vyberte prosím datum (RRRR-MM-DD)."
     }
   ],
   "Cy0pyB": [
@@ -2026,7 +2036,7 @@
   "CypYLs": [
     {
       "type": 0,
-      "value": "Insert a new step between "
+      "value": "Vložit nový krok mezi "
     },
     {
       "type": 1,
@@ -2034,7 +2044,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " a "
     },
     {
       "type": 1,
@@ -2044,7 +2054,7 @@
   "Czt6YV": [
     {
       "type": 0,
-      "value": "at "
+      "value": "v "
     },
     {
       "type": 1,
@@ -2060,7 +2070,7 @@
   "D/xTXV": [
     {
       "type": 0,
-      "value": "Show source schema"
+      "value": "Zobrazit zdrojové schéma"
     }
   ],
   "D1lgsT": [
@@ -2096,7 +2106,7 @@
   "DJW8RE": [
     {
       "type": 0,
-      "value": "Select a value"
+      "value": "Vyberte hodnotu"
     }
   ],
   "DQV7aK": [
@@ -2116,7 +2126,7 @@
   "DWd9vy": [
     {
       "type": 0,
-      "value": "every week"
+      "value": "každý týden"
     }
   ],
   "DWsh56": [
@@ -2128,7 +2138,7 @@
   "DYXoEM": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Chisinau"
+      "value": "(UTC+02:00) Kišiněv"
     }
   ],
   "DZZ3fj": [
@@ -2140,13 +2150,13 @@
   "DZc8wP": [
     {
       "type": 0,
-      "value": "Custom value does not match the schema node's type"
+      "value": "Vlastní hodnota neodpovídá typu uzlu schématu."
     }
   ],
   "Dhu3IS": [
     {
       "type": 0,
-      "value": "Show mini-map"
+      "value": "Zobrazit miniaturní mapu"
     }
   ],
   "DjbVKU": [
@@ -2158,7 +2168,7 @@
   "DkF25I": [
     {
       "type": 0,
-      "value": "Expand Static Result"
+      "value": "Rozbalit statický výsledek"
     }
   ],
   "DsPDVB": [
@@ -2170,7 +2180,7 @@
   "DuoHXI": [
     {
       "type": 0,
-      "value": "Add an input"
+      "value": "Přidat vstup"
     }
   ],
   "DyYcJZ": [
@@ -2194,13 +2204,13 @@
   "E+iim4": [
     {
       "type": 0,
-      "value": "Select timezone."
+      "value": "Vyberte časové pásmo."
     }
   ],
   "E3+TAA": [
     {
       "type": 0,
-      "value": "Schema node '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -2208,13 +2218,13 @@
     },
     {
       "type": 0,
-      "value": "' has an input with a mismatched type"
+      "value": "' uzlu schématu má vstup s neodpovídajícím typem."
     }
   ],
   "E8iqLl": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sakhalin"
+      "value": "(UTC+11:00) Sachalin"
     }
   ],
   "ECZC6Y": [
@@ -2238,13 +2248,13 @@
   "ESZXfC": [
     {
       "type": 0,
-      "value": "At these minutes"
+      "value": "V těchto minutách"
     }
   ],
   "EUQDM6": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Přidat akci"
     }
   ],
   "EZz5q7": [
@@ -2256,7 +2266,7 @@
   "Ea/fr+": [
     {
       "type": 0,
-      "value": "Every "
+      "value": "Vždy po "
     },
     {
       "type": 1,
@@ -2264,13 +2274,19 @@
     },
     {
       "type": 0,
-      "value": " days"
+      "value": " dnech"
     }
   ],
   "EaTGcN": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) Západ střední Afriky"
+    }
+  ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
     }
   ],
   "EdzoIs": [
@@ -2308,13 +2324,13 @@
   "EurkzL": [
     {
       "type": 0,
-      "value": "Please select yes or no"
+      "value": "Vyberte prosím ano nebo ne."
     }
   ],
   "Ex4U46": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Použít připojení vyvolávače"
     }
   ],
   "ExaACE": [
@@ -2332,13 +2348,13 @@
   "F9dR1Q": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Přidat"
     }
   ],
   "FBNevf": [
     {
       "type": 0,
-      "value": "Go To Operation"
+      "value": "Přejít na operaci"
     }
   ],
   "FDF4Qb": [
@@ -2398,13 +2414,13 @@
   "FS06y3": [
     {
       "type": 0,
-      "value": "Must provide name of parameter."
+      "value": "Musí se zadat název parametru."
     }
   ],
   "FT3jt6": [
     {
       "type": 0,
-      "value": "Webhook reference information"
+      "value": "Referenční informace webhook"
     }
   ],
   "FUhNu4": [
@@ -2476,7 +2492,7 @@
   "FYtDP0": [
     {
       "type": 0,
-      "value": "Enter an email address."
+      "value": "Zadejte e-mailovou adresu."
     }
   ],
   "FaBEfQ": [
@@ -2506,7 +2522,7 @@
   "FxQ2Ts": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Tripoli"
+      "value": "(UTC+02:00) Tripolis"
     }
   ],
   "G/CC5/": [
@@ -2544,7 +2560,7 @@
   "GD3m4X": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Rozbalené"
     }
   ],
   "GDUGlm": [
@@ -2556,19 +2572,19 @@
   "GE14Xd": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) Buenos Aires"
     }
   ],
   "GEB1on": [
     {
       "type": 0,
-      "value": "This contains a value that is not between 0 and 59"
+      "value": "Obsahuje hodnotu, která není mezi 0 a 59."
     }
   ],
   "GIUSQs": [
     {
       "type": 0,
-      "value": "Filter by data type"
+      "value": "Filtrovat podle datového typu"
     }
   ],
   "GLd3MU": [
@@ -2580,13 +2596,13 @@
   "GMkbFM": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Podmínky triggeru"
     }
   ],
   "GXXLuT": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Zadejte platnou logickou hodnotu."
     }
   ],
   "GYvF54": [
@@ -2616,13 +2632,13 @@
   "Gi7czD": [
     {
       "type": 0,
-      "value": "Source schema element"
+      "value": "Zdrojový prvek schématu"
     }
   ],
   "Gl5khw": [
     {
       "type": 0,
-      "value": "At these hours"
+      "value": "V těchto hodinách"
     }
   ],
   "Gmya+V": [
@@ -2646,7 +2662,7 @@
   "GyUe4C": [
     {
       "type": 0,
-      "value": "Modify options regarding functions"
+      "value": "Upravit možnosti týkající se funkcí"
     }
   ],
   "GzQQqH": [
@@ -2658,13 +2674,13 @@
   "Gziyq8": [
     {
       "type": 0,
-      "value": "File Content"
+      "value": "Obsah souboru"
     }
   ],
   "H/QVod": [
     {
       "type": 0,
-      "value": "Workflow has settings validation errors on the following operations: "
+      "value": "Pracovní postup obsahuje chyby ověření nastavení u následujících operací: "
     },
     {
       "type": 1,
@@ -2686,13 +2702,13 @@
   "H2WdiZ": [
     {
       "type": 0,
-      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+      "value": "Zadejte platné hodnoty pro minuty (od 0 do 59) oddělené čárkou, např. 15,30."
     }
   ],
   "H5VikC": [
     {
       "type": 0,
-      "value": "Invalid connection, mapping must not form a closed loop."
+      "value": "Neplatné připojení, mapování nesmí tvořit uzavřenou smyčku."
     }
   ],
   "H8bEUn": [
@@ -2710,7 +2726,7 @@
   "HH970i": [
     {
       "type": 0,
-      "value": "Month"
+      "value": "Měsíc"
     }
   ],
   "HOchry": [
@@ -2728,19 +2744,25 @@
   "HSJLCu": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Záhlaví"
     }
   ],
   "HYhDYB": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) Koordinovaný univerzální čas (UTC)-02"
     }
   ],
   "Hbqlzk": [
     {
       "type": 0,
       "value": "Insert Expression"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
     }
   ],
   "HfrUId": [
@@ -2752,19 +2774,19 @@
   "HmcHoE": [
     {
       "type": 0,
-      "value": "Error fetching manifest"
+      "value": "Chyba při načítání manifestu"
     }
   ],
   "HoQiVa": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Zadejte platné datum a čas."
     }
   ],
   "Hs5+Mk": [
     {
       "type": 0,
-      "value": "Enter a valid value for "
+      "value": "Zadejte platnou hodnotu pro "
     },
     {
       "type": 1,
@@ -2788,7 +2810,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "Remove parameter \""
+      "value": "Odebrat \""
     },
     {
       "type": 1,
@@ -2796,7 +2818,7 @@
     },
     {
       "type": 0,
-      "value": "\" and its value"
+      "value": "\" parametru a jeho hodnotu"
     }
   ],
   "HzS2gJ": [
@@ -2808,13 +2830,13 @@
   "I41vZ/": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) Koordinovaný univerzální čas (UTC)-11"
     }
   ],
   "I7/+er": [
     {
       "type": 0,
-      "value": "Global view"
+      "value": "Globální zobrazení"
     }
   ],
   "IA+Ogm": [
@@ -2826,13 +2848,13 @@
   "IAmvpa": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) Koordinovaný světový čas-08"
     }
   ],
   "IHMd3X": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "Příklad: "
     },
     {
       "type": 1,
@@ -2848,7 +2870,7 @@
   "IPwWgu": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jeruzalém"
     }
   ],
   "IQyOth": [
@@ -2860,7 +2882,7 @@
   "IS4vNX": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) Západní mezinárodní časová osa"
     }
   ],
   "IW2MjQ": [
@@ -2872,7 +2894,7 @@
   "IXy91L": [
     {
       "type": 0,
-      "value": "Add a target schema"
+      "value": "Přidat cílové schéma"
     }
   ],
   "IdOhPY": [
@@ -2882,13 +2904,13 @@
     },
     {
       "type": 0,
-      "value": " To add dynamic data, press the Alt + '/' keys."
+      "value": " Pokud chcete přidat dynamická data, stiskněte klávesy Alt + /."
     }
   ],
   "If+p6C": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Yakutsk"
+      "value": "(UTC+09:00) Jakutsk"
     }
   ],
   "IjEKvh": [
@@ -2908,7 +2930,7 @@
   "Io48jC": [
     {
       "type": 0,
-      "value": "The {0} properties are invalid for the {1} authentication type."
+      "value": "Vlastnosti {0} nejsou pro typ ověřování {1} platné."
     }
   ],
   "IooQu1": [
@@ -2920,13 +2942,13 @@
   "IsVhkH": [
     {
       "type": 0,
-      "value": "No properties"
+      "value": "Žádné vlastnosti"
     }
   ],
   "IxWip7": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) Moskva, St. Petersburg, Volgograd"
     }
   ],
   "J/Kz1j": [
@@ -2938,7 +2960,7 @@
   "J2Su6x": [
     {
       "type": 0,
-      "value": "Formatting options for font size"
+      "value": "Možnosti formátování pro velikost písma"
     }
   ],
   "J5/7vN": [
@@ -2960,13 +2982,13 @@
   "J9wWry": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "JAIV0h": [
     {
       "type": 0,
-      "value": "The current map contains "
+      "value": "Aktuální mapa obsahuje "
     },
     {
       "type": 1,
@@ -3030,7 +3052,7 @@
   "Jil/Wa": [
     {
       "type": 0,
-      "value": "Invalid settings"
+      "value": "Neplatná nastavení"
     }
   ],
   "JjTfC7": [
@@ -3048,7 +3070,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Pokud je tato akce povolena, bude spuštěna s uživatelem z nastavení Spustit jako v aktivační události Dataverse."
     }
   ],
   "Jq2Y/o": [
@@ -3060,7 +3082,7 @@
   "JzRzVp": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Alaska"
+      "value": "(UTC-09:00) Aljaška"
     }
   ],
   "JzqgNM": [
@@ -3078,13 +3100,13 @@
   "K7/DnZ": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Výstup"
     }
   ],
   "KBaGkS": [
     {
       "type": 0,
-      "value": "Change connection reference"
+      "value": "Změnit odkaz na připojení"
     }
   ],
   "KP0Rr2": [
@@ -3158,25 +3180,25 @@
   "KYX5Do": [
     {
       "type": 0,
-      "value": "Underline (⌘U)"
+      "value": "Podtržení (⌘U)"
     }
   ],
   "KZOa5l": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "KlDW+5": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00) Bejrút"
     }
   ],
   "KwGA+K": [
     {
       "type": 0,
-      "value": "Select a Function App resource"
+      "value": "Vyberte prostředek aplikace funkcí."
     }
   ],
   "L+PY+j": [
@@ -3200,7 +3222,7 @@
   "LBH8UV": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Rozbalit"
     }
   ],
   "LBbhCu": [
@@ -3212,13 +3234,13 @@
   "LCRHQ9": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fiji"
+      "value": "(UTC+12:00) Fidži"
     }
   ],
   "LCXZLM": [
     {
       "type": 0,
-      "value": "Loading Function Apps..."
+      "value": "Načítají se aplikace funkcí..."
     }
   ],
   "LJmfmK": [
@@ -3236,7 +3258,7 @@
   "LR/3Lr": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Nakonfigurovat"
     }
   ],
   "LS8rfZ": [
@@ -3248,13 +3270,13 @@
   "LV/BTE": [
     {
       "type": 0,
-      "value": "Loading Api Management service instances..."
+      "value": "Načítají se instance služby API Management..."
     }
   ],
   "LV3k48": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) Bělehrad, Bratislava, Budapešť, Lublaň, Praha"
     }
   ],
   "LZm3ze": [
@@ -3306,13 +3328,13 @@
   "Lm9bnN": [
     {
       "type": 0,
-      "value": "Bullet List"
+      "value": "Odrážkový seznam"
     }
   ],
   "Lnqh6h": [
     {
       "type": 0,
-      "value": "Bold (Ctrl+B)"
+      "value": "Tučné (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3348,7 +3370,7 @@
   "Lx8HRl": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) Damašek"
     }
   ],
   "M/gUE8": [
@@ -3438,7 +3460,7 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Zadejte platné pole."
     }
   ],
   "MYgKHu": [
@@ -3462,13 +3484,13 @@
   "Mc6ITJ": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Hledat"
     }
   ],
   "MfAdfx": [
     {
       "type": 0,
-      "value": "Edit in advanced mode"
+      "value": "Upravit v rozšířeném režimu"
     }
   ],
   "Mgcs5s": [
@@ -3480,7 +3502,7 @@
   "MirIsS": [
     {
       "type": 0,
-      "value": "Show code"
+      "value": "Zobrazit kód"
     }
   ],
   "MmBfD1": [
@@ -3510,13 +3532,13 @@
   "N4dEVo": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Záhlaví"
     }
   ],
   "N7E9hd": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) Helsinky, Kyjev, Riga, Sofie, Tallinn, Vilnius"
     }
   ],
   "NGJ00e": [
@@ -3528,7 +3550,7 @@
   "NHnG2S": [
     {
       "type": 0,
-      "value": "The generated XSLT does not match the current mapping."
+      "value": "Vygenerovaný soubor XSLT neodpovídá aktuálnímu mapování."
     }
   ],
   "NMpFs6": [
@@ -3546,7 +3568,7 @@
   "NWxGWN": [
     {
       "type": 0,
-      "value": "Enter unique property name"
+      "value": "Zadat jedinečný název vlastnosti"
     }
   ],
   "NnD8gF": [
@@ -3604,13 +3626,13 @@
   "O/fh9A": [
     {
       "type": 0,
-      "value": "Service Principal"
+      "value": "Instanční objekt"
     }
   ],
   "O27gKq": [
     {
       "type": 0,
-      "value": "Loading Files..."
+      "value": "Načítají se soubory..."
     }
   ],
   "O9ZExg": [
@@ -3668,7 +3690,7 @@
   "OIOexo": [
     {
       "type": 0,
-      "value": "On these days"
+      "value": "V tyto dny"
     }
   ],
   "OKszbi": [
@@ -3692,7 +3714,7 @@
   "OOUTdW": [
     {
       "type": 0,
-      "value": "Loading all connectors..."
+      "value": "Načítají se všechny konektory..."
     }
   ],
   "OSHNZ2": [
@@ -3704,7 +3726,7 @@
   "OSP9JY": [
     {
       "type": 0,
-      "value": "Enter the audience."
+      "value": "Zadejte cílovou skupinu."
     }
   ],
   "OVvieE": [
@@ -3728,13 +3750,13 @@
   "OgJ9eG": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08:00) Tchaj-pej"
     }
   ],
   "OhbvXz": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) Norfolk"
     }
   ],
   "Oib1mL": [
@@ -3776,7 +3798,7 @@
   "P+7G62": [
     {
       "type": 0,
-      "value": "Heading 3"
+      "value": "Záhlaví 3"
     }
   ],
   "P+mWgV": [
@@ -3788,13 +3810,13 @@
   "P/S+q5": [
     {
       "type": 0,
-      "value": "Required. One of the strings to combine into a single string."
+      "value": "Požadované. Jeden z řetězců, které se mají sloučit do jednoho řetězce"
     }
   ],
   "P/dnfK": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) Dháka"
     }
   ],
   "P2A5dB": [
@@ -3830,7 +3852,7 @@
   "PE1tsI": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Žádné výstupy"
     }
   ],
   "PF87Ew": [
@@ -3848,7 +3870,7 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Spuštění "
     },
     {
       "type": 1,
@@ -3858,7 +3880,7 @@
   "PORNMZ": [
     {
       "type": 0,
-      "value": "Inputs"
+      "value": "Vstupy"
     }
   ],
   "PP63jY": [
@@ -3882,7 +3904,7 @@
   "PSrCNL": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funkce"
     }
   ],
   "PXa0D4": [
@@ -3894,7 +3916,7 @@
   "PZgHf/": [
     {
       "type": 0,
-      "value": "Schema Uri"
+      "value": "Identifikátor URI schématu"
     }
   ],
   "PaPPLr": [
@@ -3912,7 +3934,7 @@
   "PjBcG3": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02:00) Ammán"
     }
   ],
   "Pk4cb+": [
@@ -3924,7 +3946,7 @@
   "Pq+4a+": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00) Káhira"
     }
   ],
   "PtqSHp": [
@@ -3936,13 +3958,13 @@
   "Pudllg": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Hovd"
+      "value": "(UTC+07:00) Chovd"
     }
   ],
   "PvWTxR": [
     {
       "type": 0,
-      "value": "Show functions"
+      "value": "Zobrazit funkce"
     }
   ],
   "Pvm0xB": [
@@ -3954,7 +3976,7 @@
   "Q+ZZHI": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Hawaii"
+      "value": "(UTC-10:00) Havajské ostrovy"
     }
   ],
   "Q/7unA": [
@@ -3978,13 +4000,13 @@
   "Q5w4Do": [
     {
       "type": 0,
-      "value": "Add dynamic data or expressions by inserting a /"
+      "value": "Přidejte dynamická data nebo výrazy vložením /"
     }
   ],
   "Q8HCYK": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "Žádné položky"
     }
   ],
   "Q8zxeb": [
@@ -4042,7 +4064,7 @@
   "QiVbKW": [
     {
       "type": 0,
-      "value": "Exit Full Screen"
+      "value": "Ukončit režim zobrazení na celé obrazovce"
     }
   ],
   "QknZQ1": [
@@ -4066,7 +4088,7 @@
   "QpX2+j": [
     {
       "type": 0,
-      "value": "Location"
+      "value": "Umístění"
     }
   ],
   "QrQDdp": [
@@ -4094,7 +4116,7 @@
   "R/aiRy": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) Koordinovaný univerzální čas (UTC)+12"
     }
   ],
   "RFjYpH": [
@@ -4106,7 +4128,7 @@
   "RJes1w": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) Jerevan"
     }
   ],
   "RX2Shm": [
@@ -4115,16 +4137,10 @@
       "value": "Vyžadováno. Rozdělený řetězec."
     }
   ],
-  "RZ1MIN": [
-    {
-      "type": 0,
-      "value": "Přepne na vstup celého pole."
-    }
-  ],
   "RbJNVk": [
     {
       "type": 0,
-      "value": "Schema"
+      "value": "Schéma"
     }
   ],
   "RhH4pF": [
@@ -4196,19 +4212,19 @@
   "Ro4+PC": [
     {
       "type": 0,
-      "value": "You can add notes only when you edit a step's inputs."
+      "value": "Poznámky můžete přidat jenom v případě, že upravíte vstupy kroku."
     }
   ],
   "Rp5pHU": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Monrovia, Reykjavik"
+      "value": "(UTC+00:00) Monrovia, Reykjavík"
     }
   ],
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "Unrecognized expression '"
+      "value": "Nerozpoznaný '"
     },
     {
       "type": 1,
@@ -4216,7 +4232,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' výrazu"
     }
   ],
   "RvpHdu": [
@@ -4228,13 +4244,13 @@
   "RxGxr+": [
     {
       "type": 0,
-      "value": "Line number"
+      "value": "Číslo řádku"
     }
   ],
   "S138/4": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: ⌘B"
+      "value": "Umožňuje formátovat text tučně. Zkratka: ⌘B"
     }
   ],
   "SCCE6s": [
@@ -4246,13 +4262,13 @@
   "SGnTpt": [
     {
       "type": 0,
-      "value": "Heading 2"
+      "value": "Záhlaví 2"
     }
   ],
   "SJFVxf": [
     {
       "type": 0,
-      "value": "issues"
+      "value": "problémy"
     }
   ],
   "SKXopi": [
@@ -4264,13 +4280,13 @@
   "SKy5tj": [
     {
       "type": 0,
-      "value": "The input node type doesn't match the schema node's type."
+      "value": "Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
   "SLJkRn": [
     {
       "type": 0,
-      "value": "Remove input"
+      "value": "Odebrat vstup"
     }
   ],
   "SLZ0n4": [
@@ -4304,7 +4320,7 @@
   "SgiTAh": [
     {
       "type": 0,
-      "value": "Please enter your input"
+      "value": "Zadejte prosím svůj vstup."
     }
   ],
   "Sh10cw": [
@@ -4388,7 +4404,7 @@
   "TLHUMf": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Chyba při načítání vstupů"
     }
   ],
   "TNEttQ": [
@@ -4412,7 +4428,7 @@
   "TRpSCQ": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Typ akce"
     }
   ],
   "TUaunO": [
@@ -4430,13 +4446,13 @@
   "TY4HzZ": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Přidejte nebo nahraďte schémata."
     }
   ],
   "TZh8nV": [
     {
       "type": 0,
-      "value": "on "
+      "value": "při "
     },
     {
       "type": 1,
@@ -4478,7 +4494,7 @@
   "TjMkDP": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) Velikonoční ostrov"
     }
   ],
   "TlX98E": [
@@ -4490,19 +4506,19 @@
   "Tmr/9e": [
     {
       "type": 0,
-      "value": "Invalid parameters"
+      "value": "Neplatné parametry"
     }
   ],
   "Ts5Pzr": [
     {
       "type": 0,
-      "value": "Note"
+      "value": "Poznámka"
     }
   ],
   "Ttc0SM": [
     {
       "type": 0,
-      "value": "Heading 1"
+      "value": "Záhlaví 1"
     }
   ],
   "Twfck/": [
@@ -4520,13 +4536,13 @@
   "U086AA": [
     {
       "type": 0,
-      "value": "Target schema element"
+      "value": "Cílový prvek schématu"
     }
   ],
   "U0I10w": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05:00) Jekatěrinburg"
     }
   ],
   "U3guPp": [
@@ -4544,7 +4560,7 @@
   "U4zovj": [
     {
       "type": 0,
-      "value": "Runs "
+      "value": "Spuštění "
     },
     {
       "type": 1,
@@ -4562,7 +4578,7 @@
   "U7yRwM": [
     {
       "type": 0,
-      "value": "Validation Error"
+      "value": "Chyba ověřování"
     }
   ],
   "UCNM4L": [
@@ -4586,13 +4602,13 @@
   "UIWX6p": [
     {
       "type": 0,
-      "value": "Logical Name"
+      "value": "Logický název"
     }
   ],
   "UR1CS5": [
     {
       "type": 0,
-      "value": "Hide code"
+      "value": "Skrýt kód"
     }
   ],
   "USVffu": [
@@ -4604,13 +4620,13 @@
   "UT2ozj": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) Horská oblast USA a Kanady"
     }
   ],
   "UVAfYj": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Vyžadováno. Kolekce, ze které se má získat poslední objekt."
     }
   ],
   "UYRIS/": [
@@ -4626,13 +4642,13 @@
   "UZiXVh": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Výstup"
     }
   ],
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "Schema node '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4640,13 +4656,13 @@
     },
     {
       "type": 0,
-      "value": "' has an non-terminating connection chain"
+      "value": "' uzlu schématu má neukončovací řetěz připojení."
     }
   ],
   "Umpr3z": [
     {
       "type": 0,
-      "value": "Every "
+      "value": "Vždy po "
     },
     {
       "type": 1,
@@ -4654,7 +4670,7 @@
     },
     {
       "type": 0,
-      "value": " weeks"
+      "value": " týdnech"
     }
   ],
   "Unc2tG": [
@@ -4666,7 +4682,7 @@
   "UnrrzF": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Zdrojové schéma"
     }
   ],
   "Ur+wph": [
@@ -4702,7 +4718,7 @@
   "V5f3ha": [
     {
       "type": 0,
-      "value": "Week"
+      "value": "Týden"
     }
   ],
   "VA7M1u": [
@@ -4714,7 +4730,7 @@
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "Select an App Service resource"
+      "value": "Vyberte prostředek App Service."
     }
   ],
   "VI5Sa8": [
@@ -4742,13 +4758,13 @@
   "VL9wOu": [
     {
       "type": 0,
-      "value": "Must provide value for parameter."
+      "value": "Musí se zadat hodnota parametru."
     }
   ],
   "VLc3FV": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Zdrojové schéma"
     }
   ],
   "VPh9Jo": [
@@ -4775,12 +4791,6 @@
       "value": "Komentář"
     }
   ],
-  "VXQbMw": [
-    {
-      "type": 0,
-      "value": "Přepne na vstupy podrobností pro položku pole."
-    }
-  ],
   "VZHick": [
     {
       "type": 0,
@@ -4802,7 +4812,7 @@
   "Vfce7b": [
     {
       "type": 0,
-      "value": "Error Type"
+      "value": "Typ chyby"
     }
   ],
   "VlvlX1": [
@@ -4850,7 +4860,7 @@
   "WK6hZX": [
     {
       "type": 0,
-      "value": "Select all text in "
+      "value": "Vybrat veškerý text v "
     },
     {
       "type": 1,
@@ -4860,7 +4870,7 @@
   "WR1K3z": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+      "value": "(UTC+04:00) Astrachaň, Uljanovsk"
     }
   ],
   "WS9kXD": [
@@ -4872,7 +4882,7 @@
   "WTZvGW": [
     {
       "type": 0,
-      "value": "Workflow has invalid connections on the following operations: "
+      "value": "Pracovní postup obsahuje neplatná připojení k následujícím operacím: "
     },
     {
       "type": 1,
@@ -4894,7 +4904,7 @@
   "WcnIF8": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Odebrat"
     }
   ],
   "WgoP7R": [
@@ -4912,7 +4922,7 @@
   "X/7je+": [
     {
       "type": 0,
-      "value": "Minute"
+      "value": "Minuta"
     }
   ],
   "X2idLs": [
@@ -4930,7 +4940,7 @@
   "X7X5ew": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "X8JjjT": [
@@ -5000,13 +5010,13 @@
   "XQ4OCV": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) Bagdád"
     }
   ],
   "XRK+gt": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -5014,13 +5024,13 @@
     },
     {
       "type": 0,
-      "value": "' has an non-terminating connection chain"
+      "value": "' funkce má neukončovací řetěz připojení."
     }
   ],
   "XTeLIw": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Krasnoyarsk"
+      "value": "(UTC+07:00) Krasnojarsk"
     }
   ],
   "XTuxmH": [
@@ -5050,7 +5060,7 @@
   "XbtEq9": [
     {
       "type": 0,
-      "value": "Count"
+      "value": "Počet"
     }
   ],
   "Xew1Df": [
@@ -5070,25 +5080,25 @@
   "Xj0Gr/": [
     {
       "type": 0,
-      "value": "Target schema element cannot be deleted."
+      "value": "Cílový prvek schématu nelze odstranit."
     }
   ],
   "Xj4xwI": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
+      "value": "Spravovaná identita použitá s touto operací už neexistuje. Pokud chcete pokračovat, vyberte dostupnou identitu nebo změňte připojení."
     }
   ],
   "XkBxv5": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Vyberte cílové schéma."
     }
   ],
   "Xkt2vD": [
     {
       "type": 0,
-      "value": "Select a function app function"
+      "value": "Vyberte funkci aplikace funkcí."
     }
   ],
   "Xnn0uj": [
@@ -5118,7 +5128,7 @@
   "Xv5CGN": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) Indiana (východ)"
     }
   ],
   "Xx/naD": [
@@ -5148,13 +5158,13 @@
   "YABOLz": [
     {
       "type": 0,
-      "value": "Body Item"
+      "value": "Položka textu"
     }
   ],
   "YCFhzp": [
     {
       "type": 0,
-      "value": "Add children"
+      "value": "Přidat podřízené položky"
     }
   ],
   "YHsAKl": [
@@ -5182,7 +5192,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: Ctrl+U"
+      "value": "Umožňuje formátovat text jako podtržení. Zástupce: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -5200,31 +5210,31 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: Ctrl+B"
+      "value": "Umožňuje formátovat text tučně. Zástupce: Ctrl+B"
     }
   ],
   "YRk271": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Ověřování"
     }
   ],
   "YUbSFS": [
     {
       "type": 0,
-      "value": "Yes/No"
+      "value": "Ano/Ne"
     }
   ],
   "YWOKlU": [
     {
       "type": 0,
-      "value": "Numbered List"
+      "value": "Číslovaný seznam"
     }
   ],
   "YZ5Kwe": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) Atlantik (Kanada)"
     }
   ],
   "YaFjJQ": [
@@ -5242,7 +5252,7 @@
   "YdQw4/": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: ⌘I"
+      "value": "Umožňuje formátovat text jako kurzívu. Zástupce: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5260,19 +5270,19 @@
   "Yh5OVd": [
     {
       "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
+      "value": "Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
   "YiOybp": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) Brusel, Kodaň, Madrid, Paříž"
     }
   ],
   "YlesUQ": [
     {
       "type": 0,
-      "value": "Your map is in perfect condition"
+      "value": "Vaše mapa je v dokonalém stavu."
     }
   ],
   "YoQara": [
@@ -5296,7 +5306,7 @@
   "Z9PWl/": [
     {
       "type": 0,
-      "value": "Retry Policy count is invalid (Must be from "
+      "value": "Počet zásad opakování není platný (musí být od "
     },
     {
       "type": 1,
@@ -5304,7 +5314,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " do "
     },
     {
       "type": 1,
@@ -5312,19 +5322,19 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": ")."
     }
   ],
   "ZBJiuD": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stav"
     }
   ],
   "ZCFMoe": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Obsah"
     }
   ],
   "ZM1mRy": [
@@ -5342,7 +5352,7 @@
   "ZRdkFN": [
     {
       "type": 0,
-      "value": "Collapse Static Result"
+      "value": "Sbalit statický výsledek"
     }
   ],
   "ZUaz3Y": [
@@ -5372,13 +5382,13 @@
   "Zg3IjD": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zavřít"
     }
   ],
   "Zi9gQK": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Přidat novou položku"
     }
   ],
   "ZkjTbp": [
@@ -5408,7 +5418,7 @@
   "aJxefp": [
     {
       "type": 0,
-      "value": "Add new parameters"
+      "value": "Přidat nové parametry"
     }
   ],
   "aK4iLW": [
@@ -5420,25 +5430,25 @@
   "aP1wk9": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Vrátí první index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
     }
   ],
   "aSnCCB": [
     {
       "type": 0,
-      "value": "Location"
+      "value": "Umístění"
     }
   ],
   "aV/nLS": [
     {
       "type": 0,
-      "value": "Second"
+      "value": "Sekunda"
     }
   ],
   "ae7W0a": [
     {
       "type": 0,
-      "value": "Full Screen"
+      "value": "Celá obrazovka"
     }
   ],
   "ahsVI/": [
@@ -5450,13 +5460,13 @@
   "amRYtC": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Zadejte platnou hodnotu float."
     }
   ],
   "aoUT/3": [
     {
       "type": 0,
-      "value": "Loading resources..."
+      "value": "Načítají se prostředky..."
     }
   ],
   "auUI93": [
@@ -5484,7 +5494,7 @@
   "b9Rvl9": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Obsah"
     }
   ],
   "bG9rjv": [
@@ -5508,7 +5518,7 @@
   "bSZ0lL": [
     {
       "type": 0,
-      "value": "Callback url"
+      "value": "Adresa URL pro zpětné volání"
     }
   ],
   "bTrk+S": [
@@ -5526,7 +5536,7 @@
   "bXFGpe": [
     {
       "type": 0,
-      "value": "Info"
+      "value": "Informace"
     }
   ],
   "ba9yGJ": [
@@ -5556,7 +5566,7 @@
   "bv9QPA": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Datum"
     }
   ],
   "bwfJdj": [
@@ -5578,7 +5588,7 @@
   "byTBrn": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Vlastní"
     }
   ],
   "bzF/qn": [
@@ -5614,7 +5624,7 @@
   "c4GQZE": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Vyberte schéma pro rozevírací nabídku"
     }
   ],
   "c6XbVI": [
@@ -5626,7 +5636,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+      "value": "Dekomprimuje text požadavku, pokud je komprimován pomocí GZip nebo Deflate. Toto nastavení se dá použít jenom pro trigger HTTP."
     }
   ],
   "c8UPLp": [
@@ -5638,7 +5648,7 @@
   "cHiBAn": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) Soul"
     }
   ],
   "cJm+ah": [
@@ -5656,25 +5666,25 @@
   "cP4UkW": [
     {
       "type": 0,
-      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
+      "value": "Interval zásad opakování není platný, musí odpovídat formátu doby trvání ISO 8601."
     }
   ],
   "cR9RtV": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Zahodit změny"
     }
   ],
   "cUW5m8": [
     {
       "type": 0,
-      "value": "Select the checkbox to choose this connection."
+      "value": "Pokud chcete zvolit toto připojení, zaškrtněte toto políčko."
     }
   ],
   "ca/QIc": [
     {
       "type": 0,
-      "value": "Error Message"
+      "value": "Chybová zpráva"
     }
   ],
   "ceVB5l": [
@@ -5692,7 +5702,7 @@
   "ciLkfU": [
     {
       "type": 0,
-      "value": "Bold (⌘B)"
+      "value": "Tučné (⌘B)"
     }
   ],
   "cj+kyo": [
@@ -5704,7 +5714,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
+      "value": "Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
   "cmTCsW": [
@@ -5734,13 +5744,13 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "Generate XSLT first before attempting to test mappings."
+      "value": "Než se pokusíte otestovat mapování, vygenerujte nejdříve XSLT."
     }
   ],
   "cvp9VP": [
     {
       "type": 0,
-      "value": "Error code"
+      "value": "Kód chyby"
     }
   ],
   "cyEBus": [
@@ -5749,28 +5759,28 @@
       "value": "(UTC-04:00) Cuiaba"
     }
   ],
-  "d+MjsE": [
-    {
-      "type": 0,
-      "value": "Enter a valid dictionary."
-    }
-  ],
   "d020eg": [
     {
       "type": 0,
-      "value": "Returns the first element from the passed-in array or string."
+      "value": "Vrátí první prvek z předané pole nebo řetězce."
     }
   ],
   "dBWIjR": [
     {
       "type": 0,
-      "value": "Schema is missing required inputs"
+      "value": "Ve schématu chybí požadované vstupy."
     }
   ],
   "dBxX0M": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Přidat aktivační událost"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "Switch to key value mode"
     }
   ],
   "dDYCuU": [
@@ -5782,7 +5792,7 @@
   "dL9V5t": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Spravovaná identita"
     }
   ],
   "dOpdsP": [
@@ -5794,13 +5804,13 @@
   "dPa7+6": [
     {
       "type": 0,
-      "value": "Generate"
+      "value": "Vygenerovat"
     }
   ],
   "dQmi91": [
     {
       "type": 0,
-      "value": "Frequency"
+      "value": "Frekvence"
     }
   ],
   "dSTRb/": [
@@ -5832,13 +5842,13 @@
   "dfNjw1": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zavřít"
     }
   ],
   "dfmH55": [
     {
       "type": 0,
-      "value": "Italic (Ctrl+I)"
+      "value": "Kurzíva (Ctrl+I)"
     }
   ],
   "dhvk0u": [
@@ -5868,7 +5878,7 @@
   "dwrqEc": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Upozornění"
     }
   ],
   "dxh2CJ": [
@@ -5880,7 +5890,7 @@
   "e+GuGo": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Vstup"
     }
   ],
   "e00zot": [
@@ -5892,7 +5902,7 @@
   "e4JZEY": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Tomsk"
+      "value": "(UTC+07:00) Tomská oblast"
     }
   ],
   "e4Onhn": [
@@ -5904,31 +5914,31 @@
   "e9OvzW": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Vymazat"
     }
   ],
   "e9bIKh": [
     {
       "type": 0,
-      "value": "Failed to generate XSLT."
+      "value": "Nepodařilo se vygenerovat XSLT."
     }
   ],
   "eFet4K": [
     {
       "type": 0,
-      "value": "Action Tracking ID"
+      "value": "ID pro sledování akce"
     }
   ],
   "eFnLWK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) Střední Amerika"
     }
   ],
   "eHgfpz": [
     {
       "type": 0,
-      "value": "Please enter a valid URL"
+      "value": "Zadejte prosím platnou adresu URL."
     }
   ],
   "eHgi14": [
@@ -5964,7 +5974,7 @@
   "elD6+N": [
     {
       "type": 0,
-      "value": "Italic (⌘I)"
+      "value": "Kurzíva (⌘I)"
     }
   ],
   "epOMnV": [
@@ -6006,7 +6016,7 @@
   "f81ClO": [
     {
       "type": 0,
-      "value": "Empty dynamic content icon"
+      "value": "Prázdná ikona dynamického obsahu"
     }
   ],
   "fBQBw/": [
@@ -6024,7 +6034,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "Select an API Management resource"
+      "value": "Vyberte prostředek API Management."
     }
   ],
   "fGcSFd": [
@@ -6036,7 +6046,7 @@
   "fKYuwf": [
     {
       "type": 0,
-      "value": "Please select file or image"
+      "value": "Vyberte prosím soubor nebo obrázek."
     }
   ],
   "fVG5aD": [
@@ -6048,7 +6058,7 @@
   "faUrud": [
     {
       "type": 0,
-      "value": "Loading connection data..."
+      "value": "Načítají se data připojení..."
     }
   ],
   "fc1AV8": [
@@ -6076,7 +6086,7 @@
   "fmm7Ik": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funkce"
     }
   ],
   "fp8Ry3": [
@@ -6094,7 +6104,7 @@
   "g076bL": [
     {
       "type": 0,
-      "value": "Email"
+      "value": "E-mail"
     }
   ],
   "g1zwch": [
@@ -6112,7 +6122,7 @@
   "g5A6Bn": [
     {
       "type": 0,
-      "value": "Runtime"
+      "value": "Modul runtime"
     }
   ],
   "g7my78": [
@@ -6154,13 +6164,13 @@
   "gIx5ys": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: Ctrl+I"
+      "value": "Umožňuje formátovat text jako kurzívu. Zástupce: Ctrl+I"
     }
   ],
   "gKEaXI": [
     {
       "type": 0,
-      "value": "Copy the value of {label} to the clipboard"
+      "value": "Zkopírovat hodnotu {label} do schránky"
     }
   ],
   "gKq3Jv": [
@@ -6178,25 +6188,25 @@
   "gRUmiA": [
     {
       "type": 0,
-      "value": "Info"
+      "value": "Informace"
     }
   ],
   "gWyYg0": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00) Ašchabád, Taškent"
     }
   ],
   "gc6v4X": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Spravovaná identita přiřazená systémem"
     }
   ],
   "gfBWfH": [
     {
       "type": 0,
-      "value": "Email"
+      "value": "E-mail"
     }
   ],
   "ginGIZ": [
@@ -6208,13 +6218,13 @@
   "gkY5ya": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "gpUphl": [
     {
       "type": 0,
-      "value": "Enter the audience."
+      "value": "Zadejte cílovou skupinu."
     }
   ],
   "gu9o9z": [
@@ -6226,13 +6236,13 @@
   "gvDMuq": [
     {
       "type": 0,
-      "value": "Select a Batch Workflow resource"
+      "value": "Vyberte prostředek pracovního postupu Batch."
     }
   ],
   "h+W3VW": [
     {
       "type": 0,
-      "value": "Number"
+      "value": "Počet"
     }
   ],
   "h1lQDa": [
@@ -6244,13 +6254,13 @@
   "h40rpg": [
     {
       "type": 0,
-      "value": "Specify interval in ISO 8601 format."
+      "value": "Zadejte interval ve formátu ISO 8601."
     }
   ],
   "h6vVbX": [
     {
       "type": 0,
-      "value": "Add a source schema first, then select elements to build your map"
+      "value": "Nejprve přidejte zdrojové schéma a pak vyberte elementy pro sestavení mapy."
     }
   ],
   "hN7iBP": [
@@ -6322,7 +6332,7 @@
   "hic23z": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Hodnota je moc velká."
     }
   ],
   "hq1mk6": [
@@ -6356,7 +6366,7 @@
   "htj+eZ": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Aktualizovat cílové schéma"
     }
   ],
   "hvbclb": [
@@ -6416,7 +6426,7 @@
   "i4Om5O": [
     {
       "type": 0,
-      "value": "This contains an invalid value"
+      "value": "Obsahuje neplatnou hodnotu."
     }
   ],
   "iB8YKD": [
@@ -6494,7 +6504,7 @@
   "iTKrs8": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Stránkování"
     }
   ],
   "iU1OJh": [
@@ -6518,7 +6528,7 @@
   "iVMVAt": [
     {
       "type": 0,
-      "value": "Example: 0, 10"
+      "value": "Příklad: 0, 10"
     }
   ],
   "idQjOP": [
@@ -6552,13 +6562,13 @@
   "isnFBi": [
     {
       "type": 0,
-      "value": "Elements and mappings not connected to a target element are removed."
+      "value": "Elementy a mapování, která nejsou připojená k cílovému elementu, se odeberou."
     }
   ],
   "ixhS47": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Vrátí začátek dne do předaného řetězcového časového razítka."
     }
   ],
   "iy8rNf": [
@@ -6582,7 +6592,7 @@
   "j5z8Vd": [
     {
       "type": 0,
-      "value": "Repeating"
+      "value": "S opakováním"
     }
   ],
   "jA6Wrp": [
@@ -6600,7 +6610,7 @@
   "jHKc3w": [
     {
       "type": 0,
-      "value": "Other"
+      "value": "Jiné"
     }
   ],
   "jKsMS6": [
@@ -6624,19 +6634,19 @@
   "jQ7UzV": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) Aleutské ostrovy"
     }
   ],
   "jQjteB": [
     {
       "type": 0,
-      "value": "Add a source schema"
+      "value": "Přidat zdrojové schéma"
     }
   ],
   "jUDhbs": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Cílové schéma"
     }
   ],
   "jVpanH": [
@@ -6648,7 +6658,7 @@
   "jZjgYZ": [
     {
       "type": 0,
-      "value": "No resources of this type found under this subscription."
+      "value": "V rámci tohoto předplatného nebyly nalezeny žádné prostředky tohoto typu."
     }
   ],
   "jcA3Ig": [
@@ -6702,19 +6712,19 @@
   "kBOAkT": [
     {
       "type": 0,
-      "value": "Select Fields"
+      "value": "Vybrat pole"
     }
   ],
   "kBSLfu": [
     {
       "type": 0,
-      "value": "Duplicate property name"
+      "value": "Duplicitní název vlastnosti"
     }
   ],
   "kEI2xx": [
     {
       "type": 0,
-      "value": "Message"
+      "value": "Zpráva"
     }
   ],
   "kHcCxH": [
@@ -6738,7 +6748,7 @@
   "kM+Mr0": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Načítání…"
     }
   ],
   "kN6kce": [
@@ -6756,7 +6766,7 @@
   "kVwJXt": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) Abú Dhabi, Maskat"
     }
   ],
   "kYivbS": [
@@ -6828,7 +6838,7 @@
   "l72gf4": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Spravovaná identita"
     }
   ],
   "lM9qrG": [
@@ -6846,25 +6856,25 @@
   "lQNKUB": [
     {
       "type": 0,
-      "value": "A line for the parent element is added automatically."
+      "value": "Řádek nadřazeného elementu je přidán automaticky."
     }
   ],
   "lR7V87": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "Funkce"
     }
   ],
   "lUm6fl": [
     {
       "type": 0,
-      "value": "Return"
+      "value": "Návrat"
     }
   ],
   "lUvgiW": [
     {
       "type": 0,
-      "value": "The type for {0} is {1}."
+      "value": "Typ {0} je {1}."
     }
   ],
   "lZT0JI": [
@@ -6877,12 +6887,6 @@
     {
       "type": 0,
       "value": "přeskočeno"
-    }
-  ],
-  "lcxLiq": [
-    {
-      "type": 0,
-      "value": "Zadejte prosím platné pole."
     }
   ],
   "lexzgJ": [
@@ -6908,7 +6912,7 @@
   "lhL/KL": [
     {
       "type": 0,
-      "value": "Normal"
+      "value": "Normální"
     }
   ],
   "ljAOR6": [
@@ -6920,19 +6924,19 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "Insert Expression (You can also add by typing / in the editor)"
+      "value": "Vložit výraz (můžete ho přidat i zadáním / v editoru)"
     }
   ],
   "lsKVU6": [
     {
       "type": 0,
-      "value": "Select an action type"
+      "value": "Vyberte typ akce."
     }
   ],
   "lwlg2K": [
     {
       "type": 0,
-      "value": "Underline (Ctrl+U)"
+      "value": "Podtrhnout (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -6944,7 +6948,7 @@
   "m/jJ/5": [
     {
       "type": 0,
-      "value": "Map checker"
+      "value": "Kontrola mapy"
     }
   ],
   "m7Y6Qf": [
@@ -6968,7 +6972,7 @@
   "mCKsFw": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+      "value": "(UTC+07:00) Barnaul, Gorno-Altajsk"
     }
   ],
   "mCzkXX": [
@@ -6986,7 +6990,7 @@
   "mGPqAg": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "Odstranit "
     },
     {
       "type": 1,
@@ -7034,7 +7038,7 @@
   "mQotIu": [
     {
       "type": 0,
-      "value": "Select Connection"
+      "value": "Vyberte připojení"
     }
   ],
   "mYQFtf": [
@@ -7058,13 +7062,13 @@
   "meVkB6": [
     {
       "type": 0,
-      "value": "Empty property name"
+      "value": "Prázdný název vlastnosti"
     }
   ],
   "mej02C": [
     {
       "type": 0,
-      "value": "(UTC+08:30) Pyongyang"
+      "value": "(UTC+08:30) Pchjongjang"
     }
   ],
   "mjS/k1": [
@@ -7140,7 +7144,7 @@
   "nCa0KG": [
     {
       "type": 0,
-      "value": "Internal Errors"
+      "value": "Vnitřní chyby"
     }
   ],
   "nGds/r": [
@@ -7158,25 +7162,25 @@
   "nNWAAh": [
     {
       "type": 0,
-      "value": "No schema is added."
+      "value": "Nepřidalo se žádné schéma."
     }
   ],
   "nOWGAV": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Koncový čas"
     }
   ],
   "nOhve4": [
     {
       "type": 0,
-      "value": "Yes/No"
+      "value": "Ano/Ne"
     }
   ],
   "nRpM02": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Vlastní"
     }
   ],
   "nSan4V": [
@@ -7194,7 +7198,7 @@
   "nVDG00": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) Ostrov Kiritimati"
     }
   ],
   "nZ4nLn": [
@@ -7212,7 +7216,7 @@
   "njGstq": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05:45) Káthmándú"
     }
   ],
   "nkk1mu": [
@@ -7236,7 +7240,7 @@
   "ny75Ly": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "Zadejte výchozí hodnotu parametru."
     }
   ],
   "o/0SEj": [
@@ -7248,7 +7252,7 @@
   "o/FgET": [
     {
       "type": 0,
-      "value": "Function was removed from the current location and currently exists elsewhere."
+      "value": "Funkce byla odebrána z aktuálního umístění a aktuálně existuje jinde."
     }
   ],
   "o14STH": [
@@ -7274,25 +7278,25 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "Enter a valid uri."
+      "value": "Zadejte platný identifikátor URI."
     }
   ],
   "o3SfI4": [
     {
       "type": 0,
-      "value": "Zoom to fit"
+      "value": "Přizpůsobit zobrazení"
     }
   ],
   "o7bd1o": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) Teherán"
     }
   ],
   "o8ohVV": [
     {
       "type": 0,
-      "value": "Schema Id"
+      "value": "ID schématu"
     }
   ],
   "oAFcW6": [
@@ -7304,7 +7308,7 @@
   "oDHXKh": [
     {
       "type": 0,
-      "value": "Item"
+      "value": "Položka"
     }
   ],
   "oLtwMw": [
@@ -7328,19 +7332,19 @@
   "oQjIWf": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Chyby"
     }
   ],
   "oR2x4N": [
     {
       "type": 0,
-      "value": "Invalid integer value"
+      "value": "Neplatná hodnota celého čísla"
     }
   ],
   "oTBkbU": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Výstup"
     }
   ],
   "oV0xQ9": [
@@ -7352,7 +7356,7 @@
   "oVVPst": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Chcete zahodit všechny neuložené změny?"
     }
   ],
   "odQ554": [
@@ -7364,7 +7368,7 @@
   "onXUu0": [
     {
       "type": 0,
-      "value": "Add a note"
+      "value": "Přidat poznámku"
     }
   ],
   "ox2Ou7": [
@@ -7376,7 +7380,7 @@
   "oxXV4+": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the passed-in argument values."
+      "value": "Vrátí první objekt, který není null, v předaných hodnotách argumentů."
     }
   ],
   "p/0r2N": [
@@ -7394,7 +7398,7 @@
   "p1IEXb": [
     {
       "type": 0,
-      "value": "Enter the data from previous step. You can also add data by typing the '/' character."
+      "value": "Zadejte data z předchozího kroku. Data můžete přidat i zadáním znaku /."
     }
   ],
   "p1Qtm5": [
@@ -7406,7 +7410,7 @@
   "p5ZID0": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) Kuvajt, Rijád"
     }
   ],
   "pC2nr2": [
@@ -7430,7 +7434,7 @@
   "pMms92": [
     {
       "type": 0,
-      "value": "Insert Dynamic Content"
+      "value": "Vložit dynamický obsah"
     }
   ],
   "pOTcUO": [
@@ -7448,7 +7452,7 @@
   "pYNzbj": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "Cesta"
     }
   ],
   "pYtSyE": [
@@ -7460,7 +7464,7 @@
   "pcGqoB": [
     {
       "type": 0,
-      "value": "Error loading outputs"
+      "value": "Chyba při načítání výstupů"
     }
   ],
   "pcuZKB": [
@@ -7526,7 +7530,7 @@
   "q4ChjK": [
     {
       "type": 0,
-      "value": "Select workflow with 'manual' trigger"
+      "value": "Vyberte pracovní postup s triggerem manual."
     }
   ],
   "q5TkqE": [
@@ -7544,7 +7548,7 @@
   "q8vnZQ": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+      "value": "Ověřte text požadavku proti poskytnutému schématu. Pokud mu nebude odpovídat, vrátí se kód HTTP 400."
     }
   ],
   "qAlTD5": [
@@ -7564,7 +7568,7 @@
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: ⌘U"
+      "value": "Umožňuje formátovat text jako podtržení. Zkratka: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7606,7 +7610,7 @@
   "qUMXpq": [
     {
       "type": 0,
-      "value": "Swagger Endpoint"
+      "value": "Koncový bod swaggeru"
     }
   ],
   "qUWBUX": [
@@ -7672,11 +7676,17 @@
   "qiIs4V": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "Příklad: "
     },
     {
       "type": 1,
       "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "Switch to default view mode"
     }
   ],
   "qnI4Y1": [
@@ -7688,7 +7698,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Funkce '"
     },
     {
       "type": 1,
@@ -7696,7 +7706,7 @@
     },
     {
       "type": 0,
-      "value": "' has an input with a mismatched type"
+      "value": "' má vstup s neodpovídajícím typem."
     }
   ],
   "qrxi0L": [
@@ -7708,7 +7718,7 @@
   "r/n6/9": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Zadejte hodnotu."
     }
   ],
   "r43nMc": [
@@ -7720,7 +7730,7 @@
   "r7vZ5a": [
     {
       "type": 0,
-      "value": "Minimum Interval"
+      "value": "Minimální interval"
     }
   ],
   "r8aZXs": [
@@ -7768,7 +7778,7 @@
   "rNi5Y3": [
     {
       "type": 0,
-      "value": "Select this checkbox if you're setting up an on-premises connection."
+      "value": "Toto políčko zaškrtněte, pokud nastavujete místní připojení."
     }
   ],
   "rSIBjh": [
@@ -7792,13 +7802,13 @@
   "rd6fai": [
     {
       "type": 0,
-      "value": "Use left and right arrow keys to navigate between commands"
+      "value": "Navigovat mezi příkazy můžete pomocí šipek doleva a doprava."
     }
   ],
   "rsdJcV": [
     {
       "type": 0,
-      "value": "Select source schema elements to build your map"
+      "value": "Vyberte prvky zdrojového schématu pro vytvoření mapy."
     }
   ],
   "rv0Pn+": [
@@ -7822,7 +7832,7 @@
   "s+4LEa": [
     {
       "type": 0,
-      "value": "Open folder"
+      "value": "Otevřít složku"
     }
   ],
   "s5RV9B": [
@@ -7876,7 +7886,7 @@
   "sYQDN+": [
     {
       "type": 0,
-      "value": "Formatting options for font family"
+      "value": "Možnosti formátování pro rodinu písem"
     }
   ],
   "sZ0G/Z": [
@@ -7888,7 +7898,7 @@
   "sZHTQV": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Chita"
+      "value": "(UTC+09:00) Čita"
     }
   ],
   "sbPZ9S": [
@@ -7936,13 +7946,13 @@
   "sv+IcU": [
     {
       "type": 0,
-      "value": "Unable to generate data map definition"
+      "value": "Nepovedlo se vygenerovat definici mapování dat."
     }
   ],
   "sw6EXK": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stav"
     }
   ],
   "syiNc+": [
@@ -7960,7 +7970,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic inputs. Error details: '"
+      "value": "Nepovedlo se načíst dynamické vstupy. Podrobnosti o chybě: '"
     },
     {
       "type": 1,
@@ -7980,13 +7990,13 @@
   "tAbbH8": [
     {
       "type": 0,
-      "value": "Too many inputs assigned"
+      "value": "Bylo přiřazeno příliš mnoho vstupů."
     }
   ],
   "tAeKNh": [
     {
       "type": 0,
-      "value": "Simple"
+      "value": "Jednoduché"
     }
   ],
   "tE7Zam": [
@@ -8022,7 +8032,7 @@
   "tJMHcJ": [
     {
       "type": 0,
-      "value": "Select Connection Reference"
+      "value": "Vybrat odkaz na připojení"
     }
   ],
   "tLZ9Sh": [
@@ -8040,7 +8050,7 @@
   "tMdcE1": [
     {
       "type": 0,
-      "value": "Invalid connection, please update your connection to load complete details"
+      "value": "Neplatné připojení. Pokud chcete načíst úplné podrobnosti, aktualizujte prosím připojení."
     }
   ],
   "tNoZx2": [
@@ -8058,13 +8068,13 @@
   "tUU4ak": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Chokurdakh"
+      "value": "(UTC+11:00) Čokurdach"
     }
   ],
   "tUYXRA": [
     {
       "type": 0,
-      "value": "Example: 2017-03-24T15:00:00Z"
+      "value": "Příklad: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -8076,7 +8086,7 @@
   "tWV2mC": [
     {
       "type": 0,
-      "value": "at "
+      "value": "v "
     },
     {
       "type": 1,
@@ -8084,13 +8094,13 @@
     },
     {
       "type": 0,
-      "value": " every hour"
+      "value": " každou hodinu"
     }
   ],
   "tZIlCA": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) Tichomoří (USA a Kanada)"
     }
   ],
   "tZj2Xn": [
@@ -8114,7 +8124,7 @@
   "td5//c": [
     {
       "type": 0,
-      "value": "Collapse tree node"
+      "value": "Sbalit uzel stromu"
     }
   ],
   "ti5TEd": [
@@ -8126,7 +8136,7 @@
   "tqqUHX": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) Chathamovy ostrovy"
     }
   ],
   "tsmuoF": [
@@ -8138,7 +8148,7 @@
   "u81zB9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) Koordinovaný světový čas-09"
     }
   ],
   "u9tr3k": [
@@ -8150,19 +8160,19 @@
   "uDI1Um": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Stavový kód"
     }
   ],
   "uE0A0s": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "Koordinovaný univerzální čas (UTC)"
     }
   ],
   "uIurld": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Uložit"
     }
   ],
   "uM1i27": [
@@ -8180,13 +8190,13 @@
   "uNHpGB": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) Bangkok, Hanoj, Jakarta"
     }
   ],
   "uOWkHS": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: "
+      "value": "Nepovedlo se načíst dynamické výstupy. V důsledku toho nemusí být výstupy této operace viditelné v následných akcích. Podrobnosti o chybě: "
     },
     {
       "type": 1,
@@ -8208,7 +8218,7 @@
   "uWf/I5": [
     {
       "type": 0,
-      "value": "Show me"
+      "value": "Zobrazit"
     }
   ],
   "uZH8Qs": [
@@ -8226,7 +8236,7 @@
   "uc3ytS": [
     {
       "type": 0,
-      "value": "Select a runtime"
+      "value": "Vyberte modul runtime."
     }
   ],
   "uczA5c": [
@@ -8238,13 +8248,13 @@
   "uesaee": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Výraz"
     }
   ],
   "uh/+ZN": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) Grónsko"
     }
   ],
   "ui7GCl": [
@@ -8298,7 +8308,7 @@
   "v+keTP": [
     {
       "type": 0,
-      "value": "Trigger date"
+      "value": "Datum triggeru"
     }
   ],
   "v0ENVA": [
@@ -8340,7 +8350,7 @@
   "vT0DCP": [
     {
       "type": 0,
-      "value": "Outputs"
+      "value": "Výstupy"
     }
   ],
   "vVJuus": [
@@ -8408,7 +8418,7 @@
   "vvSHR8": [
     {
       "type": 0,
-      "value": "Navigate to element and view children"
+      "value": "Přejít na element a zobrazit podřízené položky"
     }
   ],
   "vwH/XV": [
@@ -8420,7 +8430,7 @@
   "vxOc/M": [
     {
       "type": 0,
-      "value": "This contains a duplicate value"
+      "value": "Tato hodnota obsahuje duplicitní hodnotu."
     }
   ],
   "vz2gZC": [
@@ -8438,7 +8448,7 @@
   "w16qh+": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "Dotazy"
     }
   ],
   "w5Hhig": [
@@ -8450,7 +8460,7 @@
   "w8ijDZ": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Sbalit"
     }
   ],
   "wEaGWn": [
@@ -8516,25 +8526,25 @@
   "wXJALc": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Nabídka"
     }
   ],
   "wkiETV": [
     {
       "type": 0,
-      "value": "Client Tracking ID"
+      "value": "ID pro sledování klienta"
     }
   ],
   "wkvUUA": [
     {
       "type": 0,
-      "value": "Input type mismatch"
+      "value": "Neshoda typu vstupu"
     }
   ],
   "wl7X0l": [
     {
       "type": 0,
-      "value": "Hide mini-map"
+      "value": "Skrýt miniaturní mapu"
     }
   ],
   "wmDUGV": [
@@ -8558,13 +8568,13 @@
   "wtj07J": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) Souostroví Markézy"
     }
   ],
   "wxaQwD": [
     {
       "type": 0,
-      "value": "(UTC+04:30) Kabul"
+      "value": "(UTC+04:30) Kábul"
     }
   ],
   "wzEneQ": [
@@ -8588,25 +8598,25 @@
   "x10E1p": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Stavový kód"
     }
   ],
   "x3dWOL": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) Amsterdam, Berlín, Bern, Řím, Stockholm, Vídeň"
     }
   ],
   "x8kTAX": [
     {
       "type": 0,
-      "value": "Delete note"
+      "value": "Odstranit poznámku"
     }
   ],
   "xC1zg3": [
     {
       "type": 0,
-      "value": "Schemas"
+      "value": "Schémata"
     }
   ],
   "xFQXAI": [
@@ -8648,13 +8658,13 @@
   "xSMbKr": [
     {
       "type": 0,
-      "value": "Show raw inputs"
+      "value": "Zobrazit nezpracované vstupy"
     }
   ],
   "xSSfKC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) Saint-Pierre a Miquelon"
     }
   ],
   "xV/oyK": [
@@ -8666,7 +8676,13 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kód"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "Switch to text mode"
     }
   ],
   "xYyPR8": [
@@ -8738,7 +8754,7 @@
   "yVFIAQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) Cabo Verde"
     }
   ],
   "yVh9kr": [
@@ -8788,13 +8804,13 @@
   "yuJBmK": [
     {
       "type": 0,
-      "value": "Please enter a number"
+      "value": "Zadejte prosím číslo."
     }
   ],
   "yucvJE": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) Sarajevo, Skopje, Varšava, Záhřeb"
     }
   ],
   "yyYtZV": [
@@ -8806,7 +8822,7 @@
   "z/UY4k": [
     {
       "type": 0,
-      "value": "Navigate to "
+      "value": "Přejít do "
     },
     {
       "type": 1,
@@ -8814,7 +8830,7 @@
     },
     {
       "type": 0,
-      "value": " folder"
+      "value": " složky"
     }
   ],
   "z3VuE+": [
@@ -8850,13 +8866,13 @@
   "zNesUZ": [
     {
       "type": 0,
-      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
+      "value": "Zásady opakování platí kromě výjimek připojení i pro krátkodobé chyby, které charakterizují kódy stavu HTTP 408, 429 a 5xx. Výchozím nastavením jsou zásady s exponenciálním intervalem nastavené na 4 pokusy."
     }
   ],
   "zOvGF8": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) Atény, Bukurešť"
     }
   ],
   "zTKAc9": [
@@ -8874,7 +8890,7 @@
   "zViEGr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) Petropavlovsk-Kamčatskij – starý čas"
     }
   ],
   "zcZpHT": [
@@ -8886,7 +8902,7 @@
   "ziXw25": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "ziYCiA": [
