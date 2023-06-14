@@ -25,7 +25,7 @@ export class BaseAppServiceService implements IAppServiceService {
   }
 
   async fetchAppServices(): Promise<any> {
-    const functionAppsResponse = await this.options.httpClient.get<any>({
+    const webAppsResponse = await this.options.httpClient.get<any>({
       uri: `/subscriptions/${this.options.subscriptionId}/providers/Microsoft.Web/sites`,
       queryParameters: {
         'api-version': this.options.apiVersion,
@@ -33,7 +33,7 @@ export class BaseAppServiceService implements IAppServiceService {
       },
     });
 
-    const apps = functionAppsResponse.value.filter(connectorIsAppService);
+    const apps = webAppsResponse.value.filter(connectorIsAppService);
     return apps;
   }
 
@@ -59,7 +59,7 @@ export class BaseAppServiceService implements IAppServiceService {
           type: 'string',
           default: `${baseUrl}${operation.path}`,
           'x-ms-visibility': 'hideInUI',
-          'x-ms-serialization': { property: { type: 'pathtemplate', parameterReference: 'operationDetails.pathParameters' } },
+          'x-ms-serialization': { property: { type: 'pathtemplate', parameterReference: 'inputs.operationDetails.pathParameters' } },
         },
       };
       schema.required = ['method', 'uri'];
@@ -103,7 +103,7 @@ export class BaseAppServiceService implements IAppServiceService {
 
         schemaProperties[pathProperty].properties[name] = {
           ...parameter,
-          'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: `operationDetails.uri` },
+          'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: `inputs.operationDetails.uri` },
         };
         if (required) schemaProperties[pathProperty].required.push(name);
         break;
@@ -137,7 +137,6 @@ export class BaseAppServiceService implements IAppServiceService {
   }
 }
 
-// tslint:disable-next-line: no-any
 function connectorIsAppService(connector: any): boolean {
   if (isFunctionContainer(connector.kind)) return false;
 

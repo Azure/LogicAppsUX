@@ -88,7 +88,6 @@ import {
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>,
@@ -105,8 +104,7 @@ export async function getDynamicValues(
       operationInfo.operationId,
       parameter?.alias,
       operationParameters,
-      dynamicState,
-      nodeMetadata
+      dynamicState
     );
   } else if (isLegacyDynamicValuesExtension(definition)) {
     const { connectorId } = operationInfo;
@@ -143,7 +141,6 @@ export async function getDynamicValues(
 export async function getDynamicSchema(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   variables: VariableDeclaration[] = [],
@@ -183,8 +180,7 @@ export async function getDynamicSchema(
             operationInfo.operationId,
             parameter?.alias,
             operationParameters,
-            dynamicState,
-            nodeMetadata
+            dynamicState
           );
           break;
       }
@@ -310,7 +306,6 @@ export async function getFolderItems(
   selectedValue: any | undefined,
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
-  _nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>,

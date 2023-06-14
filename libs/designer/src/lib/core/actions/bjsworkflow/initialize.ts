@@ -81,6 +81,7 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 export const getInputParametersFromManifest = (
   _nodeId: string,
   manifest: OperationManifest,
+  presetParameterValues?: Record<string, any>,
   customSwagger?: SwaggerParser,
   stepDefinition?: any
 ): NodeInputsWithDependencies => {
@@ -140,6 +141,15 @@ export const getInputParametersFromManifest = (
     );
   } else {
     loadParameterValuesArrayFromDefault(primaryInputParametersInArray);
+  }
+
+  if (presetParameterValues) {
+    for (const [parameterName, parameterValue] of Object.entries(presetParameterValues)) {
+      const parameter = primaryInputParametersInArray.find((parameter) => parameter.name === parameterName);
+      if (parameter) {
+        parameter.value = parameterValue;
+      }
+    }
   }
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);

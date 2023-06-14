@@ -260,10 +260,7 @@ export const serializeOperation = async (
 
   const actionMetadata = rootState.operations.actionMetadata[operationId];
   if (actionMetadata) {
-    serializedOperation = {
-      ...serializedOperation,
-      metadata: actionMetadata,
-    };
+    serializedOperation.metadata = { ...serializedOperation.metadata, ...actionMetadata };
   }
 
   return serializedOperation;

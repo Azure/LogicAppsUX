@@ -28,6 +28,7 @@ export const invokeWorkflowOperation = {
       brandColor,
       description: 'Azure Logic Apps',
     },
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose a Logic Apps workflow',
     description: 'Show Logic Apps in the same region',
     visibility: 'Important',

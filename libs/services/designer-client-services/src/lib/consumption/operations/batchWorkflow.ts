@@ -30,6 +30,7 @@ export const selectBatchWorkflowOperation = {
   type: 'sendtobatch',
   properties: {
     api,
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose a Logic Apps workflow with batch trigger',
     description: 'Show Logic Apps with batch triggers in the same region',
     visibility: 'Important',

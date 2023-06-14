@@ -30,6 +30,7 @@ export const apiManagementActionOperation = {
   type: 'apimanagement',
   properties: {
     api,
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose an Azure API Management action',
     description: 'Show API Management APIs in my subscription',
     visibility: 'Important',
@@ -45,6 +46,7 @@ export const apiManagementTriggerOperation = {
   type: 'apimanagement',
   properties: {
     api,
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose an Azure API Management Trigger',
     description: 'Show API Management APIs in my subscription',
     visibility: 'Important',

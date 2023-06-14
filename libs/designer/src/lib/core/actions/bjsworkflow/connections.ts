@@ -80,7 +80,6 @@ const updateNodeConnectionAndProperties = async (
     getConnectionReference(newState.connections, nodeId),
     newState.operations.dependencies[nodeId],
     newState.operations.inputParameters[nodeId],
-    newState.operations.actionMetadata[nodeId],
     newState.operations.settings[nodeId],
     getAllVariables(newState.tokens.variables),
     dispatch,

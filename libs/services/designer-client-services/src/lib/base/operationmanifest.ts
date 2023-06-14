@@ -320,14 +320,13 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       } else {
         return {
           connectorId: httpConnectorId,
-          operationId:
-            definition?.metadata?.apiDefinitionUrl && equals(definition?.metadata?.swaggerSource, 'custom')
-              ? isTrigger
-                ? httpswaggertrigger
-                : httpswaggeraction
-              : isTrigger
-              ? httptrigger
-              : httpaction,
+          operationId: definition?.metadata?.apiDefinitionUrl
+            ? isTrigger
+              ? httpswaggertrigger
+              : httpswaggeraction
+            : isTrigger
+            ? httptrigger
+            : httpaction,
         };
       }
     case httpwebhook:
