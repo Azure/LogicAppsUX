@@ -18,7 +18,6 @@ import type {
 import { equals, ArgumentException } from '@microsoft/utils-logic-apps';
 
 export interface ContinuationTokenResponse<T> {
-  // danielle to move
   value: T;
   nextLink: string;
 }

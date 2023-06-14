@@ -194,7 +194,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Duration"
+                  aria-label="Select all text in Duration"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -224,7 +224,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Duration to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -304,7 +304,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Start time"
+                  aria-label="Select all text in Start time"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -334,7 +334,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Start time to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -519,7 +519,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Status"
+                  aria-label="Select all text in Status"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -549,7 +549,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Status to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -629,7 +629,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Client request ID"
+                  aria-label="Select all text in Client request ID"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -659,7 +659,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Client request ID to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -917,7 +917,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Duration"
+                  aria-label="Select all text in Duration"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -947,7 +947,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Duration to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1027,7 +1027,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Start time"
+                  aria-label="Select all text in Start time"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1057,7 +1057,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Start time to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1242,7 +1242,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Status"
+                  aria-label="Select all text in Status"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1272,7 +1272,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Status to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1352,7 +1352,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Client request ID"
+                  aria-label="Select all text in Client request ID"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1382,7 +1382,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Client request ID to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1462,7 +1462,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Service request ID"
+                  aria-label="Select all text in Service request ID"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1492,7 +1492,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Service request ID to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1750,7 +1750,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Duration"
+                  aria-label="Select all text in Duration"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1780,7 +1780,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Duration to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1870,7 +1870,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Start time"
+                  aria-label="Select all text in Start time"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1900,7 +1900,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Start time to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2085,7 +2085,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in End time"
+                  aria-label="Select all text in End time"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2115,7 +2115,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of End time to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2300,7 +2300,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Status"
+                  aria-label="Select all text in Status"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2330,7 +2330,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Status to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2410,7 +2410,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Client request ID"
+                  aria-label="Select all text in Client request ID"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2440,7 +2440,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Client request ID to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2662,36 +2662,6 @@ Array [
     className="msla-panel-callout-content"
   >
     <div
-      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-128"
-    >
-      <div
-        className="ms-MessageBar-content content-129"
-      >
-        <div
-          aria-hidden={true}
-          className="ms-MessageBar-icon iconContainer-130"
-        >
-          <i
-            aria-hidden={true}
-            className="icon-137"
-            data-icon-name="Warning"
-          >
-            
-          </i>
-        </div>
-        <div
-          aria-live="assertive"
-          className="ms-MessageBar-text text-132"
-          id="MessageBar116"
-          role="alert"
-        >
-          <span
-            className="ms-MessageBar-innerText innerText-133"
-          />
-        </div>
-      </div>
-    </div>
-    <div
       className="msla-trace-inputs-outputs"
     >
       <div
@@ -2728,7 +2698,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Duration"
+                  aria-label="Select all text in Duration"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2758,7 +2728,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Duration to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2838,7 +2808,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Start time"
+                  aria-label="Select all text in Start time"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2868,7 +2838,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Start time to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -3053,7 +3023,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Status"
+                  aria-label="Select all text in Status"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -3083,7 +3053,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Status to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -3163,7 +3133,7 @@ Array [
                 className="buttons"
               >
                 <button
-                  aria-label="select all text in Client request ID"
+                  aria-label="Select all text in Client request ID"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -3193,7 +3163,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="copy value of Client request ID to clipboard"
+                  aria-label="Copy the value of {label} to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}

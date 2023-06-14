@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "configurations": [
     {
-      "name": "Run Designer Extension In Dev Mode",
+      "name": "Run Designer Extension in Dev Mode",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
@@ -16,7 +16,7 @@
       }
     },
     {
-      "name": "Build, Run and Debug Data Mapper Extension In Dev Mode",
+      "name": "Build, Run, and Debug Data Mapper Extension in Dev Mode",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
@@ -27,7 +27,7 @@
       "outFiles": ["${workspaceFolder}/dist/apps/vs-code-data-mapper/*.js"]
     },
     {
-      "name": "Run Data Mapper Extension In Dev Mode",
+      "name": "Run Data Mapper Extension in Dev Mode",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",

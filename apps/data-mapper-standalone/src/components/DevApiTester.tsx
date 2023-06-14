@@ -53,7 +53,7 @@ export const DevApiTester = () => {
   const getSchemaTree = async () => {
     try {
       setApiResponse('Getting schema');
-      const schemaTree = await getSelectedSchema(schemaFilename);
+      const schemaTree = await getSelectedSchema(schemaFilename, '');
       setApiResponse(JSON.stringify(schemaTree, null, 2));
     } catch (error: unknown) {
       setApiResponse(JSON.stringify((error as Error).message, null, 2));

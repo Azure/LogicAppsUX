@@ -1,4 +1,4 @@
-import { addFunction, concatFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
+import { addFunction, concatFunction, greaterThanFunction, sortFunction } from '../../__mocks__/FunctionMock';
 import { reservedMapDefinitionKeys } from '../../constants/MapDefinitionConstants';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { SchemaFileFormat, SchemaType, directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction } from '../../models';
@@ -1031,6 +1031,210 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(loopingEntries[0][1]).not.toBe('string');
 
         const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
+        const employeeForLoopEntries = Object.entries(employeeForObject);
+        expect(employeeForLoopEntries.length).toEqual(1);
+        expect(employeeForLoopEntries[0][0]).toEqual('Person');
+        expect(employeeForLoopEntries[0][1]).not.toBe('string');
+
+        const employeeObject = employeeForObject['Person'] as MapDefinitionEntry;
+        const employeeObjectEntries = Object.entries(employeeObject);
+        expect(employeeObjectEntries.length).toEqual(1);
+        expect(employeeObjectEntries[0][0]).toEqual('Name');
+        expect(employeeObjectEntries[0][1]).toEqual('$a');
+      });
+
+      it('Generates body with a sequence and an index loop', () => {
+        const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+        const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+        const sortFunctionId = createReactFlowFunctionKey(sortFunction);
+        const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        // Just confirm the mock hasn't changed
+        expect(sourceNode).toBeDefined();
+        expect(targetNode).toBeDefined();
+
+        const sourceChildNode = sourceNode.children[0];
+        const targetChildNode = targetNode.children[0];
+
+        //Add parents
+        applyConnectionValue(connections, {
+          targetNode: sortFunction,
+          targetNodeReactFlowKey: sortFunctionId,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
+            node: sourceChildNode,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: sortFunction,
+          targetNodeReactFlowKey: sortFunctionId,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
+            node: sourceChildNode.children[0],
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: indexPseudoFunction,
+          targetNodeReactFlowKey: indexFunctionId,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: sortFunctionId,
+            node: sortFunction,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: targetChildNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: indexFunctionId,
+            node: indexPseudoFunction,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: targetChildNode.children[0],
+          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: indexFunctionId,
+            node: indexPseudoFunction,
+          },
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections);
+
+        expect(Object.keys(mapDefinition).length).toEqual(1);
+        const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+        expect(rootChildren.length).toEqual(1);
+        expect(rootChildren[0][0]).toEqual('Looping');
+        expect(rootChildren[0][1]).not.toBe('string');
+
+        const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
+        const loopingEntries = Object.entries(loopObject);
+        expect(loopingEntries.length).toEqual(1);
+        expect(loopingEntries[0][0]).toEqual('$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber), $a)');
+        expect(loopingEntries[0][1]).not.toBe('string');
+
+        const employeeForObject = loopObject['$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber), $a)'] as MapDefinitionEntry;
+        const employeeForLoopEntries = Object.entries(employeeForObject);
+        expect(employeeForLoopEntries.length).toEqual(1);
+        expect(employeeForLoopEntries[0][0]).toEqual('Person');
+        expect(employeeForLoopEntries[0][1]).not.toBe('string');
+
+        const employeeObject = employeeForObject['Person'] as MapDefinitionEntry;
+        const employeeObjectEntries = Object.entries(employeeObject);
+        expect(employeeObjectEntries.length).toEqual(1);
+        expect(employeeObjectEntries[0][0]).toEqual('Name');
+        expect(employeeObjectEntries[0][1]).toEqual('$a');
+      });
+
+      it('Generates body with 2 sequences and an index loop', () => {
+        const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+        const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+        const sortFunctionId1 = createReactFlowFunctionKey(sortFunction);
+        const sortFunctionId2 = createReactFlowFunctionKey(sortFunction);
+        const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        // Just confirm the mock hasn't changed
+        expect(sourceNode).toBeDefined();
+        expect(targetNode).toBeDefined();
+
+        const sourceChildNode = sourceNode.children[0];
+        const targetChildNode = targetNode.children[0];
+
+        //Add parents
+        applyConnectionValue(connections, {
+          targetNode: sortFunction,
+          targetNodeReactFlowKey: sortFunctionId1,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
+            node: sourceChildNode,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: sortFunction,
+          targetNodeReactFlowKey: sortFunctionId1,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
+            node: sourceChildNode.children[0],
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: sortFunction,
+          targetNodeReactFlowKey: sortFunctionId2,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: sortFunctionId1,
+            node: sortFunction,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: sortFunction,
+          targetNodeReactFlowKey: sortFunctionId2,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
+            node: sourceChildNode.children[1],
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: indexPseudoFunction,
+          targetNodeReactFlowKey: indexFunctionId,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: sortFunctionId2,
+            node: sortFunction,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: targetChildNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: indexFunctionId,
+            node: indexPseudoFunction,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: targetChildNode.children[0],
+          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: indexFunctionId,
+            node: indexPseudoFunction,
+          },
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections);
+
+        expect(Object.keys(mapDefinition).length).toEqual(1);
+        const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+        expect(rootChildren.length).toEqual(1);
+        expect(rootChildren[0][0]).toEqual('Looping');
+        expect(rootChildren[0][1]).not.toBe('string');
+
+        const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
+        const loopingEntries = Object.entries(loopObject);
+        expect(loopingEntries.length).toEqual(1);
+        expect(loopingEntries[0][0]).toEqual('$for(sort(sort(/ns0:Root/Looping/Employee, TelephoneNumber), Name), $a)');
+        expect(loopingEntries[0][1]).not.toBe('string');
+
+        const employeeForObject = loopObject[
+          '$for(sort(sort(/ns0:Root/Looping/Employee, TelephoneNumber), Name), $a)'
+        ] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');

@@ -11,7 +11,6 @@ export const getStylesForSharedState = makeStyles({
     opacity: 1,
     boxShadow: tokens.shadow4,
     cursor: 'pointer',
-    paddingInline: '0px',
     paddingLeft: 'none',
     marginLeft: 'none',
     position: 'relative',

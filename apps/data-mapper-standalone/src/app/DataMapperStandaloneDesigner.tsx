@@ -18,7 +18,16 @@ import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd', 'SourceJson.json', 'TargetJson.json'];
+const workflowSchemaFilenames = [
+  'Source.xsd',
+  'Target.xsd',
+  'SourceJson.json',
+  'folder/TargetJson.json',
+  'folder 2/file.json',
+  'a/a.json',
+  'a/b.json',
+  'a/b/c.json',
+];
 
 export const DataMapperStandaloneDesigner = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,9 +49,12 @@ export const DataMapperStandaloneDesigner = () => {
     accessToken: armToken,
   });
 
-  const saveMapDefinitionCall = (dataMapDefinition: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     console.log('Map Definition\n===============');
     console.log(dataMapDefinition);
+
+    console.log('Map Metadata\n===============');
+    console.log(mapMetadata);
   };
 
   const saveXsltCall = (dataMapXslt: string) => {

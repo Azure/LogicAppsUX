@@ -94,8 +94,8 @@ function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedPa
       });
     case DynamicallyAddedParameterType.Email:
       return intl.formatMessage({
-        defaultMessage: 'Please enter an e-mail address',
-        description: 'Placeholder description for a newly inserted Email parameter',
+        defaultMessage: 'Enter an email address.',
+        description: "The placeholder description for a newly inserted 'Email' parameter.",
       });
     case DynamicallyAddedParameterType.Number:
       return intl.formatMessage({
