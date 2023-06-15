@@ -3,6 +3,7 @@ import AzureContextSettings from '../app/AzureLogicAppsDesigner/azureContextSett
 import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector/LogicAppSelector';
 import LocalContextSettings from '../app/LocalDesigner/contextSettings';
 import type { RootState } from '../state/store';
+import { LocalizationSettings } from './LocalizationSettings';
 import styles from './settings_box.module.less';
 import { darkTheme } from './themes';
 import { ThemeProvider } from '@fluentui/react';
@@ -37,17 +38,20 @@ export const SettingsBox = ({ local }: { local: boolean }) => {
             🧰
           </span>
         </div>
-        {local ? (
-          <div className={styles.contentWrapper}>
-            <SettingsSection title="Workflow Load Settings" content={<LocalLogicAppSelector />} />
-            <SettingsSection title="Context Settings" content={<LocalContextSettings />} />
-          </div>
-        ) : (
-          <div className={styles.contentWrapper}>
-            <SettingsSection title="Workflow Load Settings" content={useLocalMode ? <LocalLogicAppSelector /> : <LogicAppSelector />} />
-            <SettingsSection title="Context Settings" content={<AzureContextSettings />} />
-          </div>
-        )}
+        <div className={styles.contentWrapper}>
+          {local ? (
+            <>
+              <SettingsSection title="Workflow Load Settings" content={<LocalLogicAppSelector />} />
+              <SettingsSection title="Context Settings" content={<LocalContextSettings />} />
+            </>
+          ) : (
+            <>
+              <SettingsSection title="Workflow Load Settings" content={useLocalMode ? <LocalLogicAppSelector /> : <LogicAppSelector />} />
+              <SettingsSection title="Context Settings" content={<AzureContextSettings />} />
+            </>
+          )}
+          <SettingsSection title="Locale" content={<LocalizationSettings />} />
+        </div>
       </div>
     </ThemeProvider>
   );

@@ -65,8 +65,7 @@ export const getListDynamicValues = async (
   operationId: string,
   parameterAlias: string | undefined,
   parameters: Record<string, any>,
-  dynamicState: any,
-  nodeMetadata: any
+  dynamicState: any
 ): Promise<ListDynamicValue[]> => {
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
@@ -79,7 +78,7 @@ export const getListDynamicValues = async (
       operationId.toLowerCase(),
       getParametersKey({ ...dynamicState.parameters, ...parameters }),
     ],
-    () => service.getListDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState, nodeMetadata)
+    () => service.getListDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
   );
 };
 
@@ -123,8 +122,7 @@ export const getDynamicSchemaProperties = async (
   operationId: string,
   parameterAlias: string | undefined,
   parameters: Record<string, any>,
-  dynamicState: any,
-  nodeMetadata: any
+  dynamicState: any
 ): Promise<OpenAPIV2.SchemaObject> => {
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
@@ -138,7 +136,7 @@ export const getDynamicSchemaProperties = async (
       getParametersKey({ ...dynamicState.parameters, ...parameters }),
       `isInput:${!!dynamicState?.isInput}`,
     ],
-    () => service.getDynamicSchema(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState, nodeMetadata)
+    () => service.getDynamicSchema(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
   );
 };
 

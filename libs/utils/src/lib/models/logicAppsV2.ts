@@ -881,6 +881,24 @@ export interface TraceSubexpression {
   value: any;
 }
 
+export interface RetryHistory {
+  startTime: string;
+  endTime: string;
+  code?: string;
+  clientRequestId?: string;
+  serviceRequestId?: string;
+  error?: RetryHistoryError;
+}
+
+export interface RetryHistoryError {
+  error?: ErrorShape;
+}
+
+export interface ErrorShape {
+  code: string;
+  message: string;
+}
+
 /* Run action definition types */
 export interface WorkflowRunAction {
   inputsLink: {
@@ -894,6 +912,7 @@ export interface WorkflowRunAction {
     secureData?: Record<string, any>;
     contentSize: number;
   };
+  retryHistory: RetryHistory[];
   startTime: string;
   endTime: string;
   correlation: {
