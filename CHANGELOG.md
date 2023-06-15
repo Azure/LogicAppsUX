@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [2.31.0](https://github.com/Azure/LogicAppsUX/compare/v2.30.0...v2.31.0) (2023-06-15)
+
+
+### Features
+
+* **Data Mapper:** JSON Sequence serialization ([#2738](https://github.com/Azure/LogicAppsUX/issues/2738)) ([6c2bfb7](https://github.com/Azure/LogicAppsUX/commit/6c2bfb78feb4906a6c6df902903b3386382a1788))
+
+
+### Bug Fixes
+
+* **Designer:** Add missing quotes around reference key for hybrid triggers ([#2745](https://github.com/Azure/LogicAppsUX/issues/2745)) ([97f5bbf](https://github.com/Azure/LogicAppsUX/commit/97f5bbf09d89b1a4da83fc5fd58de1a8a0e7eea5))
+* **Power Automate:** Correctly set data-automation-ids on DOM elements ([#2672](https://github.com/Azure/LogicAppsUX/issues/2672)) ([def2d48](https://github.com/Azure/LogicAppsUX/commit/def2d4815f3a674cd81c52ab808c63cf273c1024))
+
 ## [2.30.0](https://github.com/Azure/LogicAppsUX/compare/v2.29.0...v2.30.0) (2023-06-15)
 
 ## [2.29.0](https://github.com/Azure/LogicAppsUX/compare/v2.28.0...v2.29.0) (2023-06-14)
