@@ -181,7 +181,7 @@ const TokenField = ({
         <ArrayEditor
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
-          labelProps={{ text: label ? `${labelForAutomationId} Item` : 'Array Item' }}
+          labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
