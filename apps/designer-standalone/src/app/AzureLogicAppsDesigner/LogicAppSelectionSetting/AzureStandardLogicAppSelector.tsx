@@ -1,7 +1,7 @@
 import { environment } from '../../../environments/environment';
 import type { AppDispatch } from '../../../state/store';
 import { useAppId, useIsMonitoringView, useRunId, useWorkflowName } from '../../../state/workflowLoadingSelectors';
-import { changeAppid, changeResourcePath, changeRunId, changeWorkflowName } from '../../../state/workflowLoadingSlice';
+import { setAppid, setResourcePath, changeRunId, setWorkflowName } from '../../../state/workflowLoadingSlice';
 import type { WorkflowList, RunList } from '../Models/WorkflowListTypes';
 import { useFetchStandardApps } from '../Queries/FetchStandardApps';
 import type { IComboBoxOption, IDropdownOption, IStackProps, IComboBoxStyles } from '@fluentui/react';
@@ -94,7 +94,7 @@ export const AzureStandardLogicAppSelector = () => {
           selectedKey={appId}
           options={appOptions}
           onChange={(_, option) => {
-            dispatch(changeAppid((option?.key ?? '') as string));
+            dispatch(setAppid((option?.key ?? '') as string));
           }}
           styles={comboBoxStyles}
           disabled={appOptions.length === 0 || isAppsLoading}
@@ -124,8 +124,8 @@ export const AzureStandardLogicAppSelector = () => {
           disabled={workflowOptions.length === 0 || !appId || isWorkflowsLoading}
           defaultValue={workflowName}
           onChange={(_, option) => {
-            dispatch(changeResourcePath(`${appId}/workflows/${option?.key}`));
-            dispatch(changeWorkflowName(option?.key as string));
+            dispatch(setResourcePath(`${appId}/workflows/${option?.key}`));
+            dispatch(setWorkflowName(option?.key as string));
           }}
         />
         {isWorkflowsLoading ? (

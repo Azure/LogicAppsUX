@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../state/store';
 import { useResourcePath, useIsMonitoringView } from '../../../state/workflowLoadingSelectors';
-import { changeResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
+import { setResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown, DropdownMenuItemType } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -60,7 +60,7 @@ export const LocalLogicAppSelector: React.FC = () => {
 
   const changeResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(changeResourcePath((item?.key as string) ?? ''));
+      dispatch(setResourcePath((item?.key as string) ?? ''));
       if (isMonitoringView) {
         dispatch(loadRun());
       }

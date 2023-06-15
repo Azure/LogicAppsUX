@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { getStateHistory, setStateHistory } from './historyHelpers';
 import type { RootState } from './store';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
@@ -70,17 +71,19 @@ export const workflowLoadingSlice = createSlice({
   name: 'workflowLoader',
   initialState,
   reducers: {
-    changeAppid: (state, action: PayloadAction<string>) => {
+    setAppid: (state, action: PayloadAction<string>) => {
       state.appId = action.payload;
     },
-    changeWorkflowName: (state, action: PayloadAction<string>) => {
+    setWorkflowName: (state, action: PayloadAction<string>) => {
       state.workflowName = action.payload;
     },
     changeRunId: (state, action: PayloadAction<string>) => {
       state.runId = action.payload;
     },
-    changeResourcePath: (state, action: PayloadAction<string>) => {
+    setResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
+      // Set resource path to history
+      setStateHistory(state);
     },
     clearWorkflowDetails: (state) => {
       state.appId = undefined;
@@ -88,7 +91,7 @@ export const workflowLoadingSlice = createSlice({
       state.runId = undefined;
       state.resourcePath = '';
     },
-    changeLanguage: (state, action: PayloadAction<string | undefined>) => {
+    setLanguage: (state, action: PayloadAction<string | undefined>) => {
       state.language = action.payload ?? 'en';
     },
     setReadOnly: (state, action: PayloadAction<boolean>) => {
@@ -118,6 +121,25 @@ export const workflowLoadingSlice = createSlice({
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
       state.showChatBot = action.payload;
     },
+    loadLastWorkflow: (state) => {
+      const lastWorkflow = getStateHistory() as WorkflowLoadingState;
+      if (!lastWorkflow) return;
+      // Load last workflow state object
+      state.resourcePath = lastWorkflow.resourcePath;
+      state.appId = lastWorkflow.appId;
+      state.workflowName = lastWorkflow.workflowName;
+      state.runId = lastWorkflow.runId;
+      state.language = lastWorkflow.language;
+      state.isLocal = lastWorkflow.isLocal;
+      state.isConsumption = lastWorkflow.isConsumption;
+      state.isDarkMode = lastWorkflow.isDarkMode;
+      state.isReadOnly = lastWorkflow.isReadOnly;
+      state.isMonitoringView = lastWorkflow.isMonitoringView;
+      // Clear these state values, they get built with the other values
+      state.workflowDefinition = null;
+      state.runInstance = null;
+      state.connections = {};
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -139,9 +161,9 @@ export const workflowLoadingSlice = createSlice({
 });
 
 export const {
-  changeResourcePath,
-  changeAppid,
-  changeWorkflowName,
+  setResourcePath,
+  setAppid,
+  setWorkflowName,
   clearWorkflowDetails,
   setReadOnly,
   setMonitoringView,
@@ -150,7 +172,8 @@ export const {
   setIsLocalSelected,
   setIsChatBotEnabled,
   changeRunId,
-  changeLanguage,
+  setLanguage,
+  loadLastWorkflow,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

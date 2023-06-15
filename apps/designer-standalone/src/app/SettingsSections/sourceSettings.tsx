@@ -1,15 +1,19 @@
 import { environment } from '../../environments/environment';
+import { getStateHistory } from '../../state/historyHelpers';
 import type { AppDispatch } from '../../state/store';
-import { useIsLocal, useIsConsumption } from '../../state/workflowLoadingSelectors';
-import { setConsumption, setIsLocalSelected } from '../../state/workflowLoadingSlice';
-import { ChoiceGroup } from '@fluentui/react';
-import { useEffect } from 'react';
+import { useIsLocal, useIsConsumption, useResourcePath } from '../../state/workflowLoadingSelectors';
+import { loadLastWorkflow, setConsumption, setIsLocalSelected } from '../../state/workflowLoadingSlice';
+import { ChoiceGroup, IconButton } from '@fluentui/react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 const SourceSettings = () => {
   const isLocal = useIsLocal();
   const isConsumption = useIsConsumption();
   const dispatch = useDispatch<AppDispatch>();
+
+  const resourcePath = useResourcePath();
+  const stateHistory = useMemo(() => getStateHistory(), []);
 
   const armToken = environment.armToken;
   useEffect(() => {
@@ -36,6 +40,10 @@ const SourceSettings = () => {
         onChange={(_, option) => dispatch(setConsumption(option?.key === 'consumption'))}
         selectedKey={isConsumption ? 'consumption' : 'standard'}
       />
+      {/* History Button to load last loaded workflow */}
+      {!resourcePath && stateHistory ? (
+        <IconButton iconProps={{ iconName: 'History' }} title="History" ariaLabel="History" onClick={() => dispatch(loadLastWorkflow())} />
+      ) : null}
     </div>
   );
 };

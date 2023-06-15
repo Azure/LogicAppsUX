@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../state/store';
 import { useAppId } from '../../../state/workflowLoadingSelectors';
-import { changeAppid, changeResourcePath, changeWorkflowName } from '../../../state/workflowLoadingSlice';
+import { setAppid, setResourcePath, setWorkflowName } from '../../../state/workflowLoadingSlice';
 import { useFetchConsumptionApps } from '../Queries/FetchConsumptionApps';
 import type { IComboBoxOption, IStackProps, IComboBoxStyles } from '@fluentui/react';
 import { ComboBox, Spinner, Stack } from '@fluentui/react';
@@ -40,9 +40,9 @@ export const AzureConsumptionLogicAppSelector = () => {
           onChange={(_, option) => {
             const selectedAppId = (option?.key ?? '') as string;
             if (!selectedAppId) return;
-            dispatch(changeAppid(selectedAppId));
-            dispatch(changeResourcePath(selectedAppId));
-            dispatch(changeWorkflowName(option?.data.name as string));
+            dispatch(setAppid(selectedAppId));
+            dispatch(setResourcePath(selectedAppId));
+            dispatch(setWorkflowName(option?.data.name as string));
           }}
           styles={comboBoxStyles}
           disabled={appOptions.length === 0 || isAppsLoading}
