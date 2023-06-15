@@ -23,6 +23,7 @@ import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
 import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
+import type { QueryClient } from 'react-query';
 import type { WebviewApi } from 'vscode-webview';
 
 export const getDesignerServices = (
@@ -36,7 +37,8 @@ export const getDesignerServices = (
   createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
   vscode: WebviewApi<unknown>,
   oauthRedirectUrl: string,
-  hostVersion: string
+  hostVersion: string,
+  queryClient: QueryClient
 ): {
   connectionService: StandardConnectionService;
   connectorService: StandardConnectorService;
@@ -100,6 +102,7 @@ export const getDesignerServices = (
     baseUrl,
     subscriptionId,
     httpClient,
+    queryClient,
   });
 
   const artifactService = new StandardArtifactService({
