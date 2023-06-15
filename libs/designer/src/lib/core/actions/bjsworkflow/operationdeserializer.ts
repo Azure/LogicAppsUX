@@ -193,7 +193,7 @@ export const initializeOperationDetailsForManifest = async (
         }
       });
 
-      const customSwagger = await getCustomSwaggerIfNeeded(operationId, manifest.properties, operation);
+      const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operation);
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
         nodeId,
         manifest,
