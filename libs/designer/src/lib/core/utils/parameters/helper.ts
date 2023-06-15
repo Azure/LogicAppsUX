@@ -2406,11 +2406,16 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
 
         case DeserializationType.SwaggerOperationId:
           const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
-          const uri = getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath as string[]);
+          const uri = options?.swaggerOperation.uriPath ? getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath) : undefined;
+          const templatePath = options?.swaggerOperation.templatePath
+            ? getObjectPropertyValue(finalValue, options?.swaggerOperation.templatePath)
+            : undefined;
           const operationId = getOperationIdFromDefinition(
             {
               method,
-              path: extractPathFromUri(uri, customSwagger?.api.basePath as string),
+              path: uri
+                ? extractPathFromUri(uri, customSwagger?.api.basePath as string)
+                : templatePath?.replace(customSwagger?.api.basePath, ''),
             },
             customSwagger as SwaggerParser
           );

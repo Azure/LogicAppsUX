@@ -1,6 +1,6 @@
 import constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
-import { getApiManagementSwagger, getConnection } from '../../queries/connections';
+import { getConnection } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
@@ -144,7 +144,7 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
   } else if (connectionType === ConnectionType.ApiManagement) {
     // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
-    const { api } = await getApiManagementSwagger(apimApiId);
+    const { api } = await ApiManagementService().fetchApiMSwagger(apimApiId);
     const baseUrl = api.host ? (api.schemes?.length ? `${api.schemes.at(-1)}://${api.host}` : `http://${api.host}`) : 'NotFound';
     const fullUrl = api.basePath ? `${baseUrl}${api.basePath}` : baseUrl;
     const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';

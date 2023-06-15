@@ -46,6 +46,22 @@ export enum OperationOptions {
   SuppressWorkflowHeadersOnResponse = 'SuppressWorkflowHeadersOnResponse',
 }
 
+export enum CustomSwaggerServiceNames {
+  Function = 'function',
+  ApiManagement = 'apimanagement',
+}
+
+export interface CustomSwaggerServiceDetails {
+  name: CustomSwaggerServiceNames;
+  operationId: string;
+  parameters: Record<
+    string,
+    {
+      parameterReference: string;
+    }
+  >;
+}
+
 export enum ConnectionType {
   Function = 'function',
   ServiceProvider = 'serviceprovider',
@@ -193,7 +209,8 @@ export interface OperationManifestProperties {
   };
 
   customSwagger?: {
-    location: string[];
+    location?: string[];
+    service?: CustomSwaggerServiceDetails;
   };
 
   /*

@@ -192,7 +192,8 @@ export interface ParameterDeserializationOptions {
   options?: {
     swaggerOperation: {
       methodPath: string[];
-      uriPath: string[];
+      uriPath?: string[];
+      templatePath?: string[];
     };
   };
 }
