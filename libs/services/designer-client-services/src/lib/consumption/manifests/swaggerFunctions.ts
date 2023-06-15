@@ -132,7 +132,7 @@ export const selectSwaggerFunctionManifest = {
 
     customSwagger: {
       service: {
-        name: 'AzureFunction',
+        name: 'function',
         operationId: 'fetchSwaggerUrl',
       },
     },
