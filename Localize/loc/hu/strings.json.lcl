@@ -912,6 +912,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";2gOfQI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Existing schemas from]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";2gzGrJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the action with a form-data or form-encoded response.]]></Val>
@@ -1421,6 +1427,15 @@
           <Val><![CDATA[Authority]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Szolgáltató]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";5WhTmH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Betöltés...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2003,6 +2018,15 @@
           <Val><![CDATA[Adds an integer number of days to a string timestamp passed in]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Egy, a napok számát egész számmal megadó érték hozzáadása az átadott sztring típusú időbélyeghez.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8zkvmc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Testing]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tesztelés folyamatban]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3021,6 +3045,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Ek0mSE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[View the request history for this operation]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EurkzL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select yes or no]]></Val>
@@ -3249,6 +3279,15 @@
       <Item ItemId=";FaBEfQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Fcvgvg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Keresés]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3496,7 +3535,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Workflow has settings validation errors on the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A munkafolyamat beállítás-érvényesítési hibákat észlelt a következő műveleteknél: {invalidNodes}]]></Val>
+            <Val><![CDATA[A munkafolyamat beállítás-érvényesítési hibákkal rendelkezik a következő műveleteknél: {invalidNodes}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3567,6 +3606,9 @@
       <Item ItemId=";HOchry" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an existing connection reference or create a new one.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Válasszon ki egy meglévő kapcsolati hivatkozást, vagy hozzon létre egy újat.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3600,6 +3642,9 @@
       <Item ItemId=";Hbqlzk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert Expression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kifejezés beszúrása]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3634,7 +3679,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid value for {parameterName}.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Adjon meg egy érvényes értéket a {parameterName}.]]></Val>
+            <Val><![CDATA[Adjon meg egy érvényes értéket a(z) {parameterName} paraméterhez.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3711,6 +3756,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";IPbMdl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code View]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kódnézet]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IPwWgu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Jerusalem]]></Val>
@@ -3760,7 +3814,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{label} To add dynamic data, press the Alt + '/' keys.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{label} Dinamikus adatok hozzáadásához nyomja meg a Alt + /' billentyűt.]]></Val>
+            <Val><![CDATA[{label} Dinamikus adatok hozzáadásához nyomja meg az Alt + / billentyűkombinációt.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4353,6 +4407,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";M/gUE8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[About]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Névjegy]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";M0xrm+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Code view]]></Val>
@@ -4845,6 +4908,9 @@
       <Item ItemId=";OdoUEu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Statikus eredmény engedélyezése]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5466,6 +5532,9 @@
       <Item ItemId=";RnBddN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[issue]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[probléma]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5491,7 +5560,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Unrecognized expression ''{expression}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ismeretlen kifejezés ''{expression}'']]></Val>
+            <Val><![CDATA[Ismeretlen kifejezés: „{expression}”]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5499,6 +5568,9 @@
       <Item ItemId=";RvpHdu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+11:00) Solomon Is., New Caledonia]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+11:00) Salamon-szigetek, Új-Kaledónia]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5515,7 +5587,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as bold. Shortcut: ⌘B]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Szöveg formázása félkövérré. Parancsikon: ⌘B]]></Val>
+            <Val><![CDATA[Szöveg formázása félkövérré. Billentyűparancs: ⌘B]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5583,6 +5655,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SToblZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Configure parameters for this node]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SXb47U" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{minutes}m]]></Val>
@@ -5631,6 +5709,9 @@
       <Item ItemId=";Sr8PcK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No operations found]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nem találhatók műveletek]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5800,7 +5881,7 @@
         <Str Cat="Text">
           <Val><![CDATA[on {weekDays} {frequencyDesc}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[ {weekDays} {frequencyDesc}]]></Val>
+            <Val><![CDATA[a következő napokon: {weekDays} {frequencyDesc}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5944,7 +6025,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime} {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Futtatások {onTime} {onDays}]]></Val>
+            <Val><![CDATA[Futtatások: {onTime} {onDays}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5952,6 +6033,9 @@
       <Item ItemId=";U7yRwM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Validation Error]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sikertelen volt az érvényesség ellenőrzése]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6049,7 +6133,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema node ''{nodeName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A(z) ''{nodeName}'' sémacsomópont nem megszakító kapcsolati lánccal rendelkezik]]></Val>
+            <Val><![CDATA[A(z) „{nodeName}” sémacsomópont nem megszakító kapcsolati lánccal rendelkezik]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6066,6 +6150,9 @@
       <Item ItemId=";Unc2tG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if two values are equal.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Igaz értéket ad vissza, ha két érték egyenlő.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6145,7 +6232,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an App Service resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Válasszon ki egy App Service erőforrást]]></Val>
+            <Val><![CDATA[Válasszon ki egy App Service-erőforrást]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6162,6 +6249,9 @@
       <Item ItemId=";VI7EqG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for {searchTerm}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nincs találat a következőre: {searchTerm}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6322,7 +6412,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select all text in {label}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Az összes szöveg kijelölése {label}]]></Val>
+            <Val><![CDATA[Az összes szöveg kijelölése a következőben: {label}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6359,6 +6449,15 @@
           <Val><![CDATA[Shorthand for trigger().outputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[A trigger().outputs rövid függvényneve.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WaTsxR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Korábbi kérések]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6511,7 +6610,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A(z) ''{functionName}'' függvény kapcsolati lánca nem végződik]]></Val>
+            <Val><![CDATA[A(z) „{functionName}” függvény nem megszakító kapcsolati lánccal rendelkezik]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6555,6 +6654,9 @@
       <Item ItemId=";Xew1Df" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[További diagnosztikai információ: az x-mS-client-request-id: „{clientRequestId}”.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6724,7 +6826,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: Ctrl+U]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Szöveg formázása aláhúzásként. Parancsikon: Ctrl+U]]></Val>
+            <Val><![CDATA[Szöveg formázása aláhúzottként. Billentyűparancs: Ctrl+U]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6751,7 +6853,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as bold. Shortcut: Ctrl+B]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Szöveg formázása félkövérré. Parancsikon: Ctrl+B]]></Val>
+            <Val><![CDATA[Szöveg formázása félkövérré. Billentyűparancs: Ctrl+B]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6804,6 +6906,9 @@
       <Item ItemId=";Ybzoim" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the action that has the values you want.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kötelező megadni. A kívánt értékekkel rendelkező művelet neve.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6811,7 +6916,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as italic. Shortcut: ⌘I]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Szöveg formázása dőltként. Parancsikon: ⌘I]]></Val>
+            <Val><![CDATA[Szöveg formázása dőltként. Billentyűparancs: ⌘I]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6882,6 +6987,9 @@
       <Item ItemId=";Yw7Nfl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Disable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Statikus eredmény letiltása]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6889,7 +6997,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy count is invalid (Must be from {min} to {max})]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Az újrapróbálkozási házirendek száma érvénytelen ({min} és {max} között kell lennie)]]></Val>
+            <Val><![CDATA[Az újrapróbálkozási szabályzatok száma érvénytelen ({min} és {max} között kell lennie)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7096,7 +7204,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid float.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Adjon meg egy érvényes lebegőpontos értéket.]]></Val>
+            <Val><![CDATA[Adjon meg egy érvényes lebegőpontot.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7227,6 +7335,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";bldzuj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Újrapróbálkozási előzmények]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";bsgS8m" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Preview]]></Val>
@@ -7339,7 +7456,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A kérelem törzsének kibontása, ha az GZip vagy Deflate használatával van tömörítve. Ez a beállítás csak HTTP-trigger esetén alkalmazható.]]></Val>
+            <Val><![CDATA[A kérelem törzsének kibontása, ha GZip vagy Deflate használatával van tömörítve. Ez a beállítás csak HTTP-trigger esetén alkalmazható.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7384,7 +7501,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy interval is invalid, must match ISO 8601 duration format]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Az újrapróbálkozási házirend időköze érvénytelen, meg kell egyeznie az ISO 8601 időtartamformátumával]]></Val>
+            <Val><![CDATA[Az újrapróbálkozási szabályzat időköze érvénytelen, meg kell felelnie az ISO 8601 időtartam-formátumnak]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7419,6 +7536,9 @@
       <Item ItemId=";ceVB5l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the body for a part in a multipart output from an action.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Egy művelet többrészes kimenetéből az egyik rész törzsét adja vissza.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7453,7 +7573,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Input node type does not match one of the allowed types for this input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A bemeneti csomópont típusa nem egyezik a bemenethez engedélyezett típusok egyikével]]></Val>
+            <Val><![CDATA[A bemeneti csomóponttípus nem felel meg a bemenethez engedélyezett típusok egyikének]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7498,7 +7618,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Generate XSLT first before attempting to test mappings.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Először hozzon létre XSLT-t a leképezések tesztelése előtt.]]></Val>
+            <Val><![CDATA[Először hozzon létre XSLT-t a leképezések tesztelésének megkísérlése előtt.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7525,7 +7645,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid dictionary.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Adjon meg egy érvényes szótárt.]]></Val>
+            <Val><![CDATA[Adjon meg egy érvényes tulajdonságtárat.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7534,7 +7654,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the first element from the passed-in array or string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Az átadott tömb vagy karakterlánc első elemét adja vissza.]]></Val>
+            <Val><![CDATA[Az átadott tömb vagy sztring első elemét adja vissza.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7821,6 +7941,9 @@
       <Item ItemId=";ehIBkh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter an integer]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Adjon meg egy egész számot]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7918,7 +8041,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an API Management resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Válasszon API Management erőforrást]]></Val>
+            <Val><![CDATA[Válasszon API Management-erőforrást]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7954,7 +8077,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading connection data...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kapcsolatadatok betöltése...]]></Val>
+            <Val><![CDATA[Kapcsolati adatok betöltése...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7998,6 +8121,9 @@
       <Item ItemId=";fp8Ry3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+08:00) Peking, Csungking, Hongkong, Ürümcsi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8104,7 +8230,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as italic. Shortcut: Ctrl+I]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Szöveg formázása dőltként. Parancsikon: Ctrl+I]]></Val>
+            <Val><![CDATA[Szöveg formázása dőltként. Billentyűparancs: Ctrl+I]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8113,7 +8239,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copy the value of '{label}' to the clipboard]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A '{label}' értékének másolása a vágólapra]]></Val>
+            <Val><![CDATA[A(z) {label} értékének másolása a vágólapra]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8394,6 +8520,9 @@
       <Item ItemId=";i0XjL5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Search for operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Művelet keresése]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8437,8 +8566,14 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains an invalid value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Érvénytelen értéket tartalmaz]]></Val>
+            <Val><![CDATA[Ez érvénytelen értéket tartalmaz]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";iB8YKD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[About Tab]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8574,6 +8709,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tulajdonságok]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ifnOUI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code View Tab]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8940,6 +9081,9 @@
       <Item ItemId=";kxMDyM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Érvényes JSON-t adjon meg.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8958,6 +9102,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{hours} óra {minutes} perc]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";l536iI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Monitoring Tab]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9019,7 +9169,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The type for '{0}' is '{1}'.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A '{0}' típusa '{1}'.]]></Val>
+            <Val><![CDATA[A(z) {0} típusa {1}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9054,6 +9204,9 @@
       <Item ItemId=";lexzgJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove all references to element ' {nodeName} ' before you remove the element.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Az elem eltávolítása előtt távolítsa el a(z) {nodeName} elemre mutató összes hivatkozást.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9088,7 +9241,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Insert Expression (You can also add by typing / in the editor)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kifejezés beszúrása (a szerkesztőbe beírhatja vagy beírhatja a szöveget)]]></Val>
+            <Val><![CDATA[Kifejezés beszúrása (a szerkesztőbe írással is hozzáadhatja)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9124,7 +9277,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Map checker]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Térképellenző]]></Val>
+            <Val><![CDATA[Térképellenőrző]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9231,6 +9384,9 @@
       <Item ItemId=";mPuXlv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid type on split on value ''{splitOn}'', split on not in array.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Érvénytelen típusú érték szerinti felosztás: „{splitOn}”. A felosztás nincs a tömbben.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9553,7 +9709,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function was removed from the current location and currently exists elsewhere.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A függvény el lett távolítva a jelenlegi helyről, és jelenleg máshol létezik.]]></Val>
+            <Val><![CDATA[A függvény el lett távolítva a jelenlegi helyről, és jelenleg máshol található.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9580,7 +9736,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid uri.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Adjon meg egy érvényes URI-t.]]></Val>
+            <Val><![CDATA[Érvényes URI-t adjon meg.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9635,6 +9791,15 @@
           <Val><![CDATA[Content Transfer]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tartalomátvitel]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";oMphsh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Settings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Beállítások]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9714,6 +9879,9 @@
       <Item ItemId=";ox2Ou7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid JSON]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Érvényes JSON-t adjon meg]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9721,7 +9889,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the first non-null object in the passed-in argument values.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Az átadott argumentumértékek első nem null értékű objektumát adja vissza.]]></Val>
+            <Val><![CDATA[Az átadott argumentumértékek első nem nullértékű objektumát adja vissza.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9748,7 +9916,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter the data from previous step. You can also add data by typing the '/' character.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Adja meg az előző lépés adatait. A "/" karakter beírásával adatokat is hozzáadhat.]]></Val>
+            <Val><![CDATA[Adja meg az előző lépés adatait. A / karakter beírásával is hozzáadhat adatokat.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9897,6 +10065,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";q+ZZjX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Újrapróbálkozási előzmények]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";q/+Uex" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an XML node, nodeset or value as JSON from the provided XPath expression]]></Val>
@@ -9945,6 +10122,9 @@
       <Item ItemId=";q5TkqE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value to return if the expression is false.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kötelező megadni. Az akkor visszaadandó érték, ha a kifejezés hamis.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9969,6 +10149,9 @@
       <Item ItemId=";qAlTD5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: ''{referenceKeyFormat}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nem támogatott jegyzékfájlkapcsolat hivatkozásának formátuma: „{referenceKeyFormat}”]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9976,7 +10159,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: ⌘U]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Szöveg formázása aláhúzásként. Parancsikon: ⌘U]]></Val>
+            <Val><![CDATA[Szöveg formázása aláhúzottként. Billentyűparancs: ⌘U]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10123,7 +10306,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{nodeName}'' has an input with a mismatched type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A(z) ''{nodeName}'' függvény bemenete nem egyező típusú.]]></Val>
+            <Val><![CDATA[A(z) „{nodeName}” függvény bemenete eltérő típusú]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10185,6 +10368,9 @@
       <Item ItemId=";rAwCdh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connect via on-premises data gateway]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Csatlakoztatás helyszíni adatátjáróval]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10236,6 +10422,9 @@
       <Item ItemId=";rSIBjh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter value for parameter.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Adja meg a parameter értékét.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10305,6 +10494,9 @@
       <Item ItemId=";s+4LEa" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Open folder]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mappa megnyitása]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10335,6 +10527,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";sEqLTV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Testing Tab]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sFbnCs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-05:00) Chetumal]]></Val>
@@ -10356,6 +10554,9 @@
       <Item ItemId=";sQ2vRs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add Case]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eset hozzáadása]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10372,7 +10573,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Formatting options for font family]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Betűcsalád formázási beállításai]]></Val>
+            <Val><![CDATA[Formázási beállítások a betűcsaládhoz]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10498,7 +10699,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to retrieve dynamic inputs. Error details: ''{message}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nem sikerült beolvasni a dinamikus bemeneteket. Hiba részletei: ''{message}'']]></Val>
+            <Val><![CDATA[Nem sikerült beolvasni a dinamikus bemeneteket. Hiba részletei: „”{message}”]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10561,7 +10762,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select Connection Reference]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kapcsolathivatkozás kiválasztása]]></Val>
+            <Val><![CDATA[Kapcsolati hivatkozás kiválasztása]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10588,7 +10789,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Invalid connection, please update your connection to load complete details]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Érvénytelen kapcsolat. Frissítse a kapcsolatot a teljes részletek betöltéséhez]]></Val>
+            <Val><![CDATA[Érvénytelen kapcsolat, frissítse a kapcsolatot az összes részlet betöltéséhez]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10677,6 +10878,9 @@
       <Item ItemId=";tarDYT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if the first argument is less than the second.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Igaz értéket ad vissza, ha az első argumentum kisebb a másodiknál.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10764,6 +10968,9 @@
       <Item ItemId=";uM1i27" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify a retry count from 1 to 90]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Adja meg az újrapróbálkozások számát 1 és 90 között]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10789,7 +10996,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: {message}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nem sikerült beolvasni a dinamikus kimeneteket. Emiatt előfordulhat, hogy a művelet kimenetei nem lesznek láthatók a következő műveletekben. Hiba részletei: {message}]]></Val>
+            <Val><![CDATA[Nem sikerült beolvasni a dinamikus kimeneteket. Emiatt előfordulhat, hogy a művelet kimenetei nem lesznek láthatók a későbbi műveletekben. Hiba részletei: {message}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10923,6 +11130,18 @@
       <Item ItemId=";uwuGU0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+06:30) Yangon (Rangoon)]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+06:30) Yangon (Rangun)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";uxKRO/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Paraméterek]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10940,6 +11159,15 @@
           <Val><![CDATA[Trigger date]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Aktiválás dátuma]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";v0ENVA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Betöltés folyamatban]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11034,6 +11262,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vdKLiR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request Settings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kérelem beállításai]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";vdtKjT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[To create and use an API connection, you must have a managed identity configured on this logic app.]]></Val>
@@ -11092,7 +11329,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a duplicate value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ismétlődő értéket tartalmaz]]></Val>
+            <Val><![CDATA[Ez ismétlődő értéket tartalmaz]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11109,6 +11346,9 @@
       <Item ItemId=";w0pI5M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for the specified filters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nincs a szűrőknek megfelelő találat]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11251,7 +11491,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Input type mismatch]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Bemeneti típuseltérés]]></Val>
+            <Val><![CDATA[A bemeneti típusok eltérnek]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11472,6 +11712,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";xi2tn6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Paraméterek]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";xt5TeT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Parameters are shared across workflows in a Logic App.]]></Val>
@@ -11484,6 +11733,9 @@
       <Item ItemId=";xwD1VZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading inputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bemenetek betöltése]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11544,6 +11796,9 @@
       <Item ItemId=";yF2R//" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a subset of characters from a string.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Karakterek részhalmazát adja vissza egy sztringből.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11577,6 +11832,9 @@
       <Item ItemId=";yjierd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid expression type ''{type}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A(z) „{type}” érvénytelen kifejezéstípus.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11638,7 +11896,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Navigate to {folderName} folder]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Navigálás {folderName} mappába]]></Val>
+            <Val><![CDATA[Navigálás a(z) {folderName} mappába]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

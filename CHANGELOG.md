@@ -1,5 +1,15 @@
 # Logic Apps Designer
 
+## [2.29.0](https://github.com/Azure/LogicAppsUX/compare/v2.28.0...v2.29.0) (2023-06-14)
+
+
+
+* **designer:** Adding metadata as input parameters for manifest based custom swaggers ([#2747](https://github.com/Azure/LogicAppsUX/issues/2747)) ([82f2099](https://github.com/Azure/LogicAppsUX/commit/82f2099d58b642d6640e0f111b03c0258348b147))
+
+
+
+* **Designer:** Fixed trigger serialization check  ([#2737](https://github.com/Azure/LogicAppsUX/issues/2737)) ([853ba40](https://github.com/Azure/LogicAppsUX/commit/853ba403e6f6ddcb54966c4d5462fbd7670a3864))
+
 ## [2.28.0](https://github.com/Azure/LogicAppsUX/compare/v2.27.0...v2.28.0) (2023-06-13)
 
 ## [2.23.0](https://github.com/Azure/LogicAppsUX/compare/v2.22.0...v2.23.0) (2023-05-31)
