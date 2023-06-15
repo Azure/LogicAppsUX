@@ -39,6 +39,9 @@
       <Item ItemId=";+ZSBrq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Context menu for {title} card]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Menu konteks untuk kartu {title}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -63,6 +66,9 @@
       <Item ItemId=";/EU/oJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Diperlukan. String yang berisi nama zona waktu dari zona waktu sumber. Lihat 'Zona Waktu Default' di 'https://go.microsoft.com/fwlink/?linkid=2238292'.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -249,6 +255,9 @@
       <Item ItemId=";04AwK7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error code: ''{errorCode}'', Message: ''{message}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kode kesalahan: ''{errorCode}'', Pesan: ''{message}''.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -283,7 +292,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Identitas terkelola yang digunakan dengan operasi ini sudah tidak ada. Untuk melanjutkan, siapkan identitas atau ubah sambungan.]]></Val>
+            <Val><![CDATA[Identitas terkelola yang digunakan dengan operasi ini tidak lagi ada. Untuk melanjutkan, siapkan identitas atau ubah koneksi.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -453,6 +462,9 @@
       <Item ItemId=";0qcKzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{parameterName} is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{parameterName} tidak lagi ada dalam skema operasi. Parameter harus dihapus sebelum alur kerja disimpan kembali.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -694,7 +706,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Actions perform operations on data, communicate between systems, or run other tasks.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tindakan melakukan operasi pada data, berkomunikasi antar sistem, atau menjalankan tugas lain.]]></Val>
+            <Val><![CDATA[Tindakan melakukan operasi pada data, berkomunikasi antara sistem, atau menjalankan tugas lain.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -793,7 +805,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add children (recursive)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tambahkan turunan (rekursi)]]></Val>
+            <Val><![CDATA[Tambahkan turunan (rekursif)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -856,7 +868,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Expand tree node]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Perluas node pohon]]></Val>
+            <Val><![CDATA[Luaskan node pohon]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -912,6 +924,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Menampilkan nilai tunggal yang cocok dengan nama kunci dari data formulir atau output tindakan dengan pengodean formulir]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";2gOfQI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Existing schemas from]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1072,7 +1090,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Remove all mappings within source element `{nodeName}` first.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Hapus semua pemetaan dalam elemen sumber '{nodeName}' terlebih dahulu.]]></Val>
+            <Val><![CDATA[Hapus semua pemetaan di dalam elemen sumber '{nodeName}' terlebih dahulu.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1270,7 +1288,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Menjalankan {onDays}]]></Val>
+            <Val><![CDATA[Dijalankan {onDays}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1351,7 +1369,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{parameterName} is required.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{parameterName} wajib diisi.]]></Val>
+            <Val><![CDATA[{parameterName} diperlukan.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1428,9 +1446,21 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";5WhTmH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Memuat...]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";5akc1Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported 'in' value : ''{value}'' in Parameter]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nilai 'in' yang tidak didukung: ''{value}'' di dalam Parameter]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1510,7 +1540,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Insert data from previous step (You can also add by typing Alt + / in the editor)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Sisipkan data dari langkah sebelumnya (Anda juga dapat menambahkan dengan mengetik Alt + / di editor)]]></Val>
+            <Val><![CDATA[Sisipkan data dari langkah sebelumnya (Anda juga dapat menambahkannya dengan mengetik Alt + / di editor)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1518,6 +1548,9 @@
       <Item ItemId=";62Ypnr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error loading operation data]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kesalahan saat memuat data operasi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1551,6 +1584,9 @@
       <Item ItemId=";6fDYzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed to load the schema. Please try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Gagal memuat skema. Coba lagi.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1981,7 +2017,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The workflow has parameter validation errors in the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Alur kerja memiliki kesalahan validasi parameter dalam operasi berikut: {invalidNodes}]]></Val>
+            <Val><![CDATA[Alur kerja memiliki kesalahan validasi parameter pada operasi berikut: {invalidNodes}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2009,6 +2045,15 @@
           <Val><![CDATA[Adds an integer number of days to a string timestamp passed in]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Menambahkan jumlah bilangan bulat hari ke tanda waktu string yang diberikan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8zkvmc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Testing]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Menguji]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2124,6 +2169,9 @@
       <Item ItemId=";9W0lck" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid split on value ''{splitOn}'', cannot find in outputs.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pemisahan tidak valid pada nilai ''{splitOn}'', tidak dapat menemukan dalam output.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2184,6 +2232,9 @@
       <Item ItemId=";A5Ferh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Source element removed from view.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Elemen sumber dihapus dari tampilan.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2245,7 +2296,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture).]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Menghasilkan indeks untuk kemunculan ke-n nilai dalam string (tidak peka huruf besar/kecil, kultur invarian).]]></Val>
+            <Val><![CDATA[Menghasilkan indeks kejadian ke-n dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2262,6 +2313,9 @@
       <Item ItemId=";AheXMN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select frequency.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pilih frekuensi.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2485,7 +2539,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Expant list of sibling elements]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Daftar ekspan elemen saudara kandung]]></Val>
+            <Val><![CDATA[Luaskan daftar elemen saudara]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2502,6 +2556,9 @@
       <Item ItemId=";BeqBP7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Automatic Decompression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dekompresi Otomatis]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2778,6 +2835,9 @@
       <Item ItemId=";DQV7aK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Alt/Option + click to download ''{displayName}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Alt/Option + klik untuk mengunduh ''{displayName}'']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2848,7 +2908,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Expand Static Result]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Perluas Hasil Statis]]></Val>
+            <Val><![CDATA[Luaskan Hasil Statik]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3024,6 +3084,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Ek0mSE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[View the request history for this operation]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EurkzL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select yes or no]]></Val>
@@ -3108,6 +3174,9 @@
       <Item ItemId=";FIL1Nt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Condition is too complex or invalid. Unable to switch to basic mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kondisi terlalu kompleks atau tidak valid. Tidak dapat mengalihkan ke mode dasar]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3249,6 +3318,18 @@
       <Item ItemId=";FaBEfQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Properti yang dilacak]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Fcvgvg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Cari]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3309,6 +3390,9 @@
       <Item ItemId=";GCjJnP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Masukkan Json yang valid.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3316,7 +3400,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Expanded]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Terbuka]]></Val>
+            <Val><![CDATA[Diluaskan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3343,7 +3427,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a value that is not between 0 and 59]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ini berisi nilai yang tidak antara 0 dan 59]]></Val>
+            <Val><![CDATA[Ini berisi nilai yang bukan antara 0 dan 59]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3567,6 +3651,9 @@
       <Item ItemId=";HOchry" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an existing connection reference or create a new one.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pilih referensi koneksi yang sudah ada atau buat baru.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3654,6 +3741,9 @@
       <Item ItemId=";Hyp0Ao" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove parameter "{parameterName}" and its value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hapus parameter "{parameterName}" dan nilainya]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3707,6 +3797,15 @@
           <Val><![CDATA[Example: {url}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Contoh: {url}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";IPbMdl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code View]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tampilan Kode]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3777,6 +3876,9 @@
       <Item ItemId=";IjEKvh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error executing the api ''{parameters}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kesalahan saat menjalankan api ''{parameters}''.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3964,7 +4066,7 @@
         <Str Cat="Text">
           <Val><![CDATA[When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Jika diaktifkan, tindakan ini akan berjalan dengan pengguna dari pengaturan "Jalankan sebagai" di pemicu Dataverse.]]></Val>
+            <Val><![CDATA[Ketika diaktifkan, tindakan ini akan dijalankan dengan pengguna dari pengaturan "Jalankan sebagai" di pemicu Dataverse.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4332,6 +4434,9 @@
       <Item ItemId=";LvLksz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading outputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Memuat output]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4349,6 +4454,15 @@
           <Val><![CDATA[(UTC+02:00) Damascus]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02.00) Damaskus]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";M/gUE8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[About]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tentang]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4527,6 +4641,9 @@
       <Item ItemId=";Mgcs5s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Masukkan nomor yang valid.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4722,6 +4839,9 @@
       <Item ItemId=";ODQCKj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Converts the input to a JSON type value.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Konversikan input menjadi nilai jenis JSON.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4845,6 +4965,9 @@
       <Item ItemId=";OdoUEu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aktifkan Hasil Statik]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4924,7 +5047,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Required. One of the strings to combine into a single string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Diperlukan. Salah satu string untuk digabungkan menjadi string tunggal.]]></Val>
+            <Val><![CDATA[Diperlukan. Salah satu string yang akan digabungkan menjadi string tunggal.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5014,7 +5137,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Menjalankan {onTime}]]></Val>
+            <Val><![CDATA[Dijalankan {onTime}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5112,6 +5235,9 @@
       <Item ItemId=";Pk4cb+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Properti yang dilacak]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5145,6 +5271,9 @@
       <Item ItemId=";PvWTxR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show functions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tampilkan fungsi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5259,6 +5388,9 @@
       <Item ItemId=";QdJUaS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Pencil icon]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ikon pensil]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5463,6 +5595,9 @@
       <Item ItemId=";RnBddN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[issue]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[masalah]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5488,7 +5623,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Unrecognized expression ''{expression}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[''{expression}'' ekspresi tidak dikenal]]></Val>
+            <Val><![CDATA[Ekspresi ''{expression}'' tidak dikenali]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5583,6 +5718,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SToblZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Configure parameters for this node]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SXb47U" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{minutes}m]]></Val>
@@ -5631,6 +5772,9 @@
       <Item ItemId=";Sr8PcK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No operations found]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tidak menemukan operasi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5944,7 +6088,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime} {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Menjalankan {onTime} {onDays}]]></Val>
+            <Val><![CDATA[Dijalankan {onTime} {onDays}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6052,7 +6196,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema node ''{nodeName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Node skema ''{nodeName}'' memiliki rantai koneksi yang tidak dapat dihentikan]]></Val>
+            <Val><![CDATA[Node skema ''{nodeName}'' memiliki rantai koneksi tanpa henti]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6069,6 +6213,9 @@
       <Item ItemId=";Unc2tG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if two values are equal.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Menampilkan true jika kedua nilai sama.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6165,6 +6312,9 @@
       <Item ItemId=";VI7EqG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for {searchTerm}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tidak menemukan hasil untuk {searchTerm}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6366,6 +6516,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WaTsxR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Riwayat Permintaan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WcnIF8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove]]></Val>
@@ -6514,7 +6673,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Fungsi ''{functionName}'' memiliki rantai koneksi yang tidak dapat dihentikan]]></Val>
+            <Val><![CDATA[Fungsi ''{functionName}'' memiliki rantai koneksi tanpa henti]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6550,7 +6709,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Count]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Hitung]]></Val>
+            <Val><![CDATA[Jumlah]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6558,6 +6717,9 @@
       <Item ItemId=";Xew1Df" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Informasi diagnostik lainnya: x-ms-client-request-id is ''{clientRequestId}''.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6574,7 +6736,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Identitas terkelola yang digunakan dengan operasi ini sudah tidak ada. Untuk melanjutkan, pilih identitas yang tersedia atau ubah sambungan.]]></Val>
+            <Val><![CDATA[Identitas terkelola yang digunakan dengan operasi ini sudah tidak ada. Untuk melanjutkan, pilih identitas yang tersedia atau ubah koneksi.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6807,6 +6969,9 @@
       <Item ItemId=";Ybzoim" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the action that has the values you want.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Diperlukan. Nama tindakan dengan nilai yang Anda inginkan.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6885,6 +7050,9 @@
       <Item ItemId=";Yw7Nfl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Disable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nonaktifkan Hasil Statik]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6892,7 +7060,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy count is invalid (Must be from {min} to {max})]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Jumlah Kebijakan Coba Lagi tidak valid (Harus dari {min} hingga {max})]]></Val>
+            <Val><![CDATA[Jumlah Kebijakan Coba Ulang tidak valid (Harus dari {min} hingga {max})]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6937,7 +7105,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Collapse Static Result]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ciutkan Hasil Statis]]></Val>
+            <Val><![CDATA[Ciutkan Hasil Statik]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7180,7 +7348,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Callback url]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[URL panggilan balik]]></Val>
+            <Val><![CDATA[Url panggilan balik]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7226,6 +7394,15 @@
           <Val><![CDATA[Returns the maximum value in the input array of numbers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Menampilkan nilai maksimal dalam array input angka]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";bldzuj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Coba Ulang Riwayat]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7387,7 +7564,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy interval is invalid, must match ISO 8601 duration format]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Interval Coba Lagi Kebijakan tidak valid, harus cocok dengan format durasi ISO 8601]]></Val>
+            <Val><![CDATA[Interval Kebijakan Coba Ulang tidak valid, harus cocok dengan format durasi ISO 8601]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7422,6 +7599,9 @@
       <Item ItemId=";ceVB5l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the body for a part in a multipart output from an action.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Menampilkan isi dari sebagian output beberapa bagian dari tindakan.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7537,7 +7717,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the first element from the passed-in array or string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Menghasilkan elemen pertama dari array atau string yang diserahkan.]]></Val>
+            <Val><![CDATA[Menampilkan elemen pertama dari array atau string yang diberikan.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8400,6 +8580,9 @@
       <Item ItemId=";i0XjL5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Search for operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Cari operasi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8443,8 +8626,14 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains an invalid value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ini berisi nilai yang tidak valid]]></Val>
+            <Val><![CDATA[Berisi nilai yang tidak valid]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";iB8YKD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[About Tab]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8583,6 +8772,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ifnOUI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code View Tab]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";iq+tiv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[11]]></Val>
@@ -8605,7 +8800,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Elements and mappings not connected to a target element are removed.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Elemen dan pemetaan yang tidak tersambung ke elemen target dihapus.]]></Val>
+            <Val><![CDATA[Elemen dan pemetaan yang tidak tersambung ke elemen target telah dihapus.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8839,7 +9034,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Duplicate property name]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Duplikasikan nama properti]]></Val>
+            <Val><![CDATA[Nama properti duplikat]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8946,6 +9141,9 @@
       <Item ItemId=";kxMDyM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Masukkan json yang valid.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8964,6 +9162,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{hours} jam {minutes} menit]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";l536iI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Monitoring Tab]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8998,7 +9202,7 @@
         <Str Cat="Text">
           <Val><![CDATA[A line for the parent element is added automatically.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Garis untuk elemen induk ditambahkan secara otomatis.]]></Val>
+            <Val><![CDATA[Baris untuk elemen induk ditambahkan secara otomatis.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9025,7 +9229,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The type for '{0}' is '{1}'.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tipe untuk '{0}' '{1}'.]]></Val>
+            <Val><![CDATA[Tipe untuk '{0}' adalah '{1}'.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9060,6 +9264,9 @@
       <Item ItemId=";lexzgJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove all references to element ' {nodeName} ' before you remove the element.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hapus semua referensi ke elemen ' {nodeName} ' sebelum Anda menghapus elemen.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9094,7 +9301,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Insert Expression (You can also add by typing / in the editor)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Sisipkan Ekspresi (Anda juga dapat menambahkan dengan mengetik / di editor)]]></Val>
+            <Val><![CDATA[Sisipkan Ekspresi (Anda juga dapat menambahkannya dengan mengetik / di editor)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9237,6 +9444,9 @@
       <Item ItemId=";mPuXlv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid type on split on value ''{splitOn}'', split on not in array.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tipe pemisahan tidak valid pada nilai ''{splitOn}'', pemisahan tidak dalam array.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9433,7 +9643,7 @@
         <Str Cat="Text">
           <Val><![CDATA[End time]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Waktu berakhir]]></Val>
+            <Val><![CDATA[Waktu selesai]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9559,7 +9769,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function was removed from the current location and currently exists elsewhere.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Fungsi dihapus dari lokasi saat ini dan saat ini ada di tempat lain.]]></Val>
+            <Val><![CDATA[Fungsi telah dihapus dari lokasi saat ini dan saat ini ada di tempat lain.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9595,7 +9805,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Zoom to fit]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zoom agar pas]]></Val>
+            <Val><![CDATA[Zoom hingga pas]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9641,6 +9851,15 @@
           <Val><![CDATA[Content Transfer]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Transfer Konten]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";oMphsh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Settings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pengaturan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9720,6 +9939,9 @@
       <Item ItemId=";ox2Ou7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid JSON]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Masukkan JSON yang valid]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9727,7 +9949,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the first non-null object in the passed-in argument values.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Menghasilkan objek non-null pertama dalam nilai argumen yang diserahkan.]]></Val>
+            <Val><![CDATA[Menampilkan objek non-null pertama di nilai argumen yang diberikan.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9903,6 +10125,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";q+ZZjX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Coba Ulang Riwayat]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";q/+Uex" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an XML node, nodeset or value as JSON from the provided XPath expression]]></Val>
@@ -9951,6 +10182,9 @@
       <Item ItemId=";q5TkqE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value to return if the expression is false.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Diperlukan. Nilai untuk dikembalikan jika ekspresi adalah false.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9975,6 +10209,9 @@
       <Item ItemId=";qAlTD5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: ''{referenceKeyFormat}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Format referensi koneksi manifes tidak didukung: ''{referenceKeyFormat}'']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10188,6 +10425,9 @@
       <Item ItemId=";rAwCdh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connect via on-premises data gateway]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sambungkan melalui gateway data lokal]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10239,6 +10479,9 @@
       <Item ItemId=";rSIBjh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter value for parameter.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Masukkan nilai untuk parameter.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10308,6 +10551,9 @@
       <Item ItemId=";s+4LEa" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Open folder]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Buka folder]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10338,6 +10584,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";sEqLTV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Testing Tab]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sFbnCs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-05:00) Chetumal]]></Val>
@@ -10359,6 +10611,9 @@
       <Item ItemId=";sQ2vRs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add Case]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tambahkan Kasus]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10519,7 +10774,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Too many inputs assigned]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Terlalu banyak input yang ditetapkan]]></Val>
+            <Val><![CDATA[Menetapkan terlalu banyak input]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10680,6 +10935,9 @@
       <Item ItemId=";tarDYT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if the first argument is less than the second.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Menampilkan true jika argumen pertama kurang dari argumen kedua.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10767,6 +11025,9 @@
       <Item ItemId=";uM1i27" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify a retry count from 1 to 90]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tentukan jumlah percobaan ulang dari 1 sampai 90]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10819,7 +11080,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Show me]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tunjukkan]]></Val>
+            <Val><![CDATA[Tampilkan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10845,6 +11106,9 @@
       <Item ItemId=";uc3ytS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select a runtime]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pilih runtime]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10929,6 +11193,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";uxKRO/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parameter]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";uzsleE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Creates an array from the parameters]]></Val>
@@ -10943,6 +11216,15 @@
           <Val><![CDATA[Trigger date]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tanggal pemicu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";v0ENVA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Memuat]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11037,6 +11319,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vdKLiR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request Settings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pengaturan Permintaan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";vdtKjT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[To create and use an API connection, you must have a managed identity configured on this logic app.]]></Val>
@@ -11095,7 +11386,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a duplicate value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ini berisi nilai duplikat]]></Val>
+            <Val><![CDATA[Berisi nilai duplikat]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11112,6 +11403,9 @@
       <Item ItemId=";w0pI5M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for the specified filters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tidak menemukan hasil untuk filter yang ditentukan]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11475,6 +11769,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";xi2tn6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parameter]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";xt5TeT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Parameters are shared across workflows in a Logic App.]]></Val>
@@ -11487,6 +11790,9 @@
       <Item ItemId=";xwD1VZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading inputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Memuat input]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11547,6 +11853,9 @@
       <Item ItemId=";yF2R//" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a subset of characters from a string.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Menampilkan subset karakter dari string.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11580,6 +11889,9 @@
       <Item ItemId=";yjierd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid expression type ''{type}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tipe ekspresi ''{type}'' tidak valid.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
