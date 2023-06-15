@@ -21,7 +21,7 @@ const SourceSettings = () => {
         selectedKey={isLocal ? 'local' : 'azure'}
       />
       <ChoiceGroup
-        label="Runtime"
+        label="Plan"
         options={[
           { key: 'standard', text: 'Standard' },
           { key: 'consumption', text: 'Consumption' },

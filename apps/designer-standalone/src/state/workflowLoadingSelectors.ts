@@ -2,23 +2,23 @@ import type { RootState } from './store';
 import { useSelector } from 'react-redux';
 
 export const useIsLocal = () => {
-  return useSelector((state: RootState) => state.workflowLoader.isLocalSelected);
+  return useSelector((state: RootState) => state.workflowLoader.isLocal);
 };
 
 export const useIsConsumption = () => {
-  return useSelector((state: RootState) => state.workflowLoader.consumption);
+  return useSelector((state: RootState) => state.workflowLoader.isConsumption);
 };
 
 export const useIsDarkMode = () => {
-  return useSelector((state: RootState) => state.workflowLoader.darkMode);
+  return useSelector((state: RootState) => state.workflowLoader.isDarkMode);
 };
 
 export const useIsReadOnly = () => {
-  return useSelector((state: RootState) => state.workflowLoader.readOnly);
+  return useSelector((state: RootState) => state.workflowLoader.isReadOnly);
 };
 
 export const useIsMonitoringView = () => {
-  return useSelector((state: RootState) => state.workflowLoader.monitoringView);
+  return useSelector((state: RootState) => state.workflowLoader.isMonitoringView);
 };
 
 export const useResourcePath = () => {

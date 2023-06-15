@@ -19,7 +19,7 @@ const resourceIdValidation =
   /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
 
 export const AzureStandardLogicAppSelector = () => {
-  const { appId, workflowName, runId, monitoringView } = useSelector((state: RootState) => state.workflowLoader);
+  const { appId, workflowName, runId, isMonitoringView } = useSelector((state: RootState) => state.workflowLoader);
   const { data: appList, isLoading: isAppsLoading } = useFetchStandardApps();
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
@@ -48,7 +48,7 @@ export const AzureStandardLogicAppSelector = () => {
       );
       return results.data;
     },
-    { enabled: !!workflowName && !!monitoringView }
+    { enabled: !!workflowName && !!isMonitoringView }
   );
   const appOptions: IComboBoxOption[] =
     appList?.map((app) => {
@@ -128,7 +128,7 @@ export const AzureStandardLogicAppSelector = () => {
           <Spinner style={{ position: 'absolute', bottom: '6px', left: '8px' }} labelPosition="right" label="Loading Workflows..." />
         ) : null}
       </div>
-      {monitoringView ? (
+      {isMonitoringView ? (
         <div style={{ position: 'relative' }}>
           <Dropdown
             placeholder={

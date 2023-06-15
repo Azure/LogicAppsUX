@@ -134,13 +134,13 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
 export const LocalDesigner = () => {
-  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance, showChatBot, language } =
+  const { workflowDefinition, isReadOnly, isMonitoringView, isDarkMode, isConsumption, connections, runInstance, showChatBot, language } =
     useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: {
-      connectionService: !consumption ? connectionServiceStandard : connectionServiceConsumption,
-      operationManifestService: !consumption ? operationManifestServiceStandard : operationManifestServiceConsumption,
-      searchService: !consumption ? searchServiceStandard : searchServiceConsumption,
+      connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
+      operationManifestService: !isConsumption ? operationManifestServiceStandard : operationManifestServiceConsumption,
+      searchService: !isConsumption ? searchServiceStandard : searchServiceConsumption,
       oAuthService,
       gatewayService,
       functionService,
@@ -149,10 +149,10 @@ export const LocalDesigner = () => {
       hostService,
       runService,
     },
-    readOnly,
-    isMonitoringView: monitoringView,
-    isDarkMode: darkMode,
-    isConsumption: consumption,
+    readOnly: isReadOnly,
+    isMonitoringView,
+    isDarkMode,
+    isConsumption,
   };
 
   return (

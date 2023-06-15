@@ -13,11 +13,11 @@ export interface WorkflowLoadingState {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   connections: ConnectionReferences;
-  readOnly: boolean;
-  monitoringView: boolean;
-  darkMode: boolean;
-  consumption: boolean;
-  isLocalSelected: boolean;
+  isReadOnly: boolean;
+  isMonitoringView: boolean;
+  isDarkMode: boolean;
+  isConsumption: boolean;
+  isLocal: boolean;
   showChatBot?: boolean;
   language: string;
 }
@@ -28,11 +28,11 @@ const initialState: WorkflowLoadingState = {
   runInstance: null,
   connections: {},
   resourcePath: '',
-  readOnly: false,
-  monitoringView: false,
-  darkMode: false,
-  consumption: false,
-  isLocalSelected: false,
+  isReadOnly: false,
+  isMonitoringView: false,
+  isDarkMode: false,
+  isConsumption: false,
+  isLocal: false,
   showChatBot: false,
   language: 'en',
 };
@@ -92,25 +92,25 @@ export const workflowLoadingSlice = createSlice({
       state.language = action.payload ?? 'en';
     },
     setReadOnly: (state, action: PayloadAction<boolean>) => {
-      state.readOnly = action.payload;
+      state.isReadOnly = action.payload;
     },
     setMonitoringView: (state, action: PayloadAction<boolean>) => {
-      state.monitoringView = action.payload;
+      state.isMonitoringView = action.payload;
       if (action.payload) {
-        state.readOnly = true;
+        state.isReadOnly = true;
       }
     },
     setDarkMode: (state, action: PayloadAction<boolean>) => {
-      state.darkMode = action.payload;
+      state.isDarkMode = action.payload;
     },
     setConsumption: (state, action: PayloadAction<boolean>) => {
-      state.consumption = action.payload;
+      state.isConsumption = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
       state.resourcePath = '';
     },
     setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
-      state.isLocalSelected = action.payload;
+      state.isLocal = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
       state.resourcePath = '';

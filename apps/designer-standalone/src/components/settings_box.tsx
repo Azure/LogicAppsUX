@@ -1,8 +1,8 @@
 import { AzureConsumptionLogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
 import { AzureStandardLogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector/LogicAppSelector';
-import ContextSettings from '../app/LocalDesigner/contextSettings';
-import SourceSettings from '../app/LocalDesigner/sourceSettings';
+import ContextSettings from '../app/SettingsSections/contextSettings';
+import SourceSettings from '../app/SettingsSections/sourceSettings';
 import { useIsConsumption, useIsDarkMode, useIsLocal } from '../state/workflowLoadingSelectors';
 import { LocalizationSettings } from './LocalizationSettings';
 import styles from './settings_box.module.less';
