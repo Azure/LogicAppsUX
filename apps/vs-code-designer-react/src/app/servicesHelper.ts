@@ -9,7 +9,7 @@ import {
   BaseGatewayService,
   StandardRunService,
   StandardArtifactService,
-  ApiManagementInstanceService,
+  BaseApiManagementService,
   BaseFunctionService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
@@ -47,7 +47,7 @@ export const getDesignerServices = (
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
-  apimService: ApiManagementInstanceService;
+  apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
 } => {
   let authToken = '',
@@ -95,7 +95,7 @@ export const getDesignerServices = (
       },
     },
   });
-  const apimService = new ApiManagementInstanceService({
+  const apimService = new BaseApiManagementService({
     apiVersion: '2019-12-01',
     baseUrl,
     subscriptionId,
