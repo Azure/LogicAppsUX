@@ -84,14 +84,6 @@ export interface IConnectorService {
   ): Promise<OpenAPIV2.SchemaObject>;
 
   /**
-   * Gets the dynamic swagger url in manifest based operations.
-   * @arg {string} operationId - The operation id.'
-   * @arg {any} defintion - The swagger definition.
-   * @return {Promise<string>}
-   */
-  getDynamicSwaggerUrl(connectorId: string, operationId: string, dynamicOperationId: string, defintion: string): Promise<string>;
-
-  /**
    * Gets the tree dynamic values.
    * @arg {string} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.

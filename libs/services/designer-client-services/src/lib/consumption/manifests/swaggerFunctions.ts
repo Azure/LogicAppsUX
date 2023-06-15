@@ -131,22 +131,10 @@ export const selectSwaggerFunctionManifest = {
     includeRootOutputs: true,
 
     customSwagger: {
-      // location: ['metadata', 'apiDefinitionUrl'],
-      operationId: 'getSwaggerFunctionUrl',
-      // 'x-ms-dynamic-properties': {
-      //   dynamicState: {
-      //     extension: {
-      //       operationId: 'getSwaggerFunctionUrl',
-      //     },
-      //   },
-      //   parameters: {
-      //     type: 'object',
-      //     functionAppId: {
-      //       parameterReference: 'functionApp.id',
-      //       required: true,
-      //     },
-      //   },
-      // },
+      service: {
+        name: 'AzureFunction',
+        operationId: 'fetchSwaggerUrl',
+      },
     },
 
     connector,

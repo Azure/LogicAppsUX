@@ -13,7 +13,6 @@ import {
 } from '@microsoft/utils-logic-apps';
 import type { IntlShape } from 'react-intl';
 
-type GetSwaggerUrlFunction = (args: Record<string, any>) => Promise<string>;
 type GetSchemaFunction = (args: Record<string, any>) => Promise<OpenAPIV2.SchemaObject>;
 type GetValuesFunction = (args: Record<string, any>) => Promise<ListDynamicValue[]>;
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
@@ -24,7 +23,6 @@ export interface BaseConnectorServiceOptions {
   httpClient: IHttpClient;
   clientSupportedOperations: OperationInfo[];
   getConfiguration: GetConfigurationFunction;
-  swaggerClient?: Record<string, GetSwaggerUrlFunction>;
   schemaClient?: Record<string, GetSchemaFunction>;
   valuesClient?: Record<string, GetValuesFunction>;
   apiHubServiceDetails: {
@@ -97,16 +95,6 @@ export abstract class BaseConnectorService implements IConnectorService {
       content: { parameters: invokeParameters, configuration },
     });
     return this._getResponseFromDynamicApi(response, uri);
-  }
-
-  async getDynamicSwaggerUrl(connectorId: string, operationId: string, dynamicOperationId: string, definition: any): Promise<string> {
-    if (!this._isClientSupportedOperation(connectorId, operationId)) {
-      throw new UnsupportedException(`Operation ${operationId} is not supported by the swagger url client.`);
-    }
-    if (!this.options.swaggerClient?.[dynamicOperationId]) {
-      throw new UnsupportedException(`Operation ${dynamicOperationId} is not implemented by the swagger url client.`);
-    }
-    return this.options.swaggerClient?.[dynamicOperationId]({ operationId: dynamicOperationId, definition });
   }
 
   async getDynamicSchema(

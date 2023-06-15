@@ -4,6 +4,7 @@ export interface IApiManagementService {
   fetchApiManagementInstances(): Promise<any>;
   fetchApisInApiM(apimInstanceId: string): Promise<any>;
   fetchApiMSwagger(apimApiId: string): Promise<any>;
+  fetchSwaggerUrl(apimApiId: string): Promise<any>;
 }
 
 let service: IApiManagementService;

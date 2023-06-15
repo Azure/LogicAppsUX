@@ -55,7 +55,7 @@ export class BaseFunctionService implements IFunctionService {
     return keysResponse?.default ?? 'NotFound';
   }
 
-  public async fetchApiDefinitionUrl(functionAppId: string) {
+  public async fetchSwaggerUrl(functionAppId: string) {
     const { baseUrl } = this.options;
     const response = await this.options.httpClient.get<any>({
       uri: `${baseUrl}/${functionAppId}/config/web`,
@@ -77,7 +77,7 @@ export class BaseFunctionService implements IFunctionService {
   }
 
   private async fetchFunctionAppSwagger(functionAppId: string) {
-    const apiDefinitionUrl = await this.fetchApiDefinitionUrl(functionAppId);
+    const apiDefinitionUrl = await this.fetchSwaggerUrl(functionAppId);
     return this.fetchFunctionSwagger(apiDefinitionUrl);
   }
 

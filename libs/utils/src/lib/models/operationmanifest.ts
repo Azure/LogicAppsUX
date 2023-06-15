@@ -46,6 +46,22 @@ export enum OperationOptions {
   SuppressWorkflowHeadersOnResponse = 'SuppressWorkflowHeadersOnResponse',
 }
 
+export enum CustomSwaggerServiceNames {
+  Function = 'function',
+  ApiManagement = 'apimanagement',
+}
+
+export interface CustomSwaggerServiceDetails {
+  name: CustomSwaggerServiceNames;
+  operationId: string;
+  parameters: Record<
+    string,
+    {
+      parameterReference: string;
+    }
+  >;
+}
+
 export enum ConnectionType {
   Function = 'function',
   ServiceProvider = 'serviceprovider',
@@ -194,7 +210,7 @@ export interface OperationManifestProperties {
 
   customSwagger?: {
     location?: string[];
-    operationId?: string;
+    service?: CustomSwaggerServiceDetails;
   };
 
   /*
@@ -224,6 +240,11 @@ export interface OperationManifestProperties {
   connectionReference?: ConnectionReferenceKeyFormatMapping;
 
   externalDocs?: Documentation;
+}
+
+export enum SwaggerServiceNames {
+  AZURE_FUNCTION = 'AzureFunction',
+  API_MANAGEMENT = 'ApiManagement',
 }
 
 export type SubgraphType = 'CONDITIONAL_TRUE' | 'CONDITIONAL_FALSE' | 'SWITCH_CASE' | 'SWITCH_DEFAULT' | 'SWITCH_ADD_CASE' | 'UNTIL_DO';

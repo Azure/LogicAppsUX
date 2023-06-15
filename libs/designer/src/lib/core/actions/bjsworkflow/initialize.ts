@@ -42,7 +42,8 @@ import {
   LoggerService,
   LogEntryLevel,
   OperationManifestService,
-  ConnectorService,
+  FunctionService,
+  ApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -59,7 +60,14 @@ import {
   PropertyName,
 } from '@microsoft/parsers-logic-apps';
 import type { OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
-import { clone, equals, ConnectionReferenceKeyFormat, unmap, getObjectPropertyValue } from '@microsoft/utils-logic-apps';
+import {
+  clone,
+  equals,
+  ConnectionReferenceKeyFormat,
+  unmap,
+  getObjectPropertyValue,
+  CustomSwaggerServiceNames,
+} from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -439,7 +447,6 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
 };
 
 export const getCustomSwaggerIfNeeded = async (
-  operationId: string,
   manifestProperties: OperationManifestProperties,
   stepDefinition?: any
 ): Promise<SwaggerParser | undefined> => {
@@ -447,14 +454,16 @@ export const getCustomSwaggerIfNeeded = async (
   if (swaggerUrlLocation && stepDefinition) {
     return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
   }
-  const swaggerFetchOperationId = manifestProperties.customSwagger?.operationId;
-  if (swaggerFetchOperationId && stepDefinition) {
-    const url = await ConnectorService().getDynamicSwaggerUrl(
-      manifestProperties?.connector?.id ?? '',
-      operationId,
-      swaggerFetchOperationId,
-      stepDefinition
-    );
+  const customSwaggerService = manifestProperties.customSwagger?.service;
+  if (customSwaggerService && stepDefinition) {
+    let url: string | undefined;
+    if (customSwaggerService.name === CustomSwaggerServiceNames.Function) {
+      url = await FunctionService().fetchSwaggerUrl(stepDefinition.inputs.functionApp.id);
+    } else if (customSwaggerService.name === CustomSwaggerServiceNames.ApiManagement) {
+      // TODO: This probably needs to be adjusted when this function is built
+      url = await ApiManagementService().fetchSwaggerUrl(stepDefinition.inputs.api.id);
+    }
+    if (!url) return undefined;
     return getSwaggerFromEndpoint(url);
   }
 
