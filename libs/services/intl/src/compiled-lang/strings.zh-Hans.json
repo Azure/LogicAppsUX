@@ -14,21 +14,17 @@
   "+Uvo/p": [
     {
       "type": 0,
-      "value": "下 V 形的替换文字"
+      "value": "向下 V 形的可选文字"
     }
   ],
   "+ZSBrq": [
-    {
-      "type": 0,
-      "value": "Context menu for "
-    },
     {
       "type": 1,
       "value": "title"
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " 卡的上下文菜单"
     }
   ],
   "+mAJR3": [
@@ -46,7 +42,7 @@
   "/EU/oJ": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'."
+      "value": "必填。包含源时区的时区名称的字符串。请参阅 https://go.microsoft.com/fwlink/?linkid=2238292 处的“默认时区”。"
     }
   ],
   "/I/U8L": [
@@ -142,7 +138,7 @@
   "/vWMKW": [
     {
       "type": 0,
-      "value": "缺少必需的输入"
+      "value": "缺少所需的输入"
     }
   ],
   "/yYyOq": [
@@ -172,7 +168,7 @@
   "04AwK7": [
     {
       "type": 0,
-      "value": "Error code: '"
+      "value": "错误代码: \""
     },
     {
       "type": 1,
@@ -180,7 +176,7 @@
     },
     {
       "type": 0,
-      "value": "', Message: '"
+      "value": "\"，消息: \""
     },
     {
       "type": 1,
@@ -188,7 +184,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"。"
     }
   ],
   "06zKZg": [
@@ -212,7 +208,7 @@
   "08e2rO": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
+      "value": "用于此操作的托管标识不再存在。若要继续，请设置标识或更改连接。"
     }
   ],
   "09B9CU": [
@@ -254,7 +250,7 @@
   "0IRUjM": [
     {
       "type": 0,
-      "value": "选择要启动映射的目标架构节点"
+      "value": "选择目标架构节点以启动映射"
     }
   ],
   "0JTHTZ": [
@@ -330,7 +326,7 @@
     },
     {
       "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " 不再出现在操作架构中。应在重新保存工作流前删除它。"
     }
   ],
   "0uj1Li": [
@@ -453,7 +449,7 @@
   "1REk6u": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "输入有效的电子邮件。"
     }
   ],
   "1TE0e8": [
@@ -471,7 +467,7 @@
   "1YEc9e": [
     {
       "type": 0,
-      "value": "输入有效条件。"
+      "value": "输入有效的条件。"
     }
   ],
   "1ZDLZA": [
@@ -489,7 +485,7 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "操作对数据执行操作、在系统之间通信或运行其他任务。"
+      "value": "操作会对数据执行操作，在系统之间通信或运行其他任务。"
     }
   ],
   "1eKQwo": [
@@ -555,7 +551,7 @@
   "20oqsp": [
     {
       "type": 0,
-      "value": "将子级添加(递归)"
+      "value": "添加子级(递归)"
     }
   ],
   "23fENy": [
@@ -579,7 +575,7 @@
   "27Nhhv": [
     {
       "type": 0,
-      "value": "从API 管理实例中选择 API"
+      "value": "从 API 管理实例中选择 API"
     }
   ],
   "2CXCOt": [
@@ -597,7 +593,7 @@
   "2JA3gY": [
     {
       "type": 0,
-      "value": "Expand tree node"
+      "value": "展开树节点"
     }
   ],
   "2K2fAj": [
@@ -639,7 +635,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "此中的现有架构: "
     }
   ],
   "2gzGrJ": [
@@ -669,7 +665,7 @@
   "2r30S9": [
     {
       "type": 0,
-      "value": "在"
+      "value": "在 "
     },
     {
       "type": 1,
@@ -677,7 +673,7 @@
     },
     {
       "type": 0,
-      "value": "后插入新步骤"
+      "value": " 后插入新步骤"
     }
   ],
   "2tTQ0A": [
@@ -719,7 +715,7 @@
   "34Nt/B": [
     {
       "type": 0,
-      "value": "按钮图标的替换文字"
+      "value": "按钮图标的可选文字"
     }
   ],
   "36RiST": [
@@ -755,7 +751,7 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "首先删除源元素 “"
+      "value": "首先删除源元素 `"
     },
     {
       "type": 1,
@@ -763,7 +759,7 @@
     },
     {
       "type": 0,
-      "value": "” 内的所有映射。"
+      "value": "` 中的所有映射。"
     }
   ],
   "3MTSYZ": [
@@ -919,7 +915,7 @@
   "4D7H4R": [
     {
       "type": 0,
-      "value": "运行"
+      "value": "运行时间: "
     },
     {
       "type": 1,
@@ -981,7 +977,7 @@
     },
     {
       "type": 0,
-      "value": "为必填项。"
+      "value": " 是必需的。"
     }
   ],
   "4vcnOA": [
@@ -1035,13 +1031,13 @@
   "5WhTmH": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "正在加载..."
     }
   ],
   "5akc1Q": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : '"
+      "value": "不支持的 \"in\" 值: 参数中的 \""
     },
     {
       "type": 1,
@@ -1049,7 +1045,7 @@
     },
     {
       "type": 0,
-      "value": "' in Parameter"
+      "value": "\""
     }
   ],
   "5b0sKi": [
@@ -1103,13 +1099,13 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "插入上一步中的数据(也可以通过在编辑器中键入Alt + /进行添加)"
+      "value": "插入上一步中的数据(还可以通过在编辑器中键入 Alt + / 来添加)"
     }
   ],
   "62Ypnr": [
     {
       "type": 0,
-      "value": "Error loading operation data"
+      "value": "加载操作数据时出错"
     }
   ],
   "63/zYN": [
@@ -1133,13 +1129,13 @@
   "6fDYzG": [
     {
       "type": 0,
-      "value": "Failed to load the schema. Please try again."
+      "value": "未能加载架构。请重试。"
     }
   ],
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "为函数'"
+      "value": "函数 \""
     },
     {
       "type": 1,
@@ -1147,7 +1143,7 @@
     },
     {
       "type": 0,
-      "value": "'分配了过多的输入"
+      "value": "\" 分配的输入太多"
     }
   ],
   "6jiO7t": [
@@ -1311,7 +1307,7 @@
   "83G5rr": [
     {
       "type": 0,
-      "value": "Specify the interval."
+      "value": "指定间隔。"
     }
   ],
   "83PYuA": [
@@ -1467,7 +1463,7 @@
   "8mDG0V": [
     {
       "type": 0,
-      "value": "The workflow has parameter validation errors in the following operations: "
+      "value": "此工作流在以下操作中存在参数验证错误: "
     },
     {
       "type": 1,
@@ -1495,7 +1491,7 @@
   "8zkvmc": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "测试"
     }
   ],
   "9/UeTh": [
@@ -1573,7 +1569,7 @@
   "9W0lck": [
     {
       "type": 0,
-      "value": "Invalid split on value '"
+      "value": "拆分对象值 \""
     },
     {
       "type": 1,
@@ -1581,7 +1577,7 @@
     },
     {
       "type": 0,
-      "value": "', cannot find in outputs."
+      "value": "\" 无效，在输出中找不到它。"
     }
   ],
   "9YGcT2": [
@@ -1623,13 +1619,13 @@
   "A5Ferh": [
     {
       "type": 0,
-      "value": "Source element removed from view."
+      "value": "已从视图中删除源元素。"
     }
   ],
   "A8l+k7": [
     {
       "type": 0,
-      "value": "Error occurred while executing the following API parameters: '"
+      "value": "执行以下 API 参数时出错: \""
     },
     {
       "type": 1,
@@ -1637,7 +1633,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "ADM1Z8": [
@@ -1649,7 +1645,7 @@
   "AEguAy": [
     {
       "type": 0,
-      "value": "空值 "
+      "value": "空值"
     }
   ],
   "AGCm1p": [
@@ -1673,7 +1669,7 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "返回字符串中值的第 n 次出现的索引(不区分大小写、固定区域性)。"
+      "value": "返回字符串中值的第 n 次匹配项的索引(不区分大小写，固定区域性)。"
     }
   ],
   "Af+Ve0": [
@@ -1685,7 +1681,7 @@
   "AheXMN": [
     {
       "type": 0,
-      "value": "Select frequency."
+      "value": "选择频率。"
     }
   ],
   "AnX5yC": [
@@ -1768,7 +1764,7 @@
   "B999mz": [
     {
       "type": 0,
-      "value": "Line deleted."
+      "value": "已删除行。"
     }
   ],
   "BBD8Em": [
@@ -1828,19 +1824,19 @@
   "BUutcC": [
     {
       "type": 0,
-      "value": "同级元素的扩展列表"
+      "value": "展开同辈元素的列表"
     }
   ],
   "BYrP8F": [
     {
       "type": 0,
-      "value": "数目"
+      "value": "数字"
     }
   ],
   "BeqBP7": [
     {
       "type": 0,
-      "value": "Automatic Decompression"
+      "value": "自动解压缩"
     }
   ],
   "Bl4Iv0": [
@@ -1918,7 +1914,7 @@
   "Cb6IEq": [
     {
       "type": 0,
-      "value": "(UTC-05:00) 哈瓦那"
+      "value": "(UTC-05:00)哈瓦那"
     }
   ],
   "Cb8pv0": [
@@ -1966,7 +1962,7 @@
   "CypYLs": [
     {
       "type": 0,
-      "value": "在"
+      "value": "在 "
     },
     {
       "type": 1,
@@ -1974,7 +1970,7 @@
     },
     {
       "type": 0,
-      "value": "和"
+      "value": " 和 "
     },
     {
       "type": 1,
@@ -1982,13 +1978,13 @@
     },
     {
       "type": 0,
-      "value": "之间插入新步骤"
+      "value": " 之间插入新步骤"
     }
   ],
   "Czt6YV": [
     {
       "type": 0,
-      "value": "在"
+      "value": "在 "
     },
     {
       "type": 1,
@@ -2046,7 +2042,7 @@
   "DQV7aK": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download '"
+      "value": "Alt/Option + 单击以下载 \""
     },
     {
       "type": 1,
@@ -2054,7 +2050,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "DWd9vy": [
@@ -2144,7 +2140,7 @@
   "E3+TAA": [
     {
       "type": 0,
-      "value": "架构节点'"
+      "value": "架构节点 \""
     },
     {
       "type": 1,
@@ -2152,7 +2148,7 @@
     },
     {
       "type": 0,
-      "value": "'具有类型不匹配的输入"
+      "value": "\" 具有类型不匹配的输入"
     }
   ],
   "E8iqLl": [
@@ -2200,7 +2196,7 @@
   "Ea/fr+": [
     {
       "type": 0,
-      "value": "每"
+      "value": "每 "
     },
     {
       "type": 1,
@@ -2208,7 +2204,7 @@
     },
     {
       "type": 0,
-      "value": "天"
+      "value": " 天"
     }
   ],
   "EaTGcN": [
@@ -2252,7 +2248,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "查看此操作的请求历史记录"
     }
   ],
   "EurkzL": [
@@ -2264,7 +2260,7 @@
   "Ex4U46": [
     {
       "type": 0,
-      "value": "使用调用者的连接"
+      "value": "使用调用方的连接"
     }
   ],
   "ExaACE": [
@@ -2312,7 +2308,7 @@
   "FIL1Nt": [
     {
       "type": 0,
-      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+      "value": "条件过于复杂或无效。无法切换到基本模式"
     }
   ],
   "FIT7i0": [
@@ -2399,13 +2395,13 @@
   "FaBEfQ": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "跟踪的属性"
     }
   ],
   "Fcvgvg": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜索"
     }
   ],
   "FiyQjU": [
@@ -2447,7 +2443,7 @@
   "GCjJnP": [
     {
       "type": 0,
-      "value": "Enter a valid Json."
+      "value": "输入有效的 JSON。"
     }
   ],
   "GD3m4X": [
@@ -2573,7 +2569,7 @@
   "H/QVod": [
     {
       "type": 0,
-      "value": "Workflow has settings validation errors on the following operations: "
+      "value": "工作流在以下操作上存在设置验证错误: "
     },
     {
       "type": 1,
@@ -2601,7 +2597,7 @@
   "H5VikC": [
     {
       "type": 0,
-      "value": "连接无效，映射不得形成封闭循环。"
+      "value": "连接无效，映射不得形成闭环。"
     }
   ],
   "H8bEUn": [
@@ -2625,7 +2621,7 @@
   "HOchry": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one."
+      "value": "选择现有连接引用或新建。"
     }
   ],
   "HQ8/tk": [
@@ -2649,7 +2645,7 @@
   "Hbqlzk": [
     {
       "type": 0,
-      "value": "Insert Expression"
+      "value": "插入表达式"
     }
   ],
   "HfinO2": [
@@ -2673,13 +2669,13 @@
   "HoQiVa": [
     {
       "type": 0,
-      "value": "输入有效的日期时间。"
+      "value": "输入有效日期/时间。"
     }
   ],
   "Hs5+Mk": [
     {
       "type": 0,
-      "value": "为"
+      "value": "输入 "
     },
     {
       "type": 1,
@@ -2687,7 +2683,7 @@
     },
     {
       "type": 0,
-      "value": "输入有效值。"
+      "value": " 的有效值。"
     }
   ],
   "HsO1Rd": [
@@ -2703,7 +2699,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "删除参数\""
+      "value": "删除参数 \""
     },
     {
       "type": 1,
@@ -2711,7 +2707,7 @@
     },
     {
       "type": 0,
-      "value": "\"及其值"
+      "value": "\" 及其值"
     }
   ],
   "HzS2gJ": [
@@ -2747,7 +2743,7 @@
   "IHMd3X": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "示例: "
     },
     {
       "type": 1,
@@ -2757,13 +2753,13 @@
   "IPbMdl": [
     {
       "type": 0,
-      "value": "Code View"
+      "value": "代码视图"
     }
   ],
   "IPwWgu": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00)耶路撒冷"
     }
   ],
   "IQyOth": [
@@ -2797,7 +2793,7 @@
     },
     {
       "type": 0,
-      "value": " 若要添加动态数据，请按Alt + “/”键。"
+      "value": " 若要添加动态数据，请按 Alt + \"/\" 键。"
     }
   ],
   "If+p6C": [
@@ -2809,7 +2805,7 @@
   "IjEKvh": [
     {
       "type": 0,
-      "value": "Error executing the api '"
+      "value": "执行 API \""
     },
     {
       "type": 1,
@@ -2817,13 +2813,29 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\" 时出错。"
     }
   ],
   "Io48jC": [
     {
       "type": 0,
-      "value": "{0}属性对于{1}身份验证类型无效。"
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" 属性对于 \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\" 身份验证类型无效。"
     }
   ],
   "IooQu1": [
@@ -2853,7 +2865,7 @@
   "J2Su6x": [
     {
       "type": 0,
-      "value": "字号格式选项"
+      "value": "字号的格式设置选项"
     }
   ],
   "J5/7vN": [
@@ -2893,7 +2905,7 @@
     },
     {
       "type": 0,
-      "value": " "
+      "value": " 个 "
     },
     {
       "type": 1,
@@ -2967,7 +2979,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "启用后，此操作将从 Dataverse 触发器中的“运行方式”设置中与用户一起运行。"
+      "value": "启用后，此操作将使用 Dataverse 触发器中“运行身份”设置中的用户身份运行。"
     }
   ],
   "Jq2Y/o": [
@@ -3009,7 +3021,7 @@
   "KP0Rr2": [
     {
       "type": 0,
-      "value": "请输入有效的双精度数。"
+      "value": "输入有效的双精度数字。"
     }
   ],
   "KX1poC": [
@@ -3044,7 +3056,7 @@
   "KYX5Do": [
     {
       "type": 0,
-      "value": "给(⌘U) 加下划线"
+      "value": "下划线(⌘U)"
     }
   ],
   "KZOa5l": [
@@ -3198,7 +3210,7 @@
   "Lnqh6h": [
     {
       "type": 0,
-      "value": "加粗(Ctrl+B)"
+      "value": "粗体(Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3222,7 +3234,7 @@
   "LvLksz": [
     {
       "type": 0,
-      "value": "Loading outputs"
+      "value": "正在加载输出"
     }
   ],
   "LvpxiA": [
@@ -3240,7 +3252,7 @@
   "M/gUE8": [
     {
       "type": 0,
-      "value": "About"
+      "value": "关于"
     }
   ],
   "M0xrm+": [
@@ -3360,7 +3372,7 @@
   "Mgcs5s": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "请输入有效的数字。"
     }
   ],
   "MirIsS": [
@@ -3504,7 +3516,7 @@
   "ODQCKj": [
     {
       "type": 0,
-      "value": "Converts the input to a JSON type value."
+      "value": "将输入转换为 JSON 类型的值。"
     }
   ],
   "OEEuUu": [
@@ -3604,7 +3616,7 @@
   "OdoUEu": [
     {
       "type": 0,
-      "value": "Enable Static Result"
+      "value": "启用静态结果"
     }
   ],
   "OgJ9eG": [
@@ -3670,7 +3682,7 @@
   "P/S+q5": [
     {
       "type": 0,
-      "value": "必填。要合并为单个字符串的字符串之一。"
+      "value": "必填。要合并到单个字符串中的一个字符串。"
     }
   ],
   "P/dnfK": [
@@ -3730,7 +3742,7 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "运行"
+      "value": "运行时间: "
     },
     {
       "type": 1,
@@ -3800,7 +3812,7 @@
   "Pk4cb+": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "跟踪的属性"
     }
   ],
   "Pq+4a+": [
@@ -3876,7 +3888,7 @@
     },
     {
       "type": 0,
-      "value": " Key"
+      "value": " 键"
     }
   ],
   "QGbUXX": [
@@ -3906,7 +3918,7 @@
   "QdJUaS": [
     {
       "type": 0,
-      "value": "Pencil icon"
+      "value": "铅笔图标"
     }
   ],
   "QeE0k/": [
@@ -3988,7 +4000,7 @@
   "RJes1w": [
     {
       "type": 0,
-      "value": "(UTC+04:00)耶烈万"
+      "value": "(UTC+04:00)埃里温"
     }
   ],
   "RX2Shm": [
@@ -4039,7 +4051,7 @@
   "Ro4+PC": [
     {
       "type": 0,
-      "value": "只有在编辑步骤的输入时才能添加备注。"
+      "value": "只能在编辑步骤的输入时添加备注。"
     }
   ],
   "Rp5pHU": [
@@ -4051,7 +4063,7 @@
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "无法识别的表达式'"
+      "value": "无法识别的表达式 \""
     },
     {
       "type": 1,
@@ -4059,7 +4071,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "RvpHdu": [
@@ -4077,7 +4089,7 @@
   "S138/4": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: ⌘B"
+      "value": "将文本格式设置为粗体。快捷方式: ⌘B"
     }
   ],
   "SCCE6s": [
@@ -4095,7 +4107,7 @@
   "SJFVxf": [
     {
       "type": 0,
-      "value": "问题"
+      "value": "议题"
     }
   ],
   "SKXopi": [
@@ -4125,7 +4137,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "为此节点配置参数"
     }
   ],
   "SXb47U": [
@@ -4165,7 +4177,7 @@
   "Sr8PcK": [
     {
       "type": 0,
-      "value": "No operations found"
+      "value": "未找到操作"
     }
   ],
   "SvQyvs": [
@@ -4201,7 +4213,7 @@
   "T7Xwii": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "间隔"
     }
   ],
   "T7zcR6": [
@@ -4279,19 +4291,19 @@
   "TZh8nV": [
     {
       "type": 0,
-      "value": "在 "
-    },
-    {
-      "type": 1,
-      "value": "weekDays"
-    },
-    {
-      "type": 0,
-      "value": " "
+      "value": "在每 "
     },
     {
       "type": 1,
       "value": "frequencyDesc"
+    },
+    {
+      "type": 0,
+      "value": " 的 "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
     }
   ],
   "Tayrub": [
@@ -4387,11 +4399,11 @@
   "U4zovj": [
     {
       "type": 0,
-      "value": "运行 "
+      "value": "运行时间: "
     },
     {
       "type": 1,
-      "value": "onTime"
+      "value": "onDays"
     },
     {
       "type": 0,
@@ -4399,7 +4411,7 @@
     },
     {
       "type": 1,
-      "value": "onDays"
+      "value": "onTime"
     }
   ],
   "U7yRwM": [
@@ -4475,7 +4487,7 @@
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "架构节点'"
+      "value": "架构节点 \""
     },
     {
       "type": 1,
@@ -4483,13 +4495,13 @@
     },
     {
       "type": 0,
-      "value": "'具有非终止连接链"
+      "value": "\" 具有非终止连接链"
     }
   ],
   "Umpr3z": [
     {
       "type": 0,
-      "value": "每"
+      "value": "每 "
     },
     {
       "type": 1,
@@ -4497,13 +4509,13 @@
     },
     {
       "type": 0,
-      "value": "周"
+      "value": " 周"
     }
   ],
   "Unc2tG": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal."
+      "value": "如果两个参数相等，则返回 true。"
     }
   ],
   "UnrrzF": [
@@ -4557,7 +4569,7 @@
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "选择App 服务资源"
+      "value": "选择应用服务资源"
     }
   ],
   "VI5Sa8": [
@@ -4569,11 +4581,15 @@
   "VI7EqG": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "找不到 "
     },
     {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": " 的结果"
     }
   ],
   "VKAk5g": [
@@ -4597,7 +4613,7 @@
   "VPh9Jo": [
     {
       "type": 0,
-      "value": "(UTC+06:00) 新西伯利亚"
+      "value": "(UTC+06:00)新西伯利亚"
     }
   ],
   "VUH9aj": [
@@ -4691,7 +4707,7 @@
   "WK6hZX": [
     {
       "type": 0,
-      "value": "选择"
+      "value": "选择 "
     },
     {
       "type": 1,
@@ -4699,7 +4715,7 @@
     },
     {
       "type": 0,
-      "value": "中的所有文本"
+      "value": " 中的所有文本"
     }
   ],
   "WR1K3z": [
@@ -4717,7 +4733,7 @@
   "WTZvGW": [
     {
       "type": 0,
-      "value": "Workflow has invalid connections on the following operations: "
+      "value": "工作流在以下操作上具有无效的连接: "
     },
     {
       "type": 1,
@@ -4733,7 +4749,7 @@
   "WaTsxR": [
     {
       "type": 0,
-      "value": "Request History"
+      "value": "请求历史记录"
     }
   ],
   "WcnIF8": [
@@ -4851,7 +4867,7 @@
   "XRK+gt": [
     {
       "type": 0,
-      "value": "函数'"
+      "value": "函数 \""
     },
     {
       "type": 1,
@@ -4859,7 +4875,7 @@
     },
     {
       "type": 0,
-      "value": "'具有非终止连接链"
+      "value": "\" 具有非终止连接链"
     }
   ],
   "XTeLIw": [
@@ -4889,7 +4905,7 @@
   "XVTQT6": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "间隔"
     }
   ],
   "XbtEq9": [
@@ -4901,7 +4917,7 @@
   "Xew1Df": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is '"
+      "value": "更多诊断信息: x-ms-client-request-id 为 \""
     },
     {
       "type": 1,
@@ -4909,7 +4925,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"。"
     }
   ],
   "Xj0Gr/": [
@@ -4999,7 +5015,7 @@
   "YCFhzp": [
     {
       "type": 0,
-      "value": "添加子项"
+      "value": "添加子级"
     }
   ],
   "YHsAKl": [
@@ -5027,7 +5043,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: Ctrl+U"
+      "value": "将文本格式设置为下划线。快捷方式: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -5045,7 +5061,7 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: Ctrl+B"
+      "value": "将文本格式设置为粗体。快捷方式: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -5081,13 +5097,13 @@
   "Ybzoim": [
     {
       "type": 0,
-      "value": "Required. The name of the action that has the values you want."
+      "value": "必填。具有所需值的操作的名称。"
     }
   ],
   "YdQw4/": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: ⌘I"
+      "value": "将文本格式设置为斜体。快捷方式: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5105,7 +5121,7 @@
   "Yh5OVd": [
     {
       "type": 0,
-      "value": "自定义值与此输入允许的类型之一不匹配"
+      "value": "自定义值与此输入的允许类型之一不匹配"
     }
   ],
   "YiOybp": [
@@ -5117,7 +5133,7 @@
   "YlesUQ": [
     {
       "type": 0,
-      "value": "你的地图处于完美状态"
+      "value": "你的映射处于完美状态"
     }
   ],
   "YoQara": [
@@ -5135,13 +5151,13 @@
   "Yw7Nfl": [
     {
       "type": 0,
-      "value": "Disable Static Result"
+      "value": "禁用静态结果"
     }
   ],
   "Z9PWl/": [
     {
       "type": 0,
-      "value": "重试策略计数无效(必须从 "
+      "value": "重试策略计数无效(必须介于 "
     },
     {
       "type": 1,
@@ -5157,7 +5173,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": " 之间)"
     }
   ],
   "ZBJiuD": [
@@ -5295,7 +5311,7 @@
   "amRYtC": [
     {
       "type": 0,
-      "value": "输入有效的浮点型。"
+      "value": "输入有效的浮点数。"
     }
   ],
   "aoUT/3": [
@@ -5353,7 +5369,7 @@
   "bSZ0lL": [
     {
       "type": 0,
-      "value": "回调 URL"
+      "value": "回叫 URL"
     }
   ],
   "bTrk+S": [
@@ -5389,7 +5405,7 @@
   "bldzuj": [
     {
       "type": 0,
-      "value": "Retry History"
+      "value": "重试历史记录"
     }
   ],
   "bsgS8m": [
@@ -5475,7 +5491,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "如果使用 GZip 或 Deflate 压缩请求正文，请解压缩请求正文。此设置仅适用于 HTTP 触发器。"
+      "value": "如果使用 GZip 或 Deflate 压缩了请求正文，请解压缩请求正文。此设置仅适用于 HTTP 触发器。"
     }
   ],
   "c8UPLp": [
@@ -5529,7 +5545,7 @@
   "ceVB5l": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output from an action."
+      "value": "返回操作的多部分输出中的一个部分的正文。"
     }
   ],
   "cgq/+y": [
@@ -5583,7 +5599,7 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "在尝试测试映射之前先生成 XSLT。"
+      "value": "在尝试测试映射之前，请先生成 XSLT。"
     }
   ],
   "cvp9VP": [
@@ -5607,7 +5623,7 @@
   "dBWIjR": [
     {
       "type": 0,
-      "value": "架构缺少必需的输入"
+      "value": "架构缺少所需的输入"
     }
   ],
   "dBxX0M": [
@@ -5687,7 +5703,7 @@
   "dfmH55": [
     {
       "type": 0,
-      "value": "倾斜(Ctrl+I)"
+      "value": "斜体(Ctrl+I)"
     }
   ],
   "dhvk0u": [
@@ -5807,13 +5823,13 @@
   "ehIBkh": [
     {
       "type": 0,
-      "value": "Enter an integer"
+      "value": "输入一个整数"
     }
   ],
   "elD6+N": [
     {
       "type": 0,
-      "value": "斜体(⌘我)"
+      "value": "斜体(⌘I)"
     }
   ],
   "epOMnV": [
@@ -5873,7 +5889,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "选择API 管理资源"
+      "value": "选择 API 管理资源"
     }
   ],
   "fGcSFd": [
@@ -5891,7 +5907,7 @@
   "fVG5aD": [
     {
       "type": 0,
-      "value": "(UTC-05:00) 海地"
+      "value": "(UTC-05:00)海地"
     }
   ],
   "faUrud": [
@@ -6007,13 +6023,21 @@
   "gIx5ys": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: Ctrl+I"
+      "value": "将文本格式设置为斜体。快捷方式: Ctrl+I"
     }
   ],
   "gKEaXI": [
     {
       "type": 0,
-      "value": "将{label}的值复制到剪贴板"
+      "value": "将 \""
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "\" 的值复制到剪贴板"
     }
   ],
   "gKq3Jv": [
@@ -6085,7 +6109,7 @@
   "h+W3VW": [
     {
       "type": 0,
-      "value": "数目"
+      "value": "数字"
     }
   ],
   "h1lQDa": [
@@ -6103,7 +6127,7 @@
   "h6vVbX": [
     {
       "type": 0,
-      "value": "首先添加源架构，然后选择元素以生成映射"
+      "value": "先添加源架构，然后选择元素以生成映射"
     }
   ],
   "hN7iBP": [
@@ -6136,7 +6160,7 @@
   "hZqQdt": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Gaza, Hebron"
+      "value": "(UTC+02:00)加沙，希伯伦"
     }
   ],
   "hic23z": [
@@ -6202,7 +6226,7 @@
   "i0XjL5": [
     {
       "type": 0,
-      "value": "Search for operation"
+      "value": "搜索操作"
     }
   ],
   "i1EQYm": [
@@ -6232,13 +6256,13 @@
   "i4Om5O": [
     {
       "type": 0,
-      "value": "这包含无效值"
+      "value": "此项包含无效值"
     }
   ],
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "“关于”选项卡"
     }
   ],
   "iCSHJG": [
@@ -6350,7 +6374,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "“代码视图”选项卡"
     }
   ],
   "iq+tiv": [
@@ -6372,7 +6396,7 @@
   "isnFBi": [
     {
       "type": 0,
-      "value": "未连接到目标元素的元素和映射将被删除。"
+      "value": "将删除未连接到目标元素的元素和映射。"
     }
   ],
   "ixhS47": [
@@ -6612,7 +6636,7 @@
   "kxMDyM": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "输入有效的 JSON。"
     }
   ],
   "l/9YHQ": [
@@ -6642,7 +6666,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "“监视”选项卡"
     }
   ],
   "l72gf4": [
@@ -6684,7 +6708,23 @@
   "lUvgiW": [
     {
       "type": 0,
-      "value": "{1}'{0}类型。"
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" 的类型为 \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"。"
     }
   ],
   "lZT0JI": [
@@ -6702,7 +6742,7 @@
   "lexzgJ": [
     {
       "type": 0,
-      "value": "Remove all references to element ' "
+      "value": "在删除元素之前，请删除对元素 \""
     },
     {
       "type": 1,
@@ -6710,7 +6750,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the element."
+      "value": "\" 的所有引用。"
     }
   ],
   "lgs5sf": [
@@ -6734,7 +6774,7 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "插入表达式(也可以通过在编辑器中键入/添加)"
+      "value": "插入表达式(还可以通过在编辑器中键入 / 来添加)"
     }
   ],
   "lsKVU6": [
@@ -6758,7 +6798,7 @@
   "m/jJ/5": [
     {
       "type": 0,
-      "value": "地图检查器"
+      "value": "映射检查器"
     }
   ],
   "m7Y6Qf": [
@@ -6834,7 +6874,7 @@
   "mPuXlv": [
     {
       "type": 0,
-      "value": "Invalid type on split on value '"
+      "value": "拆分对象值 \""
     },
     {
       "type": 1,
@@ -6842,7 +6882,7 @@
     },
     {
       "type": 0,
-      "value": "', split on not in array."
+      "value": "\" 的类型无效，拆分对象不在数组中。"
     }
   ],
   "mQotIu": [
@@ -6872,7 +6912,7 @@
   "meVkB6": [
     {
       "type": 0,
-      "value": "空属性名称"
+      "value": "属性名称为空"
     }
   ],
   "mej02C": [
@@ -6900,7 +6940,7 @@
     },
     {
       "type": 0,
-      "value": " Value"
+      "value": " 值"
     }
   ],
   "mwEHSX": [
@@ -6972,7 +7012,7 @@
   "nNWAAh": [
     {
       "type": 0,
-      "value": "未添加架构。"
+      "value": "未添加任何架构。"
     }
   ],
   "nOWGAV": [
@@ -7062,7 +7102,7 @@
   "o/FgET": [
     {
       "type": 0,
-      "value": "函数已从当前位置删除，当前存在于其他地方。"
+      "value": "函数已从当前位置删除，目前存在于其他位置。"
     }
   ],
   "o14STH": [
@@ -7096,7 +7136,7 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "输入有效的 URI。"
+      "value": "输入有效的 URL。"
     }
   ],
   "o3SfI4": [
@@ -7138,7 +7178,7 @@
   "oMphsh": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "设置"
     }
   ],
   "oO12r6": [
@@ -7186,13 +7226,13 @@
   "onXUu0": [
     {
       "type": 0,
-      "value": "添加注释"
+      "value": "添加备注"
     }
   ],
   "ox2Ou7": [
     {
       "type": 0,
-      "value": "Enter a valid JSON"
+      "value": "输入有效的 JSON"
     }
   ],
   "oxXV4+": [
@@ -7216,7 +7256,7 @@
   "p1IEXb": [
     {
       "type": 0,
-      "value": "输入上一步中的数据。也可以通过键入 “/” 字符来添加数据。"
+      "value": "输入上一步中的数据。还可以通过键入 \"/\" 字符来添加数据。"
     }
   ],
   "p1Qtm5": [
@@ -7318,7 +7358,7 @@
   "q+ZZjX": [
     {
       "type": 0,
-      "value": "Retry History"
+      "value": "重试历史记录"
     }
   ],
   "q/+Uex": [
@@ -7348,13 +7388,13 @@
   "q4ChjK": [
     {
       "type": 0,
-      "value": "选择具有“手动”触发器的工作流"
+      "value": "选择带有“手动”触发器的工作流"
     }
   ],
   "q5TkqE": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is false."
+      "value": "必需。表达式为 false 时要返回的值。"
     }
   ],
   "q87X20": [
@@ -7372,7 +7412,7 @@
   "qAlTD5": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: '"
+      "value": "清单连接引用格式 \""
     },
     {
       "type": 1,
@@ -7380,13 +7420,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\" 不受支持"
     }
   ],
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: ⌘U"
+      "value": "将文本格式设置为下划线。快捷方式: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7483,7 +7523,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "函数'"
+      "value": "函数 \""
     },
     {
       "type": 1,
@@ -7491,7 +7531,7 @@
     },
     {
       "type": 0,
-      "value": "'具有类型不匹配的输入"
+      "value": "\" 具有类型不匹配的输入"
     }
   ],
   "qrxi0L": [
@@ -7533,7 +7573,7 @@
   "rAwCdh": [
     {
       "type": 0,
-      "value": "Connect via on-premises data gateway"
+      "value": "通过本地数据网关连接"
     }
   ],
   "rAyuzv": [
@@ -7569,7 +7609,7 @@
   "rSIBjh": [
     {
       "type": 0,
-      "value": "Enter value for parameter."
+      "value": "输入参数的值。"
     }
   ],
   "raBiud": [
@@ -7641,13 +7681,13 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "“测试”选项卡"
     }
   ],
   "sFbnCs": [
     {
       "type": 0,
-      "value": "(UTC-05:00) 切图马尔"
+      "value": "(UTC-05:00)切图马尔"
     }
   ],
   "sFwHQc": [
@@ -7659,7 +7699,7 @@
   "sQ2vRs": [
     {
       "type": 0,
-      "value": "Add Case"
+      "value": "添加案例"
     }
   ],
   "sW47JR": [
@@ -7671,7 +7711,7 @@
   "sYQDN+": [
     {
       "type": 0,
-      "value": "字体系列的格式选项"
+      "value": "字体系列的格式设置选项"
     }
   ],
   "sZ0G/Z": [
@@ -7755,7 +7795,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic inputs. Error details: '"
+      "value": "无法检索动态输入。错误详细信息: \""
     },
     {
       "type": 1,
@@ -7763,7 +7803,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "t+XCkg": [
@@ -7871,7 +7911,7 @@
   "tWV2mC": [
     {
       "type": 0,
-      "value": "每小时"
+      "value": "每小时 "
     },
     {
       "type": 1,
@@ -7899,13 +7939,13 @@
   "tarDYT": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second."
+      "value": "如果第一个参数小于第二个参数，则返回 true。"
     }
   ],
   "td5//c": [
     {
       "type": 0,
-      "value": "Collapse tree node"
+      "value": "折叠树节点"
     }
   ],
   "ti5TEd": [
@@ -7959,7 +7999,7 @@
   "uM1i27": [
     {
       "type": 0,
-      "value": "Specify a retry count from 1 to 90"
+      "value": "指定 1 到 90 之间的数作为重试计数"
     }
   ],
   "uN4zFU": [
@@ -7977,7 +8017,7 @@
   "uOWkHS": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: "
+      "value": "无法检索动态输出。因此，此操作的输出可能在后续操作中不可见。错误详细信息: "
     },
     {
       "type": 1,
@@ -7999,7 +8039,7 @@
   "uWf/I5": [
     {
       "type": 0,
-      "value": "教我"
+      "value": "为我展示"
     }
   ],
   "uZH8Qs": [
@@ -8077,7 +8117,7 @@
   "uxKRO/": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "参数"
     }
   ],
   "uzsleE": [
@@ -8095,7 +8135,7 @@
   "v0ENVA": [
     {
       "type": 0,
-      "value": "Loading"
+      "value": "正在加载"
     }
   ],
   "v39HKj": [
@@ -8161,7 +8201,7 @@
   "vdKLiR": [
     {
       "type": 0,
-      "value": "Request Settings"
+      "value": "请求设置"
     }
   ],
   "vdtKjT": [
@@ -8199,7 +8239,7 @@
   "vvSHR8": [
     {
       "type": 0,
-      "value": "导航到元素并查看子级"
+      "value": "导航到元素并查看子项"
     }
   ],
   "vwH/XV": [
@@ -8223,7 +8263,7 @@
   "w0pI5M": [
     {
       "type": 0,
-      "value": "No results found for the specified filters"
+      "value": "找不到指定筛选器的结果"
     }
   ],
   "w16qh+": [
@@ -8391,7 +8431,7 @@
   "x8kTAX": [
     {
       "type": 0,
-      "value": "删除注释"
+      "value": "删除备注"
     }
   ],
   "xC1zg3": [
@@ -8475,7 +8515,7 @@
   "xi2tn6": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "参数"
     }
   ],
   "xt5TeT": [
@@ -8487,7 +8527,7 @@
   "xwD1VZ": [
     {
       "type": 0,
-      "value": "Loading inputs"
+      "value": "正在加载输入"
     }
   ],
   "xwEX2/": [
@@ -8529,7 +8569,7 @@
   "yF2R//": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string."
+      "value": "从字符串返回部分字符。"
     }
   ],
   "yVFIAQ": [
@@ -8553,7 +8593,7 @@
   "yjierd": [
     {
       "type": 0,
-      "value": "Invalid expression type '"
+      "value": "表达式类型 \""
     },
     {
       "type": 1,
@@ -8561,7 +8601,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\" 无效。"
     }
   ],
   "yoCi15": [
@@ -8603,7 +8643,7 @@
   "z/UY4k": [
     {
       "type": 0,
-      "value": "导航到"
+      "value": "导航到 "
     },
     {
       "type": 1,
@@ -8611,7 +8651,7 @@
     },
     {
       "type": 0,
-      "value": "文件夹"
+      "value": " 文件夹"
     }
   ],
   "z3VuE+": [
