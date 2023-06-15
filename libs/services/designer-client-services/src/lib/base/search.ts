@@ -4,7 +4,7 @@ import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
 import { Status } from '../logging/logEntry';
 import type { ISearchService } from '../search';
-import * as ClientOperationsData from '../standard/operations';
+import * as ClientOperationsData from './operations';
 import type {
   ArmResource,
   BuiltInOperation,

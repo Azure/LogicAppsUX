@@ -33,9 +33,9 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
         nodeId: newNodeId,
         isParallelBranch,
         isTrigger,
-        actionMetadata: {
-          apiDefinitionUrl: swaggerUrl,
-          swaggerSource: 'custom',
+        presetParameterValues: {
+          'metadata.apiDefinitionUrl': swaggerUrl,
+          'metadata.swaggerSource': 'custom',
         },
       })
     );
