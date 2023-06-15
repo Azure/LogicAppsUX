@@ -21,7 +21,7 @@ export type MessageToVsix =
       data: SchemaPathData;
     }
   | {
-      command: 'saveDataMapDefinition' | 'saveDraftDataMapDefinition' | 'saveDataMapXslt';
+      command: 'saveDataMapDefinition' | 'saveDraftDataMapDefinition' | 'saveDataMapXslt' | 'saveDataMapMetadata';
       data: string;
     }
   | {

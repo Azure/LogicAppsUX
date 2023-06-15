@@ -106,6 +106,10 @@ export default class DataMapperPanel {
         this.saveMapDefinition(msg.data);
         break;
       }
+      case 'saveDataMapMetadata': {
+        this.saveMapMetadata(msg.data);
+        break;
+      }
       case 'saveDataMapXslt': {
         this.saveMapXslt(msg.data);
         break;
@@ -253,6 +257,16 @@ export default class DataMapperPanel {
         })
         .catch(DataMapperExt.showError);
     });
+  }
+
+  public saveMapMetadata(mapMetadata: string) {
+    const projectPath = DataMapperExt.getWorkspaceFolderFsPath();
+    const vscodeFolderPath = path.join(projectPath, '.vscode', 'dataMapMetadata.json');
+    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8')
+      .then(() => {
+        console.log('worked');
+      })
+      .catch(DataMapperExt.showError);
   }
 
   public saveMapXslt(mapXslt: string) {
