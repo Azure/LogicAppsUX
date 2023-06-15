@@ -298,7 +298,7 @@ export async function getDynamicInputsFromSchema(
 
   if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
-    const customSwagger = await getCustomSwaggerIfNeeded(operationInfo.operationId, manifest.properties, operationDefinition);
+    const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operationDefinition);
     return getManifestBasedInputParameters(dynamicInputs, dynamicParameter, allInputKeys, manifest, customSwagger, operationDefinition);
   } else {
     const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
