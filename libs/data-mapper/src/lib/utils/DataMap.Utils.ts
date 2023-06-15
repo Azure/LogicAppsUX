@@ -121,7 +121,7 @@ export const collectSequenceValue = (
 
   const inputValues = getInputValues(currentConnection, connections, shouldLocalizePaths);
 
-  const valueToTrim = extractScopeFromLoop(inputValues[0]);
+  const valueToTrim = extractScopeFromLoop(inputValues[0]) || inputValues[0];
   const localizedInputValues =
     shouldLocalizePaths && valueToTrim
       ? inputValues.map((value) => {
