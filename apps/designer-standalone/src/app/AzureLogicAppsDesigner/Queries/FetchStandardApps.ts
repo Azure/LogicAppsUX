@@ -5,7 +5,7 @@ import { useQuery } from 'react-query';
 
 export const useFetchStandardApps = () => {
   return useQuery<FetchLogicAppsData[]>(
-    'listAllLogicApps',
+    ['listAllLogicApps', 'standard'],
     async () => {
       if (!environment.armToken) return undefined;
       const { data } = await axios.post(

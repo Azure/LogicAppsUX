@@ -1,19 +1,11 @@
 import type { RootState, AppDispatch } from '../../state/store';
-import {
-  setConsumption,
-  setDarkMode,
-  setMonitoringView,
-  setReadOnly,
-  loadRun,
-  loadWorkflow,
-  setIsChatBotEnabled,
-} from '../../state/workflowLoadingSlice';
+import { setDarkMode, setMonitoringView, setReadOnly, loadRun, loadWorkflow, setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ContextSettings = () => {
-  const { readOnly, monitoringView, darkMode, consumption, showChatBot } = useSelector((state: RootState) => {
+  const { readOnly, monitoringView, darkMode, showChatBot } = useSelector((state: RootState) => {
     return state.workflowLoader;
   });
   const dispatch = useDispatch<AppDispatch>();
@@ -37,9 +29,8 @@ const ContextSettings = () => {
         checked={readOnly}
         onChange={(_, checked) => dispatch(setReadOnly(!!checked))}
       />
-      <Checkbox label="Dark Mode" checked={darkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
       <Checkbox label="Monitoring View" checked={monitoringView} onChange={changeMonitoringView} />
-      <Checkbox label="Consumption" checked={consumption} onChange={(_, checked) => dispatch(setConsumption(!!checked))} />
+      <Checkbox label="Dark Mode" checked={darkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
       <Checkbox label="Chatbot" checked={showChatBot} onChange={(_, checked) => dispatch(setIsChatBotEnabled(!!checked))} />
     </div>
   );

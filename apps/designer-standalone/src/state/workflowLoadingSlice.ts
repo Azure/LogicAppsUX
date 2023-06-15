@@ -23,6 +23,7 @@ export interface WorkflowLoadingState {
 }
 
 const initialState: WorkflowLoadingState = {
+  appId: undefined,
   workflowDefinition: null,
   runInstance: null,
   connections: {},
@@ -104,9 +105,15 @@ export const workflowLoadingSlice = createSlice({
     },
     setConsumption: (state, action: PayloadAction<boolean>) => {
       state.consumption = action.payload;
+      state.appId = undefined;
+      state.workflowName = undefined;
+      state.resourcePath = '';
     },
     setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
       state.isLocalSelected = action.payload;
+      state.appId = undefined;
+      state.workflowName = undefined;
+      state.resourcePath = '';
     },
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
       state.showChatBot = action.payload;

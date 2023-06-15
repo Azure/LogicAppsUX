@@ -12,6 +12,8 @@ import {
   BaseFunctionService,
   BaseAppServiceService,
   StandardRunService,
+  ConsumptionOperationManifestService,
+  ConsumptionConnectionService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -19,7 +21,7 @@ import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
-const connectionService = new StandardConnectionService({
+const connectionServiceStandard = new StandardConnectionService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
@@ -34,11 +36,33 @@ const connectionService = new StandardConnectionService({
   readConnections: () => Promise.resolve({}),
 });
 
-const operationManifestService = new StandardOperationManifestService({
+const connectionServiceConsumption = new ConsumptionConnectionService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    baseUrl: '/baseUrl',
+    subscriptionId: '',
+    resourceGroup: '',
+    location: '',
+  },
+  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
+  readConnections: () => Promise.resolve({}),
+});
+
+const operationManifestServiceStandard = new StandardOperationManifestService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
 });
+
+const operationManifestServiceConsumption = new ConsumptionOperationManifestService({
+  apiVersion: '2018-11-01',
+  baseUrl: '/url',
+  httpClient,
+});
+
 const searchServiceStandard = new StandardSearchService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
@@ -114,8 +138,8 @@ export const LocalDesigner = () => {
     useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: {
-      connectionService,
-      operationManifestService,
+      connectionService: !consumption ? connectionServiceStandard : connectionServiceConsumption,
+      operationManifestService: !consumption ? operationManifestServiceStandard : operationManifestServiceConsumption,
       searchService: !consumption ? searchServiceStandard : searchServiceConsumption,
       oAuthService,
       gatewayService,
