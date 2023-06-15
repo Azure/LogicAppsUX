@@ -37,7 +37,7 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
     }),
     pill: intl.formatMessage({
       defaultMessage: 'In-Development',
-      description: 'Chatbot header label',
+      description: 'Label in the chatbot header stating the chatbot feature is still in-development',
     }),
     chatInputPlaceholder: intl.formatMessage({
       defaultMessage: 'Ask a question or describe how you want to change this flow',
