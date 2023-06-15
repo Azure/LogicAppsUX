@@ -49,6 +49,7 @@ export const StringEditor = ({
       onBlur={handleBlur}
       onFocus={baseEditorProps.onFocus}
       labelId={labelId}
+      dataAutomationId={baseEditorProps.dataAutomationId}
     >
       {singleLine ? <SingleLine /> : null}
       <Change setValue={onValueChange} />
