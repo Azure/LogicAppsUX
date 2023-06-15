@@ -22,13 +22,12 @@
       </ItemGroup>
       <RemoveDir Directories="@(DirsToClean2)" />
  </Target>
+
  
   <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
     <ItemGroup>
-        <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+        <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\bin\Debug\net472\*.*" />
     </ItemGroup>
-    <Message Importance="High" Text="$(MSBuildProjectDirectory)" />
-    <Message Importance="High" Text="$([MSBuild]::Unescape('$(MSBuildProjectDirectory)'))\$(OutputPath)bin\Microsoft.Azure.Functions.Extensions.Workflows.Sdk.BuildTasks.dll" />
     <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <ItemGroup>
         <MoveFiles Include="..\$(LogicAppFolder)\lib\custom\bin\*.*" />
@@ -40,7 +39,7 @@
      </ItemGroup>
        <RemoveDir Directories="@(DirsToClean)" />
   </Target>
-  
+ 
   <ItemGroup>
       <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
