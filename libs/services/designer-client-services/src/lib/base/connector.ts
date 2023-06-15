@@ -25,8 +25,8 @@ export interface BaseConnectorServiceOptions {
   clientSupportedOperations: OperationInfo[];
   getConfiguration: GetConfigurationFunction;
   swaggerClient?: Record<string, GetSwaggerUrlFunction>;
-  schemaClient: Record<string, GetSchemaFunction>;
-  valuesClient: Record<string, GetValuesFunction>;
+  schemaClient?: Record<string, GetSchemaFunction>;
+  valuesClient?: Record<string, GetValuesFunction>;
   apiHubServiceDetails: {
     apiVersion: string;
     baseUrl: string;

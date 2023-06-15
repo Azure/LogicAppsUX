@@ -56,14 +56,15 @@ export class BaseFunctionService implements IFunctionService {
   }
 
   public async fetchApiDefinitionUrl(functionAppId: string) {
+    const { baseUrl } = this.options;
     const response = await this.options.httpClient.get<any>({
-      uri: `https://management.azure.com/${functionAppId}/config/web`,
+      uri: `${baseUrl}/${functionAppId}/config/web`,
       queryParameters: { 'api-version': this.options.apiVersion },
     });
     if (!response?.properties?.apiDefinition?.url) {
       throw new Error('ApiDefinitionUrl not found');
     }
-    return response?.properties?.apiDefinition?.url ?? '';
+    return response.properties.apiDefinition.url;
   }
 
   private async fetchFunctionSwagger(swaggerUrl: string) {

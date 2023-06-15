@@ -943,6 +943,6 @@ export function hasInvalidChars(str: string, invalidChars: string[]): boolean {
  * @arg {any} obj - An object to get the name of.
  * @return {string} - The name of the object.
  */
-export function getObjectName(obj: any): string {
-  return obj?.displayName ?? obj?.properties?.displayName ?? obj?.name ?? obj?.properties?.name ?? obj?.id ?? '';
+export function getResourceName(obj: any): string {
+  return obj?.name ?? obj?.properties?.name ?? obj?.id ?? '';
 }

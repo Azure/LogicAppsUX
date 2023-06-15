@@ -21,7 +21,7 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType, getObjectName } from '@microsoft/utils-logic-apps';
+import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType, getResourceName } from '@microsoft/utils-logic-apps';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   const { connectionsMapping, connectionReferences } = state;
@@ -83,9 +83,9 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       description: 'Label for function app selection',
     });
 
-    const getColumns = (functionApp: any) => [getObjectName(functionApp), functionApp?.properties?.resourceGroup, functionApp?.location];
+    const getColumns = (functionApp: any) => [getResourceName(functionApp), functionApp?.properties?.resourceGroup, functionApp?.location];
 
-    const getSubResourceName = (azureFunction: any) => getObjectName(azureFunction).split('/').slice(1).join('/');
+    const getSubResourceName = (azureFunction: any) => getResourceName(azureFunction).split('/')?.[1] ?? azureFunction?.id;
 
     return {
       resourceType: 'functionApps',

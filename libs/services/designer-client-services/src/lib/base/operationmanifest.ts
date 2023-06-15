@@ -112,7 +112,7 @@ const xslttransform = 'xslttransform';
 const datamapper = 'datamapper';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
-export const azureFunctionConnectorId = '/connectionProviders/function';
+export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 export const appServiceConnectorId = '/connectionProviders/appService';
 export const batchConnectorId = '/connectionProviders/batch';
 export const workflowConnectorId = '/connectionProviders/workflow';

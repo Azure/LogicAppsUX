@@ -7,8 +7,8 @@ const iconUri =
 const brandColor = '#3999C6';
 
 const connector = {
-  id: '/connectionProviders/function',
-  name: 'connectionProviders/function',
+  id: '/connectionProviders/azureFunctionOperation',
+  name: 'connectionProviders/azureFunctionOperation',
   properties: {
     displayName: 'Azure Swagger Functions',
     description: 'Azure Swagger Functions',
@@ -32,7 +32,6 @@ export const selectSwaggerFunctionManifest = {
       properties: {
         functionApp: {
           type: 'object',
-          'x-ms-visibility': 'hideInUI',
           properties: {
             id: {
               type: 'string',

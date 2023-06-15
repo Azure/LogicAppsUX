@@ -4,8 +4,8 @@ const iconUri =
 const brandColor = '#3999C6';
 
 export const functionGroup = {
-  id: '/connectionProviders/function',
-  name: 'connectionProviders/function',
+  id: '/connectionProviders/azureFunctionOperation',
+  name: 'connectionProviders/azureFunctionOperation',
   properties: {
     displayName: 'Azure Functions',
     description: 'Azure Functions',
@@ -16,8 +16,8 @@ export const functionGroup = {
 };
 
 const api = {
-  id: '/connectionProviders/function',
-  name: 'connectionProviders/function',
+  id: '/connectionProviders/azureFunctionOperation',
+  name: 'connectionProviders/azureFunctionOperation',
   displayName: 'Azure Functions',
   iconUri,
   brandColor,

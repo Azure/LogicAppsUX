@@ -6,7 +6,7 @@ import { PrimaryButton, Text } from '@fluentui/react';
 import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { getObjectName, getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
+import { getResourceName, getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -115,7 +115,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           const resource: any = selectedResources?.[1];
 
           addResourceOperation({
-            name: getObjectName(resource),
+            name: getResourceName(resource),
             presetParameterValues: {
               'api.id': resource?.id,
             },
@@ -131,7 +131,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setSubmitCallback(() => () => {
           const resource = selectedResources[0];
           addResourceOperation({
-            name: getObjectName(resource),
+            name: getResourceName(resource),
             actionMetadata: {
               apiDefinitionUrl: resource?.properties?.siteConfig?.apiDefinition?.url,
               swaggerSource: 'website',
@@ -149,7 +149,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         ]);
         setSubmitCallback(() => () => {
           addResourceOperation({
-            name: getObjectName(selectedResources[1]),
+            name: getResourceName(selectedResources[1]),
             presetParameterValues: {
               'function.id': selectedResources[1].id,
             },
@@ -163,7 +163,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setGetResourcesCallbacks(() => [() => FunctionService().fetchFunctionApps()]);
         setSubmitCallback(() => async () => {
           addResourceOperation({
-            name: getObjectName(selectedResources[0]),
+            name: getResourceName(selectedResources[0]),
             presetParameterValues: {
               'functionApp.id': selectedResources[0].id,
             },
@@ -180,9 +180,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         ]);
         setSubmitCallback(() => () => {
           addResourceOperation({
-            name: getObjectName(selectedResources[0]),
+            name: getResourceName(selectedResources[0]),
             presetParameterValues: {
-              'host.triggerName': getObjectName(selectedResources[1]),
+              'host.triggerName': getResourceName(selectedResources[1]),
               'host.workflow.id': selectedResources[0].id,
             },
           });
@@ -198,9 +198,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         ]);
         setSubmitCallback(() => () => {
           addResourceOperation({
-            name: getObjectName(selectedResources[0]),
+            name: getResourceName(selectedResources[0]),
             presetParameterValues: {
-              'host.triggerName': getObjectName(selectedResources[1]),
+              'host.triggerName': getResourceName(selectedResources[1]),
               'host.workflow.id': selectedResources[0].id,
             },
           });
@@ -235,7 +235,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   });
 
   const getColumns = (resource: any) => [
-    getObjectName(resource),
+    getResourceName(resource),
     resource?.properties?.resourceGroup ?? resource?.resourceGroup ?? getResourceGroupFromWorkflowId(resource?.id),
     resource?.properties?.location ?? resource?.location,
   ];
@@ -263,7 +263,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         selectedResourceId={selectedResources?.[0]?.id}
         onResourceSelect={(resource: any) => setResourceAtDepth(resource, 0)}
         subResourceType={resourceTypes?.[1]}
-        getSubResourceName={(subResource: any) => getObjectName(subResource)}
+        getSubResourceName={(subResource: any) => getResourceName(subResource)}
         fetchSubResourcesCallback={getResourcesCallbacks?.[1]}
         onSubResourceSelect={(subResource: any) => setResourceAtDepth(subResource, 1)}
       />
