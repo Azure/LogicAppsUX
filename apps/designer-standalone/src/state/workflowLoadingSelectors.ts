@@ -29,6 +29,14 @@ export const useAppId = () => {
   return useSelector((state: RootState) => state.workflowLoader.appId);
 };
 
+export const useWorkflowName = () => {
+  return useSelector((state: RootState) => state.workflowLoader.workflowName);
+};
+
+export const useRunId = () => {
+  return useSelector((state: RootState) => state.workflowLoader.runId);
+};
+
 export const useShowChatBot = () => {
   return useSelector((state: RootState) => state.workflowLoader.showChatBot);
 };

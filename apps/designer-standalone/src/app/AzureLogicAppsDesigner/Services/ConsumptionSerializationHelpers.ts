@@ -4,7 +4,7 @@ import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { equals, clone, unmap } from '@microsoft/utils-logic-apps';
 
 ///////////////////////////////////////////////////////////////////////////////
-// Designer workflow to consumption workflow
+// This was mostly copied straight from what we have in portal
 
 export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: any): Promise<any> => {
   const workflow = clone(_workflow);
@@ -83,7 +83,8 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-// APIM
+// APIM - These can be removed once we get designer updated to handle consumption apim internally
+//        (Will also be able to be removed from portal as well)
 
 // Walk through each apim action, if it does not have an explicit operation id, get it from the path and method values
 export const parseApimOperationIds = async (workflow: any, apiManagementService: ApiManagementInstanceService): Promise<void> => {

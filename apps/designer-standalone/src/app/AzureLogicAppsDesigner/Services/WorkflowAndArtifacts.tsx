@@ -43,8 +43,6 @@ export const useWorkflowAndArtifactsConsumption = (workflowId: string) => {
 };
 
 const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<Workflow> => {
-  // const artifacts = ['properties/connectionParameters', 'properties/swagger'];
-  // const uri = `${workflowId}?api-version=${consumptionApiVersion}&$expand=${artifacts.join(',')}`;
   const uri = `${baseUrl}${workflowId}?api-version=${consumptionApiVersion}`;
   const response = await axios.get(uri, {
     headers: {

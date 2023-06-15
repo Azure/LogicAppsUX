@@ -1,5 +1,6 @@
 import { environment } from '../../../environments/environment';
-import type { AppDispatch, RootState } from '../../../state/store';
+import type { AppDispatch } from '../../../state/store';
+import { useAppId, useIsMonitoringView, useRunId, useWorkflowName } from '../../../state/workflowLoadingSelectors';
 import { changeAppid, changeResourcePath, changeRunId, changeWorkflowName } from '../../../state/workflowLoadingSlice';
 import type { WorkflowList, RunList } from '../Models/WorkflowListTypes';
 import { useFetchStandardApps } from '../Queries/FetchStandardApps';
@@ -7,7 +8,7 @@ import type { IComboBoxOption, IDropdownOption, IStackProps, IComboBoxStyles } f
 import { ComboBox, Dropdown, Spinner, Stack } from '@fluentui/react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const columnProps: Partial<IStackProps> = {
   tokens: { childrenGap: 15 },
@@ -19,7 +20,10 @@ const resourceIdValidation =
   /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
 
 export const AzureStandardLogicAppSelector = () => {
-  const { appId, workflowName, runId, isMonitoringView } = useSelector((state: RootState) => state.workflowLoader);
+  const appId = useAppId();
+  const workflowName = useWorkflowName();
+  const runId = useRunId();
+  const isMonitoringView = useIsMonitoringView();
   const { data: appList, isLoading: isAppsLoading } = useFetchStandardApps();
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
