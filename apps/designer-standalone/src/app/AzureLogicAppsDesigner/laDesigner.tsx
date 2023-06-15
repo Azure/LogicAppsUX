@@ -310,10 +310,8 @@ const getDesignerServices = (
         return apiManagementService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
       },
       getSwaggerOperationSchema: (args: any) => {
-        const { parameters, nodeMetadata, isInput } = args;
-        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        if (!swaggerUrl) return Promise.resolve();
-        return appService.getOperationSchema(swaggerUrl, parameters.operationId, isInput);
+        const { parameters, isInput } = args;
+        return appService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
       },
     },
     valuesClient: {
@@ -323,9 +321,8 @@ const getDesignerServices = (
         return artifactService.getMapArtifacts(mapType, mapSource);
       },
       getSwaggerOperations: (args: any) => {
-        const { nodeMetadata } = args;
-        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        return appService.getOperations(swaggerUrl);
+        const { parameters } = args;
+        return appService.getOperations(parameters.swaggerUrl);
       },
       getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
       getApimOperations: (args: any) => {

@@ -14,21 +14,17 @@
   "+Uvo/p": [
     {
       "type": 0,
-      "value": "向下 >形箭號的替代文字"
+      "value": "向下＞形箭號的替代文字"
     }
   ],
   "+ZSBrq": [
-    {
-      "type": 0,
-      "value": "Context menu for "
-    },
     {
       "type": 1,
       "value": "title"
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " 卡片的操作功能表"
     }
   ],
   "+mAJR3": [
@@ -46,7 +42,7 @@
   "/EU/oJ": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'."
+      "value": "必要項目。包含來源時區之時區名稱的字串。請於 'https://go.microsoft.com/fwlink/?linkid=2238292'參閱「預設時區」。"
     }
   ],
   "/I/U8L": [
@@ -142,7 +138,7 @@
   "/vWMKW": [
     {
       "type": 0,
-      "value": "缺少必要的輸入"
+      "value": "遺漏必要的輸入"
     }
   ],
   "/yYyOq": [
@@ -172,7 +168,7 @@
   "04AwK7": [
     {
       "type": 0,
-      "value": "Error code: '"
+      "value": "錯誤碼: '"
     },
     {
       "type": 1,
@@ -180,7 +176,7 @@
     },
     {
       "type": 0,
-      "value": "', Message: '"
+      "value": "'，訊息: '"
     },
     {
       "type": 1,
@@ -188,7 +184,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'。"
     }
   ],
   "06zKZg": [
@@ -212,7 +208,7 @@
   "08e2rO": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
+      "value": "與此作業一起使用的受控識別已不存在。若要繼續，請設定身分識別或變更連線。"
     }
   ],
   "09B9CU": [
@@ -254,7 +250,7 @@
   "0IRUjM": [
     {
       "type": 0,
-      "value": "選取目標架構節點以開始對應"
+      "value": "選取目標結構描述節點以開始對應"
     }
   ],
   "0JTHTZ": [
@@ -330,7 +326,7 @@
     },
     {
       "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " 已不存在於作業結構描述中。在重新儲存工作流程前，應予以移除。"
     }
   ],
   "0uj1Li": [
@@ -378,7 +374,7 @@
   "11qu8f": [
     {
       "type": 0,
-      "value": "請輸入有效的整數。"
+      "value": "輸入有效的整數。"
     }
   ],
   "14lYtE": [
@@ -449,7 +445,7 @@
   "1REk6u": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "輸入有效的電子郵件。"
     }
   ],
   "1TE0e8": [
@@ -467,7 +463,7 @@
   "1YEc9e": [
     {
       "type": 0,
-      "value": "請輸入有效的條件。"
+      "value": "輸入有效的條件。"
     }
   ],
   "1ZDLZA": [
@@ -485,7 +481,7 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "動作會在資料、系統之間通訊或執行其他工作上執行作業。"
+      "value": "動作會在資料上執行作業，在系統之間進行通訊或執行其他工作。"
     }
   ],
   "1eKQwo": [
@@ -533,7 +529,7 @@
   "1pjO9s": [
     {
       "type": 0,
-      "value": "隱藏來源架構"
+      "value": "隱藏來源結構描述"
     }
   ],
   "1uGBLP": [
@@ -551,7 +547,7 @@
   "20oqsp": [
     {
       "type": 0,
-      "value": "新增遞迴(子系)"
+      "value": "新增子系 (遞迴)"
     }
   ],
   "23fENy": [
@@ -575,7 +571,7 @@
   "27Nhhv": [
     {
       "type": 0,
-      "value": "從API 管理實例選取 API"
+      "value": "從 APIM 執行個體選取 API"
     }
   ],
   "2CXCOt": [
@@ -593,7 +589,7 @@
   "2JA3gY": [
     {
       "type": 0,
-      "value": "Expand tree node"
+      "value": "展開樹狀結構節點"
     }
   ],
   "2K2fAj": [
@@ -635,7 +631,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "現有結構描述來自"
     }
   ],
   "2gzGrJ": [
@@ -665,7 +661,7 @@
   "2r30S9": [
     {
       "type": 0,
-      "value": "在"
+      "value": "在 "
     },
     {
       "type": 1,
@@ -673,7 +669,7 @@
     },
     {
       "type": 0,
-      "value": "後插入新步驟"
+      "value": " 後插入新步驟"
     }
   ],
   "2tTQ0A": [
@@ -907,11 +903,15 @@
   "4D7H4R": [
     {
       "type": 0,
-      "value": "執行"
+      "value": "於 "
     },
     {
       "type": 1,
       "value": "onDays"
+    },
+    {
+      "type": 0,
+      "value": " 執行"
     }
   ],
   "4Ekn9t": [
@@ -964,16 +964,12 @@
   ],
   "4sYR0J": [
     {
-      "type": 0,
-      "value": "需要"
-    },
-    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": "。"
+      "value": " 為必要項目。"
     }
   ],
   "4vcnOA": [
@@ -1027,13 +1023,13 @@
   "5WhTmH": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "正在載入..."
     }
   ],
   "5akc1Q": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : '"
+      "value": "不支援的 'in' 值: 參數中的 '"
     },
     {
       "type": 1,
@@ -1041,7 +1037,7 @@
     },
     {
       "type": 0,
-      "value": "' in Parameter"
+      "value": "'"
     }
   ],
   "5b0sKi": [
@@ -1095,13 +1091,13 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "從上一個步驟插入資料(您也可以在編輯器中輸入Alt + /新增)"
+      "value": "插入上一個步驟的資料 (您也可以在編輯器中輸入 Alt + / 來新增)"
     }
   ],
   "62Ypnr": [
     {
       "type": 0,
-      "value": "Error loading operation data"
+      "value": "載入作業資料時發生錯誤"
     }
   ],
   "63/zYN": [
@@ -1125,13 +1121,13 @@
   "6fDYzG": [
     {
       "type": 0,
-      "value": "Failed to load the schema. Please try again."
+      "value": "無法載入結構描述。請再試一次。"
     }
   ],
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "已指派太多輸入給函數'"
+      "value": "已指派太多輸入給函數 '"
     },
     {
       "type": 1,
@@ -1303,7 +1299,7 @@
   "83G5rr": [
     {
       "type": 0,
-      "value": "Specify the interval."
+      "value": "指定間隔。"
     }
   ],
   "83PYuA": [
@@ -1437,13 +1433,13 @@
   "8luJ2j": [
     {
       "type": 0,
-      "value": "建立連線參考"
+      "value": "選取連線參考"
     }
   ],
   "8mDG0V": [
     {
       "type": 0,
-      "value": "The workflow has parameter validation errors in the following operations: "
+      "value": "工作流程在下列作業上有參數驗證錯誤: "
     },
     {
       "type": 1,
@@ -1471,7 +1467,7 @@
   "8zkvmc": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "測試"
     }
   ],
   "9/UeTh": [
@@ -1549,7 +1545,7 @@
   "9W0lck": [
     {
       "type": 0,
-      "value": "Invalid split on value '"
+      "value": "值 '"
     },
     {
       "type": 1,
@@ -1557,7 +1553,7 @@
     },
     {
       "type": 0,
-      "value": "', cannot find in outputs."
+      "value": "' 的分割無效，在輸出中找不到。"
     }
   ],
   "9YGcT2": [
@@ -1599,13 +1595,13 @@
   "A5Ferh": [
     {
       "type": 0,
-      "value": "Source element removed from view."
+      "value": "已從檢視移除來源元素。"
     }
   ],
   "A8l+k7": [
     {
       "type": 0,
-      "value": "Error occurred while executing the following API parameters: '"
+      "value": "執行下列 API 參數時發生錯誤: '"
     },
     {
       "type": 1,
@@ -1649,7 +1645,7 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "傳回字串中值的第 n 次出現的索引，(不區分大小寫、不變異的文化特性)。"
+      "value": "傳回字串中值第 n 次出現值的索引 (不區分大小寫、不因文化特性而異)。"
     }
   ],
   "Af+Ve0": [
@@ -1661,7 +1657,7 @@
   "AheXMN": [
     {
       "type": 0,
-      "value": "Select frequency."
+      "value": "選取頻率。"
     }
   ],
   "AnX5yC": [
@@ -1744,7 +1740,7 @@
   "B999mz": [
     {
       "type": 0,
-      "value": "Line deleted."
+      "value": "已刪除行。"
     }
   ],
   "BBD8Em": [
@@ -1804,7 +1800,7 @@
   "BUutcC": [
     {
       "type": 0,
-      "value": "同層級元素的到期清單"
+      "value": "展開同層級元素的清單"
     }
   ],
   "BYrP8F": [
@@ -1816,13 +1812,13 @@
   "BeqBP7": [
     {
       "type": 0,
-      "value": "Automatic Decompression"
+      "value": "自動解壓縮"
     }
   ],
   "Bl4Iv0": [
     {
       "type": 0,
-      "value": "(UTC+08:00) 庫倫"
+      "value": "(UTC+08:00) 烏蘭巴托"
     }
   ],
   "Bn8iTS": [
@@ -1963,12 +1959,12 @@
   ],
   "Czt6YV": [
     {
-      "type": 0,
-      "value": "在 "
-    },
-    {
       "type": 1,
       "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " 次"
     }
   ],
   "D+Ptnq": [
@@ -1980,7 +1976,7 @@
   "D/xTXV": [
     {
       "type": 0,
-      "value": "顯示來源架構"
+      "value": "顯示來源結構描述"
     }
   ],
   "D1lgsT": [
@@ -2016,13 +2012,13 @@
   "DJW8RE": [
     {
       "type": 0,
-      "value": "選取一個值"
+      "value": "選取值"
     }
   ],
   "DQV7aK": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download '"
+      "value": "Alt/Option + 按一下以下載 '"
     },
     {
       "type": 1,
@@ -2060,7 +2056,7 @@
   "DZc8wP": [
     {
       "type": 0,
-      "value": "自訂值不符合架構節點的類型"
+      "value": "自訂值與結構描述節點的類型不符。"
     }
   ],
   "Dhu3IS": [
@@ -2120,7 +2116,7 @@
   "E3+TAA": [
     {
       "type": 0,
-      "value": "架構節點'"
+      "value": "結構描述 '"
     },
     {
       "type": 1,
@@ -2128,7 +2124,7 @@
     },
     {
       "type": 0,
-      "value": "'具有類型不相符的輸入"
+      "value": "' '具有類型不相符的輸入"
     }
   ],
   "E8iqLl": [
@@ -2158,7 +2154,7 @@
   "ESZXfC": [
     {
       "type": 0,
-      "value": "在這幾分鐘內"
+      "value": "在這幾分鐘"
     }
   ],
   "EUQDM6": [
@@ -2176,7 +2172,7 @@
   "Ea/fr+": [
     {
       "type": 0,
-      "value": "每"
+      "value": "每 "
     },
     {
       "type": 1,
@@ -2184,7 +2180,7 @@
     },
     {
       "type": 0,
-      "value": "天"
+      "value": " 週"
     }
   ],
   "EaTGcN": [
@@ -2228,7 +2224,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "檢視此作業的要求歷程記錄"
     }
   ],
   "EurkzL": [
@@ -2288,7 +2284,7 @@
   "FIL1Nt": [
     {
       "type": 0,
-      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+      "value": "條件太過複雜或無效。無法切換至基本模式"
     }
   ],
   "FIT7i0": [
@@ -2375,13 +2371,13 @@
   "FaBEfQ": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "追蹤的屬性"
     }
   ],
   "Fcvgvg": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜尋"
     }
   ],
   "FiyQjU": [
@@ -2423,7 +2419,7 @@
   "GCjJnP": [
     {
       "type": 0,
-      "value": "Enter a valid Json."
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "GD3m4X": [
@@ -2501,13 +2497,13 @@
   "Gi7czD": [
     {
       "type": 0,
-      "value": "來源架構元素"
+      "value": "來源結構描述元素"
     }
   ],
   "Gl5khw": [
     {
       "type": 0,
-      "value": "在這幾小時內"
+      "value": "在這幾小時"
     }
   ],
   "Gmya+V": [
@@ -2549,7 +2545,7 @@
   "H/QVod": [
     {
       "type": 0,
-      "value": "Workflow has settings validation errors on the following operations: "
+      "value": "工作流程在下列作業上有設定驗證錯誤: "
     },
     {
       "type": 1,
@@ -2577,7 +2573,7 @@
   "H5VikC": [
     {
       "type": 0,
-      "value": "不正確連接，對應不能形成封閉迴圈。"
+      "value": "不正確連線，對應不能形成封閉迴圈。"
     }
   ],
   "H8bEUn": [
@@ -2601,7 +2597,7 @@
   "HOchry": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one."
+      "value": "選取現有的連接參考或建立新的連接參考。"
     }
   ],
   "HQ8/tk": [
@@ -2625,7 +2621,7 @@
   "Hbqlzk": [
     {
       "type": 0,
-      "value": "Insert Expression"
+      "value": "插入運算式"
     }
   ],
   "HfinO2": [
@@ -2649,13 +2645,13 @@
   "HoQiVa": [
     {
       "type": 0,
-      "value": "輸入有效的日期時間。"
+      "value": "輸入有效日期/時間。"
     }
   ],
   "Hs5+Mk": [
     {
       "type": 0,
-      "value": "請為"
+      "value": "請為 "
     },
     {
       "type": 1,
@@ -2663,7 +2659,7 @@
     },
     {
       "type": 0,
-      "value": "輸入有效的值。"
+      "value": " 輸入有效值。"
     }
   ],
   "HsO1Rd": [
@@ -2679,7 +2675,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "移除參數\""
+      "value": "移除參數 \""
     },
     {
       "type": 1,
@@ -2687,7 +2683,7 @@
     },
     {
       "type": 0,
-      "value": "\"及其值"
+      "value": "\" 及其值"
     }
   ],
   "HzS2gJ": [
@@ -2723,7 +2719,7 @@
   "IHMd3X": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "範例: "
     },
     {
       "type": 1,
@@ -2733,13 +2729,13 @@
   "IPbMdl": [
     {
       "type": 0,
-      "value": "Code View"
+      "value": "程式碼檢視"
     }
   ],
   "IPwWgu": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) 耶路撒冷"
     }
   ],
   "IQyOth": [
@@ -2763,7 +2759,7 @@
   "IXy91L": [
     {
       "type": 0,
-      "value": "新增目標架構"
+      "value": "新增目標結構描述"
     }
   ],
   "IdOhPY": [
@@ -2785,21 +2781,13 @@
   "IjEKvh": [
     {
       "type": 0,
-      "value": "Error executing the api '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'."
+      "value": "執行 API {parameters} 時發生錯誤。"
     }
   ],
   "Io48jC": [
     {
       "type": 0,
-      "value": "{1}驗證類型的{0}屬性無效。"
+      "value": "{1} 驗證類型的 {0} 屬性無效。"
     }
   ],
   "IooQu1": [
@@ -2811,7 +2799,7 @@
   "IsVhkH": [
     {
       "type": 0,
-      "value": "沒有屬性"
+      "value": "無屬性"
     }
   ],
   "IxWip7": [
@@ -2829,7 +2817,7 @@
   "J2Su6x": [
     {
       "type": 0,
-      "value": "字型大小的格式設定選項"
+      "value": "字型大小的格式化選項"
     }
   ],
   "J5/7vN": [
@@ -2869,7 +2857,7 @@
     },
     {
       "type": 0,
-      "value": " "
+      "value": " 個 "
     },
     {
       "type": 1,
@@ -2943,7 +2931,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "啟用時，此動作會從 Dataverse 觸發程式中的 [執行身分] 設定與使用者一起執行。"
+      "value": "啟用時，此動作會從 Dataverse 觸發程序中的 [執行身分] 設定與使用者一起執行。"
     }
   ],
   "Jq2Y/o": [
@@ -2985,7 +2973,7 @@
   "KP0Rr2": [
     {
       "type": 0,
-      "value": "請輸入有效的雙精度浮點數。"
+      "value": "輸入有效的雙數字。"
     }
   ],
   "KX1poC": [
@@ -3020,7 +3008,7 @@
   "KYX5Do": [
     {
       "type": 0,
-      "value": "為(⌘U) 加上底線"
+      "value": "底線 (⌘U)"
     }
   ],
   "KZOa5l": [
@@ -3110,7 +3098,7 @@
   "LV/BTE": [
     {
       "type": 0,
-      "value": "正在載入 API 管理服務實例..."
+      "value": "正在載入 APIM 服務執行個體..."
     }
   ],
   "LV3k48": [
@@ -3182,7 +3170,7 @@
   "LvLksz": [
     {
       "type": 0,
-      "value": "Loading outputs"
+      "value": "載入輸出"
     }
   ],
   "LvpxiA": [
@@ -3200,7 +3188,7 @@
   "M/gUE8": [
     {
       "type": 0,
-      "value": "About"
+      "value": "關於"
     }
   ],
   "M0xrm+": [
@@ -3320,7 +3308,7 @@
   "Mgcs5s": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "輸入有效的數字。"
     }
   ],
   "MirIsS": [
@@ -3464,7 +3452,7 @@
   "ODQCKj": [
     {
       "type": 0,
-      "value": "Converts the input to a JSON type value."
+      "value": "將輸入轉換為 JSON 類型值。"
     }
   ],
   "OEEuUu": [
@@ -3494,7 +3482,7 @@
   "OIOexo": [
     {
       "type": 0,
-      "value": "在這幾天內"
+      "value": "在這幾天"
     }
   ],
   "OKszbi": [
@@ -3530,7 +3518,7 @@
   "OSP9JY": [
     {
       "type": 0,
-      "value": "輸入觀眾。"
+      "value": "輸入對象。"
     }
   ],
   "OVvieE": [
@@ -3548,7 +3536,7 @@
   "OdoUEu": [
     {
       "type": 0,
-      "value": "Enable Static Result"
+      "value": "啟用靜態結果"
     }
   ],
   "OgJ9eG": [
@@ -3614,7 +3602,7 @@
   "P/S+q5": [
     {
       "type": 0,
-      "value": "必填。要合併成單一字串的其中一個字串。"
+      "value": "必要項目。要合併成單一字串的其中一個字串。"
     }
   ],
   "P/dnfK": [
@@ -3674,11 +3662,15 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "執行"
+      "value": "於 "
     },
     {
       "type": 1,
       "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " 執行"
     }
   ],
   "PORNMZ": [
@@ -3744,7 +3736,7 @@
   "Pk4cb+": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "追蹤的屬性"
     }
   ],
   "Pq+4a+": [
@@ -3820,7 +3812,7 @@
     },
     {
       "type": 0,
-      "value": " Key"
+      "value": " 索引鍵"
     }
   ],
   "QGbUXX": [
@@ -3850,7 +3842,7 @@
   "QdJUaS": [
     {
       "type": 0,
-      "value": "Pencil icon"
+      "value": "鉛筆圖示"
     }
   ],
   "QeE0k/": [
@@ -3977,13 +3969,13 @@
   "RnBddN": [
     {
       "type": 0,
-      "value": "issue"
+      "value": "問題"
     }
   ],
   "Ro4+PC": [
     {
       "type": 0,
-      "value": "只有在編輯步驟的輸入時，才能新增附注。"
+      "value": "只有在編輯步驟的輸入時才可新增備註。"
     }
   ],
   "Rp5pHU": [
@@ -3995,7 +3987,7 @@
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "無法辨識的運算式'"
+      "value": "無法辨認的運算式 '"
     },
     {
       "type": 1,
@@ -4021,7 +4013,7 @@
   "S138/4": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: ⌘B"
+      "value": "將文字格式化為粗體。快速鍵: ⌘B"
     }
   ],
   "SCCE6s": [
@@ -4051,7 +4043,7 @@
   "SKy5tj": [
     {
       "type": 0,
-      "value": "輸入節點類型不符合架構節點的類型。"
+      "value": "輸入節點類型不符合結構描述節點的類型。"
     }
   ],
   "SLJkRn": [
@@ -4069,7 +4061,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "設定該節點的參數"
     }
   ],
   "SXb47U": [
@@ -4109,7 +4101,7 @@
   "Sr8PcK": [
     {
       "type": 0,
-      "value": "No operations found"
+      "value": "找不到作業"
     }
   ],
   "SvQyvs": [
@@ -4307,7 +4299,7 @@
   "U086AA": [
     {
       "type": 0,
-      "value": "目標架構元素"
+      "value": "目標結構描述元素"
     }
   ],
   "U0I10w": [
@@ -4331,7 +4323,7 @@
   "U4zovj": [
     {
       "type": 0,
-      "value": "執行 "
+      "value": "於 "
     },
     {
       "type": 1,
@@ -4344,6 +4336,10 @@
     {
       "type": 1,
       "value": "onDays"
+    },
+    {
+      "type": 0,
+      "value": " 執行"
     }
   ],
   "U7yRwM": [
@@ -4419,7 +4415,7 @@
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "架構節點'"
+      "value": "結構描述節點 '"
     },
     {
       "type": 1,
@@ -4427,13 +4423,13 @@
     },
     {
       "type": 0,
-      "value": "'具有非終止的連線鏈結"
+      "value": "' 有未終止的連線鏈結"
     }
   ],
   "Umpr3z": [
     {
       "type": 0,
-      "value": "每"
+      "value": "每 "
     },
     {
       "type": 1,
@@ -4441,13 +4437,13 @@
     },
     {
       "type": 0,
-      "value": "周"
+      "value": " 週"
     }
   ],
   "Unc2tG": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal."
+      "value": "若兩個值相等，則傳回 True。"
     }
   ],
   "UnrrzF": [
@@ -4501,7 +4497,7 @@
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "選取App Service資源"
+      "value": "選取 App Service 資源"
     }
   ],
   "VI5Sa8": [
@@ -4513,11 +4509,15 @@
   "VI7EqG": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "找不到 "
     },
     {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": " 的結果"
     }
   ],
   "VKAk5g": [
@@ -4631,7 +4631,7 @@
   "WK6hZX": [
     {
       "type": 0,
-      "value": "以"
+      "value": "選取 "
     },
     {
       "type": 1,
@@ -4639,7 +4639,7 @@
     },
     {
       "type": 0,
-      "value": " Select all文字"
+      "value": " 中的所有文字"
     }
   ],
   "WR1K3z": [
@@ -4657,7 +4657,7 @@
   "WTZvGW": [
     {
       "type": 0,
-      "value": "Workflow has invalid connections on the following operations: "
+      "value": "工作流程在下列作業上有無效的連線: "
     },
     {
       "type": 1,
@@ -4673,7 +4673,7 @@
   "WaTsxR": [
     {
       "type": 0,
-      "value": "Request History"
+      "value": "要求歷程記錄"
     }
   ],
   "WcnIF8": [
@@ -4791,7 +4791,7 @@
   "XRK+gt": [
     {
       "type": 0,
-      "value": "函數'"
+      "value": "函數 '"
     },
     {
       "type": 1,
@@ -4799,7 +4799,7 @@
     },
     {
       "type": 0,
-      "value": "'有一個未終止的連線鏈結"
+      "value": "' 有未終止的連線鏈結"
     }
   ],
   "XTeLIw": [
@@ -4841,7 +4841,7 @@
   "Xew1Df": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is '"
+      "value": "其他診斷資訊: x-ms-client-request-id 是 '"
     },
     {
       "type": 1,
@@ -4849,13 +4849,13 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'。"
     }
   ],
   "Xj0Gr/": [
     {
       "type": 0,
-      "value": "無法刪除目標架構元素。"
+      "value": "無法刪除目標結構描述元素。"
     }
   ],
   "Xj4xwI": [
@@ -4933,7 +4933,7 @@
   "YABOLz": [
     {
       "type": 0,
-      "value": "本文專案"
+      "value": "本文項目"
     }
   ],
   "YCFhzp": [
@@ -4967,7 +4967,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: Ctrl+U"
+      "value": "將文字格式化為加底線。快速鍵: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -4985,7 +4985,7 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: Ctrl+B"
+      "value": "將文字格式化為粗體。快速鍵: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -5021,13 +5021,13 @@
   "Ybzoim": [
     {
       "type": 0,
-      "value": "Required. The name of the action that has the values you want."
+      "value": "必要項目。具備您需要之值的動作名稱。"
     }
   ],
   "YdQw4/": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: ⌘I"
+      "value": "將文字格式化為斜體。快速鍵: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5045,7 +5045,7 @@
   "Yh5OVd": [
     {
       "type": 0,
-      "value": "自訂值不符合此輸入允許的其中一個類型"
+      "value": "自訂值不符合此輸入允許的其中一種類型"
     }
   ],
   "YiOybp": [
@@ -5057,7 +5057,7 @@
   "YlesUQ": [
     {
       "type": 0,
-      "value": "您的地圖處於最佳狀態"
+      "value": "您的對應狀況良好"
     }
   ],
   "YoQara": [
@@ -5075,13 +5075,13 @@
   "Yw7Nfl": [
     {
       "type": 0,
-      "value": "Disable Static Result"
+      "value": "停用靜態結果"
     }
   ],
   "Z9PWl/": [
     {
       "type": 0,
-      "value": "重試原則計數無效(必須從 "
+      "value": "重試原則計數無效 (必須介於 "
     },
     {
       "type": 1,
@@ -5127,7 +5127,7 @@
   "ZRdkFN": [
     {
       "type": 0,
-      "value": "折迭靜態結果"
+      "value": "摺疊靜態結果"
     }
   ],
   "ZUaz3Y": [
@@ -5193,7 +5193,7 @@
   "aJxefp": [
     {
       "type": 0,
-      "value": "新增參數"
+      "value": "新增新的參數"
     }
   ],
   "aK4iLW": [
@@ -5293,7 +5293,7 @@
   "bSZ0lL": [
     {
       "type": 0,
-      "value": "回呼 URL"
+      "value": "回撥 URL"
     }
   ],
   "bTrk+S": [
@@ -5329,7 +5329,7 @@
   "bldzuj": [
     {
       "type": 0,
-      "value": "Retry History"
+      "value": "重試歷程記錄"
     }
   ],
   "bsgS8m": [
@@ -5415,7 +5415,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "如果要求本文使用 GZip 或 Deflate 進行壓縮，請將它解壓縮。此設定僅適用于 HTTP 觸發程式。"
+      "value": "如果要求本文是使用 GZip 或 Deflate 進行壓縮，則請將它解壓縮。此設定僅適用於 HTTP 觸發程序。"
     }
   ],
   "c8UPLp": [
@@ -5469,7 +5469,7 @@
   "ceVB5l": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output from an action."
+      "value": "傳回來自動作 multipart 輸出中一部分的本文。"
     }
   ],
   "cgq/+y": [
@@ -5481,7 +5481,7 @@
   "ciLkfU": [
     {
       "type": 0,
-      "value": "粗體(⌘B)"
+      "value": "粗體 (⌘B)"
     }
   ],
   "cj+kyo": [
@@ -5493,7 +5493,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "輸入節點類型不符合此輸入的其中一個允許類型"
+      "value": "輸入節點類型不符合此輸入允許的其中一種類型"
     }
   ],
   "cmTCsW": [
@@ -5541,13 +5541,13 @@
   "d020eg": [
     {
       "type": 0,
-      "value": "傳回傳入陣列或字串的第一個元素。"
+      "value": "從傳入的陣列或字串傳回第一個元素。"
     }
   ],
   "dBWIjR": [
     {
       "type": 0,
-      "value": "架構遺失必要的輸入"
+      "value": "結構描述遺漏必要輸入"
     }
   ],
   "dBxX0M": [
@@ -5747,13 +5747,13 @@
   "ehIBkh": [
     {
       "type": 0,
-      "value": "Enter an integer"
+      "value": "輸入整數"
     }
   ],
   "elD6+N": [
     {
       "type": 0,
-      "value": "斜體(⌘我)"
+      "value": "斜體 (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5795,7 +5795,7 @@
   "f81ClO": [
     {
       "type": 0,
-      "value": "空的動態內容圖示"
+      "value": "空白動態內容圖示"
     }
   ],
   "fBQBw/": [
@@ -5813,7 +5813,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "選取API 管理資源"
+      "value": "選取 APIM 資源"
     }
   ],
   "fGcSFd": [
@@ -5947,13 +5947,13 @@
   "gIx5ys": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: Ctrl+I"
+      "value": "將文字格式化為斜體。快速鍵: Ctrl+I"
     }
   ],
   "gKEaXI": [
     {
       "type": 0,
-      "value": "將{label}的值複製到剪貼簿"
+      "value": "將 {label} 的值複製到剪貼簿"
     }
   ],
   "gKq3Jv": [
@@ -6007,7 +6007,7 @@
   "gpUphl": [
     {
       "type": 0,
-      "value": "輸入觀眾。"
+      "value": "輸入對象。"
     }
   ],
   "gu9o9z": [
@@ -6043,7 +6043,7 @@
   "h6vVbX": [
     {
       "type": 0,
-      "value": "請先新增來源架構，然後選取要建立對應的專案"
+      "value": "請先新增來源結構描述，然後選取要建立對應的項目"
     }
   ],
   "hN7iBP": [
@@ -6142,7 +6142,7 @@
   "i0XjL5": [
     {
       "type": 0,
-      "value": "Search for operation"
+      "value": "搜尋作業"
     }
   ],
   "i1EQYm": [
@@ -6172,13 +6172,13 @@
   "i4Om5O": [
     {
       "type": 0,
-      "value": "這包含不正確值"
+      "value": "這包含無效值"
     }
   ],
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "關於索引標籤"
     }
   ],
   "iCSHJG": [
@@ -6282,7 +6282,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "程式碼檢視索引標籤"
     }
   ],
   "iq+tiv": [
@@ -6304,7 +6304,7 @@
   "isnFBi": [
     {
       "type": 0,
-      "value": "未連接到目標元素的元素和對應已移除。"
+      "value": "未連線到目標元素的元素和對應已移除。"
     }
   ],
   "ixhS47": [
@@ -6382,7 +6382,7 @@
   "jQjteB": [
     {
       "type": 0,
-      "value": "新增來源架構"
+      "value": "新增來源結構描述"
     }
   ],
   "jUDhbs": [
@@ -6544,7 +6544,7 @@
   "kxMDyM": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "l/9YHQ": [
@@ -6574,7 +6574,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "監視索引標籤"
     }
   ],
   "l72gf4": [
@@ -6598,7 +6598,7 @@
   "lQNKUB": [
     {
       "type": 0,
-      "value": "會自動新增父元素的線條。"
+      "value": "會自動新增父元素的行。"
     }
   ],
   "lR7V87": [
@@ -6616,7 +6616,7 @@
   "lUvgiW": [
     {
       "type": 0,
-      "value": "{0}的類型{1}。"
+      "value": "{0} 的類型為 {1}。"
     }
   ],
   "lZT0JI": [
@@ -6634,15 +6634,7 @@
   "lexzgJ": [
     {
       "type": 0,
-      "value": "Remove all references to element ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the element."
+      "value": "在移除元素之前，請先移除元素 {nodeName} 的所有參考。"
     }
   ],
   "lgs5sf": [
@@ -6666,7 +6658,7 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "插入運算式(您也可以在編輯器中輸入/新增)"
+      "value": "插入運算式 (您也可以在編輯器中輸入 / 以新增)"
     }
   ],
   "lsKVU6": [
@@ -6690,7 +6682,7 @@
   "m/jJ/5": [
     {
       "type": 0,
-      "value": "地圖檢查器"
+      "value": "對應檢查程式"
     }
   ],
   "m7Y6Qf": [
@@ -6766,7 +6758,7 @@
   "mPuXlv": [
     {
       "type": 0,
-      "value": "Invalid type on split on value '"
+      "value": "在值 '"
     },
     {
       "type": 1,
@@ -6774,7 +6766,7 @@
     },
     {
       "type": 0,
-      "value": "', split on not in array."
+      "value": "' 上的分割類型無效，分割不在陣列中。"
     }
   ],
   "mQotIu": [
@@ -6832,7 +6824,7 @@
     },
     {
       "type": 0,
-      "value": " Value"
+      "value": " 值"
     }
   ],
   "mwEHSX": [
@@ -6904,7 +6896,7 @@
   "nNWAAh": [
     {
       "type": 0,
-      "value": "未新增任何架構。"
+      "value": "未新增任何結構描述。"
     }
   ],
   "nOWGAV": [
@@ -6970,7 +6962,7 @@
   "no/SMg": [
     {
       "type": 0,
-      "value": "(UTC+10:00) 布里斯本"
+      "value": "(UTC+10:00) 布里斯班"
     }
   ],
   "nx25nq": [
@@ -6994,7 +6986,7 @@
   "o/FgET": [
     {
       "type": 0,
-      "value": "函數已從目前位置移除，且目前存在於其他位置。"
+      "value": "函數已從目前位置移除，且目前存在於其他地方。"
     }
   ],
   "o14STH": [
@@ -7020,13 +7012,13 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "輸入有效的 URI。"
+      "value": "請輸入有效的 URI。"
     }
   ],
   "o3SfI4": [
     {
       "type": 0,
-      "value": "縮放至適當比例"
+      "value": "縮放至最適大小"
     }
   ],
   "o7bd1o": [
@@ -7062,7 +7054,7 @@
   "oMphsh": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "設定"
     }
   ],
   "oO12r6": [
@@ -7116,13 +7108,13 @@
   "ox2Ou7": [
     {
       "type": 0,
-      "value": "Enter a valid JSON"
+      "value": "請輸入有效的 JSON"
     }
   ],
   "oxXV4+": [
     {
       "type": 0,
-      "value": "傳回傳入引數值中的第一個非 Null 物件。"
+      "value": "傳回傳入引數值中第一個非 Null 物件。"
     }
   ],
   "p/0r2N": [
@@ -7242,7 +7234,7 @@
   "q+ZZjX": [
     {
       "type": 0,
-      "value": "Retry History"
+      "value": "重試歷程記錄"
     }
   ],
   "q/+Uex": [
@@ -7272,13 +7264,13 @@
   "q4ChjK": [
     {
       "type": 0,
-      "value": "選取具有 「手動」觸發程式的工作流程"
+      "value": "選取具有 [手動] 觸發程序的工作流程"
     }
   ],
   "q5TkqE": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is false."
+      "value": "必要項目。若運算式為 false 時要傳回的值。"
     }
   ],
   "q87X20": [
@@ -7296,7 +7288,7 @@
   "qAlTD5": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: '"
+      "value": "不支援的資訊清單連線參考格式: '"
     },
     {
       "type": 1,
@@ -7310,7 +7302,7 @@
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: ⌘U"
+      "value": "將文字格式化為加底線。快速鍵: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7407,7 +7399,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "函數'"
+      "value": "函數 '"
     },
     {
       "type": 1,
@@ -7415,7 +7407,7 @@
     },
     {
       "type": 0,
-      "value": "'具有類型不相符的輸入"
+      "value": "' '具有類型不相符的輸入"
     }
   ],
   "qrxi0L": [
@@ -7457,7 +7449,7 @@
   "rAwCdh": [
     {
       "type": 0,
-      "value": "Connect via on-premises data gateway"
+      "value": "透過內部部署的資料閘道連線"
     }
   ],
   "rAyuzv": [
@@ -7487,13 +7479,13 @@
   "rNi5Y3": [
     {
       "type": 0,
-      "value": "如果您正在設定內部部署連線，請選取此核取方塊。"
+      "value": "如果您在設定內部部署連線，請選取此核取方塊。"
     }
   ],
   "rSIBjh": [
     {
       "type": 0,
-      "value": "Enter value for parameter."
+      "value": "輸入參數的值。"
     }
   ],
   "raBiud": [
@@ -7517,7 +7509,7 @@
   "rsdJcV": [
     {
       "type": 0,
-      "value": "選取來源架構元素以建立對應"
+      "value": "選取來源結構描述以組建對應"
     }
   ],
   "rv0Pn+": [
@@ -7565,7 +7557,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "測試索引標籤"
     }
   ],
   "sFbnCs": [
@@ -7583,7 +7575,7 @@
   "sQ2vRs": [
     {
       "type": 0,
-      "value": "Add Case"
+      "value": "新增案例"
     }
   ],
   "sW47JR": [
@@ -7595,7 +7587,7 @@
   "sYQDN+": [
     {
       "type": 0,
-      "value": "字型家族的格式設定選項"
+      "value": "字型家族的格式化選項"
     }
   ],
   "sZ0G/Z": [
@@ -7679,7 +7671,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic inputs. Error details: '"
+      "value": "無法擷取動態輸入。錯誤詳細資料: '"
     },
     {
       "type": 1,
@@ -7759,7 +7751,7 @@
   "tMdcE1": [
     {
       "type": 0,
-      "value": "不正確連線，請更新您的連線以載入完整詳細資料"
+      "value": "無效連線，請更新您的連線以載入完整詳細資料"
     }
   ],
   "tNoZx2": [
@@ -7795,11 +7787,15 @@
   "tWV2mC": [
     {
       "type": 0,
-      "value": "每小時"
+      "value": "每小時 "
     },
     {
       "type": 1,
       "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " 次"
     }
   ],
   "tZIlCA": [
@@ -7823,13 +7819,13 @@
   "tarDYT": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second."
+      "value": "若第一個引數小於第二個引數，則傳回 True。"
     }
   ],
   "td5//c": [
     {
       "type": 0,
-      "value": "Collapse tree node"
+      "value": "摺疊樹狀結構節點"
     }
   ],
   "ti5TEd": [
@@ -7883,7 +7879,7 @@
   "uM1i27": [
     {
       "type": 0,
-      "value": "Specify a retry count from 1 to 90"
+      "value": "請指定重試次數，從 1 到 90"
     }
   ],
   "uN4zFU": [
@@ -7901,7 +7897,7 @@
   "uOWkHS": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: "
+      "value": "無法擷取動態輸出。因此，此作業的輸出可能無法在後續動作中顯示。錯誤詳細資料: "
     },
     {
       "type": 1,
@@ -8001,7 +7997,7 @@
   "uxKRO/": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "參數"
     }
   ],
   "uzsleE": [
@@ -8019,7 +8015,7 @@
   "v0ENVA": [
     {
       "type": 0,
-      "value": "Loading"
+      "value": "正在載入"
     }
   ],
   "v39HKj": [
@@ -8085,7 +8081,7 @@
   "vdKLiR": [
     {
       "type": 0,
-      "value": "Request Settings"
+      "value": "要求設定"
     }
   ],
   "vdtKjT": [
@@ -8123,7 +8119,7 @@
   "vvSHR8": [
     {
       "type": 0,
-      "value": "流覽至元素並檢視子系"
+      "value": "瀏覽至元素並檢視子系"
     }
   ],
   "vwH/XV": [
@@ -8147,7 +8143,7 @@
   "w0pI5M": [
     {
       "type": 0,
-      "value": "No results found for the specified filters"
+      "value": "指定的篩選找不到任何結果。"
     }
   ],
   "w16qh+": [
@@ -8399,7 +8395,7 @@
   "xi2tn6": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "參數"
     }
   ],
   "xt5TeT": [
@@ -8411,7 +8407,7 @@
   "xwD1VZ": [
     {
       "type": 0,
-      "value": "Loading inputs"
+      "value": "正在載入輸入"
     }
   ],
   "xwEX2/": [
@@ -8453,7 +8449,7 @@
   "yF2R//": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string."
+      "value": "從字串傳回字元子集。"
     }
   ],
   "yVFIAQ": [
@@ -8477,7 +8473,7 @@
   "yjierd": [
     {
       "type": 0,
-      "value": "Invalid expression type '"
+      "value": "無效的運算式類型 '"
     },
     {
       "type": 1,
@@ -8485,7 +8481,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'。"
     }
   ],
   "yoCi15": [
@@ -8527,7 +8523,7 @@
   "z/UY4k": [
     {
       "type": 0,
-      "value": "流覽至"
+      "value": "瀏覽至 "
     },
     {
       "type": 1,
@@ -8535,7 +8531,7 @@
     },
     {
       "type": 0,
-      "value": "資料夾"
+      "value": " 資料夾"
     }
   ],
   "z3VuE+": [

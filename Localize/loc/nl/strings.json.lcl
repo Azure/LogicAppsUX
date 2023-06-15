@@ -13,7 +13,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Testing]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Testen]]></Val>
+            <Val><![CDATA[Testen...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -31,7 +31,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Alt text for down chevron]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Alternatieve tekst voor dubbele punthaak omlaag]]></Val>
+            <Val><![CDATA[Vervangende tekst voor dubbele punthaak omlaag]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -39,6 +39,9 @@
       <Item ItemId=";+ZSBrq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Context menu for {title} card]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Contextmenu voor de kaart {title}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -63,6 +66,9 @@
       <Item ItemId=";/EU/oJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vereist. Een tekenreeks die de tijdzonenaam van de brontijdzone bevat. Zie standaardtijdzones op https://go.microsoft.com/fwlink/?linkid=2238292.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -205,7 +211,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Missing required inputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ontbrekende vereiste invoer]]></Val>
+            <Val><![CDATA[Vereiste invoer ontbreekt]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -249,6 +255,9 @@
       <Item ItemId=";04AwK7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error code: ''{errorCode}'', Message: ''{message}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Foutcode: {errorCode}, bericht: {message}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -282,6 +291,9 @@
       <Item ItemId=";08e2rO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[De beheerde identiteit die bij deze bewerking wordt gebruikt, bestaat niet meer. Als u wilt doorgaan, stelt u een identiteit in of wijzigt u de verbinding.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -450,6 +462,9 @@
       <Item ItemId=";0qcKzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{parameterName} is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{parameterName} is niet meer aanwezig in het bewerkingsschema. Deze moet worden verwijderd voordat de werkstroom opnieuw wordt opgeslagen.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -639,6 +654,9 @@
       <Item ItemId=";1REk6u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid email.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voer een geldig e-mailadres in.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -691,7 +709,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Actions perform operations on data, communicate between systems, or run other tasks.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Met acties worden bewerkingen uitgevoerd op gegevens, wordt gecommuniceerd tussen systemen of worden andere taken uitgevoerd.]]></Val>
+            <Val><![CDATA[Acties voeren bewerkingen uit op gegevens, communiceren tussen systemen of voeren andere taken uit.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -790,7 +808,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add children (recursive)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Onderliggende items toevoegen (recursief)]]></Val>
+            <Val><![CDATA[Onderliggende elementen toevoegen (recursief)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -912,6 +930,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";2gOfQI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Existing schemas from]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";2gzGrJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the action with a form-data or form-encoded response.]]></Val>
@@ -1015,7 +1039,7 @@
         <Str Cat="Text">
           <Val><![CDATA[alt text for button icon]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[alt-tekst voor knoppictogram]]></Val>
+            <Val><![CDATA[vervangende tekst voor knoppictogram]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1069,7 +1093,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Remove all mappings within source element `{nodeName}` first.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Verwijder eerst alle toewijzingen binnen het bronelement{nodeName}.]]></Val>
+            <Val><![CDATA[Verwijder eerst alle toewijzingen in het bronelement {nodeName}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1267,7 +1291,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Uitvoeringen {onDays}]]></Val>
+            <Val><![CDATA[Wordt {onDays} uitgevoerd]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1425,9 +1449,21 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";5WhTmH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Laden...]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";5akc1Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported 'in' value : ''{value}'' in Parameter]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Niet-ondersteunde 'in'-waarde {value} in de parameter]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1507,7 +1543,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Insert data from previous step (You can also add by typing Alt + / in the editor)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Gegevens uit de vorige stap invoegen (u kunt deze ook toevoegen door Alt + / in de editor te typen)]]></Val>
+            <Val><![CDATA[Gegevens uit de vorige stap invoegen (u kunt ook toevoegen door Alt + '/' te typen in de editor)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1515,6 +1551,9 @@
       <Item ItemId=";62Ypnr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error loading operation data]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fout bij het laden van bewerkingsgegevens]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1548,6 +1587,9 @@
       <Item ItemId=";6fDYzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed to load the schema. Please try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Het schema is niet geladen. Probeer het opnieuw.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1555,7 +1597,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has too many inputs assigned to it]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Aan de functie ''{functionName}'' zijn te veel invoerwaarden toegewezen]]></Val>
+            <Val><![CDATA[Aan de functie {functionName} zijn te veel invoerwaarden toegewezen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1788,6 +1830,9 @@
       <Item ItemId=";83G5rr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify the interval.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geef het interval op.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1975,7 +2020,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The workflow has parameter validation errors in the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[De werkstroom bevat parametervalidatiefouten in de volgende bewerkingen: {invalidNodes}]]></Val>
+            <Val><![CDATA[De werkstroom heeft validatiefouten voor parameters in de volgende bewerkingen: {invalidNodes}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2003,6 +2048,15 @@
           <Val><![CDATA[Adds an integer number of days to a string timestamp passed in]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Er wordt een geheel getal in dagen aan een ingevoerd tijdstempel als tekenreeks toegevoegd]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8zkvmc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Testing]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Testen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2118,6 +2172,9 @@
       <Item ItemId=";9W0lck" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid split on value ''{splitOn}'', cannot find in outputs.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ongeldige splitsing voor de waarde {splitOn}, kan niet worden gevonden in de uitvoer.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2125,7 +2182,7 @@
         <Str Cat="Text">
           <Val><![CDATA[ChildErrors]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Onderliggende fout]]></Val>
+            <Val><![CDATA[Fouten van onderliggende elementen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2178,6 +2235,9 @@
       <Item ItemId=";A5Ferh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Source element removed from view.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Het bronelement is verwijderd uit de weergave.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2185,7 +2245,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Error occurred while executing the following API parameters: ''{parameters}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Er is een fout opgetreden tijdens het uitvoeren van de volgende API-parameters: ''{parameters}'']]></Val>
+            <Val><![CDATA[Er is een fout opgetreden tijdens het uitvoeren van de volgende API-parameters: {parameters}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2203,7 +2263,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Empty value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[De waarde is leeg]]></Val>
+            <Val><![CDATA[Lege waarde]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2239,7 +2299,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture).]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Retourneert de index voor het n-e exemplaar van een waarde in een tekenreeks (niet hoofdlettergevoelig, niet-variabele cultuur).]]></Val>
+            <Val><![CDATA[Retourneert de index voor het n'de optreden van een waarde in een tekenreeks (niet-hoofdlettergevoelig, niet-variabele cultuur)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2256,6 +2316,9 @@
       <Item ItemId=";AheXMN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select frequency.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Selecteer de frequentie.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2290,7 +2353,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Maximum Interval]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Maximaal interval]]></Val>
+            <Val><![CDATA[Maximuminterval]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2392,7 +2455,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Line deleted.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Regel verwijderd.]]></Val>
+            <Val><![CDATA[De regel is verwijderd.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2482,7 +2545,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Expant list of sibling elements]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Expantlijst met elementen op hetzelfde niveau]]></Val>
+            <Val><![CDATA[Lijst met elementen op hetzelfde niveau uitvouwen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2499,6 +2562,9 @@
       <Item ItemId=";BeqBP7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Automatic Decompression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Automatische decompressie]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2775,6 +2841,9 @@
       <Item ItemId=";DQV7aK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Alt/Option + click to download ''{displayName}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Alt/Option + klikken om {displayName} te downloaden]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2827,7 +2896,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Show mini-map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Minikaart weergeven]]></Val>
+            <Val><![CDATA[Minimap weergeven]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2908,7 +2977,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema node ''{nodeName}'' has an input with a mismatched type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Schemaknooppunt ''{nodeName}'' heeft een invoer met een niet-overeenkomend type]]></Val>
+            <Val><![CDATA[Het schemaknooppunt {nodeName} heeft een invoer met een niet-overeenkomend type]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2917,7 +2986,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+11:00) Sakhalin]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+11:00) Sakhalin]]></Val>
+            <Val><![CDATA[(UTC+11:00) Sachalin]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2953,7 +3022,7 @@
         <Str Cat="Text">
           <Val><![CDATA[At these minutes]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Deze minuten]]></Val>
+            <Val><![CDATA[Op deze minuten]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3021,6 +3090,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Ek0mSE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[View the request history for this operation]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EurkzL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select yes or no]]></Val>
@@ -3034,7 +3109,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Use Invoker's Connection]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Verbinding van invoker gebruiken]]></Val>
+            <Val><![CDATA[De verbinding van de aanroeper gebruiken]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3070,7 +3145,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Go To Operation]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ga naar bewerking]]></Val>
+            <Val><![CDATA[Naar bewerking]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3105,6 +3180,9 @@
       <Item ItemId=";FIL1Nt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Condition is too complex or invalid. Unable to switch to basic mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[De voorwaarde is te complex of ongeldig. Kan niet overschakelen naar de basismodus]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3249,6 +3327,18 @@
       <Item ItemId=";FaBEfQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bijgehouden eigenschappen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Fcvgvg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zoeken]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3309,6 +3399,9 @@
       <Item ItemId=";GCjJnP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voer een geldige JSON in.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3343,7 +3436,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a value that is not between 0 and 59]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dit bevat een waarde die niet tussen 0 en 59 ligt]]></Val>
+            <Val><![CDATA[Deze bevat een waarde die niet tussen 0 en 59 ligt]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3433,7 +3526,7 @@
         <Str Cat="Text">
           <Val><![CDATA[At these hours]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Deze uren]]></Val>
+            <Val><![CDATA[Op deze uren]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3496,7 +3589,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Workflow has settings validation errors on the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[De werkstroom bevat validatiefouten voor instellingen voor de volgende bewerkingen: {invalidNodes}]]></Val>
+            <Val><![CDATA[De werkstroom heeft validatiefouten voor instellingen voor de volgende bewerkingen: {invalidNodes}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3532,7 +3625,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Invalid connection, mapping must not form a closed loop.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ongeldige verbinding. Toewijzing mag geen gesloten lus vormen.]]></Val>
+            <Val><![CDATA[Ongeldige verbinding. De toewijzing mag geen gesloten lus vormen.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3567,6 +3660,9 @@
       <Item ItemId=";HOchry" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an existing connection reference or create a new one.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Selecteer een bestaande verbindingsverwijzing of maak een nieuwe.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3583,7 +3679,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Headers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kopteksten]]></Val>
+            <Val><![CDATA[Headers]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3600,6 +3696,9 @@
       <Item ItemId=";Hbqlzk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert Expression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Expressie invoegen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3652,7 +3751,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Remove parameter "{parameterName}" and its value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Parameter "{parameterName}" en de bijbehorende waarde verwijderen]]></Val>
+            <Val><![CDATA[De parameter {parameterName} en de bijbehorende waarde verwijderen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3679,7 +3778,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Global view]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Weergave Globaal]]></Val>
+            <Val><![CDATA[Globale weergave]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3711,9 +3810,21 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";IPbMdl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code View]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Codeweergave]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IPwWgu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Jerusalem]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+02:00) Jeruzalem]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3757,7 +3868,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{label} To add dynamic data, press the Alt + '/' keys.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{label} Druk op de toetsen Alt + /om dynamische gegevens toe te voegen.]]></Val>
+            <Val><![CDATA[{label} Als u dynamische gegevens wilt toevoegen, drukt u op de toetsen Alt + '/'.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3774,6 +3885,9 @@
       <Item ItemId=";IjEKvh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error executing the api ''{parameters}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fout bij het uitvoeren van de {parameters} van de API.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3781,7 +3895,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The '{0}' properties are invalid for the '{1}' authentication type.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[De '{0}' eigenschappen zijn ongeldig voor het '{1}' authenticatietype.]]></Val>
+            <Val><![CDATA[De eigenschappen {0} zijn ongeldig voor het verificatietype {1}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3862,7 +3976,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The current map contains {numOfIssues} {issue}.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[De huidige kaart bevat {numOfIssues} {issue}.]]></Val>
+            <Val><![CDATA[De huidige toewijzing bevat {numOfIssues} {issue}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3961,7 +4075,7 @@
         <Str Cat="Text">
           <Val><![CDATA[When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Wanneer deze actie is ingeschakeld, wordt deze uitgevoerd met de gebruiker vanuit de instelling Uitvoeren als in de Dataverse-trigger.]]></Val>
+            <Val><![CDATA[Wanneer dit is ingeschakeld, wordt deze actie uitgevoerd met de gebruiker vanuit de instelling 'Uitvoeren als' in de Dataverse-trigger.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4023,6 +4137,9 @@
       <Item ItemId=";KP0Rr2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Double number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voer een geldig dubbel getal in.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4114,7 +4231,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select a Function App resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Een functie-app-resource selecteren]]></Val>
+            <Val><![CDATA[Een resource voor een functie-app selecteren]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4222,7 +4339,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading Api Management service instances...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Api Management-service-exemplaren laden...]]></Val>
+            <Val><![CDATA[API Management-service-exemplaren laden...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4329,6 +4446,9 @@
       <Item ItemId=";LvLksz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading outputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Uitvoer laden...]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4346,6 +4466,15 @@
           <Val><![CDATA[(UTC+02:00) Damascus]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02:00) Damascus]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";M/gUE8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[About]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Over]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4524,6 +4653,9 @@
       <Item ItemId=";Mgcs5s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voer een geldig getal in.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4576,7 +4708,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Headers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kopteksten]]></Val>
+            <Val><![CDATA[Headers]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4693,7 +4825,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Service Principal]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Service Principal]]></Val>
+            <Val><![CDATA[Service-principal]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4719,6 +4851,9 @@
       <Item ItemId=";ODQCKj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Converts the input to a JSON type value.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hiermee wordt de invoer geconverteerd naar de waarde van een JSON-type.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4762,7 +4897,7 @@
         <Str Cat="Text">
           <Val><![CDATA[On these days]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Deze dagen]]></Val>
+            <Val><![CDATA[Op deze dagen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4842,6 +4977,9 @@
       <Item ItemId=";OdoUEu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Statisch resultaat inschakelen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5011,7 +5149,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Uitvoeringen {onTime}]]></Val>
+            <Val><![CDATA[Wordt {onTime} uitgevoerd]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5020,7 +5158,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Inputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Invoeren]]></Val>
+            <Val><![CDATA[Invoer]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5109,6 +5247,9 @@
       <Item ItemId=";Pk4cb+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bijgehouden eigenschappen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5142,6 +5283,9 @@
       <Item ItemId=";PvWTxR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show functions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Functies weergeven]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5194,7 +5338,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add dynamic data or expressions by inserting a /]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dynamische gegevens of expressies toevoegen door een / in te voegen]]></Val>
+            <Val><![CDATA[Voeg dynamische gegevens of expressies toe door een '/' in te voegen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5212,7 +5356,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{name} Key]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{name} sleutel]]></Val>
+            <Val><![CDATA[{name} Sleutel]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5256,6 +5400,9 @@
       <Item ItemId=";QdJUaS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Pencil icon]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Potloodpictogram]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5463,6 +5610,9 @@
       <Item ItemId=";RnBddN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[issue]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[probleem]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5488,7 +5638,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Unrecognized expression ''{expression}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Niet-herkende expressie ''{expression}'']]></Val>
+            <Val><![CDATA[Niet-herkende expressie {expression}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5496,6 +5646,9 @@
       <Item ItemId=";RvpHdu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+11:00) Solomon Is., New Caledonia]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+11:00) Salomonseilanden, Nieuw-Caledonië]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5512,7 +5665,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as bold. Shortcut: ⌘B]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tekst opmaken als vet. Snelkoppeling: ⌘B]]></Val>
+            <Val><![CDATA[Tekst opmaken als vet. Toetsencombinatie: ⌘B]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5580,6 +5733,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SToblZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Configure parameters for this node]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SXb47U" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{minutes}m]]></Val>
@@ -5628,6 +5787,9 @@
       <Item ItemId=";Sr8PcK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No operations found]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geen bewerkingen gevonden]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5941,7 +6103,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime} {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Uitvoeringen {onTime} {onDays}]]></Val>
+            <Val><![CDATA[Wordt {onTime} {onDays} uitgevoerd]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6049,7 +6211,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema node ''{nodeName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Het schemaknooppunt ''{nodeName}'' heeft een niet-beëindigende verbindingsketen]]></Val>
+            <Val><![CDATA[Het schemaknooppunt {nodeName} heeft een niet-beëindigende verbindingsketen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6066,6 +6228,9 @@
       <Item ItemId=";Unc2tG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if two values are equal.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Retourneert 'waar' als twee waarden gelijk zijn.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6145,7 +6310,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an App Service resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Een App Service resource selecteren]]></Val>
+            <Val><![CDATA[Een App Service-resource selecteren]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6162,6 +6327,9 @@
       <Item ItemId=";VI7EqG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for {searchTerm}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geen resultaten gevonden voor {searchTerm}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6322,7 +6490,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select all text in {label}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Alle tekst in {label} selecteren]]></Val>
+            <Val><![CDATA[Alle tekst selecteren in {label}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6349,7 +6517,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Workflow has invalid connections on the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Werkstroom heeft ongeldige verbindingen voor de volgende bewerkingen: {invalidNodes}]]></Val>
+            <Val><![CDATA[De werkstroom heeft ongeldige verbindingen voor de volgende bewerkingen: {invalidNodes}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6359,6 +6527,15 @@
           <Val><![CDATA[Shorthand for trigger().outputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Verkorte versie van trigger().outputs]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WaTsxR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aanvraaggeschiedenis]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6511,7 +6688,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[De functie ''{functionName}'' heeft een verbindingsketen die niet wordt beëindigd]]></Val>
+            <Val><![CDATA[De functie {functionName} heeft een niet-beëindigende verbindingsketen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6520,7 +6697,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+07:00) Krasnoyarsk]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+07:00) Krasnoyarsk]]></Val>
+            <Val><![CDATA[(UTC+07:00) Krasnojarsk]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6555,6 +6732,9 @@
       <Item ItemId=";Xew1Df" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Meer diagnostische gegevens: x-ms-client-request-id is {clientRequestId}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6688,7 +6868,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add children]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Onderliggende items toevoegen]]></Val>
+            <Val><![CDATA[Onderliggende knooppunten toevoegen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6724,7 +6904,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: Ctrl+U]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tekst opmaken als onderstreping. Snelkoppeling: Ctrl+U]]></Val>
+            <Val><![CDATA[Tekst opmaken als onderstreept. Toetsencombinatie: Ctrl+U]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6751,7 +6931,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as bold. Shortcut: Ctrl+B]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tekst opmaken als vet. Snelkoppeling: Ctrl+B]]></Val>
+            <Val><![CDATA[Tekst opmaken als vet. Toetsencombinatie: Ctrl+B]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6804,6 +6984,9 @@
       <Item ItemId=";Ybzoim" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the action that has the values you want.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vereist. De naam van de actie met de gewenste waarden.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6811,7 +6994,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as italic. Shortcut: ⌘I]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tekst opmaken als cursief. Snelkoppeling: ⌘I]]></Val>
+            <Val><![CDATA[Tekst opmaken als cursief. Toetsencombinatie: ⌘I]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6856,7 +7039,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Your map is in perfect condition]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Uw kaart bevindt zich in perfecte staat]]></Val>
+            <Val><![CDATA[Uw toewijzing bevindt zich in perfecte staat]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6882,6 +7065,9 @@
       <Item ItemId=";Yw7Nfl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Disable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Statisch resultaat uitschakelen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7177,7 +7363,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Callback url]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[URL voor terugbellen]]></Val>
+            <Val><![CDATA[Callback-URL]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7223,6 +7409,15 @@
           <Val><![CDATA[Returns the maximum value in the input array of numbers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[De maximumwaarde in de invoermatrix van getallen wordt geretourneerd]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";bldzuj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geschiedenis voor opnieuw proberen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7384,7 +7579,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy interval is invalid, must match ISO 8601 duration format]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Het interval voor het beleid voor opnieuw proberen is ongeldig, moet overeenkomen met de iso 8601-duurnotatie]]></Val>
+            <Val><![CDATA[Het interval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7419,6 +7614,9 @@
       <Item ItemId=";ceVB5l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the body for a part in a multipart output from an action.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Retourneert de hoofdtekst voor een onderdeel in een meerdelige uitvoer van een actie.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7516,7 +7714,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-04:00) Cuiaba]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-04:00) Cuiaba]]></Val>
+            <Val><![CDATA[(UTC-04:00) Cuiabá]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7543,7 +7741,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema is missing required inputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vereiste invoer ontbreekt in schema]]></Val>
+            <Val><![CDATA[Vereiste invoer ontbreekt in het schema]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7750,7 +7948,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to generate XSLT.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kan XSLT niet genereren.]]></Val>
+            <Val><![CDATA[XSLT is niet gegenereerd.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7821,6 +8019,9 @@
       <Item ItemId=";ehIBkh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter an integer]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Een geheel getal invoeren]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7918,7 +8119,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an API Management resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Een API Management resource selecteren]]></Val>
+            <Val><![CDATA[Een API Management-resource selecteren]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7998,6 +8199,9 @@
       <Item ItemId=";fp8Ry3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+08:00) Beijing, Chongqing, Hongkong SAR, Urumqi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8104,7 +8308,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as italic. Shortcut: Ctrl+I]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tekst opmaken als cursief. Snelkoppeling: Ctrl+I]]></Val>
+            <Val><![CDATA[Tekst opmaken als cursief. Toetsencombinatie: Ctrl+I]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8113,7 +8317,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copy the value of '{label}' to the clipboard]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[De waarde van '{label}' naar het klembord kopiëren]]></Val>
+            <Val><![CDATA[De waarde van {label} kopiëren naar het klembord]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8248,7 +8452,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add a source schema first, then select elements to build your map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Voeg eerst een bronschema toe en selecteer vervolgens elementen om uw kaart samen te stellen]]></Val>
+            <Val><![CDATA[Voeg eerst een bronschema toe en selecteer vervolgens elementen om uw toewijzing samen te stellen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8313,6 +8517,9 @@
       <Item ItemId=";hZqQdt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8391,6 +8598,9 @@
       <Item ItemId=";i0XjL5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Search for operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bewerking zoeken]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8434,8 +8644,14 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains an invalid value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dit bevat een ongeldige waarde]]></Val>
+            <Val><![CDATA[Deze bevat een ongeldige waarde]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";iB8YKD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[About Tab]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8574,6 +8790,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ifnOUI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code View Tab]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";iq+tiv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[11]]></Val>
@@ -8596,7 +8818,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Elements and mappings not connected to a target element are removed.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Elementen en toewijzingen die niet zijn verbonden met een doelelement, worden verwijderd.]]></Val>
+            <Val><![CDATA[Elementen en toewijzingen worden verwijderd wanneer die niet zijn verbonden met een doelelement.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8641,7 +8863,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Repeating]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Herhalende]]></Val>
+            <Val><![CDATA[Herhalend]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8821,7 +9043,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select Fields]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Selecteer velden]]></Val>
+            <Val><![CDATA[Velden selecteren]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8937,6 +9159,9 @@
       <Item ItemId=";kxMDyM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voer een geldige JSON in.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8955,6 +9180,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{hours} uren {minutes} minuten]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";l536iI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Monitoring Tab]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9016,7 +9247,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The type for '{0}' is '{1}'.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Het type voor '{0}' is '{1}'.]]></Val>
+            <Val><![CDATA[Het type voor {0} is {1}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9051,6 +9282,9 @@
       <Item ItemId=";lexzgJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove all references to element ' {nodeName} ' before you remove the element.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Verwijder alle verwijzingen naar het element {nodeName} voordat u het element verwijdert.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9085,7 +9319,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Insert Expression (You can also add by typing / in the editor)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Expressie invoegen (u kunt ook toevoegen door te typen/in de editor)]]></Val>
+            <Val><![CDATA[Expressie invoegen (u kunt ook toevoegen door '/' te typen in de editor)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9121,7 +9355,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Map checker]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kaartcontrole]]></Val>
+            <Val><![CDATA[Toewijzingscontrole]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9228,6 +9462,9 @@
       <Item ItemId=";mPuXlv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid type on split on value ''{splitOn}'', split on not in array.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ongeldig type voor het splitsen van de waarde {splitOn}, splits op 'niet in de matrix'.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9307,7 +9544,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{name} Value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{name} waarde]]></Val>
+            <Val><![CDATA[{name} Waarde]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9622,7 +9859,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Item]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Onderdeel]]></Val>
+            <Val><![CDATA[Item]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9632,6 +9869,15 @@
           <Val><![CDATA[Content Transfer]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Inhoudsoverdracht]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";oMphsh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Settings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Instellingen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9711,6 +9957,9 @@
       <Item ItemId=";ox2Ou7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid JSON]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Een geldige JSON invoeren]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9718,7 +9967,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the first non-null object in the passed-in argument values.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Retourneert het eerste object dat niet null is in de doorgegeven argumentwaarden.]]></Val>
+            <Val><![CDATA[Retourneert het eerste object in de doorgegeven argumentwaarden dat niet null is.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9745,7 +9994,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter the data from previous step. You can also add data by typing the '/' character.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Voer de gegevens uit de vorige stap in. U kunt ook gegevens toevoegen door het teken / te typen.]]></Val>
+            <Val><![CDATA[Voer de gegevens uit de vorige stap in. U kunt ook gegevens toevoegen door het teken '/' te typen.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9894,6 +10143,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";q+ZZjX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geschiedenis voor opnieuw proberen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";q/+Uex" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an XML node, nodeset or value as JSON from the provided XPath expression]]></Val>
@@ -9934,7 +10192,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select workflow with 'manual' trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Werkstroom met handmatige trigger selecteren]]></Val>
+            <Val><![CDATA[Werkstroom met een handmatige trigger selecteren]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9942,6 +10200,9 @@
       <Item ItemId=";q5TkqE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value to return if the expression is false.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vereist. De waarde die moet worden geretourneerd als de expressie onwaar is.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9966,6 +10227,9 @@
       <Item ItemId=";qAlTD5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: ''{referenceKeyFormat}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Niet-ondersteunde verwijzingsindeling voor de manifestverbinding: {referenceKeyFormat}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9973,7 +10237,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: ⌘U]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tekst opmaken als onderstreping. Snelkoppeling: ⌘U]]></Val>
+            <Val><![CDATA[Tekst opmaken als onderstreept. Toetsencombinatie: ⌘U]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10120,7 +10384,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{nodeName}'' has an input with a mismatched type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Functie ''{nodeName}'' heeft een invoer met een niet-overeenkomend type]]></Val>
+            <Val><![CDATA[De functie {nodeName} heeft een invoer met een niet-overeenkomend type]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10156,7 +10420,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Minimum Interval]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Minimaal interval]]></Val>
+            <Val><![CDATA[Minimuminterval]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10182,6 +10446,9 @@
       <Item ItemId=";rAwCdh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connect via on-premises data gateway]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Verbinding maken via een on-premises gegevensgateway]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10233,6 +10500,9 @@
       <Item ItemId=";rSIBjh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter value for parameter.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voer een waarde in voor de parameter.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10267,7 +10537,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select source schema elements to build your map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Bronschema-elementen selecteren om uw kaart op te bouwen]]></Val>
+            <Val><![CDATA[Bronschema-elementen selecteren om uw toewijzing op te bouwen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10302,6 +10572,9 @@
       <Item ItemId=";s+4LEa" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Open folder]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Map openen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10332,6 +10605,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";sEqLTV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Testing Tab]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sFbnCs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-05:00) Chetumal]]></Val>
@@ -10353,6 +10632,9 @@
       <Item ItemId=";sQ2vRs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add Case]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Case toevoegen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10495,7 +10777,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to retrieve dynamic inputs. Error details: ''{message}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kan de dynamische invoer niet ophalen. Foutdetails: ''{message}'']]></Val>
+            <Val><![CDATA[De dynamische invoer is niet opgehaald. Foutdetails: {message}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10513,7 +10795,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Too many inputs assigned]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Er zijn te veel invoerwaarden toegewezen]]></Val>
+            <Val><![CDATA[Er is te veel invoer toegewezen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10639,7 +10921,7 @@
         <Str Cat="Text">
           <Val><![CDATA[at {times} every hour]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[om {times} elk uur]]></Val>
+            <Val><![CDATA[elk uur om {times}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10674,6 +10956,9 @@
       <Item ItemId=";tarDYT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if the first argument is less than the second.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Retourneert 'waar' als het eerste argument kleiner is dan het tweede argument.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10761,6 +11046,9 @@
       <Item ItemId=";uM1i27" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify a retry count from 1 to 90]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geef het aantal nieuwe pogingen op van 1 tot 90]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10786,7 +11074,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: {message}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kan de dynamische uitvoer niet ophalen. Als gevolg hiervan zijn de uitvoer van deze bewerking mogelijk niet zichtbaar in volgende acties. Foutdetails: {message}]]></Val>
+            <Val><![CDATA[De dynamische uitvoer is niet opgehaald. Als gevolg hiervan is de uitvoer van deze bewerking mogelijk niet zichtbaar in volgende acties. Foutdetails: {message}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10926,6 +11214,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";uxKRO/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parameters]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";uzsleE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Creates an array from the parameters]]></Val>
@@ -10940,6 +11237,15 @@
           <Val><![CDATA[Trigger date]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Triggerdatum]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";v0ENVA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Laden]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11034,6 +11340,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vdKLiR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request Settings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aanvraaginstellingen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";vdtKjT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[To create and use an API connection, you must have a managed identity configured on this logic app.]]></Val>
@@ -11074,7 +11389,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Navigate to element and view children]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Navigeren naar element en onderliggende items weergeven]]></Val>
+            <Val><![CDATA[Navigeren naar het element en onderliggende elementen weergeven]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11092,7 +11407,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a duplicate value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dit bevat een dubbele waarde]]></Val>
+            <Val><![CDATA[Deze bevat een dubbele waarde]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11109,6 +11424,9 @@
       <Item ItemId=";w0pI5M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for the specified filters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geen resultaten gevonden voor de opgegeven filters]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11260,7 +11578,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Hide mini-map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Minikaart verbergen]]></Val>
+            <Val><![CDATA[Minimap verbergen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11305,7 +11623,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+04:30) Kabul]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+04:30) Kaboel]]></Val>
+            <Val><![CDATA[(UTC+04:30) Kabul]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11395,7 +11713,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Istanbul]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+02:00) Istanbul]]></Val>
+            <Val><![CDATA[(UTC+02:00) Istanboel]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11472,6 +11790,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";xi2tn6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parameters]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";xt5TeT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Parameters are shared across workflows in a Logic App.]]></Val>
@@ -11484,6 +11811,9 @@
       <Item ItemId=";xwD1VZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading inputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Invoer laden...]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11544,6 +11874,9 @@
       <Item ItemId=";yF2R//" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a subset of characters from a string.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Retourneert een subset van tekens uit een tekenreeks.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11577,6 +11910,9 @@
       <Item ItemId=";yjierd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid expression type ''{type}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ongeldig expressietype {type}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11638,7 +11974,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Navigate to {folderName} folder]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Navigeren naar {folderName} map]]></Val>
+            <Val><![CDATA[Navigeren naar de map {folderName}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

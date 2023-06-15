@@ -260,10 +260,7 @@ export const serializeOperation = async (
 
   const actionMetadata = rootState.operations.actionMetadata[operationId];
   if (actionMetadata) {
-    serializedOperation = {
-      ...serializedOperation,
-      metadata: actionMetadata,
-    };
+    serializedOperation.metadata = { ...serializedOperation.metadata, ...actionMetadata };
   }
 
   return serializedOperation;
@@ -644,7 +641,7 @@ const serializeHost = (
       return {
         host: {
           connection: {
-            name: "@parameters('$connections')[" + referenceKey + "]['connectionId']",
+            name: `@parameters('$connections')['${referenceKey}']['connectionId']`,
           },
         },
       };
