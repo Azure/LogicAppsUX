@@ -5,7 +5,7 @@ const brandColor = '#59B2D9';
 
 export const invokeWorkflowGroup = {
   id: '/connectionProviders/workflow',
-  name: 'connectionProviders/workflow',
+  name: 'workflow',
   properties: {
     displayName: 'Azure Logic Apps',
     description: 'Azure Logic Apps',
