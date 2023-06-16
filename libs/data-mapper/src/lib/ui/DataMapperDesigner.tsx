@@ -19,6 +19,7 @@ import { generateDataMapXslt } from '../core/queries/datamap';
 import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../mapDefinitions';
+import { generateMapMetadata } from '../mapDefinitions/MapMetadataSerializer';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { collectErrorsForMapChecker } from '../utils/MapChecker.Utils';
 import './ReactFlowStyleOverrides.css';
@@ -91,7 +92,7 @@ const useStyles = makeStyles({
 });
 
 export interface DataMapperDesignerProps {
-  saveMapDefinitionCall: (dataMapDefinition: string) => void;
+  saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
   saveXsltCall: (dataMapXslt: string) => void;
   saveDraftStateCall?: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
@@ -122,6 +123,7 @@ export const DataMapperDesigner = ({
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchemaOrdering);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const functions = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
   const { centerViewHeight, centerViewWidth } = useCenterViewSize();
@@ -184,7 +186,9 @@ export const DataMapperDesigner = ({
       );
     }
 
-    saveMapDefinitionCall(dataMapDefinition);
+    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
+
+    saveMapDefinitionCall(dataMapDefinition, mapMetadata);
 
     dispatch(
       saveDataMap({
@@ -192,7 +196,16 @@ export const DataMapperDesigner = ({
         targetSchemaExtended: targetSchema,
       })
     );
-  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, dispatch, saveMapDefinitionCall, sourceSchema, targetSchema]);
+  }, [
+    currentConnections,
+    flattenedTargetSchema,
+    functions,
+    saveMapDefinitionCall,
+    dataMapDefinition,
+    dispatch,
+    sourceSchema,
+    targetSchema,
+  ]);
 
   const onGenerateClick = useCallback(() => {
     const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);

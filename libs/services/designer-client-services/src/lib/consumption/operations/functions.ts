@@ -28,6 +28,7 @@ export const functionOperation = {
       brandColor,
       description: 'Azure Functions',
     },
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose an Azure function',
     description: 'Show Azure Functions in my subscription',
     visibility: 'Important',

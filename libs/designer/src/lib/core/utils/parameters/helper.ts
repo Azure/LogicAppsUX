@@ -1568,7 +1568,6 @@ export async function updateParameterAndDependencies(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   dependencies: NodeDependencies,
   variables: VariableDeclaration[],
   settings: Settings,
@@ -1632,7 +1631,6 @@ export async function updateParameterAndDependencies(
       connectionReference,
       dependenciesToUpdate,
       updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
-      nodeMetadata,
       settings,
       variables,
       dispatch,
@@ -1697,7 +1695,6 @@ export async function updateDynamicDataInNode(
   connectionReference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
@@ -1711,7 +1708,6 @@ export async function updateDynamicDataInNode(
     connectionReference,
     dependencies,
     nodeInputs,
-    nodeMetadata,
     settings,
     variables,
     dispatch,
@@ -1732,7 +1728,6 @@ export async function updateDynamicDataInNode(
           operationInfo,
           connectionReference,
           operations.inputParameters[nodeId],
-          operations.actionMetadata[nodeId],
           operations.dependencies[nodeId],
           false /* showErrorWhenNotReady */,
           dispatch,
@@ -1751,7 +1746,6 @@ async function loadDynamicData(
   connectionReference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
@@ -1766,7 +1760,6 @@ async function loadDynamicData(
       connectionReference,
       dependencies.outputs,
       nodeInputs,
-      nodeMetadata,
       settings,
       rootState.workflowParameters.definitions,
       dispatch
@@ -1780,7 +1773,6 @@ async function loadDynamicData(
       operationInfo,
       connectionReference,
       nodeInputs,
-      nodeMetadata,
       variables,
       dispatch,
       rootState,
@@ -1795,7 +1787,6 @@ async function loadDynamicContentForInputsInNode(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   allInputs: NodeInputs,
-  nodeMetadata: any,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
   rootState: RootState,
@@ -1813,7 +1804,6 @@ async function loadDynamicContentForInputsInNode(
             operationInfo,
             info,
             allInputs,
-            nodeMetadata,
             variables,
             connectionReference,
             rootState.workflowParameters.definitions,
@@ -1876,7 +1866,6 @@ export async function loadDynamicTreeItemsForParameter(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
@@ -1914,7 +1903,6 @@ export async function loadDynamicTreeItemsForParameter(
           selectedValue,
           dependencyInfo,
           nodeInputs,
-          nodeMetadata,
           operationInfo,
           connectionReference,
           idReplacements,
@@ -1963,7 +1951,6 @@ export async function loadDynamicValuesForParameter(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
@@ -1996,7 +1983,6 @@ export async function loadDynamicValuesForParameter(
         const dynamicValues = await getDynamicValues(
           dependencyInfo,
           nodeInputs,
-          nodeMetadata,
           operationInfo,
           connectionReference,
           idReplacements,
@@ -2048,7 +2034,6 @@ async function tryGetInputDynamicSchema(
   operationInfo: NodeOperation,
   dependencyInfo: DependencyInfo,
   allInputs: NodeInputs,
-  nodeMetadata: any,
   variables: VariableDeclaration[],
   connectionReference: ConnectionReference | undefined,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
@@ -2058,7 +2043,6 @@ async function tryGetInputDynamicSchema(
     const schema = await getDynamicSchema(
       dependencyInfo,
       allInputs,
-      nodeMetadata,
       operationInfo,
       connectionReference,
       variables,
@@ -2374,9 +2358,9 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
 
           // NOTE: Currently this only handles only one variable property name in the object
-          const keys = Object.keys(objectValue);
+          const keys = Object.keys(objectValue ?? {});
           if (keys.length !== 1) {
-            return inputsValue;
+            continue;
           }
 
           const propertyName = keys[0];
@@ -2393,6 +2377,11 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           const parameterLocation = propertyParameter.name.split('.');
           const pathParametersLocation = parameterReference.split('.');
           const uriValue = getObjectPropertyValue(finalValue, parameterLocation);
+
+          if (!uriValue) {
+            continue;
+          }
+
           const pathParameters = processPathInputs(uriValue, propertyParameter.default);
           safeSetObjectPropertyValue(finalValue, pathParametersLocation, pathParameters);
           safeSetObjectPropertyValue(finalValue, parameterLocation, propertyParameter.default);
@@ -2415,6 +2404,11 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
       switch (type) {
         case DeserializationType.ParentObjectProperties:
           const objectValue = getObjectPropertyValue(finalValue, propertySegments);
+
+          if (isNullOrUndefined(objectValue)) {
+            continue;
+          }
+
           const value = Object.keys(objectValue ?? {});
           objectValue[name.split('.').at(-1) as string] = value;
           safeSetObjectPropertyValue(finalValue, propertySegments, objectValue);
@@ -2422,11 +2416,21 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
 
         case DeserializationType.SwaggerOperationId:
           const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
-          const uri = getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath as string[]);
+          const uri = options?.swaggerOperation.uriPath ? getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath) : undefined;
+          const templatePath = options?.swaggerOperation.templatePath
+            ? getObjectPropertyValue(finalValue, options?.swaggerOperation.templatePath)
+            : undefined;
+
+          if (!method && !uri && !templatePath) {
+            continue;
+          }
+
           const operationId = getOperationIdFromDefinition(
             {
               method,
-              path: extractPathFromUri(uri, customSwagger?.api.basePath as string),
+              path: uri
+                ? extractPathFromUri(uri, customSwagger?.api.basePath as string)
+                : templatePath?.replace(customSwagger?.api.basePath, ''),
             },
             customSwagger as SwaggerParser
           );

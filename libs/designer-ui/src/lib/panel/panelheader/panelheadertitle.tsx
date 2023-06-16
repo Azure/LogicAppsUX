@@ -47,7 +47,7 @@ export const PanelHeaderTitle = ({
     if (!result.valid) {
       setErrorMessage(
         intl.formatMessage({
-          defaultMessage: 'The name already exists or is invalid, please update it before proceeding.',
+          defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
           description: 'Text for invalid operation title name',
         })
       );

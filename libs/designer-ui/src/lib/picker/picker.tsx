@@ -47,7 +47,7 @@ export const Picker = ({
     description: 'Loading indicator message showing that the UX is getting the next list of files',
   });
   const noItemsMessage = intl.formatMessage({
-    defaultMessage: 'No Items',
+    defaultMessage: 'No items',
     description: 'Message to show when there are no items to show',
   });
   const handleDismiss = (e?: Event | React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>): void => {

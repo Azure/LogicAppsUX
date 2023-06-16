@@ -26,6 +26,18 @@ export const apiManagementActionManifest = {
 
     environmentBadge: coreBadge,
 
+    customSwagger: {
+      service: {
+        name: 'apimanagement',
+        operationId: 'fetchApiMSwagger',
+        parameters: {
+          apiId: {
+            parameterReference: 'api.id',
+          },
+        },
+      },
+    },
+
     inputs: {
       type: 'object',
       properties: {
@@ -33,7 +45,6 @@ export const apiManagementActionManifest = {
           type: 'object',
           title: 'Authentication',
           description: 'Enter JSON object of authentication parameter',
-          'x-ms-visibility': 'advanced',
           'x-ms-editor': 'authentication',
           'x-ms-editor-options': {
             supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
@@ -47,37 +58,42 @@ export const apiManagementActionManifest = {
         api: {
           type: 'object',
           title: 'API',
-          'x-ms-visibility': 'hideInUI',
           properties: {
             id: {
               type: 'string',
               'x-ms-visibility': 'hideInUI',
             },
           },
+          required: ['id'],
         },
         // Dynamic params
-        apiManagement: {
-          type: 'object',
-          properties: {
-            operationId: {
-              type: 'string',
-              title: 'Operation Id',
-              description: 'Operation Id',
-              'x-ms-dynamic-list': {
-                dynamicState: {
-                  operationId: 'getApimOperations',
-                },
-                parameters: {
-                  type: 'object',
-                  apiId: {
-                    parameterReference: 'api.id',
-                    required: true,
-                  },
-                },
+        operationId: {
+          type: 'string',
+          title: 'Operation Id',
+          description: 'Operation Id',
+          'x-ms-serialization': { skip: true },
+          'x-ms-deserialization': {
+            type: 'swaggeroperationid',
+            parameterReference: 'operationId',
+            options: {
+              swaggerOperation: {
+                methodPath: ['operationDetails', 'method'],
+                templatePath: ['operationDetails', 'pathTemplate', 'template'],
               },
             },
           },
-          required: ['operationId'],
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'getApimOperations',
+            },
+            parameters: {
+              type: 'object',
+              apiId: {
+                parameterReference: 'api.id',
+                required: true,
+              },
+            },
+          },
         },
         operationDetails: {
           title: 'Operation Parameters',
@@ -90,20 +106,19 @@ export const apiManagementActionManifest = {
               isInput: true,
             },
             parameters: {
-              type: 'object',
               apiId: {
                 parameterReference: 'api.id',
                 required: true,
               },
               operationId: {
-                parameterReference: 'apiManagement.operationId',
+                parameterReference: 'operationId',
                 required: true,
               },
             },
           },
         },
       },
-      required: ['apiManagement'],
+      required: ['api', 'operationId', 'operationDetails'],
     },
 
     inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
@@ -116,9 +131,12 @@ export const apiManagementActionManifest = {
           },
         },
         parameters: {
-          type: 'object',
+          apiId: {
+            parameterReference: 'api.id',
+            required: true,
+          },
           operationId: {
-            parameterReference: 'apiManagement.operationId',
+            parameterReference: 'operationId',
             required: true,
           },
         },

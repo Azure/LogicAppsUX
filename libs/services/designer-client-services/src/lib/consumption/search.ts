@@ -1,7 +1,7 @@
 import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
+import * as ClientOperationsData from '../base/operations';
 import type { ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
 import type { QueryParameters } from '../httpClient';
-import * as ClientOperationsData from '../standard/operations';
 import * as AzureResourceOperationsData from './operations';
 import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 
@@ -61,8 +61,8 @@ export class ConsumptionSearchService extends BaseSearchService {
       AzureResourceOperationsData.appServiceTriggerOperation,
       AzureResourceOperationsData.functionOperation,
       AzureResourceOperationsData.invokeWorkflowOperation,
-      AzureResourceOperationsData.selectBatchWorkflowOperation,
-      // AzureResourceOperationsData.selectBatchWorkflowTriggerOperation,
+      AzureResourceOperationsData.sendToBatchOperation,
+      AzureResourceOperationsData.batchTriggerOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
