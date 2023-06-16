@@ -74,10 +74,14 @@ export const App = () => {
     });
   }, [sendMsgToVsix]);
 
-  const saveMapDefinitionCall = (dataMapDefinition: string, _mapMetadata: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
+    });
+    sendMsgToVsix({
+      command: 'saveDataMapMetadata',
+      data: mapMetadata,
     });
   };
 
