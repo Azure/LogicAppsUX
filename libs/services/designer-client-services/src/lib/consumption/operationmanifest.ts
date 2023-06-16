@@ -16,13 +16,25 @@ import { integrationAccountArtifactLookupManifest } from './manifests/integratio
 import { invokeWorkflowManifest } from './manifests/invokeWorkflow';
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
+import { invokeWorkflowGroup, invokeWorkflowOperation } from './operations';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import { UnsupportedException } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionOperationManifestService extends BaseOperationManifestService {
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
     if (isBuiltInOperation(definition)) {
-      return getBuiltInOperationInfo(definition, isTrigger);
+      const normalizedOperationType = definition.type?.toLowerCase();
+
+      switch (normalizedOperationType) {
+        case 'workflow':
+          return {
+            connectorId: invokeWorkflowGroup.id,
+            operationId: invokeWorkflowOperation.id,
+          };
+
+        default:
+          return getBuiltInOperationInfo(definition, isTrigger);
+      }
     }
 
     throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
