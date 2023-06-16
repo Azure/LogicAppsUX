@@ -1,5 +1,4 @@
 import { coreBadge } from '../../badges';
-import { PropertySerializationType } from '@microsoft/parsers-logic-apps';
 import { RecurrenceType, SettingScope, type OperationManifest } from '@microsoft/utils-logic-apps';
 
 const iconUri =
@@ -105,11 +104,6 @@ export const appServiceActionManifest = {
             apiDefinitionUrl: {
               type: 'string',
               hideInUI: true,
-              'x-ms-serialization': {
-                property: {
-                  type: PropertySerializationType.SwaggerUrl,
-                },
-              },
             },
             swaggerSource: {
               type: 'string',
