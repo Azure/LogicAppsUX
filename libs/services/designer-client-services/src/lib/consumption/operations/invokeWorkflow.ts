@@ -32,7 +32,7 @@ export const invokeWorkflowOperation = {
     summary: 'Choose a Logic Apps workflow',
     description: 'Show Logic Apps in the same region',
     visibility: 'Important',
-    operationType: 'workflow',
+    operationType: 'Workflow',
     brandColor,
     iconUri,
   },
