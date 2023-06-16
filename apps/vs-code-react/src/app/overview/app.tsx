@@ -59,7 +59,7 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
     return new StandardRunService({
       baseUrl,
       apiVersion,
-      accessToken,
+      getAccessToken: () => Promise.resolve(accessToken),
       workflowName: workflowProperties.name,
       httpClient,
     });
