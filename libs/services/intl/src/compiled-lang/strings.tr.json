@@ -642,7 +642,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Şu kaynaktan alınan mevcut şemalar:"
     }
   ],
   "2gzGrJ": [
@@ -1366,7 +1366,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Kod görünümü moduna geç"
     }
   ],
   "8ND+Yc": [
@@ -2202,7 +2202,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Tam dizi girişine geçiş yapın"
     }
   ],
   "EdzoIs": [
@@ -2230,7 +2230,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Bu işlemle ilgili istek geçmişini görüntüleyin"
     }
   ],
   "EurkzL": [
@@ -2644,7 +2644,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Dizi öğesi için ayrıntılı girişlere geçiş yapın"
     }
   ],
   "HfrUId": [
@@ -4100,7 +4100,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Bu düğümle ilgili parametreleri yapılandırın"
     }
   ],
   "SXb47U": [
@@ -5578,7 +5578,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Anahtar değeri moduna geç"
     }
   ],
   "dDYCuU": [
@@ -6204,7 +6204,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Hakkında Sekmesi"
     }
   ],
   "iCSHJG": [
@@ -6304,7 +6304,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Kod Görünümü Sekmesi"
     }
   ],
   "iq+tiv": [
@@ -6596,7 +6596,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "İzleme Sekmesi"
     }
   ],
   "l72gf4": [
@@ -7428,7 +7428,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Varsayılan görünüm moduna geç"
     }
   ],
   "qnI4Y1": [
@@ -7598,7 +7598,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Test Sekmesi"
     }
   ],
   "sFbnCs": [
@@ -8420,7 +8420,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Metin moduna geç"
     }
   ],
   "xYyPR8": [

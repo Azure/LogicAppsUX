@@ -653,7 +653,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Schemi esistenti da"
     }
   ],
   "2gzGrJ": [
@@ -1377,7 +1377,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Passa alla modalità di visualizzazione Codice"
     }
   ],
   "8ND+Yc": [
@@ -2216,7 +2216,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Passa all'input dell'intera matrice"
     }
   ],
   "EdzoIs": [
@@ -2248,7 +2248,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Visualizzare la cronologia delle richieste per questa operazione"
     }
   ],
   "EurkzL": [
@@ -2673,7 +2673,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Passa a input dettagli per l'elemento matrice"
     }
   ],
   "HfrUId": [
@@ -4163,7 +4163,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Configurare i parametri per questo nodo"
     }
   ],
   "SXb47U": [
@@ -5645,7 +5645,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Passa a modalità chiave-valore"
     }
   ],
   "dDYCuU": [
@@ -6286,7 +6286,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Scheda Informazioni"
     }
   ],
   "iCSHJG": [
@@ -6390,7 +6390,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Scheda Visualizzazione Codice"
     }
   ],
   "iq+tiv": [
@@ -6682,7 +6682,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Scheda Monitoraggio"
     }
   ],
   "l72gf4": [
@@ -7521,7 +7521,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Passa alla modalità di visualizzazione predefinita"
     }
   ],
   "qnI4Y1": [
@@ -7691,7 +7691,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Scheda di test"
     }
   ],
   "sFbnCs": [
@@ -8517,7 +8517,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Passa a modalità testo"
     }
   ],
   "xYyPR8": [
