@@ -207,6 +207,7 @@ export enum PropertySerializationType {
 export interface ParameterSerializationOptions {
   skip?: boolean;
   location?: string[];
+  value?: any;
   property?: {
     type: string;
     name?: string;

@@ -61,8 +61,8 @@ export class ConsumptionSearchService extends BaseSearchService {
       AzureResourceOperationsData.appServiceTriggerOperation,
       AzureResourceOperationsData.functionOperation,
       AzureResourceOperationsData.invokeWorkflowOperation,
-      AzureResourceOperationsData.selectBatchWorkflowOperation,
-      // AzureResourceOperationsData.selectBatchWorkflowTriggerOperation,
+      AzureResourceOperationsData.sendToBatchOperation,
+      AzureResourceOperationsData.batchTriggerOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
