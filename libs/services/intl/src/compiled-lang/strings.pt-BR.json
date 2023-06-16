@@ -8,27 +8,23 @@
   "+0yxlR": [
     {
       "type": 0,
-      "value": "Exibição de função"
+      "value": "Exibição da função"
     }
   ],
   "+Uvo/p": [
     {
       "type": 0,
-      "value": "Texto alt para divisa inferior"
+      "value": "Texto alt para divisa para baixo"
     }
   ],
   "+ZSBrq": [
     {
       "type": 0,
-      "value": "Context menu for "
+      "value": "Menu de contexto para cartão de "
     },
     {
       "type": 1,
       "value": "title"
-    },
-    {
-      "type": 0,
-      "value": " card"
     }
   ],
   "+mAJR3": [
@@ -46,7 +42,7 @@
   "/EU/oJ": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'."
+      "value": "Necessário. Uma cadeia de caracteres que contém o nome do fuso horário do fuso horário de origem. Consulte \"Fusos horários padrão\" em \"https://go.microsoft.com/fwlink/?linkid=2238292\"."
     }
   ],
   "/I/U8L": [
@@ -172,23 +168,7 @@
   "04AwK7": [
     {
       "type": 0,
-      "value": "Error code: '"
-    },
-    {
-      "type": 1,
-      "value": "errorCode"
-    },
-    {
-      "type": 0,
-      "value": "', Message: '"
-    },
-    {
-      "type": 1,
-      "value": "message"
-    },
-    {
-      "type": 0,
-      "value": "'."
+      "value": "Código de erro: {errorCode}, Mensagem: {message}."
     }
   ],
   "06zKZg": [
@@ -212,7 +192,7 @@
   "08e2rO": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
+      "value": "A identidade gerenciada usada com esta operação não existe mais. Para continuar, configure uma identidade ou altere a conexão."
     }
   ],
   "09B9CU": [
@@ -330,7 +310,7 @@
     },
     {
       "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " não está mais presente no esquema de operação. Ele deve ser removido antes que o fluxo de trabalho seja salvo novamente."
     }
   ],
   "0uj1Li": [
@@ -471,7 +451,7 @@
   "1REk6u": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Insira um email válido."
     }
   ],
   "1TE0e8": [
@@ -507,7 +487,7 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "As ações executam operações em dados, se comunicam entre sistemas ou executam outras tarefas."
+      "value": "As ações executam operações em dados, comunicam-se entre sistemas ou executam outras tarefas."
     }
   ],
   "1eKQwo": [
@@ -597,7 +577,7 @@
   "27Nhhv": [
     {
       "type": 0,
-      "value": "Selecione uma API de uma Gerenciamento de API instância"
+      "value": "Selecionar uma API de uma API Management instância"
     }
   ],
   "2CXCOt": [
@@ -715,7 +695,7 @@
   "3+TQMa": [
     {
       "type": 0,
-      "value": "Carregando conexão..."
+      "value": "Carregando a conexão..."
     }
   ],
   "30njcn": [
@@ -733,7 +713,7 @@
   "34Nt/B": [
     {
       "type": 0,
-      "value": "texto alt para ícone de botão"
+      "value": "Texto alt para ícone de botão"
     }
   ],
   "36RiST": [
@@ -769,7 +749,15 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "Remova todos os mapeamentos no elemento de origem {nodeName} primeiro."
+      "value": "Remova todos os mapeamentos no elemento de origem \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" primeiro."
     }
   ],
   "3MTSYZ": [
@@ -925,7 +913,7 @@
   "4D7H4R": [
     {
       "type": 0,
-      "value": "Execuções "
+      "value": "Executa "
     },
     {
       "type": 1,
@@ -981,6 +969,10 @@
     }
   ],
   "4sYR0J": [
+    {
+      "type": 0,
+      "value": "O "
+    },
     {
       "type": 1,
       "value": "parameterName"
@@ -1047,15 +1039,7 @@
   "5akc1Q": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : '"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "' in Parameter"
+      "value": "Valor 'in' não suportado: {value} no parâmetro"
     }
   ],
   "5b0sKi": [
@@ -1115,7 +1099,7 @@
   "62Ypnr": [
     {
       "type": 0,
-      "value": "Error loading operation data"
+      "value": "Erro ao carregar dados da operação"
     }
   ],
   "63/zYN": [
@@ -1139,13 +1123,13 @@
   "6fDYzG": [
     {
       "type": 0,
-      "value": "Failed to load the schema. Please try again."
+      "value": "Falha ao carregar o esquema. Tente novamente."
     }
   ],
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "O '"
+      "value": "A função '"
     },
     {
       "type": 1,
@@ -1153,7 +1137,7 @@
     },
     {
       "type": 0,
-      "value": "' função tem muitas entradas atribuídas a ela"
+      "value": "' tem muitas entradas atribuídas a ela"
     }
   ],
   "6jiO7t": [
@@ -1317,7 +1301,7 @@
   "83G5rr": [
     {
       "type": 0,
-      "value": "Specify the interval."
+      "value": "Especifique o intervalo."
     }
   ],
   "83PYuA": [
@@ -1377,7 +1361,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Alternar para modo de exibição de código"
     }
   ],
   "8ND+Yc": [
@@ -1559,7 +1543,7 @@
   "9W0lck": [
     {
       "type": 0,
-      "value": "Invalid split on value '"
+      "value": "Divisão inválida no valor '"
     },
     {
       "type": 1,
@@ -1567,7 +1551,7 @@
     },
     {
       "type": 0,
-      "value": "', cannot find in outputs."
+      "value": "'. Não foi possível localizar nas saídas."
     }
   ],
   "9YGcT2": [
@@ -1609,7 +1593,7 @@
   "A5Ferh": [
     {
       "type": 0,
-      "value": "Source element removed from view."
+      "value": "Elemento de origem removido da exibição."
     }
   ],
   "A8l+k7": [
@@ -1659,7 +1643,7 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "Retorna o índice para a n-th ocorrência de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)."
+      "value": "Retorna o índice para a n-º de ocorrência de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)."
     }
   ],
   "Af+Ve0": [
@@ -1671,7 +1655,7 @@
   "AheXMN": [
     {
       "type": 0,
-      "value": "Select frequency."
+      "value": "Selecionar a frequência."
     }
   ],
   "AnX5yC": [
@@ -1836,7 +1820,7 @@
   "BUutcC": [
     {
       "type": 0,
-      "value": "Lista expanta de elementos irmãos"
+      "value": "Expandir lista de elementos irmãos"
     }
   ],
   "BYrP8F": [
@@ -1848,7 +1832,7 @@
   "BeqBP7": [
     {
       "type": 0,
-      "value": "Automatic Decompression"
+      "value": "Descompactação automática"
     }
   ],
   "Bl4Iv0": [
@@ -2050,7 +2034,7 @@
   "DQV7aK": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download '"
+      "value": "Alt/Option + clique para baixar '"
     },
     {
       "type": 1,
@@ -2142,13 +2126,13 @@
   "E+iim4": [
     {
       "type": 0,
-      "value": "Selecione o fuso horário."
+      "value": "Selecionar fuso horário."
     }
   ],
   "E3+TAA": [
     {
       "type": 0,
-      "value": "O nó de '"
+      "value": "O nó de esquema '"
     },
     {
       "type": 1,
@@ -2224,7 +2208,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Mudar para a matriz de entrada integral"
     }
   ],
   "EdzoIs": [
@@ -2268,7 +2252,7 @@
   "Ex4U46": [
     {
       "type": 0,
-      "value": "Usar Conexão do Chamador"
+      "value": "Usar a conexão do chamador"
     }
   ],
   "ExaACE": [
@@ -2292,7 +2276,7 @@
   "FBNevf": [
     {
       "type": 0,
-      "value": "Ir para a Operação"
+      "value": "Ir para Operação"
     }
   ],
   "FDF4Qb": [
@@ -2316,7 +2300,7 @@
   "FIL1Nt": [
     {
       "type": 0,
-      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+      "value": "A condição é muito complexa ou inválida. Não é possível mudar para o modo básico."
     }
   ],
   "FIT7i0": [
@@ -2425,7 +2409,7 @@
   "FaBEfQ": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "Propriedades Rastreadas"
     }
   ],
   "Fcvgvg": [
@@ -2473,7 +2457,7 @@
   "GCjJnP": [
     {
       "type": 0,
-      "value": "Enter a valid Json."
+      "value": "Insira um JSON válido."
     }
   ],
   "GD3m4X": [
@@ -2497,7 +2481,7 @@
   "GEB1on": [
     {
       "type": 0,
-      "value": "Isso contém um valor que não está entre 0 e 59"
+      "value": "Contém um valor que não está entre 0 e 59"
     }
   ],
   "GIUSQs": [
@@ -2581,7 +2565,7 @@
   "GyUe4C": [
     {
       "type": 0,
-      "value": "Modificar opções referentes a funções"
+      "value": "Modificar opções relacionadas a funções"
     }
   ],
   "GzQQqH": [
@@ -2627,7 +2611,7 @@
   "H5VikC": [
     {
       "type": 0,
-      "value": "Conexão inválida. O mapeamento não deve formar um loop fechado."
+      "value": "Conexão inválida, o mapeamento não deve formar um loop fechado."
     }
   ],
   "H8bEUn": [
@@ -2681,7 +2665,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Mudar para entradas detalhadas do item da matriz"
     }
   ],
   "HfrUId": [
@@ -2729,7 +2713,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "Remover parâmetro \""
+      "value": "Remover o parâmetro \""
     },
     {
       "type": 1,
@@ -2835,7 +2819,7 @@
   "IjEKvh": [
     {
       "type": 0,
-      "value": "Error executing the api '"
+      "value": "Erro ao executar os '"
     },
     {
       "type": 1,
@@ -2843,13 +2827,29 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' da API."
     }
   ],
   "Io48jC": [
     {
       "type": 0,
-      "value": "As {0} não são válidas para o tipo {1} autenticação."
+      "value": "As propriedades '"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "' são inválidas para o tipo de autenticação '"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "IooQu1": [
@@ -2993,7 +2993,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "Quando habilitada, esta ação será executada com o usuário na configuração \"Executar como\" no gatilho Dataverse."
+      "value": "Quando habilitada, essa ação será executada com o usuário na configuração \"Executar como\" no gatilho do Dataverse."
     }
   ],
   "Jq2Y/o": [
@@ -3182,7 +3182,7 @@
   "LV/BTE": [
     {
       "type": 0,
-      "value": "Carregando instâncias do serviço de Gerenciamento de API..."
+      "value": "Carregando instâncias de serviço de Gerenciamento de API..."
     }
   ],
   "LV3k48": [
@@ -3254,7 +3254,7 @@
   "LvLksz": [
     {
       "type": 0,
-      "value": "Loading outputs"
+      "value": "Carregando saídas"
     }
   ],
   "LvpxiA": [
@@ -3392,7 +3392,7 @@
   "Mgcs5s": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Insira um número válido."
     }
   ],
   "MirIsS": [
@@ -3524,7 +3524,7 @@
   "O27gKq": [
     {
       "type": 0,
-      "value": "Carregando Arquivos..."
+      "value": "Carregando arquivos ..."
     }
   ],
   "O9ZExg": [
@@ -3536,7 +3536,7 @@
   "ODQCKj": [
     {
       "type": 0,
-      "value": "Converts the input to a JSON type value."
+      "value": "Converter a entrada em um valor do tipo JSON."
     }
   ],
   "OEEuUu": [
@@ -3746,7 +3746,7 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "Execuções "
+      "value": "Executa "
     },
     {
       "type": 1,
@@ -3816,7 +3816,7 @@
   "Pk4cb+": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "Propriedades Rastreadas"
     }
   ],
   "Pq+4a+": [
@@ -3887,12 +3887,8 @@
   ],
   "Q8zxeb": [
     {
-      "type": 1,
-      "value": "name"
-    },
-    {
       "type": 0,
-      "value": " Key"
+      "value": "Nome (chave)"
     }
   ],
   "QGbUXX": [
@@ -3922,7 +3918,7 @@
   "QdJUaS": [
     {
       "type": 0,
-      "value": "Pencil icon"
+      "value": "ícone de lápis"
     }
   ],
   "QeE0k/": [
@@ -5645,7 +5641,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Mudar para o modo de valor de chave"
     }
   ],
   "dDYCuU": [
@@ -7549,7 +7545,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Alternar para modo de exibição padrão"
     }
   ],
   "qnI4Y1": [
@@ -8545,7 +8541,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Mudar para o modo de texto"
     }
   ],
   "xYyPR8": [
