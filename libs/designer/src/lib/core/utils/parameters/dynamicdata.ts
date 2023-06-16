@@ -590,7 +590,7 @@ function loadUnknownManifestBasedParameters(
       } as ResolvedParameter;
       knownKeys.add(keyPrefix);
     }
-  } else if (!result[keyPrefix]) {
+  } else if (!result[keyPrefix] && !knownKeys.has(keyPrefix)) {
     // If it is an object, recurse down and find the other unknown values.
     Object.keys(input).forEach((key) => {
       // encode the key to match the paths of the known parameters.
