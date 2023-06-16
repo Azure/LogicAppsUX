@@ -1,6 +1,5 @@
 import './styles.less';
-import { FontSizes, IconButton, Panel, PanelType, css, getId, getTheme } from '@fluentui/react';
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { IconButton, Panel, PanelType, css, getId, getTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { ConversationItem } from '@microsoft/designer-ui';
 import { PanelLocation, ChatInput, ConversationItemType, ConversationMessage } from '@microsoft/designer-ui';
@@ -15,8 +14,8 @@ interface ChatbotProps {
 const getInputIconButtonStyles = () => {
   const theme = getTheme();
   return {
-    root: { color: theme.palette.neutralPrimary, backgroundColor: 'transparent !important' },
-    rootDisabled: { backgroundColor: 'transparent !important' },
+    root: { color: theme.palette.neutralPrimary, backgroundColor: 'transparent' },
+    rootDisabled: { backgroundColor: 'transparent' },
   };
 };
 
@@ -72,7 +71,6 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
     setInputQuery('');
   }, [conversation]);
 
-  const styles = useStyles();
   return (
     <Panel
       type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
@@ -82,26 +80,26 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
       isBlocking={false}
       layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
     >
-      <div className={styles.container}>
-        <div className={styles.header}>
+      <div className={'chatbot-container'}>
+        <div className={'chatbot-header'}>
           {/*TODO: Add icon for header*/}
-          <div className={styles.headerTitle}>{intlText.headerTitle}</div>
-          <div className={styles.headerModePill}>{intlText.pill}</div>
+          <div className={'chatbot-header-title'}>{intlText.headerTitle}</div>
+          <div className={'chatbot-header-mode-pill'}>{intlText.pill}</div>
           <IconButton
             title={'Close'}
             iconProps={{ iconName: 'Clear' }}
             onClick={() => {
               setCollapsed(true);
             }}
-            className={styles.closeButton}
+            className={'chatbot-close-button'}
           />
         </div>
-        <div className={css(styles.content)}>
+        <div className={css('chatbot-content')}>
           {conversation.map((item) => (
             <ConversationMessage key={item.id} item={item} />
           ))}
         </div>
-        <div className={styles.footer}>
+        <div className={'chatbot-footer'}>
           <ChatInput
             query={inputQuery}
             placeholder={intlText.chatInputPlaceholder}
@@ -128,90 +126,9 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
             onQueryChange={(ev, newValue) => {
               setInputQuery(newValue ?? '');
             }}
-          ></ChatInput>
+          />
         </div>
       </div>
     </Panel>
   );
 };
-
-const useStyles = makeStyles({
-  container: {
-    top: 0,
-    left: 0,
-    position: 'absolute',
-    height: '100%',
-    width: '100%',
-    minWidth: '100%',
-    ...shorthands.overflow('hidden'),
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: getTheme().palette.neutralLighterAlt,
-  },
-  header: {
-    height: '50px',
-    display: 'flex',
-    flexDirection: 'row',
-    ...shorthands.padding('16px'),
-    alignItems: 'center',
-    fontSize: 'large',
-    fontWeight: 'bold',
-    boxShadow: getTheme().effects.elevation4,
-    zIndex: 1,
-  },
-  headerIcon: {
-    color: getTheme().palette.themePrimary,
-  },
-  headerTitle: {
-    display: 'flex',
-    flexGrow: 2,
-    ...shorthands.padding('0px', '0px', '0px', '8px'),
-  },
-  headerModePill: {
-    ...shorthands.margin('0px', '4px', '0px', '4px'),
-    width: 'fit-content',
-    fontSize: FontSizes.small,
-    fontWeight: 600,
-    textTransform: 'uppercase',
-    color: getTheme().palette.neutralSecondary,
-    backgroundColor: getTheme().palette.neutralLight,
-    ...shorthands.borderRadius('20px'),
-    ...shorthands.padding('2px 8px'),
-    lineHeight: '15px',
-  },
-  closeButton: {
-    color: 'unset',
-  },
-  content: {
-    flexGrow: 2,
-    display: 'flex',
-    flexDirection: 'column-reverse',
-    rowGap: '12px',
-    overflowY: 'auto',
-    ...shorthands.padding('15px'),
-    '::-webkit-scrollbar': {
-      width: '6px',
-      height: '10px',
-      backgroundColor: getTheme().palette.neutralPrimary,
-      ...shorthands.borderRadius('3px'),
-    },
-    '::-webkit-scrollbar-thumb': {
-      ...shorthands.borderRadius('5px'),
-      backgroundColor: getTheme().palette.neutralLight,
-    },
-    '::-webkit-scrollbar-track': {
-      backgroundColor: getTheme().palette.neutralLighter,
-    },
-  },
-  footer: {
-    ...shorthands.padding('15px'),
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-  },
-  aINotice: {
-    fontSize: FontSizes.xSmall,
-    ...shorthands.margin('8px', '0px', '0px', '0px'),
-    lineHeight: 14,
-  },
-});

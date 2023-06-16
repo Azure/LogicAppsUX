@@ -1,7 +1,7 @@
 import { animations } from './animations';
 import type { ChatResources } from './chatResources';
 import { ThumbsReactionButton } from './thumbsReactionButton';
-import { ActionButton, css, FontSizes, getTheme, mergeStyleSets } from '@fluentui/react';
+import { ActionButton, css, getTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
 import React from 'react';
 
@@ -40,30 +40,30 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   return (
     <div
       className={css(
-        styles.bubbleContainer,
+        'bubble-container',
         isUserMessage && USER_MESSAGE_CLASS,
         isUserMessage ? animations.userMessageEnter : animations.assistantMessageEnter,
         isEmphasized && animations.messageBorderGlint,
         className
       )}
     >
-      <div className={css(styles.bubble, isUserMessage && USER_MESSAGE_CLASS)}>{children}</div>
+      <div className={css('bubble', isUserMessage && USER_MESSAGE_CLASS)}>{children}</div>
       {(footerActions || isAIGenerated) && (
-        <div className={styles.bubbleFooter}>
+        <div className={'bubble-footer'}>
           {footerActions && (
-            <div className={styles.footerActions}>
+            <div className={'bubble-footer-actions'}>
               {footerActions.map((action) => (
-                <div key={action.title} className={styles.actionsFooter}>
+                <div key={action.title} className={'bubble-actions-footer'}>
                   <ActionButton {...action} disabled={disabled || action.disabled} styles={footerButtonStyles} />
                 </div>
               ))}
             </div>
           )}
 
-          <div className={styles.footer}>
-            <div className={styles.disclaimer}>{resources?.AIGeneratedDisclaimer}</div>
+          <div className={'bubble-footer'}>
+            <div className={'bubble-disclaimer'}>{resources?.AIGeneratedDisclaimer}</div>
             {onThumbsReactionClicked && (
-              <div className={styles.reactions}>
+              <div className={'bubble-reactions'}>
                 <>
                   <ThumbsReactionButton
                     resources={resources?.ThumbReaction}
@@ -123,59 +123,3 @@ const footerButtonStyles: IButtonStyles = {
     color: getTheme().palette.neutralPrimary,
   },
 };
-
-const styles = mergeStyleSets({
-  bubbleContainer: {
-    alignSelf: 'auto',
-    marginRight: 0,
-    marginLeft: 0,
-    padding: 12,
-    borderRadius: 8,
-    background: getTheme().palette.white,
-    boxShadow: getTheme().effects.elevation4,
-    [`&.${USER_MESSAGE_CLASS}`]: {
-      boxShadow: 'none',
-      alignSelf: 'flex-end',
-      marginRight: 0,
-      marginLeft: 60,
-      background: getTheme().palette.themeLighter,
-    },
-  },
-  bubble: {
-    wordBreak: 'break-word',
-    width: '100%',
-    borderRadius: 10,
-    textAlign: 'start',
-  },
-  bubbleFooter: {
-    paddingTop: 12,
-    gap: 4,
-  },
-  footerActions: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 5,
-  },
-  disclaimer: {
-    fontSize: FontSizes.xSmall,
-    color: '#707070',
-    height: 32,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  actionsFooter: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  reactions: {
-    flexGrow: 2,
-    textAlign: 'right',
-  },
-});

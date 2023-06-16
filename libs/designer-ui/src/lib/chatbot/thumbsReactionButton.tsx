@@ -31,9 +31,9 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
 const getIconButtonStyles = (isVoted?: boolean) => {
   const theme = getTheme();
   return {
-    root: { color: theme.palette.neutralPrimary, backgroundColor: 'transparent !important' },
-    rootChecked: { color: theme.palette.themePrimary, backgroundColor: 'transparent !important' },
+    root: { color: theme.palette.neutralPrimary, backgroundColor: 'transparent' },
+    rootChecked: { color: theme.palette.themePrimary, backgroundColor: 'transparent' },
     icon: { color: isVoted ? theme.palette.themePrimary : 'unset' },
-    rootDisabled: { color: theme.palette.neutralLighter, backgroundColor: 'transparent !important' },
+    rootDisabled: { color: theme.palette.neutralLighter, backgroundColor: 'transparent' },
   };
 };
