@@ -1,4 +1,3 @@
-import './styles.less';
 import { IconButton, Panel, PanelType, css, getId, getTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { ConversationItem } from '@microsoft/designer-ui';
