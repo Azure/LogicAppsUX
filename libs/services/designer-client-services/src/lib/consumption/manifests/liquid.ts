@@ -1,14 +1,9 @@
+import { liquidGroup } from '../operations';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { SettingScope } from '@microsoft/utils-logic-apps';
 
-const connector: any = {
-  id: 'connectionProviders/liquidOperations',
-  name: 'liquidOperations',
-  properties: {
-    description: 'Liquid Operations',
-    displayName: 'Liquid Operations',
-  },
-};
+const iconUri = liquidGroup.properties.iconUri;
+const brandColor = liquidGroup.properties.brandColor;
 
 const settings: any = {
   secureData: {},
@@ -37,10 +32,38 @@ const objectOutput = {
   },
 };
 
+const integrationAccount = {
+  type: 'object',
+  properties: {
+    map: {
+      type: 'object',
+      properties: {
+        name: {
+          title: 'Map Name',
+          type: 'string',
+          description: 'The name of the map to use from the associated integration account',
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'getMapArtifacts',
+              parameters: {
+                $filter: {
+                  value: "maptype eq 'liquid'",
+                },
+              },
+            },
+            parameters: {},
+          },
+        },
+      },
+      required: ['name'],
+    },
+  },
+  required: ['map'],
+};
+
 const jsonContent = {
   title: 'Content',
   description: 'The JSON content to transform',
-  required: true,
   type: 'object',
 };
 
@@ -48,23 +71,7 @@ const xmlContent = {
   title: 'Content',
   description: 'The XML content to transform',
   required: true,
-  type: 'object',
-};
-
-const mapName = {
-  title: 'Map',
-  description: 'The name of the map to use from the associated integration account',
-  required: true,
   type: 'string',
-  'x-ms-dynamic-values': {
-    operationId: 'xslt_get_maps',
-    'value-collection': 'value',
-    'value-path': 'name',
-    'value-title': 'name',
-    parameters: {
-      $filter: "maptype eq 'liquid'",
-    },
-  },
 };
 
 const transformedContentSchema = {
@@ -77,90 +84,90 @@ const transformedContentSchema = {
 
 export const liquidJsonToJsonManifest = {
   properties: {
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/liquid.svg',
-    brandColor: '#804998',
+    iconUri,
+    brandColor,
     summary: 'Transform JSON To JSON',
     description: 'Transform JSON to JSON using Liquid map.',
 
     inputs: {
       type: 'object',
-      required: ['content', 'mapName'],
+      required: ['content', 'integrationAccount'],
       properties: {
         content: jsonContent,
-        mapName,
+        integrationAccount,
         transformedContentSchema,
       },
     },
     outputs: objectOutput,
 
-    connector,
+    connector: liquidGroup,
     settings,
   },
 } as OperationManifest;
 
 export const liquidJsonToTextManifest = {
   properties: {
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/liquid.svg',
-    brandColor: '#804998',
+    iconUri,
+    brandColor,
     summary: 'Transform JSON To TEXT',
     description: 'Transform JSON to TEXT using Liquid map.',
 
     inputs: {
       type: 'object',
-      required: ['content', 'mapName'],
+      required: ['content', 'integrationAccount'],
       properties: {
         content: jsonContent,
-        mapName,
+        integrationAccount,
       },
     },
     outputs: stringOutput,
 
-    connector,
+    connector: liquidGroup,
     settings,
   },
 } as OperationManifest;
 
 export const liquidXmlToJsonManifest = {
   properties: {
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/liquid.svg',
-    brandColor: '#804998',
+    iconUri,
+    brandColor,
     summary: 'Transform XML To JSON',
     description: 'Transform XML to JSON using Liquid map.',
 
     inputs: {
       type: 'object',
-      required: ['content', 'mapName'],
+      required: ['content', 'integrationAccount'],
       properties: {
         content: xmlContent,
-        mapName,
+        integrationAccount,
         transformedContentSchema,
       },
     },
     outputs: objectOutput,
 
-    connector,
+    connector: liquidGroup,
     settings,
   },
 } as OperationManifest;
 
 export const liquidXmlToTextManifest = {
   properties: {
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/liquid.svg',
-    brandColor: '#804998',
+    iconUri,
+    brandColor,
     summary: 'Transform XML To TEXT',
     description: 'Transform XML to TEXT using Liquid map.',
 
     inputs: {
       type: 'object',
-      required: ['content', 'mapName'],
+      required: ['content', 'integrationAccount'],
       properties: {
         content: xmlContent,
-        mapName,
+        integrationAccount,
       },
     },
     outputs: stringOutput,
 
-    connector,
+    connector: liquidGroup,
     settings,
   },
 } as OperationManifest;
