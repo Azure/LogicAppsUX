@@ -5,7 +5,7 @@
 import { workflowType } from '../../../../../constants';
 import { localize } from '../../../../../localize';
 import { ScriptWorkflowNameStep } from '../../../createCodeless/createCodelessSteps/ScriptSteps/ScriptWorkflowNameStep';
-import { CodelessFunctiontWorkflow } from './CodelessFunctiontWorkflow';
+import { CodelessFunctiontWorkflow } from './CodelessFunctionWorkflow';
 import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type {
