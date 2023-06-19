@@ -53,16 +53,21 @@ export const parseSimpleItems = (
   uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  ' });
   items.forEach((item, index) => {
     const { value } = item;
-    if (type === constants.SWAGGER.TYPE.STRING) {
-      addStringLiteralSegment(castedArraySegments);
-      addStringLiteralSegment(uncastedArraySegments);
-    }
-    castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: castParameter(value, type, format) });
-    uncastedArraySegments.push(...value);
+    if (value?.length === 0) {
+      castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' });
+      uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' });
+    } else {
+      if (type === constants.SWAGGER.TYPE.STRING) {
+        addStringLiteralSegment(castedArraySegments);
+        addStringLiteralSegment(uncastedArraySegments);
+      }
+      castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: castParameter(value, type, format) });
+      uncastedArraySegments.push(...value);
 
-    if (type === constants.SWAGGER.TYPE.STRING) {
-      addStringLiteralSegment(castedArraySegments);
-      addStringLiteralSegment(uncastedArraySegments);
+      if (type === constants.SWAGGER.TYPE.STRING) {
+        addStringLiteralSegment(castedArraySegments);
+        addStringLiteralSegment(uncastedArraySegments);
+      }
     }
     castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? ',\n  ' : '\n]' });
     uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? ',\n  ' : '\n]' });
@@ -70,7 +75,7 @@ export const parseSimpleItems = (
   return { uncastedValue: uncastedArraySegments, castedValue: castedArraySegments };
 };
 
-const addStringLiteralSegment = (segments: ValueSegment[]) => {
+const addStringLiteralSegment = (segments: ValueSegment[]): void => {
   segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: `"` });
 };
 
