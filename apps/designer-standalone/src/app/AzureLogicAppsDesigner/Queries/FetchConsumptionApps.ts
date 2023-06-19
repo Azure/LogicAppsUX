@@ -3,12 +3,12 @@ import type { Data as FetchLogicAppsData } from '../Models/LogicAppAppTypes';
 import { fetchAppsByQuery } from '../Utilities/resourceUtilities';
 import { useQuery } from 'react-query';
 
-export const useFetchStandardApps = () => {
+export const useFetchConsumptionApps = () => {
   return useQuery<FetchLogicAppsData[]>(
-    ['listAllLogicApps', 'standard'],
+    ['listAllLogicApps', 'consumption'],
     async () => {
       if (!environment.armToken) return [];
-      const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp"`;
+      const query = `resources | where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp') | extend plan = case(kind contains 'workflowapp', 'Standard', 'Consumption') | where (plan =~ ('consumption'))`;
       const data = await fetchAppsByQuery(query);
       return data.map((item: any) => ({
         id: item[0],
@@ -16,7 +16,7 @@ export const useFetchStandardApps = () => {
         location: item[5],
         resourceGroup: item[6],
         subscriptionId: item[7],
-        properties: item[11],
+        properties: item[10],
       }));
     },
     {
