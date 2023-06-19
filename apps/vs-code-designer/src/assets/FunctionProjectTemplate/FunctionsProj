@@ -22,6 +22,7 @@
       </ItemGroup>
       <RemoveDir Directories="@(DirsToClean2)" />
  </Target>
+
  
   <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
     <ItemGroup>

@@ -12,7 +12,7 @@ Now, your remote logic apps still appear in the Azure window, but in the Resourc
 
 Extension toolbar buttons have now migrated to the Workspace section.
 
-![Azure Logic Apps in Resources tab.](assets/logicAppResources.png)
+![Azure Logic Apps in Resources tab.](/apps/vs-code-designer/src/assets/logicAppResources.png)
 
 ## Azure Logic Apps (Standard) Custom Code Workspace
 

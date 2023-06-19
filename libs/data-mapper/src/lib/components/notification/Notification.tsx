@@ -165,8 +165,8 @@ export const Notification = (props: NotificationProps) => {
         description: 'Message informing that target element cannot be removed',
       }),
       [NotificationTypes.FunctionNodePartiallyDeleted]: intl.formatMessage({
-        defaultMessage: `Function removed from current location. Function exists elsewhere.`,
-        description: 'Message on deleting connection that exists in multiple spots',
+        defaultMessage: `Function was removed from the current location and currently exists elsewhere.`,
+        description: 'Message to show when deleting a connection that exists in multiple places.',
       }),
       [NotificationTypes.FunctionNodeDeleted]: intl.formatMessage({
         defaultMessage: `Function deleted.`,

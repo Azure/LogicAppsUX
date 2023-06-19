@@ -20,9 +20,11 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
+import { Chatbot } from '@microsoft/chatbot';
 import {
   ApiManagementInstanceService,
   BaseAppServiceService,
+  BaseFunctionService,
   BaseGatewayService,
   BaseOAuthService,
   StandardConnectionService,
@@ -54,6 +56,8 @@ const DesignerEditor = () => {
     monitoringView,
     runId,
     appId,
+    showChatBot,
+    language,
   } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -197,7 +201,7 @@ const DesignerEditor = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
+      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters }}
@@ -213,6 +217,7 @@ const DesignerEditor = () => {
                 isDarkMode={isDarkMode}
               />
               <Designer />
+              {showChatBot ? <Chatbot /> : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
@@ -311,10 +316,8 @@ const getDesignerServices = (
         return apiManagementService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
       },
       getSwaggerOperationSchema: (args: any) => {
-        const { parameters, nodeMetadata, isInput } = args;
-        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        if (!swaggerUrl) return Promise.resolve();
-        return appService.getOperationSchema(swaggerUrl, parameters.operationId, isInput);
+        const { parameters, isInput } = args;
+        return appService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
       },
     },
     valuesClient: {
@@ -324,9 +327,8 @@ const getDesignerServices = (
         return artifactService.getMapArtifacts(mapType, mapSource);
       },
       getSwaggerOperations: (args: any) => {
-        const { nodeMetadata } = args;
-        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        return appService.getOperations(swaggerUrl);
+        const { parameters } = args;
+        return appService.getOperations(parameters.swaggerUrl);
       },
       getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
       getApimOperations: (args: any) => {
@@ -384,6 +386,13 @@ const getDesignerServices = (
     isExplicitAuthRequiredForManagedIdentity: () => true,
   };
 
+  const functionService = new BaseFunctionService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
+
   // const loggerService = new Stan({
   //   resourceID: workflowId,
   //   designerVersion: packagejson.dependencies['@microsoft/logic-apps-designer'],
@@ -408,6 +417,7 @@ const getDesignerServices = (
     oAuthService,
     workflowService,
     apimService,
+    functionService,
     runService,
   };
 };

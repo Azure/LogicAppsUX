@@ -63,7 +63,7 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
       workflowName: workflowProperties.name,
       httpClient,
     });
-  }, [baseUrl, apiVersion, accessToken, workflowProperties.name]);
+  }, [baseUrl, apiVersion, accessToken, workflowProperties.name, hostVersion]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
     if (pageParam) {

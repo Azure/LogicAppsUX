@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.25.0",
+  "version": "2.30.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -19,6 +19,7 @@
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/services/intl/src/compiled-lang/\" ",
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/services/intl/src/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "build:designer-client-services": "nx run services-designer-client-services:build",
+    "build:chatbot": "nx run chatbot:build",
     "build:parsers": "nx run parsers:build",
     "build:vscode-react": "nx run vs-code-react:build",
     "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-designer-react:build && nx run vs-code-react:build",
@@ -58,7 +59,8 @@
     "@fluentui/react-components": "^9.18.2",
     "@fluentui/react-focus": "8.8.19",
     "@fluentui/react-hooks": "8.6.20",
-    "@fluentui/react-portal-compat": "^9.0.45",
+    "@fluentui/react-migration-v8-v9": "^9.2.16",
+    "@fluentui/react-portal-compat": "^9.0.60",
     "@fluentui/style-utilities": "8.9.6",
     "@fluentui/theme": "2.6.25",
     "@fluentui/web-components": "^2.5.12",

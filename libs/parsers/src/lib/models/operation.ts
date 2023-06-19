@@ -200,6 +200,7 @@ export interface ParameterDeserializationOptions {
 export enum PropertySerializationType {
   ParentObject = 'parentobject',
   PathTemplate = 'pathtemplate',
+  SwaggerUrl = 'swaggerurl',
 }
 
 export interface ParameterSerializationOptions {

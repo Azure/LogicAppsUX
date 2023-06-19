@@ -9,8 +9,10 @@ import {
   serializeBJSWorkflow,
   updateCallbackUrl,
   switchToWorkflowParameters,
+  useIsDesignerDirty,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
+import { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -22,6 +24,7 @@ const iconClass = mergeStyles({
 
 const classNames = mergeStyleSets({
   azureBlue: [{ color: 'rgb(0, 120, 212)' }, iconClass],
+  azureGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
 });
 
 export const DesignerCommandBar = ({
@@ -49,14 +52,15 @@ export const DesignerCommandBar = ({
     updateCallbackUrl(designerState, DesignerStore.dispatch);
   });
 
-  const allOperationErrors = useSelector((state: RootState) => {
+  const designerIsDirty = useIsDesignerDirty();
+
+  const allInputErrors = useSelector((state: RootState) => {
     return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
       Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
         parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
       )
     );
   });
-
   const allWorkflowParameterErrors = useSelector((state: RootState) => {
     let validationErrorToShow = null;
     for (const parameter of Object.entries(state.workflowParameters.validationErrors) ?? []) {
@@ -69,16 +73,20 @@ export const DesignerCommandBar = ({
     }
     return validationErrorToShow;
   });
+
+  const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
+
+  const saveIsDisabled = isSaving || haveErrors || !designerIsDirty;
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
       text: 'Save',
-      disabled: isSaving || allOperationErrors.length > 0 || !!allWorkflowParameterErrors,
+      disabled: saveIsDisabled,
       onRenderIcon: () => {
         return isSaving ? (
           <Spinner size={SpinnerSize.small} />
         ) : (
-          <FontIcon aria-label="Save" iconName="Save" className={classNames.azureBlue} />
+          <FontIcon aria-label="Save" iconName="Save" className={!saveIsDisabled ? classNames.azureBlue : classNames.azureGrey} />
         );
       },
       onClick: () => {

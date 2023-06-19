@@ -5,7 +5,7 @@ on:
     types: [opened, edited, deleted, closed, reopened, labeled, unlabeled, assigned]
   issue_comment:
     types: [created, edited, deleted]
-  
+
 jobs:
   bugs:
     runs-on: ubuntu-latest
@@ -27,4 +27,3 @@ jobs:
           ado_active_state: 'Active'
           ado_close_state: 'Done'
           log_level: 100
- 
