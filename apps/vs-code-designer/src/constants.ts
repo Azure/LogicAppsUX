@@ -40,6 +40,10 @@ export const dotNetSDKMajorVersion = 6;
 export const dotNetSDKLatestVersion = '6.0.408';
 export const dotNetInstallScript = 'https://dot.net/v1/dotnet-install.sh';
 
+// NodeJs
+export const nvmWingetPackageName = 'CoreyButler.NVMforWindows';
+export const nodeJsMajorVersion = 16;
+
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
 export const workflowResourceGroupNameKey = 'WORKFLOWS_RESOURCE_GROUP_NAME';
@@ -126,6 +130,7 @@ export enum extensionCommand {
   reportIssue = 'azureLogicAppsStandard.reportIssue',
   installDotNetSDK = 'azureLogicAppsStandard.installDotNetSDK',
   uninstallDotNetSDK = 'azureLogicAppsStandard.uninstallDotNetSDK',
+  installNodeJs = 'azureLogicAppsStandard.installNodeJs',
 }
 
 // Context
@@ -185,6 +190,11 @@ export enum DotnetVersion {
   net48 = 'net48',
 }
 
+// NodeJs
+export enum NodeVersion {
+  v16 = '16',
+}
+
 // Packages Manager
 export enum PackageManager {
   npm = 'npm',
@@ -212,3 +222,6 @@ export const logicAppFilter = {
   type: 'microsoft.web/sites',
   kind: 'functionapp,workflowapp',
 };
+
+// Utils
+export const versionRegex = /\b\d+\.\d+\.\d+\b/g;
