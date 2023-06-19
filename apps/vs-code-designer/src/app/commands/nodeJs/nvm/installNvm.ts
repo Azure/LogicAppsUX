@@ -11,11 +11,11 @@ import { DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { MessageItem } from 'vscode';
 
-export async function installNvm(context: IActionContext, usersVersion?: string): Promise<void> {
+export async function installNvm(context: IActionContext): Promise<void> {
   ext.outputChannel.show();
 
   // Notifies Users of NVM install.
-  const message: string = localize('installNvm', 'Installing Node Version Manager');
+  const message: string = localize('installNvm', 'Node Version Manager');
   const install: MessageItem = { title: localize('install', 'Install') };
 
   let result: MessageItem;
@@ -27,11 +27,7 @@ export async function installNvm(context: IActionContext, usersVersion?: string)
       switch (process.platform) {
         case Platform.windows:
           uninstallNodeJs();
-          await executeCommand(ext.outputChannel, undefined, 'winget', 'install', nvmWingetPackageName);
-
-          if (usersVersion) {
-            await executeCommand(ext.outputChannel, undefined, 'nvm', 'install', usersVersion);
-          }
+          await executeCommand(ext.outputChannel, undefined, 'winget', 'install', '-e', '--id', nvmWingetPackageName);
           break;
       }
     }

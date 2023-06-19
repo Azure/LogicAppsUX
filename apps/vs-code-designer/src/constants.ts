@@ -42,7 +42,9 @@ export const dotNetInstallScript = 'https://dot.net/v1/dotnet-install.sh';
 
 // NodeJs
 export const nvmWingetPackageName = 'CoreyButler.NVMforWindows';
+export const nodeWingetPackageName = 'OpenJS.NodeJS';
 export const nodeJsMajorVersion = 16;
+export const nodeJsCurrentVersion = '16.12.0';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
