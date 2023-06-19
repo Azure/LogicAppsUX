@@ -14,11 +14,11 @@ import {
 } from '../models/Function';
 import { findLast } from './Array.Utils';
 import {
+  applyConnectionValue,
   flattenInputs,
   isCustomValue,
   nodeHasSourceNodeEventually,
   nodeHasSpecificInputEventually,
-  applyConnectionValue,
 } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
@@ -58,7 +58,7 @@ export const getInputValues = (
             return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
-              return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);
+              return getIndexValueForCurrentConnection(connections[input.reactFlowKey], connections);
             } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
               const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
               return formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
@@ -72,7 +72,7 @@ export const getInputValues = (
 };
 
 const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]): string => {
-  return `${functionData.functionName}(${inputs.join(', ')})`;
+  return functionData.functionName ? `${functionData.functionName}(${inputs.join(', ')})` : inputs.join(', ');
 };
 
 export const collectFunctionValue = (
@@ -83,7 +83,7 @@ export const collectFunctionValue = (
 ): string => {
   // Special case where the index is used directly
   if (currentConnection.self.node.key === indexPseudoFunctionKey) {
-    return getIndexValueForCurrentConnection(currentConnection);
+    return getIndexValueForCurrentConnection(currentConnection, connections);
   }
 
   const inputValues = getInputValues(currentConnection, connections, shouldLocalizePaths);
@@ -94,6 +94,53 @@ export const collectFunctionValue = (
   }
 
   return combineFunctionAndInputs(node, inputValues);
+};
+
+export interface SequenceValueResult {
+  sequenceValue: string;
+  hasIndex: boolean;
+  rootLoop: string;
+}
+
+export const collectSequenceValue = (
+  node: FunctionData,
+  currentConnection: Connection,
+  connections: ConnectionDictionary,
+  shouldLocalizePaths: boolean
+): SequenceValueResult => {
+  // Special case where the index is used directly
+  const result: SequenceValueResult = {
+    sequenceValue: '',
+    hasIndex: false,
+    rootLoop: '',
+  };
+
+  if (currentConnection.self.node.key === indexPseudoFunctionKey) {
+    result.hasIndex = true;
+  }
+
+  const inputValues = getInputValues(currentConnection, connections, shouldLocalizePaths);
+
+  const valueToTrim = extractScopeFromLoop(inputValues[0]) || inputValues[0];
+  const localizedInputValues =
+    shouldLocalizePaths && valueToTrim
+      ? inputValues.map((value) => {
+          return value.replaceAll(`${valueToTrim}/`, '');
+        })
+      : inputValues;
+
+  if (valueToTrim) {
+    result.rootLoop = valueToTrim;
+  }
+
+  // Special case for conditionals
+  if (currentConnection.self.node.key === ifPseudoFunctionKey) {
+    result.sequenceValue = localizedInputValues[0];
+  } else {
+    result.sequenceValue = combineFunctionAndInputs(node, localizedInputValues);
+  }
+
+  return result;
 };
 
 export const collectConditionalValues = (currentConnection: Connection, connections: ConnectionDictionary): [string, string] => {
@@ -494,3 +541,5 @@ export const flattenMapDefinitionValues = (node: MapDefinitionEntry | MapDefinit
     }
   });
 };
+
+export const extractScopeFromLoop = (scope: string): string | undefined => scope.match(/.*\(([^,]*),+/)?.[1];

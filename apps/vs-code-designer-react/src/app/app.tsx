@@ -15,7 +15,7 @@ import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-ex
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const App = () => {
@@ -40,6 +40,7 @@ export const App = () => {
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const intl = useIntl();
+  const queryClient = useQueryClient();
 
   const intlText = {
     ERROR_APP: intl.formatMessage({
@@ -81,7 +82,8 @@ export const App = () => {
       fileSystemConnectionCreate,
       vscode,
       oauthRedirectUrl,
-      hostVersion
+      hostVersion,
+      queryClient
     );
   }, [
     baseUrl,
@@ -95,6 +97,7 @@ export const App = () => {
     oauthRedirectUrl,
     dispatch,
     hostVersion,
+    queryClient,
   ]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {

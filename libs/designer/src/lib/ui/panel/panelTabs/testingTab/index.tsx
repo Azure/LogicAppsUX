@@ -8,7 +8,7 @@ import { selectPanelTab } from '../../../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useStaticResultProperties, useStaticResultSchema } from '../../../../core/state/staticresultschema/staitcresultsSelector';
 import { updateStaticResultProperties } from '../../../../core/state/staticresultschema/staticresultsSlice';
-import type { PanelTab } from '@microsoft/designer-ui';
+import type { PanelTabFn } from '@microsoft/designer-ui';
 import { StaticResultContainer } from '@microsoft/designer-ui';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
@@ -48,12 +48,12 @@ export const TestingPanel: React.FC = () => {
   ) : null;
 };
 
-export const testingTab: PanelTab = {
-  title: 'Testing',
+export const testingTab: PanelTabFn = (intl) => ({
+  title: intl.formatMessage({ defaultMessage: 'Testing', description: 'The tab label for the testing tab on the operation panel' }),
   name: constants.PANEL_TAB_NAMES.TESTING,
-  description: 'Static Testing Tab',
+  description: intl.formatMessage({ defaultMessage: 'Testing Tab', description: 'An accessability label that describes the testing tab' }),
   visible: true,
   content: <TestingPanel />,
-  order: 0,
+  order: 5,
   icon: 'Info',
-};
+});

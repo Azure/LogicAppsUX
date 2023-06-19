@@ -9,6 +9,7 @@ import type { CommentBoxProps, MenuItemOption } from './types';
 import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
 import { Icon, Spinner, SpinnerSize, css } from '@fluentui/react';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 
@@ -37,7 +38,7 @@ export interface CardProps {
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
-  runData: { status?: string; duration?: string };
+  runData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined;
   setFocus?: boolean;
 }
 
@@ -75,7 +76,7 @@ export const Card: React.FC<CardProps> = ({
   staticResultsEnabled,
   title,
   onClick,
-  runData,
+  runData = {},
   setFocus,
 }) => {
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
@@ -133,7 +134,13 @@ export const Card: React.FC<CardProps> = ({
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (
-          <StatusPill id={`${title}-status`} status={runData.status ?? 'Waiting'} duration={runData.duration ?? '0s'} />
+          <StatusPill
+            id={`${title}-status`}
+            status={runData.status}
+            duration={runData.duration}
+            startTime={runData.startTime}
+            endTime={runData.endTime}
+          />
         ) : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
         <div className="panel-card-main">

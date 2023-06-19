@@ -240,6 +240,7 @@ export const Combobox = ({
             getTokenPicker={baseEditorProps.getTokenPicker}
             placeholder={baseEditorProps.placeholder}
             tokenPickerButtonEditorProps={{ showOnLeft: true }}
+            dataAutomationId={baseEditorProps.dataAutomationId}
           >
             <Change setValue={setValue} />
           </BaseEditor>

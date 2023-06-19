@@ -67,8 +67,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     operationId: string,
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any,
-    nodeMetadata: any
+    dynamicState: any
   ): Promise<ListDynamicValue[]> {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
     const { operationId: dynamicOperation } = dynamicState;
@@ -84,7 +83,6 @@ export abstract class BaseConnectorService implements IConnectorService {
         operationId,
         parameters: invokeParameters,
         configuration,
-        nodeMetadata,
       });
     }
 
@@ -103,8 +101,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     operationId: string,
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any,
-    nodeMetadata: any
+    dynamicState: any
   ): Promise<OpenAPIV2.SchemaObject> {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
     const {
@@ -124,7 +121,6 @@ export abstract class BaseConnectorService implements IConnectorService {
         parameters: invokeParameters,
         configuration,
         isInput,
-        nodeMetadata,
       });
     }
 
@@ -267,7 +263,7 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: "Error executing the api ''{parameters}''.",
+                  defaultMessage: "Error occurred while executing the following API parameters: ''{parameters}''",
                   description:
                     'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
                 },
