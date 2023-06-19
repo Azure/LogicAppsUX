@@ -96,12 +96,13 @@ export class BaseFunctionService implements IFunctionService {
         ? swagger.api.schemes?.length
           ? `${swagger.api.schemes.at(-1)}://${swagger.api.host}`
           : `http://${swagger.api.host}`
-        : swagger?.api?.basePath ?? 'NotFound';
+        : 'NotFound';
+      const basePath = swagger?.api?.basePath ?? '';
       schema.properties = {
         method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
         uri: {
           type: 'string',
-          default: `${baseUrl}${operation.path}`,
+          default: `${baseUrl}${basePath}${operation.path}`,
           'x-ms-visibility': 'hideInUI',
           'x-ms-serialization': { property: { type: 'pathtemplate', parameterReference: 'operationDetails.pathParameters' } },
         },

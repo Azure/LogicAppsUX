@@ -411,12 +411,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         operationId: isTrigger ? appservicetrigger : appservice,
       };
 
-    case function_:
-      return {
-        connectorId: azureFunctionConnectorId,
-        operationId: azurefunction,
-      };
-
     case xslt:
       switch (kind) {
         case datamapper:
@@ -473,6 +467,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [foreach]: {
     connectorId: controlConnectorId,
     operationId: foreach,
+  },
+  [function_]: {
+    connectorId: azureFunctionConnectorId,
+    operationId: azurefunction,
   },
   [initializevariable]: {
     connectorId: variableConnectorId,
