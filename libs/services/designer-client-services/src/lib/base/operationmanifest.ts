@@ -127,7 +127,6 @@ const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 
 const azurefunction = 'azurefunction';
-const azureswaggerfunction = 'azureswaggerfunction';
 const appservice = 'appservice';
 const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
@@ -415,7 +414,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
     case function_:
       return {
         connectorId: azureFunctionConnectorId,
-        operationId: definition?.inputs?.uri ? azureswaggerfunction : azurefunction,
+        operationId: azurefunction,
       };
 
     case xslt:
