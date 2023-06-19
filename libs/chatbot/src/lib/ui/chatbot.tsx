@@ -49,6 +49,10 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
       defaultMessage: 'Actions',
       description: 'Actions button',
     }),
+    closeButtonTitle: intl.formatMessage({
+      defaultMessage: 'Close',
+      description: 'Close button',
+    }),
   };
 
   const onSubmitInputQuery = useCallback(() => {
@@ -79,26 +83,26 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
       isBlocking={false}
       layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
     >
-      <div className={'chatbot-container'}>
-        <div className={'chatbot-header'}>
+      <div className={'msla-chatbot-container'}>
+        <div className={'msla-chatbot-header'}>
           {/*TODO: Add icon for header*/}
-          <div className={'chatbot-header-title'}>{intlText.headerTitle}</div>
-          <div className={'chatbot-header-mode-pill'}>{intlText.pill}</div>
+          <div className={'msla-chatbot-header-title'}>{intlText.headerTitle}</div>
+          <div className={'msla-chatbot-header-mode-pill'}>{intlText.pill}</div>
           <IconButton
-            title={'Close'}
+            title={intlText.closeButtonTitle}
             iconProps={{ iconName: 'Clear' }}
             onClick={() => {
               setCollapsed(true);
             }}
-            className={'chatbot-close-button'}
+            className={'msla-chatbot-close-button'}
           />
         </div>
-        <div className={css('chatbot-content')}>
+        <div className={css('msla-chatbot-content')}>
           {conversation.map((item) => (
             <ConversationMessage key={item.id} item={item} />
           ))}
         </div>
-        <div className={'chatbot-footer'}>
+        <div className={'msla-chatbot-footer'}>
           <ChatInput
             query={inputQuery}
             placeholder={intlText.chatInputPlaceholder}

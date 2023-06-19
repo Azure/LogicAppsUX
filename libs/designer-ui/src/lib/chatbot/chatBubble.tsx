@@ -40,30 +40,30 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   return (
     <div
       className={css(
-        'bubble-container',
+        'msla-bubble-container',
         isUserMessage && USER_MESSAGE_CLASS,
         isUserMessage ? animations.userMessageEnter : animations.assistantMessageEnter,
         isEmphasized && animations.messageBorderGlint,
         className
       )}
     >
-      <div className={css('bubble', isUserMessage && USER_MESSAGE_CLASS)}>{children}</div>
+      <div className={css('msla-bubble', isUserMessage && USER_MESSAGE_CLASS)}>{children}</div>
       {(footerActions || isAIGenerated) && (
-        <div className={'bubble-footer'}>
+        <div className={'msla-bubble-footer'}>
           {footerActions && (
-            <div className={'bubble-footer-actions'}>
+            <div className={'msla-bubble-footer-actions'}>
               {footerActions.map((action) => (
-                <div key={action.title} className={'bubble-actions-footer'}>
+                <div key={action.title} className={'msla-bubble-actions-footer'}>
                   <ActionButton {...action} disabled={disabled || action.disabled} styles={footerButtonStyles} />
                 </div>
               ))}
             </div>
           )}
 
-          <div className={'bubble-footer'}>
-            <div className={'bubble-disclaimer'}>{resources?.AIGeneratedDisclaimer}</div>
+          <div className={'msla-bubble-footer'}>
+            <div className={'msla-bubble-disclaimer'}>{resources?.AIGeneratedDisclaimer}</div>
             {onThumbsReactionClicked && (
-              <div className={'bubble-reactions'}>
+              <div className={'msla-bubble-reactions'}>
                 <>
                   <ThumbsReactionButton
                     resources={resources?.ThumbReaction}
