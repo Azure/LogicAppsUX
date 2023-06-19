@@ -21,7 +21,7 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType } from '@microsoft/utils-logic-apps';
+import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType, getResourceName } from '@microsoft/utils-logic-apps';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   const { connectionsMapping, connectionReferences } = state;
@@ -72,7 +72,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
     const functionAppsCallback = () => FunctionService().fetchFunctionApps();
-    const functionsCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
+    const fetchSubResourcesCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
     const functionAppsLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Function Apps...',
       description: 'Text for loading function apps',
@@ -83,7 +83,9 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       description: 'Label for function app selection',
     });
 
-    const getColumns = (functionApp: any) => [functionApp?.name, functionApp?.properties?.resourceGroup, functionApp?.location];
+    const getColumns = (functionApp: any) => [getResourceName(functionApp), functionApp?.properties?.resourceGroup, functionApp?.location];
+
+    const getSubResourceName = (azureFunction: any) => getResourceName(azureFunction).split('/')?.[1] ?? azureFunction?.id;
 
     return {
       resourceType: 'functionApps',
@@ -93,8 +95,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       getColumns,
       getResourcesCallback: functionAppsCallback,
       loadingText: functionAppsLoadingText,
-      getSubResourceName: (azureFunction: any) => azureFunction.name.split('/')[1],
-      fetchSubResourcesCallback: functionsCallback,
+      getSubResourceName,
+      fetchSubResourcesCallback,
     };
   } else if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
     const apiInstancesCallback = () => ApiManagementService().fetchApiManagementInstances();
