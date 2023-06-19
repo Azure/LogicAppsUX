@@ -3,10 +3,13 @@ import { TokenType } from '../editor';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
 import { OPEN_TOKEN_PICKER } from '../editor/base/plugins/OpenTokenPicker';
 import iconSvg from './icon/icon.svg';
-import { Icon } from '@fluentui/react';
+import { Icon, css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getNodeByKey } from 'lexical';
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
+import { mergeRegister } from '@lexical/utils';
+import { $getNodeByKey, CLICK_COMMAND, COMMAND_PRIORITY_LOW } from 'lexical';
 import type { NodeKey } from 'lexical';
+import { useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface InputTokenProps {
@@ -19,7 +22,7 @@ export interface InputTokenProps {
   readOnly?: boolean;
   required?: boolean;
   title: string;
-  nodeKey?: NodeKey;
+  nodeKey: NodeKey;
   description?: string;
 }
 
@@ -27,6 +30,35 @@ export const DELETE = '\u00D7';
 export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readOnly, title, nodeKey }) => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
+  const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
+  const tokenRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    const unregister = mergeRegister(
+      editor.registerCommand<MouseEvent>(
+        CLICK_COMMAND,
+        (payload) => {
+          const event = payload;
+
+          if (event.target === tokenRef.current) {
+            if (event.shiftKey) {
+              setSelected(!isSelected);
+            } else {
+              clearSelection();
+              setSelected(true);
+            }
+            return true;
+          }
+
+          return false;
+        },
+        COMMAND_PRIORITY_LOW
+      )
+    );
+    return () => {
+      unregister();
+    };
+  }, [clearSelection, editor, isSelected, nodeKey, setSelected]);
 
   const handleTokenClicked = () => {
     if (nodeKey) {
@@ -52,6 +84,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
     if (nodeKey) {
       editor.focus();
       editor.dispatchCommand(DELETE_TOKEN_NODE, nodeKey);
+      setSelected(false);
     }
   };
 
@@ -83,10 +116,11 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
   return (
     <div
-      className="msla-token msla-input-token"
+      className={css('msla-token msla-input-token', isSelected && 'selected')}
       data-automation-id={`msla-token msla-input-token-${title}`}
       onClick={handleTokenClicked}
       style={tokenStyle}
+      ref={tokenRef}
     >
       <div className="msla-token-title" title={value}>
         {title}
