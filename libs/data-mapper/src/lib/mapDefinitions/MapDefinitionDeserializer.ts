@@ -309,7 +309,7 @@ export class MapDefinitionDeserializer {
       // Handle loops in targetKey by back-tracking
       while (startIdxOfCurLoop > -1) {
         const srcLoopNodeKey = getSourceKeyOfLastLoop(loopKey.substring(0, startIdxOfPrevLoop));
-        const srcLoopNode = findNodeForKey(srcLoopNodeKey, this._sourceSchema.schemaTreeRoot, false); // XXX Pretty sure this is correct
+        const srcLoopNode = findNodeForKey(srcLoopNodeKey, this._sourceSchema.schemaTreeRoot, false);
 
         const idxOfIndexVariable = loopKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
         let indexFnRfKey: string | undefined = undefined;
@@ -327,7 +327,7 @@ export class MapDefinitionDeserializer {
             startIdxOfNextPathChunk > -1 ? loopKey.substring(0, startIdxOfNextPathChunk) : loopKey,
             loopKey.indexOf('*') > -1
           );
-          tgtLoopNode = findNodeForKey(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot, true); // XXX Confirm here
+          tgtLoopNode = findNodeForKey(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot, true);
         }
 
         // Handle index variables

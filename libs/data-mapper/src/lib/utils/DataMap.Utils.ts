@@ -238,7 +238,7 @@ export const getSourceNode = (
     // We found a Function in source key -> let's find its data
     return findFunctionForFunctionName(sourceKey.substring(0, endOfFunctionIndex), functions);
   } else {
-    return findNodeForKey(sourceKey, sourceSchema.schemaTreeRoot, false); // XXX double check, pretty sure this is fine
+    return findNodeForKey(sourceKey, sourceSchema.schemaTreeRoot, false);
   }
 };
 
@@ -253,7 +253,7 @@ export const getDestinationNode = (targetKey: string, functions: FunctionData[],
 
   const destinationNode = isAGuid(destinationFunctionGuid)
     ? findFunctionForKey(destinationFunctionKey, functions)
-    : findNodeForKey(targetKey, schemaTreeRoot, false); // XXX
+    : findNodeForKey(targetKey, schemaTreeRoot, false);
 
   return destinationNode;
 };
