@@ -937,3 +937,12 @@ export function findAncestorElement(
 export function hasInvalidChars(str: string, invalidChars: string[]): boolean {
   return invalidChars.some((invalidChar) => includes(str, invalidChar));
 }
+
+/**
+ * Returns the closest thing to a "name" on an Azure resource.
+ * @arg {any} obj - An object to get the name of.
+ * @return {string} - The name of the object.
+ */
+export function getResourceName(obj: any): string {
+  return obj?.name ?? obj?.properties?.name ?? obj?.id ?? '';
+}

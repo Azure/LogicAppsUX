@@ -23,8 +23,8 @@ export interface BaseConnectorServiceOptions {
   httpClient: IHttpClient;
   clientSupportedOperations: OperationInfo[];
   getConfiguration: GetConfigurationFunction;
-  schemaClient: Record<string, GetSchemaFunction>;
-  valuesClient: Record<string, GetValuesFunction>;
+  schemaClient?: Record<string, GetSchemaFunction>;
+  valuesClient?: Record<string, GetValuesFunction>;
   apiHubServiceDetails: {
     apiVersion: string;
     baseUrl: string;
@@ -76,10 +76,10 @@ export abstract class BaseConnectorService implements IConnectorService {
     const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
-      if (!this.options.valuesClient[dynamicOperation]) {
+      if (!this.options.valuesClient?.[dynamicOperation]) {
         throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the values client.`);
       }
-      return this.options.valuesClient[dynamicOperation]({
+      return this.options.valuesClient?.[dynamicOperation]({
         operationId,
         parameters: invokeParameters,
         configuration,
@@ -113,10 +113,10 @@ export abstract class BaseConnectorService implements IConnectorService {
     const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
-      if (!this.options.schemaClient[dynamicOperation]) {
+      if (!this.options.schemaClient?.[dynamicOperation]) {
         throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the schema client.`);
       }
-      return this.options.schemaClient[dynamicOperation]({
+      return this.options.schemaClient?.[dynamicOperation]({
         operationId,
         parameters: invokeParameters,
         configuration,

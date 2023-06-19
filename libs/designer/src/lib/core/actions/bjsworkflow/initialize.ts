@@ -38,11 +38,12 @@ import type {
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
 import {
-  ApiManagementService,
   WorkflowService,
   LoggerService,
   LogEntryLevel,
   OperationManifestService,
+  FunctionService,
+  ApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -480,7 +481,17 @@ export const getCustomSwaggerIfNeeded = async (
 
 const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails, stepInputs: any): Promise<SwaggerParser> => {
   const { name, operationId, parameters } = serviceDetails;
-  const service: any = name === CustomSwaggerServiceNames.ApiManagement ? ApiManagementService() : undefined;
+  let service: any;
+  switch (name) {
+    case CustomSwaggerServiceNames.Function:
+      service = FunctionService();
+      break;
+    case CustomSwaggerServiceNames.ApiManagement:
+      service = ApiManagementService();
+      break;
+    default:
+      throw new UnsupportedException(`The custom swagger service name '${name}' is not supported`);
+  }
 
   if (!service || !service[operationId]) {
     throw new UnsupportedException(`The custom swagger service name '${name}' for operation '${operationId}' is not supported`);

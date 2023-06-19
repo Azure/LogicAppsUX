@@ -15,8 +15,9 @@ import { inlineCodeManifest } from './manifests/inlinecode';
 import { integrationAccountArtifactLookupManifest } from './manifests/integrationaccountartifactlookup';
 import { invokeWorkflowManifest } from './manifests/invokeWorkflow';
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
+import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
-import { invokeWorkflowGroup, invokeWorkflowOperation } from './operations';
+import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import { UnsupportedException } from '@microsoft/utils-logic-apps';
 
@@ -30,6 +31,12 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
           return {
             connectorId: invokeWorkflowGroup.id,
             operationId: invokeWorkflowOperation.id,
+          };
+
+        case 'function':
+          return {
+            connectorId: functionGroup.id,
+            operationId: definition?.inputs?.uri ? swaggerFunctionOperation.id : functionOperation.id,
           };
 
         default:
@@ -100,6 +107,7 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [appservice, appServiceActionManifest],
   [appservicetrigger, appServiceTriggerManifest],
   ['azurefunction', selectFunctionManifest],
+  ['azureswaggerfunction', selectSwaggerFunctionManifest],
   [invokeworkflow, invokeWorkflowManifest],
   [sendtobatch, sendToBatchManifest],
   [batch, batchTriggerManifest],
