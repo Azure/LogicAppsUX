@@ -1193,7 +1193,7 @@ export function updateParameterWithValues(
                     isUnknown: true,
                   };
 
-                  parameters.push(transformInputParameter(restInputParameter, propertyValue, /* invisible */ true));
+                  parameters.push(transformInputParameter(restInputParameter, propertyValue, /* invisible */ false));
                 }
               }
             }
