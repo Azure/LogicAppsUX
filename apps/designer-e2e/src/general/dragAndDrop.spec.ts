@@ -5,11 +5,10 @@ import { test, expect } from '@playwright/test';
 test('Should be able to drag and drop operations', async ({ page }) => {
   await page.goto(baseUrl);
 
-  await page.locator('div[role="button"]:has-text("🧰")').click();
   await page.locator('text=Select an option').click();
-
   await page.locator('button[role="option"]:has-text("Simple Big Workflow")').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();
+
   const originElement = await page.waitForSelector('div[role="button"]:has-text("Increment variable55")');
   const destinationElement = await page.waitForSelector('g:nth-child(51) > .edgebutton-foreignobject > div > .msla-drop-zone-viewmanager2');
 

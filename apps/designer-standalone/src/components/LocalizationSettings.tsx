@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../state/store';
-import { changeLanguage } from '../state/workflowLoadingSlice';
+import { setLanguage } from '../state/workflowLoadingSlice';
 import { Dropdown } from '@fluentui/react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -45,7 +45,7 @@ export const LocalizationSettings = () => {
       selectedKey={language}
       defaultValue={'en'}
       onChange={(_, option) => {
-        dispatch(changeLanguage(option?.key as string));
+        dispatch(setLanguage(option?.key as string));
       }}
     />
   );

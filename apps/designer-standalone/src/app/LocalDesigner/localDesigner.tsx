@@ -12,6 +12,8 @@ import {
   BaseFunctionService,
   BaseAppServiceService,
   StandardRunService,
+  ConsumptionOperationManifestService,
+  ConsumptionConnectionService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -19,7 +21,7 @@ import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
-const connectionService = new StandardConnectionService({
+const connectionServiceStandard = new StandardConnectionService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
@@ -34,11 +36,33 @@ const connectionService = new StandardConnectionService({
   readConnections: () => Promise.resolve({}),
 });
 
-const operationManifestService = new StandardOperationManifestService({
+const connectionServiceConsumption = new ConsumptionConnectionService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    baseUrl: '/baseUrl',
+    subscriptionId: '',
+    resourceGroup: '',
+    location: '',
+  },
+  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
+  readConnections: () => Promise.resolve({}),
+});
+
+const operationManifestServiceStandard = new StandardOperationManifestService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
 });
+
+const operationManifestServiceConsumption = new ConsumptionOperationManifestService({
+  apiVersion: '2018-11-01',
+  baseUrl: '/url',
+  httpClient,
+});
+
 const searchServiceStandard = new StandardSearchService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
@@ -110,13 +134,13 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
 export const LocalDesigner = () => {
-  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance, showChatBot, language } =
+  const { workflowDefinition, isReadOnly, isMonitoringView, isDarkMode, isConsumption, connections, runInstance, showChatBot, language } =
     useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: {
-      connectionService,
-      operationManifestService,
-      searchService: !consumption ? searchServiceStandard : searchServiceConsumption,
+      connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
+      operationManifestService: !isConsumption ? operationManifestServiceStandard : operationManifestServiceConsumption,
+      searchService: !isConsumption ? searchServiceStandard : searchServiceConsumption,
       oAuthService,
       gatewayService,
       functionService,
@@ -125,10 +149,10 @@ export const LocalDesigner = () => {
       hostService,
       runService,
     },
-    readOnly,
-    isMonitoringView: monitoringView,
-    isDarkMode: darkMode,
-    isConsumption: consumption,
+    readOnly: isReadOnly,
+    isMonitoringView,
+    isDarkMode,
+    isConsumption,
   };
 
   return (

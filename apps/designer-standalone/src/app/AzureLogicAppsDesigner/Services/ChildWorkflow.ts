@@ -2,6 +2,7 @@ import type { ArmResources } from '../Models/Arm';
 import type { Workflow } from '../Models/Workflow';
 import type { HttpClient } from './HttpClient';
 import type { ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import { hasProperty, getPropertyValue } from '@microsoft/utils-logic-apps';
 
 export interface DynamicCallServiceOptions {
   apiVersion: string;
@@ -15,7 +16,7 @@ interface ChildWorkflowServiceOptions extends DynamicCallServiceOptions {
 }
 
 export class ChildWorkflowService {
-  private _workflowsRequestSchema: Record<string, any> | undefined;
+  private _workflowsRequestSchema: Record<string, any> = {};
 
   constructor(private readonly options: ChildWorkflowServiceOptions) {
     const { apiVersion, baseUrl, httpClient, siteResourceId, workflowName } = this.options;
@@ -65,6 +66,27 @@ export class ChildWorkflowService {
       }
 
       this._workflowsRequestSchema[normalizedName] = schema;
+
+      return schema;
+    } catch {
+      // TODO(psamband): Log error but do not throw.
+      return {};
+    }
+  }
+
+  public async getLogicAppSwagger(workflowId: string): Promise<Record<string, any>> {
+    if (hasProperty(this._workflowsRequestSchema, workflowId)) {
+      return getPropertyValue(this._workflowsRequestSchema, workflowId);
+    }
+
+    try {
+      const { apiVersion, baseUrl, httpClient } = this.options;
+      const workflowContent = await httpClient.get<any>({
+        uri: `${baseUrl}${workflowId}`,
+        queryParameters: { 'api-version': apiVersion },
+      });
+      const schema = getTriggerSchema(workflowContent.properties?.definition?.triggers ?? {});
+      this._workflowsRequestSchema[workflowId] = schema;
 
       return schema;
     } catch {

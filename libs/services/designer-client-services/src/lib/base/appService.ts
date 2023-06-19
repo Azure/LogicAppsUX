@@ -38,6 +38,7 @@ export class BaseAppServiceService implements IAppServiceService {
   }
 
   async getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any> {
+    if (!swaggerUrl) return Promise.resolve();
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
     if (!operationId) return Promise.resolve();
     const operation = swagger.getOperationByOperationId(operationId);
