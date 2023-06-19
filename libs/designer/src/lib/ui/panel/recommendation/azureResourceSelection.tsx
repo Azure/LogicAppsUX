@@ -40,8 +40,8 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     description: 'Select a Function App resource',
   });
   const manualWorkflowTitleText = intl.formatMessage({
-    defaultMessage: "Select workflow with 'manual' trigger",
-    description: "Select workflow with 'manual' trigger",
+    defaultMessage: 'Select a Manual Workflow resource',
+    description: 'Select a Manual Workflow resource',
   });
   const batchWorkflowTitleText = intl.formatMessage({
     defaultMessage: 'Select a Batch Workflow resource',
@@ -128,9 +128,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           const resource = selectedResources[0];
           addResourceOperation({
             name: getResourceName(resource),
-            presetParameterValues: {
-              'metadata.apiDefinitionUrl': resource?.properties?.siteConfig?.apiDefinition?.url,
-              'metadata.swaggerSource': 'website',
+            actionMetadata: {
+              apiDefinitionUrl: resource?.properties?.siteConfig?.apiDefinition?.url,
+              swaggerSource: 'website',
             },
           });
         });

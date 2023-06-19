@@ -14,8 +14,6 @@ on:
           - patch
   repository_dispatch:
     types: [release]
-  schedule:
-    - cron: '0 17 * * 4'
 
 env:
   AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff

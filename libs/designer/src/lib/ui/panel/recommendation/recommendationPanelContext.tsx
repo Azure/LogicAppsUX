@@ -1,6 +1,8 @@
+import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
+import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
@@ -18,7 +20,7 @@ import { Link, Icon } from '@fluentui/react';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { equals, guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
+import { guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -38,6 +40,7 @@ export type RecommendationPanelContextProps = {
 export const RecommendationPanelContext = (props: RecommendationPanelContextProps) => {
   const { displayRuntimeInfo } = props;
   const dispatch = useDispatch<AppDispatch>();
+  const isConsumption = useIsConsumption();
   const isTrigger = useIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
@@ -76,19 +79,16 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
   const relationshipIds = useRelationshipIds();
   const isParallelBranch = useIsParallelBranch();
 
-  const hasAzureResourceSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-    return operation.properties.capabilities?.some((capability) => equals(capability, 'azureResourceSelection'));
-  }, []);
-
-  const hasSwaggerSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-    return operation.properties.capabilities?.some((capability) => equals(capability, 'swaggerSelection'));
+  const isAzureResourceActionId = useCallback((id: string) => {
+    const azureResourceOperationIds = Object.values(Constants.AZURE_RESOURCE_ACTION_TYPES);
+    return azureResourceOperationIds.some((_id) => areApiIdsEqual(id, _id));
   }, []);
 
   const startAzureResourceSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.AZURE_RESOURCE);
   }, []);
 
-  const startSwaggerSelection = useCallback(() => {
+  const startHttpSwaggerSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
 
@@ -99,12 +99,12 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
       });
       if (!operation) return;
       dispatch(selectOperationId(operation.id));
-      if (hasAzureResourceSelection(operation)) {
+      if (isAzureResourceActionId(operation.id) && isConsumption) {
         startAzureResourceSelection();
         return;
       }
-      if (hasSwaggerSelection(operation)) {
-        startSwaggerSelection();
+      if (operation.id === 'httpswaggeraction' || operation.id === 'httpswaggertrigger') {
+        startHttpSwaggerSelection();
         return;
       }
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
@@ -113,13 +113,13 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
     [
       allOperations,
       dispatch,
-      hasAzureResourceSelection,
-      hasSwaggerSelection,
+      isAzureResourceActionId,
+      isConsumption,
       isParallelBranch,
       isTrigger,
       relationshipIds,
       startAzureResourceSelection,
-      startSwaggerSelection,
+      startHttpSwaggerSelection,
     ]
   );
 

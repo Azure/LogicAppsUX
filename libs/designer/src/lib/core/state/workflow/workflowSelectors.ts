@@ -252,14 +252,6 @@ export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null => {
   );
 };
 
-export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return state.runInstance?.properties.actions?.[id]?.retryHistory ?? state.runInstance?.properties.trigger?.retryHistory;
-    })
-  );
-};
-
 export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {

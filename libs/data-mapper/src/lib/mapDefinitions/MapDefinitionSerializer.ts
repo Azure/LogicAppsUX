@@ -11,13 +11,12 @@ import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, 
 import {
   collectConditionalValues,
   collectFunctionValue,
-  collectSequenceValue,
-  extractScopeFromLoop,
   getInputValues,
   getSourceKeyOfLastLoop,
   isValidToMakeMapDefinition,
 } from '../utils/DataMap.Utils';
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
+import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import yaml from 'js-yaml';
@@ -287,7 +286,7 @@ const addLoopingToNewPathItems = (
             const inputConnection = indexConnection.inputs[0][0];
             const inputKey = isConnectionUnit(inputConnection) && inputConnection.node.key;
 
-            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})`;
+            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection)})`;
           } else {
             loopValue = `${mapNodeParams.for}(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, '')})`;
           }
@@ -300,25 +299,22 @@ const addLoopingToNewPathItems = (
         } else {
           // Loop with an index
           if (!prevPathItemWasConditional) {
-            const functionKey = sourceNode.reactFlowKey;
-            const functionConnection = connections[functionKey];
-            const sequenceValueResult = collectSequenceValue(sourceNode.node, functionConnection, connections, true);
+            const indexFunctionKey = sourceNode.reactFlowKey;
+            const sourceSchemaNodeConnection = connections[indexFunctionKey].inputs[0][0];
+            const sourceSchemaNode = isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node;
+            const indexFunctionInput = connections[indexFunctionKey];
 
-            newPath.forEach((pathItem) => {
-              const extractedScope = extractScopeFromLoop(pathItem.key);
-
-              if (extractedScope) {
-                sequenceValueResult.sequenceValue = sequenceValueResult.sequenceValue.replaceAll(`${extractedScope}/`, '');
-              }
-            });
-
-            if (sequenceValueResult.hasIndex) {
-              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue}, ${getIndexValueForCurrentConnection(
-                functionConnection,
-                connections
-              )})`;
+            if (sourceSchemaNode && isSchemaNodeExtended(sourceSchemaNode)) {
+              const valueToTrim = findLast(
+                sourceSchemaNode.pathToRoot,
+                (pathItem) => pathItem.repeating && pathItem.key !== sourceSchemaNode.key
+              )?.key;
+              loopValue = sourceSchemaNode.key.replace(`${valueToTrim}/`, '');
+              loopValue = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
             } else {
-              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})`;
+              LogService.error(LogCategory.DataMapUtils, 'addLoopingToNewPathItems', {
+                message: `Failed to generate proper loopValue: ${loopValue}`,
+              });
             }
 
             // For entry

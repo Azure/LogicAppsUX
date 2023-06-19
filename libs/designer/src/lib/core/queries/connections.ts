@@ -1,5 +1,5 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
+import { ApiManagementService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
@@ -97,6 +97,16 @@ export const getUniqueConnectionName = async (connectorId: string): Promise<stri
   const connectionNames = (await getConnectionsForConnector(connectorId)).map((connection) => connection.name);
   const connectorName = connectorId.split('/').at(-1);
   return ConnectionService().getUniqueConnectionName(connectorId, connectionNames, connectorName as string);
+};
+
+export const getApiManagementSwagger = async (apimApiId: string): Promise<SwaggerParser> => {
+  const queryClient = getReactQueryClient();
+  const swagger = await queryClient.fetchQuery(['apimSwagger', apimApiId?.toLowerCase()], async () => {
+    const swagger = await ApiManagementService().fetchApiMSwagger(apimApiId);
+    return SwaggerParser.parse(swagger);
+  });
+
+  return new SwaggerParser(swagger);
 };
 
 const useConnectionResource = (connectionId: string) => {

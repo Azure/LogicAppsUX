@@ -42,7 +42,7 @@ describe('lib/monitoring/statuspill', () => {
   });
 
   it('should render the duration as text and as an ARIA label', () => {
-    renderer.render(<StatusPill {...minimal} duration="1s" startTime="4/28/2023, 12:06:28 AM" endTime="4/28/2023, 12:06:29 AM" />);
+    renderer.render(<StatusPill {...minimal} duration="1s" durationAnnounced="1 second" />);
 
     const pill = renderer.getRenderOutput();
     expect(pill.props['aria-label']).toBe(`1 second. ${'Succeeded'}`);

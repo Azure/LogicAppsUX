@@ -24,13 +24,15 @@
 }
 .editor-heading-h1 {
   font-size: 24px;
+  color: rgb(5, 5, 5);
   font-weight: 400;
   margin: 0;
   margin-bottom: 12px;
   padding: 0;
 }
 .editor-heading-h2 {
-  font-size: 18px;
+  font-size: 15px;
+  color: rgb(101, 103, 107);
   font-weight: 700;
   margin: 0;
   margin-top: 10px;
@@ -38,7 +40,7 @@
   text-transform: uppercase;
 }
 .editor-heading-h3 {
-  font-size: 14px;
+  font-size: 12px;
   margin: 0;
   margin-top: 10px;
   padding: 0;

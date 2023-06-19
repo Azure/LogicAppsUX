@@ -1,15 +1,12 @@
 import constants from '../../../common/constants';
 import { SettingsPanel } from '../../settings/';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTab } from '@microsoft/designer-ui';
 
-export const settingsTab: PanelTabFn = (intl) => ({
-  title: intl.formatMessage({ defaultMessage: 'Settings', description: 'The tab label for the settings tab on the operation panel' }),
+export const settingsTab: PanelTab = {
+  title: 'Settings',
   name: constants.PANEL_TAB_NAMES.SETTINGS,
-  description: intl.formatMessage({
-    defaultMessage: 'Request Settings',
-    description: 'An accessability label that describes the settings tab',
-  }),
+  description: 'Request Settings',
   visible: true,
   content: <SettingsPanel />,
-  order: 2,
-});
+  order: 0,
+};

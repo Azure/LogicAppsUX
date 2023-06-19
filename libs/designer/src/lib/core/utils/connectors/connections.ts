@@ -1,6 +1,6 @@
 import constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
-import { getConnection } from '../../queries/connections';
+import { getApiManagementSwagger, getConnection } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
@@ -49,12 +49,8 @@ export async function isConnectionReferenceValid(
     return false;
   }
 
-  try {
-    const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
-    return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
-  } catch (error: any) {
-    return false;
-  }
+  const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
+  return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
 }
 
 export function getAssistedConnectionProps(connector: Connector, manifest?: OperationManifest): AssistedConnectionProps | undefined {
@@ -105,8 +101,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     });
 
     const apisLabel = intl.formatMessage({
-      defaultMessage: 'Select an API from an API Management instance',
-      description: 'Label for API selection',
+      defaultMessage: 'Select an api from apim instance',
+      description: 'Label for api selection',
     });
 
     const getColumns = (apimInstance: any) => [apimInstance?.name, apimInstance?.id.split('/')[4], apimInstance?.location];
@@ -144,7 +140,7 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
   } else if (connectionType === ConnectionType.ApiManagement) {
     // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
-    const { api } = await ApiManagementService().fetchApiMSwagger(apimApiId);
+    const { api } = await getApiManagementSwagger(apimApiId);
     const baseUrl = api.host ? (api.schemes?.length ? `${api.schemes.at(-1)}://${api.host}` : `http://${api.host}`) : 'NotFound';
     const fullUrl = api.basePath ? `${baseUrl}${api.basePath}` : baseUrl;
     const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';

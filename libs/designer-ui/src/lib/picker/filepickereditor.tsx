@@ -128,7 +128,6 @@ export const FilePickerEditor = ({
         getTokenPicker={baseEditorProps.getTokenPicker}
         placeholder={baseEditorProps.placeholder}
         tokenPickerButtonEditorProps={{ showOnLeft: true }}
-        dataAutomationId={baseEditorProps.dataAutomationId}
       >
         <EditorValueChange
           pickerDisplayValue={pickerDisplayValue}

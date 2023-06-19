@@ -39,11 +39,11 @@ const Resources = {
     description: 'Label for combining strings together',
   }),
   TOKEN_PARAMETER_CONCAT_ALL: intl.formatMessage({
-    defaultMessage: 'Required. One of the strings to combine into a single string.',
+    defaultMessage: 'Required. The string to combine into a single string.',
     description: 'Required string parameter required to combine strings',
   }),
   TOKEN_FUNCTION_FUNCTION_SUBSTRING: intl.formatMessage({
-    defaultMessage: 'Returns a subset of characters from a string.',
+    defaultMessage: 'Returns a subset of characters from a string',
     description: 'Label for description of custom substring Function',
   }),
   TOKEN_PARAMETER_SUBSTRING_TEXT: intl.formatMessage({
@@ -111,7 +111,7 @@ const Resources = {
   }),
   TOKEN_FUNCTION_FUNCTION_INDEXOF: intl.formatMessage({
     defaultMessage: 'Returns the first index of a value within a string (case-insensitive, invariant culture)',
-    description: "Label for the description of a custom 'indexOf' function",
+    description: 'Label for description of custom indexOf Function',
   }),
   TOKEN_PARAMETER_INDEXOF_TEXT: intl.formatMessage({
     defaultMessage: 'Required. The string that may contain the value.',
@@ -122,7 +122,7 @@ const Resources = {
     description: 'Required text parameter to search indexOf function with',
   }),
   TOKEN_FUNCTION_FUNCTION_NTHINDEXOF: intl.formatMessage({
-    defaultMessage: "Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture).",
+    defaultMessage: 'Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)',
     description: 'Label for description of custom nthIndexOf Function',
   }),
   TOKEN_PARAMETER_NTHINDEXOF_TEXT: intl.formatMessage({
@@ -260,7 +260,7 @@ const Resources = {
     description: 'Required collection parameters to check union function on',
   }),
   TOKEN_FUNCTION_COLLECTION_FIRST: intl.formatMessage({
-    defaultMessage: 'Returns the first element from the passed-in array or string.',
+    defaultMessage: 'Returns the first element in the array or string passed in',
     description: 'Label for description of custom first Function',
   }),
   TOKEN_PARAMETER_FIRST_COLLECTION: intl.formatMessage({
@@ -273,7 +273,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_LAST_COLLECTION: intl.formatMessage({
     defaultMessage: 'Required. The collection to take the last object from.',
-    description: "The required collection parameter for applying the 'last' function.",
+    description: 'Required collection parameter to apply last function on',
   }),
   TOKEN_FUNCTION_COLLECTION_TAKE: intl.formatMessage({
     defaultMessage: 'Returns the first Count elements from the array or string passed in',
@@ -328,11 +328,11 @@ const Resources = {
     description: 'Required value parameter to return given if function is true',
   }),
   TOKEN_PARAMETER_IF_VALUEIFFALSE: intl.formatMessage({
-    defaultMessage: 'Required. The value to return if the expression is false.',
+    defaultMessage: "Required. The value to return if the expression is 'false'.",
     description: 'Required value parameter to return given if function is false',
   }),
   TOKEN_FUNCTION_LOGICAL_EQUALS: intl.formatMessage({
-    defaultMessage: 'Returns true if two values are equal.',
+    defaultMessage: 'Returns true if two values are equal',
     description: 'Label for description of custom equals Function',
   }),
   TOKEN_PARAMETER_EQUALS_OBJECT: intl.formatMessage({
@@ -364,7 +364,7 @@ const Resources = {
     description: 'Required expression parameter to apply not function',
   }),
   TOKEN_FUNCTION_LOGICAL_LESS: intl.formatMessage({
-    defaultMessage: 'Returns true if the first argument is less than the second.',
+    defaultMessage: 'Returns true if the first argument is less than the second',
     description: 'Label for description of custom less Function',
   }),
   TOKEN_PARAMETER_LESS_VALUE: intl.formatMessage({
@@ -416,7 +416,7 @@ const Resources = {
     description: 'Label for conversion functions',
   }),
   TOKEN_FUNCTION_CONVERSION_JSON: intl.formatMessage({
-    defaultMessage: 'Converts the input to a JSON type value.',
+    defaultMessage: 'Convert the input to a JSON type value',
     description: 'Label for description of custom json Function',
   }),
   TOKEN_PARAMETER_JSON_VALUE: intl.formatMessage({
@@ -640,8 +640,8 @@ const Resources = {
     description: 'Required string parameter to be used as key for formDataMultiValues function',
   }),
   TOKEN_FUNCTION_CONVERSION_MULTIPARTBODY: intl.formatMessage({
-    defaultMessage: 'Returns the body for a part in a multipart output from an action.',
-    description: "Label for the description of the custom 'multipartBody' function",
+    defaultMessage: 'Returns the body for a part in a multipart output of an action',
+    description: 'Label for description of custom multipartBody Function',
   }),
   TOKEN_PARAMETER_MULTIPARTBODY_ACTIONNAME: intl.formatMessage({
     defaultMessage: 'Required. The name of the action with a multipart response.',
@@ -866,7 +866,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_SOURCETIMEZONE: intl.formatMessage({
     defaultMessage:
-      "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'.",
+      'Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details.',
     description: 'Required string parameter for source time zone',
   }),
   TOKEN_PARAMETER_DESTINATIONTIMEZONE: intl.formatMessage({
@@ -900,7 +900,7 @@ const Resources = {
   }),
   TOKEN_FUNCTION_DATETIME_STARTOFDAY: intl.formatMessage({
     defaultMessage: 'Returns the start of the day to a string timestamp passed in',
-    description: "Label for the description of a custom 'startOfDay' function",
+    description: 'Label for description of custom startOfDay Function',
   }),
   TOKEN_FUNCTION_DATETIME_STARTOFMONTH: intl.formatMessage({
     defaultMessage: 'Returns the start of the month of a string timestamp',
@@ -949,7 +949,7 @@ const Resources = {
     description: 'Label for description of custom actions Function',
   }),
   TOKEN_PARAMETER_ACTIONS_ACTIONNAME: intl.formatMessage({
-    defaultMessage: 'Required. The name of the action that has the values you want.',
+    defaultMessage: 'Required. The name of the action whose values you want.',
     description: 'Required string parameter to determine action wanted',
   }),
   TOKEN_FUNCTION_REFERENCE_OUTPUTS: intl.formatMessage({
@@ -1054,7 +1054,7 @@ const Resources = {
     description: 'Label for URI manipulation functions',
   }),
   TOKEN_FUNCTION_MANIPULATION_COALESCE: intl.formatMessage({
-    defaultMessage: 'Returns the first non-null object in the passed-in argument values.',
+    defaultMessage: 'Returns the first non-null object in the arguments passed in',
     description: 'Label for description of custom coalesce Function',
   }),
   TOKEN_PARAMETER_COALESCE_ALL: intl.formatMessage({

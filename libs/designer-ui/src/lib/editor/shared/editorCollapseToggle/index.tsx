@@ -4,11 +4,11 @@ import TextMode from '../../../card/images/text_mode.svg';
 import TextModeInverted from '../../../card/images/text_mode_inverted.svg';
 import type { ICalloutProps, ITooltipHostStyles } from '@fluentui/react';
 import { useTheme, IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
+import { useIntl } from 'react-intl';
 
 export interface EditorCollapseToggleProps {
   collapsed: boolean;
   disabled?: boolean;
-  label?: string;
   toggleCollapsed: () => void;
 }
 
@@ -23,9 +23,9 @@ const inlineBlockStyle: Partial<ITooltipHostStyles> = {
 export const EditorCollapseToggle: React.FC<EditorCollapseToggleProps> = ({
   collapsed,
   disabled = false,
-  label,
   toggleCollapsed,
 }): JSX.Element => {
+  const intl = useIntl();
   const { isInverted } = useTheme();
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>): void => {
@@ -33,12 +33,24 @@ export const EditorCollapseToggle: React.FC<EditorCollapseToggleProps> = ({
     toggleCollapsed();
   };
 
+  const PARAMETER_EXPAND_ICON_DESC = intl.formatMessage({
+    defaultMessage: 'Switch to detail inputs for array item',
+    description: 'Label for switching input to array',
+  });
+
+  const PARAMETER_COLLAPSE_ICON_DESC = intl.formatMessage({
+    defaultMessage: 'Switch to input entire array',
+    description: 'Label for switching input to Text',
+  });
+
   const toggleIcon = collapsed ? (isInverted ? KeyValueModeInverted : KeyValueMode) : isInverted ? TextModeInverted : TextMode;
 
+  const toggleText = collapsed ? PARAMETER_EXPAND_ICON_DESC : PARAMETER_COLLAPSE_ICON_DESC;
+
   return (
-    <TooltipHost calloutProps={calloutProps} content={label} styles={inlineBlockStyle}>
+    <TooltipHost calloutProps={calloutProps} content={toggleText} styles={inlineBlockStyle}>
       <IconButton
-        aria-label={label}
+        aria-label={toggleText}
         className="msla-button msla-editor-toggle-button"
         disabled={disabled}
         iconProps={{ imageProps: { src: toggleIcon } }}

@@ -2,47 +2,125 @@
   "++ZVe/": [
     {
       "type": 0,
-      "value": "Тестирование"
+      "value": "Testing"
     }
   ],
   "+0yxlR": [
     {
       "type": 0,
-      "value": "Отображение функции"
+      "value": "Function display"
     }
   ],
-  "+Uvo/p": [
+  "+20fdv": [
     {
       "type": 0,
-      "value": "Замещающий текст для нижнего шеврона"
-    }
-  ],
-  "+ZSBrq": [
-    {
-      "type": 0,
-      "value": "Контекстное меню для карточки "
+      "value": "Недопустимые свойства \""
     },
     {
       "type": 1,
-      "value": "title"
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" для типа проверки подлинности \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
-  "+mAJR3": [
+  "+3efoo": [
+    {
+      "type": 0,
+      "value": "No schema is added"
+    }
+  ],
+  "+DxBpE": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
+    }
+  ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
+  "+W9fkq": [
     {
       "type": 0,
       "value": "(UTC+08:00) Куала-Лумпур, Сингапур"
     }
   ],
-  "+powfX": [
+  "+dlOgj": [
     {
       "type": 0,
-      "value": "Часовой пояс"
+      "value": "(UTC-05:00) Гаити"
     }
   ],
-  "/EU/oJ": [
+  "+g+mch": [
     {
       "type": 0,
-      "value": "Обязательно. Строка, содержащая название исходного часового пояса. Дополнительные сведения в статье \"Часовые пояса по умолчанию\" по ссылке: https://go.microsoft.com/fwlink/?linkid=2238292."
+      "value": "Возвращает тело части в составных выходных данных действия"
+    }
+  ],
+  "+iMTt7": [
+    {
+      "type": 0,
+      "value": "Отметьте для выбора подключения"
+    }
+  ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Обязательное поле. Значение, которое нужно вернуть, если выражение имеет значение false."
+    }
+  ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Разбивка на страницы"
+    }
+  ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
+  "/AtN16": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Дарвин"
+    }
+  ],
+  "/B2CTz": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Пекин, Чунцин, Гонконг, Урумчи"
     }
   ],
   "/I/U8L": [
@@ -51,28 +129,22 @@
       "value": "Текст"
     }
   ],
+  "/Igb36": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Брисбен"
+    }
+  ],
   "/NDLmg": [
     {
       "type": 0,
       "value": "Ожидание"
     }
   ],
-  "/NtebP": [
-    {
-      "type": 0,
-      "value": "(UTC+05:00) Стамбул, Карачи"
-    }
-  ],
   "/QqADs": [
     {
       "type": 0,
       "value": "Возвращает элементы в массиве, начиная со счетчика индекса"
-    }
-  ],
-  "/RS9F7": [
-    {
-      "type": 0,
-      "value": "(UTC-06:00) Саскачеван"
     }
   ],
   "/ULFwg": [
@@ -99,22 +171,16 @@
       "value": "Преобразует входные данные в массив"
     }
   ],
-  "/km5eO": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) Асунсьон"
-    }
-  ],
   "/mjH84": [
     {
       "type": 0,
-      "value": "Показать необработанные выходные данные"
+      "value": "Show raw outputs"
     }
   ],
   "/n13VL": [
     {
       "type": 0,
-      "value": "Свойства"
+      "value": "Properties"
     }
   ],
   "/qchXQ": [
@@ -129,6 +195,18 @@
       "value": "0"
     }
   ],
+  "/rjP4U": [
+    {
+      "type": 0,
+      "value": "(UTC) Время в формате UTC"
+    }
+  ],
+  "/sMQhI": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Индиана (восток)"
+    }
+  ],
   "/ut0u7": [
     {
       "type": 0,
@@ -138,13 +216,13 @@
   "/vWMKW": [
     {
       "type": 0,
-      "value": "Отсутствуют обязательные входные данные"
+      "value": "Missing required inputs"
     }
   ],
   "/yYyOq": [
     {
       "type": 0,
-      "value": "Группа ресурсов"
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -159,16 +237,10 @@
       "value": "Триггер"
     }
   ],
-  "03RO5d": [
-    {
-      "type": 0,
-      "value": "Изменить параметр"
-    }
-  ],
   "04AwK7": [
     {
       "type": 0,
-      "value": "Код ошибки: \""
+      "value": "Error code: '"
     },
     {
       "type": 1,
@@ -176,7 +248,7 @@
     },
     {
       "type": 0,
-      "value": "\", сообщение: \""
+      "value": "', Message: '"
     },
     {
       "type": 1,
@@ -184,13 +256,7 @@
     },
     {
       "type": 0,
-      "value": "\"."
-    }
-  ],
-  "06zKZg": [
-    {
-      "type": 0,
-      "value": "(UTC+04:00) Тбилиси"
+      "value": "'."
     }
   ],
   "07ZsoY": [
@@ -199,16 +265,10 @@
       "value": "Возвращает начало часа в метку времени строки, переданную в функцию"
     }
   ],
-  "07oZoX": [
-    {
-      "type": 0,
-      "value": "(UTC+12:00) Анадырь, Петропавловск-Камчатский"
-    }
-  ],
   "08e2rO": [
     {
       "type": 0,
-      "value": "Управляемое удостоверение, используемое с этой операцией, больше не существует. Чтобы продолжить, настройте удостоверение или измените подключение."
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
     }
   ],
   "09B9CU": [
@@ -217,10 +277,10 @@
       "value": "Возвращает URL-адрес для вызова триггера или действия. Примечание: эта функция может использоваться только в httpWebhook и apiConnectionWebhook. Она не может использоваться в manual, recurrence, http или apiConnection."
     }
   ],
-  "0B5xDu": [
+  "09oqLb": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Шри-Джаяварденепура"
+      "value": "(UTC+04:00) Баку"
     }
   ],
   "0CvRZW": [
@@ -238,7 +298,7 @@
   "0GT0SI": [
     {
       "type": 0,
-      "value": "Отмена"
+      "value": "Cancel"
     }
   ],
   "0GqNGo": [
@@ -250,7 +310,7 @@
   "0IRUjM": [
     {
       "type": 0,
-      "value": "Выберите узел целевой схемы, чтобы начать сопоставление"
+      "value": "Select a target schema node to start mapping"
     }
   ],
   "0JTHTZ": [
@@ -274,7 +334,7 @@
   "0SSwxD": [
     {
       "type": 0,
-      "value": "Закрыть панель"
+      "value": "Close panel"
     }
   ],
   "0Vzp0l": [
@@ -289,6 +349,12 @@
       "value": "Выполнено с повторными попытками"
     }
   ],
+  "0hxr5j": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Четумаль"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -298,13 +364,19 @@
   "0m2Y1/": [
     {
       "type": 0,
-      "value": "Значение"
+      "value": "Value"
+    }
+  ],
+  "0meqK1": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Богота, Кито, Лима, Рио-Бранко"
     }
   ],
   "0oebOm": [
     {
       "type": 0,
-      "value": "Выводы"
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -326,7 +398,7 @@
     },
     {
       "type": 0,
-      "value": " больше не существует в схеме операции. Удалите его, прежде чем вновь сохранять рабочий процесс."
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
     }
   ],
   "0uj1Li": [
@@ -338,19 +410,13 @@
   "0upuCv": [
     {
       "type": 0,
-      "value": "Час"
+      "value": "Hour"
     }
   ],
   "0vfdFS": [
     {
       "type": 0,
-      "value": "каждый день"
-    }
-  ],
-  "0xLWzG": [
-    {
-      "type": 0,
-      "value": "Имя уже существует или является недопустимым. Обновите имя, прежде чем продолжить."
+      "value": "every day"
     }
   ],
   "0y5eia": [
@@ -374,7 +440,7 @@
   "11qu8f": [
     {
       "type": 0,
-      "value": "Введите допустимое целое число."
+      "value": "Enter a valid integer."
     }
   ],
   "14lYtE": [
@@ -401,16 +467,16 @@
       "value": "Требуется. Строка в кодировке URI."
     }
   ],
-  "1KFpTX": [
-    {
-      "type": 0,
-      "value": "(UTC+03:00) Минск"
-    }
-  ],
   "1NBvKu": [
     {
       "type": 0,
       "value": "Преобразует аргумент параметра в число с плавающей запятой"
+    }
+  ],
+  "1Ogj/V": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Иерусалим"
     }
   ],
   "1R6Vaa": [
@@ -478,7 +544,7 @@
   "1REk6u": [
     {
       "type": 0,
-      "value": "Введите допустимый электронный адрес."
+      "value": "Enter a valid email."
     }
   ],
   "1TE0e8": [
@@ -496,7 +562,7 @@
   "1YEc9e": [
     {
       "type": 0,
-      "value": "Введите допустимое условие."
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -511,28 +577,10 @@
       "value": "У каждого выполнения после конфигурации должно быть выбрано по меньшей мере одно состояние"
     }
   ],
-  "1dlfUe": [
-    {
-      "type": 0,
-      "value": "Действия выполняют операции с данными, взаимодействуют с системами или запускают другие задачи."
-    }
-  ],
-  "1eKQwo": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) Перт"
-    }
-  ],
   "1ejxkP": [
     {
       "type": 0,
       "value": "Безопасные входные данные"
-    }
-  ],
-  "1hHFdx": [
-    {
-      "type": 0,
-      "value": "(UTC-01:00) Азорские острова"
     }
   ],
   "1htSs7": [
@@ -550,7 +598,7 @@
   "1nODUD": [
     {
       "type": 0,
-      "value": "Скрыть функции"
+      "value": "Hide functions"
     }
   ],
   "1nvvw1": [
@@ -562,7 +610,7 @@
   "1pjO9s": [
     {
       "type": 0,
-      "value": "Скрыть исходную схему"
+      "value": "Hide source schema"
     }
   ],
   "1uGBLP": [
@@ -577,10 +625,16 @@
       "value": "Закрыть"
     }
   ],
+  "1zmMYu": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Каракас"
+    }
+  ],
   "20oqsp": [
     {
       "type": 0,
-      "value": "Добавить дочерние элементы (рекурсивные)"
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -601,12 +655,6 @@
       "value": "Глобальный поиск"
     }
   ],
-  "27Nhhv": [
-    {
-      "type": 0,
-      "value": "Выбор API из экземпляра управления API"
-    }
-  ],
   "2CXCOt": [
     {
       "type": 0,
@@ -622,7 +670,7 @@
   "2JA3gY": [
     {
       "type": 0,
-      "value": "Развернуть узел дерева"
+      "value": "Expand tree node"
     }
   ],
   "2K2fAj": [
@@ -635,6 +683,12 @@
     {
       "type": 0,
       "value": "Поиск"
+    }
+  ],
+  "2NYPLt": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Ньюфаундленд"
     }
   ],
   "2Noh96": [
@@ -655,16 +709,16 @@
       "value": "Выбрать существующую"
     }
   ],
+  "2b1yD3": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Окленд, Веллингтон"
+    }
+  ],
   "2cVEMV": [
     {
       "type": 0,
       "value": "Возвращает одно значение, соответствующее имени ключа из выходных данных действия form-data или form-encoded"
-    }
-  ],
-  "2gOfQI": [
-    {
-      "type": 0,
-      "value": "Существующие схемы из"
     }
   ],
   "2gzGrJ": [
@@ -673,32 +727,32 @@
       "value": "Требуется. Имя действия с ответом form-data или form-encoded."
     }
   ],
-  "2hrQOL": [
-    {
-      "type": 0,
-      "value": "(UTC+00:00) Дублин, Эдинбург, Лиссабон, Лондон"
-    }
-  ],
   "2kWLLc": [
     {
       "type": 0,
-      "value": "Время начала"
+      "value": "Start Time"
     }
   ],
   "2pRsUf": [
     {
       "type": 0,
-      "value": "Введите допустимый массив."
+      "value": "Enter a valid array."
     }
   ],
   "2r30S9": [
     {
       "type": 0,
-      "value": "Вставить новый шаг после "
+      "value": "Insert a new step after "
     },
     {
       "type": 1,
       "value": "parentName"
+    }
+  ],
+  "2ri1Kf": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Дамаск"
     }
   ],
   "2tTQ0A": [
@@ -710,25 +764,25 @@
   "2vnYre": [
     {
       "type": 0,
-      "value": "Добавить действие"
+      "value": "Add Action"
+    }
+  ],
+  "2xhbE1": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Магадан"
     }
   ],
   "2y24a/": [
     {
       "type": 0,
-      "value": "Сохранить"
-    }
-  ],
-  "3+TQMa": [
-    {
-      "type": 0,
-      "value": "Загрузка подключения…"
+      "value": "Save"
     }
   ],
   "30njcn": [
     {
       "type": 0,
-      "value": "Создать подключение"
+      "value": "Create Connection"
     }
   ],
   "33+WHG": [
@@ -740,7 +794,7 @@
   "34Nt/B": [
     {
       "type": 0,
-      "value": "замещающий текст для значка кнопки"
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -752,7 +806,7 @@
   "3AWwVl": [
     {
       "type": 0,
-      "value": "Код"
+      "value": "Code"
     }
   ],
   "3BZnxY": [
@@ -767,6 +821,12 @@
       "value": "Условия предоставления услуг"
     }
   ],
+  "3FoqCK": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Тбилиси"
+    }
+  ],
   "3GINhd": [
     {
       "type": 0,
@@ -776,7 +836,7 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "Сначала удалите все сопоставления в исходном элементе \""
+      "value": "Remove all mappings within source element `"
     },
     {
       "type": 1,
@@ -784,13 +844,7 @@
     },
     {
       "type": 0,
-      "value": "\"."
-    }
-  ],
-  "3MTSYZ": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) Сальвадор"
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -805,16 +859,28 @@
       "value": "Нет доступного содержимого"
     }
   ],
+  "3PgHCT": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Кишинев"
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Замена существующей схемы несовместимой схемой может привести к ошибкам в карте."
     }
   ],
+  "3TD2V5": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Дакка"
+    }
+  ],
   "3X4FHS": [
     {
       "type": 0,
-      "value": "Выбор типа входных данных от пользователя"
+      "value": "Choose the type of user input"
     }
   ],
   "3Y8a6G": [
@@ -831,22 +897,34 @@
       "value": " не настроены или недопустимы"
     }
   ],
+  "3afjx+": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Чита"
+    }
+  ],
   "3cZZKj": [
     {
       "type": 0,
-      "value": "Разделитель"
+      "value": "Divider"
     }
   ],
   "3eeli7": [
     {
       "type": 0,
-      "value": "Выберите исходную схему"
+      "value": "Select a source schema"
     }
   ],
   "3ewBbk": [
     {
       "type": 0,
       "value": "Введенное удостоверение не связано с этим приложением логики."
+    }
+  ],
+  "3jlz+B": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Тегеран"
     }
   ],
   "3jwMBm": [
@@ -877,10 +955,10 @@
       "value": "Со сбоем"
     }
   ],
-  "3n5pnv": [
+  "3qG1VT": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Остров Лорд-Хау"
+      "value": "Отслеживаемые свойства"
     }
   ],
   "3rzrWf": [
@@ -892,7 +970,7 @@
   "3sJlV+": [
     {
       "type": 0,
-      "value": "Закрыть представление кода"
+      "value": "Close code view"
     }
   ],
   "3vCCY7": [
@@ -907,10 +985,10 @@
       "value": "3"
     }
   ],
-  "43xObP": [
+  "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Канберра, Мельбурн, Сидней"
+      "value": "(UTC+04:00) Ереван"
     }
   ],
   "45ubha": [
@@ -928,7 +1006,7 @@
   "4BH9uU": [
     {
       "type": 0,
-      "value": "Ошибки"
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -940,7 +1018,7 @@
   "4D7H4R": [
     {
       "type": 0,
-      "value": "Запуски "
+      "value": "Runs "
     },
     {
       "type": 1,
@@ -950,19 +1028,25 @@
   "4Ekn9t": [
     {
       "type": 0,
-      "value": "Отменить"
+      "value": "Undo"
     }
   ],
   "4IS4yp": [
     {
       "type": 0,
-      "value": "Политика повтора"
+      "value": "Retry Policy"
     }
   ],
   "4Q7WzU": [
     {
       "type": 0,
       "value": "Добавление нового подключения"
+    }
+  ],
+  "4XdZNj": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Западная Центральная Африка"
     }
   ],
   "4YKQAF": [
@@ -974,7 +1058,7 @@
   "4aaixN": [
     {
       "type": 0,
-      "value": "Обзор"
+      "value": "Tour"
     }
   ],
   "4c0uPQ": [
@@ -997,16 +1081,12 @@
   ],
   "4sYR0J": [
     {
-      "type": 0,
-      "value": "Требуется параметр "
-    },
-    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " is required."
     }
   ],
   "4vcnOA": [
@@ -1027,16 +1107,20 @@
       "value": "14"
     }
   ],
-  "5+P3ef": [
+  "5+MuPz": [
     {
       "type": 0,
-      "value": "(UTC+08:45) Юкла"
+      "value": "Enter a valid double."
     }
   ],
-  "595Baw": [
+  "5FINOY": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Осака, Саппоро, Токио"
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
     }
   ],
   "5J7j9k": [
@@ -1045,10 +1129,16 @@
       "value": "Обязательное поле. Выражение XPath для вычисления."
     }
   ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
+    }
+  ],
   "5OvGgn": [
     {
       "type": 0,
-      "value": "Текст"
+      "value": "Body"
     }
   ],
   "5SAQOb": [
@@ -1057,16 +1147,16 @@
       "value": "Центр"
     }
   ],
-  "5WhTmH": [
+  "5aa76N": [
     {
       "type": 0,
-      "value": "Загрузка..."
+      "value": "Возвращает первый элемент в переданном в функцию массиве или строке"
     }
   ],
   "5akc1Q": [
     {
       "type": 0,
-      "value": "Неподдерживаемое значение \"in\": \""
+      "value": "Unsupported 'in' value : '"
     },
     {
       "type": 1,
@@ -1074,7 +1164,7 @@
     },
     {
       "type": 0,
-      "value": "\" в параметре"
+      "value": "' in Parameter"
     }
   ],
   "5b0sKi": [
@@ -1092,13 +1182,13 @@
   "5dCAjy": [
     {
       "type": 0,
-      "value": "День"
+      "value": "Day"
     }
   ],
   "5hWg4V": [
     {
       "type": 0,
-      "value": "Выбрать элемент"
+      "value": "Select element"
     }
   ],
   "5qzZMo": [
@@ -1116,7 +1206,7 @@
   "5ytHcK": [
     {
       "type": 0,
-      "value": "Загрузка..."
+      "value": "Loading..."
     }
   ],
   "6+RwRp": [
@@ -1128,19 +1218,25 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "Вставка данных из предыдущего шага (также их можно добавить, набрав в редакторе ALT + /)"
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
     }
   ],
   "62Ypnr": [
     {
       "type": 0,
-      "value": "Ошибка при загрузке данных операции"
+      "value": "Error loading operation data"
     }
   ],
   "63/zYN": [
     {
       "type": 0,
       "value": "Обязательное поле. Объект, который нужно сравнить со значением на отношение \"больше\"."
+    }
+  ],
+  "65FlWi": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Юкла"
     }
   ],
   "6OSgRP": [
@@ -1155,16 +1251,16 @@
       "value": "Отмена"
     }
   ],
-  "6fDYzG": [
+  "6XR3FS": [
     {
       "type": 0,
-      "value": "Не удалось загрузить схему. Повторите попытку."
+      "value": "(UTC+09:30) Аделаида"
     }
   ],
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "Функции '"
+      "value": "Function '"
     },
     {
       "type": 1,
@@ -1172,7 +1268,7 @@
     },
     {
       "type": 0,
-      "value": "' назначено слишком много входных данных"
+      "value": "' has too many inputs assigned to it"
     }
   ],
   "6jiO7t": [
@@ -1205,6 +1301,12 @@
       "value": "Назад"
     }
   ],
+  "6pd1bE": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Аризона"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
@@ -1214,31 +1316,31 @@
   "6ueRYm": [
     {
       "type": 0,
-      "value": "Время начала"
+      "value": "Start time"
     }
   ],
   "73iM9+": [
     {
       "type": 0,
-      "value": "Обновить исходную схему"
-    }
-  ],
-  "7EZ2oY": [
-    {
-      "type": 0,
-      "value": "(UTC –04:00) Теркс и Кайкос"
+      "value": "Update source schema"
     }
   ],
   "7Fyq1F": [
     {
       "type": 0,
-      "value": "Нет входных данных"
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
     {
       "type": 0,
       "value": "ОК"
+    }
+  ],
+  "7KxCGX": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Остров Лорд-Хау"
     }
   ],
   "7LmpNN": [
@@ -1255,12 +1357,6 @@
       "value": "\" для этой операции"
     }
   ],
-  "7PtWvu": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) Восточное время (США и Канада)"
-    }
-  ],
   "7QymrD": [
     {
       "type": 0,
@@ -1270,13 +1366,13 @@
   "7S2wtE": [
     {
       "type": 0,
-      "value": "Проверка схемы"
+      "value": "Schema Validation"
     }
   ],
   "7WVgiU": [
     {
       "type": 0,
-      "value": "Настройка"
+      "value": "Configure"
     }
   ],
   "7ZR1xr": [
@@ -1330,19 +1426,13 @@
   "8+0teU": [
     {
       "type": 0,
-      "value": "Имя параметра уже существует."
+      "value": "Parameter name already exists."
     }
   ],
   "83G5rr": [
     {
       "type": 0,
-      "value": "Укажите интервал."
-    }
-  ],
-  "83PYuA": [
-    {
-      "type": 0,
-      "value": "(UTC-06:00) Центральное время (США и Канада)"
+      "value": "Specify the interval."
     }
   ],
   "84D91Y": [
@@ -1413,12 +1503,6 @@
       "value": "Не удается отобразить конструктор из-за наличия нескольких триггеров в определении."
     }
   ],
-  "8LhQeL": [
-    {
-      "type": 0,
-      "value": "Переключиться в режим просмотра кода"
-    }
-  ],
   "8ND+Yc": [
     {
       "type": 0,
@@ -1428,7 +1512,7 @@
   "8SxNQC": [
     {
       "type": 0,
-      "value": "Общие сведения"
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1449,12 +1533,6 @@
       "value": "Четверг"
     }
   ],
-  "8ZfbyZ": [
-    {
-      "type": 0,
-      "value": "(UTC+06:00) Астана"
-    }
-  ],
   "8baaNC": [
     {
       "type": 0,
@@ -1465,16 +1543,10 @@
       "value": "expressions"
     }
   ],
-  "8eKf/c": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) Иркутск"
-    }
-  ],
   "8eTWaf": [
     {
       "type": 0,
-      "value": "Переименовать"
+      "value": "Rename"
     }
   ],
   "8j+a0n": [
@@ -1486,17 +1558,13 @@
   "8luJ2j": [
     {
       "type": 0,
-      "value": "Создать ссылку на подключение"
+      "value": "Create Connection Reference"
     }
   ],
-  "8mDG0V": [
+  "8pPivj": [
     {
       "type": 0,
-      "value": "Рабочий процесс содержит ошибки проверки параметров в следующих операциях: "
-    },
-    {
-      "type": 1,
-      "value": "invalidNodes"
+      "value": "(UTC+11:00) О-в Норфолк"
     }
   ],
   "8ubEPi": [
@@ -1517,16 +1585,16 @@
       "value": "Добавляет целое число дней в метку времени строки, переданной в функцию"
     }
   ],
-  "8zkvmc": [
-    {
-      "type": 0,
-      "value": "Тестирование"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
       "value": "Возвращает один массив или объект, который имеет общие элементы с переданными в функцию массивами или объектами"
+    }
+  ],
+  "9/vdrb": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Ховд"
     }
   ],
   "90Q7Pw": [
@@ -1538,19 +1606,25 @@
   "90o7sB": [
     {
       "type": 0,
-      "value": "Файл"
+      "value": "File"
     }
   ],
   "93Gj/n": [
     {
       "type": 0,
-      "value": "Позиция в строке"
+      "value": "Line Position"
     }
   ],
   "93svjx": [
     {
       "type": 0,
       "value": "Удостоверение пользователя не поддерживается, если в приложении логики включено управляемое удостоверение, назначаемое системой."
+    }
+  ],
+  "949s+r": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Улан-Батор"
     }
   ],
   "99vsJy": [
@@ -1583,12 +1657,6 @@
       "value": "Возвращает объект с дополнительной парой \"свойство-значение\""
     }
   ],
-  "9LLnyJ": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) Бразилиа"
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1598,7 +1666,7 @@
   "9W0lck": [
     {
       "type": 0,
-      "value": "Недопустимое значение разделения \""
+      "value": "Invalid split on value '"
     },
     {
       "type": 1,
@@ -1606,7 +1674,7 @@
     },
     {
       "type": 0,
-      "value": "\". Не удается найти его в выходных данных."
+      "value": "', cannot find in outputs."
     }
   ],
   "9YGcT2": [
@@ -1618,19 +1686,31 @@
   "9YZ873": [
     {
       "type": 0,
-      "value": "Текст"
+      "value": "Text"
     }
   ],
   "9atGYe": [
     {
       "type": 0,
-      "value": "Добавить"
+      "value": "Add"
     }
   ],
   "9djnqI": [
     {
       "type": 0,
       "value": "Возвращает результат сложения двух чисел"
+    }
+  ],
+  "9pdXmX": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Амстердам, Берлин, Берн, Рим, Стокгольм, Вена"
+    }
+  ],
+  "9pl7QP": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Атлантическое время (Канада)"
     }
   ],
   "9u/Ae3": [
@@ -1642,27 +1722,13 @@
   "9x8hg8": [
     {
       "type": 0,
-      "value": "Изменить в простом режиме"
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
     {
       "type": 0,
-      "value": "Исходный элемент удален из представления."
-    }
-  ],
-  "A8l+k7": [
-    {
-      "type": 0,
-      "value": "Произошла ошибка при выполнении следующих параметров API: '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'"
+      "value": "Source element removed from view."
     }
   ],
   "ADM1Z8": [
@@ -1674,13 +1740,13 @@
   "AEguAy": [
     {
       "type": 0,
-      "value": "Пустое значение"
+      "value": "Empty value"
     }
   ],
   "AGCm1p": [
     {
       "type": 0,
-      "value": "Имя"
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -1689,28 +1755,90 @@
       "value": "Фильтровать действия"
     }
   ],
+  "AIL7WX": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Газа, Хеврон"
+    }
+  ],
+  "ALImBL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Монровия, Рейкьявик"
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Требуется. Имя действия, значения которого нужны."
+    }
+  ],
   "AO6T9u": [
     {
       "type": 0,
       "value": "Готово"
     }
   ],
-  "AQ7Zxc": [
+  "AX7dq3": [
     {
       "type": 0,
-      "value": "Возвращает индекс n-го вхождения значения в строке (без учета регистра, инвариантные язык и региональные параметры)."
+      "value": "Input node type does not match the schema node's type"
     }
   ],
-  "Af+Ve0": [
+  "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Остров Бугенвиль"
+      "value": "(UTC+06:30) Янгон (Рангун)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" имеет тип \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "AheXMN": [
     {
       "type": 0,
-      "value": "Выберите периодичность."
+      "value": "Select frequency."
+    }
+  ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Укажите аудиторию"
     }
   ],
   "AnX5yC": [
@@ -1722,7 +1850,7 @@
   "AoalgS": [
     {
       "type": 0,
-      "value": "Загрузка дополнительных результатов..."
+      "value": "Loading more results..."
     }
   ],
   "ArTh0/": [
@@ -1734,7 +1862,7 @@
   "AsqIUa": [
     {
       "type": 0,
-      "value": "Максимальный интервал"
+      "value": "Maximum Interval"
     }
   ],
   "Az0QvG": [
@@ -1808,7 +1936,7 @@
   "B/gCWM": [
     {
       "type": 0,
-      "value": "Ошибка"
+      "value": "Error"
     }
   ],
   "B2s0iG": [
@@ -1826,7 +1954,13 @@
   "B999mz": [
     {
       "type": 0,
-      "value": "Удаленная строка."
+      "value": "Line deleted."
+    }
+  ],
+  "BAgRzO": [
+    {
+      "type": 0,
+      "value": "(UTC –08:00) Всемирное координированное время — 08"
     }
   ],
   "BBD8Em": [
@@ -1844,7 +1978,7 @@
   "BEZWxB": [
     {
       "type": 0,
-      "value": "Удалить пользовательское значение"
+      "value": "Clear custom value"
     }
   ],
   "BHe7qY": [
@@ -1856,7 +1990,7 @@
   "BJNUxN": [
     {
       "type": 0,
-      "value": "Параметры пути"
+      "value": "Path Parameters"
     }
   ],
   "BKL0ZG": [
@@ -1877,34 +2011,40 @@
       "value": "Введите пароль в виде обычного текста или используйте безопасный параметр."
     }
   ],
+  "BSHFiw": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Перт"
+    }
+  ],
   "BSgavq": [
     {
       "type": 0,
-      "value": "Пример: понедельник, пятница"
+      "value": "Example: Monday, Friday"
     }
   ],
   "BUutcC": [
     {
       "type": 0,
-      "value": "Развернуть список элементов того же уровня"
+      "value": "Expant list of sibling elements"
+    }
+  ],
+  "BVOUxP": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Гавана"
     }
   ],
   "BYrP8F": [
     {
       "type": 0,
-      "value": "Число"
+      "value": "Number"
     }
   ],
   "BeqBP7": [
     {
       "type": 0,
-      "value": "Автоматическая распаковка"
-    }
-  ],
-  "Bl4Iv0": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) Улан-Батор"
+      "value": "Automatic Decompression"
     }
   ],
   "Bn8iTS": [
@@ -1919,22 +2059,16 @@
       "value": "Свернуть"
     }
   ],
-  "BogxJl": [
-    {
-      "type": 0,
-      "value": "(UTC+04:00) Ижевск, Самара"
-    }
-  ],
   "BrWQ0Z": [
     {
       "type": 0,
-      "value": "Выберите управляемое удостоверение"
+      "value": "Select a managed identity"
     }
   ],
   "BtL7UI": [
     {
       "type": 0,
-      "value": "Для этого шага не требуются дополнительные сведения. Вы сможете использовать выходные данные в последующих шагах."
+      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
     }
   ],
   "BuYrD3": [
@@ -1952,7 +2086,7 @@
   "C1cy54": [
     {
       "type": 0,
-      "value": "Текст"
+      "value": "Body"
     }
   ],
   "C4NQ1J": [
@@ -1967,30 +2101,6 @@
       "value": "Требуется подключение"
     }
   ],
-  "CaajcD": [
-    {
-      "type": 0,
-      "value": "(UTC+13:00) Самоа"
-    }
-  ],
-  "Cb6IEq": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) Гавана"
-    }
-  ],
-  "Cb8pv0": [
-    {
-      "type": 0,
-      "value": "(UTC-02:00) Среднеатлантическое время (старое)"
-    }
-  ],
-  "Ci41Od": [
-    {
-      "type": 0,
-      "value": "(UTC+12:00) Окленд, Веллингтон"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -2000,7 +2110,7 @@
   "ClZW2r": [
     {
       "type": 0,
-      "value": "Значение"
+      "value": "Value"
     }
   ],
   "CsPY74": [
@@ -2012,19 +2122,19 @@
   "CvoqQ6": [
     {
       "type": 0,
-      "value": "Введите или выберите дату (DD.MM.YYYY)."
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
-  "Cy0pyB": [
+  "Cy9qeQ": [
     {
       "type": 0,
-      "value": "(UTC+09:30) Аделаида"
+      "value": "(UTC+02:00) Хельсинки, Киев, Рига, София, Таллин, Вильнюс"
     }
   ],
   "CypYLs": [
     {
       "type": 0,
-      "value": "Вставка нового шага между "
+      "value": "Insert a new step between "
     },
     {
       "type": 1,
@@ -2032,7 +2142,7 @@
     },
     {
       "type": 0,
-      "value": " и "
+      "value": " and "
     },
     {
       "type": 1,
@@ -2042,7 +2152,7 @@
   "Czt6YV": [
     {
       "type": 0,
-      "value": "в "
+      "value": "at "
     },
     {
       "type": 1,
@@ -2058,7 +2168,7 @@
   "D/xTXV": [
     {
       "type": 0,
-      "value": "Показать исходную схему"
+      "value": "Show source schema"
     }
   ],
   "D1lgsT": [
@@ -2079,12 +2189,6 @@
       "value": "Узел"
     }
   ],
-  "DEu7oK": [
-    {
-      "type": 0,
-      "value": "(UTC-07:00) Аризона"
-    }
-  ],
   "DGMwU4": [
     {
       "type": 0,
@@ -2094,13 +2198,13 @@
   "DJW8RE": [
     {
       "type": 0,
-      "value": "Выберите значение"
+      "value": "Select a value"
     }
   ],
   "DQV7aK": [
     {
       "type": 0,
-      "value": "ALT/OPTION + щелчок для скачивания \""
+      "value": "Alt/Option + click to download '"
     },
     {
       "type": 1,
@@ -2108,25 +2212,19 @@
     },
     {
       "type": 0,
-      "value": "\""
+      "value": "'"
     }
   ],
   "DWd9vy": [
     {
       "type": 0,
-      "value": "каждую неделю"
+      "value": "every week"
     }
   ],
   "DWsh56": [
     {
       "type": 0,
       "value": "Введите идентификатор клиента"
-    }
-  ],
-  "DYXoEM": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Кишинев"
     }
   ],
   "DZZ3fj": [
@@ -2138,13 +2236,19 @@
   "DZc8wP": [
     {
       "type": 0,
-      "value": "Настраиваемое значение не соответствует типу узла схемы"
+      "value": "Custom value does not match the schema node's type"
+    }
+  ],
+  "DfS13/": [
+    {
+      "type": 0,
+      "value": "(UTC –10:00) Алеутские острова"
     }
   ],
   "Dhu3IS": [
     {
       "type": 0,
-      "value": "Показать мини-карту"
+      "value": "Show mini-map"
     }
   ],
   "DjbVKU": [
@@ -2156,7 +2260,7 @@
   "DkF25I": [
     {
       "type": 0,
-      "value": "Развернуть статический результат"
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -2165,10 +2269,16 @@
       "value": "Условие триггера не может быть пустым"
     }
   ],
+  "DuXV2M": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Азорские острова"
+    }
+  ],
   "DuoHXI": [
     {
       "type": 0,
-      "value": "Добавить входные данные"
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -2192,13 +2302,13 @@
   "E+iim4": [
     {
       "type": 0,
-      "value": "Выберите часовой пояс."
+      "value": "Select timezone."
     }
   ],
   "E3+TAA": [
     {
       "type": 0,
-      "value": "Входные данные узла схемы '"
+      "value": "Schema node '"
     },
     {
       "type": 1,
@@ -2206,13 +2316,13 @@
     },
     {
       "type": 0,
-      "value": "' имеют с несоответствующий тип"
+      "value": "' has an input with a mismatched type"
     }
   ],
-  "E8iqLl": [
+  "E9OS+9": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Сахалин"
+      "value": "(UTC –09:00) Время в формате UTC –9"
     }
   ],
   "ECZC6Y": [
@@ -2236,13 +2346,19 @@
   "ESZXfC": [
     {
       "type": 0,
-      "value": "В эти минуты"
+      "value": "At these minutes"
     }
   ],
   "EUQDM6": [
     {
       "type": 0,
-      "value": "Добавить действие"
+      "value": "Add an action"
+    }
+  ],
+  "EYqGxA": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Афины, Бухарест"
     }
   ],
   "EZz5q7": [
@@ -2254,7 +2370,7 @@
   "Ea/fr+": [
     {
       "type": 0,
-      "value": "Каждые "
+      "value": "Every "
     },
     {
       "type": 1,
@@ -2262,19 +2378,7 @@
     },
     {
       "type": 0,
-      "value": " дней"
-    }
-  ],
-  "EaTGcN": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) Западная центральная Африка"
-    }
-  ],
-  "EdeHLs": [
-    {
-      "type": 0,
-      "value": "Переключиться на ввод всего массива"
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2303,22 +2407,22 @@
       "value": "Пароль"
     }
   ],
-  "Ek0mSE": [
+  "Eqgm4v": [
     {
       "type": 0,
-      "value": "Просмотреть журнал запросов для этой операции"
+      "value": "(UTC-05:00) Восточное время (США и Канада)"
     }
   ],
   "EurkzL": [
     {
       "type": 0,
-      "value": "Выберите \"Да\" или \"Нет\""
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
     {
       "type": 0,
-      "value": "Использовать подключение вызвавшего"
+      "value": "Use Invoker's Connection"
     }
   ],
   "ExaACE": [
@@ -2333,16 +2437,22 @@
       "value": "Обязательно. Количество единиц измерения времени для добавления."
     }
   ],
+  "F489Vg": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Иркутск"
+    }
+  ],
   "F9dR1Q": [
     {
       "type": 0,
-      "value": "Добавить"
+      "value": "Add"
     }
   ],
   "FBNevf": [
     {
       "type": 0,
-      "value": "Перейти к операции"
+      "value": "Go To Operation"
     }
   ],
   "FDF4Qb": [
@@ -2363,22 +2473,22 @@
       "value": "завершился сбоем"
     }
   ],
+  "FHsP9y": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Катманду"
+    }
+  ],
   "FIL1Nt": [
     {
       "type": 0,
-      "value": "Условие является слишком сложным или недействительным. Не удается переключиться в простой режим"
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
     {
       "type": 0,
       "value": "20"
-    }
-  ],
-  "FL/0Zp": [
-    {
-      "type": 0,
-      "value": "(UTC-07:00) Чиуауа, Ла Пас, Масатлан"
     }
   ],
   "FN5zHQ": [
@@ -2402,13 +2512,13 @@
   "FS06y3": [
     {
       "type": 0,
-      "value": "Требуется указать имя параметра."
+      "value": "Must provide name of parameter."
     }
   ],
   "FT3jt6": [
     {
       "type": 0,
-      "value": "Справочные сведения по веб-перехватчикам"
+      "value": "Webhook reference information"
     }
   ],
   "FUhNu4": [
@@ -2421,6 +2531,18 @@
     {
       "type": 0,
       "value": "По умолчанию"
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Возвращает начало дня в метку времени строки, переданную в функцию"
+    }
+  ],
+  "FXC0Zi": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Багдад"
     }
   ],
   "FXLR5M": [
@@ -2477,22 +2599,16 @@
       "value": "hours"
     }
   ],
-  "FYtDP0": [
+  "Fgq3Db": [
     {
       "type": 0,
-      "value": "Введите свой адрес электронной почты."
+      "value": "Обязательное поле. Коллекция, из которой необходимо извлечь последний объект."
     }
   ],
-  "FaBEfQ": [
+  "Fh2HDb": [
     {
       "type": 0,
-      "value": "Отслеживаемые свойства"
-    }
-  ],
-  "Fcvgvg": [
-    {
-      "type": 0,
-      "value": "Поиск"
+      "value": "Возвращает первый индекс значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
     }
   ],
   "FiyQjU": [
@@ -2505,12 +2621,6 @@
     {
       "type": 0,
       "value": "Состояние"
-    }
-  ],
-  "FxQ2Ts": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Триполи"
     }
   ],
   "G/CC5/": [
@@ -2542,13 +2652,13 @@
   "GCjJnP": [
     {
       "type": 0,
-      "value": "Введите допустимый объект JSON."
+      "value": "Enter a valid Json."
     }
   ],
   "GD3m4X": [
     {
       "type": 0,
-      "value": "Развернуто"
+      "value": "Expanded"
     }
   ],
   "GDUGlm": [
@@ -2557,22 +2667,16 @@
       "value": "Введите центр"
     }
   ],
-  "GE14Xd": [
-    {
-      "type": 0,
-      "value": "(UTC –03:00) Буэнос-Айрес"
-    }
-  ],
   "GEB1on": [
     {
       "type": 0,
-      "value": "Содержит значение, которое находится вне диапазона от 0 до 59"
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
     {
       "type": 0,
-      "value": "Фильтровать по типу данных"
+      "value": "Filter by data type"
     }
   ],
   "GLd3MU": [
@@ -2581,16 +2685,10 @@
       "value": "Обязательное поле. Объект, который необходимо найти в коллекции."
     }
   ],
-  "GMkbFM": [
-    {
-      "type": 0,
-      "value": "Условия триггера"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
-      "value": "Введите допустимое логическое значение."
+      "value": "Enter a valid boolean."
     }
   ],
   "GYvF54": [
@@ -2620,13 +2718,13 @@
   "Gi7czD": [
     {
       "type": 0,
-      "value": "Элемент исходной схемы"
+      "value": "Source schema element"
     }
   ],
   "Gl5khw": [
     {
       "type": 0,
-      "value": "В эти часы"
+      "value": "At these hours"
     }
   ],
   "Gmya+V": [
@@ -2650,7 +2748,7 @@
   "GyUe4C": [
     {
       "type": 0,
-      "value": "Изменить параметры, касающиеся функций"
+      "value": "Modify options regarding functions"
     }
   ],
   "GzQQqH": [
@@ -2662,13 +2760,13 @@
   "Gziyq8": [
     {
       "type": 0,
-      "value": "Содержимое файла"
+      "value": "File Content"
     }
   ],
   "H/QVod": [
     {
       "type": 0,
-      "value": "В рабочем процессе есть ошибки проверки для следующих операций: "
+      "value": "Workflow has settings validation errors on the following operations: "
     },
     {
       "type": 1,
@@ -2690,13 +2788,13 @@
   "H2WdiZ": [
     {
       "type": 0,
-      "value": "Введите допустимые значения минут (от 0 до 59), разделенных запятыми, например \"15, 30\""
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
     }
   ],
   "H5VikC": [
     {
       "type": 0,
-      "value": "Недопустимое подключение. Сопоставление не должно формировать замкнутый цикл."
+      "value": "Invalid connection, mapping must not form a closed loop."
     }
   ],
   "H8bEUn": [
@@ -2714,13 +2812,13 @@
   "HH970i": [
     {
       "type": 0,
-      "value": "Месяц"
+      "value": "Month"
     }
   ],
   "HOchry": [
     {
       "type": 0,
-      "value": "Выберите существующую ссылку на подключение или создайте новую."
+      "value": "Select an existing connection reference or create a new one."
     }
   ],
   "HQ8/tk": [
@@ -2732,25 +2830,13 @@
   "HSJLCu": [
     {
       "type": 0,
-      "value": "Заголовки"
-    }
-  ],
-  "HYhDYB": [
-    {
-      "type": 0,
-      "value": "(UTC-02:00) Время в формате UTC-02"
+      "value": "Headers"
     }
   ],
   "Hbqlzk": [
     {
       "type": 0,
-      "value": "Вставить выражение"
-    }
-  ],
-  "HfinO2": [
-    {
-      "type": 0,
-      "value": "Переключиться на подробные входные данные элемента массива"
+      "value": "Insert Expression"
     }
   ],
   "HfrUId": [
@@ -2762,19 +2848,19 @@
   "HmcHoE": [
     {
       "type": 0,
-      "value": "Ошибка при получении манифеста"
+      "value": "Error fetching manifest"
     }
   ],
   "HoQiVa": [
     {
       "type": 0,
-      "value": "Введите допустимое значение даты и времени."
+      "value": "Enter a valid datetime."
     }
   ],
   "Hs5+Mk": [
     {
       "type": 0,
-      "value": "Введите допустимое значение параметра "
+      "value": "Enter a valid value for "
     },
     {
       "type": 1,
@@ -2798,7 +2884,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "Удалить параметр \""
+      "value": "Remove parameter \""
     },
     {
       "type": 1,
@@ -2806,7 +2892,7 @@
     },
     {
       "type": 0,
-      "value": "\" и его значение"
+      "value": "\" and its value"
     }
   ],
   "HzS2gJ": [
@@ -2815,16 +2901,10 @@
       "value": "Динамическое содержимое не поддерживается в качестве свойств при проверке подлинности."
     }
   ],
-  "I41vZ/": [
-    {
-      "type": 0,
-      "value": "(UTC-11:00) Время в формате UTC-11"
-    }
-  ],
   "I7/+er": [
     {
       "type": 0,
-      "value": "Глобальное представление"
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [
@@ -2833,32 +2913,20 @@
       "value": "22"
     }
   ],
-  "IAmvpa": [
-    {
-      "type": 0,
-      "value": "(UTC –08:00) Всемирное координированное время — 08"
-    }
-  ],
   "IHMd3X": [
     {
       "type": 0,
-      "value": "Пример: "
+      "value": "Example: "
     },
     {
       "type": 1,
       "value": "url"
     }
   ],
-  "IPbMdl": [
+  "IPbBB2": [
     {
       "type": 0,
-      "value": "Представление кода"
-    }
-  ],
-  "IPwWgu": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Иерусалим"
+      "value": "(UTC+12:00) Фиджи"
     }
   ],
   "IQyOth": [
@@ -2867,10 +2935,10 @@
       "value": "Если динамическое содержимое доступно, оно создается автоматически с помощью соединителей и действий, выбранных для потока."
     }
   ],
-  "IS4vNX": [
+  "IUE/lQ": [
     {
       "type": 0,
-      "value": "(UTC-12:00) Меридиан смены дат"
+      "value": "(UTC-01:00) Кабо-Верде"
     }
   ],
   "IW2MjQ": [
@@ -2879,32 +2947,32 @@
       "value": "Преобразует переданную строку метки времени в формате UTC в целевой часовой пояс"
     }
   ],
+  "IX1OiA": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "IXy91L": [
     {
       "type": 0,
-      "value": "Добавить целевую схему"
+      "value": "Add a target schema"
     }
   ],
-  "IdOhPY": [
-    {
-      "type": 1,
-      "value": "label"
-    },
+  "IbGIq3": [
     {
       "type": 0,
-      "value": " Чтобы добавить динамические данные, нажмите клавиши ALT + \"/\"."
-    }
-  ],
-  "If+p6C": [
-    {
-      "type": 0,
-      "value": "(UTC+09:00) Якутск"
+      "value": "Error Code"
     }
   ],
   "IjEKvh": [
     {
       "type": 0,
-      "value": "Ошибка при выполнении API \""
+      "value": "Error executing the api '"
     },
     {
       "type": 1,
@@ -2912,29 +2980,13 @@
     },
     {
       "type": 0,
-      "value": "\"."
+      "value": "'."
     }
   ],
-  "Io48jC": [
+  "IjZFjQ": [
     {
       "type": 0,
-      "value": "Тип проверки подлинности \""
-    },
-    {
-      "type": 1,
-      "value": "0"
-    },
-    {
-      "type": 0,
-      "value": "\" свойства недопустимы для \""
-    },
-    {
-      "type": 1,
-      "value": "1"
-    },
-    {
-      "type": 0,
-      "value": "\"."
+      "value": "(UTC+07:00) Барнаул, Горно-Алтайск"
     }
   ],
   "IooQu1": [
@@ -2943,16 +2995,22 @@
       "value": "Расширенные параметры"
     }
   ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Возвращает индекс n-го вхождения значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Возвращает первый ненулевой объект в переданных в функцию аргументах"
+    }
+  ],
   "IsVhkH": [
     {
       "type": 0,
-      "value": "Свойства отсутствуют"
-    }
-  ],
-  "IxWip7": [
-    {
-      "type": 0,
-      "value": "(UTC+03:00) Волгоград, Москва, Санкт-Петербург"
+      "value": "No properties"
     }
   ],
   "J/Kz1j": [
@@ -2964,7 +3022,7 @@
   "J2Su6x": [
     {
       "type": 0,
-      "value": "Параметры форматирования — размер шрифта"
+      "value": "Formatting options for font size"
     }
   ],
   "J5/7vN": [
@@ -2990,13 +3048,13 @@
   "J9wWry": [
     {
       "type": 0,
-      "value": "Параметры"
+      "value": "Parameters"
     }
   ],
   "JAIV0h": [
     {
       "type": 0,
-      "value": "Текущая карта содержит "
+      "value": "The current map contains "
     },
     {
       "type": 1,
@@ -3060,7 +3118,7 @@
   "Jil/Wa": [
     {
       "type": 0,
-      "value": "Недопустимые параметры"
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -3078,19 +3136,19 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "Если параметр включен, это действие будет запускаться с пользователем из параметра \"Запуск от имени\" в триггере Dataverse."
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+    }
+  ],
+  "JpthWY": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Монтевидео"
     }
   ],
   "Jq2Y/o": [
     {
       "type": 0,
       "value": "Строка в числовом формате (обязательно)."
-    }
-  ],
-  "JzRzVp": [
-    {
-      "type": 0,
-      "value": "(UTC-09:00) Аляска"
     }
   ],
   "JzqgNM": [
@@ -3108,19 +3166,19 @@
   "K7/DnZ": [
     {
       "type": 0,
-      "value": "Выходные данные"
+      "value": "Output"
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Возвращает подмножество символов из строки"
     }
   ],
   "KBaGkS": [
     {
       "type": 0,
-      "value": "Изменить ссылку на подключение"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Введите допустимое двойное число."
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3188,25 +3246,43 @@
   "KYX5Do": [
     {
       "type": 0,
-      "value": "Подчеркивание (⌘U)"
+      "value": "Underline (⌘U)"
     }
   ],
   "KZOa5l": [
     {
       "type": 0,
-      "value": "Отмена"
+      "value": "Cancel"
     }
   ],
-  "KlDW+5": [
+  "Khc8lS": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Бейрут"
+      "value": "(UTC –09:30) Маркизские острова"
+    }
+  ],
+  "KlvTze": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Шри-Джаяварденепура"
+    }
+  ],
+  "KoBDbT": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Время в формате UTC-02"
+    }
+  ],
+  "Kw3bWO": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Стамбул"
     }
   ],
   "KwGA+K": [
     {
       "type": 0,
-      "value": "Выберите ресурс приложения-функции"
+      "value": "Select a Function App resource"
     }
   ],
   "L+PY+j": [
@@ -3230,7 +3306,7 @@
   "LBH8UV": [
     {
       "type": 0,
-      "value": "Развернуть"
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -3239,16 +3315,10 @@
       "value": "Удалить граф рабочего процесса"
     }
   ],
-  "LCRHQ9": [
-    {
-      "type": 0,
-      "value": "(UTC+12:00) Фиджи"
-    }
-  ],
   "LCXZLM": [
     {
       "type": 0,
-      "value": "Загрузка приложений-функций..."
+      "value": "Loading Function Apps..."
     }
   ],
   "LJmfmK": [
@@ -3266,7 +3336,7 @@
   "LR/3Lr": [
     {
       "type": 0,
-      "value": "Настроить"
+      "value": "Configure"
     }
   ],
   "LS8rfZ": [
@@ -3278,25 +3348,13 @@
   "LV/BTE": [
     {
       "type": 0,
-      "value": "Загрузка экземпляров службы управления API..."
-    }
-  ],
-  "LV3k48": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) Белград, Братислава, Будапешт, Любляна, Прага"
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
     {
       "type": 0,
       "value": "Добавить параллельную ветвь"
-    }
-  ],
-  "LdITnG": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) Кайенна, Форталеса"
     }
   ],
   "Lft/is": [
@@ -3336,13 +3394,13 @@
   "Lm9bnN": [
     {
       "type": 0,
-      "value": "Маркированный список"
+      "value": "Bullet List"
     }
   ],
   "Lnqh6h": [
     {
       "type": 0,
-      "value": "Полужирный (Ctrl+B)"
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3366,7 +3424,7 @@
   "LvLksz": [
     {
       "type": 0,
-      "value": "Загрузка выходных данных"
+      "value": "Loading outputs"
     }
   ],
   "LvpxiA": [
@@ -3375,22 +3433,28 @@
       "value": "Шлюз"
     }
   ],
-  "Lx8HRl": [
+  "Lwe7tQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Дамаск"
+      "value": "(UTC+00:00) Дублин, Эдинбург, Лиссабон, Лондон"
     }
   ],
-  "M/gUE8": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Сведения"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
     {
       "type": 0,
       "value": "Представление кода"
+    }
+  ],
+  "M48CGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Соломоновы острова, Новая Каледония"
     }
   ],
   "M4H0gh": [
@@ -3426,7 +3490,7 @@
   "MCzWDc": [
     {
       "type": 0,
-      "value": "Предварительная версия"
+      "value": "Preview"
     }
   ],
   "MDbmMw": [
@@ -3447,18 +3511,6 @@
       "value": "Управляемое удостоверение"
     }
   ],
-  "MOsuw2": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) Гуам, Порт-Морсби"
-    }
-  ],
-  "MPPyI6": [
-    {
-      "type": 0,
-      "value": "(UTC+04:00) Баку"
-    }
-  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -3468,7 +3520,7 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Введите допустимый массив."
+      "value": "Enter a valid array."
     }
   ],
   "MYgKHu": [
@@ -3492,25 +3544,25 @@
   "Mc6ITJ": [
     {
       "type": 0,
-      "value": "Поиск"
+      "value": "Search"
     }
   ],
   "MfAdfx": [
     {
       "type": 0,
-      "value": "Расширенный редактор"
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [
     {
       "type": 0,
-      "value": "Введите допустимое число."
+      "value": "Enter a valid number."
     }
   ],
   "MirIsS": [
     {
       "type": 0,
-      "value": "Показать код"
+      "value": "Show code"
     }
   ],
   "MmBfD1": [
@@ -3540,31 +3592,13 @@
   "N4dEVo": [
     {
       "type": 0,
-      "value": "Заголовки"
-    }
-  ],
-  "N7E9hd": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Хельсинки, Киев, Рига, София, Таллинн, Вильнюс"
-    }
-  ],
-  "NGJ00e": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) Джорджтаун, Ла Пас, Манаус, Сан-Хуан"
+      "value": "Headers"
     }
   ],
   "NHnG2S": [
     {
       "type": 0,
-      "value": "Созданный XSLT не совпадает с текущим сопоставлением."
-    }
-  ],
-  "NMpFs6": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) Арагуаина"
+      "value": "The generated XSLT does not match the current mapping."
     }
   ],
   "NPUFgH": [
@@ -3576,7 +3610,19 @@
   "NWxGWN": [
     {
       "type": 0,
-      "value": "Введите уникальное имя свойства"
+      "value": "Enter unique property name"
+    }
+  ],
+  "NeyUAh": [
+    {
+      "type": 0,
+      "value": "(UTC –03:00) Буэнос-Айрес"
+    }
+  ],
+  "NkUgXU": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Минск"
     }
   ],
   "NnD8gF": [
@@ -3597,12 +3643,6 @@
       "value": "pathTemplate"
     }
   ],
-  "NnrHK3": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) Владивосток"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -3613,6 +3653,12 @@
     {
       "type": 0,
       "value": "Выберите удостоверение."
+    }
+  ],
+  "NvANon": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Аляска"
     }
   ],
   "NvJDn/": [
@@ -3630,13 +3676,19 @@
   "O/fh9A": [
     {
       "type": 0,
-      "value": "Субъект-служба"
+      "value": "Service Principal"
     }
   ],
   "O27gKq": [
     {
       "type": 0,
-      "value": "Выполняется загрузка файлов..."
+      "value": "Loading Files..."
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "Изменить параметр"
     }
   ],
   "O9ZExg": [
@@ -3645,10 +3697,10 @@
       "value": "ОК"
     }
   ],
-  "ODQCKj": [
+  "OD8igU": [
     {
       "type": 0,
-      "value": "Преобразует входные данные в значение типа JSON."
+      "value": "Обязательно. Строка, содержащая название исходного часового пояса. Дополнительные сведения: https://msdn.microsoft.com/ru-ru/library/gg154758.aspx."
     }
   ],
   "OEEuUu": [
@@ -3661,6 +3713,12 @@
     {
       "type": 0,
       "value": "Параметры операции:"
+    }
+  ],
+  "OGUVGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Остров Бугенвиль"
     }
   ],
   "OH94j3": [
@@ -3694,7 +3752,7 @@
   "OIOexo": [
     {
       "type": 0,
-      "value": "В эти дни"
+      "value": "On these days"
     }
   ],
   "OKszbi": [
@@ -3718,19 +3776,13 @@
   "OOUTdW": [
     {
       "type": 0,
-      "value": "Загрузка всех соединителей..."
+      "value": "Loading all connectors..."
     }
   ],
   "OSHNZ2": [
     {
       "type": 0,
       "value": "Комментарий"
-    }
-  ],
-  "OSP9JY": [
-    {
-      "type": 0,
-      "value": "Введите аудиторию"
     }
   ],
   "OVvieE": [
@@ -3748,19 +3800,7 @@
   "OdoUEu": [
     {
       "type": 0,
-      "value": "Включить статический результат"
-    }
-  ],
-  "OgJ9eG": [
-    {
-      "type": 0,
-      "value": "(UTC+08:00) Тайбэй"
-    }
-  ],
-  "OhbvXz": [
-    {
-      "type": 0,
-      "value": "(UTC+11:00) О-в Норфолк"
+      "value": "Enable Static Result"
     }
   ],
   "Oib1mL": [
@@ -3802,25 +3842,13 @@
   "P+7G62": [
     {
       "type": 0,
-      "value": "Заголовок 3"
+      "value": "Heading 3"
     }
   ],
   "P+mWgV": [
     {
       "type": 0,
       "value": "PFX"
-    }
-  ],
-  "P/S+q5": [
-    {
-      "type": 0,
-      "value": "Обязательно. Строка, которая будет объединена в другую строку."
-    }
-  ],
-  "P/dnfK": [
-    {
-      "type": 0,
-      "value": "(UTC+06:00) Дакка"
     }
   ],
   "P2A5dB": [
@@ -3853,10 +3881,16 @@
       "value": "Обязательное поле. Коллекция, из которой необходимо извлечь первый объект."
     }
   ],
+  "PBvR9Q": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Арагуаяна"
+    }
+  ],
   "PE1tsI": [
     {
       "type": 0,
-      "value": "Нет выходных данных"
+      "value": "No outputs"
     }
   ],
   "PF87Ew": [
@@ -3874,7 +3908,7 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "Запуски "
+      "value": "Runs "
     },
     {
       "type": 1,
@@ -3884,7 +3918,7 @@
   "PORNMZ": [
     {
       "type": 0,
-      "value": "Входные данные"
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3908,7 +3942,7 @@
   "PSrCNL": [
     {
       "type": 0,
-      "value": "Функция"
+      "value": "Function"
     }
   ],
   "PXa0D4": [
@@ -3920,7 +3954,7 @@
   "PZgHf/": [
     {
       "type": 0,
-      "value": "URI схемы"
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3929,28 +3963,22 @@
       "value": "Прервано"
     }
   ],
+  "PeLrFb": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Волгоград, Москва, Санкт-Петербург"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
       "value": "Функции рабочего процесса"
     }
   ],
-  "PjBcG3": [
+  "PmB0J7": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Амман"
-    }
-  ],
-  "Pk4cb+": [
-    {
-      "type": 0,
-      "value": "Отслеживаемые свойства"
-    }
-  ],
-  "Pq+4a+": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Каир"
+      "value": "(UTC –04:00) Теркс и Кайкос"
     }
   ],
   "PtqSHp": [
@@ -3959,16 +3987,10 @@
       "value": "Не создавать, если значение отсутствует"
     }
   ],
-  "Pudllg": [
-    {
-      "type": 0,
-      "value": "(UTC+07:00) Ховд"
-    }
-  ],
   "PvWTxR": [
     {
       "type": 0,
-      "value": "Показать функции"
+      "value": "Show functions"
     }
   ],
   "Pvm0xB": [
@@ -3977,10 +3999,10 @@
       "value": "Возвращает представление входной строки в кодировке Base 64"
     }
   ],
-  "Q+ZZHI": [
+  "Q+oELo": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Гавайи"
+      "value": "(UTC+04:00) Ижевск, Самара"
     }
   ],
   "Q/7unA": [
@@ -4004,13 +4026,7 @@
   "Q5w4Do": [
     {
       "type": 0,
-      "value": "Добавьте динамические данные или выражения, вставив /"
-    }
-  ],
-  "Q8HCYK": [
-    {
-      "type": 0,
-      "value": "Нет элементов"
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "Q8zxeb": [
@@ -4020,13 +4036,41 @@
     },
     {
       "type": 0,
-      "value": " Ключ"
+      "value": " Key"
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Преобразует входные данные в значение типа JSON"
     }
   ],
   "QGbUXX": [
     {
       "type": 0,
       "value": "Код состояния"
+    }
+  ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 0,
+      "value": "Контекстное меню для карточки "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -4050,7 +4094,7 @@
   "QdJUaS": [
     {
       "type": 0,
-      "value": "Значок карандаша"
+      "value": "Pencil icon"
     }
   ],
   "QeE0k/": [
@@ -4068,7 +4112,7 @@
   "QiVbKW": [
     {
       "type": 0,
-      "value": "Выйти из полноэкранного режима"
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4092,7 +4136,7 @@
   "QpX2+j": [
     {
       "type": 0,
-      "value": "Расположение"
+      "value": "Location"
     }
   ],
   "QrQDdp": [
@@ -4117,22 +4161,16 @@
       "value": "Триггеры удалить невозможно."
     }
   ],
-  "R/aiRy": [
-    {
-      "type": 0,
-      "value": "(UTC+12:00) Время в формате UTC+12"
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
       "value": "Имя"
     }
   ],
-  "RJes1w": [
+  "RPSKbr": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Ереван"
+      "value": "Укажите аудиторию"
     }
   ],
   "RX2Shm": [
@@ -4141,10 +4179,16 @@
       "value": "Обязательное поле. Строка, которая будет разделена."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Переключиться на ввод всего массива"
+    }
+  ],
   "RbJNVk": [
     {
       "type": 0,
-      "value": "Схема"
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -4210,25 +4254,13 @@
   "RnBddN": [
     {
       "type": 0,
-      "value": "проблема"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Можно добавлять заметки только при редактировании входных данных какого-либо шага"
-    }
-  ],
-  "Rp5pHU": [
-    {
-      "type": 0,
-      "value": "(UTC+00:00) Монровия, Рейкьявик"
+      "value": "issue"
     }
   ],
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "Нераспознанное выражение '"
+      "value": "Unrecognized expression '"
     },
     {
       "type": 1,
@@ -4239,22 +4271,16 @@
       "value": "'"
     }
   ],
-  "RvpHdu": [
-    {
-      "type": 0,
-      "value": "(UTC+11:00) Соломоновы острова, Новая Каледония"
-    }
-  ],
-  "RxGxr+": [
-    {
-      "type": 0,
-      "value": "Номер строки"
-    }
-  ],
   "S138/4": [
     {
       "type": 0,
-      "value": "Форматировать текст полужирным шрифтом. Сочетание клавиш: ⌘B"
+      "value": "Format text as bold. Shortcut: ⌘B"
+    }
+  ],
+  "SADSSs": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Петропавловск-Камчатский (устаревшее)"
     }
   ],
   "SCCE6s": [
@@ -4266,13 +4292,13 @@
   "SGnTpt": [
     {
       "type": 0,
-      "value": "Заголовок 2"
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
     {
       "type": 0,
-      "value": "проблемы"
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -4281,28 +4307,16 @@
       "value": "Преобразует параметр в целое число"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Тип входного узла не совпадает с типом узла схемы."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
-      "value": "Удалить входные данные"
+      "value": "Remove input"
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
       "value": "Проверяет, начинается ли строка со значения (без учета регистра, инвариантные язык и региональные параметры)"
-    }
-  ],
-  "SToblZ": [
-    {
-      "type": 0,
-      "value": "Настройте параметры для этого узла"
     }
   ],
   "SXb47U": [
@@ -4324,7 +4338,7 @@
   "SgiTAh": [
     {
       "type": 0,
-      "value": "Введите данные"
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4342,7 +4356,7 @@
   "Sr8PcK": [
     {
       "type": 0,
-      "value": "Операции не найдены."
+      "value": "No operations found"
     }
   ],
   "SvQyvs": [
@@ -4378,7 +4392,7 @@
   "T7Xwii": [
     {
       "type": 0,
-      "value": "Интервал"
+      "value": "Interval"
     }
   ],
   "T7zcR6": [
@@ -4408,13 +4422,19 @@
   "TLHUMf": [
     {
       "type": 0,
-      "value": "Ошибка при загрузке входных данных"
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Пятница"
+    }
+  ],
+  "TNzcrv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Владивосток"
     }
   ],
   "TO7qos": [
@@ -4432,7 +4452,7 @@
   "TRpSCQ": [
     {
       "type": 0,
-      "value": "Тип действия"
+      "value": "Action Type"
     }
   ],
   "TUaunO": [
@@ -4450,13 +4470,13 @@
   "TY4HzZ": [
     {
       "type": 0,
-      "value": "Добавьте или замените схемы."
+      "value": "Add or replace your schemas."
     }
   ],
   "TZh8nV": [
     {
       "type": 0,
-      "value": "по "
+      "value": "on "
     },
     {
       "type": 1,
@@ -4495,34 +4515,34 @@
       "value": "Пользовательское"
     }
   ],
-  "TjMkDP": [
-    {
-      "type": 0,
-      "value": "(UTC –06:00) Остров Пасхи"
-    }
-  ],
-  "TlX98E": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Калининград"
-    }
-  ],
   "Tmr/9e": [
     {
       "type": 0,
-      "value": "Недопустимые параметры"
+      "value": "Invalid parameters"
+    }
+  ],
+  "ToPmjE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Куяба"
+    }
+  ],
+  "TqPfth": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Брюссель, Копенгаген, Мадрид, Париж"
     }
   ],
   "Ts5Pzr": [
     {
       "type": 0,
-      "value": "Примечание"
+      "value": "Note"
     }
   ],
   "Ttc0SM": [
     {
       "type": 0,
-      "value": "Заголовок 1"
+      "value": "Heading 1"
     }
   ],
   "Twfck/": [
@@ -4540,13 +4560,13 @@
   "U086AA": [
     {
       "type": 0,
-      "value": "Элемент целевой схемы"
+      "value": "Target schema element"
     }
   ],
-  "U0I10w": [
+  "U1NiVg": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Екатеринбург"
+      "value": "(UTC-06:00) Центральная Америка"
     }
   ],
   "U3guPp": [
@@ -4564,7 +4584,7 @@
   "U4zovj": [
     {
       "type": 0,
-      "value": "Запуск: "
+      "value": "Runs "
     },
     {
       "type": 1,
@@ -4579,10 +4599,16 @@
       "value": "onDays"
     }
   ],
+  "U56j9a": [
+    {
+      "type": 0,
+      "value": "(UTC –06:00) Остров Пасхи"
+    }
+  ],
   "U7yRwM": [
     {
       "type": 0,
-      "value": "Ошибка проверки"
+      "value": "Validation Error"
     }
   ],
   "UCNM4L": [
@@ -4606,31 +4632,19 @@
   "UIWX6p": [
     {
       "type": 0,
-      "value": "Логическое имя"
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
     {
       "type": 0,
-      "value": "Скрыть код"
+      "value": "Hide code"
     }
   ],
   "USVffu": [
     {
       "type": 0,
       "value": "Содержимое не показано из-за конфигурации безопасности."
-    }
-  ],
-  "UT2ozj": [
-    {
-      "type": 0,
-      "value": "(UTC-07:00) Горное время (США и Канада)"
-    }
-  ],
-  "UVAfYj": [
-    {
-      "type": 0,
-      "value": "Обязательное поле. Коллекция, из которой необходимо извлечь последний объект."
     }
   ],
   "UYRIS/": [
@@ -4646,13 +4660,13 @@
   "UZiXVh": [
     {
       "type": 0,
-      "value": "Выходные данные"
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "У узла схемы '"
+      "value": "Schema node '"
     },
     {
       "type": 1,
@@ -4660,13 +4674,13 @@
     },
     {
       "type": 0,
-      "value": "' незавершенная цепочка подключений"
+      "value": "' has an non-terminating connection chain"
     }
   ],
   "Umpr3z": [
     {
       "type": 0,
-      "value": "Каждые "
+      "value": "Every "
     },
     {
       "type": 1,
@@ -4674,19 +4688,13 @@
     },
     {
       "type": 0,
-      "value": " нед."
-    }
-  ],
-  "Unc2tG": [
-    {
-      "type": 0,
-      "value": "Возвращает значение true, если два значения равны."
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
     {
       "type": 0,
-      "value": "Исходная схема"
+      "value": "Source schema"
     }
   ],
   "Ur+wph": [
@@ -4722,7 +4730,7 @@
   "V5f3ha": [
     {
       "type": 0,
-      "value": "Неделя"
+      "value": "Week"
     }
   ],
   "VA7M1u": [
@@ -4731,10 +4739,16 @@
       "value": "В приложении"
     }
   ],
+  "VE3cxq": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Горное время (США и Канада)"
+    }
+  ],
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "Выберите ресурс Службы приложений"
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4746,7 +4760,7 @@
   "VI7EqG": [
     {
       "type": 0,
-      "value": "Не найдены результаты по запросу "
+      "value": "No results found for "
     },
     {
       "type": 1,
@@ -4762,19 +4776,13 @@
   "VL9wOu": [
     {
       "type": 0,
-      "value": "Требуется указать для параметра значение."
+      "value": "Must provide value for parameter."
     }
   ],
   "VLc3FV": [
     {
       "type": 0,
-      "value": "Исходная схема"
-    }
-  ],
-  "VPh9Jo": [
-    {
-      "type": 0,
-      "value": "(UTC+06:00) Новосибирск"
+      "value": "Source schema"
     }
   ],
   "VUH9aj": [
@@ -4793,6 +4801,12 @@
     {
       "type": 0,
       "value": "Комментарий"
+    }
+  ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Переключиться на подробные входные данные элемента массива"
     }
   ],
   "VZHick": [
@@ -4816,7 +4830,7 @@
   "Vfce7b": [
     {
       "type": 0,
-      "value": "Тип ошибки"
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4861,20 +4875,16 @@
       "value": "Очистить"
     }
   ],
-  "WK6hZX": [
+  "WLj8DH": [
     {
       "type": 0,
-      "value": "Выделите весь "
-    },
-    {
-      "type": 1,
-      "value": "label"
+      "value": "Введите допустимый словарь"
     }
   ],
-  "WR1K3z": [
+  "WOOYW1": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Астрахань, Ульяновск"
+      "value": "Действия выполняют операции с данными или взаимодействуют с системами для выполнения."
     }
   ],
   "WS9kXD": [
@@ -4886,7 +4896,7 @@
   "WTZvGW": [
     {
       "type": 0,
-      "value": "В рабочем процессе есть недопустимые подключения для следующих операций: "
+      "value": "Workflow has invalid connections on the following operations: "
     },
     {
       "type": 1,
@@ -4899,16 +4909,10 @@
       "value": "Сокращение для trigger().outputs"
     }
   ],
-  "WaTsxR": [
-    {
-      "type": 0,
-      "value": "Журнал запросов"
-    }
-  ],
   "WcnIF8": [
     {
       "type": 0,
-      "value": "Удалить"
+      "value": "Remove"
     }
   ],
   "WgoP7R": [
@@ -4926,13 +4930,7 @@
   "X/7je+": [
     {
       "type": 0,
-      "value": "Минута"
-    }
-  ],
-  "X2idLs": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) Монтевидео"
+      "value": "Minute"
     }
   ],
   "X4gDhV": [
@@ -4944,7 +4942,7 @@
   "X7X5ew": [
     {
       "type": 0,
-      "value": "Параметры"
+      "value": "Parameters"
     }
   ],
   "X8JjjT": [
@@ -4999,10 +4997,10 @@
       "value": "var"
     }
   ],
-  "XOAcjQ": [
+  "XN9RvJ": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Найроби"
+      "value": "(UTC-08:00) Нижняя Калифорния"
     }
   ],
   "XOzn/3": [
@@ -5011,16 +5009,10 @@
       "value": "Имя соединения"
     }
   ],
-  "XQ4OCV": [
-    {
-      "type": 0,
-      "value": "(UTC+03:00) Багдад"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
-      "value": "У функции '"
+      "value": "Function '"
     },
     {
       "type": 1,
@@ -5028,13 +5020,13 @@
     },
     {
       "type": 0,
-      "value": "' незавершенная цепочка подключений"
+      "value": "' has an non-terminating connection chain"
     }
   ],
-  "XTeLIw": [
+  "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Красноярск"
+      "value": "(UTC+09:00) Сеул"
     }
   ],
   "XTuxmH": [
@@ -5058,19 +5050,31 @@
   "XVTQT6": [
     {
       "type": 0,
-      "value": "Интервал"
+      "value": "Interval"
+    }
+  ],
+  "XX1ioe": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Кувейт, Эр-Рияд"
+    }
+  ],
+  "XaS4ds": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Тихоокеанское время (США и Канада)"
     }
   ],
   "XbtEq9": [
     {
       "type": 0,
-      "value": "Количество"
+      "value": "Count"
     }
   ],
   "Xew1Df": [
     {
       "type": 0,
-      "value": "Дополнительные диагностические сведения: x-ms-client-request-id — \""
+      "value": "More diagnostic information: x-ms-client-request-id is '"
     },
     {
       "type": 1,
@@ -5078,31 +5082,31 @@
     },
     {
       "type": 0,
-      "value": "\"."
+      "value": "'."
     }
   ],
   "Xj0Gr/": [
     {
       "type": 0,
-      "value": "Невозможно удалить целевой элемент схемы."
+      "value": "Target schema element cannot be deleted."
     }
   ],
   "Xj4xwI": [
     {
       "type": 0,
-      "value": "Управляемое удостоверение, используемое с этой операцией, больше не существует. Чтобы продолжить, выберите доступное удостоверение или измените подключение."
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
     }
   ],
   "XkBxv5": [
     {
       "type": 0,
-      "value": "Выберите целевую схему"
+      "value": "Select a target schema"
     }
   ],
   "Xkt2vD": [
     {
       "type": 0,
-      "value": "Выберите функцию приложения-функции"
+      "value": "Select a function app function"
     }
   ],
   "Xnn0uj": [
@@ -5127,12 +5131,6 @@
     {
       "type": 0,
       "value": "Математические функции"
-    }
-  ],
-  "Xv5CGN": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) Индиана (Восток)"
     }
   ],
   "Xx/naD": [
@@ -5162,13 +5160,13 @@
   "YABOLz": [
     {
       "type": 0,
-      "value": "Элемент текста"
+      "value": "Body Item"
     }
   ],
   "YCFhzp": [
     {
       "type": 0,
-      "value": "Добавить дочерние элементы"
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -5196,7 +5194,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Форматировать текст подчеркнутым. Сочетание клавиш: CTRL+U"
+      "value": "Format text as underline. Shortcut: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -5214,31 +5212,25 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Форматировать текст полужирным шрифтом. Сочетание клавиш: CTRL+B"
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
     {
       "type": 0,
-      "value": "Проверка подлинности"
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
     {
       "type": 0,
-      "value": "Да или нет"
+      "value": "Yes/No"
     }
   ],
   "YWOKlU": [
     {
       "type": 0,
-      "value": "Нумерованный список"
-    }
-  ],
-  "YZ5Kwe": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) Атлантическое время (Канада)"
+      "value": "Numbered List"
     }
   ],
   "YaFjJQ": [
@@ -5247,16 +5239,10 @@
       "value": "Возвращает один массив или объект, который содержит все элементы массива или объекта, переданные этой функции. В качестве параметров может использоваться набор объектов или набор массивов (и не может использоваться набор, состоящий из объектов и массивов). При наличии двух объектов с одинаковыми именами в результирующий объект включается последний объект с этим именем."
     }
   ],
-  "Ybzoim": [
-    {
-      "type": 0,
-      "value": "Требуется. Имя действия с нужными значениями."
-    }
-  ],
   "YdQw4/": [
     {
       "type": 0,
-      "value": "Форматировать текст курсивом. Сочетание клавиш: ⌘I"
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5265,28 +5251,16 @@
       "value": "Советы по поиску"
     }
   ],
-  "YgU88A": [
-    {
-      "type": 0,
-      "value": "(UTC+05:30) Ченнаи, Колката, Мумбай, Нью-Дели"
-    }
-  ],
   "Yh5OVd": [
     {
       "type": 0,
-      "value": "Пользовательское значение не совпадает с одним из разрешенных типов для этого входного значения"
-    }
-  ],
-  "YiOybp": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) Брюссель, Копенгаген, Мадрид, Париж"
+      "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
   "YlesUQ": [
     {
       "type": 0,
-      "value": "Карта находится в идеальном состоянии"
+      "value": "Your map is in perfect condition"
     }
   ],
   "YoQara": [
@@ -5304,13 +5278,13 @@
   "Yw7Nfl": [
     {
       "type": 0,
-      "value": "Отключить статический результат"
+      "value": "Disable Static Result"
     }
   ],
   "Z9PWl/": [
     {
       "type": 0,
-      "value": "Недопустимое количество политик повтора (должно быть от "
+      "value": "Retry Policy count is invalid (Must be from "
     },
     {
       "type": 1,
@@ -5318,7 +5292,7 @@
     },
     {
       "type": 0,
-      "value": " до "
+      "value": " to "
     },
     {
       "type": 1,
@@ -5332,13 +5306,13 @@
   "ZBJiuD": [
     {
       "type": 0,
-      "value": "Состояние"
+      "value": "Status"
     }
   ],
   "ZCFMoe": [
     {
       "type": 0,
-      "value": "Текст"
+      "value": "Body"
     }
   ],
   "ZM1mRy": [
@@ -5353,10 +5327,16 @@
       "value": "Возвращает компонент дня месяца метки времени строки"
     }
   ],
+  "ZQ4lji": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Канберра, Мельбурн, Сидней"
+    }
+  ],
   "ZRdkFN": [
     {
       "type": 0,
-      "value": "Свернуть статический результат"
+      "value": "Collapse Static Result"
     }
   ],
   "ZUaz3Y": [
@@ -5386,13 +5366,13 @@
   "Zg3IjD": [
     {
       "type": 0,
-      "value": "Закрыть"
+      "value": "Close"
     }
   ],
   "Zi9gQK": [
     {
       "type": 0,
-      "value": "Добавить новый элемент"
+      "value": "Add new item"
     }
   ],
   "ZkjTbp": [
@@ -5401,10 +5381,22 @@
       "value": "Дополнительные сведения о динамическом содержимом."
     }
   ],
+  "ZnGRMP": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Томск"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
       "value": "Требуется. Число, которое делится на делитель."
+    }
+  ],
+  "a7x6VI": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Тайбэй"
     }
   ],
   "aAXnqw": [
@@ -5419,10 +5411,16 @@
       "value": "Обязательное поле. Количество объектов, которое необходимо удалить с начала коллекции. Необходимо указать положительное целое число."
     }
   ],
+  "aH9SV7": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ашхабад, Ташкент"
+    }
+  ],
   "aJxefp": [
     {
       "type": 0,
-      "value": "Добавить новые параметры"
+      "value": "Add new parameters"
     }
   ],
   "aK4iLW": [
@@ -5431,28 +5429,22 @@
       "value": "Обработка данных"
     }
   ],
-  "aP1wk9": [
-    {
-      "type": 0,
-      "value": "Возвращает первый индекс значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
-    }
-  ],
   "aSnCCB": [
     {
       "type": 0,
-      "value": "Расположение"
+      "value": "Location"
     }
   ],
   "aV/nLS": [
     {
       "type": 0,
-      "value": "Секунда"
+      "value": "Second"
     }
   ],
   "ae7W0a": [
     {
       "type": 0,
-      "value": "Во весь экран"
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -5464,13 +5456,13 @@
   "amRYtC": [
     {
       "type": 0,
-      "value": "Введите допустимое значение с плавающей точкой."
+      "value": "Enter a valid float."
     }
   ],
   "aoUT/3": [
     {
       "type": 0,
-      "value": "Загрузка ресурсов..."
+      "value": "Loading resources..."
     }
   ],
   "auUI93": [
@@ -5498,7 +5490,7 @@
   "b9Rvl9": [
     {
       "type": 0,
-      "value": "Текст"
+      "value": "Body"
     }
   ],
   "bG9rjv": [
@@ -5519,10 +5511,16 @@
       "value": "Подписка"
     }
   ],
+  "bS5DyV": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Калининград"
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
-      "value": "URL-адрес обратного вызова"
+      "value": "Callback url"
     }
   ],
   "bTrk+S": [
@@ -5540,7 +5538,7 @@
   "bXFGpe": [
     {
       "type": 0,
-      "value": "Сведения"
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -5555,22 +5553,16 @@
       "value": "Возвращает максимальное значение во входном массиве чисел"
     }
   ],
-  "bldzuj": [
+  "bnStSJ": [
     {
       "type": 0,
-      "value": "Журнал повторных попыток"
-    }
-  ],
-  "bsgS8m": [
-    {
-      "type": 0,
-      "value": "Предварительная версия"
+      "value": "(UTC+05:30) Ченнаи, Колката, Мумбаи, Нью-Дели"
     }
   ],
   "bv9QPA": [
     {
       "type": 0,
-      "value": "Дата"
+      "value": "Date"
     }
   ],
   "bwfJdj": [
@@ -5583,6 +5575,12 @@
       "value": "sourceNodeId"
     }
   ],
+  "bx3qeC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Бразилиа"
+    }
+  ],
   "bxhkTi": [
     {
       "type": 0,
@@ -5592,7 +5590,7 @@
   "byTBrn": [
     {
       "type": 0,
-      "value": "Настроить"
+      "value": "Custom"
     }
   ],
   "bzF/qn": [
@@ -5607,16 +5605,16 @@
       "value": "Выполнить"
     }
   ],
+  "c1XmvN": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Нукуалофа"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
       "value": "Поиск"
-    }
-  ],
-  "c3FLox": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) Хобарт"
     }
   ],
   "c3G/zq": [
@@ -5628,7 +5626,7 @@
   "c4GQZE": [
     {
       "type": 0,
-      "value": "Выберите схему для раскрывающегося списка"
+      "value": "Select the schema for dropdown"
     }
   ],
   "c6XbVI": [
@@ -5640,19 +5638,13 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "Распаковка текста запроса, если он сжат с помощью GZip или Deflate. Этот параметр применим только к триггеру HTTP."
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
     }
   ],
   "c8UPLp": [
     {
       "type": 0,
       "value": "Динамическое содержимое можно также добавить из других источников."
-    }
-  ],
-  "cHiBAn": [
-    {
-      "type": 0,
-      "value": "(UTC+09:00) Сеул"
     }
   ],
   "cJm+ah": [
@@ -5670,31 +5662,31 @@
   "cP4UkW": [
     {
       "type": 0,
-      "value": "Недопустимый интервал политики повтора. Необходимо указать длительность в формате ISO 8601"
+      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "cR9RtV": [
     {
       "type": 0,
-      "value": "Отменить изменения"
+      "value": "Discard changes"
     }
   ],
-  "cUW5m8": [
+  "cT2MlP": [
     {
       "type": 0,
-      "value": "Установите флажок, чтобы выбрать это подключение."
+      "value": "(UTC+11:00) Чокурдах"
+    }
+  ],
+  "cVIZTQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Триполи"
     }
   ],
   "ca/QIc": [
     {
       "type": 0,
-      "value": "Сообщение об ошибке"
-    }
-  ],
-  "ceVB5l": [
-    {
-      "type": 0,
-      "value": "Возвращает текст части в составных выходных данных какого-либо действия."
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -5706,7 +5698,7 @@
   "ciLkfU": [
     {
       "type": 0,
-      "value": "Полужирный (⌘B)"
+      "value": "Bold (⌘B)"
     }
   ],
   "cj+kyo": [
@@ -5718,7 +5710,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "Тип входного узла не совпадает с одним из разрешенных типов для этого входного значения"
+      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -5748,43 +5740,25 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "Создайте XSLT перед попыткой тестирования сопоставлений."
+      "value": "Generate XSLT first before attempting to test mappings."
     }
   ],
-  "cvp9VP": [
+  "d4xMIx": [
     {
       "type": 0,
-      "value": "Код ошибки"
-    }
-  ],
-  "cyEBus": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) Куяба"
-    }
-  ],
-  "d020eg": [
-    {
-      "type": 0,
-      "value": "Возвращает первый элемент в переданном массиве или переданной строке."
+      "value": "(UTC+02:00) Хараре, Претория"
     }
   ],
   "dBWIjR": [
     {
       "type": 0,
-      "value": "В схеме отсутствуют необходимые входные данные"
+      "value": "Schema is missing required inputs"
     }
   ],
   "dBxX0M": [
     {
       "type": 0,
-      "value": "Добавить триггер"
-    }
-  ],
-  "dD8y1n": [
-    {
-      "type": 0,
-      "value": "Переключиться в режим значений ключей"
+      "value": "Add a trigger"
     }
   ],
   "dDYCuU": [
@@ -5796,7 +5770,7 @@
   "dL9V5t": [
     {
       "type": 0,
-      "value": "Управляемое удостоверение"
+      "value": "Managed identity"
     }
   ],
   "dOpdsP": [
@@ -5808,13 +5782,13 @@
   "dPa7+6": [
     {
       "type": 0,
-      "value": "Создать"
+      "value": "Generate"
     }
   ],
   "dQmi91": [
     {
       "type": 0,
-      "value": "Периодичность"
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -5823,10 +5797,22 @@
       "value": "Укажите поведение и возможности передачи содержимого по HTTP. При отправке больших сообщений они могут быть разделены на запросы меньшего размера к соединителю. Подробнее см. по адресу http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
+  "dUZi34": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Острова Чатем"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
       "value": "Защита входных данных операции."
+    }
+  ],
+  "dWx21B": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Сахалин"
     }
   ],
   "daoo3l": [
@@ -5846,13 +5832,19 @@
   "dfNjw1": [
     {
       "type": 0,
-      "value": "Закрыть"
+      "value": "Close"
     }
   ],
   "dfmH55": [
     {
       "type": 0,
-      "value": "Курсив (CTRL+I)"
+      "value": "Italic (Ctrl+I)"
+    }
+  ],
+  "dgAu27": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Гренландия"
     }
   ],
   "dhvk0u": [
@@ -5882,7 +5874,7 @@
   "dwrqEc": [
     {
       "type": 0,
-      "value": "Предупреждения"
+      "value": "Warnings"
     }
   ],
   "dxh2CJ": [
@@ -5894,19 +5886,13 @@
   "e+GuGo": [
     {
       "type": 0,
-      "value": "Входные данные"
+      "value": "Input"
     }
   ],
   "e00zot": [
     {
       "type": 0,
       "value": "Как часто вам нужно проверять наличие элементов?"
-    }
-  ],
-  "e4JZEY": [
-    {
-      "type": 0,
-      "value": "(UTC+07:00) Томск"
     }
   ],
   "e4Onhn": [
@@ -5918,31 +5904,31 @@
   "e9OvzW": [
     {
       "type": 0,
-      "value": "Очистить"
+      "value": "Clear"
     }
   ],
   "e9bIKh": [
     {
       "type": 0,
-      "value": "Не удалось создать XSLT."
+      "value": "Failed to generate XSLT."
     }
   ],
   "eFet4K": [
     {
       "type": 0,
-      "value": "Идентификатор отслеживания действий"
+      "value": "Action Tracking ID"
     }
   ],
-  "eFnLWK": [
+  "eGa1Wa": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Центральная Америка"
+      "value": "(UTC+05:00) Екатеринбург"
     }
   ],
   "eHgfpz": [
     {
       "type": 0,
-      "value": "Введите допустимый URL-адрес"
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -5972,13 +5958,13 @@
   "ehIBkh": [
     {
       "type": 0,
-      "value": "Введите целое число"
+      "value": "Enter an integer"
     }
   ],
   "elD6+N": [
     {
       "type": 0,
-      "value": "Курсив (⌘I)"
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -6020,7 +6006,7 @@
   "f81ClO": [
     {
       "type": 0,
-      "value": "Значок пустого динамического содержимого"
+      "value": "Empty dynamic content icon"
     }
   ],
   "fBQBw/": [
@@ -6038,7 +6024,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "Выберите ресурс Управления API Azure"
+      "value": "Select an API Management resource"
     }
   ],
   "fGcSFd": [
@@ -6050,19 +6036,19 @@
   "fKYuwf": [
     {
       "type": 0,
-      "value": "Выберите файл или образ"
+      "value": "Please select file or image"
     }
   ],
-  "fVG5aD": [
+  "faSDuD": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Гаити"
+      "value": "(UTC+04:00) Порт-Луи"
     }
   ],
   "faUrud": [
     {
       "type": 0,
-      "value": "Загрузка данных подключения…"
+      "value": "Loading connection data..."
     }
   ],
   "fc1AV8": [
@@ -6081,22 +6067,16 @@
       "value": "Логические функции"
     }
   ],
-  "fifSPb": [
-    {
-      "type": 0,
-      "value": "(UTC-03:30) Ньюфаундленд"
-    }
-  ],
   "fmm7Ik": [
     {
       "type": 0,
-      "value": "Функция"
+      "value": "Function"
     }
   ],
-  "fp8Ry3": [
+  "froV/0": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Пекин, Чунцин, Гонконг, Урумчи"
+      "value": "(UTC+04:30) Кабул"
     }
   ],
   "ftwXvc": [
@@ -6108,7 +6088,7 @@
   "g076bL": [
     {
       "type": 0,
-      "value": "Адрес электронной почты"
+      "value": "Email"
     }
   ],
   "g1zwch": [
@@ -6126,7 +6106,13 @@
   "g5A6Bn": [
     {
       "type": 0,
-      "value": "Среда выполнения"
+      "value": "Runtime"
+    }
+  ],
+  "g5mMuM": [
+    {
+      "type": 0,
+      "value": "(UTC –03:00) Сен-Пьер и Микелон"
     }
   ],
   "g7my78": [
@@ -6153,6 +6139,12 @@
       "value": "Возвращает результат деления двух чисел"
     }
   ],
+  "gF+0/N": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Амман"
+    }
+  ],
   "gIK0WG": [
     {
       "type": 0,
@@ -6168,27 +6160,19 @@
   "gIx5ys": [
     {
       "type": 0,
-      "value": "Форматировать текст курсивом. Сочетание клавиш: CTRL+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Копировать значение \""
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": "\" в буфер обмена"
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Предыдущее со сбоем"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Обязательное поле. Строка, которая будет объединена в другую строку."
     }
   ],
   "gQt/0f": [
@@ -6200,43 +6184,49 @@
   "gRUmiA": [
     {
       "type": 0,
-      "value": "Сведения"
+      "value": "Info"
     }
   ],
-  "gWyYg0": [
+  "gTXyUo": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ашхабад, Ташкент"
+      "value": "Time Zone"
+    }
+  ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Условия триггера"
     }
   ],
   "gc6v4X": [
     {
       "type": 0,
-      "value": "Управляемое удостоверение, назначаемое системой"
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
     {
       "type": 0,
-      "value": "Адрес электронной почты"
+      "value": "Email"
     }
   ],
-  "ginGIZ": [
+  "gg0j4S": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Гвадалахара, Мехико, Монтеррей"
+      "value": "(UTC-06:00) Саскачеван"
     }
   ],
   "gkY5ya": [
     {
       "type": 0,
-      "value": "Удалить"
-    }
-  ],
-  "gpUphl": [
-    {
-      "type": 0,
-      "value": "Введите аудиторию."
+      "value": "Delete"
     }
   ],
   "gu9o9z": [
@@ -6248,13 +6238,13 @@
   "gvDMuq": [
     {
       "type": 0,
-      "value": "Выберите ресурс пакетного рабочего процесса"
+      "value": "Select a Batch Workflow resource"
     }
   ],
   "h+W3VW": [
     {
       "type": 0,
-      "value": "Число"
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -6266,13 +6256,19 @@
   "h40rpg": [
     {
       "type": 0,
-      "value": "Укажите интервал в формате ISO 8601."
+      "value": "Specify interval in ISO 8601 format."
     }
   ],
   "h6vVbX": [
     {
       "type": 0,
-      "value": "Сначала добавьте исходную схему, а затем выберите элементы для построения карты"
+      "value": "Add a source schema first, then select elements to build your map"
+    }
+  ],
+  "hBLPXK": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Джорджтаун, Ла-Пас, Манаус, Сан-Хуан"
     }
   ],
   "hN7iBP": [
@@ -6335,16 +6331,10 @@
       "value": "Возвращает результат вычитания двух чисел"
     }
   ],
-  "hZqQdt": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Газа, Хеврон"
-    }
-  ],
   "hic23z": [
     {
       "type": 0,
-      "value": "Значение слишком велико."
+      "value": "The value is too large."
     }
   ],
   "hq1mk6": [
@@ -6374,19 +6364,13 @@
   "htj+eZ": [
     {
       "type": 0,
-      "value": "Обновить целевую схему"
+      "value": "Update target schema"
     }
   ],
   "hvbclb": [
     {
       "type": 0,
       "value": "Аудитория"
-    }
-  ],
-  "hza/cT": [
-    {
-      "type": 0,
-      "value": "(UTC+00:00) Касабланка"
     }
   ],
   "i/SguY": [
@@ -6404,13 +6388,7 @@
   "i0XjL5": [
     {
       "type": 0,
-      "value": "Поиск операции"
-    }
-  ],
-  "i1EQYm": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Хараре, Претория"
+      "value": "Search for operation"
     }
   ],
   "i1Tufp": [
@@ -6434,13 +6412,7 @@
   "i4Om5O": [
     {
       "type": 0,
-      "value": "Содержится недопустимое значение"
-    }
-  ],
-  "iB8YKD": [
-    {
-      "type": 0,
-      "value": "Вкладка \"Сведения\""
+      "value": "This contains an invalid value"
     }
   ],
   "iCSHJG": [
@@ -6513,12 +6485,6 @@
       "value": "Управляемое удостоверение"
     }
   ],
-  "iTKrs8": [
-    {
-      "type": 0,
-      "value": "Разбивка на страницы"
-    }
-  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -6540,19 +6506,13 @@
   "iVMVAt": [
     {
       "type": 0,
-      "value": "Пример: 0, 10"
+      "value": "Example: 0, 10"
     }
   ],
   "idQjOP": [
     {
       "type": 0,
       "value": "Свойства"
-    }
-  ],
-  "ifnOUI": [
-    {
-      "type": 0,
-      "value": "Вкладка \"Просмотр кода\""
     }
   ],
   "iq+tiv": [
@@ -6574,19 +6534,19 @@
   "isnFBi": [
     {
       "type": 0,
-      "value": "Элементы и сопоставления, не подключенные к целевому элементу, удаляются."
-    }
-  ],
-  "ixhS47": [
-    {
-      "type": 0,
-      "value": "Возвращает начало дня в метку времени строки, переданную в функцию"
+      "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
   "iy8rNf": [
     {
       "type": 0,
       "value": "Тест"
+    }
+  ],
+  "j1VU25": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Киритимати, остров"
     }
   ],
   "j2MU0b": [
@@ -6604,7 +6564,7 @@
   "j5z8Vd": [
     {
       "type": 0,
-      "value": "Повтор"
+      "value": "Repeating"
     }
   ],
   "jA6Wrp": [
@@ -6622,7 +6582,7 @@
   "jHKc3w": [
     {
       "type": 0,
-      "value": "Другое"
+      "value": "Other"
     }
   ],
   "jKsMS6": [
@@ -6643,22 +6603,16 @@
       "value": "Обязательное поле. Значение, которое будет преобразовано в строку."
     }
   ],
-  "jQ7UzV": [
-    {
-      "type": 0,
-      "value": "(UTC –10:00) Алеутские острова"
-    }
-  ],
   "jQjteB": [
     {
       "type": 0,
-      "value": "Добавить исходную схему"
+      "value": "Add a source schema"
     }
   ],
   "jUDhbs": [
     {
       "type": 0,
-      "value": "Целевая схема"
+      "value": "Target schema"
     }
   ],
   "jVpanH": [
@@ -6670,7 +6624,7 @@
   "jZjgYZ": [
     {
       "type": 0,
-      "value": "В этой подписке не найдены ресурсы этого типа."
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -6724,19 +6678,25 @@
   "kBOAkT": [
     {
       "type": 0,
-      "value": "Выберите поля"
+      "value": "Select Fields"
     }
   ],
   "kBSLfu": [
     {
       "type": 0,
-      "value": "Дублирующееся имя свойства"
+      "value": "Duplicate property name"
+    }
+  ],
+  "kDsud+": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Кайенна, Форталеза"
     }
   ],
   "kEI2xx": [
     {
       "type": 0,
-      "value": "Сообщение"
+      "value": "Message"
     }
   ],
   "kHcCxH": [
@@ -6760,25 +6720,13 @@
   "kM+Mr0": [
     {
       "type": 0,
-      "value": "Загрузка..."
+      "value": "Loading..."
     }
   ],
   "kN6kce": [
     {
       "type": 0,
       "value": "Возвращает строковое представление входной строки в формате Base 64"
-    }
-  ],
-  "kSK9Pq": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) Богота, Кито, Лима, Рио-Бранко"
-    }
-  ],
-  "kVwJXt": [
-    {
-      "type": 0,
-      "value": "(UTC+04:00) Абу-Даби, Маскат"
     }
   ],
   "kYivbS": [
@@ -6793,10 +6741,34 @@
       "value": "Понедельник"
     }
   ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Возвращает значение true, если первый аргумент меньше второго"
+    }
+  ],
+  "kc5Mui": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Среднеатлантическое время (старое)"
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Возвращает значение true, если два значения равны"
+    }
+  ],
   "klpJg1": [
     {
       "type": 0,
       "value": "Введите имя пользователя"
+    }
+  ],
+  "kneb9/": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) Меридиан смены дат (запад)"
     }
   ],
   "knylNW": [
@@ -6814,13 +6786,7 @@
   "kxMDyM": [
     {
       "type": 0,
-      "value": "Введите допустимый код JSON."
-    }
-  ],
-  "l/9YHQ": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) Виндхук"
+      "value": "Enter a valid json."
     }
   ],
   "l36V56": [
@@ -6841,22 +6807,22 @@
       "value": " мин"
     }
   ],
-  "l536iI": [
-    {
-      "type": 0,
-      "value": "Вкладка \"Мониторинг\""
-    }
-  ],
   "l72gf4": [
     {
       "type": 0,
-      "value": "Управляемое удостоверение"
+      "value": "Managed Identity"
     }
   ],
-  "lM9qrG": [
+  "lFve22": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Нукуалофа"
+      "value": "(UTC+01:00) Сараево, Скопье, Варшава, Загреб"
+    }
+  ],
+  "lIPWQ6": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Бангкок, Ханой, Джакарта"
     }
   ],
   "lPTdSf": [
@@ -6868,41 +6834,19 @@
   "lQNKUB": [
     {
       "type": 0,
-      "value": "Строка для родительского элемента добавляется автоматически."
+      "value": "A line for the parent element is added automatically."
     }
   ],
   "lR7V87": [
     {
       "type": 0,
-      "value": "Функции"
+      "value": "Functions"
     }
   ],
   "lUm6fl": [
     {
       "type": 0,
-      "value": "Вернуться"
-    }
-  ],
-  "lUvgiW": [
-    {
-      "type": 0,
-      "value": "Тип \""
-    },
-    {
-      "type": 1,
-      "value": "0"
-    },
-    {
-      "type": 0,
-      "value": "\": \""
-    },
-    {
-      "type": 1,
-      "value": "1"
-    },
-    {
-      "type": 0,
-      "value": "\"."
+      "value": "Return"
     }
   ],
   "lZT0JI": [
@@ -6917,10 +6861,16 @@
       "value": "пропущен"
     }
   ],
+  "lcxLiq": [
+    {
+      "type": 0,
+      "value": "Введите допустимый массив"
+    }
+  ],
   "lexzgJ": [
     {
       "type": 0,
-      "value": "Удалите все ссылки на элемент \""
+      "value": "Remove all references to element ' "
     },
     {
       "type": 1,
@@ -6928,7 +6878,7 @@
     },
     {
       "type": 0,
-      "value": "\" перед удалением этого элемента."
+      "value": " ' before you remove the element."
     }
   ],
   "lgs5sf": [
@@ -6940,7 +6890,7 @@
   "lhL/KL": [
     {
       "type": 0,
-      "value": "Обычный"
+      "value": "Normal"
     }
   ],
   "ljAOR6": [
@@ -6952,19 +6902,19 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "Вставить выражение (для добавления также можно ввести \"/\" в редакторе)"
+      "value": "Insert Expression (You can also add by typing / in the editor)"
     }
   ],
   "lsKVU6": [
     {
       "type": 0,
-      "value": "Выберите тип действия"
+      "value": "Select an action type"
     }
   ],
   "lwlg2K": [
     {
       "type": 0,
-      "value": "Подчеркнутый (CTRL+U)"
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -6976,7 +6926,7 @@
   "m/jJ/5": [
     {
       "type": 0,
-      "value": "Средство проверки карт"
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6997,12 +6947,6 @@
       "value": "Введите массив"
     }
   ],
-  "mCKsFw": [
-    {
-      "type": 0,
-      "value": "(UTC+07:00) Барнаул, Горно-Алтайск"
-    }
-  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -7018,7 +6962,7 @@
   "mGPqAg": [
     {
       "type": 0,
-      "value": "Удалить "
+      "value": "Delete "
     },
     {
       "type": 1,
@@ -7052,7 +6996,7 @@
   "mPuXlv": [
     {
       "type": 0,
-      "value": "Недопустимый тип значения разделения \""
+      "value": "Invalid type on split on value '"
     },
     {
       "type": 1,
@@ -7060,19 +7004,25 @@
     },
     {
       "type": 0,
-      "value": "\". Разделение отсутствует в массиве."
+      "value": "', split on not in array."
     }
   ],
   "mQotIu": [
     {
       "type": 0,
-      "value": "Выбор подключения"
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
     {
       "type": 0,
       "value": "Отсутствуют обязательные свойства \"secret\" или \"pfx\" и \"password\" для типа проверки подлинности \"ActiveDirectoryOAuth\"."
+    }
+  ],
+  "mZCHKf": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Анадырь, Петропавловск-Камчатский"
     }
   ],
   "mZRMD9": [
@@ -7090,13 +7040,7 @@
   "meVkB6": [
     {
       "type": 0,
-      "value": "Пустое имя свойства"
-    }
-  ],
-  "mej02C": [
-    {
-      "type": 0,
-      "value": "(UTC+08:30) Пхеньян"
+      "value": "Empty property name"
     }
   ],
   "mjS/k1": [
@@ -7113,12 +7057,12 @@
   ],
   "mvu5xN": [
     {
-      "type": 0,
-      "value": "Значение "
-    },
-    {
       "type": 1,
       "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -7151,12 +7095,6 @@
       "value": "Обязательное поле. Значение, которое необходимо преобразовать в число с плавающей точкой."
     }
   ],
-  "n42uAO": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) Сантьяго"
-    }
-  ],
   "n4V2Hi": [
     {
       "type": 0,
@@ -7172,7 +7110,7 @@
   "nCa0KG": [
     {
       "type": 0,
-      "value": "Внутренние ошибки"
+      "value": "Internal Errors"
     }
   ],
   "nGds/r": [
@@ -7187,28 +7125,22 @@
       "value": "Обязательно. Количество единиц измерения времени, на которое желаемая дата находится в будущем по отношению к текущему времени."
     }
   ],
-  "nNWAAh": [
-    {
-      "type": 0,
-      "value": "Схема не добавлена."
-    }
-  ],
   "nOWGAV": [
     {
       "type": 0,
-      "value": "Время окончания"
+      "value": "End time"
     }
   ],
   "nOhve4": [
     {
       "type": 0,
-      "value": "Да или нет"
+      "value": "Yes/No"
     }
   ],
   "nRpM02": [
     {
       "type": 0,
-      "value": "Настроить"
+      "value": "Custom"
     }
   ],
   "nSan4V": [
@@ -7223,12 +7155,6 @@
       "value": "Требуется. Имя удаляемого свойства."
     }
   ],
-  "nVDG00": [
-    {
-      "type": 0,
-      "value": "(UTC+14:00) Киритимати, остров"
-    }
-  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -7241,22 +7167,10 @@
       "value": "Обязательное поле. Объект, который нужно сравнить с другим объектом на отношение \"меньше\"."
     }
   ],
-  "njGstq": [
-    {
-      "type": 0,
-      "value": "(UTC+05:45) Катманду"
-    }
-  ],
   "nkk1mu": [
     {
       "type": 0,
       "value": "Добавляет целое число минут в метку времени строки, переданной в функцию"
-    }
-  ],
-  "no/SMg": [
-    {
-      "type": 0,
-      "value": "(UTC+10:00) Брисбен"
     }
   ],
   "nx25nq": [
@@ -7268,19 +7182,13 @@
   "ny75Ly": [
     {
       "type": 0,
-      "value": "Введите для параметра значение по умолчанию."
+      "value": "Enter default value for parameter."
     }
   ],
   "o/0SEj": [
     {
       "type": 0,
       "value": "Возвращает последний элемент в переданном в функцию массиве или строке"
-    }
-  ],
-  "o/FgET": [
-    {
-      "type": 0,
-      "value": "Функция удалена из текущего расположения и в настоящее время находится в другом месте."
     }
   ],
   "o14STH": [
@@ -7306,25 +7214,19 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "Введите допустимый URI."
+      "value": "Enter a valid uri."
     }
   ],
   "o3SfI4": [
     {
       "type": 0,
-      "value": "По размеру окна"
-    }
-  ],
-  "o7bd1o": [
-    {
-      "type": 0,
-      "value": "(UTC+03:30) Тегеран"
+      "value": "Zoom to fit"
     }
   ],
   "o8ohVV": [
     {
       "type": 0,
-      "value": "Идентификатор схемы"
+      "value": "Schema Id"
     }
   ],
   "oAFcW6": [
@@ -7336,7 +7238,7 @@
   "oDHXKh": [
     {
       "type": 0,
-      "value": "Элемент"
+      "value": "Item"
     }
   ],
   "oLtwMw": [
@@ -7345,34 +7247,28 @@
       "value": "Передача содержимого"
     }
   ],
-  "oMphsh": [
-    {
-      "type": 0,
-      "value": "Настройки"
-    }
-  ],
-  "oO12r6": [
-    {
-      "type": 0,
-      "value": "(UTC-08:00) Баха Калифорния"
-    }
-  ],
   "oQjIWf": [
     {
       "type": 0,
-      "value": "Ошибки"
+      "value": "Errors"
     }
   ],
   "oR2x4N": [
     {
       "type": 0,
-      "value": "Недопустимое целочисленное значение"
+      "value": "Invalid integer value"
+    }
+  ],
+  "oRvVIW": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Красноярск"
     }
   ],
   "oTBkbU": [
     {
       "type": 0,
-      "value": "Выходные данные"
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -7384,7 +7280,7 @@
   "oVVPst": [
     {
       "type": 0,
-      "value": "Вы хотите отменить все несохраненные изменения?"
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "odQ554": [
@@ -7393,22 +7289,28 @@
       "value": "Текст отклика"
     }
   ],
+  "ol+TkT": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Сальвадор"
+    }
+  ],
   "onXUu0": [
     {
       "type": 0,
-      "value": "Добавить заметку"
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
     {
       "type": 0,
-      "value": "Введите допустимый код JSON"
+      "value": "Enter a valid JSON"
     }
   ],
-  "oxXV4+": [
+  "oxH1L/": [
     {
       "type": 0,
-      "value": "Возвращает первый объект, отличный от null, в переданных значениях аргументов."
+      "value": "(UTC-07:00) Чиуауа, Ла-Пас, Мазатлан"
     }
   ],
   "p/0r2N": [
@@ -7423,22 +7325,16 @@
       "value": "Заголовки"
     }
   ],
-  "p1IEXb": [
-    {
-      "type": 0,
-      "value": "Введите данные из предыдущего шага. Также можно добавить данные, введя символ \"/\"."
-    }
-  ],
   "p1Qtm5": [
     {
       "type": 0,
       "value": "В приложении"
     }
   ],
-  "p5ZID0": [
+  "p5tz8/": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Кувейт, Эр-Рияд"
+      "value": "(UTC+13:00) Самоа"
     }
   ],
   "pC2nr2": [
@@ -7462,13 +7358,19 @@
   "pMms92": [
     {
       "type": 0,
-      "value": "Вставить динамическое содержимое"
+      "value": "Insert Dynamic Content"
     }
   ],
   "pOTcUO": [
     {
       "type": 0,
       "value": "Требуется. Значения, которые объединяются в массив."
+    }
+  ],
+  "pUeUDw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Осака, Саппоро, Токио"
     }
   ],
   "pXmFGf": [
@@ -7480,7 +7382,7 @@
   "pYNzbj": [
     {
       "type": 0,
-      "value": "Путь"
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -7492,7 +7394,7 @@
   "pcGqoB": [
     {
       "type": 0,
-      "value": "Ошибка при загрузке выходных данных"
+      "value": "Error loading outputs"
     }
   ],
   "pcuZKB": [
@@ -7525,12 +7427,6 @@
       "value": "Безопасность"
     }
   ],
-  "q+ZZjX": [
-    {
-      "type": 0,
-      "value": "Журнал повторных попыток"
-    }
-  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -7555,18 +7451,6 @@
       "value": "Преобразует параметр в строку"
     }
   ],
-  "q4ChjK": [
-    {
-      "type": 0,
-      "value": "Выберите рабочий процесс с триггером \"manual\""
-    }
-  ],
-  "q5TkqE": [
-    {
-      "type": 0,
-      "value": "Требуется. Значение, которое возвращается при значении \"false\" у выражения."
-    }
-  ],
   "q87X20": [
     {
       "type": 0,
@@ -7576,13 +7460,19 @@
   "q8vnZQ": [
     {
       "type": 0,
-      "value": "Проверьте текст запроса по предоставленной схеме. В случае несоответствия будет возвращена ошибка HTTP 400."
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+    }
+  ],
+  "q9hf8i": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Астрахань, Ульяновск"
     }
   ],
   "qAlTD5": [
     {
       "type": 0,
-      "value": "Формат ссылки на подключение манифеста не поддерживается: '"
+      "value": "Unsupported manifest connection reference format: '"
     },
     {
       "type": 1,
@@ -7596,7 +7486,7 @@
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Форматировать текст подчеркнутым. Сочетание клавиш: ⌘U"
+      "value": "Format text as underline. Shortcut: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7638,7 +7528,7 @@
   "qUMXpq": [
     {
       "type": 0,
-      "value": "Конечная точка Swagger"
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
@@ -7704,17 +7594,11 @@
   "qiIs4V": [
     {
       "type": 0,
-      "value": "Пример: "
+      "value": "Example: "
     },
     {
       "type": 1,
       "value": "example"
-    }
-  ],
-  "qij+Vf": [
-    {
-      "type": 0,
-      "value": "Переключиться в режим просмотра по умолчанию"
     }
   ],
   "qnI4Y1": [
@@ -7723,10 +7607,16 @@
       "value": "Обязательное поле. Значение, которое необходимо преобразовать в целое число."
     }
   ],
+  "qq/bq0": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Якутск"
+    }
+  ],
   "qr1lLG": [
     {
       "type": 0,
-      "value": "У функции '"
+      "value": "Function '"
     },
     {
       "type": 1,
@@ -7734,7 +7624,7 @@
     },
     {
       "type": 0,
-      "value": "' не совпадает тип входных данных"
+      "value": "' has an input with a mismatched type"
     }
   ],
   "qrxi0L": [
@@ -7746,7 +7636,13 @@
   "r/n6/9": [
     {
       "type": 0,
-      "value": "Введите значение"
+      "value": "Enter a value"
+    }
+  ],
+  "r1FQhf": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Виндхук"
     }
   ],
   "r43nMc": [
@@ -7758,7 +7654,7 @@
   "r7vZ5a": [
     {
       "type": 0,
-      "value": "Минимальный интервал"
+      "value": "Minimum Interval"
     }
   ],
   "r8aZXs": [
@@ -7776,7 +7672,7 @@
   "rAwCdh": [
     {
       "type": 0,
-      "value": "Подключаться через локальный шлюз данных"
+      "value": "Connect via on-premises data gateway"
     }
   ],
   "rAyuzv": [
@@ -7803,16 +7699,10 @@
       "value": "Является ли подключение недопустимым"
     }
   ],
-  "rNi5Y3": [
-    {
-      "type": 0,
-      "value": "Установите этот флажок, если выполняется настройка подключения в локальной среде."
-    }
-  ],
   "rSIBjh": [
     {
       "type": 0,
-      "value": "Введите значение параметра."
+      "value": "Enter value for parameter."
     }
   ],
   "raBiud": [
@@ -7830,13 +7720,19 @@
   "rd6fai": [
     {
       "type": 0,
-      "value": "Использовать клавиши со стрелками влево и вправо для навигации между командами."
+      "value": "Use left and right arrow keys to navigate between commands"
     }
   ],
   "rsdJcV": [
     {
       "type": 0,
-      "value": "Выберите элементы исходной схемы для сборки карты"
+      "value": "Select source schema elements to build your map"
+    }
+  ],
+  "rstpaK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Центральное время (США и Канада)"
     }
   ],
   "rv0Pn+": [
@@ -7845,22 +7741,10 @@
       "value": "Добавить"
     }
   ],
-  "rxIJfD": [
-    {
-      "type": 0,
-      "value": "(UTC+09:30) Дарвин"
-    }
-  ],
-  "rxMXmZ": [
-    {
-      "type": 0,
-      "value": "(UTC+04:00) Порт Луис"
-    }
-  ],
   "s+4LEa": [
     {
       "type": 0,
-      "value": "Открыть папку"
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
@@ -7881,18 +7765,6 @@
       "value": "Возвращает массив значений, соответствующих имени ключа из выходных данных триггера form-data или form-encoded"
     }
   ],
-  "sEqLTV": [
-    {
-      "type": 0,
-      "value": "Вкладка \"Тестирование\""
-    }
-  ],
-  "sFbnCs": [
-    {
-      "type": 0,
-      "value": "(UTC-05:00) Четумаль"
-    }
-  ],
   "sFwHQc": [
     {
       "type": 0,
@@ -7902,7 +7774,7 @@
   "sQ2vRs": [
     {
       "type": 0,
-      "value": "Добавить инструкцию Case"
+      "value": "Add Case"
     }
   ],
   "sW47JR": [
@@ -7914,19 +7786,13 @@
   "sYQDN+": [
     {
       "type": 0,
-      "value": "Параметры форматирования — семейство шрифтов"
+      "value": "Formatting options for font family"
     }
   ],
   "sZ0G/Z": [
     {
       "type": 0,
       "value": "Обязательно. Строка, содержащая единицу интервала времени для добавляемого интервала."
-    }
-  ],
-  "sZHTQV": [
-    {
-      "type": 0,
-      "value": "(UTC+09:00) Чита"
     }
   ],
   "sbPZ9S": [
@@ -7953,6 +7819,12 @@
       "value": "ключ"
     }
   ],
+  "siYGSo": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Бейрут"
+    }
+  ],
   "soqP+Z": [
     {
       "type": 0,
@@ -7974,13 +7846,13 @@
   "sv+IcU": [
     {
       "type": 0,
-      "value": "Не удалось создать определение карты данных"
+      "value": "Unable to generate data map definition"
     }
   ],
   "sw6EXK": [
     {
       "type": 0,
-      "value": "Состояние"
+      "value": "Status"
     }
   ],
   "syiNc+": [
@@ -7998,7 +7870,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Не удалось получить динамические входные данные. Сведения об ошибке: '"
+      "value": "Failed to retrieve dynamic inputs. Error details: '"
     },
     {
       "type": 1,
@@ -8018,19 +7890,25 @@
   "tAbbH8": [
     {
       "type": 0,
-      "value": "Назначено слишком много входных данных"
+      "value": "Too many inputs assigned"
     }
   ],
   "tAeKNh": [
     {
       "type": 0,
-      "value": "Простой"
+      "value": "Simple"
     }
   ],
   "tE7Zam": [
     {
       "type": 0,
       "value": "Возвращает URL-адрес для вызова триггера или действия"
+    }
+  ],
+  "tELkSC": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Гвадалахара, Мехико, Монтеррей"
     }
   ],
   "tH2pT1": [
@@ -8060,7 +7938,7 @@
   "tJMHcJ": [
     {
       "type": 0,
-      "value": "Выбор ссылки на подключение"
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
@@ -8078,7 +7956,7 @@
   "tMdcE1": [
     {
       "type": 0,
-      "value": "Недопустимое подключение. Обновите подключение, чтобы загрузить полные сведения."
+      "value": "Invalid connection, please update your connection to load complete details"
     }
   ],
   "tNoZx2": [
@@ -8087,22 +7965,22 @@
       "value": "Тип"
     }
   ],
+  "tP+5fA": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Новосибирск"
+    }
+  ],
   "tUCptx": [
     {
       "type": 0,
-      "value": "Вставить ссылку"
-    }
-  ],
-  "tUU4ak": [
-    {
-      "type": 0,
-      "value": "(UTC+11:00) Чокурдах"
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [
     {
       "type": 0,
-      "value": "Пример: 2017-03-24T15:00:00Z"
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -8114,7 +7992,7 @@
   "tWV2mC": [
     {
       "type": 0,
-      "value": "в "
+      "value": "at "
     },
     {
       "type": 1,
@@ -8122,13 +8000,7 @@
     },
     {
       "type": 0,
-      "value": " каждый час"
-    }
-  ],
-  "tZIlCA": [
-    {
-      "type": 0,
-      "value": "(UTC-08:00) Тихоокеанское время (США и Канада)"
+      "value": " every hour"
     }
   ],
   "tZj2Xn": [
@@ -8143,16 +8015,16 @@
       "value": "Требуется. Число добавляемых часов. Значение может быть отрицательным для вычитания часов."
     }
   ],
-  "tarDYT": [
-    {
-      "type": 0,
-      "value": "Возвращает значение true, если первый аргумент меньше второго."
-    }
-  ],
   "td5//c": [
     {
       "type": 0,
-      "value": "Свернуть узел дерева"
+      "value": "Collapse tree node"
+    }
+  ],
+  "teZwo6": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Хобарт"
     }
   ],
   "ti5TEd": [
@@ -8161,22 +8033,22 @@
       "value": "Отмена"
     }
   ],
-  "tqqUHX": [
-    {
-      "type": 0,
-      "value": "(UTC+12:45) Острова Чатем"
-    }
-  ],
   "tsmuoF": [
     {
       "type": 0,
       "value": "Отображаемое имя"
     }
   ],
-  "u81zB9": [
+  "u/KSPz": [
     {
       "type": 0,
-      "value": "(UTC –09:00) Время в формате UTC –9"
+      "value": "(UTC-04:00) Сантьяго"
+    }
+  ],
+  "u6Gdft": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Абу-Даби, Маскат"
     }
   ],
   "u9tr3k": [
@@ -8188,25 +8060,19 @@
   "uDI1Um": [
     {
       "type": 0,
-      "value": "Код состояния"
-    }
-  ],
-  "uE0A0s": [
-    {
-      "type": 0,
-      "value": "(UTC) Время в формате UTC"
+      "value": "Status Code"
     }
   ],
   "uIurld": [
     {
       "type": 0,
-      "value": "Сохранить"
+      "value": "Save"
     }
   ],
   "uM1i27": [
     {
       "type": 0,
-      "value": "Укажите количество повторных попыток от 1 до 90"
+      "value": "Specify a retry count from 1 to 90"
     }
   ],
   "uN4zFU": [
@@ -8215,26 +8081,16 @@
       "value": "ОК"
     }
   ],
-  "uNHpGB": [
-    {
-      "type": 0,
-      "value": "(UTC+07:00) Бангкок, Ханой, Джакарта"
-    }
-  ],
-  "uOWkHS": [
-    {
-      "type": 0,
-      "value": "Не удалось получить динамические выходные данные. В результате выходные данные этой операции могут не отображаться в последующих действиях. Сведения об ошибке: "
-    },
-    {
-      "type": 1,
-      "value": "message"
-    }
-  ],
   "uR9WuI": [
     {
       "type": 0,
       "value": "Обязательное поле. Коллекции для обработки. Чтобы объект появился в результате, он должен входить в любую из этих коллекций."
+    }
+  ],
+  "uRurmg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Гуам, Порт-Морсби"
     }
   ],
   "uUlBZ8": [
@@ -8246,7 +8102,7 @@
   "uWf/I5": [
     {
       "type": 0,
-      "value": "Показать"
+      "value": "Show me"
     }
   ],
   "uZH8Qs": [
@@ -8264,7 +8120,7 @@
   "uc3ytS": [
     {
       "type": 0,
-      "value": "Выберите среду выполнения"
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -8273,16 +8129,16 @@
       "value": "Обязательное поле. Строка, которая может содержать значение."
     }
   ],
+  "udNlco": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Время в формате UTC-11"
+    }
+  ],
   "uesaee": [
     {
       "type": 0,
-      "value": "Выражение"
-    }
-  ],
-  "uh/+ZN": [
-    {
-      "type": 0,
-      "value": "(UTC-03:00) Гренландия"
+      "value": "Expression"
     }
   ],
   "ui7GCl": [
@@ -8303,28 +8159,10 @@
       "value": "4"
     }
   ],
-  "usCZ7R": [
-    {
-      "type": 0,
-      "value": "(UTC+11:00) Магадан"
-    }
-  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Значение по умолчанию"
-    }
-  ],
-  "uwuGU0": [
-    {
-      "type": 0,
-      "value": "(UTC+06:30) Янгон (Рангун)"
-    }
-  ],
-  "uxKRO/": [
-    {
-      "type": 0,
-      "value": "Параметры"
     }
   ],
   "uzsleE": [
@@ -8336,13 +8174,7 @@
   "v+keTP": [
     {
       "type": 0,
-      "value": "Дата активации"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Загрузка"
+      "value": "Trigger date"
     }
   ],
   "v39HKj": [
@@ -8355,6 +8187,12 @@
     {
       "type": 0,
       "value": "Каждое действие должно иметь одно или несколько выполнений после конфигурации"
+    }
+  ],
+  "vD2lQy": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Асунсьон"
     }
   ],
   "vEBhDX": [
@@ -8378,7 +8216,7 @@
   "vT0DCP": [
     {
       "type": 0,
-      "value": "Выходные данные"
+      "value": "Outputs"
     }
   ],
   "vVJuus": [
@@ -8393,22 +8231,28 @@
       "value": "Аудитория"
     }
   ],
+  "vXwYXe": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Астана"
+    }
+  ],
   "va40BJ": [
     {
       "type": 0,
       "value": "Требуется. Имя действия, выходные данные которого нужны."
     }
   ],
+  "vb/okJ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Каир"
+    }
+  ],
   "vcBAuU": [
     {
       "type": 0,
       "value": "превысил время ожидания"
-    }
-  ],
-  "vdKLiR": [
-    {
-      "type": 0,
-      "value": "Параметры запроса"
     }
   ],
   "vdtKjT": [
@@ -8446,7 +8290,7 @@
   "vvSHR8": [
     {
       "type": 0,
-      "value": "Перейти к элементу и просмотреть дочерние элементы"
+      "value": "Navigate to element and view children"
     }
   ],
   "vwH/XV": [
@@ -8458,7 +8302,7 @@
   "vxOc/M": [
     {
       "type": 0,
-      "value": "Содержится дубликат значения"
+      "value": "This contains a duplicate value"
     }
   ],
   "vz2gZC": [
@@ -8470,13 +8314,13 @@
   "w0pI5M": [
     {
       "type": 0,
-      "value": "Не найдены результаты для указанных фильтров."
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [
     {
       "type": 0,
-      "value": "Запросы"
+      "value": "Queries"
     }
   ],
   "w5Hhig": [
@@ -8488,7 +8332,7 @@
   "w8ijDZ": [
     {
       "type": 0,
-      "value": "Свернуть"
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
@@ -8554,25 +8398,25 @@
   "wXJALc": [
     {
       "type": 0,
-      "value": "Меню"
+      "value": "Menu"
     }
   ],
   "wkiETV": [
     {
       "type": 0,
-      "value": "Идентификатор отслеживания клиента"
+      "value": "Client Tracking ID"
     }
   ],
   "wkvUUA": [
     {
       "type": 0,
-      "value": "Типы входных данных не совпадают"
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [
     {
       "type": 0,
-      "value": "Скрыть мини-карту"
+      "value": "Hide mini-map"
     }
   ],
   "wmDUGV": [
@@ -8591,18 +8435,6 @@
     {
       "type": 0,
       "value": "URL-адрес обратного вызова"
-    }
-  ],
-  "wtj07J": [
-    {
-      "type": 0,
-      "value": "(UTC –09:30) Маркизские острова"
-    }
-  ],
-  "wxaQwD": [
-    {
-      "type": 0,
-      "value": "(UTC+04:30) Кабул"
     }
   ],
   "wzEneQ": [
@@ -8626,25 +8458,19 @@
   "x10E1p": [
     {
       "type": 0,
-      "value": "Код состояния"
-    }
-  ],
-  "x3dWOL": [
-    {
-      "type": 0,
-      "value": "(UTC+01:00) Амстердам, Берлин, Берн, Рим, Стокгольм, Вена"
+      "value": "Status Code"
     }
   ],
   "x8kTAX": [
     {
       "type": 0,
-      "value": "Удалить заметку"
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
     {
       "type": 0,
-      "value": "Схемы"
+      "value": "Schemas"
     }
   ],
   "xFQXAI": [
@@ -8657,12 +8483,6 @@
     {
       "type": 0,
       "value": "Возвращает строковое представление сроки в кодировке URI"
-    }
-  ],
-  "xJQeeC": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Стамбул"
     }
   ],
   "xLF2Zr": [
@@ -8686,13 +8506,7 @@
   "xSMbKr": [
     {
       "type": 0,
-      "value": "Показать необработанные входные данные"
-    }
-  ],
-  "xSSfKC": [
-    {
-      "type": 0,
-      "value": "(UTC –03:00) Сен-Пьер и Микелон"
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [
@@ -8704,13 +8518,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Код"
-    }
-  ],
-  "xXVu2y": [
-    {
-      "type": 0,
-      "value": "Переключиться в текстовый режим"
+      "value": "Code"
     }
   ],
   "xYyPR8": [
@@ -8719,10 +8527,16 @@
       "value": "Возвращает путь из URI. Если путь не указан, возвращает \"/\""
     }
   ],
-  "xi2tn6": [
+  "xZhieP": [
     {
       "type": 0,
-      "value": "Параметры"
+      "value": "(UTC+05:00) Исламабад, Карачи"
+    }
+  ],
+  "xb/DIr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Время в формате UTC+12"
     }
   ],
   "xt5TeT": [
@@ -8734,7 +8548,7 @@
   "xwD1VZ": [
     {
       "type": 0,
-      "value": "Загрузка входных данных"
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [
@@ -8773,16 +8587,10 @@
       "value": "Требуется. Значение, которое преобразуется в массив."
     }
   ],
-  "yF2R//": [
+  "yIZP4R": [
     {
       "type": 0,
-      "value": "Возвращает подмножество символов из строки."
-    }
-  ],
-  "yVFIAQ": [
-    {
-      "type": 0,
-      "value": "(UTC-01:00) Кабо-Верде"
+      "value": "(UTC-10:00) Гавайи"
     }
   ],
   "yVh9kr": [
@@ -8800,7 +8608,7 @@
   "yjierd": [
     {
       "type": 0,
-      "value": "Недопустимый тип выражения \""
+      "value": "Invalid expression type '"
     },
     {
       "type": 1,
@@ -8808,13 +8616,19 @@
     },
     {
       "type": 0,
-      "value": "\"."
+      "value": "'."
     }
   ],
   "yoCi15": [
     {
       "type": 0,
       "value": "Выберите существующее подключение или создайте новое."
+    }
+  ],
+  "yph4eq": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Белград, Братислава, Будапешт, Любляна, Прага"
     }
   ],
   "yqRrQ/": [
@@ -8832,13 +8646,13 @@
   "yuJBmK": [
     {
       "type": 0,
-      "value": "Введите число"
+      "value": "Please enter a number"
     }
   ],
-  "yucvJE": [
+  "yxsn7s": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Сараево, Скопье, Варшава, Загреб"
+      "value": "(UTC+00:00) Касабланка"
     }
   ],
   "yyYtZV": [
@@ -8850,11 +8664,15 @@
   "z/UY4k": [
     {
       "type": 0,
-      "value": "Перейти в папку "
+      "value": "Navigate to "
     },
     {
       "type": 1,
       "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [
@@ -8890,13 +8708,7 @@
   "zNesUZ": [
     {
       "type": 0,
-      "value": "Политика повторных попыток применяется к прерывистым сбоям, обозначаемым кодами состояния HTTP (408, 429 и 5xx), в дополнение к любым исключениям при подключении. По умолчанию используется политика экспоненциального интервала с четырьмя повторами."
-    }
-  ],
-  "zOvGF8": [
-    {
-      "type": 0,
-      "value": "(UTC+02:00) Афины, Бухарест"
+      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
     }
   ],
   "zTKAc9": [
@@ -8911,10 +8723,10 @@
       "value": "Удалить пользовательское значение"
     }
   ],
-  "zViEGr": [
+  "zbtUQ/": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Петропавловск-Камчатский (устаревшее)"
+      "value": "(UTC+08:30) Пхеньян"
     }
   ],
   "zcZpHT": [
@@ -8923,10 +8735,16 @@
       "value": "Преобразует строку с дополнительным языковым стандартом и форматом в дату"
     }
   ],
+  "zggBvC": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Найроби"
+    }
+  ],
   "ziXw25": [
     {
       "type": 0,
-      "value": "Удалить"
+      "value": "Delete"
     }
   ],
   "ziYCiA": [
@@ -8939,12 +8757,6 @@
     {
       "type": 0,
       "value": "Число с плавающей запятой"
-    }
-  ],
-  "zkeKWE": [
-    {
-      "type": 0,
-      "value": "(UTC-04:00) Каракас"
     }
   ],
   "znGyyU": [

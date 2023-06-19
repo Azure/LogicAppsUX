@@ -1,5 +1,5 @@
 import { SchemaNodeProperty } from '../../models';
-import { convertSchemaToSchemaExtended, findNodeForKey, getFileNameAndPath, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
+import { convertSchemaToSchemaExtended, findNodeForKey, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
 import { targetMockSchema } from '__mocks__/schemas';
 
 describe('utils/Schema', () => {
@@ -49,15 +49,6 @@ describe('utils/Schema', () => {
 
       expect(extendedTarget.schemaTreeRoot.children[0].children[0].pathToRoot.length).toEqual(3);
       expect(extendedTarget.schemaTreeRoot.children[0].children[0].parentKey).toEqual(extendedTarget.schemaTreeRoot.children[0].key);
-    });
-  });
-
-  describe('getFileNameAndPath', () => {
-    it('separates simple name from path', () => {
-      const fullPath = 'NestedFolder\\NestedSchema.xsd';
-      const [fileName, filePath] = getFileNameAndPath(fullPath);
-      expect(fileName).toEqual('NestedSchema.xsd');
-      expect(filePath).toEqual('NestedFolder/');
     });
   });
 });

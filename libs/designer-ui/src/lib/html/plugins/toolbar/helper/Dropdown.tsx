@@ -1,7 +1,5 @@
-import chevronDownDark from './../../icons/dark/chevron-down.svg';
-import chevronDownLight from './../../icons/light/chevron-down.svg';
+import chevronDown from './../../icons/chevron-down.svg';
 import { DropDownItems } from './DropdownItems';
-import { useTheme } from '@fluentui/react';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import { COMMAND_PRIORITY_CRITICAL, createCommand } from 'lexical';
 import type { ReactNode } from 'react';
@@ -32,7 +30,6 @@ export const DropDown = ({
   stopCloseOnClickSelf,
   editor,
 }: DropdownProps): JSX.Element => {
-  const { isInverted } = useTheme();
   const intl = useIntl();
   const dropDownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -76,8 +73,8 @@ export const DropDown = ({
   });
 
   const altTextForChevronDown = intl.formatMessage({
-    defaultMessage: 'Alt text for down chevron',
-    description: 'Alt text for down chevron',
+    defaultMessage: 'alt text for chevron down',
+    description: 'alt text for chevron down',
   });
 
   return (
@@ -97,7 +94,7 @@ export const DropDown = ({
       >
         {buttonIconSrc ? <img src={buttonIconSrc} alt={altTextForButtonIcon} /> : null}
         {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
-        <img className="chevron-down" src={isInverted ? chevronDownDark : chevronDownLight} alt={altTextForChevronDown} />
+        <img className="chevron-down" src={chevronDown} alt={altTextForChevronDown} />
       </button>
 
       {showDropDown &&

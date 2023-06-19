@@ -408,6 +408,7 @@ export const loadDynamicOutputsInNode = async (
   connectionReference: ConnectionReference | undefined,
   outputDependencies: Record<string, DependencyInfo>,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   settings: Settings,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
   dispatch: Dispatch
@@ -424,6 +425,7 @@ export const loadDynamicOutputsInNode = async (
           const outputSchema = await getDynamicSchema(
             info,
             nodeInputs,
+            nodeMetadata,
             operationInfo,
             connectionReference,
             /* variables */ undefined,
@@ -470,7 +472,7 @@ export const loadDynamicOutputsInNode = async (
           const message = error.message as string;
           const errorMessage = getIntl().formatMessage(
             {
-              defaultMessage: `Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: {message}`,
+              defaultMessage: `Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: {message}`,
               description: 'Error message to show when loading dynamic outputs failed.',
             },
             {

@@ -7,7 +7,7 @@ import {
 } from '../base/operationmanifest';
 import { apiManagementActionManifest, apiManagementTriggerManifest } from './manifests/apiManagement';
 import { appServiceActionManifest, appServiceTriggerManifest } from './manifests/appServices';
-import { batchTriggerManifest, sendToBatchManifest } from './manifests/batchWorkflow';
+import { selectBatchWorkflowManifest } from './manifests/batchWorkflow';
 import { composeManifest } from './manifests/compose';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
 import { selectFunctionManifest } from './manifests/functions';
@@ -16,28 +16,20 @@ import { integrationAccountArtifactLookupManifest } from './manifests/integratio
 import { invokeWorkflowManifest } from './manifests/invokeWorkflow';
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
-import { invokeWorkflowGroup, invokeWorkflowOperation } from './operations';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { UnsupportedException } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionOperationManifestService extends BaseOperationManifestService {
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
     if (isBuiltInOperation(definition)) {
-      const normalizedOperationType = definition.type?.toLowerCase();
-
-      switch (normalizedOperationType) {
-        case 'workflow':
-          return {
-            connectorId: invokeWorkflowGroup.id,
-            operationId: invokeWorkflowOperation.id,
-          };
-
-        default:
-          return getBuiltInOperationInfo(definition, isTrigger);
-      }
+      return getBuiltInOperationInfo(definition, isTrigger);
     }
 
-    throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
+    return {
+      connectorId: 'Unknown',
+      operationId: 'Unknown',
+    };
+
+    //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
   override isSupported(operationType: string, _operationKind?: string): boolean {
@@ -48,14 +40,9 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
       : supportedConsumptionManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
-  override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+  override async getOperationManifest(_connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
-
-    if (!supportedManifest) {
-      throw new UnsupportedException(`Operation manifest does not exist for connector: '${connectorId}' and operation: '${operationId}'`);
-    }
-
-    return supportedManifest;
+    return supportedManifest ?? ({ properties: {} } as any);
   }
 }
 
@@ -74,13 +61,21 @@ const flatfileencoding = 'flatfileencoding';
 // Azure Resource Connectors
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
+const azurefunction = 'function';
 const appservice = 'appservice';
 const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
 const sendtobatch = 'sendtobatch';
-const batch = 'batch';
+// const sendtobatchtrigger = 'sendtobatchtrigger';
 
-const supportedConsumptionManifestTypes = [...supportedBaseManifestTypes, appservice];
+const supportedConsumptionManifestTypes = [
+  ...supportedBaseManifestTypes,
+  apimanagement,
+  azurefunction,
+  appservice,
+  invokeworkflow,
+  sendtobatch,
+];
 
 const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   ...supportedBaseManifestObjects,
@@ -101,6 +96,6 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [appservicetrigger, appServiceTriggerManifest],
   ['azurefunction', selectFunctionManifest],
   [invokeworkflow, invokeWorkflowManifest],
-  [sendtobatch, sendToBatchManifest],
-  [batch, batchTriggerManifest],
+  [sendtobatch, selectBatchWorkflowManifest],
+  // [sendtobatchtrigger, selectBatchWorkflowTriggerManifest]
 ]);

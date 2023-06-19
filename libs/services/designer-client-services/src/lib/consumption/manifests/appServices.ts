@@ -30,110 +30,74 @@ export const appServiceActionManifest = {
     inputs: {
       type: 'object',
       properties: {
-        inputs: {
+        authentication: {
           type: 'object',
-          properties: {
-            authentication: {
-              type: 'object',
-              title: 'Authentication',
-              description: 'Enter JSON object of authentication parameter',
-              'x-ms-visibility': 'advanced',
-              'x-ms-editor': 'authentication',
-              'x-ms-editor-options': {
-                supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
-              },
-            },
-            // Dynamic Params
-            operationId: {
-              required: true,
-              type: 'string',
-              title: 'Operation Id',
-              description: 'Operation Id',
-              'x-ms-serialization': { skip: true },
-              'x-ms-deserialization': {
-                type: 'swaggeroperationid',
-                parameterReference: 'inputs.operationId',
-                options: {
-                  swaggerOperation: {
-                    methodPath: ['inputs', 'operationDetails', 'method'],
-                    uriPath: ['inputs', 'operationDetails', 'uri'],
-                  },
-                },
-              },
-              'x-ms-dynamic-list': {
-                dynamicState: {
-                  operationId: 'getSwaggerOperations',
-                  parameters: {},
-                },
-                parameters: {
-                  swaggerUrl: {
-                    parameterReference: 'metadata.apiDefinitionUrl',
-                    required: true,
-                  },
-                },
-              },
-            },
-            operationDetails: {
-              title: 'Operation Parameters',
-              description: 'Operation parameters for the above operation',
-              'x-ms-dynamic-properties': {
-                dynamicState: {
-                  extension: {
-                    operationId: 'getSwaggerOperationSchema',
-                  },
-                  isInput: true,
-                },
-                parameters: {
-                  operationId: {
-                    parameterReference: 'inputs.operationId',
-                    required: true,
-                  },
-                  swaggerUrl: {
-                    parameterReference: 'metadata.apiDefinitionUrl',
-                    required: true,
-                  },
-                },
-              },
-            },
+          title: 'Authentication',
+          description: 'Enter JSON object of authentication parameter',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor': 'authentication',
+          'x-ms-editor-options': {
+            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
           },
-          required: ['operationId'],
         },
-        metadata: {
-          type: 'object',
-          properties: {
-            apiDefinitionUrl: {
-              type: 'string',
-              hideInUI: true,
-            },
-            swaggerSource: {
-              type: 'string',
-              hideInUI: true,
-              default: 'website',
+        // Dynamic params
+        operationId: {
+          required: true,
+          type: 'string',
+          title: 'Operation Id',
+          description: 'Operation Id',
+          'x-ms-serialization': { skip: true },
+          'x-ms-deserialization': {
+            type: 'swaggeroperationid',
+            parameterReference: 'operationDetails.uri',
+            options: {
+              swaggerOperation: { methodPath: ['operationDetails', 'method'], uriPath: ['operationDetails', 'uri'] },
             },
           },
-          required: ['apiDefinitionUrl', 'swaggerSource'],
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'getAppServiceOperations',
+              parameters: {},
+            },
+            parameters: {},
+          },
+        },
+        operationDetails: {
+          title: 'Operation Parameters',
+          description: 'Operation parameters for the above operation',
+          'x-ms-dynamic-properties': {
+            dynamicState: {
+              extension: {
+                operationId: 'getAppServiceOperationSchema',
+              },
+              isInput: true,
+            },
+            parameters: {
+              type: 'object',
+              operationId: {
+                parameterReference: 'operationId',
+                required: true,
+              },
+            },
+          },
         },
       },
-      required: ['inputs', 'metadata'],
+      required: ['operationId'],
     },
-    inputsLocation: [],
-    inputsLocationSwapMap: [{ source: ['inputs', 'operationDetails'], target: ['inputs'] }],
+    inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     isInputsOptional: false,
 
     outputs: {
       'x-ms-dynamic-properties': {
         dynamicState: {
           extension: {
-            operationId: 'getSwaggerOperationSchema',
+            operationId: 'getAppServiceOperationSchema',
           },
         },
         parameters: {
+          type: 'object',
           operationId: {
-            parameterReference: 'inputs.operationId',
-            required: true,
-          },
-          swaggerUrl: {
-            parameterReference: 'metadata.apiDefinitionUrl',
+            parameterReference: 'operationId',
             required: true,
           },
         },

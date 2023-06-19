@@ -69,7 +69,6 @@ export interface BaseEditorProps {
   label?: string;
   valueType?: string;
   tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
-  dataAutomationId?: string;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -98,7 +97,6 @@ export const BaseEditor = ({
   labelId,
   tokenPickerButtonEditorProps,
   valueType,
-  dataAutomationId,
   onFocus,
   onBlur,
   getTokenPicker,
@@ -183,7 +181,7 @@ export const BaseEditor = ({
   return (
     <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
       <LexicalComposer initialConfig={initialConfig}>
-        <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
+        <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef}>
           {toolbar ? <Toolbar readonly={readonly} /> : null}
           <RichTextPlugin
             contentEditable={

@@ -1,17 +1,11 @@
 import constants from '../../../constants';
 import { isApple } from '../../../helper';
-import fontColorSvgDark from '../icons/dark/font-color.svg';
-import linkDark from '../icons/dark/link.svg';
-import paintBucketSvgDark from '../icons/dark/paint-bucket.svg';
-import boldDark from '../icons/dark/type-bold.svg';
-import italicDark from '../icons/dark/type-italic.svg';
-import underlineDark from '../icons/dark/type-underline.svg';
-import fontColorSvgLight from '../icons/light/font-color.svg';
-import linkLight from '../icons/light/link.svg';
-import paintBucketSvgLight from '../icons/light/paint-bucket.svg';
-import boldLight from '../icons/light/type-bold.svg';
-import italicLight from '../icons/light/type-italic.svg';
-import underlineLight from '../icons/light/type-underline.svg';
+import fontColorSvg from '../icons/font-color.svg';
+import link from '../icons/link.svg';
+import paintBucketSvg from '../icons/paint-bucket.svg';
+import bold from '../icons/type-bold.svg';
+import italic from '../icons/type-italic.svg';
+import underline from '../icons/type-underline.svg';
 import { DropdownColorPicker } from './DropdownColorPicker';
 import { getSelectedNode, sanitizeUrl } from './helper/functions';
 import { useTheme } from '@fluentui/react';
@@ -214,7 +208,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         aria-label={isApple() ? boldTitleMacAriaLabel : boldTitleNonMacAriaLabel}
         disabled={readonly}
       >
-        <img className={'format'} src={isInverted ? boldDark : boldLight} alt={'bold icon'} />
+        <img className={'format'} src={bold} alt={'bold icon'} />
       </button>
       <button
         onMouseDown={(e) => e.preventDefault()}
@@ -226,7 +220,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         aria-label={isApple() ? italicTitleMacAriaLabel : italicTitleNonMacAriaLabel}
         disabled={readonly}
       >
-        <img className={'format'} src={isInverted ? italicDark : italicLight} alt={'italic icon'} />
+        <img className={'format'} src={italic} alt={'italic icon'} />
       </button>
       <button
         onMouseDown={(e) => e.preventDefault()}
@@ -238,7 +232,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         aria-label={isApple() ? underlineTitleMacAriaLabel : underlineTitleNonMacAriaLabel}
         disabled={readonly}
       >
-        <img className={'format'} src={isInverted ? underlineDark : underlineLight} alt={'underline icon'} />
+        <img className={'format'} src={underline} alt={'underline icon'} />
       </button>
       <button
         disabled={readonly}
@@ -247,14 +241,14 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         aria-label={insertLinkLabel}
         title={insertLinkLabel}
       >
-        <img className={'format'} src={isInverted ? linkDark : linkLight} alt={'link icon'} />
+        <img className={'format'} src={link} alt={'link icon'} />
       </button>
       <DropdownColorPicker
         editor={activeEditor}
         disabled={readonly}
         buttonClassName="toolbar-item color-picker"
         buttonAriaLabel="Formatting text color"
-        buttonIconSrc={isInverted ? fontColorSvgDark : fontColorSvgLight}
+        buttonIconSrc={fontColorSvg}
         color={fontColor}
         onChange={onFontColorSelect}
         title="text color"
@@ -264,7 +258,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         disabled={readonly}
         buttonClassName="toolbar-item color-picker"
         buttonAriaLabel="Formatting background color"
-        buttonIconSrc={isInverted ? paintBucketSvgDark : paintBucketSvgLight}
+        buttonIconSrc={paintBucketSvg}
         color={bgColor}
         onChange={onBgColorSelect}
         title="background color"

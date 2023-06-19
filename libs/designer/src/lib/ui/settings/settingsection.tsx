@@ -7,8 +7,8 @@ import { type ValidationError, ValidationWarningKeys } from '../../core/state/se
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
-import type { IButtonStyles, IDropdownOption } from '@fluentui/react';
-import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
+import type { IButtonStyles } from '@fluentui/react';
+import { Separator, useTheme, Icon, IconButton, TooltipHost, Dropdown } from '@fluentui/react';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
   isHighContrastBlack,
@@ -24,7 +24,6 @@ import {
   SettingDictionary,
   SettingTokenField,
   SettingDropdown,
-  SearchableDropdown,
 } from '@microsoft/designer-ui';
 import type {
   MultiSelectSettingProps,
@@ -228,6 +227,8 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
     [settings]
   );
 
+  const [conditionalVisibilityTempArray, setConditionalVisibilityTempArray] = useState<string[]>([]);
+
   const addNewParamText = intl.formatMessage({
     defaultMessage: 'Add new parameters',
     description: 'Text for add new parameter button',
@@ -325,19 +326,29 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
 
       {conditionallyInvisibleSettings.length > 0 && !readOnly ? (
         <div style={{ paddingTop: '5px' }}>
-          <SearchableDropdown
-            dropdownProps={{
-              multiSelect: true,
-              options: conditionallyInvisibleSettings.map(
-                (setting): IDropdownOption => ({
-                  key: (setting.settingProp as any).id,
-                  text: (setting.settingProp as any).label ?? '',
-                })
-              ),
-              placeholder: addNewParamText,
+          <Dropdown
+            placeholder={addNewParamText}
+            multiSelect
+            options={conditionallyInvisibleSettings.map((setting) => ({
+              key: (setting.settingProp as any).id,
+              text: (setting.settingProp as any).label,
+            }))}
+            style={{ margin: '24px auto 0 auto' }}
+            selectedKeys={conditionalVisibilityTempArray}
+            onChange={(_e: any, item: any) => {
+              if (item?.key) {
+                setConditionalVisibilityTempArray(
+                  conditionalVisibilityTempArray.includes(item.key)
+                    ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
+                    : [...conditionalVisibilityTempArray, item.key]
+                );
+              }
             }}
-            onItemSelectionChanged={(parameterId, value) => {
-              dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value }));
+            onDismiss={() => {
+              conditionalVisibilityTempArray.forEach((parameterId) => {
+                dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: true }));
+              });
+              setConditionalVisibilityTempArray([]);
             }}
           />
         </div>

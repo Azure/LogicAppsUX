@@ -13,7 +13,7 @@ export { BaseConnectionService } from './connection';
 export type { BaseConnectionServiceOptions } from './connection';
 // API Management
 export type { IApiHubServiceDetails } from './connection';
-export { BaseApiManagementService } from './apimanagement';
+export { ApiManagementInstanceService } from './apimanagement';
 export type { ApiManagementServiceOptions } from './apimanagement';
 // Function
 export { BaseFunctionService } from './function';
@@ -26,4 +26,3 @@ export { BaseGatewayService } from './gateway';
 export type { BaseGatewayServiceOptions } from './gateway';
 // OAuth
 export { BaseOAuthService } from './oAuth';
-export * from './operations';

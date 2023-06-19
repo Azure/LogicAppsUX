@@ -70,7 +70,6 @@ export * from './picker/filepickereditor';
 // export * from './picker';
 // export * from './rulescontrol';
 export * from './schemaeditor';
-export * from './searchabledropdown';
 export * from './searchbox';
 // export * from './selector';
 // export * from './selector2';

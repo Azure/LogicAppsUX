@@ -249,7 +249,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     };
 
     return (
-      <div className="msla-monaco-container" style={options.monacoContainerStyle} data-automation-id={`monaco-editor-${label}`}>
+      <div className="msla-monaco-container" style={options.monacoContainerStyle}>
         {canRender ? (
           <Editor
             keepCurrentModel={true}

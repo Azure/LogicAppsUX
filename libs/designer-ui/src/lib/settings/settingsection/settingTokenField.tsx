@@ -21,7 +21,6 @@ import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
-import { convertUIElementNameToAutomationId } from '../../utils';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 
@@ -88,7 +87,6 @@ const TokenField = ({
   getTokenPicker,
 }: SettingTokenFieldProps & { labelId: string }) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
-  const labelForAutomationId = convertUIElementNameToAutomationId(label);
 
   switch (editor?.toLowerCase()) {
     case 'copyable':
@@ -104,7 +102,7 @@ const TokenField = ({
           multiSelect={!!editorOptions?.multiSelect}
           serialization={editorOptions?.serialization}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-dropdowneditor-${labelForAutomationId}`}
+          data-automation-id={`msla-setting-token-editor-dropdowneditor-${label}`}
         />
       );
 
@@ -118,6 +116,7 @@ const TokenField = ({
           onChange={onValueChange}
           readonly={readOnly}
           placeholder={placeholder}
+          data-automation-id={`msla-setting-token-editor-codeeditor-${label}`}
         />
       );
 
@@ -136,12 +135,20 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
-          dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
+          data-automation-id={`msla-setting-token-editor-combobox-${label}`}
         />
       );
 
     case 'schema':
-      return <SchemaEditor label={label} readonly={readOnly} initialValue={value} onChange={onValueChange} />;
+      return (
+        <SchemaEditor
+          label={label}
+          readonly={readOnly}
+          initialValue={value}
+          onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-schemaeditor-${label}`}
+        />
+      );
 
     case 'dictionary':
       return (
@@ -154,7 +161,7 @@ const TokenField = ({
           valueType={editorOptions?.valueType}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${labelForAutomationId}`}
+          data-automation-id={`msla-setting-token-editor-dictionaryeditor-${label}`}
         />
       );
 
@@ -172,7 +179,7 @@ const TokenField = ({
           types={editorOptions?.columns?.types}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
+          data-automation-id={`msla-setting-token-editor-tableditor-${label}`}
         />
       );
 
@@ -189,7 +196,7 @@ const TokenField = ({
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
+          data-automation-id={`msla-setting-token-editor-arrayeditor-${label}`}
         />
       );
 
@@ -204,6 +211,7 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           BasePlugins={{ tokens: showTokens }}
+          data-automation-id={`msla-setting-token-editor-authenticationeditor-${label}`}
         />
       );
 
@@ -215,6 +223,7 @@ const TokenField = ({
           isRowFormat={editorViewModel.isRowFormat}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-simplequerybuildereditor-${label}`}
         />
       ) : editorViewModel.isHybridEditor ? (
         <HybridQueryBuilderEditor
@@ -222,6 +231,7 @@ const TokenField = ({
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
           getTokenPicker={getTokenPicker}
+          data-automation-id={`msla-setting-token-editor-hybridquerybuildereditor-${label}`}
         />
       ) : (
         <QueryBuilderEditor
@@ -229,6 +239,7 @@ const TokenField = ({
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
           getTokenPicker={getTokenPicker}
+          data-automation-id={`msla-setting-token-editor-querybuildereditor-${label}`}
         />
       );
 
@@ -240,6 +251,7 @@ const TokenField = ({
           showPreview={editorOptions?.showPreview}
           initialValue={value}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-scheduleeditor-${label}`}
         />
       );
 
@@ -261,7 +273,7 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
-          dataAutomationId={`msla-setting-token-editor-filepickereditor-${labelForAutomationId}`}
+          data-automation-id={`msla-setting-token-editor-filepickereditor-${label}`}
         />
       );
     case 'html':
@@ -273,7 +285,6 @@ const TokenField = ({
           readonly={readOnly}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
-          dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
         />
       );
     case 'floatingactionmenu': {
@@ -283,6 +294,7 @@ const TokenField = ({
           useStaticInputs={editorOptions?.useStaticInputs}
           initialValue={value}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-floatingactionmenu-${label}`}
         />
       );
     }
@@ -299,7 +311,7 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
-          dataAutomationId={`msla-setting-token-editor-stringeditor-${labelForAutomationId}`}
+          data-automation-id={`msla-setting-token-editor-stringeditor-${label}`}
         />
       );
   }

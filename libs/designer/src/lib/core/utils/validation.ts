@@ -179,7 +179,7 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
   switch (parameterFormat.toLowerCase()) {
     case Constants.SWAGGER.FORMAT.DOUBLE:
       if (!regex.double.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid Double number.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid double.', description: 'Error validation message' });
       }
       break;
 
@@ -253,8 +253,7 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
  */
 export function validateJSONParameter(parameterMetadata: ParameterInfo, parameterValue: ValueSegment[]): string[] {
   const intl = getIntl();
-  const { editor, editorOptions } = parameterMetadata;
-  const isConditionEditor = editor === Constants.EDITOR.CONDITION && !editorOptions?.isOldFormat;
+  const isConditionEditor = parameterMetadata.editor === Constants.EDITOR.CONDITION && !parameterMetadata.editorOptions?.isOldFormat;
   const value = isConditionEditor
     ? JSON.stringify(recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true))
     : parameterValueToJSONString(parameterValue, false, true);

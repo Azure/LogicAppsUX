@@ -27,7 +27,6 @@ export interface SomeKindOfAzureOperationDiscovery {
     family?: string;
     revision?: number;
   };
-  capabilities?: string[];
   isNotification?: boolean;
   api: OperationApi;
   description: string;

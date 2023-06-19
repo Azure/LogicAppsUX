@@ -100,7 +100,7 @@ export const Networking = ({
   });
   const paginationTitle = intl.formatMessage({
     defaultMessage: 'Pagination',
-    description: 'Title for pagination setting',
+    description: 'title for pagination setting',
   });
   const paginationTooltipText = intl.formatMessage({
     defaultMessage:

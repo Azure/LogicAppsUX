@@ -192,8 +192,7 @@ export interface ParameterDeserializationOptions {
   options?: {
     swaggerOperation: {
       methodPath: string[];
-      uriPath?: string[];
-      templatePath?: string[];
+      uriPath: string[];
     };
   };
 }
@@ -201,13 +200,11 @@ export interface ParameterDeserializationOptions {
 export enum PropertySerializationType {
   ParentObject = 'parentobject',
   PathTemplate = 'pathtemplate',
-  SwaggerUrl = 'swaggerurl',
 }
 
 export interface ParameterSerializationOptions {
   skip?: boolean;
   location?: string[];
-  value?: any;
   property?: {
     type: string;
     name?: string;

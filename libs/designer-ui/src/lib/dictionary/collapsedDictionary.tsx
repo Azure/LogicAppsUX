@@ -28,6 +28,11 @@ export const CollapsedDictionary = ({
 }: CollapsedDictionaryProps): JSX.Element => {
   const intl = useIntl();
 
+  const errorMessage = intl.formatMessage({
+    defaultMessage: 'Please enter a valid dictionary',
+    description: 'Error Message for Invalid Dictionary',
+  });
+
   const editorPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter a valid JSON',
     description: 'Placeholder for empty collapsed dictionary',
@@ -49,6 +54,7 @@ export const CollapsedDictionary = ({
           getTokenPicker={getTokenPicker}
         >
           <CollapsedDictionaryValidation
+            errorMessage={errorMessage}
             className={'msla-collapsed-editor-validation'}
             isValid={isValid}
             setIsValid={setIsValid}

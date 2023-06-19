@@ -3,8 +3,8 @@ import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
 import {
-  // AuthenticationType,
-  // Combobox, // RowDropdownOptions,
+  AuthenticationType,
+  Combobox, // RowDropdownOptions,
   // GroupType, // ArrayEditor,
   // // ArrayType, // DictionaryEditor,
   // // TokenType,
@@ -12,15 +12,15 @@ import {
   // // GroupDropdownOptions,
   // // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
   // SimpleQueryBuilder,
-  ValueSegmentType, // CodeEditor,
-  // EditorLanguage,
-  HTMLEditor,
+  ValueSegmentType,
+  CodeEditor,
+  EditorLanguage, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
   // testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
   Scratch, // StringEditor,
-  // AuthenticationEditor, // DropdownEditor,
+  AuthenticationEditor, // DropdownEditor,
   outputToken,
   outputToken2, // RowDropdownOptions,
 } from '@microsoft/designer-ui';
@@ -116,7 +116,7 @@ getTokenPicker={GetTokenPicker}
             ],
           }}
         /> */}
-        {/* <CodeEditor
+        <CodeEditor
           labelId=""
           initialValue={[
             {
@@ -141,7 +141,7 @@ getTokenPicker={GetTokenPicker}
           ]}
           getTokenPicker={GetTokenPicker}
           language={EditorLanguage.javascript}
-        /> */}
+        />
         {/* <DropdownEditor
           multiSelect={true}
           initialValue={[
@@ -156,7 +156,7 @@ getTokenPicker={GetTokenPicker}
             { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
           ]}
         /> */}
-        {/* <AuthenticationEditor
+        <AuthenticationEditor
           labelId=""
           initialValue={[]}
           getTokenPicker={GetTokenPicker}
@@ -172,7 +172,7 @@ getTokenPicker={GetTokenPicker}
           }}
           type={AuthenticationType.BASIC}
           authenticationValue={{}}
-        /> */}
+        />
         {/* <ArrayEditor
           labelId=""
           type={ArrayType.SIMPLE}
@@ -211,7 +211,7 @@ getTokenPicker={GetTokenPicker}
           getTokenPicker={GetTokenPicker}
         /> */}
 
-        {/* <Combobox
+        <Combobox
           labelId=""
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
@@ -224,7 +224,7 @@ getTokenPicker={GetTokenPicker}
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
           getTokenPicker={GetTokenPicker}
           // readonly={true}
-        /> */}
+        />
 
         {/* <SchemaEditor
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
@@ -377,7 +377,7 @@ getTokenPicker={GetTokenPicker}
           ]}
           getTokenPicker={GetTokenPicker}
         /> */}
-        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" getTokenPicker={GetTokenPicker} />
+        {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail"           getTokenPicker={GetTokenPicker}*/}
         {/* {
           <SimpleQueryBuilder
             getTokenPicker={GetTokenPicker}
@@ -396,6 +396,6 @@ export const scratchTab: PanelTab = {
   description: 'To be removed',
   visible: true,
   content: <ScratchTab />,
-  order: 10000000,
+  order: 0,
   icon: 'Rerun',
 };

@@ -54,16 +54,13 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, nodeId
         overflowBehavior="menu"
         overflowAriaLabel={overflowLabel}
       >
-        {Object.entries(tabs)
-          .slice() //This makes the sort non destructive
-          .sort(([, a], [, b]) => a.order - b.order)
-          .map(([name, { visible, tabErrors, title }]) => {
-            return visible && tabErrors?.[nodeId] ? (
-              <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRendererWithErrors} />
-            ) : visible ? (
-              <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRenderer} />
-            ) : null;
-          })}
+        {Object.entries(tabs).map(([name, { visible, tabErrors, title }]) => {
+          return visible && tabErrors?.[nodeId] ? (
+            <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRendererWithErrors} />
+          ) : visible ? (
+            <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRenderer} />
+          ) : null;
+        })}
       </Pivot>
     </div>
   );

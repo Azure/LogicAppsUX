@@ -39,7 +39,7 @@ export const resources = {
     description: intl.formatMessage({ defaultMessage: 'Example: 2017-03-24T15:00:00Z', description: 'Placeholder for Start time' }),
   },
   timezone: {
-    label: intl.formatMessage({ defaultMessage: 'Time zone', description: 'Label for timezone' }),
+    label: intl.formatMessage({ defaultMessage: 'Time Zone', description: 'Label for timezone' }),
     description: intl.formatMessage({ defaultMessage: 'Select timezone.', description: 'Placeholder for timezone' }),
   },
   hours: {

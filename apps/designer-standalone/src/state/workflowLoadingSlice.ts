@@ -19,7 +19,6 @@ export interface WorkflowLoadingState {
   consumption: boolean;
   isLocalSelected: boolean;
   showChatBot?: boolean;
-  language: string;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -33,7 +32,6 @@ const initialState: WorkflowLoadingState = {
   consumption: false,
   isLocalSelected: false,
   showChatBot: false,
-  language: 'en',
 };
 
 type WorkflowPayload = {
@@ -86,9 +84,6 @@ export const workflowLoadingSlice = createSlice({
       state.workflowName = undefined;
       state.runId = undefined;
       state.resourcePath = '';
-    },
-    changeLanguage: (state, action: PayloadAction<string | undefined>) => {
-      state.language = action.payload ?? 'en';
     },
     setReadOnly: (state, action: PayloadAction<boolean>) => {
       state.readOnly = action.payload;
@@ -143,7 +138,6 @@ export const {
   setIsLocalSelected,
   setIsChatBotEnabled,
   changeRunId,
-  changeLanguage,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

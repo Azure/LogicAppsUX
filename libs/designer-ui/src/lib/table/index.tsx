@@ -50,7 +50,6 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   readonly,
   labelId,
   placeholder,
-  dataAutomationId,
   getTokenPicker,
   onChange,
 }): JSX.Element => {
@@ -84,7 +83,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
     <div>
       <Dropdown styles={dropdownStyles} disabled={readonly} options={columnOptions} selectedKey={selectedKey} onChange={onOptionChange} />
       {selectedKey === ColumnMode.Custom ? (
-        <div className="msla-table-editor-container" data-automation-id={dataAutomationId}>
+        <div className="msla-table-editor-container">
           <DictionaryEditor
             labelId={labelId}
             keyTitle={titles?.[0]}

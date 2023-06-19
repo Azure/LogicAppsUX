@@ -36,7 +36,6 @@ import { getCreateConnectionTab } from './panelTabs/createConnectionTab';
 import { loadingTab } from './panelTabs/loadingTab';
 import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
-import { monitorRetryTab } from './panelTabs/retryTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { getSelectConnectionTab } from './panelTabs/selectConnectionTab';
 import { settingsTab } from './panelTabs/settingsTab';
@@ -118,22 +117,13 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       });
 
   useEffect(() => {
-    const tabs = [
-      monitoringTab(intl),
-      parametersTab(intl),
-      settingsTab(intl),
-      codeViewTab(intl),
-      testingTab(intl),
-      aboutTab(intl),
-      loadingTab(intl),
-      monitorRetryTab(intl),
-    ];
+    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
     dispatch(clearPanel());
-  }, [dispatch, intl]);
+  }, [dispatch]);
 
   useEffect(() => {
     const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
@@ -251,7 +241,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       description: 'Note text',
     });
     const disabledCommentAction = intl.formatMessage({
-      defaultMessage: "You can add notes only when you edit a step's inputs.",
+      defaultMessage: 'Notes can only be added while editing the inputs of a step.',
       description: 'Text to tell users why notes are disabled',
     });
     const commentAdd = intl.formatMessage({

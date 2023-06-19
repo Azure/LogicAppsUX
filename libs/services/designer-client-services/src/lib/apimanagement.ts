@@ -1,13 +1,9 @@
-import type { ListDynamicValue } from './connector';
-import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IApiManagementService {
   fetchApiManagementInstances(): Promise<any>;
   fetchApisInApiM(apimInstanceId: string): Promise<any>;
-  fetchApiMSwagger(apimApiId: string): Promise<SwaggerParser>;
-  getOperations(apimApiId: string): Promise<ListDynamicValue[]>;
-  getOperationSchema(apimApiId: string, operationId: string, isInput: boolean): Promise<any>;
+  fetchApiMSwagger(apimApiId: string): Promise<any>;
 }
 
 let service: IApiManagementService;

@@ -16,243 +16,12 @@ const connector = {
   },
 };
 
-export const batchTriggerManifest = {
+export const selectBatchWorkflowManifest = {
   properties: {
     iconUri,
     brandColor,
-    summary: 'Batch Trigger',
-    description: 'Batches related messages together and releases the messages from the trigger when a specified release criteria is met.',
-
-    environmentBadge: coreBadge,
-
-    inputs: {
-      type: 'object',
-      properties: {
-        mode: {
-          type: 'string',
-          default: 'Inline',
-          description: 'The batch mode to use.',
-          'x-ms-editor': 'dropdown',
-          'x-ms-editor-options': {
-            options: [
-              { value: 'Inline', displayName: 'Inline' },
-              { value: 'IntegrationAccount', displayName: 'IntegrationAccount' },
-            ],
-          },
-        },
-        configurations: {
-          type: 'object',
-          properties: {
-            $$batchName$$: {
-              type: 'object',
-              properties: {
-                name: {
-                  type: 'string',
-                  title: 'Batch name',
-                  description: 'The batch name',
-                  'x-ms-input-dependencies': {
-                    type: 'visibility',
-                    parameters: [
-                      {
-                        name: 'mode',
-                        values: ['Inline'],
-                      },
-                    ],
-                  },
-                  'x-ms-serialization': {
-                    property: {
-                      type: 'parentobject',
-                      name: '$$batchName$$',
-                      parameterReference: 'configurations.$$batchName$$',
-                    },
-                  },
-                },
-                releaseCriteria: {
-                  type: 'object',
-                  properties: {
-                    type: {
-                      type: 'array',
-                      title: 'Release criteria',
-                      description: 'Release criteria of the batch.',
-                      'x-ms-editor': 'dropdown',
-                      'x-ms-editor-options': {
-                        multiSelect: true,
-                        titleSeparator: ',',
-                        serialization: {
-                          valueType: 'array',
-                        },
-                        options: [
-                          {
-                            value: 'messageCount',
-                            displayName: 'Message count based',
-                          },
-                          {
-                            value: 'batchSize',
-                            displayName: 'Size based',
-                          },
-                          {
-                            value: 'recurrence',
-                            displayName: 'Schedule based',
-                          },
-                        ],
-                      },
-                      'x-ms-input-dependencies': {
-                        type: 'visibility',
-                        parameters: [
-                          {
-                            name: 'mode',
-                            values: ['Inline'],
-                          },
-                        ],
-                      },
-                      'x-ms-serialization': {
-                        skip: true,
-                      },
-                      'x-ms-deserialization': {
-                        type: 'parentobjectproperties',
-                        parameterReference: 'configurations.$$batchName$$.releaseCriteria',
-                      },
-                    },
-                    messageCount: {
-                      type: 'integer',
-                      title: 'Message count',
-                      description: 'The number of messages to batch and release.',
-                      'x-ms-visibility': 'important',
-                      'x-ms-input-dependencies': {
-                        type: 'visibility',
-                        parameters: [
-                          {
-                            name: 'mode',
-                            values: ['Inline'],
-                          },
-                          {
-                            name: 'configurations.$$batchName$$.releaseCriteria.type',
-                            values: ['messageCount'],
-                          },
-                        ],
-                      },
-                    },
-                    batchSize: {
-                      type: 'integer',
-                      title: 'Batch size',
-                      description: 'The total byte size of all messages in the batch to release.',
-                      'x-ms-visibility': 'important',
-                      'x-ms-input-dependencies': {
-                        type: 'visibility',
-                        parameters: [
-                          {
-                            name: 'mode',
-                            values: ['Inline'],
-                          },
-                          {
-                            name: 'configurations.$$batchName$$.releaseCriteria.type',
-                            values: ['batchSize'],
-                          },
-                        ],
-                      },
-                    },
-                    recurrence: {
-                      type: 'object',
-                      title: 'Recurrence',
-                      description: 'The recurrence details.',
-                      'x-ms-visibility': 'important',
-                      'x-ms-editor': 'recurrence',
-                      'x-ms-editor-options': {
-                        recurrenceType: 'advanced',
-                      },
-                      'x-ms-input-dependencies': {
-                        type: 'visibility',
-                        parameters: [
-                          {
-                            name: 'mode',
-                            values: ['Inline'],
-                          },
-                          {
-                            name: 'configurations.$$batchName$$.releaseCriteria.type',
-                            values: ['recurrence'],
-                          },
-                        ],
-                      },
-                    },
-                  },
-                  required: ['type'],
-                },
-              },
-              required: ['name', 'releaseCriteria'],
-            },
-          },
-          required: ['$$batchName$$'],
-        },
-        batchGroupName: {
-          type: 'string',
-          default: 'DEFAULT',
-          hideInUI: true,
-          'x-ms-input-dependencies': {
-            type: 'visibility',
-            parameters: [
-              {
-                name: 'mode',
-                values: ['IntegrationAccount'],
-              },
-            ],
-          },
-          'x-ms-serialization': { value: 'DEFAULT' },
-        },
-      },
-      required: ['mode', 'configurations'],
-    },
-    inputsLocation: ['inputs'],
-    isInputsOptional: false,
-
-    outputs: {
-      type: 'object',
-      required: ['body'],
-      properties: {
-        body: {
-          type: 'object',
-          properties: {
-            batchName: {
-              type: 'string',
-              title: 'Batch Name',
-              description: 'Name of the batch.',
-            },
-            items: {
-              type: 'array',
-              title: 'Batched Items',
-              description: 'The batched items.',
-              items: {
-                type: 'object',
-                title: 'Message',
-                properties: {
-                  content: { title: 'Message Content' },
-                  messageId: { title: 'Message Id', type: 'string' },
-                },
-                required: ['content', 'messageId'],
-              },
-            },
-            partitionName: {
-              type: 'string',
-              title: 'Partition Name',
-              description: 'Name of the partition.',
-            },
-          },
-          required: ['batchName', 'partitionName', 'items'],
-        },
-      },
-    },
-    isOutputsOptional: false,
-
-    includeRootOutputs: false,
-    connector,
-  },
-} as OperationManifest;
-
-export const sendToBatchManifest = {
-  properties: {
-    iconUri,
-    brandColor,
-    summary: 'Send to batch trigger workflow',
-    description: 'Sends messages to a Logic App with batch triggers in the same region',
+    summary: 'Choose a Logic Apps workflow with batch trigger',
+    description: 'Show Logic Apps with batch triggers in the same region',
 
     environmentBadge: coreBadge,
 
@@ -262,7 +31,7 @@ export const sendToBatchManifest = {
         batchName: {
           type: 'string',
           title: 'Batch Name',
-          description: 'The name of the batch where to send the message.',
+          description: 'Name of the batch to send message.',
         },
         content: {
           title: 'Message Content',
@@ -271,7 +40,7 @@ export const sendToBatchManifest = {
         partitionName: {
           type: 'string',
           title: 'Partition Name',
-          description: 'The name of the partition where to send the message.',
+          description: 'Name of the partition to send message.',
         },
         messageId: {
           type: 'string',
@@ -284,15 +53,15 @@ export const sendToBatchManifest = {
             triggerName: {
               type: 'string',
               title: 'Trigger Name',
-              description: 'The batch trigger name.',
+              description: 'Name of the trigger',
             },
             workflow: {
               type: 'object',
               properties: {
                 id: {
                   type: 'string',
-                  title: 'Workflow id',
-                  description: 'The resource id of the workflow with the batch trigger.',
+                  title: 'Workflow',
+                  description: 'Workflow name',
                 },
               },
               required: ['id'],
@@ -305,18 +74,18 @@ export const sendToBatchManifest = {
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
-
     outputs: {
       type: 'object',
-      required: ['body'],
+      required: [],
       properties: {
         body: {
+          title: 'Body',
           type: 'object',
           properties: {
             batchName: {
               type: 'string',
               title: 'Batch Name',
-              description: 'The name of the batch where the message was sent.',
+              description: 'Name of the batch to send message.',
             },
             messageId: {
               type: 'string',
@@ -326,7 +95,7 @@ export const sendToBatchManifest = {
             partitionName: {
               type: 'string',
               title: 'Partition Name',
-              description: 'The name of the partition where the message was sent.',
+              description: 'Name of the partition to send message.',
             },
           },
         },
@@ -341,7 +110,6 @@ export const sendToBatchManifest = {
       },
     },
     isOutputsOptional: false,
-
     settings: {
       secureData: {},
       trackedProperties: {

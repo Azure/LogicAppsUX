@@ -26,7 +26,7 @@ export const Tracking = ({
   const intl = useIntl();
 
   const trackedPropertiesTitle = intl.formatMessage({
-    defaultMessage: 'Tracked properties',
+    defaultMessage: 'Tracked Properties',
     description: 'title for tracked properties setting',
   });
 

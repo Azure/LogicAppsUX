@@ -1,5 +1,5 @@
 import { getSelectedNode, sanitizeUrl, setFloatingElemPositionForLinkEditor } from '../../../html/plugins/toolbar/helper/functions';
-import { IconButton, TextField, css, useTheme } from '@fluentui/react';
+import { IconButton, TextField } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react';
 import { $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -41,7 +41,6 @@ function FloatingLinkEditor({
   setIsLink: Dispatch<boolean>;
   anchorElem: HTMLElement;
 }): JSX.Element {
-  const { isInverted } = useTheme();
   const editorRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [linkUrl, setLinkUrl] = useState('');
@@ -183,7 +182,7 @@ function FloatingLinkEditor({
   };
 
   return (
-    <div ref={editorRef} className={css('msla-html-link-editor', isInverted && 'inverted')}>
+    <div ref={editorRef} className="msla-html-link-editor">
       {!isLink ? null : isEditMode ? (
         <div className="msla-html-link-view">
           <TextField

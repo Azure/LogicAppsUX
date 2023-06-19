@@ -34,7 +34,7 @@ import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, TokenType } from '@microsoft/designer-ui';
-import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
+import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -105,8 +105,8 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
-        <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} isLoading={connectionName.isLoading} />
+      {operationInfo && connectionName.isLoading === false && showConnectionDisplay ? (
+        <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />
       ) : null}
       {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
@@ -131,6 +131,7 @@ const ParameterSection = ({
   const {
     isTrigger,
     nodeInputs,
+    nodeMetadata,
     operationInfo,
     dependencies,
     settings: nodeSettings,
@@ -144,6 +145,7 @@ const ParameterSection = ({
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
       nodeInputs: state.operations.inputParameters[nodeId],
+      nodeMetadata: state.operations.actionMetadata[nodeId],
       operationInfo: state.operations.operationInfo[nodeId],
       dependencies: state.operations.dependencies[nodeId],
       settings: state.operations.settings[nodeId],
@@ -185,6 +187,7 @@ const ParameterSection = ({
         operationInfo,
         connectionReference,
         nodeInputs,
+        nodeMetadata,
         dependencies,
         getAllVariables(variables),
         nodeSettings,
@@ -218,6 +221,7 @@ const ParameterSection = ({
         operationInfo,
         connectionReference,
         nodeInputs,
+        nodeMetadata,
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
@@ -250,6 +254,7 @@ const ParameterSection = ({
         operationInfo,
         connectionReference,
         nodeInputs,
+        nodeMetadata,
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
@@ -423,12 +428,12 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
   return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
 
-export const parametersTab: PanelTabFn = (intl) => ({
-  title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
+export const parametersTab: PanelTab = {
+  title: 'Parameters',
   name: constants.PANEL_TAB_NAMES.PARAMETERS,
-  description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
+  description: 'Request History',
   visible: true,
   content: <ParametersTab />,
   order: 0,
   icon: 'Info',
-});
+};

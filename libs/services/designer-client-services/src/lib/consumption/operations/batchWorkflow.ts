@@ -6,53 +6,53 @@ const brandColor = '#2280CC';
 const api = {
   id: '/connectionProviders/batch',
   name: 'connectionProviders/batch',
-  displayName: 'Batch Operations',
+  displayName: 'Send messages to batch',
   iconUri,
   brandColor,
-  description: 'Batch Operations',
+  description: 'Send messages to batch',
 };
 
 export const selectBatchWorkflowGroup = {
-  id: api.id,
-  name: api.name,
+  id: '/connectionProviders/batch',
+  name: 'connectionProviders/batch',
   properties: {
-    displayName: api.displayName,
-    description: api.description,
+    displayName: 'Send messages to batch',
+    description: 'Send messages to batch',
     iconUri,
     brandColor,
     capabilities: ['actions', 'triggers'],
   },
 };
 
-export const sendToBatchOperation = {
-  id: 'sendToBatch',
-  name: 'sendToBatch',
-  type: 'sendToBatch',
+export const selectBatchWorkflowOperation = {
+  id: 'sendtobatch',
+  name: 'sendtobatch',
+  type: 'sendtobatch',
   properties: {
     api,
-    capabilities: ['azureResourceSelection'],
-    summary: 'Send to batch trigger workflow',
-    description: 'Sends messages to a Logic App with batch triggers in the same region',
+    summary: 'Choose a Logic Apps workflow with batch trigger',
+    description: 'Show Logic Apps with batch triggers in the same region',
     visibility: 'Important',
-    operationType: 'SendToBatch',
+    operationType: 'sendtobatch',
     brandColor,
     iconUri,
   },
 };
 
-export const batchTriggerOperation = {
-  id: 'batch',
-  name: 'batch',
-  type: 'batch',
-  properties: {
-    api,
-    annotation: { family: 'batch', status: 'Production' },
-    summary: 'Batch Trigger',
-    description: 'Batches related messages together and releases the messages from the trigger when a specified release criteria is met.',
-    visibility: 'Important',
-    operationType: 'Batch',
-    brandColor,
-    iconUri,
-    trigger: 'Single',
-  },
-};
+// TODO: This needs a decent bit of work
+
+// export const selectBatchWorkflowTriggerOperation = {
+//   id: 'sendtobatchtrigger',
+//   name: 'sendtobatchtrigger',
+//   type: 'sendtobatchtrigger',
+//   properties: {
+//     api,
+//     summary: 'Batch messages',
+//     description: 'Trigger a flow when batch release criteria is met.',
+//     visibility: 'Important',
+//     operationType: 'sendtobatch',
+//     brandColor,
+//     iconUri,
+//     trigger: 'single',
+//   },
+// };

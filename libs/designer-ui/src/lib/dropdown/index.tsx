@@ -21,7 +21,6 @@ interface DropdownEditorProps {
   height?: number;
   fontSize?: number;
   label?: string;
-  dataAutomationId?: string;
   onChange?: ChangeHandler;
 }
 
@@ -42,7 +41,6 @@ export const DropdownEditor = ({
   height,
   fontSize,
   label,
-  dataAutomationId,
   onChange,
 }: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
@@ -95,7 +93,7 @@ export const DropdownEditor = ({
   };
 
   return (
-    <div className="msla-dropdown-editor-container" data-automation-id={dataAutomationId}>
+    <div className="msla-dropdown-editor-container">
       <Dropdown
         ariaLabel={label}
         styles={dropdownStyles}

@@ -25,7 +25,7 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in display-name"
+          aria-label="select all text in display-name"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -55,7 +55,7 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="copy value of display-name to clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -138,7 +138,7 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
         className="buttons"
       >
         <button
-          aria-label="Select all text in display-name"
+          aria-label="select all text in display-name"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -168,7 +168,7 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="copy value of display-name to clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}

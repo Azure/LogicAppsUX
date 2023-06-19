@@ -98,7 +98,7 @@ function EditButton({ onClick }: ButtonProps): JSX.Element {
   const intl = useIntl();
 
   const editTitle = intl.formatMessage({
-    defaultMessage: 'Edit parameter',
+    defaultMessage: 'Edit Parameter',
     description: 'Edit Button Tooltip Text',
   });
 

@@ -17,15 +17,9 @@ export const convertItemsToSegments = (items: DictionaryEditorItemProps[]): Valu
 
   for (let index = 0; index < itemsToConvert.length; index++) {
     const { key, value } = itemsToConvert[index];
-    const updatedKey = key.map((segment) => {
-      return { ...segment, value: segment.value.replace(/\n/g, '\\n') };
-    });
-    const updatedValue = value.map((segment) => {
-      return { ...segment, value: segment.value.replace(/\n/g, '\\n') };
-    });
-    parsedItems.push(...updatedKey);
+    parsedItems.push(...key);
     parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '" : "' });
-    parsedItems.push(...updatedValue);
+    parsedItems.push(...value);
     parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < itemsToConvert.length - 1 ? '",\n  "' : '"\n}' });
   }
 

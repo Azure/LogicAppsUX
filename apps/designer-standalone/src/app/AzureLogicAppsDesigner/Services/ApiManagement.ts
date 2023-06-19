@@ -1,76 +1,21 @@
-import type { IApiManagementService } from '../apimanagement';
-import type { ListDynamicValue } from '../connector';
-import type { IHttpClient } from '../httpClient';
+import type { IApiManagementService, ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import { getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
-import { QueryClient } from 'react-query';
+import { unmap } from '@microsoft/utils-logic-apps';
 
-export interface ApiManagementServiceOptions {
-  apiVersion: string;
-  baseUrl: string;
-  subscriptionId: string;
-  httpClient: IHttpClient;
+interface ApiManagementServiceOptions {
+  service: IApiManagementService;
 }
 
-export class ApiManagementInstanceService implements IApiManagementService {
+export class ApiManagementService {
   private _swaggers: Record<string, SwaggerParser> = {};
-  private queryClient: QueryClient;
 
-  constructor(public readonly options: ApiManagementServiceOptions) {
-    const { apiVersion, baseUrl, subscriptionId, httpClient } = options;
-    if (!baseUrl) {
-      throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
-      throw new ArgumentException('apiVersion required');
-    } else if (!subscriptionId) {
-      throw new ArgumentException('subscriptionId required');
-    } else if (!httpClient) {
-      throw new ArgumentException('httpClient required for workflow app');
+  constructor(private readonly options: ApiManagementServiceOptions) {
+    const { service } = this.options;
+
+    if (!service) {
+      throw new Error('Designer Api Management service is required');
     }
-    this.queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchInterval: false,
-          refetchIntervalInBackground: false,
-          refetchOnWindowFocus: false,
-          refetchOnReconnect: false,
-          refetchOnMount: false,
-        },
-      },
-    });
-  }
-
-  async fetchApiManagementInstances(): Promise<any> {
-    const { apiVersion, subscriptionId, httpClient } = this.options;
-    const response = await httpClient.get<any>({
-      uri: `/subscriptions/${subscriptionId}/providers/Microsoft.ApiManagement/service`,
-      queryParameters: { 'api-version': apiVersion },
-    });
-
-    return response.value.filter((instance: any) => !equals(instance.sku ? instance.sku.name : '', 'Consumption'));
-  }
-
-  async fetchApisInApiM(apiInstanceId: string): Promise<any> {
-    const { apiVersion, httpClient } = this.options;
-    const response = await httpClient.get<any>({
-      uri: `${apiInstanceId}/apis`,
-      queryParameters: { 'api-version': apiVersion },
-    });
-
-    return response.value;
-  }
-
-  fetchApiMSwagger(apimApiId: string): Promise<any> {
-    const { apiVersion, httpClient } = this.options;
-
-    const response = httpClient.get<any>({
-      uri: apimApiId,
-      queryParameters: { 'api-version': apiVersion },
-      headers: {
-        accept: 'application/vnd.swagger.doc+json',
-      },
-    });
-    return response;
   }
 
   public async getOperations(apimApiId: string): Promise<ListDynamicValue[]> {
@@ -136,8 +81,9 @@ export class ApiManagementInstanceService implements IApiManagementService {
       return this._swaggers[normalizedName];
     }
 
-    const swagger = await this.queryClient.fetchQuery(['apimSwagger', apimApiId?.toLowerCase()], async () => {
-      const swagger = await this.fetchApiMSwagger(apimApiId);
+    const queryClient = getReactQueryClient();
+    const swagger = await queryClient.fetchQuery(['apimSwagger', apimApiId?.toLowerCase()], async () => {
+      const swagger = await this.options.service.fetchApiMSwagger(apimApiId);
       return SwaggerParser.parse(swagger);
     });
 

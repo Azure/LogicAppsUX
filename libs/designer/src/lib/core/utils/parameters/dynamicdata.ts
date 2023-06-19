@@ -88,6 +88,7 @@ import {
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>,
@@ -104,7 +105,8 @@ export async function getDynamicValues(
       operationInfo.operationId,
       parameter?.alias,
       operationParameters,
-      dynamicState
+      dynamicState,
+      nodeMetadata
     );
   } else if (isLegacyDynamicValuesExtension(definition)) {
     const { connectorId } = operationInfo;
@@ -141,6 +143,7 @@ export async function getDynamicValues(
 export async function getDynamicSchema(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   variables: VariableDeclaration[] = [],
@@ -180,7 +183,8 @@ export async function getDynamicSchema(
             operationInfo.operationId,
             parameter?.alias,
             operationParameters,
-            dynamicState
+            dynamicState,
+            nodeMetadata
           );
           break;
       }
@@ -306,6 +310,7 @@ export async function getFolderItems(
   selectedValue: any | undefined,
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
+  _nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>,
@@ -590,7 +595,7 @@ function loadUnknownManifestBasedParameters(
       } as ResolvedParameter;
       knownKeys.add(keyPrefix);
     }
-  } else if (!result[keyPrefix] && !knownKeys.has(keyPrefix)) {
+  } else if (!result[keyPrefix]) {
     // If it is an object, recurse down and find the other unknown values.
     Object.keys(input).forEach((key) => {
       // encode the key to match the paths of the known parameters.

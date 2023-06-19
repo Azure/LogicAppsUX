@@ -3,7 +3,6 @@ import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeU
 import type { AppDispatch, RootState } from '../state/Store';
 import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
-  getFileNameAndPath,
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
@@ -74,7 +73,7 @@ export const App = () => {
     });
   }, [sendMsgToVsix]);
 
-  const saveMapDefinitionCall = (dataMapDefinition: string, _mapMetadata: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string) => {
     sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
@@ -171,13 +170,11 @@ export const App = () => {
     const getSelectedSchemaTrees = async () => {
       try {
         if (sourceSchemaFilename) {
-          const [fileName, filePath] = getFileNameAndPath(sourceSchemaFilename);
-          dispatch(changeSourceSchema(await getSelectedSchema(fileName, filePath)));
+          dispatch(changeSourceSchema(await getSelectedSchema(sourceSchemaFilename)));
         }
 
         if (targetSchemaFilename) {
-          const [fileName, filePath] = getFileNameAndPath(targetSchemaFilename);
-          dispatch(changeTargetSchema(await getSelectedSchema(fileName, filePath)));
+          dispatch(changeTargetSchema(await getSelectedSchema(targetSchemaFilename)));
         }
       } catch (error) {
         handleRscLoadError(error);

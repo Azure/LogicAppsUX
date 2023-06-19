@@ -112,7 +112,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   });
 
   const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
-    defaultMessage: `The input node type doesn't match the schema node's type.`,
+    defaultMessage: `Input node type does not match the schema node's type`,
     description: 'Error message for when input node type does not match schema node type',
   });
 

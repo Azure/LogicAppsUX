@@ -113,7 +113,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         SerializationErrorCode.INVALID_PARAMETERS,
         intl.formatMessage(
           {
-            defaultMessage: 'The workflow has parameter validation errors in the following operations: {invalidNodes}',
+            defaultMessage: 'Workflow has parameter validation errors on the following operations: {invalidNodes}',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }
@@ -141,7 +141,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       ...rootState.workflow.originalDefinition,
       actions: await getActions(rootState, options),
       ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
-      triggers: await getTrigger(rootState, options),
+      triggers: rootState.panel.addingTrigger ? {} : await getTrigger(rootState, options),
     },
     connectionReferences,
     parameters: getWorkflowParameters(rootState.workflowParameters.definitions),
@@ -179,9 +179,6 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
 
 const getTrigger = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Triggers> => {
   const rootNodeId = getTriggerNodeId(rootState.workflow);
-  if (rootNodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
-    return {}; // Placeholder trigger was found, return empty object
-  }
   const idReplacements = rootState.workflow.idReplacements;
   return rootNodeId
     ? {
@@ -260,7 +257,10 @@ export const serializeOperation = async (
 
   const actionMetadata = rootState.operations.actionMetadata[operationId];
   if (actionMetadata) {
-    serializedOperation.metadata = { ...serializedOperation.metadata, ...actionMetadata };
+    serializedOperation = {
+      ...serializedOperation,
+      metadata: actionMetadata,
+    };
   }
 
   return serializedOperation;
@@ -433,13 +433,6 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
       if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
         serializedParameter.value = replaceTemplatePlaceholders(pathParameters, serializedParameter.value);
         result = serializeParameterWithPath(result, serializedParameter.value, key, serializedParameter);
-      } else if (serializedParameter.info.serialization?.value) {
-        result = serializeParameterWithPath(
-          result,
-          serializedParameter.value ? serializedParameter.value : serializedParameter.info.serialization.value,
-          key,
-          serializedParameter
-        );
       } else if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
         let parameterKey = serializedParameter.parameterKey;
         for (const propertyNameParameter of propertyNameParameters) {
@@ -648,7 +641,7 @@ const serializeHost = (
       return {
         host: {
           connection: {
-            name: `@parameters('$connections')['${referenceKey}']['connectionId']`,
+            name: "@parameters('$connections')[" + referenceKey + "]['connectionId']",
           },
         },
       };

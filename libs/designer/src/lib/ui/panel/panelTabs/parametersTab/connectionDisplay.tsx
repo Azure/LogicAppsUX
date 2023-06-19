@@ -4,7 +4,7 @@ import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designer
 import { isolateTab } from '../../../../core/state/panel/panelSlice';
 import { useIsConnectionRequired, useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
 import '../../../../core/utils/connectors/connections';
-import { Label, Link, Spinner, SpinnerSize } from '@fluentui/react';
+import { Label, Link } from '@fluentui/react';
 import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -12,11 +12,10 @@ import { useDispatch } from 'react-redux';
 interface ConnectionDisplayProps {
   connectionName: string;
   nodeId: string;
-  isLoading?: boolean;
 }
 
 export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
-  const { connectionName, nodeId, isLoading = false } = props;
+  const { connectionName, nodeId } = props;
 
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -56,18 +55,6 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
         defaultMessage: 'Change connection',
         description: "Button text to take the user to the 'change connection' component",
       });
-
-  const loadingText = intl.formatMessage({
-    defaultMessage: 'Loading connection...',
-    description: 'Text to show when the connection is loading',
-  });
-
-  if (isLoading)
-    return (
-      <div className="connection-info">
-        <Spinner size={SpinnerSize.small} label={loadingText} style={{ padding: '4px 0px' }} labelPosition="right" />
-      </div>
-    );
 
   return (
     <div className="connection-info">

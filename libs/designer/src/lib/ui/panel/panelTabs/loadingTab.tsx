@@ -1,6 +1,6 @@
 import constants from '../../../common/constants';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTab } from '@microsoft/designer-ui';
 
 export const LoadingTab = () => {
   return (
@@ -12,14 +12,11 @@ export const LoadingTab = () => {
 
 // Riley - I'm adding this loading tab so that our tabs don't jump around in front of the user while we are loading panel data / deciding which panel to show. (Right now this is used for node creation / connection data loading when going between parameters / connection selection / connection creation)
 
-export const loadingTab: PanelTabFn = (intl) => ({
-  title: intl.formatMessage({ defaultMessage: 'Loading...', description: 'The tab label for the loading tab on the operation panel' }),
+export const loadingTab: PanelTab = {
+  title: 'Loading...',
   name: constants.PANEL_TAB_NAMES.LOADING,
-  description: intl.formatMessage({
-    defaultMessage: 'Loading',
-    description: 'An accessability label that describes the loading tab',
-  }),
+  description: 'Loading...',
   visible: true,
   content: <LoadingTab />,
   order: 0,
-});
+};

@@ -71,7 +71,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
   });
 
   const actionTooltipBody = intl.formatMessage({
-    defaultMessage: 'Actions perform operations on data, communicate between systems, or run other tasks.',
+    defaultMessage: 'Actions perform operations on data or communicate between systems to execute.',
     description: 'Description of what Actions are, on a tooltip about Actions',
   });
 

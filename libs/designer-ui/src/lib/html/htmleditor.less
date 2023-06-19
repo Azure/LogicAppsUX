@@ -114,24 +114,28 @@
   border-radius: 8px;
   min-height: 40px;
   background-color: #fff;
-  .item {
-    margin: 0 8px 0 8px;
-    padding: 8px;
-    color: currentColor;
-    cursor: pointer;
-    line-height: 16px;
-    font-size: 15px;
-    display: flex;
-    align-content: center;
-    flex-direction: row;
-    flex-shrink: 0;
-    justify-content: space-between;
-    background-color: #fff;
-    border-radius: 8px;
-    border: 0;
-    max-width: 250px;
-    min-width: 100px;
-  }
+}
+
+.msla-html-editor-dropdown-items-container .item {
+  margin: 0 8px 0 8px;
+  padding: 8px;
+  color: #050505;
+  cursor: pointer;
+  line-height: 16px;
+  font-size: 15px;
+  display: flex;
+  align-content: center;
+  flex-direction: row;
+  flex-shrink: 0;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 0;
+  max-width: 250px;
+  min-width: 100px;
+}
+
+.msla-html-editor-dropdown-items-container {
   .item.fontsize-item {
     .text {
       min-width: unset;
@@ -177,25 +181,6 @@
     margin: 4px 8px;
     height: 1px;
   }
-  &.inverted {
-    background-color: @ms-color-primaryBackground;
-    .item {
-      background-color: @ms-color-primaryBackground;
-      color: @ms-color-neutralTertiary;
-    }
-    .item:hover {
-      background-color: @ms-color-neutralLighterAlt;
-    }
-    .item.msla-dropdown-item-active {
-      background-color: @panel-mode-panel-border-color;
-    }
-    .divider {
-      background-color: @panel-mode-panel-border-color;
-    }
-  }
-  .msla-dropdown-item-active {
-    background-color: @ms-color-neutralLighterAlt;
-  }
 }
 
 img.chevron-down {
@@ -204,6 +189,14 @@ img.chevron-down {
   display: inline-block;
   height: 8px;
   width: 8px;
+}
+
+button.item.msla-dropdown-item-active {
+  background-color: rgba(223, 232, 250, 0.3);
+}
+
+button.item.msla-dropdown-item-active img {
+  opacity: 1;
 }
 
 .msla-html-editor {
@@ -253,18 +246,19 @@ img.chevron-down {
   background-color: #eee;
   margin: 0 4px;
 }
-.msla-colorpicker-input-wrapper {
+
+.Input__wrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
 }
-.msla-colorpicker-input-label {
+.Input__label {
   display: flex;
   flex: 1;
   color: #666;
 }
-.msla-colorpicker-input {
+.Input__input {
   display: flex;
   flex: 2;
   border: 1px solid #999;
@@ -387,50 +381,6 @@ img.chevron-down {
       padding: 6px;
       overflow-x: 'auto';
       max-width: 78%;
-    }
-  }
-}
-
-.msla-theme-dark {
-  .msla-html-editor-toolbar {
-    background-color: rgb(27, 26, 25);
-
-    .toolbar-item:hover:not([disabled]) {
-      background-color: #696969;
-    }
-  }
-}
-
-.msla-theme-dark {
-  .msla-toolbar-divider {
-    background-color: @panel-mode-panel-border-color;
-    opacity: 0.8;
-  }
-  .msla-colorpicker-input {
-    background-color: @ms-color-neutralTertiary;
-  }
-  .msla-html-link-editor {
-    background-color: @ms-color-themeLighterAlt;
-  }
-  .msla-html-editor-toolbar {
-    .toolbar-item {
-      .text {
-        color: @ms-color-neutralTertiary;
-      }
-      img {
-        opacity: 0.8;
-      }
-    }
-    button.toolbar-item img.format {
-      opacity: 0.8;
-    }
-    button.toolbar-item:disabled img.format {
-      opacity: 0.3;
-    }
-  }
-  .msla-html-editor-dropdown-items-container {
-    .item {
-      color: @ms-color-neutralTertiary;
     }
   }
 }

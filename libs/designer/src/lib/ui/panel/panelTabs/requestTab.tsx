@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTab } from '@microsoft/designer-ui';
 import { RequestPanel } from '@microsoft/designer-ui';
 
 export const RequestPanelTab = () => {
@@ -235,18 +235,12 @@ export const RequestPanelTab = () => {
   return <RequestPanel requestHistory={requestHistory} />;
 };
 
-export const monitorRequestTab: PanelTabFn = (intl) => ({
-  title: intl.formatMessage({
-    defaultMessage: 'Request History',
-    description: 'The tab label for the request history tab on the operation panel',
-  }),
+export const monitorRequestTab: PanelTab = {
+  title: 'Request',
   name: constants.PANEL_TAB_NAMES.REQUEST_HISTORY,
-  description: intl.formatMessage({
-    defaultMessage: 'View the request history for this operation',
-    description: 'The tab description for the request history tab on the operation panel',
-  }),
+  description: 'Request History',
   visible: true,
   content: <RequestPanelTab />,
   order: 0,
   icon: 'Rerun',
-});
+};

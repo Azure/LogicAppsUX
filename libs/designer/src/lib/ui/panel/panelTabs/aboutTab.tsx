@@ -8,7 +8,7 @@ import {
   useOperationDocumentation,
   useOperationInfo,
 } from '../../../core/state/selectors/actionMetadataSelector';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTab } from '@microsoft/designer-ui';
 import { About } from '@microsoft/designer-ui';
 
 export const AboutTab = () => {
@@ -36,12 +36,12 @@ export const AboutTab = () => {
   );
 };
 
-export const aboutTab: PanelTabFn = (intl) => ({
-  title: intl.formatMessage({ defaultMessage: 'About', description: 'The tab label for the about tab on the operation panel' }),
+export const aboutTab: PanelTab = {
+  title: 'About',
   name: constants.PANEL_TAB_NAMES.ABOUT,
-  description: intl.formatMessage({ defaultMessage: 'About Tab', description: 'An accessability label that describes the about tab' }),
+  description: 'About Tab',
   visible: true,
   content: <AboutTab />,
-  order: 10,
+  order: 0,
   icon: 'Info',
-});
+};

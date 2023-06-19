@@ -9,7 +9,7 @@ import {
   BaseGatewayService,
   StandardRunService,
   StandardArtifactService,
-  BaseApiManagementService,
+  ApiManagementInstanceService,
   BaseFunctionService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
@@ -23,7 +23,6 @@ import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
 import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
-import type { QueryClient } from 'react-query';
 import type { WebviewApi } from 'vscode-webview';
 
 export const getDesignerServices = (
@@ -37,8 +36,7 @@ export const getDesignerServices = (
   createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
   vscode: WebviewApi<unknown>,
   oauthRedirectUrl: string,
-  hostVersion: string,
-  queryClient: QueryClient
+  hostVersion: string
 ): {
   connectionService: StandardConnectionService;
   connectorService: StandardConnectorService;
@@ -49,7 +47,7 @@ export const getDesignerServices = (
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
-  apimService: BaseApiManagementService;
+  apimService: ApiManagementInstanceService;
   functionService: BaseFunctionService;
 } => {
   let authToken = '',
@@ -97,12 +95,11 @@ export const getDesignerServices = (
       },
     },
   });
-  const apimService = new BaseApiManagementService({
+  const apimService = new ApiManagementInstanceService({
     apiVersion: '2019-12-01',
     baseUrl,
     subscriptionId,
     httpClient,
-    queryClient,
   });
 
   const artifactService = new StandardArtifactService({

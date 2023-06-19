@@ -77,7 +77,7 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in display-name"
+          aria-label="select all text in display-name"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -107,7 +107,7 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="copy value of display-name to clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -549,7 +549,7 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in display-name"
+          aria-label="select all text in display-name"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -579,7 +579,7 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="copy value of display-name to clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -667,7 +667,7 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in raw"
+          aria-label="select all text in raw"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -697,7 +697,7 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="copy value of raw to clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -780,7 +780,7 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in XML"
+          aria-label="select all text in XML"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -810,7 +810,7 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="copy value of XML to clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}

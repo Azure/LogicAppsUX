@@ -23,6 +23,7 @@ export interface CollapsedArrayProps {
 
 export const CollapsedArray = ({
   labelProps,
+  isValid = true,
   collapsedValue,
   readOnly,
   itemSchema,
@@ -46,6 +47,10 @@ export const CollapsedArray = ({
     );
   };
 
+  const defaultErrorMessage = intl.formatMessage({
+    defaultMessage: 'Please enter a valid array',
+    description: 'Error Message for Invalid Array',
+  });
   const editorPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter an Array',
     description: 'Placeholder for empty collapsed array',
@@ -68,7 +73,10 @@ export const CollapsedArray = ({
           getTokenPicker={getTokenPicker}
         >
           <CollapsedArrayValidation
+            defaultErrorMessage={defaultErrorMessage}
             className={'msla-collapsed-editor-validation'}
+            isValid={isValid}
+            collapsedValue={collapsedValue}
             itemSchema={itemSchema}
             isComplex={isComplex}
             setCollapsedValue={setCollapsedValue}

@@ -5,6 +5,7 @@ import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import { $createTokenNode } from '../nodes/tokenNode';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
+import { createHeadlessEditor } from '@lexical/headless';
 import { $generateNodesFromDOM } from '@lexical/html';
 import type { LinkNode } from '@lexical/link';
 import { $isLinkNode, $createLinkNode } from '@lexical/link';
@@ -15,10 +16,10 @@ import { $isHeadingNode } from '@lexical/rich-text';
 import type { Expression } from '@microsoft/parsers-logic-apps';
 import { ExpressionParser } from '@microsoft/parsers-logic-apps';
 import type { LexicalNode, ParagraphNode, RootNode, TextFormatType } from 'lexical';
-import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, $createTextNode, $getRoot, createEditor } from 'lexical';
+import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, $createTextNode, $getRoot } from 'lexical';
 
 export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
-  const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
+  const editor = createHeadlessEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
   const root = $getRoot();
   const rootChild = root.getFirstChild();

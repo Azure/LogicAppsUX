@@ -197,7 +197,6 @@ export const initializeOperationDetailsForManifest = async (
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
         nodeId,
         manifest,
-        /* presetParameterValues */ undefined,
         customSwagger,
         operation
       );
@@ -267,7 +266,6 @@ const processChildGraphAndItsInputs = (
             const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
               subNodeKey,
               subManifest,
-              /* presetParameterValues */ undefined,
               /* customSwagger */ undefined,
               subOperation[subNodeKey]
             );
@@ -287,7 +285,6 @@ const processChildGraphAndItsInputs = (
         const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
           subGraphKey,
           subManifest,
-          /* presetParameterValues */ undefined,
           /* customSwagger */ undefined,
           subOperation
         );
@@ -499,7 +496,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
-    operations: { inputParameters, settings, dependencies, operationInfo, errors },
+    operations: { inputParameters, settings, dependencies, operationInfo, actionMetadata, errors },
     tokens: { variables },
     connections,
   } = rootState;
@@ -508,6 +505,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
     if (!errors[nodeId]?.[ErrorLevel.Critical]) {
       const nodeDependencies = dependencies[nodeId];
       const nodeInputs = inputParameters[nodeId];
+      const nodeMetadata = actionMetadata[nodeId];
       const nodeSettings = settings[nodeId];
       const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
       const nodeOperationInfo = operationInfo[nodeId];
@@ -520,6 +518,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
         connectionReference,
         nodeDependencies,
         nodeInputs,
+        nodeMetadata,
         nodeSettings,
         allVariables,
         dispatch,
@@ -537,6 +536,7 @@ const updateDynamicDataForValidConnection = async (
   reference: ConnectionReference,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
+  nodeMetadata: Record<string, any>,
   settings: Settings,
   variables: any,
   dispatch: Dispatch,
@@ -553,6 +553,7 @@ const updateDynamicDataForValidConnection = async (
       reference,
       dependencies,
       nodeInputs,
+      nodeMetadata,
       settings,
       variables,
       dispatch,
