@@ -51,15 +51,9 @@ const DesignerEditor = () => {
     id: state.workflowLoader.resourcePath!,
   }));
 
-  const {
-    readOnly: isReadOnly,
-    darkMode: isDarkMode,
-    monitoringView,
-    runId,
-    appId,
-    showChatBot,
-    language,
-  } = useSelector((state: RootState) => state.workflowLoader);
+  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language } = useSelector(
+    (state: RootState) => state.workflowLoader
+  );
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -75,7 +69,7 @@ const DesignerEditor = () => {
   const queryClient = useQueryClient();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (monitoringView) {
+    if (isMonitoringView) {
       const standardAppInstance = {
         ...workflow,
         definition: runDefinition.properties.workflow.properties.definition,
@@ -204,7 +198,7 @@ const DesignerEditor = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
+      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters }}
