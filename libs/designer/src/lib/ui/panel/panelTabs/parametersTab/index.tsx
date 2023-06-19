@@ -2,8 +2,8 @@ import constants from '../../../../common/constants';
 import { useShowIdentitySelector } from '../../../../core/state/connection/connectionSelector';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
-import { ErrorLevel } from '../../../../core/state/operation/operationMetadataSlice';
-import { useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
+import { DynamicLoadStatus, ErrorLevel } from '../../../../core/state/operation/operationMetadataSlice';
+import { useNodesInitialized, useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
@@ -36,7 +36,7 @@ import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/reac
 import { DynamicCallStatus, TokenPicker, TokenType } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -50,6 +50,7 @@ export const ParametersTab = () => {
   }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly();
+  const nodesInitialized = useNodesInitialized();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
@@ -64,7 +65,14 @@ export const ParametersTab = () => {
     description: 'Message to show when there are no parameters to author in operation.',
   });
 
-  if (!operationInfo && !nodeMetadata?.subgraphType) {
+  const isLoading = useMemo(() => {
+    if (!operationInfo && !nodeMetadata?.subgraphType) return true;
+    if (!nodesInitialized) return true;
+    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.STARTED) return true;
+    return false;
+  }, [inputs?.dynamicLoadStatus, nodeMetadata?.subgraphType, nodesInitialized, operationInfo]);
+
+  if (isLoading) {
     return (
       <div className="msla-loading-container">
         <Spinner size={SpinnerSize.large} />
