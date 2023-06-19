@@ -9,7 +9,7 @@ import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import type { OnErrorFn as OnIntlErrorFn } from '@formatjs/intl';
 import { IntlProvider } from '@microsoft/intl-logic-apps';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
 export interface DesignerProviderProps {
@@ -40,15 +40,12 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
   const azTheme = !isDarkMode ? AzureThemeLight : AzureThemeDark;
   const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
   const themeName = useMemo(() => (!isDarkMode ? 'light' : 'dark'), [isDarkMode]);
-  const onError = useMemo<OnIntlErrorFn>(
-    () => (err) => {
-      if (err.code === 'MISSING_TRANSLATION') {
-        return;
-      }
-      throw err;
-    },
-    []
-  );
+  const onError = useCallback<OnIntlErrorFn>((err) => {
+    if (err.code === 'MISSING_TRANSLATION') {
+      return;
+    }
+    throw err;
+  }, []);
 
   return (
     <ReduxProvider store={store}>
