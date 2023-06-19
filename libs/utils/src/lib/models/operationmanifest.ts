@@ -242,11 +242,6 @@ export interface OperationManifestProperties {
   externalDocs?: Documentation;
 }
 
-export enum SwaggerServiceNames {
-  AZURE_FUNCTION = 'AzureFunction',
-  API_MANAGEMENT = 'ApiManagement',
-}
-
 export type SubgraphType = 'CONDITIONAL_TRUE' | 'CONDITIONAL_FALSE' | 'SWITCH_CASE' | 'SWITCH_DEFAULT' | 'SWITCH_ADD_CASE' | 'UNTIL_DO';
 export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
   CONDITIONAL_TRUE: 'CONDITIONAL_TRUE',

@@ -29,7 +29,7 @@ export const selectSwaggerFunctionManifest = {
 
     customSwagger: {
       service: {
-        name: 'functions',
+        name: 'function',
         operationId: 'fetchFunctionAppSwagger',
         parameters: {
           apiId: {
@@ -138,13 +138,6 @@ export const selectSwaggerFunctionManifest = {
     },
     isOutputsOptional: false,
     includeRootOutputs: true,
-
-    customSwagger: {
-      service: {
-        name: 'function',
-        operationId: 'fetchSwaggerUrl',
-      },
-    },
 
     connector,
 

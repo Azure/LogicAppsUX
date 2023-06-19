@@ -55,7 +55,7 @@ export class BaseFunctionService implements IFunctionService {
     return keysResponse?.default ?? 'NotFound';
   }
 
-  public async fetchSwaggerUrl(functionAppId: string) {
+  async fetchSwaggerUrl(functionAppId: string) {
     const { baseUrl } = this.options;
     const response = await this.options.httpClient.get<any>({
       uri: `${baseUrl}/${functionAppId}/config/web`,
