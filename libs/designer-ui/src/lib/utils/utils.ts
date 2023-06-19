@@ -14,7 +14,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
     return '--';
   }
 
-  const seconds = Math.round(Math.abs(milliseconds / 1000));
+  const seconds = Math.round(Math.abs(milliseconds / 100)) / 10;
   if (seconds < 60) {
     if (abbreviated) {
       return intl.formatMessage(

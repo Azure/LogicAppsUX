@@ -8,6 +8,7 @@ import { ExpandedDictionary } from './expandeddictionary';
 import { convertItemsToSegments } from './util/deserializecollapseddictionary';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export enum DictionaryType {
   DEFAULT = 'default',
@@ -41,6 +42,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   onChange,
   ...baseEditorProps
 }): JSX.Element => {
+  const intl = useIntl();
   const [collapsed, setCollapsed] = useState(!initialItems ?? false);
   const [items, setItems] = useState(initialItems);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
@@ -64,8 +66,18 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
     onChange?.({ value: collapsedValue, viewModel: { items: isValid ? items : undefined } });
   };
 
+  const expandedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to text mode',
+    description: 'Label for editor toggle button when in expanded mode',
+  });
+
+  const collapsedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to key value mode',
+    description: 'Label for editor toggle button when in collapsed mode',
+  });
+
   return (
-    <div className="msla-dictionary-editor-container">
+    <div className="msla-dictionary-editor-container" data-automation-id={baseEditorProps.dataAutomationId}>
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
           isValid={isValid}
@@ -92,7 +104,12 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
       <div className="msla-dictionary-commands">
         {!disableToggle && !(dictionaryType === DictionaryType.TABLE) ? (
-          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || baseEditorProps.readonly} toggleCollapsed={toggleCollapsed} />
+          <EditorCollapseToggle
+            label={collapsed ? collapsedLabel : expandedLabel}
+            collapsed={collapsed}
+            disabled={!isValid || baseEditorProps.readonly}
+            toggleCollapsed={toggleCollapsed}
+          />
         ) : null}
       </div>
     </div>

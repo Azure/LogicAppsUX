@@ -1,8 +1,8 @@
 import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
+import * as ClientOperationsData from '../base/operations';
 import type { ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
 import type { QueryParameters } from '../httpClient';
-import * as ClientOperationsData from '../standard/operations';
-import * as AzureResourceOperationsData from './operations';
+import * as OperationsData from './operations';
 import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
@@ -44,26 +44,25 @@ export class ConsumptionSearchService extends BaseSearchService {
     const clientBuiltInOperations = getClientBuiltInOperations(true);
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.slidingWindowOperation,
-      ClientOperationsData.inlineCodeOperation,
       ClientOperationsData.composeOperation,
-      ClientOperationsData.flatFileDecodingOperations,
-      ClientOperationsData.flatFileEncodingOperations,
-      ClientOperationsData.integrationAccountArtifactLookupOperation,
-      ClientOperationsData.liquidJsonToJsonOperation,
-      ClientOperationsData.liquidJsonToTextOperation,
-      ClientOperationsData.liquidXmlToJsonOperation,
-      ClientOperationsData.liquidXmlToTextOperation,
-      ClientOperationsData.xmlTransformOperation,
-      ClientOperationsData.xmlValidationOperation,
-      AzureResourceOperationsData.apiManagementActionOperation,
-      AzureResourceOperationsData.apiManagementTriggerOperation,
-      AzureResourceOperationsData.appServiceActionOperation,
-      AzureResourceOperationsData.appServiceTriggerOperation,
-      AzureResourceOperationsData.functionOperation,
-      AzureResourceOperationsData.swaggerFunctionOperation,
-      AzureResourceOperationsData.invokeWorkflowOperation,
-      AzureResourceOperationsData.selectBatchWorkflowOperation,
-      // AzureResourceOperationsData.selectBatchWorkflowTriggerOperation,
+      OperationsData.inlineCodeOperation,
+      OperationsData.flatFileDecodingOperations,
+      OperationsData.flatFileEncodingOperations,
+      OperationsData.integrationAccountArtifactLookupOperation,
+      OperationsData.liquidJsonToJsonOperation,
+      OperationsData.liquidJsonToTextOperation,
+      OperationsData.liquidXmlToJsonOperation,
+      OperationsData.liquidXmlToTextOperation,
+      OperationsData.xmlTransformOperation,
+      OperationsData.xmlValidationOperation,
+      OperationsData.apiManagementActionOperation,
+      OperationsData.apiManagementTriggerOperation,
+      OperationsData.appServiceActionOperation,
+      OperationsData.appServiceTriggerOperation,
+      OperationsData.functionOperation,
+      OperationsData.invokeWorkflowOperation,
+      OperationsData.sendToBatchOperation,
+      OperationsData.batchTriggerOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
@@ -81,17 +80,17 @@ export class ConsumptionSearchService extends BaseSearchService {
   public getBuiltInConnectors(): Promise<Connector[]> {
     const clientBuiltInConnectors = getClientBuiltInConnectors(true);
     const consumptionBuiltIn: any[] = [
-      ClientOperationsData.inlineCodeGroup,
       ClientOperationsData.dataOperationsGroup,
-      ClientOperationsData.flatFileGroup,
-      ClientOperationsData.integrationAccountGroup,
-      ClientOperationsData.liquidGroup,
-      ClientOperationsData.xmlGroup,
-      AzureResourceOperationsData.apiManagementGroup,
-      AzureResourceOperationsData.appServiceGroup,
-      AzureResourceOperationsData.functionGroup,
-      AzureResourceOperationsData.invokeWorkflowGroup,
-      AzureResourceOperationsData.selectBatchWorkflowGroup,
+      OperationsData.inlineCodeGroup,
+      OperationsData.flatFileGroup,
+      OperationsData.integrationAccountGroup,
+      OperationsData.liquidGroup,
+      OperationsData.xmlGroup,
+      OperationsData.apiManagementGroup,
+      OperationsData.appServiceGroup,
+      OperationsData.functionGroup,
+      OperationsData.invokeWorkflowGroup,
+      OperationsData.selectBatchWorkflowGroup,
     ];
     return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
   }

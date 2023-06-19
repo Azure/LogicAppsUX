@@ -2662,36 +2662,6 @@ Array [
     className="msla-panel-callout-content"
   >
     <div
-      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-128"
-    >
-      <div
-        className="ms-MessageBar-content content-129"
-      >
-        <div
-          aria-hidden={true}
-          className="ms-MessageBar-icon iconContainer-130"
-        >
-          <i
-            aria-hidden={true}
-            className="icon-137"
-            data-icon-name="Warning"
-          >
-            
-          </i>
-        </div>
-        <div
-          aria-live="assertive"
-          className="ms-MessageBar-text text-132"
-          id="MessageBar116"
-          role="alert"
-        >
-          <span
-            className="ms-MessageBar-innerText innerText-133"
-          />
-        </div>
-      </div>
-    </div>
-    <div
       className="msla-trace-inputs-outputs"
     >
       <div

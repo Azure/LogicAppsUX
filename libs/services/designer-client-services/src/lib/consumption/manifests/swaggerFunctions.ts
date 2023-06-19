@@ -27,6 +27,18 @@ export const selectSwaggerFunctionManifest = {
 
     environmentBadge: coreBadge,
 
+    customSwagger: {
+      service: {
+        name: 'functions',
+        operationId: 'fetchFunctionAppSwagger',
+        parameters: {
+          apiId: {
+            parameterReference: 'functionApp.id',
+          },
+        },
+      },
+    },
+
     inputs: {
       type: 'object',
       properties: {

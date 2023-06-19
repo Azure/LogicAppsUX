@@ -643,6 +643,12 @@
       "value": "Returns a single value matching the key name from form-data or form-encoded action output"
     }
   ],
+  "2gOfQI": [
+    {
+      "type": 0,
+      "value": "Existing schemas from"
+    }
+  ],
   "2gzGrJ": [
     {
       "type": 0,
@@ -1029,6 +1035,12 @@
       "value": "Authority"
     }
   ],
+  "5WhTmH": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1363,6 +1375,12 @@
       "value": "Cannot render designer due to multiple triggers in definition."
     }
   ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "Switch to code view mode"
+    }
+  ],
   "8ND+Yc": [
     {
       "type": 0,
@@ -1459,6 +1477,12 @@
     {
       "type": 0,
       "value": "Adds an integer number of days to a string timestamp passed in"
+    }
+  ],
+  "8zkvmc": [
+    {
+      "type": 0,
+      "value": "Testing"
     }
   ],
   "9/UeTh": [
@@ -2187,6 +2211,12 @@
       "value": "(UTC+01:00) West Central Africa"
     }
   ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "EdzoIs": [
     {
       "type": 0,
@@ -2211,6 +2241,12 @@
     {
       "type": 0,
       "value": "Password"
+    }
+  ],
+  "Ek0mSE": [
+    {
+      "type": 0,
+      "value": "View the request history for this operation"
     }
   ],
   "EurkzL": [
@@ -2369,6 +2405,12 @@
     {
       "type": 0,
       "value": "Tracked properties"
+    }
+  ],
+  "Fcvgvg": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "FiyQjU": [
@@ -2615,6 +2657,12 @@
       "value": "Insert Expression"
     }
   ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2709,6 +2757,12 @@
     {
       "type": 1,
       "value": "url"
+    }
+  ],
+  "IPbMdl": [
+    {
+      "type": 0,
+      "value": "Code View"
     }
   ],
   "IPwWgu": [
@@ -3181,6 +3235,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Damascus"
+    }
+  ],
+  "M/gUE8": [
+    {
+      "type": 0,
+      "value": "About"
     }
   ],
   "M0xrm+": [
@@ -3921,12 +3981,6 @@
       "value": "Required. The string that is split."
     }
   ],
-  "RZ1MIN": [
-    {
-      "type": 0,
-      "value": "Switch to input entire array"
-    }
-  ],
   "RbJNVk": [
     {
       "type": 0,
@@ -4061,6 +4115,12 @@
     {
       "type": 0,
       "value": "Checks if the string starts with a value (case-insensitive, invariant culture)"
+    }
+  ],
+  "SToblZ": [
+    {
+      "type": 0,
+      "value": "Configure parameters for this node"
     }
   ],
   "SXb47U": [
@@ -4553,12 +4613,6 @@
       "value": "Comment"
     }
   ],
-  "VXQbMw": [
-    {
-      "type": 0,
-      "value": "Switch to detail inputs for array item"
-    }
-  ],
   "VZHick": [
     {
       "type": 0,
@@ -4661,6 +4715,12 @@
     {
       "type": 0,
       "value": "Shorthand for trigger().outputs"
+    }
+  ],
+  "WaTsxR": [
+    {
+      "type": 0,
+      "value": "Request History"
     }
   ],
   "WcnIF8": [
@@ -5319,6 +5379,12 @@
       "value": "Returns the maximum value in the input array of numbers"
     }
   ],
+  "bldzuj": [
+    {
+      "type": 0,
+      "value": "Retry History"
+    }
+  ],
   "bsgS8m": [
     {
       "type": 0,
@@ -5521,12 +5587,6 @@
       "value": "(UTC-04:00) Cuiaba"
     }
   ],
-  "d+MjsE": [
-    {
-      "type": 0,
-      "value": "Enter a valid dictionary."
-    }
-  ],
   "d020eg": [
     {
       "type": 0,
@@ -5543,6 +5603,12 @@
     {
       "type": 0,
       "value": "Add a trigger"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "Switch to key value mode"
     }
   ],
   "dDYCuU": [
@@ -6169,6 +6235,12 @@
       "value": "This contains an invalid value"
     }
   ],
+  "iB8YKD": [
+    {
+      "type": 0,
+      "value": "About Tab"
+    }
+  ],
   "iCSHJG": [
     {
       "type": 0,
@@ -6265,6 +6337,12 @@
     {
       "type": 0,
       "value": "Properties"
+    }
+  ],
+  "ifnOUI": [
+    {
+      "type": 0,
+      "value": "Code View Tab"
     }
   ],
   "iq+tiv": [
@@ -6553,6 +6631,12 @@
       "value": " minutes"
     }
   ],
+  "l536iI": [
+    {
+      "type": 0,
+      "value": "Monitoring Tab"
+    }
+  ],
   "l72gf4": [
     {
       "type": 0,
@@ -6605,12 +6689,6 @@
     {
       "type": 0,
       "value": "is skipped"
-    }
-  ],
-  "lcxLiq": [
-    {
-      "type": 0,
-      "value": "Please enter a valid array"
     }
   ],
   "lexzgJ": [
@@ -7041,6 +7119,12 @@
       "value": "Content Transfer"
     }
   ],
+  "oMphsh": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "oO12r6": [
     {
       "type": 0,
@@ -7215,6 +7299,12 @@
       "value": "Security"
     }
   ],
+  "q+ZZjX": [
+    {
+      "type": 0,
+      "value": "Retry History"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -7379,6 +7469,12 @@
       "value": "example"
     }
   ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "Switch to default view mode"
+    }
+  ],
   "qnI4Y1": [
     {
       "type": 0,
@@ -7541,6 +7637,12 @@
     {
       "type": 0,
       "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+    }
+  ],
+  "sEqLTV": [
+    {
+      "type": 0,
+      "value": "Testing Tab"
     }
   ],
   "sFbnCs": [
@@ -7977,6 +8079,12 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "uxKRO/": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -7987,6 +8095,12 @@
     {
       "type": 0,
       "value": "Trigger date"
+    }
+  ],
+  "v0ENVA": [
+    {
+      "type": 0,
+      "value": "Loading"
     }
   ],
   "v39HKj": [
@@ -8047,6 +8161,12 @@
     {
       "type": 0,
       "value": "has timed out"
+    }
+  ],
+  "vdKLiR": [
+    {
+      "type": 0,
+      "value": "Request Settings"
     }
   ],
   "vdtKjT": [
@@ -8345,10 +8465,22 @@
       "value": "Code"
     }
   ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "Switch to text mode"
+    }
+  ],
   "xYyPR8": [
     {
       "type": 0,
       "value": "Returns the path from a URI. If path is not specified, returns '/'"
+    }
+  ],
+  "xi2tn6": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "xt5TeT": [

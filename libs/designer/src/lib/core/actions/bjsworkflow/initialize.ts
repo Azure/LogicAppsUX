@@ -47,7 +47,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { SchemaProperty, InputParameter } from '@microsoft/parsers-logic-apps';
+import type { SchemaProperty, InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -58,16 +58,16 @@ import {
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
-  SwaggerParser,
 } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
+import type { CustomSwaggerServiceDetails, OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
 import {
+  CustomSwaggerServiceNames,
+  UnsupportedException,
   clone,
   equals,
   ConnectionReferenceKeyFormat,
   unmap,
   getObjectPropertyValue,
-  CustomSwaggerServiceNames,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -96,6 +96,7 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 export const getInputParametersFromManifest = (
   _nodeId: string,
   manifest: OperationManifest,
+  presetParameterValues?: Record<string, any>,
   customSwagger?: SwaggerParser,
   stepDefinition?: any
 ): NodeInputsWithDependencies => {
@@ -155,6 +156,15 @@ export const getInputParametersFromManifest = (
     );
   } else {
     loadParameterValuesArrayFromDefault(primaryInputParametersInArray);
+  }
+
+  if (presetParameterValues) {
+    for (const [parameterName, parameterValue] of Object.entries(presetParameterValues)) {
+      const parameter = primaryInputParametersInArray.find((parameter) => parameter.name === parameterName);
+      if (parameter) {
+        parameter.value = parameterValue;
+      }
+    }
   }
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
@@ -451,23 +461,41 @@ export const getCustomSwaggerIfNeeded = async (
   manifestProperties: OperationManifestProperties,
   stepDefinition?: any
 ): Promise<SwaggerParser | undefined> => {
-  const swaggerUrlLocation = manifestProperties.customSwagger?.location;
-  if (swaggerUrlLocation && stepDefinition) {
-    return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
-  }
-  const customSwaggerService = manifestProperties.customSwagger?.service;
-  let swagger: OpenAPIV2.Document | undefined;
-  if (customSwaggerService && stepDefinition) {
-    if (customSwaggerService.name === CustomSwaggerServiceNames.Function) {
-      swagger = await FunctionService().fetchFunctionAppSwagger(stepDefinition.inputs.functionApp.id);
-    } else if (customSwaggerService.name === CustomSwaggerServiceNames.ApiManagement) {
-      swagger = await ApiManagementService().fetchApiMSwagger(stepDefinition.inputs.api.id);
-    }
-    if (!swagger) return undefined;
-    return new SwaggerParser(swagger);
+  if (!manifestProperties.customSwagger || !stepDefinition) {
+    return undefined;
   }
 
-  return undefined;
+  const { location, service } = manifestProperties.customSwagger;
+
+  if (!location && !service) {
+    return undefined;
+  }
+
+  return location
+    ? getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, location))
+    : getSwaggerFromService(
+        service as CustomSwaggerServiceDetails,
+        getObjectPropertyValue(stepDefinition, manifestProperties.inputsLocation ?? ['inputs'])
+      );
+};
+
+const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails, stepInputs: any): Promise<SwaggerParser> => {
+  const { name, operationId, parameters } = serviceDetails;
+  const service: any =
+    name === CustomSwaggerServiceNames.ApiManagement
+      ? ApiManagementService()
+      : name === CustomSwaggerServiceNames.Function
+      ? FunctionService()
+      : undefined;
+
+  if (!service || !service[operationId]) {
+    throw new UnsupportedException(`The custom swagger service name '${name}' for operation '${operationId}' is not supported`);
+  }
+
+  const operationParameters = Object.keys(parameters).map((parameterName) =>
+    getObjectPropertyValue(stepInputs, parameters[parameterName].parameterReference.split('.'))
+  );
+  return service[operationId](...operationParameters);
 };
 
 export const updateInvokerSettings = (

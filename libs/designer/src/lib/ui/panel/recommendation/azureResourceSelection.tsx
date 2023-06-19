@@ -132,9 +132,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           const resource = selectedResources[0];
           addResourceOperation({
             name: getResourceName(resource),
-            actionMetadata: {
-              apiDefinitionUrl: resource?.properties?.siteConfig?.apiDefinition?.url,
-              swaggerSource: 'website',
+            presetParameterValues: {
+              'metadata.apiDefinitionUrl': resource?.properties?.siteConfig?.apiDefinition?.url,
+              'metadata.swaggerSource': 'website',
             },
           });
         });

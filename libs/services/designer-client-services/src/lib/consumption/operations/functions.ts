@@ -30,6 +30,7 @@ export const functionOperation = {
   type: 'azureFunction',
   properties: {
     api,
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose an Azure function',
     description: 'Show Azure Functions in my subscription',
     visibility: 'Important',
@@ -45,6 +46,7 @@ export const swaggerFunctionOperation = {
   type: 'azureFunction',
   properties: {
     api,
+    capabilities: ['azureResourceSelection'],
     summary: 'Choose an Azure swagger function',
     description: 'Show Azure Swagger Functions in my subscription',
     visibility: 'Important',

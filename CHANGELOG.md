@@ -2,6 +2,8 @@
 
 ## [2.32.0](https://github.com/Azure/LogicAppsUX/compare/v2.31.0...v2.32.0) (2023-06-16)
 
+## [2.32.0](https://github.com/Azure/LogicAppsUX/compare/v2.31.0...v2.32.0) (2023-06-16)
+
 ### Features
 
 - **designer:** Adding batch trigger operation and manifest in Consumption ([#2767](https://github.com/Azure/LogicAppsUX/issues/2767)) ([a50c18b](https://github.com/Azure/LogicAppsUX/commit/a50c18bae4d8d197de8750bb5f29dfe216bb6bfc))

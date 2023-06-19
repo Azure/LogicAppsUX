@@ -115,7 +115,6 @@ export const apiManagementConnectorId = '/connectionProviders/apiManagementOpera
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 export const appServiceConnectorId = '/connectionProviders/appService';
 export const batchConnectorId = '/connectionProviders/batch';
-export const workflowConnectorId = '/connectionProviders/workflow';
 export const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
@@ -321,14 +320,13 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       } else {
         return {
           connectorId: httpConnectorId,
-          operationId:
-            definition?.metadata?.apiDefinitionUrl && equals(definition?.metadata?.swaggerSource, 'custom')
-              ? isTrigger
-                ? httpswaggertrigger
-                : httpswaggeraction
-              : isTrigger
-              ? httptrigger
-              : httpaction,
+          operationId: definition?.metadata?.apiDefinitionUrl
+            ? isTrigger
+              ? httpswaggertrigger
+              : httpswaggeraction
+            : isTrigger
+            ? httptrigger
+            : httpaction,
         };
       }
     case httpwebhook:
@@ -418,18 +416,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       return {
         connectorId: azureFunctionConnectorId,
         operationId: definition?.inputs?.uri ? azureswaggerfunction : azurefunction,
-      };
-
-    case workflow:
-      return {
-        connectorId: workflowConnectorId,
-        operationId: workflow,
-      };
-
-    case invokeworkflow:
-      return {
-        connectorId: workflowConnectorId,
-        operationId: invokeworkflow,
       };
 
     case xslt:

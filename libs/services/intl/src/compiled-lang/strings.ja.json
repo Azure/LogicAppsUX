@@ -2,51 +2,47 @@
   "++ZVe/": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "テスト"
     }
   ],
   "+0yxlR": [
     {
       "type": 0,
-      "value": "Function display"
+      "value": "関数の表示"
     }
   ],
   "+Uvo/p": [
     {
       "type": 0,
-      "value": "Alt text for down chevron"
+      "value": "下矢印シェブロンの代替テキスト"
     }
   ],
   "+ZSBrq": [
-    {
-      "type": 0,
-      "value": "Context menu for "
-    },
     {
       "type": 1,
       "value": "title"
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " カードのコンテキスト メニュー"
     }
   ],
   "+mAJR3": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) クアラルンプール、シンガポール"
     }
   ],
   "+powfX": [
     {
       "type": 0,
-      "value": "Time zone"
+      "value": "タイム ゾーン"
     }
   ],
   "/EU/oJ": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'."
+      "value": "必須。変換元のタイム ゾーンのタイム ゾーン名を含む文字列です。詳しくは、「既定のタイム ゾーン (https://go.microsoft.com/fwlink/?linkid=2238292)」をご覧ください。"
     }
   ],
   "/I/U8L": [
@@ -64,7 +60,7 @@
   "/NtebP": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Islamabad, Karachi"
+      "value": "(UTC+05:00) イスラマバード、カラチ"
     }
   ],
   "/QqADs": [
@@ -76,7 +72,7 @@
   "/RS9F7": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Saskatchewan"
+      "value": "(UTC-06:00) サスカチェワン"
     }
   ],
   "/ULFwg": [
@@ -106,19 +102,19 @@
   "/km5eO": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04:00) アスンシオン"
     }
   ],
   "/mjH84": [
     {
       "type": 0,
-      "value": "Show raw outputs"
+      "value": "未加工出力の表示"
     }
   ],
   "/n13VL": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "プロパティ"
     }
   ],
   "/qchXQ": [
@@ -142,13 +138,13 @@
   "/vWMKW": [
     {
       "type": 0,
-      "value": "Missing required inputs"
+      "value": "必要な入力がありません"
     }
   ],
   "/yYyOq": [
     {
       "type": 0,
-      "value": "Resource Group"
+      "value": "リソース グループ"
     }
   ],
   "00xlpa": [
@@ -166,13 +162,13 @@
   "03RO5d": [
     {
       "type": 0,
-      "value": "Edit parameter"
+      "value": "パラメーターの編集"
     }
   ],
   "04AwK7": [
     {
       "type": 0,
-      "value": "Error code: '"
+      "value": "エラー コード: '"
     },
     {
       "type": 1,
@@ -180,7 +176,7 @@
     },
     {
       "type": 0,
-      "value": "', Message: '"
+      "value": "'、メッセージ: '"
     },
     {
       "type": 1,
@@ -188,13 +184,13 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'。"
     }
   ],
   "06zKZg": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Tbilisi"
+      "value": "(UTC+04:00) トビリシ"
     }
   ],
   "07ZsoY": [
@@ -206,13 +202,13 @@
   "07oZoX": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+      "value": "(UTC+12:00) アナディリ、ペトロパブロフスク・カムチャツキー"
     }
   ],
   "08e2rO": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
+      "value": "この操作で使用されているマネージド ID は存在しなくなりました。続行するには、ID を設定するか、接続を変更してください。"
     }
   ],
   "09B9CU": [
@@ -224,7 +220,7 @@
   "0B5xDu": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Sri Jayawardenepura"
+      "value": "(UTC+05:30) スリジャヤワルダナプラコッテ"
     }
   ],
   "0CvRZW": [
@@ -242,7 +238,7 @@
   "0GT0SI": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "キャンセル"
     }
   ],
   "0GqNGo": [
@@ -254,7 +250,7 @@
   "0IRUjM": [
     {
       "type": 0,
-      "value": "Select a target schema node to start mapping"
+      "value": "マッピングを開始するターゲット スキーマ ノードを選択します"
     }
   ],
   "0JTHTZ": [
@@ -278,7 +274,7 @@
   "0SSwxD": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "パネルを閉じる"
     }
   ],
   "0Vzp0l": [
@@ -302,13 +298,13 @@
   "0m2Y1/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "値"
     }
   ],
   "0oebOm": [
     {
       "type": 0,
-      "value": "Outputs"
+      "value": "出力"
     }
   ],
   "0p+pJq": [
@@ -330,7 +326,7 @@
     },
     {
       "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " は、操作スキーマに存在しなくなりました。ワークフローを再保存する前に、削除する必要があります。"
     }
   ],
   "0uj1Li": [
@@ -342,19 +338,19 @@
   "0upuCv": [
     {
       "type": 0,
-      "value": "Hour"
+      "value": "時間"
     }
   ],
   "0vfdFS": [
     {
       "type": 0,
-      "value": "every day"
+      "value": "毎日"
     }
   ],
   "0xLWzG": [
     {
       "type": 0,
-      "value": "The name already exists or is invalid. Update the name before you continue."
+      "value": "この名前は既に存在するか、無効です。続行する前に名前を更新してください。"
     }
   ],
   "0y5eia": [
@@ -378,7 +374,7 @@
   "11qu8f": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "有効な整数を入力してください。"
     }
   ],
   "14lYtE": [
@@ -408,7 +404,7 @@
   "1KFpTX": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Minsk"
+      "value": "(UTC+03:00) ミンスク"
     }
   ],
   "1NBvKu": [
@@ -449,7 +445,7 @@
   "1REk6u": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "有効なメールを入力してください。"
     }
   ],
   "1TE0e8": [
@@ -467,7 +463,7 @@
   "1YEc9e": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "有効な条件を入力してください。"
     }
   ],
   "1ZDLZA": [
@@ -485,13 +481,13 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "Actions perform operations on data, communicate between systems, or run other tasks."
+      "value": "アクションによって、データに対する操作を実行したり、システム間の通信を行ったり、その他のタスクを実行したりします。"
     }
   ],
   "1eKQwo": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Perth"
+      "value": "(UTC+08:00) パース"
     }
   ],
   "1ejxkP": [
@@ -503,7 +499,7 @@
   "1hHFdx": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00) アゾレス諸島"
     }
   ],
   "1htSs7": [
@@ -521,7 +517,7 @@
   "1nODUD": [
     {
       "type": 0,
-      "value": "Hide functions"
+      "value": "関数を非表示にする"
     }
   ],
   "1nvvw1": [
@@ -533,7 +529,7 @@
   "1pjO9s": [
     {
       "type": 0,
-      "value": "Hide source schema"
+      "value": "ソース スキーマを非表示にする"
     }
   ],
   "1uGBLP": [
@@ -551,7 +547,7 @@
   "20oqsp": [
     {
       "type": 0,
-      "value": "Add children (recursive)"
+      "value": "子の追加 (再帰)"
     }
   ],
   "23fENy": [
@@ -575,7 +571,7 @@
   "27Nhhv": [
     {
       "type": 0,
-      "value": "Select an API from an API Management instance"
+      "value": "API Management インスタンスから API を選択する"
     }
   ],
   "2CXCOt": [
@@ -593,7 +589,7 @@
   "2JA3gY": [
     {
       "type": 0,
-      "value": "Expand tree node"
+      "value": "ツリー ノードの展開"
     }
   ],
   "2K2fAj": [
@@ -632,6 +628,12 @@
       "value": "form-data または form-encoded アクション出力のキー名と一致する単一の値を返します"
     }
   ],
+  "2gOfQI": [
+    {
+      "type": 0,
+      "value": "既存のスキーマの取得元"
+    }
+  ],
   "2gzGrJ": [
     {
       "type": 0,
@@ -641,29 +643,29 @@
   "2hrQOL": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) ダブリン、エジンバラ、リスボン、ロンドン"
     }
   ],
   "2kWLLc": [
     {
       "type": 0,
-      "value": "Start Time"
+      "value": "開始時刻"
     }
   ],
   "2pRsUf": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "有効な配列を入力してください。"
     }
   ],
   "2r30S9": [
     {
-      "type": 0,
-      "value": "Insert a new step after "
-    },
-    {
       "type": 1,
       "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " 後に新しいステップを挿入します"
     }
   ],
   "2tTQ0A": [
@@ -675,25 +677,25 @@
   "2vnYre": [
     {
       "type": 0,
-      "value": "Add Action"
+      "value": "アクションの追加"
     }
   ],
   "2y24a/": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "保存"
     }
   ],
   "3+TQMa": [
     {
       "type": 0,
-      "value": "Loading connection..."
+      "value": "接続を読み込んでいます..."
     }
   ],
   "30njcn": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "接続の作成"
     }
   ],
   "33+WHG": [
@@ -705,7 +707,7 @@
   "34Nt/B": [
     {
       "type": 0,
-      "value": "alt text for button icon"
+      "value": "ボタン アイコンの代替テキスト"
     }
   ],
   "36RiST": [
@@ -717,7 +719,7 @@
   "3AWwVl": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "コード"
     }
   ],
   "3BZnxY": [
@@ -741,21 +743,13 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "` first."
+      "value": "最初にソース要素 {nodeName} 内のすべてのマッピングを削除します。"
     }
   ],
   "3MTSYZ": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Salvador"
+      "value": "(UTC-03:00) サルバドル"
     }
   ],
   "3NhwIJ": [
@@ -779,7 +773,7 @@
   "3X4FHS": [
     {
       "type": 0,
-      "value": "Choose the type of user input"
+      "value": "ユーザー入力の種類の選択"
     }
   ],
   "3Y8a6G": [
@@ -799,13 +793,13 @@
   "3cZZKj": [
     {
       "type": 0,
-      "value": "Divider"
+      "value": "区切り線"
     }
   ],
   "3eeli7": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "ソース スキーマの選択"
     }
   ],
   "3ewBbk": [
@@ -845,7 +839,7 @@
   "3n5pnv": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) ロードハウ島"
     }
   ],
   "3rzrWf": [
@@ -857,7 +851,7 @@
   "3sJlV+": [
     {
       "type": 0,
-      "value": "Close code view"
+      "value": "コード ビューを閉じる"
     }
   ],
   "3vCCY7": [
@@ -875,7 +869,7 @@
   "43xObP": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+      "value": "(UTC+10:00) キャンベラ、メルボルン、シドニー"
     }
   ],
   "45ubha": [
@@ -893,7 +887,7 @@
   "4BH9uU": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "エラー"
     }
   ],
   "4BrA0z": [
@@ -904,24 +898,24 @@
   ],
   "4D7H4R": [
     {
-      "type": 0,
-      "value": "Runs "
-    },
-    {
       "type": 1,
       "value": "onDays"
+    },
+    {
+      "type": 0,
+      "value": " に実行します"
     }
   ],
   "4Ekn9t": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "元に戻す"
     }
   ],
   "4IS4yp": [
     {
       "type": 0,
-      "value": "Retry Policy"
+      "value": "再試行ポリシー"
     }
   ],
   "4Q7WzU": [
@@ -939,7 +933,7 @@
   "4aaixN": [
     {
       "type": 0,
-      "value": "Tour"
+      "value": "ツアー"
     }
   ],
   "4c0uPQ": [
@@ -967,7 +961,7 @@
     },
     {
       "type": 0,
-      "value": " is required."
+      "value": " は必須です。"
     }
   ],
   "4vcnOA": [
@@ -991,13 +985,13 @@
   "5+P3ef": [
     {
       "type": 0,
-      "value": "(UTC+08:45) Eucla"
+      "value": "(UTC+08:45) ユークラ"
     }
   ],
   "595Baw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+      "value": "(UTC+09:00) 大阪、札幌、東京"
     }
   ],
   "5J7j9k": [
@@ -1009,7 +1003,7 @@
   "5OvGgn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "5SAQOb": [
@@ -1018,10 +1012,16 @@
       "value": "権限"
     }
   ],
+  "5WhTmH": [
+    {
+      "type": 0,
+      "value": "読み込んでいます..."
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : '"
+      "value": "パラメーターでサポートされていない 'in' 値: '"
     },
     {
       "type": 1,
@@ -1029,7 +1029,7 @@
     },
     {
       "type": 0,
-      "value": "' in Parameter"
+      "value": "'"
     }
   ],
   "5b0sKi": [
@@ -1047,13 +1047,13 @@
   "5dCAjy": [
     {
       "type": 0,
-      "value": "Day"
+      "value": "日"
     }
   ],
   "5hWg4V": [
     {
       "type": 0,
-      "value": "Select element"
+      "value": "要素の選択"
     }
   ],
   "5qzZMo": [
@@ -1071,7 +1071,7 @@
   "5ytHcK": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "読み込んでいます..."
     }
   ],
   "6+RwRp": [
@@ -1083,13 +1083,13 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+      "value": "前のステップからデータを挿入する (エディターで Alt + / を入力して追加することもできます)"
     }
   ],
   "62Ypnr": [
     {
       "type": 0,
-      "value": "Error loading operation data"
+      "value": "操作のデータの読み込みでエラーが発生しました"
     }
   ],
   "63/zYN": [
@@ -1113,13 +1113,13 @@
   "6fDYzG": [
     {
       "type": 0,
-      "value": "Failed to load the schema. Please try again."
+      "value": "スキーマの読み込みに失敗しました。もう一度お試しください。"
     }
   ],
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "関数 '"
     },
     {
       "type": 1,
@@ -1127,7 +1127,7 @@
     },
     {
       "type": 0,
-      "value": "' has too many inputs assigned to it"
+      "value": "' に割り当てられている入力が多すぎます"
     }
   ],
   "6jiO7t": [
@@ -1169,25 +1169,25 @@
   "6ueRYm": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "開始時刻"
     }
   ],
   "73iM9+": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "ソース スキーマの更新"
     }
   ],
   "7EZ2oY": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) タークス・カイコス諸島"
     }
   ],
   "7Fyq1F": [
     {
       "type": 0,
-      "value": "No inputs"
+      "value": "入力なし"
     }
   ],
   "7GSk99": [
@@ -1213,7 +1213,7 @@
   "7PtWvu": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) 東部標準時 (米国およびカナダ)"
     }
   ],
   "7QymrD": [
@@ -1225,13 +1225,13 @@
   "7S2wtE": [
     {
       "type": 0,
-      "value": "Schema Validation"
+      "value": "スキーマ検証"
     }
   ],
   "7WVgiU": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "構成"
     }
   ],
   "7ZR1xr": [
@@ -1285,19 +1285,19 @@
   "8+0teU": [
     {
       "type": 0,
-      "value": "Parameter name already exists."
+      "value": "パラメーター名は既に存在します。"
     }
   ],
   "83G5rr": [
     {
       "type": 0,
-      "value": "Specify the interval."
+      "value": "間隔を指定します。"
     }
   ],
   "83PYuA": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) 中部標準時 (米国およびカナダ)"
     }
   ],
   "84D91Y": [
@@ -1352,6 +1352,12 @@
       "value": "定義に複数のトリガーが含まれているため、デザイナーをレンダリングできません。"
     }
   ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "コード表示モードに切り替える"
+    }
+  ],
   "8ND+Yc": [
     {
       "type": 0,
@@ -1361,7 +1367,7 @@
   "8SxNQC": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "概要"
     }
   ],
   "8U0KPg": [
@@ -1385,7 +1391,7 @@
   "8ZfbyZ": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Astana"
+      "value": "(UTC+06:00) アスタナ"
     }
   ],
   "8baaNC": [
@@ -1401,13 +1407,13 @@
   "8eKf/c": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Irkutsk"
+      "value": "(UTC+08:00) イルクーツク"
     }
   ],
   "8eTWaf": [
     {
       "type": 0,
-      "value": "Rename"
+      "value": "名前の変更"
     }
   ],
   "8j+a0n": [
@@ -1419,13 +1425,13 @@
   "8luJ2j": [
     {
       "type": 0,
-      "value": "Create Connection Reference"
+      "value": "接続参照の作成"
     }
   ],
   "8mDG0V": [
     {
       "type": 0,
-      "value": "The workflow has parameter validation errors in the following operations: "
+      "value": "ワークフローの次の操作でパラメーター検証エラーが発生しました: "
     },
     {
       "type": 1,
@@ -1450,6 +1456,12 @@
       "value": "渡された文字列のタイムスタンプに日数を表す整数を加算します"
     }
   ],
+  "8zkvmc": [
+    {
+      "type": 0,
+      "value": "テスト"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1465,13 +1477,13 @@
   "90o7sB": [
     {
       "type": 0,
-      "value": "File"
+      "value": "ファイル"
     }
   ],
   "93Gj/n": [
     {
       "type": 0,
-      "value": "Line Position"
+      "value": "行の位置"
     }
   ],
   "93svjx": [
@@ -1513,7 +1525,7 @@
   "9LLnyJ": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00) ブラジリア"
     }
   ],
   "9SuA/E": [
@@ -1525,7 +1537,7 @@
   "9W0lck": [
     {
       "type": 0,
-      "value": "Invalid split on value '"
+      "value": "値 '"
     },
     {
       "type": 1,
@@ -1533,7 +1545,7 @@
     },
     {
       "type": 0,
-      "value": "', cannot find in outputs."
+      "value": "' の分割が無効です。出力で見つかりません。"
     }
   ],
   "9YGcT2": [
@@ -1545,13 +1557,13 @@
   "9YZ873": [
     {
       "type": 0,
-      "value": "Text"
+      "value": "テキスト"
     }
   ],
   "9atGYe": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "追加"
     }
   ],
   "9djnqI": [
@@ -1569,19 +1581,19 @@
   "9x8hg8": [
     {
       "type": 0,
-      "value": "Edit in basic mode"
+      "value": "基本モードで編集"
     }
   ],
   "A5Ferh": [
     {
       "type": 0,
-      "value": "Source element removed from view."
+      "value": "ソース要素がビューから削除されました。"
     }
   ],
   "A8l+k7": [
     {
       "type": 0,
-      "value": "Error occurred while executing the following API parameters: '"
+      "value": "次の API パラメーターの実行でエラーが発生しました: '"
     },
     {
       "type": 1,
@@ -1601,13 +1613,13 @@
   "AEguAy": [
     {
       "type": 0,
-      "value": "Empty value"
+      "value": "空白の値"
     }
   ],
   "AGCm1p": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名前"
     }
   ],
   "AHB418": [
@@ -1625,19 +1637,19 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture)."
+      "value": "文字列内で値が n 番目に出現する位置のインデックスを返します (大文字と小文字は区別されません。インバリアント カルチャ)。"
     }
   ],
   "Af+Ve0": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) ブーゲンビル島"
     }
   ],
   "AheXMN": [
     {
       "type": 0,
-      "value": "Select frequency."
+      "value": "頻度を選択します。"
     }
   ],
   "AnX5yC": [
@@ -1649,7 +1661,7 @@
   "AoalgS": [
     {
       "type": 0,
-      "value": "Loading more results..."
+      "value": "結果の続きを読み込み中..."
     }
   ],
   "ArTh0/": [
@@ -1661,7 +1673,7 @@
   "AsqIUa": [
     {
       "type": 0,
-      "value": "Maximum Interval"
+      "value": "最大間隔"
     }
   ],
   "Az0QvG": [
@@ -1702,7 +1714,7 @@
   "B/gCWM": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "エラー"
     }
   ],
   "B2s0iG": [
@@ -1720,7 +1732,7 @@
   "B999mz": [
     {
       "type": 0,
-      "value": "Line deleted."
+      "value": "行が削除されました"
     }
   ],
   "BBD8Em": [
@@ -1738,7 +1750,7 @@
   "BEZWxB": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "カスタム値のクリア"
     }
   ],
   "BHe7qY": [
@@ -1750,7 +1762,7 @@
   "BJNUxN": [
     {
       "type": 0,
-      "value": "Path Parameters"
+      "value": "パス パラメーター"
     }
   ],
   "BKL0ZG": [
@@ -1774,31 +1786,31 @@
   "BSgavq": [
     {
       "type": 0,
-      "value": "Example: Monday, Friday"
+      "value": "例: 月曜日、金曜日"
     }
   ],
   "BUutcC": [
     {
       "type": 0,
-      "value": "Expant list of sibling elements"
+      "value": "兄弟要素の有効期限リスト"
     }
   ],
   "BYrP8F": [
     {
       "type": 0,
-      "value": "Number"
+      "value": "数"
     }
   ],
   "BeqBP7": [
     {
       "type": 0,
-      "value": "Automatic Decompression"
+      "value": "自動展開"
     }
   ],
   "Bl4Iv0": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) ウランバートル"
     }
   ],
   "Bn8iTS": [
@@ -1816,19 +1828,19 @@
   "BogxJl": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Izhevsk, Samara"
+      "value": "(UTC+04:00) イジェフスク、サマーラ"
     }
   ],
   "BrWQ0Z": [
     {
       "type": 0,
-      "value": "Select a managed identity"
+      "value": "マネージド ID を選択してください"
     }
   ],
   "BtL7UI": [
     {
       "type": 0,
-      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
+      "value": "この手順では、追加情報が必要ありません。後続の手順で出力を使用できるようになります。"
     }
   ],
   "BuYrD3": [
@@ -1846,7 +1858,7 @@
   "C1cy54": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "C4NQ1J": [
@@ -1864,25 +1876,25 @@
   "CaajcD": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Samoa"
+      "value": "(UTC+13:00) サモア"
     }
   ],
   "Cb6IEq": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Havana"
+      "value": "(UTC-05:00) ハバナ"
     }
   ],
   "Cb8pv0": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) 中央大西洋 - 廃止"
     }
   ],
   "Ci41Od": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Auckland, Wellington"
+      "value": "(UTC+12:00) オークランド、ウェリントン"
     }
   ],
   "Ciol6I": [
@@ -1894,7 +1906,7 @@
   "ClZW2r": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "値"
     }
   ],
   "CsPY74": [
@@ -1906,37 +1918,37 @@
   "CvoqQ6": [
     {
       "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
+      "value": "日付を入力または選択してください (YYYY-MM-DD)"
     }
   ],
   "Cy0pyB": [
     {
       "type": 0,
-      "value": "(UTC+09:30) Adelaide"
+      "value": "(UTC+09:30) アデレード"
     }
   ],
   "CypYLs": [
-    {
-      "type": 0,
-      "value": "Insert a new step between "
-    },
     {
       "type": 1,
       "value": "parentName"
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " と "
     },
     {
       "type": 1,
       "value": "childName"
+    },
+    {
+      "type": 0,
+      "value": " の間に新しいステップを挿入します"
     }
   ],
   "Czt6YV": [
     {
       "type": 0,
-      "value": "at "
+      "value": "設定時刻 "
     },
     {
       "type": 1,
@@ -1952,7 +1964,7 @@
   "D/xTXV": [
     {
       "type": 0,
-      "value": "Show source schema"
+      "value": "ソース スキーマを表示する"
     }
   ],
   "D1lgsT": [
@@ -1976,7 +1988,7 @@
   "DEu7oK": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Arizona"
+      "value": "(UTC-07:00) アリゾナ"
     }
   ],
   "DGMwU4": [
@@ -1988,13 +2000,13 @@
   "DJW8RE": [
     {
       "type": 0,
-      "value": "Select a value"
+      "value": "値を選択してください"
     }
   ],
   "DQV7aK": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download '"
+      "value": "Alt または Option キーを押しながらクリックして '"
     },
     {
       "type": 1,
@@ -2002,13 +2014,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' をダウンロードします"
     }
   ],
   "DWd9vy": [
     {
       "type": 0,
-      "value": "every week"
+      "value": "毎週"
     }
   ],
   "DWsh56": [
@@ -2020,7 +2032,7 @@
   "DYXoEM": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Chisinau"
+      "value": "(UTC+02:00) キシナウ"
     }
   ],
   "DZZ3fj": [
@@ -2032,13 +2044,13 @@
   "DZc8wP": [
     {
       "type": 0,
-      "value": "Custom value does not match the schema node's type"
+      "value": "カスタム値がスキーマ ノードの種類と一致しません"
     }
   ],
   "Dhu3IS": [
     {
       "type": 0,
-      "value": "Show mini-map"
+      "value": "ミニマップを表示する"
     }
   ],
   "DjbVKU": [
@@ -2050,7 +2062,7 @@
   "DkF25I": [
     {
       "type": 0,
-      "value": "Expand Static Result"
+      "value": "静的な結果の展開"
     }
   ],
   "DsPDVB": [
@@ -2062,7 +2074,7 @@
   "DuoHXI": [
     {
       "type": 0,
-      "value": "Add an input"
+      "value": "入力の追加"
     }
   ],
   "DyYcJZ": [
@@ -2086,13 +2098,13 @@
   "E+iim4": [
     {
       "type": 0,
-      "value": "Select timezone."
+      "value": "タイムゾーンを選択してください。"
     }
   ],
   "E3+TAA": [
     {
       "type": 0,
-      "value": "Schema node '"
+      "value": "スキーマ ノード '"
     },
     {
       "type": 1,
@@ -2100,13 +2112,13 @@
     },
     {
       "type": 0,
-      "value": "' has an input with a mismatched type"
+      "value": "' の入力の型が一致しません"
     }
   ],
   "E8iqLl": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sakhalin"
+      "value": "(UTC+11:00) サハリン"
     }
   ],
   "ECZC6Y": [
@@ -2130,13 +2142,13 @@
   "ESZXfC": [
     {
       "type": 0,
-      "value": "At these minutes"
+      "value": "設定時刻 (分)"
     }
   ],
   "EUQDM6": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "アクションの追加"
     }
   ],
   "EZz5q7": [
@@ -2147,22 +2159,24 @@
   ],
   "Ea/fr+": [
     {
-      "type": 0,
-      "value": "Every "
-    },
-    {
       "type": 1,
       "value": "interval"
     },
     {
       "type": 0,
-      "value": " days"
+      "value": " 日ごと"
     }
   ],
   "EaTGcN": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) 西中央アフリカ"
+    }
+  ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "アレイ全体の入力に切り替える"
     }
   ],
   "EdzoIs": [
@@ -2191,16 +2205,22 @@
       "value": "パスワード"
     }
   ],
+  "Ek0mSE": [
+    {
+      "type": 0,
+      "value": "この操作の要求履歴を表示します"
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
-      "value": "Please select yes or no"
+      "value": "[はい] または [いいえ] を選択してください"
     }
   ],
   "Ex4U46": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "呼び出し元の接続を使用する"
     }
   ],
   "ExaACE": [
@@ -2218,13 +2238,13 @@
   "F9dR1Q": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "追加"
     }
   ],
   "FBNevf": [
     {
       "type": 0,
-      "value": "Go To Operation"
+      "value": "操作に移動"
     }
   ],
   "FDF4Qb": [
@@ -2248,7 +2268,7 @@
   "FIL1Nt": [
     {
       "type": 0,
-      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+      "value": "条件が複雑すぎるか、無効です。基本モードに切り替えることができません"
     }
   ],
   "FIT7i0": [
@@ -2260,7 +2280,7 @@
   "FL/0Zp": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
+      "value": "(UTC-07:00) チワワ、ラパス、マサトラン"
     }
   ],
   "FN5zHQ": [
@@ -2284,13 +2304,13 @@
   "FS06y3": [
     {
       "type": 0,
-      "value": "Must provide name of parameter."
+      "value": "パラメーターの名前を指定する必要があります。"
     }
   ],
   "FT3jt6": [
     {
       "type": 0,
-      "value": "Webhook reference information"
+      "value": "Webhook の参照情報"
     }
   ],
   "FUhNu4": [
@@ -2329,13 +2349,19 @@
   "FYtDP0": [
     {
       "type": 0,
-      "value": "Enter an email address."
+      "value": "メール アドレスを入力してください。"
     }
   ],
   "FaBEfQ": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "追跡対象プロパティ"
+    }
+  ],
+  "Fcvgvg": [
+    {
+      "type": 0,
+      "value": "検索"
     }
   ],
   "FiyQjU": [
@@ -2353,7 +2379,7 @@
   "FxQ2Ts": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Tripoli"
+      "value": "(UTC+02:00) トリポリ"
     }
   ],
   "G/CC5/": [
@@ -2377,13 +2403,13 @@
   "GCjJnP": [
     {
       "type": 0,
-      "value": "Enter a valid Json."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "GD3m4X": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "展開済み"
     }
   ],
   "GDUGlm": [
@@ -2395,19 +2421,19 @@
   "GE14Xd": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) ブエノスアイレス"
     }
   ],
   "GEB1on": [
     {
       "type": 0,
-      "value": "This contains a value that is not between 0 and 59"
+      "value": "これには 0 から 59 までではない値が含まれています"
     }
   ],
   "GIUSQs": [
     {
       "type": 0,
-      "value": "Filter by data type"
+      "value": "データ型でフィルター"
     }
   ],
   "GLd3MU": [
@@ -2419,13 +2445,13 @@
   "GMkbFM": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "トリガーの条件"
     }
   ],
   "GXXLuT": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "有効なブール値を入力してください。"
     }
   ],
   "GYvF54": [
@@ -2455,13 +2481,13 @@
   "Gi7czD": [
     {
       "type": 0,
-      "value": "Source schema element"
+      "value": "ソース スキーマ要素"
     }
   ],
   "Gl5khw": [
     {
       "type": 0,
-      "value": "At these hours"
+      "value": "設定時刻 (時間)"
     }
   ],
   "Gmya+V": [
@@ -2485,7 +2511,7 @@
   "GyUe4C": [
     {
       "type": 0,
-      "value": "Modify options regarding functions"
+      "value": "関数に関するオプションを変更します"
     }
   ],
   "GzQQqH": [
@@ -2497,13 +2523,13 @@
   "Gziyq8": [
     {
       "type": 0,
-      "value": "File Content"
+      "value": "ファイルのコンテンツ"
     }
   ],
   "H/QVod": [
     {
       "type": 0,
-      "value": "Workflow has settings validation errors on the following operations: "
+      "value": "ワークフローには、次の操作に対する設定の検証エラーがあります: "
     },
     {
       "type": 1,
@@ -2525,13 +2551,13 @@
   "H2WdiZ": [
     {
       "type": 0,
-      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+      "value": "有効な分の値 (0 - 59) をコンマで区切って入力します (例: 15,30)"
     }
   ],
   "H5VikC": [
     {
       "type": 0,
-      "value": "Invalid connection, mapping must not form a closed loop."
+      "value": "接続が無効です。マッピングでは閉じたループを形成できません。"
     }
   ],
   "H8bEUn": [
@@ -2549,13 +2575,13 @@
   "HH970i": [
     {
       "type": 0,
-      "value": "Month"
+      "value": "月"
     }
   ],
   "HOchry": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one."
+      "value": "既存の接続参照を選択するか、新規に作成してください。"
     }
   ],
   "HQ8/tk": [
@@ -2567,19 +2593,25 @@
   "HSJLCu": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "ヘッダー"
     }
   ],
   "HYhDYB": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) 協定世界時-02"
     }
   ],
   "Hbqlzk": [
     {
       "type": 0,
-      "value": "Insert Expression"
+      "value": "式の挿入"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "アレイ項目の詳細の入力に切り替える"
     }
   ],
   "HfrUId": [
@@ -2591,27 +2623,23 @@
   "HmcHoE": [
     {
       "type": 0,
-      "value": "Error fetching manifest"
+      "value": "マニフェストの取得でエラーが発生しました"
     }
   ],
   "HoQiVa": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "有効な日時を入力してください。"
     }
   ],
   "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Enter a valid value for "
-    },
     {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " の有効な値を入力してください。"
     }
   ],
   "HsO1Rd": [
@@ -2627,7 +2655,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "Remove parameter \""
+      "value": "パラメーター '"
     },
     {
       "type": 1,
@@ -2635,7 +2663,7 @@
     },
     {
       "type": 0,
-      "value": "\" and its value"
+      "value": "' とその値の削除"
     }
   ],
   "HzS2gJ": [
@@ -2647,13 +2675,13 @@
   "I41vZ/": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) 協定世界時-11"
     }
   ],
   "I7/+er": [
     {
       "type": 0,
-      "value": "Global view"
+      "value": "グローバル ビュー"
     }
   ],
   "IA+Ogm": [
@@ -2665,23 +2693,29 @@
   "IAmvpa": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) 協定世界時-08"
     }
   ],
   "IHMd3X": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "例: "
     },
     {
       "type": 1,
       "value": "url"
     }
   ],
+  "IPbMdl": [
+    {
+      "type": 0,
+      "value": "コード ビュー"
+    }
+  ],
   "IPwWgu": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) エルサレム"
     }
   ],
   "IQyOth": [
@@ -2693,7 +2727,7 @@
   "IS4vNX": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) 国際日付変更線 西側"
     }
   ],
   "IW2MjQ": [
@@ -2705,7 +2739,7 @@
   "IXy91L": [
     {
       "type": 0,
-      "value": "Add a target schema"
+      "value": "ターゲット スキーマの追加"
     }
   ],
   "IdOhPY": [
@@ -2715,19 +2749,19 @@
     },
     {
       "type": 0,
-      "value": " To add dynamic data, press the Alt + '/' keys."
+      "value": " 動的データを追加するには、Alt + /' キーを押します。"
     }
   ],
   "If+p6C": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Yakutsk"
+      "value": "(UTC+09:00) ヤクーツク"
     }
   ],
   "IjEKvh": [
     {
       "type": 0,
-      "value": "Error executing the api '"
+      "value": "API '"
     },
     {
       "type": 1,
@@ -2735,13 +2769,13 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' の実行でエラーが発生しました。"
     }
   ],
   "Io48jC": [
     {
       "type": 0,
-      "value": "The {0} properties are invalid for the {1} authentication type."
+      "value": "{1} 認証の種類に対して、{0} プロパティが無効です。"
     }
   ],
   "IooQu1": [
@@ -2753,13 +2787,13 @@
   "IsVhkH": [
     {
       "type": 0,
-      "value": "No properties"
+      "value": "プロパティなし"
     }
   ],
   "IxWip7": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) モスクワ、サンクトペテルブルク、ボルゴグラード"
     }
   ],
   "J/Kz1j": [
@@ -2771,7 +2805,7 @@
   "J2Su6x": [
     {
       "type": 0,
-      "value": "Formatting options for font size"
+      "value": "フォント サイズの書式設定オプション"
     }
   ],
   "J5/7vN": [
@@ -2797,13 +2831,13 @@
   "J9wWry": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "パラメーター"
     }
   ],
   "JAIV0h": [
     {
       "type": 0,
-      "value": "The current map contains "
+      "value": "現在のマップには "
     },
     {
       "type": 1,
@@ -2819,7 +2853,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " が含まれています。"
     }
   ],
   "JErLDT": [
@@ -2867,7 +2901,7 @@
   "Jil/Wa": [
     {
       "type": 0,
-      "value": "Invalid settings"
+      "value": "設定が無効です"
     }
   ],
   "JjTfC7": [
@@ -2885,7 +2919,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "有効にすると、このアクションは Dataverse トリガーの [実行するアカウント名] 設定のユーザーによって実行されます。"
     }
   ],
   "Jq2Y/o": [
@@ -2897,7 +2931,7 @@
   "JzRzVp": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Alaska"
+      "value": "(UTC-09:00) アラスカ"
     }
   ],
   "JzqgNM": [
@@ -2915,19 +2949,19 @@
   "K7/DnZ": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "出力"
     }
   ],
   "KBaGkS": [
     {
       "type": 0,
-      "value": "Change connection reference"
+      "value": "接続参照の変更"
     }
   ],
   "KP0Rr2": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "有効な倍精度浮動小数点数を入力してください。"
     }
   ],
   "KX1poC": [
@@ -2962,25 +2996,25 @@
   "KYX5Do": [
     {
       "type": 0,
-      "value": "Underline (⌘U)"
+      "value": "下線 (⌘U)"
     }
   ],
   "KZOa5l": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "キャンセル"
     }
   ],
   "KlDW+5": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00) ベイルート"
     }
   ],
   "KwGA+K": [
     {
       "type": 0,
-      "value": "Select a Function App resource"
+      "value": "関数アプリ リソースの選択"
     }
   ],
   "L+PY+j": [
@@ -3004,7 +3038,7 @@
   "LBH8UV": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開"
     }
   ],
   "LBbhCu": [
@@ -3016,13 +3050,13 @@
   "LCRHQ9": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fiji"
+      "value": "(UTC+12:00) フィジー"
     }
   ],
   "LCXZLM": [
     {
       "type": 0,
-      "value": "Loading Function Apps..."
+      "value": "関数アプリを読み込んでいます..."
     }
   ],
   "LJmfmK": [
@@ -3040,7 +3074,7 @@
   "LR/3Lr": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "構成"
     }
   ],
   "LS8rfZ": [
@@ -3052,13 +3086,13 @@
   "LV/BTE": [
     {
       "type": 0,
-      "value": "Loading Api Management service instances..."
+      "value": "API Management サービス インスタンスを読み込んでいます..."
     }
   ],
   "LV3k48": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) ベオグラード、ブラチスラバ、ブダペスト、リュブリャナ、プラハ"
     }
   ],
   "LZm3ze": [
@@ -3070,7 +3104,7 @@
   "LdITnG": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Cayenne, Fortaleza"
+      "value": "(UTC-03:00) カイエンヌ、フォルタレザ"
     }
   ],
   "Lft/is": [
@@ -3094,13 +3128,13 @@
   "Lm9bnN": [
     {
       "type": 0,
-      "value": "Bullet List"
+      "value": "箇条書きリスト"
     }
   ],
   "Lnqh6h": [
     {
       "type": 0,
-      "value": "Bold (Ctrl+B)"
+      "value": "太字 (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3124,7 +3158,7 @@
   "LvLksz": [
     {
       "type": 0,
-      "value": "Loading outputs"
+      "value": "出力の読み込み"
     }
   ],
   "LvpxiA": [
@@ -3136,7 +3170,13 @@
   "Lx8HRl": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) ダマスカス"
+    }
+  ],
+  "M/gUE8": [
+    {
+      "type": 0,
+      "value": "情報"
     }
   ],
   "M0xrm+": [
@@ -3178,7 +3218,7 @@
   "MCzWDc": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "プレビュー"
     }
   ],
   "MDbmMw": [
@@ -3202,13 +3242,13 @@
   "MOsuw2": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Guam, Port Moresby"
+      "value": "(UTC+10:00) グアム、ポートモレスビー"
     }
   ],
   "MPPyI6": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Baku"
+      "value": "(UTC+04:00) バクー"
     }
   ],
   "MTR4Vg": [
@@ -3220,7 +3260,7 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "有効な配列を入力してください。"
     }
   ],
   "MYgKHu": [
@@ -3244,25 +3284,25 @@
   "Mc6ITJ": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "検索"
     }
   ],
   "MfAdfx": [
     {
       "type": 0,
-      "value": "Edit in advanced mode"
+      "value": "詳細設定モードで編集"
     }
   ],
   "Mgcs5s": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "有効な数値を入力してください。"
     }
   ],
   "MirIsS": [
     {
       "type": 0,
-      "value": "Show code"
+      "value": "コードの表示"
     }
   ],
   "MmBfD1": [
@@ -3292,31 +3332,31 @@
   "N4dEVo": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "ヘッダー"
     }
   ],
   "N7E9hd": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) ヘルシンキ、キエフ、リガ、ソフィア、タリン、ビリニュス"
     }
   ],
   "NGJ00e": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
+      "value": "(UTC-04:00) ジョージタウン、ラパス、マナウス、サンフアン"
     }
   ],
   "NHnG2S": [
     {
       "type": 0,
-      "value": "The generated XSLT does not match the current mapping."
+      "value": "生成された XSLT は現在のマッピングと一致しません。"
     }
   ],
   "NMpFs6": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Araguaina"
+      "value": "(UTC-03:00) アラグァイナ"
     }
   ],
   "NPUFgH": [
@@ -3328,7 +3368,7 @@
   "NWxGWN": [
     {
       "type": 0,
-      "value": "Enter unique property name"
+      "value": "一意のプロパティ名の入力"
     }
   ],
   "NnD8gF": [
@@ -3352,7 +3392,7 @@
   "NnrHK3": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Vladivostok"
+      "value": "(UTC+10:00) ウラジオストク"
     }
   ],
   "No6CS+": [
@@ -3382,13 +3422,13 @@
   "O/fh9A": [
     {
       "type": 0,
-      "value": "Service Principal"
+      "value": "サービス プリンシパル"
     }
   ],
   "O27gKq": [
     {
       "type": 0,
-      "value": "Loading Files..."
+      "value": "ファイルを読み込んでいます..."
     }
   ],
   "O9ZExg": [
@@ -3400,7 +3440,7 @@
   "ODQCKj": [
     {
       "type": 0,
-      "value": "Converts the input to a JSON type value."
+      "value": "入力を JSON 型の値に変換します。"
     }
   ],
   "OEEuUu": [
@@ -3430,7 +3470,7 @@
   "OIOexo": [
     {
       "type": 0,
-      "value": "On these days"
+      "value": "設定曜日"
     }
   ],
   "OKszbi": [
@@ -3454,7 +3494,7 @@
   "OOUTdW": [
     {
       "type": 0,
-      "value": "Loading all connectors..."
+      "value": "すべてのコネクタを読み込んでいます..."
     }
   ],
   "OSHNZ2": [
@@ -3466,7 +3506,7 @@
   "OSP9JY": [
     {
       "type": 0,
-      "value": "Enter the audience."
+      "value": "対象ユーザーを入力してください。"
     }
   ],
   "OVvieE": [
@@ -3484,19 +3524,19 @@
   "OdoUEu": [
     {
       "type": 0,
-      "value": "Enable Static Result"
+      "value": "静的な結果の有効化"
     }
   ],
   "OgJ9eG": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08:00) 台北"
     }
   ],
   "OhbvXz": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) ノーフォーク島"
     }
   ],
   "Oib1mL": [
@@ -3538,7 +3578,7 @@
   "P+7G62": [
     {
       "type": 0,
-      "value": "Heading 3"
+      "value": "見出し 3"
     }
   ],
   "P+mWgV": [
@@ -3550,13 +3590,13 @@
   "P/S+q5": [
     {
       "type": 0,
-      "value": "Required. One of the strings to combine into a single string."
+      "value": "必須。1 つの文字列に結合する文字列の 1 つです。"
     }
   ],
   "P/dnfK": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) ダッカ"
     }
   ],
   "P2A5dB": [
@@ -3592,7 +3632,7 @@
   "PE1tsI": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "出力なし"
     }
   ],
   "PF87Ew": [
@@ -3609,18 +3649,18 @@
   ],
   "PNk3n4": [
     {
-      "type": 0,
-      "value": "Runs "
-    },
-    {
       "type": 1,
       "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " に実行"
     }
   ],
   "PORNMZ": [
     {
       "type": 0,
-      "value": "Inputs"
+      "value": "入力"
     }
   ],
   "PP63jY": [
@@ -3644,7 +3684,7 @@
   "PSrCNL": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "関数"
     }
   ],
   "PXa0D4": [
@@ -3656,7 +3696,7 @@
   "PZgHf/": [
     {
       "type": 0,
-      "value": "Schema Uri"
+      "value": "スキーマ URI"
     }
   ],
   "PaPPLr": [
@@ -3674,19 +3714,19 @@
   "PjBcG3": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02:00) アンマン"
     }
   ],
   "Pk4cb+": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "追跡対象プロパティ"
     }
   ],
   "Pq+4a+": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00) カイロ"
     }
   ],
   "PtqSHp": [
@@ -3698,13 +3738,13 @@
   "Pudllg": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Hovd"
+      "value": "(UTC+07:00) ホブド"
     }
   ],
   "PvWTxR": [
     {
       "type": 0,
-      "value": "Show functions"
+      "value": "関数を表示する"
     }
   ],
   "Pvm0xB": [
@@ -3716,7 +3756,7 @@
   "Q+ZZHI": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Hawaii"
+      "value": "(UTC-10:00) ハワイ"
     }
   ],
   "Q/7unA": [
@@ -3740,13 +3780,13 @@
   "Q5w4Do": [
     {
       "type": 0,
-      "value": "Add dynamic data or expressions by inserting a /"
+      "value": "/ を挿入して動的データまたは式を追加してください"
     }
   ],
   "Q8HCYK": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "アイテムがありません"
     }
   ],
   "Q8zxeb": [
@@ -3756,7 +3796,7 @@
     },
     {
       "type": 0,
-      "value": " Key"
+      "value": " キー"
     }
   ],
   "QGbUXX": [
@@ -3786,7 +3826,7 @@
   "QdJUaS": [
     {
       "type": 0,
-      "value": "Pencil icon"
+      "value": "鉛筆のアイコン"
     }
   ],
   "QeE0k/": [
@@ -3804,7 +3844,7 @@
   "QiVbKW": [
     {
       "type": 0,
-      "value": "Exit Full Screen"
+      "value": "全画面表示の終了"
     }
   ],
   "QknZQ1": [
@@ -3828,7 +3868,7 @@
   "QpX2+j": [
     {
       "type": 0,
-      "value": "Location"
+      "value": "場所"
     }
   ],
   "QrQDdp": [
@@ -3856,7 +3896,7 @@
   "R/aiRy": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) 協定世界時+12"
     }
   ],
   "RFjYpH": [
@@ -3868,7 +3908,7 @@
   "RJes1w": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) エレバン"
     }
   ],
   "RX2Shm": [
@@ -3877,16 +3917,10 @@
       "value": "必須。分割される文字列。"
     }
   ],
-  "RZ1MIN": [
-    {
-      "type": 0,
-      "value": "アレイ全体の入力に切り替える"
-    }
-  ],
   "RbJNVk": [
     {
       "type": 0,
-      "value": "Schema"
+      "value": "スキーマ"
     }
   ],
   "RhH4pF": [
@@ -3919,25 +3953,25 @@
   "RnBddN": [
     {
       "type": 0,
-      "value": "issue"
+      "value": "問題"
     }
   ],
   "Ro4+PC": [
     {
       "type": 0,
-      "value": "You can add notes only when you edit a step's inputs."
+      "value": "メモの追加は、ステップの入力を編集した場合にのみ可能です。"
     }
   ],
   "Rp5pHU": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Monrovia, Reykjavik"
+      "value": "(UTC+00:00) モンロビア、レイキャビク"
     }
   ],
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "Unrecognized expression '"
+      "value": "認識されない式 '"
     },
     {
       "type": 1,
@@ -3951,19 +3985,19 @@
   "RvpHdu": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) ソロモン諸島、ニューカレドニア"
     }
   ],
   "RxGxr+": [
     {
       "type": 0,
-      "value": "Line number"
+      "value": "行番号"
     }
   ],
   "S138/4": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: ⌘B"
+      "value": "テキストを太字で書式設定します。ショートカット: ⌘B"
     }
   ],
   "SCCE6s": [
@@ -3975,13 +4009,13 @@
   "SGnTpt": [
     {
       "type": 0,
-      "value": "Heading 2"
+      "value": "見出し 2"
     }
   ],
   "SJFVxf": [
     {
       "type": 0,
-      "value": "issues"
+      "value": "問題"
     }
   ],
   "SKXopi": [
@@ -3993,19 +4027,25 @@
   "SKy5tj": [
     {
       "type": 0,
-      "value": "The input node type doesn't match the schema node's type."
+      "value": "入力ノードの種類がスキーマ ノードの種類と一致しません。"
     }
   ],
   "SLJkRn": [
     {
       "type": 0,
-      "value": "Remove input"
+      "value": "入力を削除する"
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
       "value": "文字列の先頭が値かどうかを確認します (大文字と小文字は区別されません、インバリアント カルチャ)"
+    }
+  ],
+  "SToblZ": [
+    {
+      "type": 0,
+      "value": "このノードのパラメーターの構成"
     }
   ],
   "SXb47U": [
@@ -4027,7 +4067,7 @@
   "SgiTAh": [
     {
       "type": 0,
-      "value": "Please enter your input"
+      "value": "入力を指定してください"
     }
   ],
   "Sh10cw": [
@@ -4045,7 +4085,7 @@
   "Sr8PcK": [
     {
       "type": 0,
-      "value": "No operations found"
+      "value": "操作が見つかりません"
     }
   ],
   "SvQyvs": [
@@ -4081,7 +4121,7 @@
   "T7Xwii": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "間隔"
     }
   ],
   "T7zcR6": [
@@ -4111,7 +4151,7 @@
   "TLHUMf": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "入力の読み込みエラー"
     }
   ],
   "TNEttQ": [
@@ -4135,7 +4175,7 @@
   "TRpSCQ": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "アクションの種類"
     }
   ],
   "TUaunO": [
@@ -4153,14 +4193,10 @@
   "TY4HzZ": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "スキーマを追加または置換します。"
     }
   ],
   "TZh8nV": [
-    {
-      "type": 0,
-      "value": "on "
-    },
     {
       "type": 1,
       "value": "weekDays"
@@ -4201,31 +4237,31 @@
   "TjMkDP": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) イースター島"
     }
   ],
   "TlX98E": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Kaliningrad"
+      "value": "(UTC+02:00) カリーニングラード"
     }
   ],
   "Tmr/9e": [
     {
       "type": 0,
-      "value": "Invalid parameters"
+      "value": "正しくないパラメーター"
     }
   ],
   "Ts5Pzr": [
     {
       "type": 0,
-      "value": "Note"
+      "value": "メモ"
     }
   ],
   "Ttc0SM": [
     {
       "type": 0,
-      "value": "Heading 1"
+      "value": "見出し 1"
     }
   ],
   "Twfck/": [
@@ -4243,13 +4279,13 @@
   "U086AA": [
     {
       "type": 0,
-      "value": "Target schema element"
+      "value": "ターゲット スキーマ要素"
     }
   ],
   "U0I10w": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05:00) エカテリンブルク"
     }
   ],
   "U3guPp": [
@@ -4266,10 +4302,6 @@
   ],
   "U4zovj": [
     {
-      "type": 0,
-      "value": "Runs "
-    },
-    {
       "type": 1,
       "value": "onTime"
     },
@@ -4280,12 +4312,16 @@
     {
       "type": 1,
       "value": "onDays"
+    },
+    {
+      "type": 0,
+      "value": " に実行"
     }
   ],
   "U7yRwM": [
     {
       "type": 0,
-      "value": "Validation Error"
+      "value": "検証エラー"
     }
   ],
   "UCNM4L": [
@@ -4309,13 +4345,13 @@
   "UIWX6p": [
     {
       "type": 0,
-      "value": "Logical Name"
+      "value": "論理名"
     }
   ],
   "UR1CS5": [
     {
       "type": 0,
-      "value": "Hide code"
+      "value": "コードを非表示にする"
     }
   ],
   "USVffu": [
@@ -4327,13 +4363,13 @@
   "UT2ozj": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) 山地標準時 (米国およびカナダ)"
     }
   ],
   "UVAfYj": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "必須。最後のオブジェクトの取得元となるコレクション。"
     }
   ],
   "UYRIS/": [
@@ -4349,13 +4385,13 @@
   "UZiXVh": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "出力"
     }
   ],
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "Schema node '"
+      "value": "スキーマ ノード '"
     },
     {
       "type": 1,
@@ -4363,33 +4399,29 @@
     },
     {
       "type": 0,
-      "value": "' has an non-terminating connection chain"
+      "value": "' に終端のない接続チェーンがあります"
     }
   ],
   "Umpr3z": [
-    {
-      "type": 0,
-      "value": "Every "
-    },
     {
       "type": 1,
       "value": "interval"
     },
     {
       "type": 0,
-      "value": " weeks"
+      "value": " 週間ごと"
     }
   ],
   "Unc2tG": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal."
+      "value": "2 つの値が等しい場合は true を返します。"
     }
   ],
   "UnrrzF": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "ソース スキーマ"
     }
   ],
   "Ur+wph": [
@@ -4425,7 +4457,7 @@
   "V5f3ha": [
     {
       "type": 0,
-      "value": "Week"
+      "value": "週"
     }
   ],
   "VA7M1u": [
@@ -4437,7 +4469,7 @@
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "Select an App Service resource"
+      "value": "App Service リソースの選択"
     }
   ],
   "VI5Sa8": [
@@ -4448,12 +4480,12 @@
   ],
   "VI7EqG": [
     {
-      "type": 0,
-      "value": "No results found for "
-    },
-    {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": " の結果が見つかりませんでした"
     }
   ],
   "VKAk5g": [
@@ -4465,19 +4497,19 @@
   "VL9wOu": [
     {
       "type": 0,
-      "value": "Must provide value for parameter."
+      "value": "パラメーターの値を指定する必要があります。"
     }
   ],
   "VLc3FV": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "ソース スキーマ"
     }
   ],
   "VPh9Jo": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Novosibirsk"
+      "value": "(UTC+06:00) ノボシビルスク"
     }
   ],
   "VUH9aj": [
@@ -4496,12 +4528,6 @@
     {
       "type": 0,
       "value": "コメント"
-    }
-  ],
-  "VXQbMw": [
-    {
-      "type": 0,
-      "value": "アレイ項目の詳細の入力に切り替える"
     }
   ],
   "VZHick": [
@@ -4525,7 +4551,7 @@
   "Vfce7b": [
     {
       "type": 0,
-      "value": "Error Type"
+      "value": "エラーの種類"
     }
   ],
   "VlvlX1": [
@@ -4572,18 +4598,18 @@
   ],
   "WK6hZX": [
     {
-      "type": 0,
-      "value": "Select all text in "
-    },
-    {
       "type": 1,
       "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " のすべてのテキストを選択"
     }
   ],
   "WR1K3z": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+      "value": "(UTC+04:00) アストラハン、ウリヤノフスク"
     }
   ],
   "WS9kXD": [
@@ -4595,7 +4621,7 @@
   "WTZvGW": [
     {
       "type": 0,
-      "value": "Workflow has invalid connections on the following operations: "
+      "value": "ワークフローには、次の操作に対する無効な接続があります: "
     },
     {
       "type": 1,
@@ -4608,10 +4634,16 @@
       "value": "trigger().outputs の短縮形"
     }
   ],
+  "WaTsxR": [
+    {
+      "type": 0,
+      "value": "要求の履歴"
+    }
+  ],
   "WcnIF8": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "削除"
     }
   ],
   "WgoP7R": [
@@ -4629,13 +4661,13 @@
   "X/7je+": [
     {
       "type": 0,
-      "value": "Minute"
+      "value": "分"
     }
   ],
   "X2idLs": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Montevideo"
+      "value": "(UTC-03:00) モンテビデオ"
     }
   ],
   "X4gDhV": [
@@ -4647,7 +4679,7 @@
   "X7X5ew": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "パラメーター"
     }
   ],
   "X8JjjT": [
@@ -4705,7 +4737,7 @@
   "XOAcjQ": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Nairobi"
+      "value": "(UTC+03:00) ナイロビ"
     }
   ],
   "XOzn/3": [
@@ -4717,13 +4749,13 @@
   "XQ4OCV": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) バグダッド"
     }
   ],
   "XRK+gt": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "関数 '"
     },
     {
       "type": 1,
@@ -4731,13 +4763,13 @@
     },
     {
       "type": 0,
-      "value": "' has an non-terminating connection chain"
+      "value": "' に終端のない接続チェーンがあります"
     }
   ],
   "XTeLIw": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Krasnoyarsk"
+      "value": "(UTC+07:00) クラスノヤルスク"
     }
   ],
   "XTuxmH": [
@@ -4761,19 +4793,19 @@
   "XVTQT6": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "間隔"
     }
   ],
   "XbtEq9": [
     {
       "type": 0,
-      "value": "Count"
+      "value": "カウント"
     }
   ],
   "Xew1Df": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is '"
+      "value": "詳細な診断情報: x-ms-client-request-id は '"
     },
     {
       "type": 1,
@@ -4781,31 +4813,31 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' です。"
     }
   ],
   "Xj0Gr/": [
     {
       "type": 0,
-      "value": "Target schema element cannot be deleted."
+      "value": "ターゲット スキーマ要素を削除できません。"
     }
   ],
   "Xj4xwI": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
+      "value": "この操作で使用されているマネージド ID は存在しなくなりました。続行するには、使用可能な ID を選択するか、接続を変更してください。"
     }
   ],
   "XkBxv5": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "ターゲット スキーマの選択"
     }
   ],
   "Xkt2vD": [
     {
       "type": 0,
-      "value": "Select a function app function"
+      "value": "関数アプリ関数の選択"
     }
   ],
   "Xnn0uj": [
@@ -4835,7 +4867,7 @@
   "Xv5CGN": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) インディアナ東部"
     }
   ],
   "Xx/naD": [
@@ -4865,13 +4897,13 @@
   "YABOLz": [
     {
       "type": 0,
-      "value": "Body Item"
+      "value": "本文項目"
     }
   ],
   "YCFhzp": [
     {
       "type": 0,
-      "value": "Add children"
+      "value": "子の追加"
     }
   ],
   "YHsAKl": [
@@ -4899,7 +4931,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: Ctrl+U"
+      "value": "テキストを下線付きで書式設定します。ショートカット: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -4917,31 +4949,31 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Format text as bold. Shortcut: Ctrl+B"
+      "value": "テキストを太字で書式設定します。ショートカット: Ctrl+B"
     }
   ],
   "YRk271": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "認証"
     }
   ],
   "YUbSFS": [
     {
       "type": 0,
-      "value": "Yes/No"
+      "value": "はい/いいえ"
     }
   ],
   "YWOKlU": [
     {
       "type": 0,
-      "value": "Numbered List"
+      "value": "番号付きリスト"
     }
   ],
   "YZ5Kwe": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) 大西洋標準時 (カナダ)"
     }
   ],
   "YaFjJQ": [
@@ -4953,13 +4985,13 @@
   "Ybzoim": [
     {
       "type": 0,
-      "value": "Required. The name of the action that has the values you want."
+      "value": "必須。求める値を持つアクションの名前。"
     }
   ],
   "YdQw4/": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: ⌘I"
+      "value": "テキストを斜体で書式設定します。ショートカット: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -4971,25 +5003,25 @@
   "YgU88A": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) チェンナイ、コルカタ、ムンバイ、ニューデリー"
     }
   ],
   "Yh5OVd": [
     {
       "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
+      "value": "カスタム値が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "YiOybp": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) ブリュッセル、コペンハーゲン、マドリード、パリ"
     }
   ],
   "YlesUQ": [
     {
       "type": 0,
-      "value": "Your map is in perfect condition"
+      "value": "マップは完全な状態です"
     }
   ],
   "YoQara": [
@@ -5007,13 +5039,13 @@
   "Yw7Nfl": [
     {
       "type": 0,
-      "value": "Disable Static Result"
+      "value": "静的な結果の無効化"
     }
   ],
   "Z9PWl/": [
     {
       "type": 0,
-      "value": "Retry Policy count is invalid (Must be from "
+      "value": "再試行ポリシー数が無効です ("
     },
     {
       "type": 1,
@@ -5021,7 +5053,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " から "
     },
     {
       "type": 1,
@@ -5029,19 +5061,19 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": " にする必要があります)"
     }
   ],
   "ZBJiuD": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状態"
     }
   ],
   "ZCFMoe": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "ZM1mRy": [
@@ -5059,7 +5091,7 @@
   "ZRdkFN": [
     {
       "type": 0,
-      "value": "Collapse Static Result"
+      "value": "静的な結果を折りたたむ"
     }
   ],
   "ZUaz3Y": [
@@ -5089,13 +5121,13 @@
   "Zg3IjD": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "閉じる"
     }
   ],
   "Zi9gQK": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "新しい項目の追加"
     }
   ],
   "ZkjTbp": [
@@ -5125,7 +5157,7 @@
   "aJxefp": [
     {
       "type": 0,
-      "value": "Add new parameters"
+      "value": "新しいパラメーターの追加"
     }
   ],
   "aK4iLW": [
@@ -5137,25 +5169,25 @@
   "aP1wk9": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "文字列内の値の最初のインデックスを返します (大文字と小文字は区別されません、インバリアント カルチャ)"
     }
   ],
   "aSnCCB": [
     {
       "type": 0,
-      "value": "Location"
+      "value": "場所"
     }
   ],
   "aV/nLS": [
     {
       "type": 0,
-      "value": "Second"
+      "value": "秒"
     }
   ],
   "ae7W0a": [
     {
       "type": 0,
-      "value": "Full Screen"
+      "value": "全画面表示"
     }
   ],
   "ahsVI/": [
@@ -5167,13 +5199,13 @@
   "amRYtC": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "有効な float を入力してください。"
     }
   ],
   "aoUT/3": [
     {
       "type": 0,
-      "value": "Loading resources..."
+      "value": "リソースを読み込んでいます..."
     }
   ],
   "auUI93": [
@@ -5201,7 +5233,7 @@
   "b9Rvl9": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "bG9rjv": [
@@ -5225,7 +5257,7 @@
   "bSZ0lL": [
     {
       "type": 0,
-      "value": "Callback url"
+      "value": "コールバック URL"
     }
   ],
   "bTrk+S": [
@@ -5243,7 +5275,7 @@
   "bXFGpe": [
     {
       "type": 0,
-      "value": "Info"
+      "value": "情報"
     }
   ],
   "ba9yGJ": [
@@ -5258,16 +5290,22 @@
       "value": "入力された数値アレイ内の最大値を返します"
     }
   ],
+  "bldzuj": [
+    {
+      "type": 0,
+      "value": "再試行の履歴"
+    }
+  ],
   "bsgS8m": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "プレビュー"
     }
   ],
   "bv9QPA": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "日付"
     }
   ],
   "bwfJdj": [
@@ -5289,7 +5327,7 @@
   "byTBrn": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "カスタム"
     }
   ],
   "bzF/qn": [
@@ -5313,7 +5351,7 @@
   "c3FLox": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Hobart"
+      "value": "(UTC+10:00) ホバート"
     }
   ],
   "c3G/zq": [
@@ -5325,7 +5363,7 @@
   "c4GQZE": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "ドロップダウンのスキーマを選択する"
     }
   ],
   "c6XbVI": [
@@ -5337,7 +5375,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+      "value": "GZip または Deflate を使用して圧縮されている場合は、要求本文の圧縮を展開します。この設定は、HTTP トリガーにのみ適用されます。"
     }
   ],
   "c8UPLp": [
@@ -5349,7 +5387,7 @@
   "cHiBAn": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) ソウル"
     }
   ],
   "cJm+ah": [
@@ -5367,31 +5405,31 @@
   "cP4UkW": [
     {
       "type": 0,
-      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
+      "value": "再試行ポリシーの間隔が無効です。ISO 8601 の期間の形式と一致する必要があります"
     }
   ],
   "cR9RtV": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "変更の破棄"
     }
   ],
   "cUW5m8": [
     {
       "type": 0,
-      "value": "Select the checkbox to choose this connection."
+      "value": "この接続を選択するには、チェック ボックスをオンにします。"
     }
   ],
   "ca/QIc": [
     {
       "type": 0,
-      "value": "Error Message"
+      "value": "エラー メッセージ"
     }
   ],
   "ceVB5l": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output from an action."
+      "value": "アクションからのマルチパート出力に含まれるパートの本文を返します。"
     }
   ],
   "cgq/+y": [
@@ -5403,7 +5441,7 @@
   "ciLkfU": [
     {
       "type": 0,
-      "value": "Bold (⌘B)"
+      "value": "太字 (⌘B)"
     }
   ],
   "cj+kyo": [
@@ -5415,7 +5453,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
+      "value": "入力ノードの種類が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "cmTCsW": [
@@ -5445,43 +5483,43 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "Generate XSLT first before attempting to test mappings."
+      "value": "マッピングをテストする前に、XSLT を生成してください。"
     }
   ],
   "cvp9VP": [
     {
       "type": 0,
-      "value": "Error code"
+      "value": "エラー コード"
     }
   ],
   "cyEBus": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Cuiaba"
-    }
-  ],
-  "d+MjsE": [
-    {
-      "type": 0,
-      "value": "Enter a valid dictionary."
+      "value": "(UTC-04:00) クイアバ"
     }
   ],
   "d020eg": [
     {
       "type": 0,
-      "value": "Returns the first element from the passed-in array or string."
+      "value": "渡された配列または文字列の最初の要素を返します"
     }
   ],
   "dBWIjR": [
     {
       "type": 0,
-      "value": "Schema is missing required inputs"
+      "value": "スキーマに必要な入力がありません"
     }
   ],
   "dBxX0M": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "トリガーの追加"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "キー値モードに切り替え"
     }
   ],
   "dDYCuU": [
@@ -5493,7 +5531,7 @@
   "dL9V5t": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "マネージド ID"
     }
   ],
   "dOpdsP": [
@@ -5505,13 +5543,13 @@
   "dPa7+6": [
     {
       "type": 0,
-      "value": "Generate"
+      "value": "生成"
     }
   ],
   "dQmi91": [
     {
       "type": 0,
-      "value": "Frequency"
+      "value": "頻度"
     }
   ],
   "dSTRb/": [
@@ -5539,13 +5577,13 @@
   "dfNjw1": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "閉じる"
     }
   ],
   "dfmH55": [
     {
       "type": 0,
-      "value": "Italic (Ctrl+I)"
+      "value": "斜体 (Ctrl+I)"
     }
   ],
   "dhvk0u": [
@@ -5575,7 +5613,7 @@
   "dwrqEc": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "警告"
     }
   ],
   "dxh2CJ": [
@@ -5587,7 +5625,7 @@
   "e+GuGo": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "入力"
     }
   ],
   "e00zot": [
@@ -5599,7 +5637,7 @@
   "e4JZEY": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Tomsk"
+      "value": "(UTC+07:00) トムスク"
     }
   ],
   "e4Onhn": [
@@ -5611,31 +5649,31 @@
   "e9OvzW": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "クリア"
     }
   ],
   "e9bIKh": [
     {
       "type": 0,
-      "value": "Failed to generate XSLT."
+      "value": "XSLT を生成できませんでした。"
     }
   ],
   "eFet4K": [
     {
       "type": 0,
-      "value": "Action Tracking ID"
+      "value": "アクションの追跡 ID"
     }
   ],
   "eFnLWK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) 中央アメリカ"
     }
   ],
   "eHgfpz": [
     {
       "type": 0,
-      "value": "Please enter a valid URL"
+      "value": "有効な URL を入力してください"
     }
   ],
   "eHgi14": [
@@ -5665,13 +5703,13 @@
   "ehIBkh": [
     {
       "type": 0,
-      "value": "Enter an integer"
+      "value": "整数を入力してください"
     }
   ],
   "elD6+N": [
     {
       "type": 0,
-      "value": "Italic (⌘I)"
+      "value": "斜体 (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5713,7 +5751,7 @@
   "f81ClO": [
     {
       "type": 0,
-      "value": "Empty dynamic content icon"
+      "value": "空の動的コンテンツ アイコン"
     }
   ],
   "fBQBw/": [
@@ -5731,7 +5769,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "Select an API Management resource"
+      "value": "Azure API Management リソースの選択"
     }
   ],
   "fGcSFd": [
@@ -5743,19 +5781,19 @@
   "fKYuwf": [
     {
       "type": 0,
-      "value": "Please select file or image"
+      "value": "ファイルまたはイメージを選択してください"
     }
   ],
   "fVG5aD": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Haiti"
+      "value": "(UTC-05:00) ハイチ"
     }
   ],
   "faUrud": [
     {
       "type": 0,
-      "value": "Loading connection data..."
+      "value": "接続データを読み込んでいます..."
     }
   ],
   "fc1AV8": [
@@ -5781,19 +5819,19 @@
   "fifSPb": [
     {
       "type": 0,
-      "value": "(UTC-03:30) Newfoundland"
+      "value": "(UTC-03:30) ニューファンドランド"
     }
   ],
   "fmm7Ik": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "関数"
     }
   ],
   "fp8Ry3": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) 北京、重慶、香港特別行政区、ウルムチ"
     }
   ],
   "ftwXvc": [
@@ -5805,7 +5843,7 @@
   "g076bL": [
     {
       "type": 0,
-      "value": "Email"
+      "value": "電子メール"
     }
   ],
   "g1zwch": [
@@ -5823,7 +5861,7 @@
   "g5A6Bn": [
     {
       "type": 0,
-      "value": "Runtime"
+      "value": "ランタイム"
     }
   ],
   "g7my78": [
@@ -5865,13 +5903,13 @@
   "gIx5ys": [
     {
       "type": 0,
-      "value": "Format text as italic. Shortcut: Ctrl+I"
+      "value": "テキストを斜体で書式設定します。ショートカット: Ctrl+I"
     }
   ],
   "gKEaXI": [
     {
       "type": 0,
-      "value": "Copy the value of {label} to the clipboard"
+      "value": "{label} の値をクリップボードにコピーします"
     }
   ],
   "gKq3Jv": [
@@ -5889,43 +5927,43 @@
   "gRUmiA": [
     {
       "type": 0,
-      "value": "Info"
+      "value": "情報"
     }
   ],
   "gWyYg0": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00) アシハバード、タシケント"
     }
   ],
   "gc6v4X": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "システム割り当てマネージド ID"
     }
   ],
   "gfBWfH": [
     {
       "type": 0,
-      "value": "Email"
+      "value": "電子メール"
     }
   ],
   "ginGIZ": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+      "value": "(UTC-06:00) グアダラハラ、メキシコシティ、モンテレー"
     }
   ],
   "gkY5ya": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "削除"
     }
   ],
   "gpUphl": [
     {
       "type": 0,
-      "value": "Enter the audience."
+      "value": "対象ユーザーを入力してください。"
     }
   ],
   "gu9o9z": [
@@ -5937,13 +5975,13 @@
   "gvDMuq": [
     {
       "type": 0,
-      "value": "Select a Batch Workflow resource"
+      "value": "バッチ ワークフロー リソースの選択"
     }
   ],
   "h+W3VW": [
     {
       "type": 0,
-      "value": "Number"
+      "value": "数値"
     }
   ],
   "h1lQDa": [
@@ -5955,13 +5993,13 @@
   "h40rpg": [
     {
       "type": 0,
-      "value": "Specify interval in ISO 8601 format."
+      "value": "ISO 8601 形式で間隔を指定します。"
     }
   ],
   "h6vVbX": [
     {
       "type": 0,
-      "value": "Add a source schema first, then select elements to build your map"
+      "value": "最初にソース スキーマを追加してから、マップを作成する要素を選択します"
     }
   ],
   "hN7iBP": [
@@ -5994,13 +6032,13 @@
   "hZqQdt": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Gaza, Hebron"
+      "value": "(UTC+02:00) ガザ、ヘブロン"
     }
   ],
   "hic23z": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "値が大きすぎます。"
     }
   ],
   "hq1mk6": [
@@ -6030,7 +6068,7 @@
   "htj+eZ": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "ターゲット スキーマの更新"
     }
   ],
   "hvbclb": [
@@ -6042,7 +6080,7 @@
   "hza/cT": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Casablanca"
+      "value": "(UTC+00:00) カサブランカ"
     }
   ],
   "i/SguY": [
@@ -6060,13 +6098,13 @@
   "i0XjL5": [
     {
       "type": 0,
-      "value": "Search for operation"
+      "value": "操作の検索"
     }
   ],
   "i1EQYm": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Harare, Pretoria"
+      "value": "(UTC+02:00) ハラーレ、プレトリア"
     }
   ],
   "i1Tufp": [
@@ -6090,7 +6128,13 @@
   "i4Om5O": [
     {
       "type": 0,
-      "value": "This contains an invalid value"
+      "value": "無効な値が含まれています"
+    }
+  ],
+  "iB8YKD": [
+    {
+      "type": 0,
+      "value": "[情報] タブ"
     }
   ],
   "iCSHJG": [
@@ -6154,7 +6198,7 @@
   "iTKrs8": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "改ページ"
     }
   ],
   "iU1OJh": [
@@ -6178,13 +6222,19 @@
   "iVMVAt": [
     {
       "type": 0,
-      "value": "Example: 0, 10"
+      "value": "例: 0、10"
     }
   ],
   "idQjOP": [
     {
       "type": 0,
       "value": "プロパティ"
+    }
+  ],
+  "ifnOUI": [
+    {
+      "type": 0,
+      "value": "[コード ビュー] タブ"
     }
   ],
   "iq+tiv": [
@@ -6206,13 +6256,13 @@
   "isnFBi": [
     {
       "type": 0,
-      "value": "Elements and mappings not connected to a target element are removed."
+      "value": "ターゲット要素に接続されていない要素とマッピングは削除されます。"
     }
   ],
   "ixhS47": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "渡された文字列のタイムスタンプに 1日の開始を返します"
     }
   ],
   "iy8rNf": [
@@ -6236,7 +6286,7 @@
   "j5z8Vd": [
     {
       "type": 0,
-      "value": "Repeating"
+      "value": "繰り返し"
     }
   ],
   "jA6Wrp": [
@@ -6254,7 +6304,7 @@
   "jHKc3w": [
     {
       "type": 0,
-      "value": "Other"
+      "value": "その他"
     }
   ],
   "jKsMS6": [
@@ -6278,19 +6328,19 @@
   "jQ7UzV": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) アリューシャン諸島"
     }
   ],
   "jQjteB": [
     {
       "type": 0,
-      "value": "Add a source schema"
+      "value": "ソース スキーマの追加"
     }
   ],
   "jUDhbs": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "ターゲット スキーマ"
     }
   ],
   "jVpanH": [
@@ -6302,7 +6352,7 @@
   "jZjgYZ": [
     {
       "type": 0,
-      "value": "No resources of this type found under this subscription."
+      "value": "この種類のリソースは、このサブスクリプションで見つかりません。"
     }
   ],
   "jcA3Ig": [
@@ -6356,19 +6406,19 @@
   "kBOAkT": [
     {
       "type": 0,
-      "value": "Select Fields"
+      "value": "フィールドを選択"
     }
   ],
   "kBSLfu": [
     {
       "type": 0,
-      "value": "Duplicate property name"
+      "value": "プロパティ名が重複しています"
     }
   ],
   "kEI2xx": [
     {
       "type": 0,
-      "value": "Message"
+      "value": "メッセージ"
     }
   ],
   "kHcCxH": [
@@ -6392,7 +6442,7 @@
   "kM+Mr0": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "読み込んでいます..."
     }
   ],
   "kN6kce": [
@@ -6404,13 +6454,13 @@
   "kSK9Pq": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+      "value": "(UTC-05:00) ボゴタ、リマ、キト、リオ ブランコ"
     }
   ],
   "kVwJXt": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) アブダビ、マスカット"
     }
   ],
   "kYivbS": [
@@ -6446,13 +6496,13 @@
   "kxMDyM": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "l/9YHQ": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Windhoek"
+      "value": "(UTC+01:00) ウィントフック"
     }
   ],
   "l36V56": [
@@ -6473,16 +6523,22 @@
       "value": " 分"
     }
   ],
+  "l536iI": [
+    {
+      "type": 0,
+      "value": "[監視] タブ"
+    }
+  ],
   "l72gf4": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "マネージド ID"
     }
   ],
   "lM9qrG": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Nuku'alofa"
+      "value": "(UTC+13:00) ヌクアロファ"
     }
   ],
   "lPTdSf": [
@@ -6494,25 +6550,25 @@
   "lQNKUB": [
     {
       "type": 0,
-      "value": "A line for the parent element is added automatically."
+      "value": "親要素の行が自動的に追加されます。"
     }
   ],
   "lR7V87": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "関数"
     }
   ],
   "lUm6fl": [
     {
       "type": 0,
-      "value": "Return"
+      "value": "返す"
     }
   ],
   "lUvgiW": [
     {
       "type": 0,
-      "value": "The type for {0} is {1}."
+      "value": "{0} の種類は {1} です。"
     }
   ],
   "lZT0JI": [
@@ -6527,24 +6583,10 @@
       "value": "がスキップされます"
     }
   ],
-  "lcxLiq": [
-    {
-      "type": 0,
-      "value": "有効なアレイを入力してください"
-    }
-  ],
   "lexzgJ": [
     {
       "type": 0,
-      "value": "Remove all references to element ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the element."
+      "value": "すべての要素 {nodeName} への参照を削除してから、この要素を削除してください。"
     }
   ],
   "lgs5sf": [
@@ -6556,7 +6598,7 @@
   "lhL/KL": [
     {
       "type": 0,
-      "value": "Normal"
+      "value": "標準"
     }
   ],
   "ljAOR6": [
@@ -6568,19 +6610,19 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "Insert Expression (You can also add by typing / in the editor)"
+      "value": "式の挿入 (エディターで「/」を入力して追加することもできます)"
     }
   ],
   "lsKVU6": [
     {
       "type": 0,
-      "value": "Select an action type"
+      "value": "アクション タイプを選択する"
     }
   ],
   "lwlg2K": [
     {
       "type": 0,
-      "value": "Underline (Ctrl+U)"
+      "value": "下線 (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -6592,7 +6634,7 @@
   "m/jJ/5": [
     {
       "type": 0,
-      "value": "Map checker"
+      "value": "マップ チェッカー"
     }
   ],
   "m7Y6Qf": [
@@ -6616,7 +6658,7 @@
   "mCKsFw": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+      "value": "(UTC+07:00) バルナウル、ゴルノ・アルタイスク"
     }
   ],
   "mCzkXX": [
@@ -6633,12 +6675,12 @@
   ],
   "mGPqAg": [
     {
-      "type": 0,
-      "value": "Delete "
-    },
-    {
       "type": 1,
       "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " の削除"
     }
   ],
   "mGUdCO": [
@@ -6668,7 +6710,7 @@
   "mPuXlv": [
     {
       "type": 0,
-      "value": "Invalid type on split on value '"
+      "value": "値 '"
     },
     {
       "type": 1,
@@ -6676,13 +6718,13 @@
     },
     {
       "type": 0,
-      "value": "', split on not in array."
+      "value": "' の分割の種類が無効です。分割が配列にありません。"
     }
   ],
   "mQotIu": [
     {
       "type": 0,
-      "value": "Select Connection"
+      "value": "接続を選択"
     }
   ],
   "mYQFtf": [
@@ -6706,13 +6748,13 @@
   "meVkB6": [
     {
       "type": 0,
-      "value": "Empty property name"
+      "value": "空のプロパティ名"
     }
   ],
   "mej02C": [
     {
       "type": 0,
-      "value": "(UTC+08:30) Pyongyang"
+      "value": "(UTC+08:30) 平壌"
     }
   ],
   "mjS/k1": [
@@ -6734,7 +6776,7 @@
     },
     {
       "type": 0,
-      "value": " Value"
+      "value": " 値"
     }
   ],
   "mwEHSX": [
@@ -6770,7 +6812,7 @@
   "n42uAO": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Santiago"
+      "value": "(UTC-04:00) サンティアゴ"
     }
   ],
   "n4V2Hi": [
@@ -6788,7 +6830,7 @@
   "nCa0KG": [
     {
       "type": 0,
-      "value": "Internal Errors"
+      "value": "内部エラー"
     }
   ],
   "nGds/r": [
@@ -6806,25 +6848,25 @@
   "nNWAAh": [
     {
       "type": 0,
-      "value": "No schema is added."
+      "value": "スキーマが追加されていません。"
     }
   ],
   "nOWGAV": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "終了時刻"
     }
   ],
   "nOhve4": [
     {
       "type": 0,
-      "value": "Yes/No"
+      "value": "はい/いいえ"
     }
   ],
   "nRpM02": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "カスタム"
     }
   ],
   "nSan4V": [
@@ -6842,7 +6884,7 @@
   "nVDG00": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) クリスマス島"
     }
   ],
   "nZ4nLn": [
@@ -6860,7 +6902,7 @@
   "njGstq": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05:45) カトマンズ"
     }
   ],
   "nkk1mu": [
@@ -6872,7 +6914,7 @@
   "no/SMg": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Brisbane"
+      "value": "(UTC+10:00) ブリスベン"
     }
   ],
   "nx25nq": [
@@ -6884,7 +6926,7 @@
   "ny75Ly": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "パラメーターの既定値を入力してください。"
     }
   ],
   "o/0SEj": [
@@ -6896,7 +6938,7 @@
   "o/FgET": [
     {
       "type": 0,
-      "value": "Function was removed from the current location and currently exists elsewhere."
+      "value": "関数は現在の場所から削除され、現時点で別の場所に存在します。"
     }
   ],
   "o14STH": [
@@ -6922,25 +6964,25 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "Enter a valid uri."
+      "value": "有効な URL を入力してください。"
     }
   ],
   "o3SfI4": [
     {
       "type": 0,
-      "value": "Zoom to fit"
+      "value": "ウィンドウのサイズに合わせて大きさを変更"
     }
   ],
   "o7bd1o": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) テヘラン"
     }
   ],
   "o8ohVV": [
     {
       "type": 0,
-      "value": "Schema Id"
+      "value": "スキーマ ID"
     }
   ],
   "oAFcW6": [
@@ -6952,7 +6994,7 @@
   "oDHXKh": [
     {
       "type": 0,
-      "value": "Item"
+      "value": "項目"
     }
   ],
   "oLtwMw": [
@@ -6961,28 +7003,34 @@
       "value": "コンテンツ転送"
     }
   ],
+  "oMphsh": [
+    {
+      "type": 0,
+      "value": "設定"
+    }
+  ],
   "oO12r6": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Baja California"
+      "value": "(UTC-08:00) バハカリフォルニア"
     }
   ],
   "oQjIWf": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "エラー"
     }
   ],
   "oR2x4N": [
     {
       "type": 0,
-      "value": "Invalid integer value"
+      "value": "整数値が無効です"
     }
   ],
   "oTBkbU": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "出力"
     }
   ],
   "oV0xQ9": [
@@ -6994,7 +7042,7 @@
   "oVVPst": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "保存されていないすべての変更を破棄しますか?"
     }
   ],
   "odQ554": [
@@ -7006,19 +7054,19 @@
   "onXUu0": [
     {
       "type": 0,
-      "value": "Add a note"
+      "value": "メモを追加する"
     }
   ],
   "ox2Ou7": [
     {
       "type": 0,
-      "value": "Enter a valid JSON"
+      "value": "有効な JSON を入力してください"
     }
   ],
   "oxXV4+": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the passed-in argument values."
+      "value": "渡された引数値のうち null 以外の最初のオブジェクトを返します。"
     }
   ],
   "p/0r2N": [
@@ -7036,7 +7084,7 @@
   "p1IEXb": [
     {
       "type": 0,
-      "value": "Enter the data from previous step. You can also add data by typing the '/' character."
+      "value": "前の手順のデータを入力します。「/」文字を入力してデータを追加することもできます。"
     }
   ],
   "p1Qtm5": [
@@ -7048,7 +7096,7 @@
   "p5ZID0": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) クウェート、リヤド"
     }
   ],
   "pC2nr2": [
@@ -7072,7 +7120,7 @@
   "pMms92": [
     {
       "type": 0,
-      "value": "Insert Dynamic Content"
+      "value": "動的なコンテンツの挿入"
     }
   ],
   "pOTcUO": [
@@ -7090,7 +7138,7 @@
   "pYNzbj": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "パス"
     }
   ],
   "pYtSyE": [
@@ -7102,7 +7150,7 @@
   "pcGqoB": [
     {
       "type": 0,
-      "value": "Error loading outputs"
+      "value": "出力の読み込み中にエラーが発生しました"
     }
   ],
   "pcuZKB": [
@@ -7135,6 +7183,12 @@
       "value": "セキュリティ"
     }
   ],
+  "q+ZZjX": [
+    {
+      "type": 0,
+      "value": "再試行の履歴"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -7162,13 +7216,13 @@
   "q4ChjK": [
     {
       "type": 0,
-      "value": "Select workflow with 'manual' trigger"
+      "value": "'手動' トリガーを持つワークフローの選択"
     }
   ],
   "q5TkqE": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is false."
+      "value": "必須。式が false の場合に返す値。"
     }
   ],
   "q87X20": [
@@ -7180,13 +7234,13 @@
   "q8vnZQ": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+      "value": "指定されたスキーマに照らして要求の本体を検証します。不一致がある場合、HTTP 400 が返されます。"
     }
   ],
   "qAlTD5": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: '"
+      "value": "サポートされていないマニフェスト接続参照形式: '"
     },
     {
       "type": 1,
@@ -7200,7 +7254,7 @@
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Format text as underline. Shortcut: ⌘U"
+      "value": "テキストを下線付きで書式設定します。ショートカット: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7242,7 +7296,7 @@
   "qUMXpq": [
     {
       "type": 0,
-      "value": "Swagger Endpoint"
+      "value": "Swagger エンドポイント"
     }
   ],
   "qUWBUX": [
@@ -7275,11 +7329,17 @@
   "qiIs4V": [
     {
       "type": 0,
-      "value": "Example: "
+      "value": "例: "
     },
     {
       "type": 1,
       "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "既定の表示モードに切り替える"
     }
   ],
   "qnI4Y1": [
@@ -7291,7 +7351,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "関数 \""
     },
     {
       "type": 1,
@@ -7299,7 +7359,7 @@
     },
     {
       "type": 0,
-      "value": "' has an input with a mismatched type"
+      "value": "\" の入力の型が一致しません"
     }
   ],
   "qrxi0L": [
@@ -7311,7 +7371,7 @@
   "r/n6/9": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "値を入力してください"
     }
   ],
   "r43nMc": [
@@ -7323,7 +7383,7 @@
   "r7vZ5a": [
     {
       "type": 0,
-      "value": "Minimum Interval"
+      "value": "最小間隔"
     }
   ],
   "r8aZXs": [
@@ -7341,7 +7401,7 @@
   "rAwCdh": [
     {
       "type": 0,
-      "value": "Connect via on-premises data gateway"
+      "value": "オンプレミス データ ゲートウェイ経由で接続"
     }
   ],
   "rAyuzv": [
@@ -7371,13 +7431,13 @@
   "rNi5Y3": [
     {
       "type": 0,
-      "value": "Select this checkbox if you're setting up an on-premises connection."
+      "value": "オンプレミスの接続を設定する場合は、このチェック ボックスをオンにします。"
     }
   ],
   "rSIBjh": [
     {
       "type": 0,
-      "value": "Enter value for parameter."
+      "value": "パラメーターの値を入力してください。"
     }
   ],
   "raBiud": [
@@ -7395,13 +7455,13 @@
   "rd6fai": [
     {
       "type": 0,
-      "value": "Use left and right arrow keys to navigate between commands"
+      "value": "左右の矢印キーを使用してコマンド間を移動します"
     }
   ],
   "rsdJcV": [
     {
       "type": 0,
-      "value": "Select source schema elements to build your map"
+      "value": "マップを構築するソース スキーマ要素の選択"
     }
   ],
   "rv0Pn+": [
@@ -7413,19 +7473,19 @@
   "rxIJfD": [
     {
       "type": 0,
-      "value": "(UTC+09:30) Darwin"
+      "value": "(UTC+09:30) ダーウィン"
     }
   ],
   "rxMXmZ": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Port Louis"
+      "value": "(UTC+04:00) ポートルイス"
     }
   ],
   "s+4LEa": [
     {
       "type": 0,
-      "value": "Open folder"
+      "value": "フォルダーを開く"
     }
   ],
   "s5RV9B": [
@@ -7446,10 +7506,16 @@
       "value": "form-data または form-encoded トリガー出力のキー名と一致する値のアレイを返します"
     }
   ],
+  "sEqLTV": [
+    {
+      "type": 0,
+      "value": "[テスト] タブ"
+    }
+  ],
   "sFbnCs": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Chetumal"
+      "value": "(UTC-05:00) チェトゥマル"
     }
   ],
   "sFwHQc": [
@@ -7461,7 +7527,7 @@
   "sQ2vRs": [
     {
       "type": 0,
-      "value": "Add Case"
+      "value": "ケースの追加"
     }
   ],
   "sW47JR": [
@@ -7473,7 +7539,7 @@
   "sYQDN+": [
     {
       "type": 0,
-      "value": "Formatting options for font family"
+      "value": "フォント ファミリの書式設定オプション"
     }
   ],
   "sZ0G/Z": [
@@ -7485,7 +7551,7 @@
   "sZHTQV": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Chita"
+      "value": "(UTC+09:00) チタ"
     }
   ],
   "sbPZ9S": [
@@ -7533,13 +7599,13 @@
   "sv+IcU": [
     {
       "type": 0,
-      "value": "Unable to generate data map definition"
+      "value": "データ マップ定義を生成できません"
     }
   ],
   "sw6EXK": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状態"
     }
   ],
   "syiNc+": [
@@ -7557,7 +7623,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic inputs. Error details: '"
+      "value": "動的な入力を取得できませんでした。エラーの詳細: '"
     },
     {
       "type": 1,
@@ -7577,13 +7643,13 @@
   "tAbbH8": [
     {
       "type": 0,
-      "value": "Too many inputs assigned"
+      "value": "割り当てられた入力が多すぎます"
     }
   ],
   "tAeKNh": [
     {
       "type": 0,
-      "value": "Simple"
+      "value": "シンプル"
     }
   ],
   "tE7Zam": [
@@ -7619,7 +7685,7 @@
   "tJMHcJ": [
     {
       "type": 0,
-      "value": "Select Connection Reference"
+      "value": "接続参照の選択"
     }
   ],
   "tLZ9Sh": [
@@ -7637,7 +7703,7 @@
   "tMdcE1": [
     {
       "type": 0,
-      "value": "Invalid connection, please update your connection to load complete details"
+      "value": "接続が無効です。完全な詳細を読み込むために接続を更新してください"
     }
   ],
   "tNoZx2": [
@@ -7649,19 +7715,19 @@
   "tUCptx": [
     {
       "type": 0,
-      "value": "Insert Link"
+      "value": "リンクの挿入"
     }
   ],
   "tUU4ak": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Chokurdakh"
+      "value": "(UTC+11:00) チョクルダフ"
     }
   ],
   "tUYXRA": [
     {
       "type": 0,
-      "value": "Example: 2017-03-24T15:00:00Z"
+      "value": "例: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -7673,21 +7739,17 @@
   "tWV2mC": [
     {
       "type": 0,
-      "value": "at "
+      "value": "毎時 "
     },
     {
       "type": 1,
       "value": "times"
-    },
-    {
-      "type": 0,
-      "value": " every hour"
     }
   ],
   "tZIlCA": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) 太平洋標準時 (米国およびカナダ)"
     }
   ],
   "tZj2Xn": [
@@ -7705,13 +7767,13 @@
   "tarDYT": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second."
+      "value": "1 番目の引数が 2 番目の引数より小さい場合は true を返します。"
     }
   ],
   "td5//c": [
     {
       "type": 0,
-      "value": "Collapse tree node"
+      "value": "ツリー ノードの折りたたみ"
     }
   ],
   "ti5TEd": [
@@ -7723,7 +7785,7 @@
   "tqqUHX": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) チャタム諸島"
     }
   ],
   "tsmuoF": [
@@ -7735,7 +7797,7 @@
   "u81zB9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) 協定世界時-09"
     }
   ],
   "u9tr3k": [
@@ -7747,25 +7809,25 @@
   "uDI1Um": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "状態コード"
     }
   ],
   "uE0A0s": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "(UTC) 協定世界時"
     }
   ],
   "uIurld": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "保存"
     }
   ],
   "uM1i27": [
     {
       "type": 0,
-      "value": "Specify a retry count from 1 to 90"
+      "value": "再試行回数を 1 から 90 までで指定する"
     }
   ],
   "uN4zFU": [
@@ -7777,13 +7839,13 @@
   "uNHpGB": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) バンコク、ハノイ、ジャカルタ"
     }
   ],
   "uOWkHS": [
     {
       "type": 0,
-      "value": "Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: "
+      "value": "動的出力を取得できませんでした。その結果、この操作の出力が後続のアクションで表示されない可能性があります。エラーの詳細: "
     },
     {
       "type": 1,
@@ -7805,7 +7867,7 @@
   "uWf/I5": [
     {
       "type": 0,
-      "value": "Show me"
+      "value": "表示する"
     }
   ],
   "uZH8Qs": [
@@ -7823,7 +7885,7 @@
   "uc3ytS": [
     {
       "type": 0,
-      "value": "Select a runtime"
+      "value": "ランタイムを選択する"
     }
   ],
   "uczA5c": [
@@ -7835,13 +7897,13 @@
   "uesaee": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "式"
     }
   ],
   "uh/+ZN": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) グリーンランド"
     }
   ],
   "ui7GCl": [
@@ -7865,7 +7927,7 @@
   "usCZ7R": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Magadan"
+      "value": "(UTC+11:00) マガダン"
     }
   ],
   "ut5Med": [
@@ -7877,7 +7939,13 @@
   "uwuGU0": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) ヤンゴン (ラングーン)"
+    }
+  ],
+  "uxKRO/": [
+    {
+      "type": 0,
+      "value": "パラメーター"
     }
   ],
   "uzsleE": [
@@ -7889,7 +7957,13 @@
   "v+keTP": [
     {
       "type": 0,
-      "value": "Trigger date"
+      "value": "トリガーの日付"
+    }
+  ],
+  "v0ENVA": [
+    {
+      "type": 0,
+      "value": "読み込み中"
     }
   ],
   "v39HKj": [
@@ -7925,7 +7999,7 @@
   "vT0DCP": [
     {
       "type": 0,
-      "value": "Outputs"
+      "value": "出力"
     }
   ],
   "vVJuus": [
@@ -7950,6 +8024,12 @@
     {
       "type": 0,
       "value": "がタイムアウトしました"
+    }
+  ],
+  "vdKLiR": [
+    {
+      "type": 0,
+      "value": "要求の設定"
     }
   ],
   "vdtKjT": [
@@ -7983,7 +8063,7 @@
   "vvSHR8": [
     {
       "type": 0,
-      "value": "Navigate to element and view children"
+      "value": "要素に移動して子を表示する"
     }
   ],
   "vwH/XV": [
@@ -7995,7 +8075,7 @@
   "vxOc/M": [
     {
       "type": 0,
-      "value": "This contains a duplicate value"
+      "value": "重複する値が含まれています"
     }
   ],
   "vz2gZC": [
@@ -8007,13 +8087,13 @@
   "w0pI5M": [
     {
       "type": 0,
-      "value": "No results found for the specified filters"
+      "value": "指定されたフィルターの結果が見つかりませんでした"
     }
   ],
   "w16qh+": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "クエリ"
     }
   ],
   "w5Hhig": [
@@ -8025,7 +8105,7 @@
   "w8ijDZ": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "折りたたむ"
     }
   ],
   "wEaGWn": [
@@ -8091,25 +8171,25 @@
   "wXJALc": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "メニュー"
     }
   ],
   "wkiETV": [
     {
       "type": 0,
-      "value": "Client Tracking ID"
+      "value": "クライアントの追跡 ID"
     }
   ],
   "wkvUUA": [
     {
       "type": 0,
-      "value": "Input type mismatch"
+      "value": "入力の種類の不一致"
     }
   ],
   "wl7X0l": [
     {
       "type": 0,
-      "value": "Hide mini-map"
+      "value": "ミニマップを非表示にする"
     }
   ],
   "wmDUGV": [
@@ -8133,13 +8213,13 @@
   "wtj07J": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) マルキーズ諸島"
     }
   ],
   "wxaQwD": [
     {
       "type": 0,
-      "value": "(UTC+04:30) Kabul"
+      "value": "(UTC+04:30) カブール"
     }
   ],
   "wzEneQ": [
@@ -8163,25 +8243,25 @@
   "x10E1p": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "状態コード"
     }
   ],
   "x3dWOL": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) アムステルダム、ベルリン、ベルン、ローマ、ストックホルム、ウィーン"
     }
   ],
   "x8kTAX": [
     {
       "type": 0,
-      "value": "Delete note"
+      "value": "メモの削除"
     }
   ],
   "xC1zg3": [
     {
       "type": 0,
-      "value": "Schemas"
+      "value": "スキーマ"
     }
   ],
   "xFQXAI": [
@@ -8199,7 +8279,7 @@
   "xJQeeC": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02:00) イスタンブール"
     }
   ],
   "xLF2Zr": [
@@ -8223,13 +8303,13 @@
   "xSMbKr": [
     {
       "type": 0,
-      "value": "Show raw inputs"
+      "value": "未加工入力の表示"
     }
   ],
   "xSSfKC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) サンピエール・ミクロン"
     }
   ],
   "xV/oyK": [
@@ -8241,13 +8321,25 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "コード"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "テキスト モードに切り替え"
     }
   ],
   "xYyPR8": [
     {
       "type": 0,
       "value": "URI からパスを返します。パスが指定されていない場合は、'/' を返します"
+    }
+  ],
+  "xi2tn6": [
+    {
+      "type": 0,
+      "value": "パラメーター"
     }
   ],
   "xt5TeT": [
@@ -8259,7 +8351,7 @@
   "xwD1VZ": [
     {
       "type": 0,
-      "value": "Loading inputs"
+      "value": "入力の読み込み中"
     }
   ],
   "xwEX2/": [
@@ -8301,13 +8393,13 @@
   "yF2R//": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string."
+      "value": "文字列から文字のサブセットを返します。"
     }
   ],
   "yVFIAQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) カーボベルデ諸島"
     }
   ],
   "yVh9kr": [
@@ -8325,7 +8417,7 @@
   "yjierd": [
     {
       "type": 0,
-      "value": "Invalid expression type '"
+      "value": "式の型 '"
     },
     {
       "type": 1,
@@ -8333,7 +8425,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' が無効です。"
     }
   ],
   "yoCi15": [
@@ -8357,13 +8449,13 @@
   "yuJBmK": [
     {
       "type": 0,
-      "value": "Please enter a number"
+      "value": "数を入力してください"
     }
   ],
   "yucvJE": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) サラエボ、スコピエ、ワルシャワ、ザグレブ"
     }
   ],
   "yyYtZV": [
@@ -8374,16 +8466,12 @@
   ],
   "z/UY4k": [
     {
-      "type": 0,
-      "value": "Navigate to "
-    },
-    {
       "type": 1,
       "value": "folderName"
     },
     {
       "type": 0,
-      "value": " folder"
+      "value": " フォルダーに移動"
     }
   ],
   "z3VuE+": [
@@ -8419,13 +8507,13 @@
   "zNesUZ": [
     {
       "type": 0,
-      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
+      "value": "再試行ポリシーは、接続の例外に加えて、間欠的な障害 (HTTP 状態コード 408、429、5xx として示されています) に適用されます。既定値は、4 回再試行するよう設定された指数間隔のポリシーです。"
     }
   ],
   "zOvGF8": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) アテネ、ブカレスト"
     }
   ],
   "zTKAc9": [
@@ -8443,7 +8531,7 @@
   "zViEGr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) ペトロパブロフスク-カムチャツキー - 廃止"
     }
   ],
   "zcZpHT": [
@@ -8455,7 +8543,7 @@
   "ziXw25": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "削除"
     }
   ],
   "ziYCiA": [
@@ -8473,7 +8561,7 @@
   "zkeKWE": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Caracas"
+      "value": "(UTC-04:00) カラカス"
     }
   ],
   "znGyyU": [

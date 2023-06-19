@@ -5,11 +5,10 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaType } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended, getFileNameAndPath } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
-import type { IDropdownOption } from '@fluentui/react';
 import { DefaultButton, Panel, PrimaryButton } from '@fluentui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -43,14 +42,19 @@ export const ConfigPanel = ({
   const currentTheme = useSelector((state: RootState) => state.app.theme);
 
   const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
-  const [selectedSourceSchema, setSelectedSourceSchema] = useState<IDropdownOption>();
-  const [selectedTargetSchema, setSelectedTargetSchema] = useState<IDropdownOption>();
+  const [selectedSourceSchema, setSelectedSourceSchema] = useState<string>();
+  const [selectedTargetSchema, setSelectedTargetSchema] = useState<string>();
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
   const fetchedSourceSchema = useQuery(
-    [selectedSourceSchema?.text],
-    async () => await getSelectedSchema(selectedSourceSchema?.text ?? ''),
+    [selectedSourceSchema],
+    async () => {
+      if (selectedSourceSchema) {
+        const [fileName, filePath] = getFileNameAndPath(selectedSourceSchema);
+        return await getSelectedSchema(fileName ?? '', filePath);
+      } else return await getSelectedSchema(selectedSourceSchema ?? '', '');
+    },
     {
       ...schemaFileQuerySettings,
       enabled: selectedSourceSchema !== undefined,
@@ -58,8 +62,14 @@ export const ConfigPanel = ({
   );
 
   const fetchedTargetSchema = useQuery(
-    [selectedTargetSchema?.text],
-    async () => await getSelectedSchema(selectedTargetSchema?.text ?? ''),
+    [selectedTargetSchema],
+    async () => {
+      if (selectedTargetSchema) {
+        const [fileName, filePath] = getFileNameAndPath(selectedTargetSchema);
+
+        return await getSelectedSchema(fileName ?? '', filePath);
+      } else return await getSelectedSchema(selectedTargetSchema ?? '', '');
+    },
     {
       ...schemaFileQuerySettings,
       enabled: selectedTargetSchema !== undefined,
@@ -192,9 +202,9 @@ export const ConfigPanel = ({
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
       if (schemaType === SchemaType.Source) {
-        isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema.key === curDataMapOperation.sourceSchema?.name;
+        isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema === curDataMapOperation.sourceSchema?.name;
       } else {
-        isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema.key === curDataMapOperation.targetSchema?.name;
+        isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema === curDataMapOperation.targetSchema?.name;
       }
     } else {
       isNoNewSchemaSelected = !selectedSchemaFile;
