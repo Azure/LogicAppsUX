@@ -939,7 +939,7 @@ export function hasInvalidChars(str: string, invalidChars: string[]): boolean {
 }
 
 /**
- * Returns the closest thing to a "name" on an object.
+ * Returns the closest thing to a "name" on an Azure resource.
  * @arg {any} obj - An object to get the name of.
  * @return {string} - The name of the object.
  */

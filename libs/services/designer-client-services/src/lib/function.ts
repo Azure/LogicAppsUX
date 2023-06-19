@@ -1,10 +1,11 @@
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IFunctionService {
   fetchFunctionApps(): Promise<any>;
   fetchFunctionAppsFunctions(functionAppId: string): Promise<any>;
   fetchFunctionKey(functionId: string): Promise<any>;
-  fetchSwaggerUrl(functionAppId: string): Promise<string>;
+  fetchFunctionAppSwagger(functionAppId: string): Promise<OpenAPIV2.Document>;
   getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any>;
   getOperations(swaggerUrl: string): Promise<any>;
 }

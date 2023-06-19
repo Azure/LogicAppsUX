@@ -1,5 +1,67 @@
 # Logic Apps Designer
 
+## [2.32.0](https://github.com/Azure/LogicAppsUX/compare/v2.31.0...v2.32.0) (2023-06-16)
+
+### Features
+
+- **designer:** Adding batch trigger operation and manifest in Consumption ([#2767](https://github.com/Azure/LogicAppsUX/issues/2767)) ([a50c18b](https://github.com/Azure/LogicAppsUX/commit/a50c18bae4d8d197de8750bb5f29dfe216bb6bfc))
+
+### Bug Fixes
+
+- **designer:** Consumption - Fixing API Management service serialization and deserialization ([#2761](https://github.com/Azure/LogicAppsUX/issues/2761)) ([34f419c](https://github.com/Azure/LogicAppsUX/commit/34f419c17a8cf8a40df59ba9b3c29ae4fd301d22))
+- **designer:** Consumption - Fixing dynamic content in child workflow manifest and loading in designer ([#2771](https://github.com/Azure/LogicAppsUX/issues/2771)) ([044f177](https://github.com/Azure/LogicAppsUX/commit/044f177165cfbcd784d5d142a85380426b7f780f))
+
+## [2.31.0](https://github.com/Azure/LogicAppsUX/compare/v2.30.0...v2.31.0) (2023-06-15)
+
+### Features
+
+- **Data Mapper:** JSON Sequence serialization ([#2738](https://github.com/Azure/LogicAppsUX/issues/2738)) ([6c2bfb7](https://github.com/Azure/LogicAppsUX/commit/6c2bfb78feb4906a6c6df902903b3386382a1788))
+
+### Bug Fixes
+
+- **Designer:** Add missing quotes around reference key for hybrid triggers ([#2745](https://github.com/Azure/LogicAppsUX/issues/2745)) ([97f5bbf](https://github.com/Azure/LogicAppsUX/commit/97f5bbf09d89b1a4da83fc5fd58de1a8a0e7eea5))
+- **Power Automate:** Correctly set data-automation-ids on DOM elements ([#2672](https://github.com/Azure/LogicAppsUX/issues/2672)) ([def2d48](https://github.com/Azure/LogicAppsUX/commit/def2d4815f3a674cd81c52ab808c63cf273c1024))
+
+## [2.30.0](https://github.com/Azure/LogicAppsUX/compare/v2.29.0...v2.30.0) (2023-06-15)
+
+## [2.29.0](https://github.com/Azure/LogicAppsUX/compare/v2.28.0...v2.29.0) (2023-06-14)
+
+### Features
+
+- **designer:** Adding metadata as input parameters for manifest based custom swaggers ([#2747](https://github.com/Azure/LogicAppsUX/issues/2747)) ([82f2099](https://github.com/Azure/LogicAppsUX/commit/82f2099d58b642d6640e0f111b03c0258348b147))
+
+### Bug Fixes
+
+- **Designer:** Fixed trigger serialization check ([#2737](https://github.com/Azure/LogicAppsUX/issues/2737)) ([853ba40](https://github.com/Azure/LogicAppsUX/commit/853ba403e6f6ddcb54966c4d5462fbd7670a3864))
+
+## [2.28.0](https://github.com/Azure/LogicAppsUX/compare/v2.27.0...v2.28.0) (2023-06-13)
+
+### Features
+
+- **Data Mapper:** Able to select schemas from folders within 'Schemas' folder ([#2700](https://github.com/Azure/LogicAppsUX/issues/2700)) ([3999cd3](https://github.com/Azure/LogicAppsUX/commit/3999cd312d414e2a915ace6a65c0cda46d64db87))
+- **Data Mapper:** XML sequence serialization ([#2731](https://github.com/Azure/LogicAppsUX/issues/2731)) ([c2e7189](https://github.com/Azure/LogicAppsUX/commit/c2e7189c55629b61d0f2608cdf5a3d4c75af1f1c))
+- **designer:** Add 'search' function for conditional param dropdown ([#2718](https://github.com/Azure/LogicAppsUX/issues/2718)) ([aad4d33](https://github.com/Azure/LogicAppsUX/commit/aad4d3349f725568762825f5ab9f88dab3290bda))
+- **designer:** Add retry history panel to the monitoring view ([#2721](https://github.com/Azure/LogicAppsUX/issues/2721)) ([4ca69f7](https://github.com/Azure/LogicAppsUX/commit/4ca69f75cf94fd9c3f7e5a46b59dd623a6d55c35))
+
+### Bug Fixes
+
+- **designer:** dictionary and array editor collapsed views erroring ([#2733](https://github.com/Azure/LogicAppsUX/issues/2733)) ([7bca872](https://github.com/Azure/LogicAppsUX/commit/7bca87278f2ea634de3cff7a0894130b6a1bedde))
+- **designer:** Localize panel tab labels ([#2722](https://github.com/Azure/LogicAppsUX/issues/2722)) ([5cf8eb1](https://github.com/Azure/LogicAppsUX/commit/5cf8eb1a5a626c7a58658c63fd6c579579f54fa4))
+
+## [2.27.0](https://github.com/Azure/LogicAppsUX/compare/v2.26.0...v2.27.0) (2023-06-12)
+
+### Features
+
+- **Data Mapper:** Start the map metadata generation ([#2709](https://github.com/Azure/LogicAppsUX/issues/2709)) ([0b29d70](https://github.com/Azure/LogicAppsUX/commit/0b29d702d004c96802253180383944a85c255891))
+- **vscode:** Update logic to disable save button in designer ([#2713](https://github.com/Azure/LogicAppsUX/issues/2713)) ([2a93672](https://github.com/Azure/LogicAppsUX/commit/2a9367217a1cbd5a271e5b93cd43b4a1bd786e25))
+
+### Bug Fixes
+
+- **Designer:** Monitoring - StatusPill component `duration` in tooltip ([#2719](https://github.com/Azure/LogicAppsUX/issues/2719)) ([1d9ae8d](https://github.com/Azure/LogicAppsUX/commit/1d9ae8de797dd7993925bc72e8b565b665c63306))
+- **vscode:** Validation and save of local workflow ([#2649](https://github.com/Azure/LogicAppsUX/issues/2649)) ([d193d41](https://github.com/Azure/LogicAppsUX/commit/d193d416b0a750f9f17942dad90f0bcb1f1558f8))
+
+## [2.26.0](https://github.com/Azure/LogicAppsUX/compare/v2.25.0...v2.26.0) (2023-06-08)
+
 ## [2.26.0](https://github.com/Azure/LogicAppsUX/compare/v2.25.0...v2.26.0) (2023-06-08)
 
 ### Features
@@ -32,6 +94,8 @@
 - **vscode:** Copy/Paste commands in vscode for Mac ([#2653](https://github.com/Azure/LogicAppsUX/issues/2653)) ([5010b8e](https://github.com/Azure/LogicAppsUX/commit/5010b8e7707c331eadb320b966586e3ab3d215ae))
 - **vscode:** Create an OAuth connection to Key vault ([#2657](https://github.com/Azure/LogicAppsUX/issues/2657)) ([7f2f505](https://github.com/Azure/LogicAppsUX/commit/7f2f50531a11fe5bb158bfe95f2a0bb2e647c7bf))
 - **vscode:** Resources image path in readme ([#2698](https://github.com/Azure/LogicAppsUX/issues/2698)) ([20dc4a8](https://github.com/Azure/LogicAppsUX/commit/20dc4a82c4e4174715b835e88593ad202066f903))
+
+## [2.25.0](https://github.com/Azure/LogicAppsUX/compare/v2.24.0...v2.25.0) (2023-06-01)
 
 ## [2.25.0](https://github.com/Azure/LogicAppsUX/compare/v2.24.0...v2.25.0) (2023-06-01)
 

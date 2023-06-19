@@ -47,7 +47,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { SchemaProperty, InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { SchemaProperty, InputParameter } from '@microsoft/parsers-logic-apps';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -58,8 +58,9 @@ import {
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
+  SwaggerParser,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
 import {
   clone,
   equals,
@@ -455,16 +456,15 @@ export const getCustomSwaggerIfNeeded = async (
     return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
   }
   const customSwaggerService = manifestProperties.customSwagger?.service;
+  let swagger: OpenAPIV2.Document | undefined;
   if (customSwaggerService && stepDefinition) {
-    let url: string | undefined;
     if (customSwaggerService.name === CustomSwaggerServiceNames.Function) {
-      url = await FunctionService().fetchSwaggerUrl(stepDefinition.inputs.functionApp.id);
+      swagger = await FunctionService().fetchFunctionAppSwagger(stepDefinition.inputs.functionApp.id);
     } else if (customSwaggerService.name === CustomSwaggerServiceNames.ApiManagement) {
-      // TODO: This probably needs to be adjusted when this function is built
-      url = await ApiManagementService().fetchSwaggerUrl(stepDefinition.inputs.api.id);
+      swagger = await ApiManagementService().fetchApiMSwagger(stepDefinition.inputs.api.id);
     }
-    if (!url) return undefined;
-    return getSwaggerFromEndpoint(url);
+    if (!swagger) return undefined;
+    return new SwaggerParser(swagger);
   }
 
   return undefined;

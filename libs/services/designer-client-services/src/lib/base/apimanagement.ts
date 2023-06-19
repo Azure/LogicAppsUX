@@ -130,10 +130,6 @@ export class ApiManagementInstanceService implements IApiManagementService {
     return schema;
   }
 
-  public async fetchSwaggerUrl(_apimApiId: string): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-
   private async _getSwaggerForAPIM(apimApiId: string): Promise<SwaggerParser> {
     const normalizedName = apimApiId.toLowerCase();
     if (this._swaggers[normalizedName]) {

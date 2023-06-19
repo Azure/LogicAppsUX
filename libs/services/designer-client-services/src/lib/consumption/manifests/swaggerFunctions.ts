@@ -62,7 +62,6 @@ export const selectSwaggerFunctionManifest = {
               operationId: 'getSwaggerFunctionOperations',
             },
             parameters: {
-              type: 'object',
               functionAppId: {
                 parameterReference: 'functionApp.id',
                 required: true,
@@ -81,7 +80,6 @@ export const selectSwaggerFunctionManifest = {
               isInput: true,
             },
             parameters: {
-              type: 'object',
               operationId: {
                 parameterReference: 'operationId',
                 required: true,
@@ -113,7 +111,6 @@ export const selectSwaggerFunctionManifest = {
               },
             },
             parameters: {
-              type: 'object',
               operationId: {
                 parameterReference: 'operationId',
                 required: true,

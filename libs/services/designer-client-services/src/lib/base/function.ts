@@ -76,7 +76,7 @@ export class BaseFunctionService implements IFunctionService {
     return new SwaggerParser(swaggerDoc);
   }
 
-  private async fetchFunctionAppSwagger(functionAppId: string) {
+  public async fetchFunctionAppSwagger(functionAppId: string) {
     const apiDefinitionUrl = await this.fetchSwaggerUrl(functionAppId);
     return this.fetchFunctionSwagger(apiDefinitionUrl);
   }
