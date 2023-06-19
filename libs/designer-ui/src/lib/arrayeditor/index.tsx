@@ -84,8 +84,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   useEffect(() => {
     arrayType === ArrayType.COMPLEX
       ? initializeComplexArrayItems(initialValue, itemSchema, setItems, setIsValid, setCollapsed)
-      : initializeSimpleArrayItems(initialValue, setItems, setIsValid, setCollapsed);
-  }, [arrayType, initialValue, itemSchema]);
+      : initializeSimpleArrayItems(initialValue, itemSchema.type, setItems, setIsValid, setCollapsed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
