@@ -5,7 +5,7 @@
 import { workflowType } from '../../../../../constants';
 import { localize } from '../../../../../localize';
 import { ScriptWorkflowNameStep } from '../../../createCodeless/createCodelessSteps/ScriptSteps/ScriptWorkflowNameStep';
-import { CodelessFunctiontWorkflow } from './CodelessFunctionWorkflow';
+import { CodelessFunctionWorkflow } from './CodelessFunctionWorkflow';
 import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type {
@@ -67,7 +67,7 @@ export class CodeProjectWorkflowStateTypeStep extends AzureWizardPromptStep<IFun
       promptSteps.push(new ScriptWorkflowNameStep());
 
       // Add a step to create the workflow
-      executeSteps.push(await CodelessFunctiontWorkflow.createStep(context));
+      executeSteps.push(await CodelessFunctionWorkflow.createStep(context));
 
       // Set the trigger settings for the context
       for (const key of Object.keys(this.triggerSettings)) {
