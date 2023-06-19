@@ -98,7 +98,7 @@ export const ParametersTab = () => {
           {errorInfo.message}
         </MessageBar>
       ) : null}
-      {!hasParametersToAuthor(inputs?.parameterGroups ?? {}) ? (
+      {!errorInfo && !hasParametersToAuthor(inputs?.parameterGroups ?? {}) ? (
         <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar>
       ) : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
