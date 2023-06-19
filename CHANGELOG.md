@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [2.32.0](https://github.com/Azure/LogicAppsUX/compare/v2.31.0...v2.32.0) (2023-06-16)
+
+
+### Features
+
+* **designer:** Adding batch trigger operation and manifest in Consumption ([#2767](https://github.com/Azure/LogicAppsUX/issues/2767)) ([a50c18b](https://github.com/Azure/LogicAppsUX/commit/a50c18bae4d8d197de8750bb5f29dfe216bb6bfc))
+
+
+### Bug Fixes
+
+* **designer:** Consumption - Fixing API Management service serialization and deserialization ([#2761](https://github.com/Azure/LogicAppsUX/issues/2761)) ([34f419c](https://github.com/Azure/LogicAppsUX/commit/34f419c17a8cf8a40df59ba9b3c29ae4fd301d22))
+* **designer:** Consumption - Fixing dynamic content in child workflow manifest and loading in designer ([#2771](https://github.com/Azure/LogicAppsUX/issues/2771)) ([044f177](https://github.com/Azure/LogicAppsUX/commit/044f177165cfbcd784d5d142a85380426b7f780f))
+
 ## [2.31.0](https://github.com/Azure/LogicAppsUX/compare/v2.30.0...v2.31.0) (2023-06-15)
 
 

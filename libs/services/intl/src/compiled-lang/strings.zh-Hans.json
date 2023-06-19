@@ -1387,7 +1387,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "切换到代码视图模式"
     }
   ],
   "8ND+Yc": [
@@ -2216,7 +2216,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "切换到输入整个数组"
     }
   ],
   "EdzoIs": [
@@ -2651,7 +2651,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "切换到数组项的详细信息输入"
     }
   ],
   "HfrUId": [
@@ -5635,7 +5635,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "切换到键值模式"
     }
   ],
   "dDYCuU": [
@@ -7511,7 +7511,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "切换到默认视图模式"
     }
   ],
   "qnI4Y1": [
@@ -8503,7 +8503,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "切换到文本模式"
     }
   ],
   "xYyPR8": [

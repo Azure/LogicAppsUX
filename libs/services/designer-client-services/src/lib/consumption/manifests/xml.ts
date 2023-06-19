@@ -1,14 +1,6 @@
+import { xmlGroup, xmlValidationOperation } from '../operations';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { SettingScope } from '@microsoft/utils-logic-apps';
-
-const connector: any = {
-  id: 'connectionProviders/xmlOperations',
-  name: 'xmlOperations',
-  properties: {
-    description: 'XML Operations',
-    displayName: 'XML Operations',
-  },
-};
 
 const settings: any = {
   secureData: {},
@@ -19,114 +11,86 @@ const settings: any = {
 
 export const xmlTransformManifest = {
   properties: {
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/xml.svg',
-    brandColor: '#804998',
+    iconUri: xmlValidationOperation.properties.iconUri,
+    brandColor: xmlValidationOperation.properties.brandColor,
     summary: 'Transform XML',
     description: 'Transform XML using XSLT map.',
 
     inputs: {
       type: 'object',
-      required: ['content', 'mapName', 'xsltParameters'],
+      required: ['content', 'integrationAccount'],
       properties: {
-        containerId: {
-          name: 'containerId',
-          title: 'Container Id',
-          summary: 'Function container',
-          description: 'The function container',
-          type: 'string',
-          hideInUI: true,
-          'x-ms-dynamic-values': {
-            operationId: 'xslt_get_containers',
-            'value-collection': 'value',
-            'value-path': 'id',
-            'value-title': 'Name',
-          },
-        },
-        functionId: {
-          name: 'functionId',
-          title: 'Function Id',
-          summary: 'Function',
-          description: 'The function to use for transform',
-          type: 'string',
-          hideInUI: true,
-          'x-ms-dynamic-values': {
-            operationId: 'xslt_get_functions_in_container',
-            parameters: {
-              containerId: {
-                parameter: 'containerId',
-              },
-            },
-            'value-collection': 'value',
-            'value-path': 'id',
-            'value-title': 'properties/name',
-          },
-        },
         content: {
-          name: 'content',
           title: 'Content',
-          summary: 'Content',
           description: 'The XML content to transform',
-          required: true,
           type: 'string',
         },
-        mapName: {
-          name: 'mapName',
-          title: 'Map',
-          summary: 'Map',
-          description: 'The name of the map to use from the associated integration account',
-          required: true,
-          type: 'string',
-          'x-ms-dynamic-values': {
-            operationId: 'xslt_get_maps',
-            'value-collection': 'value',
-            'value-path': 'name',
-            'value-title': 'name',
-            parameters: {
-              $filter: "maptype ne 'liquid'",
-            },
-          },
-        },
-        xsltParameters: {
-          name: 'xsltParameters',
-          title: 'XSLT Parameters',
-          summary: 'Map parameters',
-          description: 'The map parameters',
-          hideInUI: true,
-          schema: {
-            type: 'object',
-            'x-ms-dynamic-schema': {
-              operationId: 'xslt_get_map',
-              parameters: {
-                mapName: {
-                  parameter: 'mapName',
+        integrationAccount: {
+          type: 'object',
+          properties: {
+            map: {
+              type: 'object',
+              properties: {
+                name: {
+                  title: 'Map Name',
+                  type: 'string',
+                  description: 'The name of the map to use from the associated integration account',
+                  'x-ms-dynamic-list': {
+                    dynamicState: {
+                      operationId: 'getMapArtifacts',
+                      parameters: {
+                        $filter: {
+                          value: "maptype ne 'liquid'",
+                        },
+                      },
+                    },
+                    parameters: {},
+                  },
                 },
               },
-              'value-path': 'properties/parametersSchema',
+              required: ['name'],
+            },
+          },
+          required: ['map'],
+        },
+        xsltParameters: {
+          title: 'Map Parameters',
+          description: 'The map parameters',
+          type: 'object',
+          'x-ms-dynamic-properties': {
+            dynamicState: {
+              extension: { operationId: 'getMapSchema' },
+              parameters: {},
+              isInput: true,
+            },
+            parameters: {
+              mapName: {
+                parameterReference: 'integrationAccount.map.name',
+                required: true,
+              },
             },
           },
         },
         transformOptions: {
-          name: 'transformOptions',
           title: 'Transform Options',
-          summary: 'Transform options',
           description: 'The transform options',
           type: 'string',
           visibility: 'advanced',
           'x-ms-editor': 'dropdown',
           'x-ms-editor-options': {
-            multiselect: true,
+            multiSelect: true,
             titleSeparator: ',',
-            items: [
+            options: [
               {
-                title: 'Disable the byte order mark.',
+                displayName: 'Disable the byte order mark.',
                 value: 'DisableByteOrderMark',
               },
               {
-                title: 'Generate text output.',
+                displayName: 'Generate text output.',
                 value: 'GenerateTextOutput',
               },
               {
-                title: 'Apply XSLT output attributes.',
+                displayName: 'Apply XSLT output attributes.',
                 value: 'ApplyXsltOutputAttributes',
               },
             ],
@@ -139,30 +103,23 @@ export const xmlTransformManifest = {
       type: 'object',
       properties: {
         body: {
-          title: 'Body',
+          title: 'Transformed XML',
+          type: 'string',
+          format: 'binary',
         },
       },
     },
-    outputsSchema: {
-      outputPaths: [
-        {
-          outputLocation: ['properties', 'body'],
-          name: 'schema',
-          schema: 'Value',
-        },
-      ],
-    },
     isOutputsOptional: false,
 
-    connector,
+    connector: xmlGroup,
     settings,
   },
 } as OperationManifest;
 
 export const xmlValidationManifest = {
   properties: {
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/xml.svg',
-    brandColor: '#804998',
+    iconUri: xmlValidationOperation.properties.iconUri,
+    brandColor: xmlValidationOperation.properties.brandColor,
     summary: 'XML Validation',
     description: 'Validate XML using schema.',
 
@@ -174,21 +131,32 @@ export const xmlValidationManifest = {
           title: 'Content',
           summary: 'Message Content',
           description: 'The XML content to validate',
-          required: true,
           type: 'string',
         },
-        schemaName: {
-          title: 'Schema Name',
-          summary: 'Schema Name',
-          description: 'The name of the XML schema to use from the associated integration account',
-          type: 'string',
-          visibility: 'important',
-          'x-ms-dynamic-values': {
-            operationId: 'content_and_schema_operation_get_schemas',
-            'value-collection': 'value',
-            'value-path': 'name',
-            'value-title': 'name',
+        integrationAccount: {
+          type: 'object',
+          properties: {
+            schema: {
+              type: 'object',
+              properties: {
+                name: {
+                  title: 'Schema Name',
+                  type: 'string',
+                  'x-ms-visibility': 'important',
+                  description: 'The name of the XML schema to use from the associated integration account',
+                  'x-ms-dynamic-list': {
+                    dynamicState: {
+                      operationId: 'getSchemaArtifacts',
+                      parameters: {},
+                    },
+                    parameters: {},
+                  },
+                },
+              },
+              required: ['name'],
+            },
           },
+          required: ['schema'],
         },
       },
     },
@@ -196,14 +164,14 @@ export const xmlValidationManifest = {
     outputs: {
       type: 'object',
       properties: {
-        transformedXml: {
-          title: 'Transformed XML',
-          type: 'string',
+        body: {
+          title: 'Body',
         },
       },
     },
+    isOutputsOptional: false,
 
-    connector,
+    connector: xmlGroup,
     settings,
   },
 } as OperationManifest;
