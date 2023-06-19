@@ -20,15 +20,11 @@
   "+ZSBrq": [
     {
       "type": 0,
-      "value": "Context menu for "
+      "value": "Menu de contexto do cartão "
     },
     {
       "type": 1,
       "value": "title"
-    },
-    {
-      "type": 0,
-      "value": " card"
     }
   ],
   "+mAJR3": [
@@ -46,7 +42,7 @@
   "/EU/oJ": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'."
+      "value": "Necessário. Uma cadeia que contém o nome do fuso horário do fuso horário de origem. Consulte \"Fusos Horário Predefinidos\" em \"https://go.microsoft.com/fwlink/?linkid=2238292\"."
     }
   ],
   "/I/U8L": [
@@ -172,7 +168,7 @@
   "04AwK7": [
     {
       "type": 0,
-      "value": "Error code: '"
+      "value": "Código de erro: \""
     },
     {
       "type": 1,
@@ -180,7 +176,7 @@
     },
     {
       "type": 0,
-      "value": "', Message: '"
+      "value": "\", Mensagem: \""
     },
     {
       "type": 1,
@@ -188,7 +184,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "06zKZg": [
@@ -212,7 +208,7 @@
   "08e2rO": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
+      "value": "A identidade gerida utilizada nesta operação já não existe. Para continuar, crie uma identidade ou altere a ligação."
     }
   ],
   "09B9CU": [
@@ -325,12 +321,16 @@
   ],
   "0qcKzG": [
     {
+      "type": 0,
+      "value": "O "
+    },
+    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " já não está presente no esquema da operação. Deve remover o mesmo antes de guardar novamente o fluxo de trabalho."
     }
   ],
   "0uj1Li": [
@@ -471,7 +471,7 @@
   "1REk6u": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Introduza um e-mail válido."
     }
   ],
   "1TE0e8": [
@@ -657,7 +657,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Esquemas existentes de"
     }
   ],
   "2gzGrJ": [
@@ -687,7 +687,7 @@
   "2r30S9": [
     {
       "type": 0,
-      "value": "Inserir um novo passo após "
+      "value": "Introduza um novo passo após "
     },
     {
       "type": 1,
@@ -769,7 +769,15 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "Remova primeiro todos os mapeamentos no elemento de origem {nodeName} primeiro."
+      "value": "Remova primeiro todos os mapeamentos no elemento de origem \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" primeiro."
     }
   ],
   "3MTSYZ": [
@@ -1041,13 +1049,13 @@
   "5WhTmH": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "A carregar..."
     }
   ],
   "5akc1Q": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : '"
+      "value": "Valor \"in\" não suportado: \""
     },
     {
       "type": 1,
@@ -1055,7 +1063,7 @@
     },
     {
       "type": 0,
-      "value": "' in Parameter"
+      "value": "\" no Parâmetro"
     }
   ],
   "5b0sKi": [
@@ -1109,13 +1117,13 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "Inserir dados do passo anterior (também pode adicionar escrevendo Alt + / no editor)"
+      "value": "Insira dados do passo anterior (também pode adicionar ao escrever Alt + / no editor)"
     }
   ],
   "62Ypnr": [
     {
       "type": 0,
-      "value": "Error loading operation data"
+      "value": "Erro ao carregar dados da operação"
     }
   ],
   "63/zYN": [
@@ -1139,13 +1147,13 @@
   "6fDYzG": [
     {
       "type": 0,
-      "value": "Failed to load the schema. Please try again."
+      "value": "Falha ao carregar o esquema. Tente novamente."
     }
   ],
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "A função '"
+      "value": "A função \""
     },
     {
       "type": 1,
@@ -1153,7 +1161,7 @@
     },
     {
       "type": 0,
-      "value": "' tem demasiadas entradas atribuídas"
+      "value": "\" tem demasiadas entradas atribuídas"
     }
   ],
   "6jiO7t": [
@@ -1317,7 +1325,7 @@
   "83G5rr": [
     {
       "type": 0,
-      "value": "Specify the interval."
+      "value": "Especifique o intervalo."
     }
   ],
   "83PYuA": [
@@ -1397,7 +1405,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Mudar para o modo de visualização de código"
     }
   ],
   "8ND+Yc": [
@@ -1501,7 +1509,7 @@
   "8zkvmc": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Teste"
     }
   ],
   "9/UeTh": [
@@ -1579,7 +1587,7 @@
   "9W0lck": [
     {
       "type": 0,
-      "value": "Invalid split on value '"
+      "value": "Divisão inválida no valor \""
     },
     {
       "type": 1,
@@ -1587,7 +1595,7 @@
     },
     {
       "type": 0,
-      "value": "', cannot find in outputs."
+      "value": "\"; não se encontra nas saídas."
     }
   ],
   "9YGcT2": [
@@ -1629,13 +1637,13 @@
   "A5Ferh": [
     {
       "type": 0,
-      "value": "Source element removed from view."
+      "value": "Elemento de origem removido da vista."
     }
   ],
   "A8l+k7": [
     {
       "type": 0,
-      "value": "Ocorreu um erro ao executar os seguintes parâmetros de API: '"
+      "value": "Ocorreu um erro ao executar os seguintes parâmetros de API: \""
     },
     {
       "type": 1,
@@ -1643,7 +1651,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "ADM1Z8": [
@@ -1679,7 +1687,7 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "Devolve o índice da n-ª ocorrência de um valor numa cadeia (não sensível a maiúsculas e minúsculas, cultura invariante)."
+      "value": "Devolve o índice da n.ª ocorrência de um valor numa cadeia (não sensível a maiúsculas e minúsculas, cultura invariável)."
     }
   ],
   "Af+Ve0": [
@@ -1691,7 +1699,7 @@
   "AheXMN": [
     {
       "type": 0,
-      "value": "Select frequency."
+      "value": "Selecione a frequência."
     }
   ],
   "AnX5yC": [
@@ -1715,7 +1723,7 @@
   "AsqIUa": [
     {
       "type": 0,
-      "value": "Intervalo máximo"
+      "value": "Intervalo Máximo"
     }
   ],
   "Az0QvG": [
@@ -1856,7 +1864,7 @@
   "BUutcC": [
     {
       "type": 0,
-      "value": "Lista expânte de elementos colateral"
+      "value": "Expandir lista de elementos colaterais"
     }
   ],
   "BYrP8F": [
@@ -1868,7 +1876,7 @@
   "BeqBP7": [
     {
       "type": 0,
-      "value": "Automatic Decompression"
+      "value": "Descompressão Automática"
     }
   ],
   "Bl4Iv0": [
@@ -1994,7 +2002,7 @@
   "CypYLs": [
     {
       "type": 0,
-      "value": "Inserir um novo passo entre "
+      "value": "Insira um novo passo entre "
     },
     {
       "type": 1,
@@ -2070,7 +2078,7 @@
   "DQV7aK": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download '"
+      "value": "Alt/Opção + clique para transferir “"
     },
     {
       "type": 1,
@@ -2078,7 +2086,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "DWd9vy": [
@@ -2162,13 +2170,13 @@
   "E+iim4": [
     {
       "type": 0,
-      "value": "Selecione o fuso horário."
+      "value": "Selecionar fuso horário."
     }
   ],
   "E3+TAA": [
     {
       "type": 0,
-      "value": "O nó de esquema '"
+      "value": "O nó de esquema \""
     },
     {
       "type": 1,
@@ -2176,7 +2184,7 @@
     },
     {
       "type": 0,
-      "value": "' tem uma entrada com um tipo sem correspondência"
+      "value": "\" tem uma entrada com um tipo sem correspondência"
     }
   ],
   "E8iqLl": [
@@ -2244,7 +2252,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Mudar para entrada da matriz completa"
     }
   ],
   "EdzoIs": [
@@ -2276,7 +2284,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Ver o histórico de pedidos para esta operação"
     }
   ],
   "EurkzL": [
@@ -2288,7 +2296,7 @@
   "Ex4U46": [
     {
       "type": 0,
-      "value": "Utilizar Ligação do Invocador"
+      "value": "Utilizar a Ligação do Invocador"
     }
   ],
   "ExaACE": [
@@ -2336,7 +2344,7 @@
   "FIL1Nt": [
     {
       "type": 0,
-      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+      "value": "A condição é demasiado complexa ou inválida. Não é possível mudar para o modo básico."
     }
   ],
   "FIT7i0": [
@@ -2445,13 +2453,13 @@
   "FaBEfQ": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "Propriedades monitorizadas"
     }
   ],
   "Fcvgvg": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Pesquisar"
     }
   ],
   "FiyQjU": [
@@ -2501,7 +2509,7 @@
   "GCjJnP": [
     {
       "type": 0,
-      "value": "Enter a valid Json."
+      "value": "Introduza um ficheiro JSON válido."
     }
   ],
   "GD3m4X": [
@@ -2525,7 +2533,7 @@
   "GEB1on": [
     {
       "type": 0,
-      "value": "Contém um valor que não está entre 0 e 59"
+      "value": "Contém um valor que não está situado entre 0 e 59"
     }
   ],
   "GIUSQs": [
@@ -2549,7 +2557,7 @@
   "GXXLuT": [
     {
       "type": 0,
-      "value": "Introduza um booleano válido."
+      "value": "Introduza um valor booleano válido."
     }
   ],
   "GYvF54": [
@@ -2679,7 +2687,7 @@
   "HOchry": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one."
+      "value": "Selecione uma referência de ligação existente ou crie uma nova."
     }
   ],
   "HQ8/tk": [
@@ -2703,13 +2711,13 @@
   "Hbqlzk": [
     {
       "type": 0,
-      "value": "Insert Expression"
+      "value": "Inserir Expressão"
     }
   ],
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Mudar para entradas de detalhe do item de matriz"
     }
   ],
   "HfrUId": [
@@ -2765,7 +2773,7 @@
     },
     {
       "type": 0,
-      "value": "\" e respetivo valor"
+      "value": "\" e o respetivo valor"
     }
   ],
   "HzS2gJ": [
@@ -2811,13 +2819,13 @@
   "IPbMdl": [
     {
       "type": 0,
-      "value": "Code View"
+      "value": "Vista de Código"
     }
   ],
   "IPwWgu": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jerusalém"
     }
   ],
   "IQyOth": [
@@ -2841,7 +2849,7 @@
   "IXy91L": [
     {
       "type": 0,
-      "value": "Adicionar um esquema de destino"
+      "value": "Adicione um esquema de destino"
     }
   ],
   "IdOhPY": [
@@ -2863,7 +2871,7 @@
   "IjEKvh": [
     {
       "type": 0,
-      "value": "Error executing the api '"
+      "value": "Erro ao executar a API \""
     },
     {
       "type": 1,
@@ -2871,13 +2879,29 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "Io48jC": [
     {
       "type": 0,
-      "value": "As propriedades {0} são inválidas para o tipo de autenticação {1}."
+      "value": "As propriedades \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" são inválidas para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "IooQu1": [
@@ -3063,7 +3087,7 @@
   "KP0Rr2": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Introduza um número Duplo válido."
     }
   ],
   "KX1poC": [
@@ -3120,7 +3144,7 @@
   "KYX5Do": [
     {
       "type": 0,
-      "value": "Sublinhado (⌘U)"
+      "value": "Sublinhado (⌘S)"
     }
   ],
   "KZOa5l": [
@@ -3298,7 +3322,7 @@
   "LvLksz": [
     {
       "type": 0,
-      "value": "Loading outputs"
+      "value": "A carregar saídas"
     }
   ],
   "LvpxiA": [
@@ -3316,7 +3340,7 @@
   "M/gUE8": [
     {
       "type": 0,
-      "value": "About"
+      "value": "Acerca de"
     }
   ],
   "M0xrm+": [
@@ -3436,7 +3460,7 @@
   "Mgcs5s": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Introduza um número válido."
     }
   ],
   "MirIsS": [
@@ -3568,7 +3592,7 @@
   "O27gKq": [
     {
       "type": 0,
-      "value": "A carregar ficheiros..."
+      "value": "A carregar Ficheiros..."
     }
   ],
   "O9ZExg": [
@@ -3580,7 +3604,7 @@
   "ODQCKj": [
     {
       "type": 0,
-      "value": "Converts the input to a JSON type value."
+      "value": "Converter a entrada num valor de tipo JSON."
     }
   ],
   "OEEuUu": [
@@ -3680,7 +3704,7 @@
   "OdoUEu": [
     {
       "type": 0,
-      "value": "Enable Static Result"
+      "value": "Ativar Resultado Estático"
     }
   ],
   "OgJ9eG": [
@@ -3806,7 +3830,7 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "Executa "
+      "value": "É executado "
     },
     {
       "type": 1,
@@ -3876,7 +3900,7 @@
   "Pk4cb+": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "Propriedades monitorizadas"
     }
   ],
   "Pq+4a+": [
@@ -3900,7 +3924,7 @@
   "PvWTxR": [
     {
       "type": 0,
-      "value": "Show functions"
+      "value": "Mostrar funções"
     }
   ],
   "Pvm0xB": [
@@ -3936,7 +3960,7 @@
   "Q5w4Do": [
     {
       "type": 0,
-      "value": "Adicione dados dinâmicos ou expressões ao inserir um /"
+      "value": "Adicione dados dinâmicos ou expressões ao inserir uma /"
     }
   ],
   "Q8HCYK": [
@@ -3982,7 +4006,7 @@
   "QdJUaS": [
     {
       "type": 0,
-      "value": "Pencil icon"
+      "value": "Ícone de lápis"
     }
   ],
   "QeE0k/": [
@@ -4131,7 +4155,7 @@
   "RnBddN": [
     {
       "type": 0,
-      "value": "issue"
+      "value": "problema"
     }
   ],
   "Ro4+PC": [
@@ -4149,7 +4173,7 @@
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "expressão não reconhecida '"
+      "value": "Expressão não reconhecida: \""
     },
     {
       "type": 1,
@@ -4157,7 +4181,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "RvpHdu": [
@@ -4175,7 +4199,7 @@
   "S138/4": [
     {
       "type": 0,
-      "value": "Formatar texto como negrito. Atalho: ⌘B"
+      "value": "Formatar texto como negrito. Atalho: ⌘N"
     }
   ],
   "SCCE6s": [
@@ -4223,7 +4247,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Configurar parâmetros para este nó"
     }
   ],
   "SXb47U": [
@@ -4263,7 +4287,7 @@
   "Sr8PcK": [
     {
       "type": 0,
-      "value": "No operations found"
+      "value": "Não foram encontradas operações"
     }
   ],
   "SvQyvs": [
@@ -4377,7 +4401,7 @@
   "TZh8nV": [
     {
       "type": 0,
-      "value": "no "
+      "value": "nos "
     },
     {
       "type": 1,
@@ -4567,13 +4591,13 @@
   "UZiXVh": [
     {
       "type": 0,
-      "value": "Resultado"
+      "value": "Saída"
     }
   ],
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "O nó de esquema '"
+      "value": "O nó de esquema \""
     },
     {
       "type": 1,
@@ -4581,7 +4605,7 @@
     },
     {
       "type": 0,
-      "value": "' tem uma cadeia de ligação que não está a terminar"
+      "value": "\" tem uma cadeia de ligação sem terminação"
     }
   ],
   "Umpr3z": [
@@ -4601,7 +4625,7 @@
   "Unc2tG": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal."
+      "value": "Devolve verdadeiro se dois valores forem iguais."
     }
   ],
   "UnrrzF": [
@@ -4667,7 +4691,7 @@
   "VI7EqG": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "Não foram encontrados resultados para "
     },
     {
       "type": 1,
@@ -4785,7 +4809,7 @@
   "WK6hZX": [
     {
       "type": 0,
-      "value": "Selecionar todo o texto no "
+      "value": "Selecionar todo o texto em "
     },
     {
       "type": 1,
@@ -4823,7 +4847,7 @@
   "WaTsxR": [
     {
       "type": 0,
-      "value": "Request History"
+      "value": "Histórico de Pedidos"
     }
   ],
   "WcnIF8": [
@@ -4941,7 +4965,7 @@
   "XRK+gt": [
     {
       "type": 0,
-      "value": "A função '"
+      "value": "A função \""
     },
     {
       "type": 1,
@@ -4949,7 +4973,7 @@
     },
     {
       "type": 0,
-      "value": "' tem uma cadeia de ligação que não está a terminar"
+      "value": "\" tem uma cadeia de ligação sem terminação"
     }
   ],
   "XTeLIw": [
@@ -4991,7 +5015,7 @@
   "Xew1Df": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is '"
+      "value": "Mais informações de diagnóstico: x-ms-client-request-id é \""
     },
     {
       "type": 1,
@@ -4999,7 +5023,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "Xj0Gr/": [
@@ -5083,7 +5107,7 @@
   "YABOLz": [
     {
       "type": 0,
-      "value": "Item de Corpo"
+      "value": "Item de corpo"
     }
   ],
   "YCFhzp": [
@@ -5117,7 +5141,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Formatar texto como sublinhado. Atalho: Ctrl+U"
+      "value": "Formatar texto como sublinhado. Atalho: Ctrl+S"
     }
   ],
   "YKXmKD": [
@@ -5135,7 +5159,7 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Formatar texto como negrito. Atalho: Ctrl+B"
+      "value": "Formatar texto como negrito. Atalho: Ctrl+N"
     }
   ],
   "YRk271": [
@@ -5171,7 +5195,7 @@
   "Ybzoim": [
     {
       "type": 0,
-      "value": "Required. The name of the action that has the values you want."
+      "value": "Obrigatório. O nome da ação que tem os valores que pretende."
     }
   ],
   "YdQw4/": [
@@ -5225,7 +5249,7 @@
   "Yw7Nfl": [
     {
       "type": 0,
-      "value": "Disable Static Result"
+      "value": "Desativar Resultado Estático"
     }
   ],
   "Z9PWl/": [
@@ -5239,7 +5263,7 @@
     },
     {
       "type": 0,
-      "value": " para "
+      "value": " a "
     },
     {
       "type": 1,
@@ -5443,7 +5467,7 @@
   "bSZ0lL": [
     {
       "type": 0,
-      "value": "Url de chamada de retorno"
+      "value": "URL de retorno"
     }
   ],
   "bTrk+S": [
@@ -5479,7 +5503,7 @@
   "bldzuj": [
     {
       "type": 0,
-      "value": "Retry History"
+      "value": "Histórico de Novas Tentativas"
     }
   ],
   "bsgS8m": [
@@ -5513,7 +5537,7 @@
   "byTBrn": [
     {
       "type": 0,
-      "value": "Personalizada"
+      "value": "Personalizado"
     }
   ],
   "bzF/qn": [
@@ -5561,7 +5585,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "Descomprimir o corpo do pedido se for comprimido utilizando GZip ou Deflate. Esta definição só é aplicável para o acionador HTTP."
+      "value": "Descomprimir o corpo do pedido se for comprimido através de GZip ou Deflate. Esta definição só é aplicável para o acionador HTTP."
     }
   ],
   "c8UPLp": [
@@ -5591,7 +5615,7 @@
   "cP4UkW": [
     {
       "type": 0,
-      "value": "O intervalo de Política de Repetição é inválido, tem de corresponder ao formato de duração ISO 8601"
+      "value": "O intervalo de Política de Repetição é inválido; o mesmo tem de corresponder ao formato de duração ISO 8601"
     }
   ],
   "cR9RtV": [
@@ -5615,7 +5639,7 @@
   "ceVB5l": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output from an action."
+      "value": "Devolve o corpo de uma parte numa saída de várias partes a partir de uma ação."
     }
   ],
   "cgq/+y": [
@@ -5627,7 +5651,7 @@
   "ciLkfU": [
     {
       "type": 0,
-      "value": "Negrito (⌘B)"
+      "value": "Negrito (⌘N)"
     }
   ],
   "cj+kyo": [
@@ -5639,7 +5663,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "O tipo de nó de entrada não corresponde a um dos tipos permitidos para esta entrada"
+      "value": "O tipo de nó de entrada não corresponde a nenhum dos tipos permitidos para esta entrada"
     }
   ],
   "cmTCsW": [
@@ -5669,7 +5693,7 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "Gerar XSLT primeiro antes de tentar testar mapeamentos."
+      "value": "Gere o ficheiro XSLT primeiro antes de tentar testar mapeamentos."
     }
   ],
   "cvp9VP": [
@@ -5687,7 +5711,7 @@
   "d020eg": [
     {
       "type": 0,
-      "value": "Devolve o primeiro elemento da matriz ou cadeia transmitida."
+      "value": "Devolve o primeiro elemento a partir da matriz ou cadeia transmitida."
     }
   ],
   "dBWIjR": [
@@ -5705,7 +5729,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Mudar para o modo de valor de chave"
     }
   ],
   "dDYCuU": [
@@ -5845,7 +5869,7 @@
   "e9bIKh": [
     {
       "type": 0,
-      "value": "Falha ao gerar XSLT."
+      "value": "Falha ao gerar o ficheiro XSLT."
     }
   ],
   "eFet4K": [
@@ -5893,7 +5917,7 @@
   "ehIBkh": [
     {
       "type": 0,
-      "value": "Enter an integer"
+      "value": "Introduza um número inteiro"
     }
   ],
   "elD6+N": [
@@ -6021,7 +6045,7 @@
   "fp8Ry3": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Pequim, Chongqing, Hong Kong, Urumqi"
     }
   ],
   "ftwXvc": [
@@ -6099,7 +6123,15 @@
   "gKEaXI": [
     {
       "type": 0,
-      "value": "Copiar o valor de {label} para a área de transferência"
+      "value": "Copiar o valor de \""
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "\" para a área de transferência"
     }
   ],
   "gKq3Jv": [
@@ -6165,7 +6197,7 @@
   "gvDMuq": [
     {
       "type": 0,
-      "value": "Selecionar um recurso de Fluxo de Trabalho do Batch"
+      "value": "Selecionar um recurso de Fluxo de Trabalho do Lote"
     }
   ],
   "h+W3VW": [
@@ -6310,7 +6342,7 @@
   "i0XjL5": [
     {
       "type": 0,
-      "value": "Search for operation"
+      "value": "Procurar operação"
     }
   ],
   "i1EQYm": [
@@ -6346,7 +6378,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Separador Acerca de"
     }
   ],
   "iCSHJG": [
@@ -6458,7 +6490,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Separador Vista de Código"
     }
   ],
   "iq+tiv": [
@@ -6720,7 +6752,7 @@
   "kxMDyM": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Introduza um json válido."
     }
   ],
   "l/9YHQ": [
@@ -6750,7 +6782,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Separador Monitorização"
     }
   ],
   "l72gf4": [
@@ -6792,7 +6824,23 @@
   "lUvgiW": [
     {
       "type": 0,
-      "value": "O tipo de {0} é {1}."
+      "value": "O tipo de \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" é \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "lZT0JI": [
@@ -6810,7 +6858,7 @@
   "lexzgJ": [
     {
       "type": 0,
-      "value": "Remove all references to element ' "
+      "value": "Remova todas as referências ao elemento \""
     },
     {
       "type": 1,
@@ -6818,7 +6866,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the element."
+      "value": "\" antes de remover o elemento."
     }
   ],
   "lgs5sf": [
@@ -6842,7 +6890,7 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "Inserir Expressão (também pode adicionar escrevendo / no editor)"
+      "value": "Inserir Expressão (também pode adicionar ao escrever / no editor)"
     }
   ],
   "lsKVU6": [
@@ -6942,7 +6990,7 @@
   "mPuXlv": [
     {
       "type": 0,
-      "value": "Invalid type on split on value '"
+      "value": "Tipo inválido na divisão do valor \""
     },
     {
       "type": 1,
@@ -6950,7 +6998,7 @@
     },
     {
       "type": 0,
-      "value": "', split on not in array."
+      "value": "\"; a divisão não se encontra na matriz."
     }
   ],
   "mQotIu": [
@@ -6980,7 +7028,7 @@
   "meVkB6": [
     {
       "type": 0,
-      "value": "Nome de propriedade vazio"
+      "value": "Nome da propriedade vazio"
     }
   ],
   "mej02C": [
@@ -7004,7 +7052,7 @@
   "mvu5xN": [
     {
       "type": 0,
-      "value": "Valor "
+      "value": "Valor de "
     },
     {
       "type": 1,
@@ -7098,7 +7146,7 @@
   "nRpM02": [
     {
       "type": 0,
-      "value": "Personalizada"
+      "value": "Personalizado"
     }
   ],
   "nSan4V": [
@@ -7238,7 +7286,7 @@
   "oMphsh": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "Definições"
     }
   ],
   "oO12r6": [
@@ -7262,7 +7310,7 @@
   "oTBkbU": [
     {
       "type": 0,
-      "value": "Resultado"
+      "value": "Saída"
     }
   ],
   "oV0xQ9": [
@@ -7292,7 +7340,7 @@
   "ox2Ou7": [
     {
       "type": 0,
-      "value": "Enter a valid JSON"
+      "value": "Introduza um JSON válido"
     }
   ],
   "oxXV4+": [
@@ -7316,7 +7364,7 @@
   "p1IEXb": [
     {
       "type": 0,
-      "value": "Introduza os dados do passo anterior. Também pode adicionar dados escrevendo o caráter \"/\"."
+      "value": "Introduza os dados do passo anterior. Também pode adicionar dados ao introduzir o caráter \"/\"."
     }
   ],
   "p1Qtm5": [
@@ -7418,7 +7466,7 @@
   "q+ZZjX": [
     {
       "type": 0,
-      "value": "Retry History"
+      "value": "Histórico de Novas Tentativas"
     }
   ],
   "q/+Uex": [
@@ -7454,7 +7502,7 @@
   "q5TkqE": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is false."
+      "value": "Obrigatório. O valor a devolver se a expressão for falsa."
     }
   ],
   "q87X20": [
@@ -7472,7 +7520,7 @@
   "qAlTD5": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: '"
+      "value": "Formato de referência de ligação de manifesto não compatível: \""
     },
     {
       "type": 1,
@@ -7480,13 +7528,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\"."
     }
   ],
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Formatar texto como sublinhado. Atalho: ⌘U"
+      "value": "Formatar texto como sublinhado. Atalho: ⌘S"
     }
   ],
   "qGfwxW": [
@@ -7593,7 +7641,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Mudar para modo de visualização predefinido"
     }
   ],
   "qnI4Y1": [
@@ -7605,7 +7653,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "A função '"
+      "value": "A função \""
     },
     {
       "type": 1,
@@ -7613,7 +7661,7 @@
     },
     {
       "type": 0,
-      "value": "' tem uma entrada com um tipo sem correspondência"
+      "value": "\" tem uma entrada com um tipo sem correspondência"
     }
   ],
   "qrxi0L": [
@@ -7655,7 +7703,7 @@
   "rAwCdh": [
     {
       "type": 0,
-      "value": "Connect via on-premises data gateway"
+      "value": "Ligar através do gateway de dados no local"
     }
   ],
   "rAyuzv": [
@@ -7691,7 +7739,7 @@
   "rSIBjh": [
     {
       "type": 0,
-      "value": "Enter value for parameter."
+      "value": "Introduza o valor para o parâmetro."
     }
   ],
   "raBiud": [
@@ -7739,7 +7787,7 @@
   "s+4LEa": [
     {
       "type": 0,
-      "value": "Open folder"
+      "value": "Abrir pasta"
     }
   ],
   "s5RV9B": [
@@ -7763,7 +7811,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Separador Teste"
     }
   ],
   "sFbnCs": [
@@ -7781,7 +7829,7 @@
   "sQ2vRs": [
     {
       "type": 0,
-      "value": "Add Case"
+      "value": "Adicionar Incidente"
     }
   ],
   "sW47JR": [
@@ -7877,7 +7925,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Falha ao obter entradas dinâmicas. Detalhes do erro: '"
+      "value": "Falha ao obter entradas dinâmicas. Detalhes do erro: \""
     },
     {
       "type": 1,
@@ -7885,7 +7933,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "t+XCkg": [
@@ -7969,7 +8017,7 @@
   "tUCptx": [
     {
       "type": 0,
-      "value": "Insert Link"
+      "value": "Inserir Ligação"
     }
   ],
   "tUU4ak": [
@@ -8025,7 +8073,7 @@
   "tarDYT": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second."
+      "value": "Devolve verdadeiro se o primeiro argumento for mais pequeno do que o segundo."
     }
   ],
   "td5//c": [
@@ -8085,7 +8133,7 @@
   "uM1i27": [
     {
       "type": 0,
-      "value": "Specify a retry count from 1 to 90"
+      "value": "Especificar uma contagem de novas tentativas de 1 a 90"
     }
   ],
   "uN4zFU": [
@@ -8103,7 +8151,7 @@
   "uOWkHS": [
     {
       "type": 0,
-      "value": "Falha ao obter saídas dinâmicas. Como resultado, as saídas desta operação podem não estar visíveis em ações subsequentes. Detalhes do erro: "
+      "value": "Falha ao obter saídas dinâmicas. Como resultado, as saídas desta operação poderão não estar visíveis em ações subsequentes. Detalhes do erro: "
     },
     {
       "type": 1,
@@ -8185,7 +8233,7 @@
   "usCZ7R": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Magadã"
+      "value": "(UTC+11:00) Magadan"
     }
   ],
   "ut5Med": [
@@ -8203,7 +8251,7 @@
   "uxKRO/": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parâmetros"
     }
   ],
   "uzsleE": [
@@ -8221,7 +8269,7 @@
   "v0ENVA": [
     {
       "type": 0,
-      "value": "Loading"
+      "value": "A carregar"
     }
   ],
   "v39HKj": [
@@ -8287,7 +8335,7 @@
   "vdKLiR": [
     {
       "type": 0,
-      "value": "Request Settings"
+      "value": "Definições de Pedidos"
     }
   ],
   "vdtKjT": [
@@ -8349,7 +8397,7 @@
   "w0pI5M": [
     {
       "type": 0,
-      "value": "No results found for the specified filters"
+      "value": "Não foram encontrados resultados para os filtros especificados"
     }
   ],
   "w16qh+": [
@@ -8589,7 +8637,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Mudar para o modo de texto"
     }
   ],
   "xYyPR8": [
@@ -8601,7 +8649,7 @@
   "xi2tn6": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parâmetros"
     }
   ],
   "xt5TeT": [
@@ -8613,7 +8661,7 @@
   "xwD1VZ": [
     {
       "type": 0,
-      "value": "Loading inputs"
+      "value": "A carregar entradas"
     }
   ],
   "xwEX2/": [
@@ -8655,7 +8703,7 @@
   "yF2R//": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string."
+      "value": "Devolve um subconjunto de carateres a partir de uma cadeia."
     }
   ],
   "yVFIAQ": [
@@ -8679,7 +8727,7 @@
   "yjierd": [
     {
       "type": 0,
-      "value": "Invalid expression type '"
+      "value": "Tipo de expressão \""
     },
     {
       "type": 1,
@@ -8687,7 +8735,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\" inválido."
     }
   ],
   "yoCi15": [

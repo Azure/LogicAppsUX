@@ -260,10 +260,7 @@ export const serializeOperation = async (
 
   const actionMetadata = rootState.operations.actionMetadata[operationId];
   if (actionMetadata) {
-    serializedOperation = {
-      ...serializedOperation,
-      metadata: actionMetadata,
-    };
+    serializedOperation.metadata = { ...serializedOperation.metadata, ...actionMetadata };
   }
 
   return serializedOperation;
@@ -436,6 +433,13 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
       if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
         serializedParameter.value = replaceTemplatePlaceholders(pathParameters, serializedParameter.value);
         result = serializeParameterWithPath(result, serializedParameter.value, key, serializedParameter);
+      } else if (serializedParameter.info.serialization?.value) {
+        result = serializeParameterWithPath(
+          result,
+          serializedParameter.value ? serializedParameter.value : serializedParameter.info.serialization.value,
+          key,
+          serializedParameter
+        );
       } else if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
         let parameterKey = serializedParameter.parameterKey;
         for (const propertyNameParameter of propertyNameParameters) {
@@ -644,7 +648,7 @@ const serializeHost = (
       return {
         host: {
           connection: {
-            name: "@parameters('$connections')[" + referenceKey + "]['connectionId']",
+            name: `@parameters('$connections')['${referenceKey}']['connectionId']`,
           },
         },
       };

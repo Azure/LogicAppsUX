@@ -39,6 +39,9 @@
       <Item ItemId=";+ZSBrq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Context menu for {title} card]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Místní nabídka pro kartu {title}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -63,6 +66,9 @@
       <Item ItemId=";/EU/oJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Povinný parametr. Řetězec, který obsahuje název zdrojového časového pásma. Podrobnosti najdete v oddílu Výchozí časová pásma na https://go.microsoft.com/fwlink/?linkid=2238292.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -205,7 +211,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Missing required inputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Chybí požadované vstupy.]]></Val>
+            <Val><![CDATA[Chybí požadované vstupy]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -249,6 +255,9 @@
       <Item ItemId=";04AwK7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error code: ''{errorCode}'', Message: ''{message}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kód chyby: ''{errorCode}'', zpráva: ''{message}'']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -282,6 +291,9 @@
       <Item ItemId=";08e2rO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Spravovaná identita použitá s touto operací už neexistuje. Pokud chcete pokračovat, nastavte identitu nebo změňte připojení.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -343,7 +355,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select a target schema node to start mapping]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pokud chcete spustit mapování, vyberte cílový uzel schématu.]]></Val>
+            <Val><![CDATA[Pokud chcete spustit mapování, vyberte cílový uzel schématu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -450,6 +462,9 @@
       <Item ItemId=";0qcKzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{parameterName} is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr {parameterName} se už v operačním schématu nenachází. Než se pracovní postup znovu uloží, měl by se tento parametr odebrat.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -645,6 +660,9 @@
       <Item ItemId=";1REk6u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid email.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte platný e-mail.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -697,7 +715,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Actions perform operations on data, communicate between systems, or run other tasks.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Akce provádějí operace s daty, komunikují mezi systémy nebo spouštějí jiné úlohy.]]></Val>
+            <Val><![CDATA[Akce provádějí operace s daty, komunikují mezi systémy, nebo spouští další úlohy.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -796,7 +814,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add children (recursive)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Přidat podřízené položky (rekurzivní)]]></Val>
+            <Val><![CDATA[Přidat podřízené prvky (rekurzivní)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -832,7 +850,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an API from an API Management instance]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte rozhraní API z instance API Management.]]></Val>
+            <Val><![CDATA[Vyberte rozhraní API z instance API Management]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -918,6 +936,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";2gOfQI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Existing schemas from]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Existující schémata z]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";2gzGrJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the action with a form-data or form-encoded response.]]></Val>
@@ -940,7 +967,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Start Time]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Počáteční čas]]></Val>
+            <Val><![CDATA[Čas zahájení]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1075,7 +1102,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Remove all mappings within source element `{nodeName}` first.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Odeberte všechna mapování ve zdrojovém elementu{nodeName}' jako první.]]></Val>
+            <Val><![CDATA[Nejprve odeberte všechna mapování ve zdrojovém elementu {nodeName}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1273,7 +1300,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Spuštění {onDays}]]></Val>
+            <Val><![CDATA[Spouští se v {onDays}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1354,7 +1381,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{parameterName} is required.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[vyžaduje se {parameterName}.]]></Val>
+            <Val><![CDATA[Vyžaduje se parametr {parameterName}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1431,9 +1458,21 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";5WhTmH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Načítání…]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";5akc1Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported 'in' value : ''{value}'' in Parameter]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nepodporovaná hodnota in: ''{value}'' v parametru]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1513,7 +1552,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Insert data from previous step (You can also add by typing Alt + / in the editor)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vložit data z předchozího kroku (Můžete také přidat zadáním Alt + / v editoru)]]></Val>
+            <Val><![CDATA[Vložit data z předchozího kroku (můžete také přidat zadáním Alt + / v editoru)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1521,6 +1560,9 @@
       <Item ItemId=";62Ypnr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error loading operation data]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Chyba při načítání dat operace]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1554,6 +1596,9 @@
       <Item ItemId=";6fDYzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed to load the schema. Please try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Schéma se nepovedlo načíst. Zkuste to prosím znovu.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1561,7 +1606,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has too many inputs assigned to it]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[K ''{functionName}'' funkce je přiřazeno příliš mnoho vstupů.]]></Val>
+            <Val><![CDATA[K funkci {functionName} je přiřazeno příliš mnoho vstupů]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1794,6 +1839,9 @@
       <Item ItemId=";83G5rr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify the interval.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte interval.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1874,6 +1922,15 @@
           <Val><![CDATA[Cannot render designer due to multiple triggers in definition.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Návrhář se nedá vykreslit, protože v definici je více než jeden trigger.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8LhQeL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to code view mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přepnout na režim zobrazení kódu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1972,7 +2029,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Create Connection Reference]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vytvořit odkaz na připojení]]></Val>
+            <Val><![CDATA[Vytvořit informace o připojení]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2009,6 +2066,15 @@
           <Val><![CDATA[Adds an integer number of days to a string timestamp passed in]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Přidá celočíselný počet dní do předaného řetězcového časového razítka.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8zkvmc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Testing]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Testování]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2124,6 +2190,9 @@
       <Item ItemId=";9W0lck" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid split on value ''{splitOn}'', cannot find in outputs.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Neplatná hodnota rozdělení ''{splitOn}'' – nelze najít ve výstupech.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2131,7 +2200,7 @@
         <Str Cat="Text">
           <Val><![CDATA[ChildErrors]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Chyby podřízení]]></Val>
+            <Val><![CDATA[Chyby podřízených prvků]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2184,6 +2253,9 @@
       <Item ItemId=";A5Ferh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Source element removed from view.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zdrojový prvek byl odebrán ze zobrazení.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2245,7 +2317,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture).]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vrátí index n-tého výskytu hodnoty v řetězci (nerozlišuje velká a malá písmena, invariantní jazyková verze).]]></Val>
+            <Val><![CDATA[Vrátí index n-tého výskytu hodnoty v řetězci (rozlišuje velká a malá písmena, invariantní jazyková verze).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2262,6 +2334,9 @@
       <Item ItemId=";AheXMN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select frequency.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vyberte frekvenci.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2404,7 +2479,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Line deleted.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Řádek byl odstraněn.]]></Val>
+            <Val><![CDATA[Řádek odstraněn.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2485,7 +2560,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Example: Monday, Friday]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Příklad: pondělí, úterý]]></Val>
+            <Val><![CDATA[Příklad: pondělí, pátek]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2494,7 +2569,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Expant list of sibling elements]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Expant list of sibling elements]]></Val>
+            <Val><![CDATA[Rozbalit seznam prvků na stejné úrovni]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2511,6 +2586,9 @@
       <Item ItemId=";BeqBP7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Automatic Decompression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Automatická dekomprese]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2787,6 +2865,9 @@
       <Item ItemId=";DQV7aK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Alt/Option + click to download ''{displayName}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Stisknutí Alt/Option + kliknutím stáhnete ''{displayName}'']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2830,7 +2911,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Custom value does not match the schema node's type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vlastní hodnota neodpovídá typu uzlu schématu.]]></Val>
+            <Val><![CDATA[Vlastní hodnota neodpovídá typu uzlu schématu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2920,7 +3001,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema node ''{nodeName}'' has an input with a mismatched type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[''{nodeName}'' uzlu schématu má vstup s neodpovídajícím typem.]]></Val>
+            <Val><![CDATA[Uzel schématu {nodeName} má vstup s neodpovídajícím typem]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3006,6 +3087,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";EdeHLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to input entire array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přepne na vstup celého pole.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EdzoIs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[1]]></Val>
@@ -3033,6 +3123,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Ek0mSE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[View the request history for this operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zobrazit historii žádostí pro tuto operaci]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EurkzL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select yes or no]]></Val>
@@ -3046,7 +3145,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Use Invoker's Connection]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Použít připojení vyvolávače]]></Val>
+            <Val><![CDATA[Použít připojení volajícího]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3117,6 +3216,9 @@
       <Item ItemId=";FIL1Nt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Condition is too complex or invalid. Unable to switch to basic mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Podmínka je moc složitá nebo není platná. Nejde přepnout na základní režim]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3178,7 +3280,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Webhook reference information]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Referenční informace webhook]]></Val>
+            <Val><![CDATA[Referenční informace o webhooku]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3267,6 +3369,18 @@
       <Item ItemId=";FaBEfQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sledované vlastnosti]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Fcvgvg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hledat]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3327,6 +3441,9 @@
       <Item ItemId=";GCjJnP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte platný JSON.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3361,7 +3478,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a value that is not between 0 and 59]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Obsahuje hodnotu, která není mezi 0 a 59.]]></Val>
+            <Val><![CDATA[Obsahuje hodnotu, která není mezi 0 a 59]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3388,7 +3505,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Trigger conditions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Podmínky triggeru]]></Val>
+            <Val><![CDATA[Podmínky aktivační události]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3442,7 +3559,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Source schema element]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zdrojový prvek schématu]]></Val>
+            <Val><![CDATA[Prvek zdrojového schématu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3514,7 +3631,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Workflow has settings validation errors on the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pracovní postup obsahuje chyby ověření nastavení u následujících operací: {invalidNodes}]]></Val>
+            <Val><![CDATA[Pracovní postup obsahuje chyby ověřování nastavení v následujících operacích: {invalidNodes}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3585,6 +3702,9 @@
       <Item ItemId=";HOchry" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an existing connection reference or create a new one.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vyberte existující informace o připojení nebo vytvořte nové.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3618,6 +3738,18 @@
       <Item ItemId=";Hbqlzk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert Expression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vložit výraz]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HfinO2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to detail inputs for array item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přepne na vstupy podrobností pro položku pole.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3652,7 +3784,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid value for {parameterName}.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zadejte platnou hodnotu pro {parameterName}.]]></Val>
+            <Val><![CDATA[Zadejte platnou hodnotu parametru {parameterName}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3670,7 +3802,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Remove parameter "{parameterName}" and its value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Odebrat "{parameterName}" parametru a jeho hodnotu]]></Val>
+            <Val><![CDATA[Odebrat parametr {parameterName} a jeho hodnotu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3725,6 +3857,15 @@
           <Val><![CDATA[Example: {url}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Příklad: {url}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";IPbMdl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code View]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zobrazení kódu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3795,6 +3936,9 @@
       <Item ItemId=";IjEKvh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error executing the api ''{parameters}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Při provádění rozhraní API ''{parameters}'' došlo k chybě.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3802,7 +3946,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The '{0}' properties are invalid for the '{1}' authentication type.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vlastnosti '{0}' nejsou pro typ ověřování '{1}' platné.]]></Val>
+            <Val><![CDATA[Vlastnosti {0} nejsou pro typ ověřování {1} platné.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3883,7 +4027,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The current map contains {numOfIssues} {issue}.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Aktuální mapa obsahuje {numOfIssues} {issue}.]]></Val>
+            <Val><![CDATA[Aktuální mapa obsahuje tyto chyby: {numOfIssues} {issue}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3982,7 +4126,7 @@
         <Str Cat="Text">
           <Val><![CDATA[When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pokud je tato akce povolena, bude spuštěna s uživatelem z nastavení Spustit jako v aktivační události Dataverse.]]></Val>
+            <Val><![CDATA[Pokud je tato akce povolena, bude spuštěna s uživatelem z nastavení „Spustit jako“ v aktivační události Dataverse.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4036,7 +4180,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Change connection reference]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Změnit odkaz na připojení]]></Val>
+            <Val><![CDATA[Změnit informace o připojení]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4044,6 +4188,9 @@
       <Item ItemId=";KP0Rr2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Double number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte platné dvojčíslo.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4114,7 +4261,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Underline (⌘U)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Podtržení (⌘U)]]></Val>
+            <Val><![CDATA[Podtrhnout (⌘U)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4141,7 +4288,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select a Function App resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte prostředek aplikace funkcí.]]></Val>
+            <Val><![CDATA[Vybrat prostředek aplikace funkcí]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4249,7 +4396,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading Api Management service instances...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Načítají se instance služby API Management...]]></Val>
+            <Val><![CDATA[Načítají se instance služby API Management…]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4356,6 +4503,9 @@
       <Item ItemId=";LvLksz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading outputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Načítají se výstupy]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4373,6 +4523,15 @@
           <Val><![CDATA[(UTC+02:00) Damascus]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02:00) Damašek]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";M/gUE8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[About]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[O aplikaci]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4551,6 +4710,9 @@
       <Item ItemId=";Mgcs5s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte platné číslo.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4720,7 +4882,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Service Principal]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Instanční objekt]]></Val>
+            <Val><![CDATA[Objekt služby]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4746,6 +4908,9 @@
       <Item ItemId=";ODQCKj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Converts the input to a JSON type value.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Převede vstup na hodnotu typu JSON.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4869,6 +5034,9 @@
       <Item ItemId=";OdoUEu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Povolit statický výsledek]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4948,7 +5116,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Required. One of the strings to combine into a single string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Požadované. Jeden z řetězců, které se mají sloučit do jednoho řetězce]]></Val>
+            <Val><![CDATA[Povinný parametr. Jeden z řetězců, které se mají sloučit do jednoho řetězce.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5038,7 +5206,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Spuštění {onTime}]]></Val>
+            <Val><![CDATA[Spouští se v {onTime}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5136,6 +5304,9 @@
       <Item ItemId=";Pk4cb+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sledované vlastnosti]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5241,6 +5412,9 @@
       <Item ItemId=";Q8zxeb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{name} Key]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Klíč {name}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5283,6 +5457,9 @@
       <Item ItemId=";QdJUaS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Pencil icon]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ikona tužky]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5412,15 +5589,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";RZ1MIN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Switch to input entire array]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Přepne na vstup celého pole.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";RbJNVk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Schema]]></Val>
@@ -5496,6 +5664,9 @@
       <Item ItemId=";RnBddN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[issue]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[problém]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5503,7 +5674,7 @@
         <Str Cat="Text">
           <Val><![CDATA[You can add notes only when you edit a step's inputs.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Poznámky můžete přidat jenom v případě, že upravíte vstupy kroku.]]></Val>
+            <Val><![CDATA[Poznámky můžete přidat jen pokud upravíte vstupy kroku.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5521,7 +5692,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Unrecognized expression ''{expression}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nerozpoznaný ''{expression}'' výrazu]]></Val>
+            <Val><![CDATA[Nerozpoznaný výraz {expression}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5529,6 +5700,9 @@
       <Item ItemId=";RvpHdu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+11:00) Solomon Is., New Caledonia]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+11:00) Šalamounovy ostrovy, Nová Kaledonie]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5545,7 +5719,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as bold. Shortcut: ⌘B]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Umožňuje formátovat text tučně. Zkratka: ⌘B]]></Val>
+            <Val><![CDATA[Naformátujte text tučně. Zkratka: ⌘B]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5613,6 +5787,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SToblZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Configure parameters for this node]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nakonfigurovat parametry pro tento uzel]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SXb47U" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{minutes}m]]></Val>
@@ -5661,6 +5844,9 @@
       <Item ItemId=";Sr8PcK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No operations found]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nenašly se žádné operace]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5758,7 +5944,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Error loading inputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Chyba při načítání vstupů]]></Val>
+            <Val><![CDATA[Při načítání vstupů došlo k chybě]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5830,7 +6016,7 @@
         <Str Cat="Text">
           <Val><![CDATA[on {weekDays} {frequencyDesc}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[při {weekDays} {frequencyDesc}]]></Val>
+            <Val><![CDATA[v {weekDays} {frequencyDesc}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5938,7 +6124,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Target schema element]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Cílový prvek schématu]]></Val>
+            <Val><![CDATA[Prvek cílového schématu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5974,7 +6160,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime} {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Spuštění {onTime} {onDays}]]></Val>
+            <Val><![CDATA[Spouští se v {onTime} v {onDays}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6082,7 +6268,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema node ''{nodeName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[''{nodeName}'' uzlu schématu má neukončovací řetěz připojení.]]></Val>
+            <Val><![CDATA[Uzel schématu {nodeName} má neukončený řetězec připojení]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6099,6 +6285,9 @@
       <Item ItemId=";Unc2tG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if two values are equal.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vrátí true, pokud se dvě hodnoty rovnají.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6178,7 +6367,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an App Service resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte prostředek App Service.]]></Val>
+            <Val><![CDATA[Vyberte prostředek služby App Service]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6195,6 +6384,9 @@
       <Item ItemId=";VI7EqG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for {searchTerm}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nenašly se žádné výsledky pro {searchTerm}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6257,15 +6449,6 @@
           <Val><![CDATA[Comment]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Komentář]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";VXQbMw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Switch to detail inputs for array item]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Přepne na vstupy podrobností pro položku pole.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6355,7 +6538,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select all text in {label}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vybrat veškerý text v {label}]]></Val>
+            <Val><![CDATA[Vybrat veškerý text z popisku {label}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6392,6 +6575,15 @@
           <Val><![CDATA[Shorthand for trigger().outputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Zkratka pro trigger().outputs]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WaTsxR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Historie žádostí]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6544,7 +6736,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[''{functionName}'' funkce má neukončovací řetěz připojení.]]></Val>
+            <Val><![CDATA[Funkce {functionName} má neukončený řetězec připojení]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6588,6 +6780,9 @@
       <Item ItemId=";Xew1Df" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Další diagnostické informace: x-ms-client-request-id je ''{clientRequestId}''.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6595,7 +6790,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Target schema element cannot be deleted.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Cílový prvek schématu nelze odstranit.]]></Val>
+            <Val><![CDATA[Prvek cílového schématu nelze odstranit.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6622,7 +6817,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select a function app function]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte funkci aplikace funkcí.]]></Val>
+            <Val><![CDATA[Vybrat funkci aplikace funkcí]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6721,7 +6916,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add children]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Přidat podřízené položky]]></Val>
+            <Val><![CDATA[Přidat podřízené prvky]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6757,7 +6952,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: Ctrl+U]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Umožňuje formátovat text jako podtržení. Zástupce: Ctrl+U]]></Val>
+            <Val><![CDATA[Naformátujte text jako podtržení. Zkratka: Ctrl+U]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6784,7 +6979,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as bold. Shortcut: Ctrl+B]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Umožňuje formátovat text tučně. Zástupce: Ctrl+B]]></Val>
+            <Val><![CDATA[Naformátujte text tučně. Zkratka: Ctrl+B]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6837,6 +7032,9 @@
       <Item ItemId=";Ybzoim" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the action that has the values you want.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Povinný parametr. Název akce, která má vámi požadované hodnoty.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6844,7 +7042,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as italic. Shortcut: ⌘I]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Umožňuje formátovat text jako kurzívu. Zástupce: ⌘I]]></Val>
+            <Val><![CDATA[Naformátujte text jako kurzívu. Zkratka: ⌘I]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6861,6 +7059,9 @@
       <Item ItemId=";YgU88A" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+05:30) Čennaj, Kalkata, Bombaj, Dillí]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6868,7 +7069,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Custom value does not match one of the allowed types for this input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup.]]></Val>
+            <Val><![CDATA[Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6886,7 +7087,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Your map is in perfect condition]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vaše mapa je v dokonalém stavu.]]></Val>
+            <Val><![CDATA[Vaše mapa je v perfektním stavu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6912,6 +7113,9 @@
       <Item ItemId=";Yw7Nfl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Disable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zakázat statický výsledek]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6919,7 +7123,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy count is invalid (Must be from {min} to {max})]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Počet zásad opakování není platný (musí být od {min} do {max}).]]></Val>
+            <Val><![CDATA[Počet zásad opakování není platný (musí být od {min} do {max})]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7126,7 +7330,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid float.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zadejte platnou hodnotu float.]]></Val>
+            <Val><![CDATA[Zadejte platný float.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7257,6 +7461,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";bldzuj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Historie opakování pokusů]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";bsgS8m" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Preview]]></Val>
@@ -7369,7 +7582,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dekomprimuje text požadavku, pokud je komprimován pomocí GZip nebo Deflate. Toto nastavení se dá použít jenom pro trigger HTTP.]]></Val>
+            <Val><![CDATA[Dekomprimuje text požadavku, pokud je komprimován pomocí GZip nebo Deflate. Toto nastavení se dá použít jenom pro aktivační událost HTTP.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7414,7 +7627,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy interval is invalid, must match ISO 8601 duration format]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Interval zásad opakování není platný, musí odpovídat formátu doby trvání ISO 8601.]]></Val>
+            <Val><![CDATA[Interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7449,6 +7662,9 @@
       <Item ItemId=";ceVB5l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the body for a part in a multipart output from an action.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vrátí text pro určitou část ve výstupu akce s několika částmi.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7483,7 +7699,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Input node type does not match one of the allowed types for this input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup.]]></Val>
+            <Val><![CDATA[Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7528,7 +7744,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Generate XSLT first before attempting to test mappings.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Než se pokusíte otestovat mapování, vygenerujte nejdříve XSLT.]]></Val>
+            <Val><![CDATA[Než se pokusíte otestovat mapování, vygenerujte XSLT.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7551,20 +7767,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";d+MjsE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid dictionary.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zadejte platný slovník.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";d020eg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the first element from the passed-in array or string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vrátí první prvek z předané pole nebo řetězce.]]></Val>
+            <Val><![CDATA[Vrátí první prvek v předaném poli nebo řetězci.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7573,7 +7780,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema is missing required inputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ve schématu chybí požadované vstupy.]]></Val>
+            <Val><![CDATA[Ve schématu chybí požadované vstupy]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7583,6 +7790,15 @@
           <Val><![CDATA[Add a trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Přidat aktivační událost]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dD8y1n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to key value mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přepnout do režimu hodnoty klíče]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7780,7 +7996,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to generate XSLT.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nepodařilo se vygenerovat XSLT.]]></Val>
+            <Val><![CDATA[Nepovedlo se vygenerovat XSLT.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7851,6 +8067,9 @@
       <Item ItemId=";ehIBkh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter an integer]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadat celé číslo]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7948,7 +8167,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an API Management resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte prostředek API Management.]]></Val>
+            <Val><![CDATA[Vybrat prostředek služby API Management]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8028,6 +8247,9 @@
       <Item ItemId=";fp8Ry3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+08:00) Peking, Čchung-čching, Hongkong, Urumqi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8134,7 +8356,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as italic. Shortcut: Ctrl+I]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Umožňuje formátovat text jako kurzívu. Zástupce: Ctrl+I]]></Val>
+            <Val><![CDATA[Naformátujte text jako kurzívu. Zkratka: Ctrl+I]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8143,7 +8365,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copy the value of '{label}' to the clipboard]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zkopírovat hodnotu '{label}' do schránky]]></Val>
+            <Val><![CDATA[Zkopírovat hodnotu {label} do schránky]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8242,7 +8464,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select a Batch Workflow resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte prostředek pracovního postupu Batch.]]></Val>
+            <Val><![CDATA[Vybrat prostředek pracovního postupu Batch]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8278,7 +8500,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add a source schema first, then select elements to build your map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nejprve přidejte zdrojové schéma a pak vyberte elementy pro sestavení mapy.]]></Val>
+            <Val><![CDATA[Nejprve přidejte zdrojové schéma a pak vyberte prvky pro sestavení mapy]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8349,6 +8571,9 @@
       <Item ItemId=";hZqQdt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8427,6 +8652,9 @@
       <Item ItemId=";i0XjL5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Search for operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hledat operace]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8470,7 +8698,16 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains an invalid value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Obsahuje neplatnou hodnotu.]]></Val>
+            <Val><![CDATA[Obsahuje neplatnou hodnotu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";iB8YKD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[About Tab]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Karta O aplikaci]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8610,6 +8847,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ifnOUI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code View Tab]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Karta Zobrazení kódu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";iq+tiv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[11]]></Val>
@@ -8632,7 +8878,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Elements and mappings not connected to a target element are removed.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Elementy a mapování, která nejsou připojená k cílovému elementu, se odeberou.]]></Val>
+            <Val><![CDATA[Prvky a mapování, která nejsou připojená k cílovému elementu, se odeberou.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8704,7 +8950,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Other]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Jiné]]></Val>
+            <Val><![CDATA[Další]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8973,6 +9219,9 @@
       <Item ItemId=";kxMDyM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte platný JSON.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8990,6 +9239,15 @@
           <Val><![CDATA[{hours} hours {minutes} minutes]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{hours} h {minutes} m]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";l536iI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Monitoring Tab]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Karta Monitorování]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9025,7 +9283,7 @@
         <Str Cat="Text">
           <Val><![CDATA[A line for the parent element is added automatically.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Řádek nadřazeného elementu je přidán automaticky.]]></Val>
+            <Val><![CDATA[Řádek nadřazeného prvku se přidává automaticky.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9052,7 +9310,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The type for '{0}' is '{1}'.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Typ '{0}' je '{1}'.]]></Val>
+            <Val><![CDATA[Typ vlastnosti {0} je {1}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9075,18 +9333,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";lcxLiq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Please enter a valid array]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zadejte prosím platné pole.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";lexzgJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove all references to element ' {nodeName} ' before you remove the element.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Před odebráním prvku {nodeName} odeberte všechny příslušné reference.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9220,7 +9472,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Delete {name}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Odstranit {name}]]></Val>
+            <Val><![CDATA[Odstranit hodnotu {name}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9264,6 +9516,9 @@
       <Item ItemId=";mPuXlv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid type on split on value ''{splitOn}'', split on not in array.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Neplatný typ hodnoty rozdělení ''{splitOn}'' – rozdělení není v poli.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9342,6 +9597,9 @@
       <Item ItemId=";mvu5xN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{name} Value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hodnota {name}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9669,6 +9927,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";oMphsh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Settings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nastavení]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";oO12r6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-08:00) Baja California]]></Val>
@@ -9744,6 +10011,9 @@
       <Item ItemId=";ox2Ou7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid JSON]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadat platný JSON]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9751,7 +10021,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the first non-null object in the passed-in argument values.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vrátí první objekt, který není null, v předaných hodnotách argumentů.]]></Val>
+            <Val><![CDATA[Vrátí první objekt v předaných argumentech, který nemá hodnotu null.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9927,6 +10197,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";q+ZZjX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry History]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Historie opakování pokusů]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";q/+Uex" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an XML node, nodeset or value as JSON from the provided XPath expression]]></Val>
@@ -9967,7 +10246,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select workflow with 'manual' trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte pracovní postup s triggerem manual.]]></Val>
+            <Val><![CDATA[Vybrat pracovní postup s aktivační událostí „manual“]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9975,6 +10254,9 @@
       <Item ItemId=";q5TkqE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value to return if the expression is false.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Povinný parametr. Hodnota, která se má vrátit, pokud má výraz hodnotu false.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9999,6 +10281,9 @@
       <Item ItemId=";qAlTD5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: ''{referenceKeyFormat}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nepodporovaný formát informací o připojení manifestu: ''{referenceKeyFormat}'']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10006,7 +10291,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: ⌘U]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Umožňuje formátovat text jako podtržení. Zkratka: ⌘U]]></Val>
+            <Val><![CDATA[Naformátujte text jako podtržení. Zkratka: ⌘U]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10146,6 +10431,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";qij+Vf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to default view mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přepnout na výchozí režim zobrazení]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";qnI4Y1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value that is converted to an integer.]]></Val>
@@ -10159,7 +10453,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{nodeName}'' has an input with a mismatched type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Funkce ''{nodeName}'' má vstup s neodpovídajícím typem.]]></Val>
+            <Val><![CDATA[Funkce {nodeName} má vstup s neodpovídajícím typem]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10221,6 +10515,9 @@
       <Item ItemId=";rAwCdh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connect via on-premises data gateway]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Připojit přes místní bránu dat]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10272,6 +10569,9 @@
       <Item ItemId=";rSIBjh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter value for parameter.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte hodnotu parametru.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10306,7 +10606,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select source schema elements to build your map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte prvky zdrojového schématu pro vytvoření mapy.]]></Val>
+            <Val><![CDATA[Vybrat prvky zdrojového schématu pro vytvoření mapy]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10374,6 +10674,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";sEqLTV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Testing Tab]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Karta Testování]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sFbnCs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-05:00) Chetumal]]></Val>
@@ -10395,6 +10704,9 @@
       <Item ItemId=";sQ2vRs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add Case]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přidat případ]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10411,7 +10723,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Formatting options for font family]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Možnosti formátování pro rodinu písem]]></Val>
+            <Val><![CDATA[Možnosti formátování pro skupinu písem]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10501,7 +10813,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Unable to generate data map definition]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nepovedlo se vygenerovat definici mapování dat.]]></Val>
+            <Val><![CDATA[Nepovedlo se vygenerovat definici datové mapy]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10537,7 +10849,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to retrieve dynamic inputs. Error details: ''{message}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nepovedlo se načíst dynamické vstupy. Podrobnosti o chybě: ''{message}'']]></Val>
+            <Val><![CDATA[Nepovedlo se načíst dynamické vstupy. Podrobnosti o chybě: {message}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10555,7 +10867,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Too many inputs assigned]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Bylo přiřazeno příliš mnoho vstupů.]]></Val>
+            <Val><![CDATA[Bylo přiřazeno příliš mnoho vstupů]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10600,7 +10912,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select Connection Reference]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vybrat odkaz na připojení]]></Val>
+            <Val><![CDATA[Vybrat informace o připojení]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10627,7 +10939,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Invalid connection, please update your connection to load complete details]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Neplatné připojení. Pokud chcete načíst úplné podrobnosti, aktualizujte prosím připojení.]]></Val>
+            <Val><![CDATA[Neplatné připojení. Pokud chcete načíst úplné podrobnosti, aktualizujte prosím připojení]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10644,6 +10956,9 @@
       <Item ItemId=";tUCptx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert Link]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vložit odkaz]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10678,7 +10993,7 @@
         <Str Cat="Text">
           <Val><![CDATA[at {times} every hour]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[v {times} každou hodinu]]></Val>
+            <Val><![CDATA[každou hodinu v {times}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10713,6 +11028,9 @@
       <Item ItemId=";tarDYT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if the first argument is less than the second.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vrátí true, pokud je první argument menší než druhý.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10800,6 +11118,9 @@
       <Item ItemId=";uM1i27" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify a retry count from 1 to 90]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte počet opakování od 1 do 90.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10825,7 +11146,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: {message}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nepovedlo se načíst dynamické výstupy. V důsledku toho nemusí být výstupy této operace viditelné v následných akcích. Podrobnosti o chybě: {message}]]></Val>
+            <Val><![CDATA[Nepovedlo se načíst dynamické výstupy. V důsledku toho nemusí být výstupy této operace viditelné v následujících akcích. Podrobnosti o chybě: {message}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10879,7 +11200,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select a runtime]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vyberte modul runtime.]]></Val>
+            <Val><![CDATA[Vyberte modul runtime]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10959,6 +11280,18 @@
       <Item ItemId=";uwuGU0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+06:30) Yangon (Rangoon)]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+06:30) Yangon (Rangún)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";uxKRO/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametry]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10976,6 +11309,15 @@
           <Val><![CDATA[Trigger date]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Datum triggeru]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";v0ENVA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Loading]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Načítání]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11070,6 +11412,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vdKLiR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request Settings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nastavení žádosti]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";vdtKjT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[To create and use an API connection, you must have a managed identity configured on this logic app.]]></Val>
@@ -11110,7 +11461,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Navigate to element and view children]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Přejít na element a zobrazit podřízené položky]]></Val>
+            <Val><![CDATA[Přejít na prvek a zobrazit podřízené prvky]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11128,7 +11479,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a duplicate value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tato hodnota obsahuje duplicitní hodnotu.]]></Val>
+            <Val><![CDATA[Toto pole obsahuje duplicitní hodnotu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11145,6 +11496,9 @@
       <Item ItemId=";w0pI5M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for the specified filters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pro zadané filtry se nenašly žádné výsledky]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11287,7 +11641,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Input type mismatch]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Neshoda typu vstupu]]></Val>
+            <Val><![CDATA[Neodpovídající typ vstupu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11499,11 +11853,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";xXVu2y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to text mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přepnout do textového režimu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";xYyPR8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the path from a URI. If path is not specified, returns '/']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vrátí cestu z identifikátoru URI. Pokud se cesta nezadá, vrátí /.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";xi2tn6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametry]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11520,6 +11892,9 @@
       <Item ItemId=";xwD1VZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading inputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Načítání vstupů]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11580,6 +11955,9 @@
       <Item ItemId=";yF2R//" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a subset of characters from a string.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vrátí podmnožinu znaků z řetězce.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11613,6 +11991,9 @@
       <Item ItemId=";yjierd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid expression type ''{type}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Neplatný typ výrazu ''{type}'']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11674,7 +12055,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Navigate to {folderName} folder]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Přejít do {folderName} složky]]></Val>
+            <Val><![CDATA[Přejít do složky {folderName}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

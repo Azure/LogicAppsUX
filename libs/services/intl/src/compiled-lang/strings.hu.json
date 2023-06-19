@@ -20,7 +20,7 @@
   "+ZSBrq": [
     {
       "type": 0,
-      "value": "Context menu for "
+      "value": "A(z) "
     },
     {
       "type": 1,
@@ -28,7 +28,7 @@
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " kártya helyi menüje"
     }
   ],
   "+mAJR3": [
@@ -46,7 +46,7 @@
   "/EU/oJ": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'."
+      "value": "Kötelező megadni. A forrásidőzóna nevét tartalmazó sztring. A részleteket lásd: Alapértelmezett időzónák, https://go.microsoft.com/fwlink/?linkid=2238292."
     }
   ],
   "/I/U8L": [
@@ -106,7 +106,7 @@
   "/km5eO": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04:00) Asunción"
     }
   ],
   "/mjH84": [
@@ -172,7 +172,7 @@
   "04AwK7": [
     {
       "type": 0,
-      "value": "Error code: '"
+      "value": "Hibakód: „"
     },
     {
       "type": 1,
@@ -180,7 +180,7 @@
     },
     {
       "type": 0,
-      "value": "', Message: '"
+      "value": "“, üzenet: „"
     },
     {
       "type": 1,
@@ -188,7 +188,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "“."
     }
   ],
   "06zKZg": [
@@ -212,7 +212,7 @@
   "08e2rO": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
+      "value": "Az ehhez a művelethez használt felügyelt identitás már nem létezik. A folytatáshoz állítson be egy identitást, vagy módosítsa a kapcsolatot."
     }
   ],
   "09B9CU": [
@@ -325,12 +325,16 @@
   ],
   "0qcKzG": [
     {
+      "type": 0,
+      "value": "A(z) "
+    },
+    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " már nem szerepel a műveleti sémában. Távolítsa el, mielőtt újból mentené a munkafolyamatot."
     }
   ],
   "0uj1Li": [
@@ -460,7 +464,7 @@
   "1REk6u": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Érvényes e-mail-címet adjon meg."
     }
   ],
   "1TE0e8": [
@@ -478,7 +482,7 @@
   "1YEc9e": [
     {
       "type": 0,
-      "value": "Adjon meg egy érvényes feltételt."
+      "value": "Adjon meg érvényes feltételt."
     }
   ],
   "1ZDLZA": [
@@ -496,7 +500,7 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "A műveletek adatokat hajtanak végre, kommunikálnak a rendszerek között, vagy más feladatokat futtatnak."
+      "value": "A műveletek az adatokon végeznek műveleteket, kommunikálnak a rendszerek között vagy egyéb feladatokat futtatnak."
     }
   ],
   "1eKQwo": [
@@ -646,7 +650,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Meglévő sémák innen:"
     }
   ],
   "2gzGrJ": [
@@ -762,7 +766,7 @@
   "3KPLpx": [
     {
       "type": 0,
-      "value": "Először távolítsa el a(z) \""
+      "value": "Először távolítsa el a(z) "
     },
     {
       "type": 1,
@@ -770,7 +774,7 @@
     },
     {
       "type": 0,
-      "value": "' forráselem összes leképezését."
+      "value": " forráselem összes leképezését."
     }
   ],
   "3MTSYZ": [
@@ -926,7 +930,7 @@
   "4D7H4R": [
     {
       "type": 0,
-      "value": "Futtatások "
+      "value": "Futtatás: "
     },
     {
       "type": 1,
@@ -983,12 +987,16 @@
   ],
   "4sYR0J": [
     {
+      "type": 0,
+      "value": "A(z) "
+    },
+    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": " kötelező megadni."
+      "value": " megadása kötelező."
     }
   ],
   "4vcnOA": [
@@ -1042,13 +1050,13 @@
   "5WhTmH": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Betöltés..."
     }
   ],
   "5akc1Q": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : '"
+      "value": "Nem támogatott „ebben” érték: „"
     },
     {
       "type": 1,
@@ -1056,7 +1064,7 @@
     },
     {
       "type": 0,
-      "value": "' in Parameter"
+      "value": "” a paraméterben"
     }
   ],
   "5b0sKi": [
@@ -1110,13 +1118,13 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "Adatok beszúrása az előző lépésből (a szerkesztőbe beírhatja Alt + / is)"
+      "value": "Adatok beszúrása az előző lépésből (a szerkesztőben az Alt + / billentyűkombinációval is hozzáadhatja)"
     }
   ],
   "62Ypnr": [
     {
       "type": 0,
-      "value": "Error loading operation data"
+      "value": "Hiba a művelet adatainak betöltésekor"
     }
   ],
   "63/zYN": [
@@ -1140,21 +1148,13 @@
   "6fDYzG": [
     {
       "type": 0,
-      "value": "Failed to load the schema. Please try again."
+      "value": "A séma betöltése nem sikerült. Próbálkozzon újra."
     }
   ],
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "A(z) '"
-    },
-    {
-      "type": 1,
-      "value": "functionName"
-    },
-    {
-      "type": 0,
-      "value": "' függvényhez túl sok bemenet van hozzárendelve"
+      "value": "A(z) „{functionName}“ függvényhez túl sok bemenet van hozzárendelve"
     }
   ],
   "6jiO7t": [
@@ -1318,7 +1318,7 @@
   "83G5rr": [
     {
       "type": 0,
-      "value": "Specify the interval."
+      "value": "Adja meg az időközt."
     }
   ],
   "83PYuA": [
@@ -1398,7 +1398,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Váltás kódnézet módba"
     }
   ],
   "8ND+Yc": [
@@ -1468,13 +1468,13 @@
   "8luJ2j": [
     {
       "type": 0,
-      "value": "Kapcsolathivatkozás létrehozása"
+      "value": "Kapcsolati hivatkozás létrehozása"
     }
   ],
   "8mDG0V": [
     {
       "type": 0,
-      "value": "A munkafolyamat paraméterérvényesítési hibákat észlelt a következő műveletekben: "
+      "value": "A munkafolyamat paraméterérvényesítési hibákkal rendelkezik a következő műveleteknél: "
     },
     {
       "type": 1,
@@ -1502,7 +1502,7 @@
   "8zkvmc": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Tesztelés folyamatban"
     }
   ],
   "9/UeTh": [
@@ -1580,7 +1580,7 @@
   "9W0lck": [
     {
       "type": 0,
-      "value": "Invalid split on value '"
+      "value": "Érvénytelen a(z) „"
     },
     {
       "type": 1,
@@ -1588,13 +1588,13 @@
     },
     {
       "type": 0,
-      "value": "', cannot find in outputs."
+      "value": "” érték szerinti felosztás. Nem található a kimenetekben."
     }
   ],
   "9YGcT2": [
     {
       "type": 0,
-      "value": "Gyermek-hiba"
+      "value": "ChildErrors"
     }
   ],
   "9YZ873": [
@@ -1630,13 +1630,13 @@
   "A5Ferh": [
     {
       "type": 0,
-      "value": "Source element removed from view."
+      "value": "A forráselem el lett távolítva a nézetből."
     }
   ],
   "A8l+k7": [
     {
       "type": 0,
-      "value": "Hiba történt a következő API-paraméterek végrehajtása közben: '"
+      "value": "Hiba történt a következő API-paraméterek végrehajtása közben: „"
     },
     {
       "type": 1,
@@ -1644,7 +1644,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "“"
     }
   ],
   "ADM1Z8": [
@@ -1680,7 +1680,7 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "Egy érték n-edik előfordulásának indexét adja vissza egy sztringben (kis- és nagybetűk megkülönböztetése nélkül, állandó kulturális környezet)."
+      "value": "Egy értéknek egy sztringben való n. előfordulásának indexét adja vissza (a kis- és nagybetűk nincsenek megkülönböztetve, invariáns kulturális környezet)."
     }
   ],
   "Af+Ve0": [
@@ -1692,7 +1692,7 @@
   "AheXMN": [
     {
       "type": 0,
-      "value": "Select frequency."
+      "value": "Válasszon gyakoriságot."
     }
   ],
   "AnX5yC": [
@@ -1846,7 +1846,7 @@
   "BUutcC": [
     {
       "type": 0,
-      "value": "Testvérelemek exponenciája"
+      "value": "Testvérelemek listájának kibontása"
     }
   ],
   "BYrP8F": [
@@ -1858,7 +1858,7 @@
   "BeqBP7": [
     {
       "type": 0,
-      "value": "Automatic Decompression"
+      "value": "Automatikus kibontás"
     }
   ],
   "Bl4Iv0": [
@@ -2007,6 +2007,10 @@
     {
       "type": 1,
       "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " alkalommal"
     }
   ],
   "D+Ptnq": [
@@ -2060,7 +2064,7 @@
   "DQV7aK": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -2068,7 +2072,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "“ letöltéséhez nyomja le az Alt/Option billentyűt, és kattintson"
     }
   ],
   "DWd9vy": [
@@ -2158,7 +2162,7 @@
   "E3+TAA": [
     {
       "type": 0,
-      "value": "A(z) '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -2166,7 +2170,7 @@
     },
     {
       "type": 0,
-      "value": "' sémacsomópont bemenete nem egyezik"
+      "value": "” sémacsomópont bemenete eltérő típusú"
     }
   ],
   "E8iqLl": [
@@ -2218,7 +2222,7 @@
     },
     {
       "type": 0,
-      "value": " naponta"
+      "value": " hetente"
     }
   ],
   "EaTGcN": [
@@ -2230,7 +2234,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Váltás a teljes tömb bevitelére"
     }
   ],
   "EdzoIs": [
@@ -2262,7 +2266,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "A művelethez tartozó kérelmek előzményeinek megtekintése"
     }
   ],
   "EurkzL": [
@@ -2322,7 +2326,7 @@
   "FIL1Nt": [
     {
       "type": 0,
-      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+      "value": "A feltétel túl összetett vagy érvénytelen. Nem sikerült egyszerű módra váltani"
     }
   ],
   "FIT7i0": [
@@ -2420,13 +2424,13 @@
   "FaBEfQ": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "Követett tulajdonságok"
     }
   ],
   "Fcvgvg": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Keresés"
     }
   ],
   "FiyQjU": [
@@ -2476,7 +2480,7 @@
   "GCjJnP": [
     {
       "type": 0,
-      "value": "Enter a valid Json."
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "GD3m4X": [
@@ -2560,7 +2564,7 @@
   "Gl5khw": [
     {
       "type": 0,
-      "value": "Órák"
+      "value": "Ezekben az órákban"
     }
   ],
   "Gmya+V": [
@@ -2602,7 +2606,7 @@
   "H/QVod": [
     {
       "type": 0,
-      "value": "A munkafolyamat beállítás-érvényesítési hibákat észlelt a következő műveleteknél: "
+      "value": "A munkafolyamat beállítás-érvényesítési hibákkal rendelkezik a következő műveleteknél: "
     },
     {
       "type": 1,
@@ -2654,7 +2658,7 @@
   "HOchry": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one."
+      "value": "Válasszon ki egy meglévő kapcsolati hivatkozást, vagy hozzon létre egy újat."
     }
   ],
   "HQ8/tk": [
@@ -2678,13 +2682,13 @@
   "Hbqlzk": [
     {
       "type": 0,
-      "value": "Insert Expression"
+      "value": "Kifejezés beszúrása"
     }
   ],
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Váltás a tömbelem részletes bemeneteire"
     }
   ],
   "HfrUId": [
@@ -2702,13 +2706,13 @@
   "HoQiVa": [
     {
       "type": 0,
-      "value": "Adjon meg érvényes dátumot és időt."
+      "value": "Adjon meg egy érvényes dátum/idő típusú értéket."
     }
   ],
   "Hs5+Mk": [
     {
       "type": 0,
-      "value": "Adjon meg egy érvényes értéket a "
+      "value": "Adjon meg egy érvényes értéket a(z) "
     },
     {
       "type": 1,
@@ -2716,7 +2720,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " paraméterhez."
     }
   ],
   "HsO1Rd": [
@@ -2732,7 +2736,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "A paraméter \""
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -2740,7 +2744,7 @@
     },
     {
       "type": 0,
-      "value": "\" és értékének eltávolítása"
+      "value": "“ paraméter és értékének eltávolítása"
     }
   ],
   "HzS2gJ": [
@@ -2786,7 +2790,7 @@
   "IPbMdl": [
     {
       "type": 0,
-      "value": "Code View"
+      "value": "Kódnézet"
     }
   ],
   "IPwWgu": [
@@ -2826,7 +2830,7 @@
     },
     {
       "type": 0,
-      "value": " Dinamikus adatok hozzáadásához nyomja meg a Alt + /' billentyűt."
+      "value": " Dinamikus adatok hozzáadásához nyomja meg az Alt + / billentyűkombinációt."
     }
   ],
   "If+p6C": [
@@ -2838,7 +2842,7 @@
   "IjEKvh": [
     {
       "type": 0,
-      "value": "Error executing the api '"
+      "value": "Hiba történt az API „"
     },
     {
       "type": 1,
@@ -2846,13 +2850,29 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "” paraméterekkel való végrehajtása közben."
     }
   ],
   "Io48jC": [
     {
       "type": 0,
-      "value": "A {0} tulajdonságai érvénytelenek a {1} hitelesítési típushoz."
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " tulajdonságai érvénytelenek a(z) "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " hitelesítési típushoz."
     }
   ],
   "IooQu1": [
@@ -2914,7 +2934,7 @@
   "JAIV0h": [
     {
       "type": 0,
-      "value": "Az aktuális térkép "
+      "value": "Az aktuális térkép tartalmazza a következőt: "
     },
     {
       "type": 1,
@@ -2930,7 +2950,7 @@
     },
     {
       "type": 0,
-      "value": " tartalmaz."
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -2996,7 +3016,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "Ha engedélyezve van, ez a művelet a Dataverse-trigger \"Futtatás mint\" beállításában szereplő felhasználóval fog futni."
+      "value": "Ha engedélyezve van, ez a művelet a Dataverse-trigger „Futtatás mint“ beállításában szereplő felhasználóval fog futni."
     }
   ],
   "Jq2Y/o": [
@@ -3032,13 +3052,13 @@
   "KBaGkS": [
     {
       "type": 0,
-      "value": "Kapcsolathivatkozás módosítása"
+      "value": "Kapcsolati hivatkozás módosítása"
     }
   ],
   "KP0Rr2": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Adjon meg egy érvényes duplaszó típusú számot."
     }
   ],
   "KX1poC": [
@@ -3174,7 +3194,7 @@
   "LV/BTE": [
     {
       "type": 0,
-      "value": "Api Management-szolgáltatáspéldányok betöltése..."
+      "value": "API Management-szolgáltatáspéldányok betöltése..."
     }
   ],
   "LV3k48": [
@@ -3262,7 +3282,7 @@
   "LvLksz": [
     {
       "type": 0,
-      "value": "Loading outputs"
+      "value": "Kimenetek betöltése"
     }
   ],
   "LvpxiA": [
@@ -3280,7 +3300,7 @@
   "M/gUE8": [
     {
       "type": 0,
-      "value": "About"
+      "value": "Névjegy"
     }
   ],
   "M0xrm+": [
@@ -3400,7 +3420,7 @@
   "Mgcs5s": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Adjon meg egy érvényes számot."
     }
   ],
   "MirIsS": [
@@ -3544,7 +3564,7 @@
   "ODQCKj": [
     {
       "type": 0,
-      "value": "Converts the input to a JSON type value."
+      "value": "A bemenet átalakítása JSON típusú értékké."
     }
   ],
   "OEEuUu": [
@@ -3644,7 +3664,7 @@
   "OdoUEu": [
     {
       "type": 0,
-      "value": "Enable Static Result"
+      "value": "Statikus eredmény engedélyezése"
     }
   ],
   "OgJ9eG": [
@@ -3770,7 +3790,7 @@
   "PNk3n4": [
     {
       "type": 0,
-      "value": "Futtatások "
+      "value": "Futtatás: "
     },
     {
       "type": 1,
@@ -3840,7 +3860,7 @@
   "Pk4cb+": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "Követett tulajdonságok"
     }
   ],
   "Pq+4a+": [
@@ -3864,7 +3884,7 @@
   "PvWTxR": [
     {
       "type": 0,
-      "value": "Show functions"
+      "value": "Függvények megjelenítése"
     }
   ],
   "Pvm0xB": [
@@ -3946,7 +3966,7 @@
   "QdJUaS": [
     {
       "type": 0,
-      "value": "Pencil icon"
+      "value": "Ceruza ikon"
     }
   ],
   "QeE0k/": [
@@ -4084,7 +4104,7 @@
   "RnBddN": [
     {
       "type": 0,
-      "value": "issue"
+      "value": "probléma"
     }
   ],
   "Ro4+PC": [
@@ -4102,7 +4122,7 @@
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "Ismeretlen kifejezés '"
+      "value": "Ismeretlen kifejezés: „"
     },
     {
       "type": 1,
@@ -4110,13 +4130,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "RvpHdu": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Salamon-szigetek, Új-Kaledónia"
     }
   ],
   "RxGxr+": [
@@ -4128,7 +4148,7 @@
   "S138/4": [
     {
       "type": 0,
-      "value": "Szöveg formázása félkövérré. Parancsikon: ⌘B"
+      "value": "Szöveg formázása félkövérré. Billentyűparancs: ⌘B"
     }
   ],
   "SCCE6s": [
@@ -4176,7 +4196,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "A csomópont paramétereinek konfigurálása"
     }
   ],
   "SXb47U": [
@@ -4216,7 +4236,7 @@
   "Sr8PcK": [
     {
       "type": 0,
-      "value": "No operations found"
+      "value": "Nem találhatók műveletek"
     }
   ],
   "SvQyvs": [
@@ -4330,7 +4350,7 @@
   "TZh8nV": [
     {
       "type": 0,
-      "value": " "
+      "value": "a következő napokon: "
     },
     {
       "type": 1,
@@ -4438,7 +4458,7 @@
   "U4zovj": [
     {
       "type": 0,
-      "value": "Futtatások "
+      "value": "Futtatások: "
     },
     {
       "type": 1,
@@ -4456,7 +4476,7 @@
   "U7yRwM": [
     {
       "type": 0,
-      "value": "Validation Error"
+      "value": "Sikertelen volt az érvényesség ellenőrzése"
     }
   ],
   "UCNM4L": [
@@ -4526,7 +4546,7 @@
   "Ufv5m9": [
     {
       "type": 0,
-      "value": "A(z) '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -4534,7 +4554,7 @@
     },
     {
       "type": 0,
-      "value": "' sémacsomópont nem megszakító kapcsolati lánccal rendelkezik"
+      "value": "” sémacsomópont nem megszakító kapcsolati lánccal rendelkezik"
     }
   ],
   "Umpr3z": [
@@ -4550,7 +4570,7 @@
   "Unc2tG": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal."
+      "value": "Igaz értéket ad vissza, ha két érték egyenlő."
     }
   ],
   "UnrrzF": [
@@ -4604,7 +4624,7 @@
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "Válasszon ki egy App Service erőforrást"
+      "value": "Válasszon ki egy App Service-erőforrást"
     }
   ],
   "VI5Sa8": [
@@ -4616,7 +4636,7 @@
   "VI7EqG": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "Nincs találat a következőre: "
     },
     {
       "type": 1,
@@ -4734,7 +4754,7 @@
   "WK6hZX": [
     {
       "type": 0,
-      "value": "Az összes szöveg kijelölése "
+      "value": "Az összes szöveg kijelölése a következőben: "
     },
     {
       "type": 1,
@@ -4772,7 +4792,7 @@
   "WaTsxR": [
     {
       "type": 0,
-      "value": "Request History"
+      "value": "Korábbi kérések"
     }
   ],
   "WcnIF8": [
@@ -4890,7 +4910,7 @@
   "XRK+gt": [
     {
       "type": 0,
-      "value": "A(z) '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -4898,7 +4918,7 @@
     },
     {
       "type": 0,
-      "value": "' függvény kapcsolati lánca nem végződik"
+      "value": "” függvény nem megszakító kapcsolati lánccal rendelkezik"
     }
   ],
   "XTeLIw": [
@@ -4940,7 +4960,7 @@
   "Xew1Df": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is '"
+      "value": "További diagnosztikai információ: az x-mS-client-request-id: „"
     },
     {
       "type": 1,
@@ -4948,7 +4968,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”."
     }
   ],
   "Xj0Gr/": [
@@ -5066,7 +5086,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "Szöveg formázása aláhúzásként. Parancsikon: Ctrl+U"
+      "value": "Szöveg formázása aláhúzottként. Billentyűparancs: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -5084,7 +5104,7 @@
   "YR1uWE": [
     {
       "type": 0,
-      "value": "Szöveg formázása félkövérré. Parancsikon: Ctrl+B"
+      "value": "Szöveg formázása félkövérré. Billentyűparancs: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -5120,13 +5140,13 @@
   "Ybzoim": [
     {
       "type": 0,
-      "value": "Required. The name of the action that has the values you want."
+      "value": "Kötelező megadni. A kívánt értékekkel rendelkező művelet neve."
     }
   ],
   "YdQw4/": [
     {
       "type": 0,
-      "value": "Szöveg formázása dőltként. Parancsikon: ⌘I"
+      "value": "Szöveg formázása dőltként. Billentyűparancs: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5174,13 +5194,13 @@
   "Yw7Nfl": [
     {
       "type": 0,
-      "value": "Disable Static Result"
+      "value": "Statikus eredmény letiltása"
     }
   ],
   "Z9PWl/": [
     {
       "type": 0,
-      "value": "Az újrapróbálkozási házirendek száma érvénytelen ("
+      "value": "Az újrapróbálkozási szabályzatok száma érvénytelen ("
     },
     {
       "type": 1,
@@ -5334,7 +5354,7 @@
   "amRYtC": [
     {
       "type": 0,
-      "value": "Adjon meg egy érvényes lebegőpontos értéket."
+      "value": "Adjon meg egy érvényes lebegőpontot."
     }
   ],
   "aoUT/3": [
@@ -5428,7 +5448,7 @@
   "bldzuj": [
     {
       "type": 0,
-      "value": "Retry History"
+      "value": "Újrapróbálkozási előzmények"
     }
   ],
   "bsgS8m": [
@@ -5514,7 +5534,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "A kérelem törzsének kibontása, ha az GZip vagy Deflate használatával van tömörítve. Ez a beállítás csak HTTP-trigger esetén alkalmazható."
+      "value": "A kérelem törzsének kibontása, ha GZip vagy Deflate használatával van tömörítve. Ez a beállítás csak HTTP-trigger esetén alkalmazható."
     }
   ],
   "c8UPLp": [
@@ -5544,7 +5564,7 @@
   "cP4UkW": [
     {
       "type": 0,
-      "value": "Az újrapróbálkozási házirend időköze érvénytelen, meg kell egyeznie az ISO 8601 időtartamformátumával"
+      "value": "Az újrapróbálkozási szabályzat időköze érvénytelen, meg kell felelnie az ISO 8601 időtartam-formátumnak"
     }
   ],
   "cR9RtV": [
@@ -5568,7 +5588,7 @@
   "ceVB5l": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output from an action."
+      "value": "Egy művelet többrészes kimenetéből az egyik rész törzsét adja vissza."
     }
   ],
   "cgq/+y": [
@@ -5592,7 +5612,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "A bemeneti csomópont típusa nem egyezik a bemenethez engedélyezett típusok egyikével"
+      "value": "A bemeneti csomóponttípus nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
   "cmTCsW": [
@@ -5622,7 +5642,7 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "Először hozzon létre XSLT-t a leképezések tesztelése előtt."
+      "value": "Először hozzon létre XSLT-t a leképezések tesztelésének megkísérlése előtt."
     }
   ],
   "cvp9VP": [
@@ -5640,7 +5660,7 @@
   "d020eg": [
     {
       "type": 0,
-      "value": "Az átadott tömb vagy karakterlánc első elemét adja vissza."
+      "value": "Az átadott tömb vagy sztring első elemét adja vissza."
     }
   ],
   "dBWIjR": [
@@ -5658,7 +5678,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Váltás kulcsérték módra"
     }
   ],
   "dDYCuU": [
@@ -5846,7 +5866,7 @@
   "ehIBkh": [
     {
       "type": 0,
-      "value": "Enter an integer"
+      "value": "Adjon meg egy egész számot"
     }
   ],
   "elD6+N": [
@@ -5912,7 +5932,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "Válasszon API Management erőforrást"
+      "value": "Válasszon API Management-erőforrást"
     }
   ],
   "fGcSFd": [
@@ -5936,7 +5956,7 @@
   "faUrud": [
     {
       "type": 0,
-      "value": "Kapcsolatadatok betöltése..."
+      "value": "Kapcsolati adatok betöltése..."
     }
   ],
   "fc1AV8": [
@@ -5974,7 +5994,7 @@
   "fp8Ry3": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Peking, Csungking, Hongkong, Ürümcsi"
     }
   ],
   "ftwXvc": [
@@ -6046,13 +6066,21 @@
   "gIx5ys": [
     {
       "type": 0,
-      "value": "Szöveg formázása dőltként. Parancsikon: Ctrl+I"
+      "value": "Szöveg formázása dőltként. Billentyűparancs: Ctrl+I"
     }
   ],
   "gKEaXI": [
     {
       "type": 0,
-      "value": "A {label} értékének másolása a vágólapra"
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " értékének másolása a vágólapra"
     }
   ],
   "gKq3Jv": [
@@ -6252,7 +6280,7 @@
   "i0XjL5": [
     {
       "type": 0,
-      "value": "Search for operation"
+      "value": "Művelet keresése"
     }
   ],
   "i1EQYm": [
@@ -6282,13 +6310,13 @@
   "i4Om5O": [
     {
       "type": 0,
-      "value": "Érvénytelen értéket tartalmaz"
+      "value": "Ez érvénytelen értéket tartalmaz"
     }
   ],
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Névjegy lapfül"
     }
   ],
   "iCSHJG": [
@@ -6400,7 +6428,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Kódnézet lapfül"
     }
   ],
   "iq+tiv": [
@@ -6662,7 +6690,7 @@
   "kxMDyM": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "l/9YHQ": [
@@ -6692,7 +6720,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Figyelés lapfül"
     }
   ],
   "l72gf4": [
@@ -6734,7 +6762,23 @@
   "lUvgiW": [
     {
       "type": 0,
-      "value": "A {0} típusa {1}."
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " típusa "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "lZT0JI": [
@@ -6752,7 +6796,7 @@
   "lexzgJ": [
     {
       "type": 0,
-      "value": "Remove all references to element ' "
+      "value": "Az elem eltávolítása előtt távolítsa el a(z) "
     },
     {
       "type": 1,
@@ -6760,7 +6804,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the element."
+      "value": " elemre mutató összes hivatkozást."
     }
   ],
   "lgs5sf": [
@@ -6784,7 +6828,7 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "Kifejezés beszúrása (a szerkesztőbe beírhatja vagy beírhatja a szöveget)"
+      "value": "Kifejezés beszúrása (a szerkesztőbe írással is hozzáadhatja)"
     }
   ],
   "lsKVU6": [
@@ -6808,7 +6852,7 @@
   "m/jJ/5": [
     {
       "type": 0,
-      "value": "Térképellenző"
+      "value": "Térképellenőrző"
     }
   ],
   "m7Y6Qf": [
@@ -6888,7 +6932,7 @@
   "mPuXlv": [
     {
       "type": 0,
-      "value": "Invalid type on split on value '"
+      "value": "Érvénytelen típusú érték szerinti felosztás: „"
     },
     {
       "type": 1,
@@ -6896,7 +6940,7 @@
     },
     {
       "type": 0,
-      "value": "', split on not in array."
+      "value": "”. A felosztás nincs a tömbben."
     }
   ],
   "mQotIu": [
@@ -7116,7 +7160,7 @@
   "o/FgET": [
     {
       "type": 0,
-      "value": "A függvény el lett távolítva a jelenlegi helyről, és jelenleg máshol létezik."
+      "value": "A függvény el lett távolítva a jelenlegi helyről, és jelenleg máshol található."
     }
   ],
   "o14STH": [
@@ -7142,7 +7186,7 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "Adjon meg egy érvényes URI-t."
+      "value": "Érvényes URI-t adjon meg."
     }
   ],
   "o3SfI4": [
@@ -7184,7 +7228,7 @@
   "oMphsh": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "Beállítások"
     }
   ],
   "oO12r6": [
@@ -7238,13 +7282,13 @@
   "ox2Ou7": [
     {
       "type": 0,
-      "value": "Enter a valid JSON"
+      "value": "Érvényes JSON-t adjon meg"
     }
   ],
   "oxXV4+": [
     {
       "type": 0,
-      "value": "Az átadott argumentumértékek első nem null értékű objektumát adja vissza."
+      "value": "Az átadott argumentumértékek első nem nullértékű objektumát adja vissza."
     }
   ],
   "p/0r2N": [
@@ -7262,7 +7306,7 @@
   "p1IEXb": [
     {
       "type": 0,
-      "value": "Adja meg az előző lépés adatait. A \"/\" karakter beírásával adatokat is hozzáadhat."
+      "value": "Adja meg az előző lépés adatait. A / karakter beírásával is hozzáadhat adatokat."
     }
   ],
   "p1Qtm5": [
@@ -7364,7 +7408,7 @@
   "q+ZZjX": [
     {
       "type": 0,
-      "value": "Retry History"
+      "value": "Újrapróbálkozási előzmények"
     }
   ],
   "q/+Uex": [
@@ -7400,7 +7444,7 @@
   "q5TkqE": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is false."
+      "value": "Kötelező megadni. Az akkor visszaadandó érték, ha a kifejezés hamis."
     }
   ],
   "q87X20": [
@@ -7418,7 +7462,7 @@
   "qAlTD5": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: '"
+      "value": "Nem támogatott jegyzékfájlkapcsolat hivatkozásának formátuma: „"
     },
     {
       "type": 1,
@@ -7426,13 +7470,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "qBkxGU": [
     {
       "type": 0,
-      "value": "Szöveg formázása aláhúzásként. Parancsikon: ⌘U"
+      "value": "Szöveg formázása aláhúzottként. Billentyűparancs: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7528,7 +7572,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Váltás alapértelmezett nézet módba"
     }
   ],
   "qnI4Y1": [
@@ -7540,7 +7584,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "A(z) '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -7548,7 +7592,7 @@
     },
     {
       "type": 0,
-      "value": "' függvény bemenete nem egyező típusú."
+      "value": "” függvény bemenete eltérő típusú"
     }
   ],
   "qrxi0L": [
@@ -7590,7 +7634,7 @@
   "rAwCdh": [
     {
       "type": 0,
-      "value": "Connect via on-premises data gateway"
+      "value": "Csatlakoztatás helyszíni adatátjáróval"
     }
   ],
   "rAyuzv": [
@@ -7626,7 +7670,7 @@
   "rSIBjh": [
     {
       "type": 0,
-      "value": "Enter value for parameter."
+      "value": "Adja meg a parameter értékét."
     }
   ],
   "raBiud": [
@@ -7674,7 +7718,7 @@
   "s+4LEa": [
     {
       "type": 0,
-      "value": "Open folder"
+      "value": "Mappa megnyitása"
     }
   ],
   "s5RV9B": [
@@ -7698,7 +7742,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Tesztelés lapfül"
     }
   ],
   "sFbnCs": [
@@ -7716,7 +7760,7 @@
   "sQ2vRs": [
     {
       "type": 0,
-      "value": "Add Case"
+      "value": "Eset hozzáadása"
     }
   ],
   "sW47JR": [
@@ -7728,7 +7772,7 @@
   "sYQDN+": [
     {
       "type": 0,
-      "value": "Betűcsalád formázási beállításai"
+      "value": "Formázási beállítások a betűcsaládhoz"
     }
   ],
   "sZ0G/Z": [
@@ -7812,7 +7856,7 @@
   "sytRna": [
     {
       "type": 0,
-      "value": "Nem sikerült beolvasni a dinamikus bemeneteket. Hiba részletei: '"
+      "value": "Nem sikerült beolvasni a dinamikus bemeneteket. Hiba részletei: „”"
     },
     {
       "type": 1,
@@ -7820,7 +7864,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "t+XCkg": [
@@ -7874,7 +7918,7 @@
   "tJMHcJ": [
     {
       "type": 0,
-      "value": "Kapcsolathivatkozás kiválasztása"
+      "value": "Kapcsolati hivatkozás kiválasztása"
     }
   ],
   "tLZ9Sh": [
@@ -7892,7 +7936,7 @@
   "tMdcE1": [
     {
       "type": 0,
-      "value": "Érvénytelen kapcsolat. Frissítse a kapcsolatot a teljes részletek betöltéséhez"
+      "value": "Érvénytelen kapcsolat, frissítse a kapcsolatot az összes részlet betöltéséhez"
     }
   ],
   "tNoZx2": [
@@ -7956,7 +8000,7 @@
   "tarDYT": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second."
+      "value": "Igaz értéket ad vissza, ha az első argumentum kisebb a másodiknál."
     }
   ],
   "td5//c": [
@@ -8016,7 +8060,7 @@
   "uM1i27": [
     {
       "type": 0,
-      "value": "Specify a retry count from 1 to 90"
+      "value": "Adja meg az újrapróbálkozások számát 1 és 90 között"
     }
   ],
   "uN4zFU": [
@@ -8034,7 +8078,7 @@
   "uOWkHS": [
     {
       "type": 0,
-      "value": "Nem sikerült beolvasni a dinamikus kimeneteket. Emiatt előfordulhat, hogy a művelet kimenetei nem lesznek láthatók a következő műveletekben. Hiba részletei: "
+      "value": "Nem sikerült beolvasni a dinamikus kimeneteket. Emiatt előfordulhat, hogy a művelet kimenetei nem lesznek láthatók a későbbi műveletekben. Hiba részletei: "
     },
     {
       "type": 1,
@@ -8128,13 +8172,13 @@
   "uwuGU0": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
   "uxKRO/": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Paraméterek"
     }
   ],
   "uzsleE": [
@@ -8152,7 +8196,7 @@
   "v0ENVA": [
     {
       "type": 0,
-      "value": "Loading"
+      "value": "Betöltés folyamatban"
     }
   ],
   "v39HKj": [
@@ -8218,7 +8262,7 @@
   "vdKLiR": [
     {
       "type": 0,
-      "value": "Request Settings"
+      "value": "Kérelem beállításai"
     }
   ],
   "vdtKjT": [
@@ -8268,7 +8312,7 @@
   "vxOc/M": [
     {
       "type": 0,
-      "value": "Ismétlődő értéket tartalmaz"
+      "value": "Ez ismétlődő értéket tartalmaz"
     }
   ],
   "vz2gZC": [
@@ -8280,7 +8324,7 @@
   "w0pI5M": [
     {
       "type": 0,
-      "value": "No results found for the specified filters"
+      "value": "Nincs a szűrőknek megfelelő találat"
     }
   ],
   "w16qh+": [
@@ -8376,7 +8420,7 @@
   "wkvUUA": [
     {
       "type": 0,
-      "value": "Bemeneti típuseltérés"
+      "value": "A bemeneti típusok eltérnek"
     }
   ],
   "wl7X0l": [
@@ -8520,7 +8564,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Váltás szöveges módra"
     }
   ],
   "xYyPR8": [
@@ -8532,7 +8576,7 @@
   "xi2tn6": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Paraméterek"
     }
   ],
   "xt5TeT": [
@@ -8544,7 +8588,7 @@
   "xwD1VZ": [
     {
       "type": 0,
-      "value": "Loading inputs"
+      "value": "Bemenetek betöltése"
     }
   ],
   "xwEX2/": [
@@ -8586,7 +8630,7 @@
   "yF2R//": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string."
+      "value": "Karakterek részhalmazát adja vissza egy sztringből."
     }
   ],
   "yVFIAQ": [
@@ -8610,7 +8654,7 @@
   "yjierd": [
     {
       "type": 0,
-      "value": "Invalid expression type '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -8618,7 +8662,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "” érvénytelen kifejezéstípus."
     }
   ],
   "yoCi15": [
@@ -8660,7 +8704,7 @@
   "z/UY4k": [
     {
       "type": 0,
-      "value": "Navigálás "
+      "value": "Navigálás a(z) "
     },
     {
       "type": 1,
