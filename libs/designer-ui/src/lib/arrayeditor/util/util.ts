@@ -103,40 +103,38 @@ export const convertComplexItemsToArray = (
 
 export const initializeSimpleArrayItems = (
   initialValue: ValueSegment[],
+  valueType: string,
   setItems: (items: SimpleArrayItem[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed: (b: boolean) => void
 ) => {
   const nodeMap = new Map<string, ValueSegment>();
   const stringifiedCollapsedValue = convertSegmentsToString(initialValue, nodeMap);
-  validationAndSerializeSimpleArray(stringifiedCollapsedValue, nodeMap, setItems, setIsValid, setCollapsed);
+  validationAndSerializeSimpleArray(stringifiedCollapsedValue, nodeMap, valueType, setItems, setIsValid, setCollapsed);
 };
 
 export const validationAndSerializeSimpleArray = (
   editorString: string,
   nodeMap: Map<string, ValueSegment>,
+  valueType: string,
   setItems: (items: SimpleArrayItem[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed?: (b: boolean) => void
 ): void => {
   try {
     const strippedEditorString = editorString.replace(/\s+/g, '');
-    if (
-      !strippedEditorString.length ||
-      strippedEditorString === '[]' ||
-      strippedEditorString === 'null' ||
-      strippedEditorString === '[null]'
-    ) {
-      setItems([]);
+    if (!strippedEditorString.length || strippedEditorString === 'null' || strippedEditorString === '[null]') {
+      setItems([{ key: guid(), value: [] }]);
     } else {
       const jsonEditor = JSON.parse(editorString);
-      if (typeof jsonEditor === 'number' || typeof jsonEditor === 'string' || typeof jsonEditor === 'boolean') {
-        throw Error();
-      }
       const returnItems: SimpleArrayItem[] = [];
       for (const [, value] of Object.entries(jsonEditor)) {
         returnItems.push({
-          value: convertStringToSegments(value as string, true, nodeMap),
+          value: convertStringToSegments(
+            valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value),
+            true,
+            nodeMap
+          ),
           key: guid(),
         });
       }

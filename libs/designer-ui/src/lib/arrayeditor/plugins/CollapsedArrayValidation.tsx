@@ -8,7 +8,7 @@ import type { EditorState } from 'lexical';
 
 export interface CollapsedArrayValidationProps {
   className?: string;
-  itemSchema?: ArrayItemSchema;
+  itemSchema: ArrayItemSchema;
   isComplex: boolean;
   setIsValid: (b: boolean) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
@@ -30,7 +30,7 @@ export const CollapsedArrayValidation = ({
       if (isComplex && itemSchema) {
         serializeComplexArray(editor, itemSchema, setItems as (complexItems: ComplexArrayItems[]) => void, setIsValid);
       } else {
-        serializeSimpleArray(editor, setItems as (simpleItems: SimpleArrayItem[]) => void, setIsValid);
+        serializeSimpleArray(editor, itemSchema.type, setItems as (simpleItems: SimpleArrayItem[]) => void, setIsValid);
       }
       setCollapsedValue(serializeEditorState(editor.getEditorState()));
     });

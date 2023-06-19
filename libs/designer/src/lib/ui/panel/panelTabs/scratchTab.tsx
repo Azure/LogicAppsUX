@@ -3,7 +3,8 @@ import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
 import {
-  // AuthenticationType,
+  BaseEditor,
+  testTokenSegment, // AuthenticationType,
   // Combobox, // RowDropdownOptions,
   // GroupType, // ArrayEditor,
   // // ArrayType, // DictionaryEditor,
@@ -384,6 +385,7 @@ getTokenPicker={GetTokenPicker}
             items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
           />
         } */}
+        <BaseEditor initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} BasePlugins={{ tokens: true, treeView: true }} />
       </>
     );
   };

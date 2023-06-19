@@ -18,6 +18,7 @@
   padding-right: 4px;
   position: relative;
   gap: 4px;
+  user-select: none;
 
   .msla-token-delete {
     align-self: center;
@@ -34,6 +35,9 @@
     position: absolute;
     left: 14px;
     top: 6px;
+  }
+  &.selected {
+    outline: 2px solid @primary_focus_blue;
   }
 }
 
