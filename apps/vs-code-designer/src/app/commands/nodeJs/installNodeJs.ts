@@ -37,11 +37,25 @@ export async function installNodeJs(context: IActionContext): Promise<void> {
         );
         break;
       }
+
       // Has nvm = good scenario
       if (hasNodeVersionManager) {
-        hasCompatibleNodeVersion() ? setCurrentNodeVersion(NodeVersion.v16) : installNodeVersion(NodeVersion.v16);
+        const hasCompatibleNodeVer = hasCompatibleNodeVersion();
+        const message: string = hasCompatibleNodeVer
+          ? localize('nvmDetected', 'Node Version Manager Detected. Use NodeJs v16?')
+          : localize('nvmDetected', 'Node Version Manager Detected. Install NodeJs v16?');
+        const action: MessageItem = hasCompatibleNodeVer ? { title: localize('action', 'Use') } : { title: localize('action', 'Install') };
+
+        let result: MessageItem;
+        do {
+          result = await context.ui.showWarningMessage(message, action);
+          if (result === action) {
+            hasCompatibleNodeVer ? setCurrentNodeVersion(NodeVersion.v16) : installNodeVersion(NodeVersion.v16);
+          }
+        } while (result === DialogResponses.learnMore);
       }
-      // Yes node but No nvm
+
+      // Has node but no nvm
       if (hasNodeJs) {
         if (!isCompatibleNodeVersion()) {
           // windows nvm will ask users if nvm can manage the current node version
