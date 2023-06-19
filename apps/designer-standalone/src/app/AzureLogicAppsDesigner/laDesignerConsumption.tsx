@@ -121,7 +121,7 @@ const DesignerEditorConsumption = () => {
         queryClient
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, connectionsData, workflowAppData, addConnectionData, tenantId, canonicalLocation, designerID]
+    [workflowId, connectionsData, workflowAppData, tenantId, canonicalLocation, designerID]
   );
 
   const [parsedDefinition, setParsedDefinition] = React.useState<any>(undefined);
@@ -244,6 +244,8 @@ const getDesignerServices = (
   loggerService?: any,
   queryClient?: any
 ): any => {
+  console.log('### Getting services');
+
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
@@ -330,26 +332,27 @@ const getDesignerServices = (
         const { parameters, isInput } = args;
         return appServiceService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
       },
+      getMapSchema: (_args: any) => {
+        throw new Error('getMapSchema not implemented for consumption standalone');
+      },
     },
     valuesClient: {
-      getWorkflows: () => childWorkflowService.getWorkflowsWithRequestTrigger(),
-      getMapArtifacts: (args: any) => {
-        const { mapType, mapSource } = args.parameters;
-        return artifactService.getMapArtifacts(mapType, mapSource);
-      },
       getSwaggerOperations: (args: any) => {
         const { nodeMetadata } = args;
         const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
         return appServiceService.getOperations(swaggerUrl);
       },
-      getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
       getApimOperations: (args: any) => {
         const { configuration } = args;
         if (!configuration?.connection?.apiId) {
           throw new Error('Missing api information to make dynamic call');
         }
-
         return apimService.getOperations(configuration?.connection?.apiId);
+      },
+      getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
+      getMapArtifacts: (args: any) => {
+        const { mapType, mapSource } = args.parameters;
+        return artifactService.getMapArtifacts(mapType, mapSource);
       },
     },
     apiHubServiceDetails: {
