@@ -118,6 +118,10 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       });
 
   useEffect(() => {
+    dispatch(clearPanel());
+  }, [dispatch]);
+
+  useEffect(() => {
     const tabs = [
       monitoringTab(intl),
       parametersTab(intl),
@@ -132,7 +136,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
-    dispatch(clearPanel());
   }, [dispatch, intl]);
 
   useEffect(() => {
