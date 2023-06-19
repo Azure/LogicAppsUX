@@ -100,6 +100,14 @@ export interface OpenApiOperationInputs extends RetryableActionInputs {
   parameters?: any;
 }
 
+export interface HybridTriggerOperationAction extends Trigger {
+  inputs: HybridTriggerConnectionInfo;
+}
+
+export interface HybridTriggerConnectionInfo {
+  host: HybridTriggerConnectionHost;
+}
+
 export type OpenApiConnectionNotificationTrigger = OpenApiConnectionWebhookTrigger;
 
 export type ApiConnectionHeaders = string | Record<string, string>;

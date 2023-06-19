@@ -408,6 +408,9 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
 
     case ConnectionReferenceKeyFormat.OpenApi:
       return getOpenApiConnectionReferenceKey((operationDefinition as LogicAppsV2.OpenApiOperationAction).inputs);
+
+    case ConnectionReferenceKeyFormat.HybridTrigger:
+      return getHybridTriggerConnectionReferenceKey((operationDefinition as LogicAppsV2.HybridTriggerOperationAction).inputs);
     default:
       throw Error('No known connection reference key type');
   }
@@ -439,4 +442,20 @@ export function getLegacyConnectionReferenceKey(operationDefinition: any): strin
     }
   }
   return referenceKey;
+}
+
+function getHybridTriggerConnectionReferenceKey(operationDefinition: LogicAppsV2.HybridTriggerConnectionInfo): string {
+  let connectionName: string;
+  if (typeof operationDefinition.host.connection.name === 'string') {
+    const hostName =  operationDefinition.host.connection.name;
+    // hostName of the format: `@parameters('$connections')['${referenceKey}']['connectionId']`
+    const startDelimiter = "['";
+    const endDelimiter = "']";
+    const startIndex = hostName.indexOf(startDelimiter) + startDelimiter.length;
+    const endIndex = hostName.indexOf(endDelimiter, startIndex);
+    connectionName = hostName.substring(startIndex, endIndex);
+  } else {
+    connectionName = operationDefinition.host.connection.name.referenceName;
+  }
+  return connectionName;
 }
