@@ -13,6 +13,10 @@ export * from './card/types';
 export * from './card/hooks';
 export * from './card/images/dynamicsvgs/trafficlightsvgs';
 export * from './card/addActionCard';
+export { ChatInput } from './chatbot/chatInputBox';
+export { ChatBubble } from './chatbot/chatBubble';
+export { ConversationMessage } from './chatbot/conversationMessage';
+export { ConversationItem, ConversationItemType } from './chatbot/conversationItem';
 export * from './checkbox';
 // export * from './colorizer'
 export * from './code';
