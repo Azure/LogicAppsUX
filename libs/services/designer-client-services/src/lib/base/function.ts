@@ -96,7 +96,7 @@ export class BaseFunctionService implements IFunctionService {
         ? swagger.api.schemes?.length
           ? `${swagger.api.schemes.at(-1)}://${swagger.api.host}`
           : `http://${swagger.api.host}`
-        : 'NotFound';
+        : swagger?.api?.basePath ?? 'NotFound';
       schema.properties = {
         method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
         uri: {
