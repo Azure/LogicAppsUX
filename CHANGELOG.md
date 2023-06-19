@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [2.33.0](https://github.com/Azure/LogicAppsUX/compare/v2.32.0...v2.33.0) (2023-06-19)
+
+
+### Features
+
+* **chatbot:** Chatbot input and user message component ([#2759](https://github.com/Azure/LogicAppsUX/issues/2759)) ([31ad7d0](https://github.com/Azure/LogicAppsUX/commit/31ad7d071fbfb9fe1bf4216724992a0c5fd8fe2e))
+
+
+### Bug Fixes
+
+* **Designer:** Consumption - Adding swagger function actions ([#2734](https://github.com/Azure/LogicAppsUX/issues/2734)) ([754080b](https://github.com/Azure/LogicAppsUX/commit/754080b83dc2ea9b8d421f63d6fd7c60f3210f0d))
+* **designer:** Consumption - Fixing integration account operations and their manifests ([#2772](https://github.com/Azure/LogicAppsUX/issues/2772)) ([d31fdf1](https://github.com/Azure/LogicAppsUX/commit/d31fdf196ae06ecfa0ff9004fa948ca8d71f9eee))
+* **desinger:** Simple Array Editor support for non-string types in expanded mode ([#2776](https://github.com/Azure/LogicAppsUX/issues/2776)) ([9a6024e](https://github.com/Azure/LogicAppsUX/commit/9a6024ef9e76a6ef89613636f2ae9d23a9766ec3))
 
 ## [2.32.0](https://github.com/Azure/LogicAppsUX/compare/v2.31.0...v2.32.0) (2023-06-16)
 
