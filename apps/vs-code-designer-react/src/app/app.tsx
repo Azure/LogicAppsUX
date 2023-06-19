@@ -166,8 +166,6 @@ export const App = () => {
       />
     );
 
-  console.log('charlie: VSCode Designer', standardApp?.definition);
-
   const designerApp = standardApp ? (
     <BJSWorkflowProvider
       workflow={{
