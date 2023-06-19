@@ -4,10 +4,8 @@ import { useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } fro
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
-import { ApiManagementService } from './Services/ApiManagement';
 import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
-import { parseApimOperationIds, serializeApimOperations } from './Services/ConsumptionSerializationHelpers';
 import { FileSystemConnectionCreationClient } from './Services/FileSystemConnectionCreationClient';
 import { HttpClient } from './Services/HttpClient';
 import {
@@ -21,7 +19,7 @@ import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot } from '@microsoft/chatbot';
 import {
-  ApiManagementInstanceService,
+  BaseApiManagementService,
   BaseAppServiceService,
   BaseFunctionService,
   BaseGatewayService,
@@ -35,6 +33,7 @@ import type { Workflow } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { guid, isArmResourceId } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
+import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
@@ -50,6 +49,8 @@ const DesignerEditorConsumption = () => {
   const readOnly = useIsReadOnly();
   const isMonitoringView = useIsMonitoringView();
   const showChatBot = useShowChatBot();
+
+  const queryClient = useQueryClient();
 
   // const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -115,7 +116,9 @@ const DesignerEditorConsumption = () => {
         addConnectionData,
         getConnectionConfiguration,
         tenantId,
-        canonicalLocation
+        canonicalLocation,
+        undefined,
+        queryClient
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [workflowId, connectionsData, workflowAppData, addConnectionData, tenantId, canonicalLocation, designerID]
@@ -127,7 +130,6 @@ const DesignerEditorConsumption = () => {
     (async () => {
       if (!services) return;
       if (!(definition as any)?.actions) return;
-      await parseApimOperationIds(definition, services.apimService);
       setParsedDefinition(definition);
     })();
   }, [definition, services]);
@@ -196,7 +198,6 @@ const DesignerEditorConsumption = () => {
       }
       workflowToSave.connections = newConnectionsObj;
 
-      await serializeApimOperations(workflowToSave.definition, services.apimService);
       const response = await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave);
       alert(`Workflow saved successfully!`);
       return response;
@@ -239,7 +240,9 @@ const getDesignerServices = (
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
-  location: string
+  location: string,
+  loggerService?: any,
+  queryClient?: any
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -276,11 +279,12 @@ const getDesignerServices = (
       }),
     },
   });
-  const apimService = new ApiManagementInstanceService({
+  const apimService = new BaseApiManagementService({
+    ...defaultServiceParams,
     apiVersion: '2019-12-01',
-    baseUrl,
     subscriptionId,
-    httpClient,
+    includeBasePathInTemplate: true,
+    queryClient,
   });
   const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl: armUrl, siteResourceId, httpClient, workflowName });
   const artifactService = new ArtifactService({
@@ -290,8 +294,11 @@ const getDesignerServices = (
     httpClient,
     integrationAccountCallbackUrl: undefined,
   });
-  const apiManagementService = new ApiManagementService({ service: apimService });
-  const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
+  const appServiceService = new BaseAppServiceService({
+    ...defaultServiceParams,
+    apiVersion: '2022-03-01',
+    subscriptionId,
+  });
   const connectorService = new ConsumptionConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [
@@ -312,19 +319,16 @@ const getDesignerServices = (
     ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
     getConfiguration,
     schemaClient: {
-      getWorkflowSwagger: (args: any) => childWorkflowService.getWorkflowTriggerSchema(args.parameters.name),
+      getLogicAppSwagger: (args: any) => childWorkflowService.getLogicAppSwagger(args.parameters.workflowId),
       getApimOperationSchema: (args: any) => {
-        const { configuration, parameters, isInput } = args;
-        if (!configuration?.connection?.apiId) {
-          throw new Error('Missing api information to make dynamic call');
-        }
-        return apiManagementService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
+        const { parameters, isInput = false } = args;
+        const { apiId, operationId } = parameters;
+        if (!apiId || !operationId) return Promise.resolve();
+        return apimService.getOperationSchema(apiId, operationId, isInput);
       },
       getSwaggerOperationSchema: (args: any) => {
-        const { parameters, nodeMetadata, isInput } = args;
-        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        if (!swaggerUrl) return Promise.resolve();
-        return appService.getOperationSchema(swaggerUrl, parameters.operationId, isInput);
+        const { parameters, isInput } = args;
+        return appServiceService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
       },
     },
     valuesClient: {
@@ -336,7 +340,7 @@ const getDesignerServices = (
       getSwaggerOperations: (args: any) => {
         const { nodeMetadata } = args;
         const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        return appService.getOperations(swaggerUrl);
+        return appServiceService.getOperations(swaggerUrl);
       },
       getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
       getApimOperations: (args: any) => {
@@ -345,7 +349,7 @@ const getDesignerServices = (
           throw new Error('Missing api information to make dynamic call');
         }
 
-        return apiManagementService.getOperations(configuration?.connection?.apiId);
+        return apimService.getOperations(configuration?.connection?.apiId);
       },
     },
     apiHubServiceDetails: {
@@ -393,20 +397,14 @@ const getDesignerServices = (
     httpClient,
   });
 
-  // const loggerService = new Stan({
-  //   resourceID: workflowId,
-  //   designerVersion: packagejson.dependencies['@microsoft/logic-apps-designer'],
-  //   designerID,
-  // });
-
   return {
-    appService,
+    appServiceService,
     connectionService,
     connectorService,
     gatewayService,
     operationManifestService,
     searchService,
-    loggerService: null,
+    loggerService,
     oAuthService,
     workflowService,
     apimService,
