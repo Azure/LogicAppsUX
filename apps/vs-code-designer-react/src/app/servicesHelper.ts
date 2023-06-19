@@ -13,7 +13,7 @@ import {
   BaseFunctionService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
-  IApiHubServiceDetails,
+  ApiHubServiceDetails,
   ConnectionCreationInfo,
   ContentType,
   IHostService,
@@ -29,8 +29,7 @@ import type { WebviewApi } from 'vscode-webview';
 export const getDesignerServices = (
   baseUrl: string,
   apiVersion: string,
-  apiHubServiceDetails: IApiHubServiceDetails,
-  tenantId: string | undefined,
+  apiHubServiceDetails: ApiHubServiceDetails,
   isLocal: boolean,
   connectionData: ConnectionsData,
   panelMetadata: IDesignerPanelMetadata | null,
@@ -86,7 +85,6 @@ export const getDesignerServices = (
     apiVersion,
     httpClient,
     apiHubServiceDetails,
-    tenantId,
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: (connectionAndSetting: ConnectionAndAppSetting) => {
       return addConnectionData(connectionAndSetting);

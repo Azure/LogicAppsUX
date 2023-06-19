@@ -31,6 +31,7 @@ const connectionServiceStandard = new StandardConnectionService({
     subscriptionId: '',
     resourceGroup: '',
     location: '',
+    httpClient,
   },
   workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
   readConnections: () => Promise.resolve({}),
