@@ -3197,10 +3197,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const actualForLoopObject = forLoopObject[
           `$for(sort(${sourceArrayItemNode.key}, ${sourceArrayItemPropNode.name}))`
         ] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(1);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
       });
 
       it('Generates body with a sequence and index loop', () => {
@@ -3306,11 +3306,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const actualForLoopObject = forLoopObject[
           `$for(sort(${sourceArrayItemNode.key}, ${sourceArrayItemPropNode.name}), $a)`
         ] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(2);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
-        expect(arrayElement[targetArrayItemPropNode2.name]).toEqual('$a');
+        expect(actualForLoopObject[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode2.name]).toEqual('$a');
       });
 
       it('Generates body with 2 sequences and index loop', () => {
@@ -3436,11 +3436,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const actualForLoopObject = forLoopObject[
           `$for(sort(sort(${sourceArrayItemNode.key}, ${sourceArrayItemPropNode.name}), ${sourceArrayItemPropNode.name}), $a)`
         ] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(2);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
-        expect(arrayElement[targetArrayItemPropNode2.name]).toEqual('$a');
+        expect(actualForLoopObject[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode2.name]).toEqual('$a');
       });
 
       it('Generates body with function and index loop', () => {

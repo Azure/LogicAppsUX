@@ -238,7 +238,7 @@ export const getSourceNode = (
     // We found a Function in source key -> let's find its data
     return findFunctionForFunctionName(sourceKey.substring(0, endOfFunctionIndex), functions);
   } else {
-    return findNodeForKey(sourceKey, sourceSchema.schemaTreeRoot);
+    return findNodeForKey(sourceKey, sourceSchema.schemaTreeRoot, false); // XXX double check, pretty sure this is fine
   }
 };
 
@@ -253,7 +253,7 @@ export const getDestinationNode = (targetKey: string, functions: FunctionData[],
 
   const destinationNode = isAGuid(destinationFunctionGuid)
     ? findFunctionForKey(destinationFunctionKey, functions)
-    : findNodeForKey(targetKey, schemaTreeRoot);
+    : findNodeForKey(targetKey, schemaTreeRoot, false); // XXX
 
   return destinationNode;
 };
@@ -429,8 +429,22 @@ export const getTargetValueWithoutLoops = (targetKey: string, targetArrayDepth: 
   const matchedLoops = targetKey.match(/\$for\(((?!\)).)+\)\//g) || [];
   // Start from the bottom and work up
   matchedLoops.reverse();
+
   matchedLoops.forEach((match, index) => {
     result = result.replace(match, index < targetArrayDepth ? '*/' : '');
+  });
+
+  return result;
+};
+
+export const getTargetValueWithoutLoopsSchemaSpecific = (targetKey: string, isJsonLoops: boolean): string => {
+  let result = targetKey;
+  const matchedLoops = targetKey.match(/\$for\(((?!\)).)+\)\//g) || [];
+  // Start from the bottom and work up
+  matchedLoops.reverse();
+
+  matchedLoops.forEach((match) => {
+    result = result.replace(match, isJsonLoops ? '*/' : '');
   });
 
   return result;
