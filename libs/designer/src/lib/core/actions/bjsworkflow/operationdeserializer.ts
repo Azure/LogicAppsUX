@@ -146,6 +146,12 @@ export const initializeOperationMetadata = async (
       variables,
     })
   );
+
+  LoggerService().log({
+    level: LogEntryLevel.Trace,
+    area: 'initializeOperationMetadata',
+    message: 'Workflow Operation Metadata initialized',
+  });
 };
 
 const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithParsedSwagger[]> => {

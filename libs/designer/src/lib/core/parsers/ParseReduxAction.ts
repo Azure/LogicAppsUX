@@ -9,6 +9,7 @@ import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from './models/workflowNode';
+import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -30,6 +31,12 @@ export const initializeGraphState = createAsyncThunk<
     throw new Error('Trying to import workflow without specifying the workflow type');
   }
   if (spec === 'BJS') {
+    const traceId = LoggerService().startTrace({
+      name: 'Initialize Graph State',
+      action: 'initializeGraphState',
+      source: 'ParseReduxAction.ts',
+    });
+
     getConnectionsQuery();
     const { definition, connectionReferences, parameters } = workflowDefinition;
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
@@ -52,7 +59,9 @@ export const initializeGraphState = createAsyncThunk<
       await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
       await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
     };
-    asyncInitialize();
+    asyncInitialize()
+      .then(() => LoggerService().endTrace(traceId, { status: Status.Success }))
+      .catch(() => LoggerService().endTrace(traceId, { status: Status.Failure }));
 
     return { deserializedWorkflow, originalDefinition: definition };
   } else if (spec === 'CNCF') {

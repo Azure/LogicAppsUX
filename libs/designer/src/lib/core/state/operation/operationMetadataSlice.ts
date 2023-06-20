@@ -106,6 +106,11 @@ export interface OperationMetadataState {
   staticResults: Record<string, NodeStaticResults>;
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
+  loadStatus: OperationMetadataLoadStatus;
+}
+
+interface OperationMetadataLoadStatus {
+  nodesInitialized: boolean;
 }
 
 const initialState: OperationMetadataState = {
@@ -119,6 +124,9 @@ const initialState: OperationMetadataState = {
   staticResults: {},
   repetitionInfos: {},
   errors: {},
+  loadStatus: {
+    nodesInitialized: false,
+  },
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {
@@ -215,6 +223,7 @@ export const operationMetadataSlice = createSlice({
           state.repetitionInfos[id] = repetitionInfo;
         }
       }
+      state.loadStatus.nodesInitialized = true;
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
       const { nodeId, groupId, inputs, newInputs: rawInputs, swagger } = action.payload;

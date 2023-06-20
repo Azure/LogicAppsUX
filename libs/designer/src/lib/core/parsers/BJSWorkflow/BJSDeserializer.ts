@@ -3,6 +3,7 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
+import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
@@ -34,7 +35,13 @@ export const Deserialize = (
 ): DeserializedWorkflow => {
   throwIfMultipleTriggers(definition);
 
-  //process Trigger
+  const traceId = LoggerService().startTrace({
+    name: 'BJSDeserialize',
+    action: 'BJSDeserialize',
+    source: 'BJSDeserializer.ts',
+  });
+
+  // Process Trigger
   let triggerNode: WorkflowNode | null = null;
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
@@ -81,6 +88,9 @@ export const Deserialize = (
     edges: [...rootEdges, ...edges],
     type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
   };
+
+  LoggerService().endTrace(traceId, { status: Status.Success });
+
   return {
     graph,
     actionData: allActions,
