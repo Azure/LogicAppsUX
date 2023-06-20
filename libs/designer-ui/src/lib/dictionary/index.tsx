@@ -107,7 +107,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           <EditorCollapseToggle
             label={collapsed ? collapsedLabel : expandedLabel}
             collapsed={collapsed}
-            disabled={!isValid || baseEditorProps.readonly}
+            disabled={!isValid}
             toggleCollapsed={toggleCollapsed}
           />
         ) : null}
