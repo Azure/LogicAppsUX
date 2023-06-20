@@ -87,7 +87,7 @@ export abstract class BaseSearchService implements ISearchService {
 
     try {
       const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
-      return { value, hasMore: !!nextLink || value.length !== 0 };
+      return { value, hasMore: !!nextLink };
     } catch (error) {
       return { value: [], hasMore: false };
     }
@@ -100,7 +100,7 @@ export abstract class BaseSearchService implements ISearchService {
       try {
         const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
         value.push(...newValue);
-        if (nextLink && newValue.length !== 0) return await requestPage(nextLink, value);
+        if (nextLink) return await requestPage(nextLink, value);
         return value;
       } catch (error) {
         return value;
