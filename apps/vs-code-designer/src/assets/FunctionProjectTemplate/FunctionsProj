@@ -25,7 +25,7 @@
  
   <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
     <ItemGroup>
-        <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\bin\Debug\net472\*.*" />
+        <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\*.*" />
       <CopyFiles2 Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\%(RecursiveDir)" SkipUnchangedFiles="true" />
