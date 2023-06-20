@@ -3,10 +3,9 @@ import { useIsConsumption, useIsLocal, useResourcePath } from '../../state/workf
 import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesigner';
 import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumption';
 import { LocalDesigner } from '../LocalDesigner/localDesigner';
-import { ReactQueryProvider } from '@microsoft/logic-apps-designer';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-const queryClient = new QueryClient({
+const standaloneQueryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchInterval: false,
@@ -14,28 +13,19 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
-      staleTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
 });
 
-const InnerDesigner = () => {
+export const DesignerWrapper = () => {
   const resourcePath = useResourcePath();
   const isLocal = useIsLocal();
   const isConsumption = useIsConsumption();
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={standaloneQueryClient}>
       <SettingsBox />
       {isLocal ? <LocalDesigner /> : resourcePath ? isConsumption ? <LogicAppsDesignerConsumption /> : <LogicAppsDesignerStandard /> : null}
     </QueryClientProvider>
-  );
-};
-
-export const DesignerWrapper = () => {
-  return (
-    <ReactQueryProvider>
-      <InnerDesigner />
-    </ReactQueryProvider>
   );
 };
