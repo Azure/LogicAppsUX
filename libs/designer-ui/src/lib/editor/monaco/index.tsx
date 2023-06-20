@@ -3,6 +3,7 @@ import { registerWorkflowLanguageProviders } from '../../workflow/languageservic
 import { useTheme } from '@fluentui/react';
 import Editor, { loader } from '@monaco-editor/react';
 import type { IScrollEvent, editor } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef } from 'react';
 
@@ -114,6 +115,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
     const initTemplateLanguage = async () => {
+      loader.config({ monaco });
       const { languages, editor } = await loader.init();
       if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
         registerWorkflowLanguageProviders(languages, editor);
