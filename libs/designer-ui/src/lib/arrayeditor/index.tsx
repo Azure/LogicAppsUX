@@ -179,7 +179,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           <EditorCollapseToggle
             label={collapsed ? collapsedLabel : expandedLabel}
             collapsed={collapsed}
-            disabled={(!isValid || baseEditorProps.readonly) && collapsed}
+            disabled={!isValid && collapsed}
             toggleCollapsed={toggleCollapsed}
           />
         ) : null}
