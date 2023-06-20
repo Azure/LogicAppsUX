@@ -1,10 +1,15 @@
-import type { BaseConnectionServiceOptions } from '../base/connection';
+import type { ApiHubServiceDetails } from '../base/connection';
 import type { ListDynamicValue } from '../connector';
+import type { IHttpClient } from '../httpClient';
 
-interface ArtifactServiceOptions extends BaseConnectionServiceOptions {
+interface ArtifactServiceOptions {
+  apiVersion: string;
+  baseUrl: string;
+  httpClient: IHttpClient;
   integrationAccountCallbackUrl: string | undefined;
   schemaArtifacts?: FileDetails[] | undefined;
   mapArtifacts?: Record<string, FileDetails[]> | undefined;
+  apiHubServiceDetails?: ApiHubServiceDetails;
 }
 
 interface FileDetails {

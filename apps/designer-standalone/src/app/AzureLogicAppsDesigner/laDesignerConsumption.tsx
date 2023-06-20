@@ -6,7 +6,6 @@ import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from '.
 import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
-import { FileSystemConnectionCreationClient } from './Services/FileSystemConnectionCreationClient';
 import { HttpClient } from './Services/HttpClient';
 import {
   listCallbackUrl,
@@ -256,30 +255,13 @@ const getDesignerServices = (
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
   const connectionService = new ConsumptionConnectionService({
-    baseUrl,
-    apiVersion,
-    httpClient,
-    apiHubServiceDetails: {
-      apiVersion: '2018-07-01-preview',
-      baseUrl: armUrl,
-      subscriptionId,
-      resourceGroup,
-      location,
-    },
+    apiVersion: '2018-07-01-preview',
+    baseUrl: armUrl,
+    subscriptionId,
+    resourceGroup,
+    location,
     tenantId,
-    workflowAppDetails: { appName: siteResourceId.split('/').splice(-1)[0], identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(connectionsData),
-    writeConnection: addConnection as any,
-    connectionCreationClients: {
-      FileSystem: new FileSystemConnectionCreationClient({
-        baseUrl: armUrl,
-        subscriptionId,
-        resourceGroup,
-        appName: siteResourceId.split('/').splice(-1)[0],
-        apiVersion: '2022-03-01',
-        httpClient,
-      }),
-    },
+    httpClient,
   });
   const apimService = new BaseApiManagementService({
     ...defaultServiceParams,

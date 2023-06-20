@@ -1,3 +1,4 @@
+import type { BaseConnectionServiceOptions } from '../base';
 import { BaseConnectionService } from '../base';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult } from '../connection';
 import { LoggerService } from '../logger';
@@ -5,12 +6,15 @@ import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import type { Connector, Connection } from '@microsoft/utils-logic-apps';
-import { isArmResourceId } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionConnectionService extends BaseConnectionService {
-  constructor(options: any) {
+  constructor(options: BaseConnectionServiceOptions) {
     super(options);
     this._vVersion = 'V1';
+  }
+
+  async getConnector(connectorId: string): Promise<Connector> {
+    return this._getAzureConnector(connectorId);
   }
 
   override async getConnections(connectorId?: string): Promise<Connection[]> {
@@ -40,8 +44,6 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     });
 
     try {
-      if (!isArmResourceId(connector.id)) throw 'Connector id is not a valid ARM resource id.';
-
       const connection = await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo);
       if (shouldTestConnection) await this.testConnection(connection);
       LoggerService().endTrace(logId, { status: Status.Success });
@@ -59,32 +61,6 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       LoggerService().endTrace(logId, { status: Status.Failure });
       return Promise.reject(errorMessage);
     }
-  }
-
-  private async createConnectionInApiHub(
-    connectionName: string,
-    connectorId: string,
-    connectionInfo: ConnectionCreationInfo
-  ): Promise<Connection> {
-    const {
-      httpClient,
-      apiHubServiceDetails: { apiVersion, baseUrl },
-    } = this.options;
-
-    const connectionId = this.getConnectionRequestPath(connectionName);
-    const connection = await httpClient.put<any, Connection>({
-      uri: `${baseUrl}${connectionId}`,
-      queryParameters: { 'api-version': apiVersion },
-      content: connectionInfo?.alternativeParameterValues
-        ? this._getRequestForCreateConnectionWithAlternativeParameters(connectorId, connectionName, connectionInfo)
-        : this._getRequestForCreateConnection(connectorId, connectionName, connectionInfo),
-    });
-
-    return connection;
-  }
-
-  async setupConnectionIfNeeded(_connection: Connection): Promise<void> {
-    // No action needed for consumption connections.
   }
 
   async createAndAuthorizeOAuthConnection(
