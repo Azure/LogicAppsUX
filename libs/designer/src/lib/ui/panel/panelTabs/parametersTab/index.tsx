@@ -72,6 +72,14 @@ export const ParametersTab = () => {
     return false;
   }, [inputs?.dynamicLoadStatus, nodeMetadata?.subgraphType, nodesInitialized, operationInfo]);
 
+  const noVisibleParams = useMemo(() => {
+    return !hasParametersToAuthor(inputs?.parameterGroups ?? {});
+  }, [inputs?.parameterGroups]);
+  const showNoParamsMessage = useMemo(() => {
+    const haveDynamicInputsError = errorInfo?.level === ErrorLevel.DynamicInputs;
+    return noVisibleParams && !haveDynamicInputsError;
+  }, [errorInfo?.level, noVisibleParams]);
+
   if (isLoading) {
     return (
       <div className="msla-loading-container">
@@ -98,9 +106,7 @@ export const ParametersTab = () => {
           {errorInfo.message}
         </MessageBar>
       ) : null}
-      {!errorInfo && !hasParametersToAuthor(inputs?.parameterGroups ?? {}) ? (
-        <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar>
-      ) : null}
+      {showNoParamsMessage ? <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar> : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
