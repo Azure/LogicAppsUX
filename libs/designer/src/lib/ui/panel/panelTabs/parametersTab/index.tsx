@@ -120,7 +120,12 @@ export const ParametersTab = () => {
         </div>
       ))}
       {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
-        <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} isLoading={connectionName.isLoading} />
+        <ConnectionDisplay
+          connectionName={connectionName.result}
+          nodeId={selectedNodeId}
+          isLoading={connectionName.isLoading}
+          readOnly={!!readOnly}
+        />
       ) : null}
       {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>

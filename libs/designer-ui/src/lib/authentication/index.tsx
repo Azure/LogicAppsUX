@@ -83,7 +83,6 @@ export const AuthenticationEditor = ({
   initialValue,
   getTokenPicker,
   onChange,
-  ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
   const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
@@ -184,7 +183,7 @@ export const AuthenticationEditor = ({
           label={codeView ? collapsedLabel : expandedLabel}
           collapsed={codeView}
           toggleCollapsed={toggleCodeView}
-          disabled={!isValid || props.readOnly}
+          disabled={!isValid}
         />
       </div>
     </div>

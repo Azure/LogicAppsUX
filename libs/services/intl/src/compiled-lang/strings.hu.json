@@ -1591,6 +1591,12 @@
       "value": "” érték szerinti felosztás. Nem található a kimenetekben."
     }
   ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
+    }
+  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -3667,6 +3673,12 @@
       "value": "Statikus eredmény engedélyezése"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3891,6 +3903,12 @@
     {
       "type": 0,
       "value": "A bemeneti sztringet Base 64 kódolású sztringként adja vissza."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4729,6 +4747,12 @@
       "value": "“ használata egyéni értékként"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5043,6 +5067,12 @@
       "value": "További információ"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5343,6 +5373,12 @@
     {
       "type": 0,
       "value": "Teljes képernyős"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -6985,6 +7021,12 @@
       "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a kimenő Logic Apps-kérelemben való megjelenítésének letiltása."
     }
   ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
+    }
+  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -7551,6 +7593,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "qc5S69": [
