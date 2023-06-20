@@ -14,7 +14,7 @@
         "project": "libs/designer-ui/package.json",
         "entryFile": "libs/designer-ui/src/index.ts",
         "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "rollupConfig": ["@nrwl/react/plugins/bundle-rollup", "custom-rollup.config.js"],
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "format": ["cjs", "esm"],
         "assets": [
