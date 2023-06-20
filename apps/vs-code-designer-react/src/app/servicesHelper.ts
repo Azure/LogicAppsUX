@@ -29,7 +29,7 @@ import type { WebviewApi } from 'vscode-webview';
 export const getDesignerServices = (
   baseUrl: string,
   apiVersion: string,
-  apiHubServiceDetails: ApiHubServiceDetails,
+  apiHubDetails: ApiHubServiceDetails,
   isLocal: boolean,
   connectionData: ConnectionsData,
   panelMetadata: IDesignerPanelMetadata | null,
@@ -58,7 +58,7 @@ export const getDesignerServices = (
     isStateful = false,
     connectionsData = { ...connectionData } ?? {};
 
-  const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubServiceDetails;
+  const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
   const armUrl = 'https://management.azure.com';
 
@@ -79,7 +79,8 @@ export const getDesignerServices = (
     });
   };
 
-  const httpClient = new HttpClient({ accessToken: authToken, baseUrl, apiHubBaseUrl: apiHubServiceDetails.baseUrl, hostVersion });
+  const httpClient = new HttpClient({ accessToken: authToken, baseUrl, apiHubBaseUrl: apiHubDetails.baseUrl, hostVersion });
+  const apiHubServiceDetails = { ...apiHubDetails, httpClient };
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
