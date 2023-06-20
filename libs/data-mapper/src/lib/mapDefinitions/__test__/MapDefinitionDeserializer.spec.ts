@@ -1379,11 +1379,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates a loop connection', () => {
         simpleMap['root'] = {
           ComplexArray1: {
-            '$for(/root/Nums/*)': [
-              {
-                F1: 'Num',
-              },
-            ],
+            '$for(/root/Nums/*)': {
+              F1: 'Num',
+            },
           },
         };
 
@@ -1766,11 +1764,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           TargetMadeUp: {
             ManySingleArray: {
               '$for(/root/SourceMadeUp/ManySingleArray/*)': {
-                '$for(*)': [
-                  {
-                    TargetMadeUp_NeedAProp: 'SourceMadeUp_NeedAProp',
-                  },
-                ],
+                '$for(*)': {
+                  TargetMadeUp_NeedAProp: 'SourceMadeUp_NeedAProp',
+                },
               },
             },
           },
@@ -1811,15 +1807,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['root'] = {
           TargetMadeUp: {
             ManyManyArray: {
-              '$for(/root/SourceMadeUp/ManyManyArray/*)': [
-                {
-                  '$for(*)': [
-                    {
-                      TargetMadeUp_NeedAProp: 'SourceMadeUp_NeedAProp',
-                    },
-                  ],
+              '$for(/root/SourceMadeUp/ManyManyArray/*)': {
+                '$for(*)': {
+                  TargetMadeUp_NeedAProp: 'SourceMadeUp_NeedAProp',
                 },
-              ],
+              },
             },
           },
         };
@@ -1829,31 +1821,28 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        expect(resultEntries.length).toEqual(6);
+        expect(resultEntries.length).toEqual(5);
 
-        expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
+        expect(resultEntries[0][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
 
         expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/*');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
 
-        expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/*/TargetMadeUp_NeedAProp');
+        expect(resultEntries[2][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp');
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/TargetMadeUp_NeedAProp');
 
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
+        expect(resultEntries[3][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*');
+        expect((resultEntries[3][1].inputs[0][1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
 
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*');
-
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/*/TargetMadeUp_NeedAProp');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect(resultEntries[4][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/TargetMadeUp_NeedAProp');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp'
         );
       });

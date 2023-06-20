@@ -1598,6 +1598,12 @@
       "value": "\", no se encuentra en las salidas."
     }
   ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
+    }
+  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -3699,6 +3705,12 @@
       "value": "Habilitar resultado estático"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3923,6 +3935,12 @@
     {
       "type": 0,
       "value": "Devuelve la representación de base 64 de la cadena de entrada."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4776,6 +4794,12 @@
       "value": "\" como un valor personalizado"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5090,6 +5114,12 @@
       "value": "Más información"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5390,6 +5420,12 @@
     {
       "type": 0,
       "value": "Pantalla completa"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -7011,6 +7047,12 @@
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la solicitud saliente."
     }
   ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
+    }
+  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -7588,6 +7630,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "qc5S69": [

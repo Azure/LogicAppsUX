@@ -1587,6 +1587,12 @@
       "value": ", finns inte i utdata."
     }
   ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
+    }
+  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -3647,6 +3653,12 @@
       "value": "Aktivera statiskt resultat"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3871,6 +3883,12 @@
     {
       "type": 0,
       "value": "Returnerar indatasträngens Base 64-representation"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4709,6 +4727,12 @@
       "value": " som anpassat värde"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5023,6 +5047,12 @@
       "value": "Mer information"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5323,6 +5353,12 @@
     {
       "type": 0,
       "value": "Helskärm"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -6953,6 +6989,12 @@
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
     }
   ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
+    }
+  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -7515,6 +7557,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "qc5S69": [

@@ -1621,6 +1621,12 @@
       "value": "' – nelze najít ve výstupech."
     }
   ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
+    }
+  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -3763,6 +3769,12 @@
       "value": "Povolit statický výsledek"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3987,6 +3999,12 @@
     {
       "type": 0,
       "value": "Vrátí reprezentaci Base 64 vstupního řetězce."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4847,6 +4865,12 @@
       "value": "“ jako vlastní hodnotu"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5161,6 +5185,12 @@
       "value": "Další informace"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5461,6 +5491,12 @@
     {
       "type": 0,
       "value": "Celá obrazovka"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -7113,6 +7149,12 @@
       "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
     }
   ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
+    }
+  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -7701,6 +7743,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "qc5S69": [

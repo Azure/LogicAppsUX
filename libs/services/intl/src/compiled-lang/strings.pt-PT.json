@@ -1598,6 +1598,12 @@
       "value": "\"; não se encontra nas saídas."
     }
   ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
+    }
+  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -3707,6 +3713,12 @@
       "value": "Ativar Resultado Estático"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3931,6 +3943,12 @@
     {
       "type": 0,
       "value": "Devolve a representação da base 64 da cadeia de entrada"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4784,6 +4802,12 @@
       "value": "\" como valor personalizado"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5098,6 +5122,12 @@
       "value": "Mais Informações"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5398,6 +5428,12 @@
     {
       "type": 0,
       "value": "Ecrã Inteiro"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -7043,6 +7079,12 @@
       "value": "Limite o Logic Apps para não incluir cabeçalhos de metadados do fluxo de trabalho no pedido efetuado."
     }
   ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
+    }
+  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -7620,6 +7662,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "qc5S69": [
