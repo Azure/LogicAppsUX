@@ -51,15 +51,9 @@ const DesignerEditor = () => {
     id: state.workflowLoader.resourcePath!,
   }));
 
-  const {
-    readOnly: isReadOnly,
-    darkMode: isDarkMode,
-    monitoringView,
-    runId,
-    appId,
-    showChatBot,
-    language,
-  } = useSelector((state: RootState) => state.workflowLoader);
+  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language } = useSelector(
+    (state: RootState) => state.workflowLoader
+  );
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -75,7 +69,7 @@ const DesignerEditor = () => {
   const queryClient = useQueryClient();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (monitoringView) {
+    if (isMonitoringView) {
       const standardAppInstance = {
         ...workflow,
         definition: runDefinition.properties.workflow.properties.definition,
@@ -204,7 +198,7 @@ const DesignerEditor = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
+      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters }}
@@ -246,6 +240,8 @@ const getDesignerServices = (
   const workflowName = workflowId.split('/').splice(-1)[0];
   const workflowIdWithHostRuntime = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}`;
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
+
+  const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
   const connectionService = new StandardConnectionService({
     baseUrl,
@@ -290,9 +286,7 @@ const getDesignerServices = (
   });
   const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
   const connectorService = new StandardConnectorService({
-    apiVersion,
-    baseUrl,
-    httpClient,
+    ...defaultServiceParams,
     clientSupportedOperations: [
       ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
@@ -361,24 +355,17 @@ const getDesignerServices = (
     },
   });
 
-  const operationManifestService = new StandardOperationManifestService({
-    apiVersion,
-    baseUrl,
-    httpClient,
-  });
+  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const searchService = new StandardSearchService({
-    baseUrl,
-    apiVersion,
-    httpClient,
+    ...defaultServiceParams,
     apiHubServiceDetails: { apiVersion: '2018-07-01-preview', subscriptionId, location },
     showStatefulOperations: isStateful,
     isDev: false,
   });
 
   const oAuthService = new BaseOAuthService({
+    ...defaultServiceParams,
     apiVersion: '2018-07-01-preview',
-    baseUrl,
-    httpClient,
     subscriptionId,
     resourceGroup,
     location,

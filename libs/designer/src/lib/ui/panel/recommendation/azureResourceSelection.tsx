@@ -6,7 +6,7 @@ import { PrimaryButton, Text } from '@fluentui/react';
 import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
+import { getResourceName, getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -38,6 +38,10 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const functionAppTitleText = intl.formatMessage({
     defaultMessage: 'Select a Function App resource',
     description: 'Select a Function App resource',
+  });
+  const swaggerFunctionAppTitleText = intl.formatMessage({
+    defaultMessage: 'Select a Swagger Function App resource',
+    description: 'Select a Swagger Function App resource',
   });
   const manualWorkflowTitleText = intl.formatMessage({
     defaultMessage: "Select workflow with 'manual' trigger",
@@ -153,6 +157,20 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         });
         break;
 
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_SWAGGER_FUNCTION_ACTION:
+        setTitleText(swaggerFunctionAppTitleText);
+        setResourceTypes(['functionApp']);
+        setGetResourcesCallbacks(() => [() => FunctionService().fetchFunctionApps()]);
+        setSubmitCallback(() => async () => {
+          addResourceOperation({
+            name: getResourceName(selectedResources[0]),
+            presetParameterValues: {
+              'functionApp.id': selectedResources[0].id,
+            },
+          });
+        });
+        break;
+
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION:
         setTitleText(manualWorkflowTitleText);
         setResourceTypes(['manualWorkflow', 'trigger']);
@@ -198,6 +216,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     appServiceTitleText,
     batchWorkflowTitleText,
     functionAppTitleText,
+    swaggerFunctionAppTitleText,
     getOptionsFromPaths,
     manualWorkflowTitleText,
     operation.id,
@@ -214,8 +233,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     defaultMessage: 'Loading resources...',
     description: 'Text for loading Azure Resources',
   });
-
-  const getResourceName = (resource: any) => resource?.properties?.name ?? resource?.name ?? resource?.id;
 
   const getColumns = (resource: any) => [
     getResourceName(resource),
