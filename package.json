@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.30.0",
+  "version": "2.33.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -80,6 +80,7 @@
     "@types/pathfinding": "^0.0.6",
     "@use-it/event-listener": "0.1.7",
     "axios": "^1.3.4",
+    "axios-retry": "^3.5.0",
     "azure-storage": "^2.10.3",
     "buffer": "^6.0.3",
     "clsx": "^1.2.1",

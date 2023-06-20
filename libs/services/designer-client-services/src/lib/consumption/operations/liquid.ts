@@ -1,20 +1,18 @@
+import { liquidGroup } from './operationgroups';
+
 const properties = {
   api: {
-    id: 'connectionProviders/liquidOperations',
-    name: 'liquidOperations',
-    displayName: 'Liquid Operations',
-    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/liquid.svg',
-    brandColor: '#804998',
-    description: 'Liquid Operations',
+    id: liquidGroup.id,
+    name: liquidGroup.name,
+    displayName: liquidGroup.properties.displayName,
+    iconUri: liquidGroup.properties.iconUri,
+    brandColor: liquidGroup.properties.brandColor,
+    description: liquidGroup.properties.description,
   },
   visibility: 'Important',
   operationType: 'Liquid',
-  brandColor: '#804998',
-  iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/liquid.svg',
-  annotation: {
-    status: 'Preview',
-    family: 'liquidOperations',
-  },
+  brandColor: liquidGroup.properties.brandColor,
+  iconUri: liquidGroup.properties.iconUri,
 };
 
 export const liquidJsonToJsonOperation = {

@@ -646,7 +646,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Vorhandene Schemas von"
     }
   ],
   "2gzGrJ": [
@@ -1406,7 +1406,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "In den Codeansichtsmodus wechseln"
     }
   ],
   "8ND+Yc": [
@@ -1514,7 +1514,7 @@
   "8zkvmc": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Testen"
     }
   ],
   "9/UeTh": [
@@ -1601,6 +1601,12 @@
     {
       "type": 0,
       "value": "“. Er kann nicht in den Ausgaben gefunden werden."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2250,7 +2256,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Hiermit wird zur Eingabe für das gesamte Array gewechselt."
     }
   ],
   "EdzoIs": [
@@ -2282,7 +2288,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Anforderungsverlauf für diesen Vorgang anzeigen"
     }
   ],
   "EurkzL": [
@@ -2708,7 +2714,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Hiermit wird zu den Detaileingaben für ein Arrayelement gewechselt."
     }
   ],
   "HfrUId": [
@@ -3687,6 +3693,12 @@
       "value": "Statisches Ergebnis aktivieren"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3915,6 +3927,12 @@
     {
       "type": 0,
       "value": "Gibt die Base64-Darstellung der Eingabezeichenfolge zurück."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4220,7 +4238,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Parameter für diesen Knoten konfigurieren"
     }
   ],
   "SXb47U": [
@@ -4761,6 +4779,12 @@
       "value": "“ als benutzerdefinierter Wert"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5079,6 +5103,12 @@
       "value": "Weitere Informationen"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5379,6 +5409,12 @@
     {
       "type": 0,
       "value": "Vollbild"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -5714,7 +5750,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Zum Schlüsselwertmodus wechseln"
     }
   ],
   "dDYCuU": [
@@ -6352,7 +6388,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Inforegisterkarte"
     }
   ],
   "iCSHJG": [
@@ -6464,7 +6500,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Registerkarte \"Codeansicht\""
     }
   ],
   "iq+tiv": [
@@ -6756,7 +6792,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Registerkarte \"Überwachung\""
     }
   ],
   "l72gf4": [
@@ -7015,6 +7051,12 @@
     {
       "type": 0,
       "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in ausgehenden Anforderungen ein."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
     }
   ],
   "mvrlkP": [
@@ -7589,6 +7631,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7608,7 +7656,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "In den Standardansichtsmodus wechseln"
     }
   ],
   "qnI4Y1": [
@@ -7778,7 +7826,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Registerkarte \"Testen\""
     }
   ],
   "sFbnCs": [
@@ -8604,7 +8652,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Zum Textmodus wechseln"
     }
   ],
   "xYyPR8": [

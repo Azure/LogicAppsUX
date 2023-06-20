@@ -1,4 +1,3 @@
-import { PropertySerializationType } from '@microsoft/parsers-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { OperationOptions, RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 
@@ -276,11 +275,6 @@ export const httpWithSwaggerManifest = {
             apiDefinitionUrl: {
               type: 'string',
               hideInUI: true,
-              'x-ms-serialization': {
-                property: {
-                  type: PropertySerializationType.SwaggerUrl,
-                },
-              },
             },
             swaggerSource: {
               type: 'string',

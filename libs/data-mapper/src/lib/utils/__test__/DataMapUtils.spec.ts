@@ -245,7 +245,8 @@ describe('utils/DataMap', () => {
     it('Single loop', () => {
       expect(
         getTargetValueWithoutLoops(
-          '/ns0:TargetSchemaRoot/Looping/ManyToOne/$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)/Simple/Direct'
+          '/ns0:TargetSchemaRoot/Looping/ManyToOne/$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)/Simple/Direct',
+          0
         )
       ).toBe('/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct');
     });
@@ -253,7 +254,8 @@ describe('utils/DataMap', () => {
     it('Multiple loops', () => {
       expect(
         getTargetValueWithoutLoops(
-          '/ns0:TargetSchemaRoot/Looping/ManyToOne/$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)/RandomNode/$for(SourceSimpleChild)/$for(SourceSimpleChildChild, $c)/Simple/Direct'
+          '/ns0:TargetSchemaRoot/Looping/ManyToOne/$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)/RandomNode/$for(SourceSimpleChild)/$for(SourceSimpleChildChild, $c)/Simple/Direct',
+          0
         )
       ).toBe('/ns0:TargetSchemaRoot/Looping/ManyToOne/RandomNode/Simple/Direct');
     });
