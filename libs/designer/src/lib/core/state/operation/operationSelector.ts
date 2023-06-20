@@ -33,15 +33,11 @@ export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined => 
 };
 
 export const useOperationsInputParameters = (): Record<string, NodeInputs> => {
-  return useSelector((rootState: RootState) => {
-    return rootState.operations.inputParameters;
-  });
+  return useSelector((rootState: RootState) => rootState.operations.inputParameters);
 };
 
 export const useParameterStaticResult = (nodeId: string): NodeStaticResults => {
-  return useSelector((rootState: RootState) => {
-    return rootState.operations.staticResults[nodeId];
-  });
+  return useSelector((rootState: RootState) => rootState.operations.staticResults[nodeId]);
 };
 
 export const useTokenDependencies = (nodeId: string) =>
@@ -71,6 +67,10 @@ export const useParameterValidationErrors = (nodeId: string) => {
       .flat()
       .filter((error) => error);
   });
+};
+
+export const useNodesInitialized = () => {
+  return useSelector((rootState: RootState) => rootState.operations.loadStatus.nodesInitialized);
 };
 
 const getTopErrorInOperation = (errors: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
