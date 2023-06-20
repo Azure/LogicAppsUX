@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [2.34.0](https://github.com/Azure/LogicAppsUX/compare/v2.33.0...v2.34.0) (2023-06-20)
+
+
+### Features
+
+* **Designer:** Added request retry to all services ([#2794](https://github.com/Azure/LogicAppsUX/issues/2794)) ([53b64ba](https://github.com/Azure/LogicAppsUX/commit/53b64ba47dabef0e9d7943de6d892246ed69486a))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fix JSON loops to not be arrays ([#2781](https://github.com/Azure/LogicAppsUX/issues/2781)) ([d0619bb](https://github.com/Azure/LogicAppsUX/commit/d0619bb6766bdc214d0e87267472cf2c01c8e4ff))
+* **designer:** Disable Change Connection when in readonly ([#2791](https://github.com/Azure/LogicAppsUX/issues/2791)) ([2e5cf63](https://github.com/Azure/LogicAppsUX/commit/2e5cf63231d8fb2aa3e01a6bf68a4b66dfeaf832))
+* **designer:** Prevent panel from closing if `intl` is updated ([#2780](https://github.com/Azure/LogicAppsUX/issues/2780)) ([495cca4](https://github.com/Azure/LogicAppsUX/commit/495cca41765b5d61fc2a20205c73f907a2b92eca))
+* **Designer:** Search requests now only rely on nextlinks, not the value length ([#2793](https://github.com/Azure/LogicAppsUX/issues/2793)) ([79f12f2](https://github.com/Azure/LogicAppsUX/commit/79f12f270a997d4e8b33f04ca84b4583a147c731))
+* **designer:** Updating the connection service options according to their offering ([#2796](https://github.com/Azure/LogicAppsUX/issues/2796)) ([cefb6c9](https://github.com/Azure/LogicAppsUX/commit/cefb6c99b06e9ff013cf45177acdc39358bb4291))
+
 ## [2.33.0](https://github.com/Azure/LogicAppsUX/compare/v2.32.0...v2.33.0) (2023-06-19)
 
 
