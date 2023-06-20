@@ -8,10 +8,18 @@ import {
   schemasPath,
   supportedSchemaFileExts,
 } from './extensionConfig';
-import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType } from '@microsoft/logic-apps-data-mapper';
+import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
-import { copyFileSync, existsSync as fileExistsSync, promises as fs, unlinkSync as removeFileSync, statSync, readdirSync } from 'fs';
+import {
+  copyFileSync,
+  existsSync as fileExistsSync,
+  promises as fs,
+  unlinkSync as removeFileSync,
+  statSync,
+  readdirSync,
+  readFileSync,
+} from 'fs';
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
 import { RelativePattern, Uri, window, workspace } from 'vscode';
@@ -151,6 +159,11 @@ export default class DataMapperPanel {
         command: 'loadDataMap',
         data: this.mapDefinitionData,
       });
+      // danielle maybe send metadata back here
+      // how do we handle the sync of this
+      // maybe combine both instead of separate messages?
+      // what if the file takes too long to read?
+      this.handleReadMapMetadata();
 
       this.checkAndSetXslt();
 
@@ -260,11 +273,11 @@ export default class DataMapperPanel {
   }
 
   public saveMapMetadata(mapMetadata: string) {
-    const projectPath = DataMapperExt.getWorkspaceFolderFsPath();
-    const vscodeFolderPath = path.join(projectPath, '.vscode', 'dataMapMetadata.json');
+    const vscodeFolderPath = this.getMapMetadataPath();
+    console.log('the file path is: ' + vscodeFolderPath);
     fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8')
       .then(() => {
-        console.log('worked');
+        console.log('write file worked');
       })
       .catch(DataMapperExt.showError);
   }
@@ -308,6 +321,16 @@ export default class DataMapperPanel {
       .catch(DataMapperExt.showError);
   }
 
+  private handleReadMapMetadata() {
+    const vscodeFolderPath = this.getMapMetadataPath();
+    const fileBuffer = readFileSync(vscodeFolderPath);
+    const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
+    this.sendMsgToWebview({
+      command: 'loadDataMapMetadata',
+      data: metadataJson,
+    });
+  }
+
   public deleteDraftDataMapDefinition() {
     const draftMapDefinitionPath = path.join(
       DataMapperExt.getWorkspaceFolderFsPath(),
@@ -344,5 +367,11 @@ export default class DataMapperPanel {
       command: 'getConfigurationSetting',
       data: configValue,
     });
+  }
+
+  private getMapMetadataPath() {
+    const projectPath = DataMapperExt.getWorkspaceFolderFsPath();
+    const vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
+    return vscodeFolderPath;
   }
 }

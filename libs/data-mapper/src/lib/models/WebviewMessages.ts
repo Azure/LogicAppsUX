@@ -1,4 +1,5 @@
 import type { MapDefinitionEntry } from './MapDefinition';
+import type { MapMetadata } from './MapMetadata';
 import type { SchemaType } from './Schema';
 
 type FetchSchemaData = { fileName: string; type: SchemaType };
@@ -10,6 +11,7 @@ export type XsltData = { filename: string; fileContents: string };
 export type MessageToWebview =
   | { command: 'fetchSchema'; data: FetchSchemaData }
   | { command: 'loadDataMap'; data: MapDefinitionData }
+  | { command: 'loadDataMapMetadata'; data: MapMetadata }
   | { command: 'showAvailableSchemas'; data: string[] }
   | { command: 'setXsltData'; data: XsltData }
   | { command: 'setRuntimePort'; data: string }
