@@ -320,7 +320,11 @@ export class StandardConnectionService extends BaseConnectionService {
         await this._createAccessPolicyInConnection(connection.id, appName, identityDetailsForApiHubAuth, connection.location as string);
       }
     } catch {
-      LoggerService().log({ level: LogEntryLevel.Error, area: 'ConnectionACLCreate', message: 'Acl creation failed for connection.' });
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'ConnectionACLCreate',
+        message: 'Acl creation failed for connection.',
+      });
     }
   }
 
