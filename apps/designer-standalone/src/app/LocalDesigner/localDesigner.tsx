@@ -38,18 +38,12 @@ const connectionServiceStandard = new StandardConnectionService({
 });
 
 const connectionServiceConsumption = new ConsumptionConnectionService({
-  baseUrl: '/url',
-  apiVersion: '2018-11-01',
+  apiVersion: '2018-07-01-preview',
+  baseUrl: '/baseUrl',
+  subscriptionId: '',
+  resourceGroup: '',
+  location: '',
   httpClient,
-  apiHubServiceDetails: {
-    apiVersion: '2018-07-01-preview',
-    baseUrl: '/baseUrl',
-    subscriptionId: '',
-    resourceGroup: '',
-    location: '',
-  },
-  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
-  readConnections: () => Promise.resolve({}),
 });
 
 const operationManifestServiceStandard = new StandardOperationManifestService({
