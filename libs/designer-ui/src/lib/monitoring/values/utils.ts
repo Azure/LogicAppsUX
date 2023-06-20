@@ -18,6 +18,10 @@ export function isXml(value: any): value is Xml {
   return isObject(value) && /^(?:application|text)\/(.*\+)?xml/i.test(value['$content-type']) && typeof value.$content === 'string';
 }
 
+export function hasXml(value: any): value is { content: Xml } {
+  return value.content && isObject(value.content) && isXml(value.content);
+}
+
 function isContentHash(value: any): value is ContentHash {
   return isObject(value) && typeof value.algorithm === 'string' && typeof value.value === 'string';
 }
