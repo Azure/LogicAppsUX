@@ -128,5 +128,5 @@ export function registerCommands(): void {
 
   registerCommandWithTreeNodeUnwrapping(extensionCommand.installDotNetSDK, installDotNetSDK);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.uninstallDotNetSDK, uninstallDotNetSDK);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.installNodeJs, installNodeJs);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.installNodeJs, async (context: IActionContext) => await installNodeJs(context));
 }

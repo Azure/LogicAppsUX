@@ -24,16 +24,16 @@ export async function hasNvm(): Promise<boolean> {
 
 /**
  * Checks if the system has nvm installed.
- * @returns {Promise<boolean>} Returns true if the system has nvm installed, otherwise returns false.
+ * @returns {Promise<string>} Returns version if the system has nvm installed, otherwise returns empty.
  */
-export async function hasCompatibleNodeVersion(): Promise<boolean> {
+export async function hasCompatibleNodeVersion(): Promise<string> {
   const versions: string[] = await listNodeInstallations();
   for (const version of versions) {
     if (semver.major(version) == nodeJsMajorVersion) {
-      return true;
+      return version;
     }
   }
-  return false;
+  return;
 }
 
 /**
@@ -42,14 +42,18 @@ export async function hasCompatibleNodeVersion(): Promise<boolean> {
  */
 export async function installNodeVersion(version: NodeVersion): Promise<void> {
   await executeCommand(ext.outputChannel, undefined, 'nvm', 'install', version);
+
+  // Does not automatically use version after installation
+  const installedVersion = await hasCompatibleNodeVersion();
+  setCurrentNodeVersion(installedVersion);
 }
 
 /**
  * Set current node version.
- * @param {NodeVersion} version - Node version.
+ * @param {NodeVersion | string} version - Node version.
  * @returns {Promise<boolean>} Returns set current active node version.
  */
-export async function setCurrentNodeVersion(version: NodeVersion): Promise<string> {
+export async function setCurrentNodeVersion(version: NodeVersion | string): Promise<string> {
   await executeCommand(ext.outputChannel, undefined, 'nvm', 'use', version);
   return await executeCommand(undefined, undefined, 'nvm', 'current');
 }
@@ -67,15 +71,6 @@ export async function getCurrentNodeVersion(): Promise<string> {
  * @returns {Promise<string[]>} Returns list of installed node version.
  */
 async function listNodeInstallations(): Promise<string[]> {
-  let versions: string[];
-  let match: RegExpMatchArray | null;
   const response: string = await executeCommand(undefined, undefined, 'nvm', 'list');
-  const result = response.split(/\r?\n/);
-  for (const version of result) {
-    match = version.match(versionRegex);
-    if (match) {
-      versions.push(match[0]);
-    }
-  }
-  return versions;
+  return response.match(versionRegex);
 }

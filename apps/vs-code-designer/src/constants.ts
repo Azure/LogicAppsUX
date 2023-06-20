@@ -45,6 +45,7 @@ export const nvmWingetPackageName = 'CoreyButler.NVMforWindows';
 export const nodeWingetPackageName = 'OpenJS.NodeJS';
 export const nodeJsMajorVersion = 16;
 export const nodeJsCurrentVersion = '16.12.0';
+export const nvmInstallScript = 'https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
