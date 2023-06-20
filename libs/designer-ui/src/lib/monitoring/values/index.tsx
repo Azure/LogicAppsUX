@@ -6,7 +6,7 @@ import { KeyValuePairs } from './keyvaluepairs';
 import { NumberValue } from './number';
 import { RawValue } from './raw';
 import type { ValueProps } from './types';
-import { hasXml, isContentLink, isXml } from './utils';
+import { isContentLink, isXml } from './utils';
 import { XmlValue } from './xml';
 
 export const Value: React.FC<ValueProps> = (props) => {
@@ -16,9 +16,6 @@ export const Value: React.FC<ValueProps> = (props) => {
     return null;
   } else if (isXml(value) || format === 'xml') {
     return <XmlValue {...props} />;
-  } else if (hasXml(value)) {
-    const xmlProps = { ...props, value: value.content };
-    return <XmlValue {...xmlProps} />;
   } else if (isContentLink(value)) {
     return <BodyLinkValue {...props} />;
   } else if (typeof value === 'number') {
