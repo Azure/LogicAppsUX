@@ -94,6 +94,7 @@ export const ExpandedSimpleArray = ({
       })}
       <div className="msla-array-toolbar">
         <DefaultButton
+          disabled={readOnly}
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}

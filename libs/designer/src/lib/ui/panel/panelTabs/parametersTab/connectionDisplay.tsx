@@ -12,11 +12,12 @@ import { useDispatch } from 'react-redux';
 interface ConnectionDisplayProps {
   connectionName: string;
   nodeId: string;
+  readOnly: boolean;
   isLoading?: boolean;
 }
 
 export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
-  const { connectionName, nodeId, isLoading = false } = props;
+  const { connectionName, nodeId, isLoading = false, readOnly } = props;
 
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -72,7 +73,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   return (
     <div className="connection-info">
       {connectionName && <Label className="label">{connectionDisplayText}</Label>}
-      <Link id="change-connection-button" onClick={openChangeConnectionCallback}>
+      <Link id="change-connection-button" onClick={openChangeConnectionCallback} disabled={readOnly}>
         {openChangeConnectionText}
       </Link>
     </div>
