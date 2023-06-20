@@ -348,12 +348,16 @@ const addLoopingToNewPathItems = (
   });
 
   const selfNode = rootTargetConnection.self.node;
+  const isSchemaNode = isSchemaNodeExtended(selfNode);
 
   // Object within the loop
-  newPath.push({
-    key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
-    arrayIndex: isSchemaNodeExtended(selfNode) ? selfNode.arrayItemIndex : undefined,
-  });
+  // Skipping ArrayItem items for now, they will come into play with direct access arrays
+  if (isSchemaNode && !selfNode.nodeProperties.find((prop) => prop === SchemaNodeProperty.ArrayItem)) {
+    newPath.push({
+      key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
+      arrayIndex: isSchemaNodeExtended(selfNode) ? selfNode.arrayItemIndex : undefined,
+    });
+  }
 };
 
 const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {

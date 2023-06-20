@@ -13,6 +13,7 @@ import {
   getSourceNode,
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
+  getTargetValueWithoutLoopsSchemaSpecific,
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
@@ -308,7 +309,7 @@ export class MapDefinitionDeserializer {
       // Handle loops in targetKey by back-tracking
       while (startIdxOfCurLoop > -1) {
         const srcLoopNodeKey = getSourceKeyOfLastLoop(loopKey.substring(0, startIdxOfPrevLoop));
-        const srcLoopNode = findNodeForKey(srcLoopNodeKey, this._sourceSchema.schemaTreeRoot);
+        const srcLoopNode = findNodeForKey(srcLoopNodeKey, this._sourceSchema.schemaTreeRoot, false);
 
         const idxOfIndexVariable = loopKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
         let indexFnRfKey: string | undefined = undefined;
@@ -322,11 +323,11 @@ export class MapDefinitionDeserializer {
         if (!tgtLoopNodeKeyChunk.startsWith(mapNodeParams.for)) {
           // Gets tgtKey for current loop (which will be the single key chunk immediately following the loop path chunk)
           const startIdxOfNextPathChunk = loopKey.indexOf('/', endOfForIdx + 2);
-          tgtLoopNodeKey = getTargetValueWithoutLoops(
+          tgtLoopNodeKey = getTargetValueWithoutLoopsSchemaSpecific(
             startIdxOfNextPathChunk > -1 ? loopKey.substring(0, startIdxOfNextPathChunk) : loopKey,
-            targetArrayDepth
+            loopKey.indexOf('*') > -1
           );
-          tgtLoopNode = findNodeForKey(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot);
+          tgtLoopNode = findNodeForKey(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot, true);
         }
 
         // Handle index variables
