@@ -1,10 +1,11 @@
-import { useIsConsumption, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useLegacyWorkflowParameters, useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { addParameter, deleteParameter, updateParameter } from '../../core/state/workflowparameters/workflowparametersSlice';
 import {
   useWorkflowParameters,
   useWorkflowParameterValidationErrors,
 } from '../../core/state/workflowparameters/workflowparametersselector';
 import { Panel, PanelType, useTheme } from '@fluentui/react';
+import { HostService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { PanelLocation, WorkflowParameters } from '@microsoft/designer-ui';
 import { useDispatch } from 'react-redux';
@@ -12,7 +13,8 @@ import { useDispatch } from 'react-redux';
 export const WorkflowParametersPanel = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
   const readOnly = useReadOnly();
-  const isConsumption = useIsConsumption();
+  const isMonitoringView = useMonitoringView();
+  const useLegacy = useLegacyWorkflowParameters();
   const { isInverted } = useTheme();
   const workflowParameters = useWorkflowParameters();
   const workflowParametersValidationErrors = useWorkflowParameterValidationErrors();
@@ -36,12 +38,13 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
       <WorkflowParameters
         parameters={Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value }))}
         isReadOnly={readOnly}
-        isConsumption={isConsumption}
+        useLegacy={useLegacy}
         onDismiss={props.toggleCollapse}
         validationErrors={workflowParametersValidationErrors}
         onAddParameter={onWorkflowParameterAdd}
         onDeleteParameter={onDeleteWorkflowParameter}
         onUpdateParameter={onUpdateParameter}
+        onManageParameters={useLegacy && !readOnly && !isMonitoringView ? HostService().openWorkflowParametersBlade : undefined}
       />
     </Panel>
   );

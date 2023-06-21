@@ -79,7 +79,7 @@ export interface ServiceOptions {
   workflowService: IWorkflowService;
 }
 
-export const parseWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
+export const updateWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
   dispatch(
     initializeParameters(
       Object.keys(parameters).reduce(

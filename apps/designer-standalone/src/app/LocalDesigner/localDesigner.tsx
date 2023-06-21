@@ -147,7 +147,7 @@ export const LocalDesigner = () => {
     readOnly: isReadOnly,
     isMonitoringView,
     isDarkMode,
-    isConsumption,
+    useLegacyWorkflowParameters: isConsumption,
   };
 
   return (
