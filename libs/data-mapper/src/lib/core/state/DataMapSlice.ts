@@ -187,8 +187,6 @@ export const dataMapSlice = createSlice({
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
-      console.log('metadata is set in store: ' + JSON.stringify(metadata));
-
       const newState: DataMapOperationState = {
         ...currentState,
         sourceSchema,

@@ -270,13 +270,8 @@ export default class DataMapperPanel {
 
   public saveMapMetadata(mapMetadata: string) {
     const vscodeFolderPath = this.getMapMetadataPath();
-    console.log('the file path is: ' + vscodeFolderPath);
 
-    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8')
-      .then(() => {
-        console.log('write file worked');
-      })
-      .catch(DataMapperExt.showError);
+    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(DataMapperExt.showError);
   }
 
   public saveMapXslt(mapXslt: string) {
@@ -319,18 +314,16 @@ export default class DataMapperPanel {
   }
 
   private readMapMetadataFile(): MapMetadata | undefined {
-    // danielle test if file does not exist- coded, needs test
-    // danielle test if file is not valid json- - coded, needs test
-    // danielle test if file has all necessary data- probably in data-mapper lib
     const vscodeFolderPath = this.getMapMetadataPath();
     if (fileExistsSync(vscodeFolderPath)) {
       try {
         const fileBuffer = readFileSync(vscodeFolderPath);
         const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
-        console.log('metadata read');
         return metadataJson;
       } catch {
-        DataMapperExt.showError(`Data map metadata file found at ${vscodeFolderPath}. Data map will load without metadata file.`);
+        DataMapperExt.showError(
+          `Data map metadata file found at ${vscodeFolderPath} contains invalid JSON. Data map will load without metadata file.`
+        );
         return undefined;
       }
     } else {
