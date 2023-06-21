@@ -1,5 +1,6 @@
 {
   "++ZVe/": "Testing",
+  "+/XTId": "Invalid connection, please update your connection to load complete details",
   "+0yxlR": "Function display",
   "+Uvo/p": "Alt text for down chevron",
   "+ZSBrq": "Context menu for {title} card",
@@ -782,6 +783,7 @@
   "Zi9gQK": "Add new item",
   "ZkjTbp": "Learn more about dynamic content.",
   "_++ZVe/.comment": "Title for testing section",
+  "_+/XTId.comment": "Error message to show on connection error after selecting a connection",
   "_+0yxlR.comment": "Label for the function display radio group",
   "_+Uvo/p.comment": "Alt text for down chevron",
   "_+ZSBrq.comment": "Accessibility label",
