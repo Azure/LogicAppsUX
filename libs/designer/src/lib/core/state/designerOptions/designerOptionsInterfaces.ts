@@ -19,7 +19,7 @@ export interface DesignerOptionsState {
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
-  isConsumption?: boolean;
+  useLegacyWorkflowParameters?: boolean;
   isXrmConnectionReferenceMode?: boolean;
 }
 
