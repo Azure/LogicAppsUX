@@ -864,6 +864,18 @@ const Resources = {
     defaultMessage: 'Converts a string timestamp passed in from a source time zone to a target time zone',
     description: 'Label for description of custom convertTimeZone Function',
   }),
+  TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE: intl.formatMessage({
+    defaultMessage: 'Returns the difference between two dates as a timespan string',
+    description: 'Label for description of custom dateDifference Function',
+  }),
+  TOKEN_PARAMETER_DATEDIFFERENCE_STARTTIMESTAMP: intl.formatMessage({
+    defaultMessage: 'Required. A string that contains the start time.',
+    description: 'Required string parameter for start time',
+  }),
+  TOKEN_PARAMETER_DATEDIFFERENCE_ENDTIMESTAMP: intl.formatMessage({
+    defaultMessage: 'Required. A string that contains the end time.',
+    description: 'Required string parameter for end time',
+  }),
   TOKEN_PARAMETER_SOURCETIMEZONE: intl.formatMessage({
     defaultMessage:
       "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'.",
@@ -2941,6 +2953,28 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
           },
         ],
         isAdvanced: false,
+      },
+      {
+        name: 'dateDifference',
+        defaultSignature: 'dateDifference(startTimestamp, endTimestamp)',
+        description: Resources.TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE,
+        signatures: [
+          {
+            definition: `convertTimeZone(timestamp: string, sourceTimeZone: string, destinationTimeZone: string, format?: string)`,
+            documentation: Resources.TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE,
+            parameters: [
+              {
+                name: 'startTimestamp',
+                documentation: Resources.TOKEN_PARAMETER_DATEDIFFERENCE_STARTTIMESTAMP,
+              },
+              {
+                name: 'endTimestamp',
+                documentation: Resources.TOKEN_PARAMETER_DATEDIFFERENCE_ENDTIMESTAMP,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
       },
       {
         name: 'convertTimeZone',
