@@ -163,5 +163,6 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),
+    metadata: undefined, // danielle revisit
   });
 };

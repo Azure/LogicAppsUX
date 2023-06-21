@@ -155,15 +155,11 @@ export default class DataMapperPanel {
 
   public handleLoadMapDefinitionIfAny() {
     if (this.mapDefinitionData) {
+      const mapMetadata = this.readMapMetadataFile();
       this.sendMsgToWebview({
         command: 'loadDataMap',
-        data: this.mapDefinitionData,
+        data: { ...this.mapDefinitionData, metadata: mapMetadata },
       });
-      // danielle maybe send metadata back here
-      // how do we handle the sync of this
-      // maybe combine both instead of separate messages?
-      // what if the file takes too long to read?
-      this.handleReadMapMetadata();
 
       this.checkAndSetXslt();
 
@@ -275,6 +271,7 @@ export default class DataMapperPanel {
   public saveMapMetadata(mapMetadata: string) {
     const vscodeFolderPath = this.getMapMetadataPath();
     console.log('the file path is: ' + vscodeFolderPath);
+
     fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8')
       .then(() => {
         console.log('write file worked');
@@ -321,14 +318,27 @@ export default class DataMapperPanel {
       .catch(DataMapperExt.showError);
   }
 
-  private handleReadMapMetadata() {
+  private readMapMetadataFile(): MapMetadata | undefined {
+    // danielle test if file does not exist- coded, needs test
+    // danielle test if file is not valid json- - coded, needs test
+    // danielle test if file has all necessary data- probably in data-mapper lib
     const vscodeFolderPath = this.getMapMetadataPath();
-    const fileBuffer = readFileSync(vscodeFolderPath);
-    const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
-    this.sendMsgToWebview({
-      command: 'loadDataMapMetadata',
-      data: metadataJson,
-    });
+    if (fileExistsSync(vscodeFolderPath)) {
+      try {
+        const fileBuffer = readFileSync(vscodeFolderPath);
+        const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
+        console.log('metadata read');
+        return metadataJson;
+      } catch {
+        DataMapperExt.showError(`Data map metadata file found at ${vscodeFolderPath}. Data map will load without metadata file.`);
+        return undefined;
+      }
+    } else {
+      DataMapperExt.showWarning(
+        `Data map metadata not found at path ${vscodeFolderPath}. This file configures your function positioning and other info. Please save your map to regenerate the file.`
+      );
+      return undefined;
+    }
   }
 
   public deleteDraftDataMapDefinition() {
