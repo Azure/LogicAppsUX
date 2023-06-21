@@ -1,0 +1,23 @@
+name: Close inactive issues
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v4
+        with:
+          only-labels: 'Needs More Info'
+          days-before-issue-stale: 3
+          days-before-issue-close: 7
+          stale-issue-label: 'stale'
+          stale-issue-message: "We requested more information to triage this issue. If the issue goes more than 7 days with no more information it'll be automatically closed."
+          close-issue-message: "This issue has been closed because the information requested wasn't provided within 7 days."
+          operations-per-run: 200
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

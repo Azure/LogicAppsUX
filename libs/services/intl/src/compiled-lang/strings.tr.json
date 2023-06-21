@@ -642,7 +642,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Şu kaynaktan alınan mevcut şemalar:"
     }
   ],
   "2gzGrJ": [
@@ -1366,7 +1366,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Kod görünümü moduna geç"
     }
   ],
   "8ND+Yc": [
@@ -1557,6 +1557,12 @@
     {
       "type": 0,
       "value": "' değeri geçersiz, çıkışlarda bulunamıyor."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2202,7 +2208,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Tam dizi girişine geçiş yapın"
     }
   ],
   "EdzoIs": [
@@ -2230,7 +2236,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Bu işlemle ilgili istek geçmişini görüntüleyin"
     }
   ],
   "EurkzL": [
@@ -2644,7 +2650,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Dizi öğesi için ayrıntılı girişlere geçiş yapın"
     }
   ],
   "HfrUId": [
@@ -3571,6 +3577,12 @@
       "value": "Statik Sonucu Etkinleştir"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3795,6 +3807,12 @@
     {
       "type": 0,
       "value": "Giriş dizesinin base 64 gösterimini döndürür"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4100,7 +4118,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Bu düğümle ilgili parametreleri yapılandırın"
     }
   ],
   "SXb47U": [
@@ -4633,6 +4651,12 @@
       "value": "\" değerini özel değer olarak kullan"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4947,6 +4971,12 @@
       "value": "Daha Fazla Bilgi"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5247,6 +5277,12 @@
     {
       "type": 0,
       "value": "Tam Ekran"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -5578,7 +5614,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Anahtar değeri moduna geç"
     }
   ],
   "dDYCuU": [
@@ -6204,7 +6240,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Hakkında Sekmesi"
     }
   ],
   "iCSHJG": [
@@ -6304,7 +6340,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Kod Görünümü Sekmesi"
     }
   ],
   "iq+tiv": [
@@ -6596,7 +6632,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "İzleme Sekmesi"
     }
   ],
   "l72gf4": [
@@ -6839,6 +6875,12 @@
     {
       "type": 0,
       "value": "Logic Apps'i giden isteklerde iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
     }
   ],
   "mvrlkP": [
@@ -7409,6 +7451,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7428,7 +7476,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Varsayılan görünüm moduna geç"
     }
   ],
   "qnI4Y1": [
@@ -7598,7 +7646,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Test Sekmesi"
     }
   ],
   "sFbnCs": [
@@ -8420,7 +8468,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Metin moduna geç"
     }
   ],
   "xYyPR8": [

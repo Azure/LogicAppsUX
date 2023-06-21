@@ -115,7 +115,6 @@ export const apiManagementConnectorId = '/connectionProviders/apiManagementOpera
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 export const appServiceConnectorId = '/connectionProviders/appService';
 export const batchConnectorId = '/connectionProviders/batch';
-export const workflowConnectorId = '/connectionProviders/workflow';
 export const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
@@ -412,24 +411,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         operationId: isTrigger ? appservicetrigger : appservice,
       };
 
-    case azurefunction:
-      return {
-        connectorId: azureFunctionConnectorId,
-        operationId: azurefunction,
-      };
-
-    case workflow:
-      return {
-        connectorId: workflowConnectorId,
-        operationId: workflow,
-      };
-
-    case invokeworkflow:
-      return {
-        connectorId: workflowConnectorId,
-        operationId: invokeworkflow,
-      };
-
     case xslt:
       switch (kind) {
         case datamapper:
@@ -489,7 +470,7 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   },
   [function_]: {
     connectorId: azureFunctionConnectorId,
-    operationId: 'azureFunction',
+    operationId: azurefunction,
   },
   [initializevariable]: {
     connectorId: variableConnectorId,

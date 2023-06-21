@@ -653,7 +653,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Schemi esistenti da"
     }
   ],
   "2gzGrJ": [
@@ -1377,7 +1377,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Passa alla modalità di visualizzazione Codice"
     }
   ],
   "8ND+Yc": [
@@ -1568,6 +1568,12 @@
     {
       "type": 0,
       "value": "'' non è valido. Non è stato trovato negli output."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2216,7 +2222,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Passa all'input dell'intera matrice"
     }
   ],
   "EdzoIs": [
@@ -2248,7 +2254,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Visualizzare la cronologia delle richieste per questa operazione"
     }
   ],
   "EurkzL": [
@@ -2673,7 +2679,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Passa a input dettagli per l'elemento matrice"
     }
   ],
   "HfrUId": [
@@ -3615,6 +3621,12 @@
       "value": "Abilita risultato statico"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3847,6 +3859,12 @@
     {
       "type": 0,
       "value": "Restituisce la rappresentazione Base 64 della stringa di input"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4163,7 +4181,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Configurare i parametri per questo nodo"
     }
   ],
   "SXb47U": [
@@ -4700,6 +4718,12 @@
       "value": "\" come valore personalizzato"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5014,6 +5038,12 @@
       "value": "Altre informazioni"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5314,6 +5344,12 @@
     {
       "type": 0,
       "value": "Schermo intero"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -5645,7 +5681,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Passa a modalità chiave-valore"
     }
   ],
   "dDYCuU": [
@@ -6286,7 +6322,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Scheda Informazioni"
     }
   ],
   "iCSHJG": [
@@ -6390,7 +6426,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Scheda Visualizzazione Codice"
     }
   ],
   "iq+tiv": [
@@ -6682,7 +6718,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Scheda Monitoraggio"
     }
   ],
   "l72gf4": [
@@ -6925,6 +6961,12 @@
     {
       "type": 0,
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella richiesta in uscita."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
     }
   ],
   "mvrlkP": [
@@ -7502,6 +7544,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7521,7 +7569,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Passa alla modalità di visualizzazione predefinita"
     }
   ],
   "qnI4Y1": [
@@ -7691,7 +7739,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Scheda di test"
     }
   ],
   "sFbnCs": [
@@ -8517,7 +8565,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Passa a modalità testo"
     }
   ],
   "xYyPR8": [

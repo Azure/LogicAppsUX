@@ -631,7 +631,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Skema yang ada dari"
     }
   ],
   "2gzGrJ": [
@@ -1355,7 +1355,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Alihkan ke mode tampilan kode"
     }
   ],
   "8ND+Yc": [
@@ -1459,7 +1459,7 @@
   "8zkvmc": [
     {
       "type": 0,
-      "value": "Menguji"
+      "value": "Pengujian"
     }
   ],
   "9/UeTh": [
@@ -1546,6 +1546,12 @@
     {
       "type": 0,
       "value": "', tidak dapat menemukan dalam output."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2180,7 +2186,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Beralih ke input seluruh array"
     }
   ],
   "EdzoIs": [
@@ -2212,7 +2218,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Lihat riwayat permintaan untuk operasi ini"
     }
   ],
   "EurkzL": [
@@ -2615,7 +2621,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Beralih ke input detail untuk item array"
     }
   ],
   "HfrUId": [
@@ -3535,6 +3541,12 @@
       "value": "Aktifkan Hasil Statik"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3759,6 +3771,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi base 64 dari string input"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4053,7 +4071,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Konfigurasikan parameter untuk node ini"
     }
   ],
   "SXb47U": [
@@ -4590,6 +4608,12 @@
       "value": "\" sebagai nilai kustom"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4904,6 +4928,12 @@
       "value": "Info Selengkapnya"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5204,6 +5234,12 @@
     {
       "type": 0,
       "value": "Layar Penuh"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -5535,7 +5571,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Beralih ke mode nilai kunci"
     }
   ],
   "dDYCuU": [
@@ -6154,7 +6190,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Tentang Tab"
     }
   ],
   "iCSHJG": [
@@ -6258,7 +6294,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Tab Tampilan Kode"
     }
   ],
   "iq+tiv": [
@@ -6550,7 +6586,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Tab Pemantauan"
     }
   ],
   "l72gf4": [
@@ -6793,6 +6829,12 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
     }
   ],
   "mvrlkP": [
@@ -7352,6 +7394,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7371,7 +7419,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Alihkan ke mode tampilan default"
     }
   ],
   "qnI4Y1": [
@@ -7541,7 +7589,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Tab Pengujian"
     }
   ],
   "sFbnCs": [
@@ -8367,7 +8415,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Beralih ke mode teks"
     }
   ],
   "xYyPR8": [

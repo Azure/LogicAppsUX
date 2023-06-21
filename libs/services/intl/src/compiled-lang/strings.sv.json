@@ -646,7 +646,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Befintliga scheman från"
     }
   ],
   "2gzGrJ": [
@@ -1394,7 +1394,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Växla till kodvyläge"
     }
   ],
   "8ND+Yc": [
@@ -1585,6 +1585,12 @@
     {
       "type": 0,
       "value": ", finns inte i utdata."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2222,7 +2228,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Växla till indata för hela matrisen"
     }
   ],
   "EdzoIs": [
@@ -2254,7 +2260,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Visa den här åtgärdens begäranshistorik"
     }
   ],
   "EurkzL": [
@@ -2676,7 +2682,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Växla till matrisobjektets detaljindata"
     }
   ],
   "HfrUId": [
@@ -3647,6 +3653,12 @@
       "value": "Aktivera statiskt resultat"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3871,6 +3883,12 @@
     {
       "type": 0,
       "value": "Returnerar indatasträngens Base 64-representation"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4172,7 +4190,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Konfigurera parametrar för den här noden"
     }
   ],
   "SXb47U": [
@@ -4709,6 +4727,12 @@
       "value": " som anpassat värde"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5023,6 +5047,12 @@
       "value": "Mer information"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5323,6 +5353,12 @@
     {
       "type": 0,
       "value": "Helskärm"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -5654,7 +5690,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Växla till nyckelvärdeläge"
     }
   ],
   "dDYCuU": [
@@ -6288,7 +6324,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Fliken Om"
     }
   ],
   "iCSHJG": [
@@ -6400,7 +6436,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Fliken Kodvy"
     }
   ],
   "iq+tiv": [
@@ -6692,7 +6728,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Fliken Övervakning"
     }
   ],
   "l72gf4": [
@@ -6951,6 +6987,12 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
     }
   ],
   "mvrlkP": [
@@ -7517,6 +7559,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7536,7 +7584,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Växla till standardvyläge"
     }
   ],
   "qnI4Y1": [
@@ -7706,7 +7754,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Fliken Testning"
     }
   ],
   "sFbnCs": [
@@ -8528,7 +8576,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Växla till textläge"
     }
   ],
   "xYyPR8": [

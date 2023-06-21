@@ -1355,7 +1355,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "코드 보기 모드로 전환"
     }
   ],
   "8ND+Yc": [
@@ -1538,6 +1538,12 @@
     {
       "type": 0,
       "value": "{splitOn}의 분할 값이 잘못되었습니다. 출력에서 찾을 수 없습니다."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2168,7 +2174,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "입력 전체 배열로 전환"
     }
   ],
   "EdzoIs": [
@@ -2603,7 +2609,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "배열 항목에 대한 상세 정보 입력으로 전환"
     }
   ],
   "HfrUId": [
@@ -3519,6 +3525,12 @@
       "value": "정적 결과 사용"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3743,6 +3755,12 @@
     {
       "type": 0,
       "value": "입력 문자열의 base 64 표현을 반환합니다."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4570,6 +4588,12 @@
       "value": "\" 사용"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 1,
@@ -4884,6 +4908,12 @@
       "value": "추가 정보"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5184,6 +5214,12 @@
     {
       "type": 0,
       "value": "전체 화면"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -5515,7 +5551,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "키 값 모드로 전환"
     }
   ],
   "dDYCuU": [
@@ -6759,6 +6795,12 @@
       "value": "Logic Apps가 나가는 요청에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다."
     }
   ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
+    }
+  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -7316,6 +7358,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7335,7 +7383,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "기본 보기 모드로 전환"
     }
   ],
   "qnI4Y1": [
@@ -8323,7 +8371,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "텍스트 모드로 전환"
     }
   ],
   "xYyPR8": [

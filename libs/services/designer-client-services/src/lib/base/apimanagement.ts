@@ -3,21 +3,22 @@ import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
-import { QueryClient } from 'react-query';
+import type { QueryClient } from 'react-query';
 
 export interface ApiManagementServiceOptions {
   apiVersion: string;
   baseUrl: string;
   subscriptionId: string;
   httpClient: IHttpClient;
+  queryClient: QueryClient;
+  includeBasePathInTemplate?: boolean;
 }
 
-export class ApiManagementInstanceService implements IApiManagementService {
+export class BaseApiManagementService implements IApiManagementService {
   private _swaggers: Record<string, SwaggerParser> = {};
-  private queryClient: QueryClient;
 
   constructor(public readonly options: ApiManagementServiceOptions) {
-    const { apiVersion, baseUrl, subscriptionId, httpClient } = options;
+    const { apiVersion, baseUrl, subscriptionId, httpClient, queryClient } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
     } else if (!apiVersion) {
@@ -25,19 +26,10 @@ export class ApiManagementInstanceService implements IApiManagementService {
     } else if (!subscriptionId) {
       throw new ArgumentException('subscriptionId required');
     } else if (!httpClient) {
-      throw new ArgumentException('httpClient required for workflow app');
+      throw new ArgumentException('httpClient required for api management service');
+    } else if (!queryClient) {
+      throw new ArgumentException('queryClient required for api management service');
     }
-    this.queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchInterval: false,
-          refetchIntervalInBackground: false,
-          refetchOnWindowFocus: false,
-          refetchOnReconnect: false,
-          refetchOnMount: false,
-        },
-      },
-    });
   }
 
   async fetchApiManagementInstances(): Promise<any> {
@@ -60,21 +52,23 @@ export class ApiManagementInstanceService implements IApiManagementService {
     return response.value;
   }
 
-  fetchApiMSwagger(apimApiId: string): Promise<any> {
-    const { apiVersion, httpClient } = this.options;
+  public async fetchApiMSwagger(apimApiId: string): Promise<SwaggerParser> {
+    const normalizedName = apimApiId.toLowerCase();
+    if (this._swaggers[normalizedName]) {
+      return this._swaggers[normalizedName];
+    }
 
-    const response = httpClient.get<any>({
-      uri: apimApiId,
-      queryParameters: { 'api-version': apiVersion },
-      headers: {
-        accept: 'application/vnd.swagger.doc+json',
-      },
+    const swagger = await this.options.queryClient.fetchQuery(['apimSwagger', apimApiId?.toLowerCase()], async () => {
+      const swagger = await this._getSwaggerForAPIM(apimApiId);
+      return SwaggerParser.parse(swagger);
     });
-    return response;
+
+    this._swaggers[normalizedName] = new SwaggerParser(swagger);
+    return this._swaggers[normalizedName];
   }
 
   public async getOperations(apimApiId: string): Promise<ListDynamicValue[]> {
-    const swagger = await this._getSwaggerForAPIM(apimApiId);
+    const swagger = await this.fetchApiMSwagger(apimApiId);
     const operations = swagger.getOperations();
 
     return unmap(operations).map((operation) => ({
@@ -85,8 +79,13 @@ export class ApiManagementInstanceService implements IApiManagementService {
   }
 
   public async getOperationSchema(apimApiId: string, operationId: string, isInput: boolean): Promise<any> {
-    const swagger = await this._getSwaggerForAPIM(apimApiId);
+    const swagger = await this.fetchApiMSwagger(apimApiId);
     const operation = swagger.getOperationByOperationId(operationId);
+
+    if (!operation) {
+      throw new Error('APIM Operation not found');
+    }
+
     const paths = swagger.api.paths[operation.path];
     const rawOperation = paths[operation.method];
     const schema = { type: 'object', properties: {} as any, required: [] as string[] };
@@ -97,7 +96,15 @@ export class ApiManagementInstanceService implements IApiManagementService {
         pathTemplate: {
           type: 'object',
           properties: {
-            template: { type: 'string', default: operation.path, 'x-ms-visibility': 'hideInUI' },
+            template: {
+              type: 'string',
+              default: this.options.includeBasePathInTemplate
+                ? swagger.api.basePath
+                  ? `${swagger.api.basePath}${operation.path}`
+                  : operation.path
+                : operation.path,
+              'x-ms-visibility': 'hideInUI',
+            },
           },
           required: ['template'],
         },
@@ -130,19 +137,17 @@ export class ApiManagementInstanceService implements IApiManagementService {
     return schema;
   }
 
-  private async _getSwaggerForAPIM(apimApiId: string): Promise<SwaggerParser> {
-    const normalizedName = apimApiId.toLowerCase();
-    if (this._swaggers[normalizedName]) {
-      return this._swaggers[normalizedName];
-    }
+  private async _getSwaggerForAPIM(apimApiId: string): Promise<any> {
+    const { apiVersion, httpClient } = this.options;
 
-    const swagger = await this.queryClient.fetchQuery(['apimSwagger', apimApiId?.toLowerCase()], async () => {
-      const swagger = await this.fetchApiMSwagger(apimApiId);
-      return SwaggerParser.parse(swagger);
+    const response = httpClient.get<any>({
+      uri: apimApiId,
+      queryParameters: { 'api-version': apiVersion },
+      headers: {
+        accept: 'application/vnd.swagger.doc+json',
+      },
     });
-
-    this._swaggers[normalizedName] = new SwaggerParser(swagger);
-    return this._swaggers[normalizedName];
+    return response;
   }
 
   private _addParameterInSchema(finalSchema: any, parameter: any) {
