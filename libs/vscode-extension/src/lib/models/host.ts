@@ -17,6 +17,11 @@ export interface IHostJsonV2 {
     http?: {
       routePrefix?: string;
     };
+    workflow?: {
+      settings?: {
+        'Runtime.IsInvokeFunctionActionEnabled': 'true';
+      };
+    };
   };
   concurrency?: {
     dynamicConcurrencyEnabled: boolean;
