@@ -3,19 +3,10 @@ import { useIsConsumption, useIsLocal, useResourcePath } from '../../state/workf
 import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesigner';
 import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumption';
 import { LocalDesigner } from '../LocalDesigner/localDesigner';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { getReactQueryClient } from '@microsoft/logic-apps-designer';
+import { QueryClientProvider } from 'react-query';
 
-const standaloneQueryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchInterval: false,
-      refetchIntervalInBackground: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-    },
-  },
-});
+const standaloneQueryClient = getReactQueryClient();
 
 export const DesignerWrapper = () => {
   const resourcePath = useResourcePath();
