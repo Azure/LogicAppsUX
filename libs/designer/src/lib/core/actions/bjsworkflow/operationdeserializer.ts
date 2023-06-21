@@ -94,6 +94,7 @@ export const initializeOperationMetadata = async (
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
+    if (operationId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
     const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
 
     if (isTrigger) {
@@ -502,6 +503,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
   } = rootState;
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
+    if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
     if (!errors[nodeId]?.[ErrorLevel.Critical]) {
       const nodeDependencies = dependencies[nodeId];
       const nodeInputs = inputParameters[nodeId];
