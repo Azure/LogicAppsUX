@@ -30,7 +30,7 @@ export interface BaseSearchServiceOptions {
     apiVersion: string;
     subscriptionId: string;
     location: string;
-    managedApisVersion?: string;
+    openApiVersion?: string;
   };
   httpClient: IHttpClient;
   isDev?: boolean;
@@ -173,11 +173,11 @@ export abstract class BaseSearchService implements ISearchService {
     }
 
     const {
-      apiHubServiceDetails: { location, subscriptionId, apiVersion, managedApisVersion },
+      apiHubServiceDetails: { location, subscriptionId, apiVersion, openApiVersion },
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
-    const { value } = await this.getAzureResourceByPage(uri, { 'api-version': managedApisVersion ? managedApisVersion : apiVersion }, page);
+    const { value } = await this.getAzureResourceByPage(uri, { 'api-version': openApiVersion ? openApiVersion : apiVersion }, page);
 
     return this.moveGeneralInformation(value);
   }

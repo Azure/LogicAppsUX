@@ -316,8 +316,13 @@ const getDesignerServices = (
   });
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
-    openApiConnectionMode: true,
-    apiHubServiceDetails: { apiVersion: '2018-07-01-preview', managedApisVersion: '2022-09-01-preview', subscriptionId, location },
+    openApiConnectionMode: false, // This should be turned on for Open Api testing.
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      openApiVersion: undefined, //'2022-09-01-preview', Uncomment to test Open Api
+      subscriptionId,
+      location,
+    },
     isDev: false,
   });
 
