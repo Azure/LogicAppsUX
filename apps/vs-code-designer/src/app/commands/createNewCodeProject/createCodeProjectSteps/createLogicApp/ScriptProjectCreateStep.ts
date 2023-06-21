@@ -107,11 +107,16 @@ __azurite_db*__.json`)
           },
         },
       },
+      extensions: {
+        workflow: {
+          settings: {
+            'Runtime.IsInvokeFunctionActionEnabled': 'true',
+          },
+        },
+      },
     };
-
     // Add the default bundle to the host.json file
     await addDefaultBundle(context, hostJson);
-
     return hostJson;
   }
 }

@@ -44,6 +44,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
         workflow: {
           settings: {
             'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+            'Runtime.IsInvokeFunctionActionEnabled': 'true',
           },
         },
       },
