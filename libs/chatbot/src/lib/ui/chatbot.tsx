@@ -3,7 +3,6 @@ import { useBoolean } from '@fluentui/react-hooks';
 import type { ConversationItem } from '@microsoft/designer-ui';
 import { PanelLocation, ChatInput, ConversationItemType, ConversationMessage } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useState } from 'react';
-import React from 'react';
 import { useIntl } from 'react-intl';
 
 interface ChatbotProps {
