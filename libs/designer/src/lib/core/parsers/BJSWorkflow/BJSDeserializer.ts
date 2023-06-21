@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
@@ -49,6 +50,16 @@ export const Deserialize = (
       isRoot: true,
       ...(trigger?.metadata && { actionMetadata: trigger?.metadata }),
       ...addTriggerInstanceMetaData(runInstance),
+    };
+    allActionNames.push(tID);
+  } else {
+    // Workflow has no trigger, create a Placeholder trigger node
+    const tID = constants.NODE.TYPE.PLACEHOLDER_TRIGGER;
+    triggerNode = createWorkflowNode(tID, WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE);
+    allActions[tID] = { ...triggerNode };
+    nodesMetadata[tID] = {
+      graphId: 'root',
+      isRoot: true,
     };
     allActionNames.push(tID);
   }
