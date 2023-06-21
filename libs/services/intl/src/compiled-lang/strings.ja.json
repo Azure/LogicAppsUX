@@ -14,21 +14,17 @@
   "+Uvo/p": [
     {
       "type": 0,
-      "value": "下シェブロンの代替テキスト"
+      "value": "下矢印シェブロンの代替テキスト"
     }
   ],
   "+ZSBrq": [
-    {
-      "type": 0,
-      "value": "Context menu for "
-    },
     {
       "type": 1,
       "value": "title"
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " カードのコンテキスト メニュー"
     }
   ],
   "+mAJR3": [
@@ -46,7 +42,7 @@
   "/EU/oJ": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'."
+      "value": "必須。変換元のタイム ゾーンのタイム ゾーン名を含む文字列です。詳しくは、「既定のタイム ゾーン (https://go.microsoft.com/fwlink/?linkid=2238292)」をご覧ください。"
     }
   ],
   "/I/U8L": [
@@ -172,7 +168,7 @@
   "04AwK7": [
     {
       "type": 0,
-      "value": "Error code: '"
+      "value": "エラー コード: '"
     },
     {
       "type": 1,
@@ -180,7 +176,7 @@
     },
     {
       "type": 0,
-      "value": "', Message: '"
+      "value": "'、メッセージ: '"
     },
     {
       "type": 1,
@@ -188,7 +184,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'。"
     }
   ],
   "06zKZg": [
@@ -212,7 +208,7 @@
   "08e2rO": [
     {
       "type": 0,
-      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
+      "value": "この操作で使用されているマネージド ID は存在しなくなりました。続行するには、ID を設定するか、接続を変更してください。"
     }
   ],
   "09B9CU": [
@@ -330,7 +326,7 @@
     },
     {
       "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " は、操作スキーマに存在しなくなりました。ワークフローを再保存する前に、削除する必要があります。"
     }
   ],
   "0uj1Li": [
@@ -449,7 +445,7 @@
   "1REk6u": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "有効なメールを入力してください。"
     }
   ],
   "1TE0e8": [
@@ -485,7 +481,7 @@
   "1dlfUe": [
     {
       "type": 0,
-      "value": "アクションは、データに対する操作、システム間の通信、または他のタスクの実行を実行します。"
+      "value": "アクションによって、データに対する操作を実行したり、システム間の通信を行ったり、その他のタスクを実行したりします。"
     }
   ],
   "1eKQwo": [
@@ -575,7 +571,7 @@
   "27Nhhv": [
     {
       "type": 0,
-      "value": "API Managementインスタンスから API を選択します"
+      "value": "API Management インスタンスから API を選択する"
     }
   ],
   "2CXCOt": [
@@ -593,7 +589,7 @@
   "2JA3gY": [
     {
       "type": 0,
-      "value": "Expand tree node"
+      "value": "ツリー ノードの展開"
     }
   ],
   "2K2fAj": [
@@ -635,7 +631,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "既存のスキーマの取得元"
     }
   ],
   "2gzGrJ": [
@@ -669,7 +665,7 @@
     },
     {
       "type": 0,
-      "value": "後に新しいステップを挿入する"
+      "value": " 後に新しいステップを挿入します"
     }
   ],
   "2tTQ0A": [
@@ -902,12 +898,12 @@
   ],
   "4D7H4R": [
     {
-      "type": 0,
-      "value": "実行"
-    },
-    {
       "type": 1,
       "value": "onDays"
+    },
+    {
+      "type": 0,
+      "value": " に実行します"
     }
   ],
   "4Ekn9t": [
@@ -965,7 +961,7 @@
     },
     {
       "type": 0,
-      "value": "が必要です。"
+      "value": " は必須です。"
     }
   ],
   "4vcnOA": [
@@ -1025,7 +1021,7 @@
   "5akc1Q": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : '"
+      "value": "パラメーターでサポートされていない 'in' 値: '"
     },
     {
       "type": 1,
@@ -1033,7 +1029,7 @@
     },
     {
       "type": 0,
-      "value": "' in Parameter"
+      "value": "'"
     }
   ],
   "5b0sKi": [
@@ -1087,13 +1083,13 @@
   "61iT9C": [
     {
       "type": 0,
-      "value": "前の手順からデータを挿入します (エディターでAlt + /入力して追加することもできます)"
+      "value": "前のステップからデータを挿入する (エディターで Alt + / を入力して追加することもできます)"
     }
   ],
   "62Ypnr": [
     {
       "type": 0,
-      "value": "Error loading operation data"
+      "value": "操作のデータの読み込みでエラーが発生しました"
     }
   ],
   "63/zYN": [
@@ -1117,13 +1113,13 @@
   "6fDYzG": [
     {
       "type": 0,
-      "value": "Failed to load the schema. Please try again."
+      "value": "スキーマの読み込みに失敗しました。もう一度お試しください。"
     }
   ],
   "6gZ4I3": [
     {
       "type": 0,
-      "value": "関数'"
+      "value": "関数 '"
     },
     {
       "type": 1,
@@ -1131,7 +1127,7 @@
     },
     {
       "type": 0,
-      "value": "'に割り当てられている入力が多すぎます"
+      "value": "' に割り当てられている入力が多すぎます"
     }
   ],
   "6jiO7t": [
@@ -1295,7 +1291,7 @@
   "83G5rr": [
     {
       "type": 0,
-      "value": "Specify the interval."
+      "value": "間隔を指定します。"
     }
   ],
   "83PYuA": [
@@ -1359,7 +1355,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "コード表示モードに切り替える"
     }
   ],
   "8ND+Yc": [
@@ -1435,7 +1431,7 @@
   "8mDG0V": [
     {
       "type": 0,
-      "value": "ワークフローで次の操作でパラメーター検証エラーが発生しました: "
+      "value": "ワークフローの次の操作でパラメーター検証エラーが発生しました: "
     },
     {
       "type": 1,
@@ -1541,7 +1537,7 @@
   "9W0lck": [
     {
       "type": 0,
-      "value": "Invalid split on value '"
+      "value": "値 '"
     },
     {
       "type": 1,
@@ -1549,7 +1545,13 @@
     },
     {
       "type": 0,
-      "value": "', cannot find in outputs."
+      "value": "' の分割が無効です。出力で見つかりません。"
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -1591,13 +1593,13 @@
   "A5Ferh": [
     {
       "type": 0,
-      "value": "Source element removed from view."
+      "value": "ソース要素がビューから削除されました。"
     }
   ],
   "A8l+k7": [
     {
       "type": 0,
-      "value": "次の API パラメーターの実行中にエラーが発生しました: '"
+      "value": "次の API パラメーターの実行でエラーが発生しました: '"
     },
     {
       "type": 1,
@@ -1641,7 +1643,7 @@
   "AQ7Zxc": [
     {
       "type": 0,
-      "value": "文字列 (大文字と小文字を区別しない、インバリアント カルチャ) で発生する値の n 番目の出現のインデックスを返します。"
+      "value": "文字列内で値が n 番目に出現する位置のインデックスを返します (大文字と小文字は区別されません。インバリアント カルチャ)。"
     }
   ],
   "Af+Ve0": [
@@ -1653,7 +1655,7 @@
   "AheXMN": [
     {
       "type": 0,
-      "value": "Select frequency."
+      "value": "頻度を選択します。"
     }
   ],
   "AnX5yC": [
@@ -1736,7 +1738,7 @@
   "B999mz": [
     {
       "type": 0,
-      "value": "Line deleted."
+      "value": "行が削除されました"
     }
   ],
   "BBD8Em": [
@@ -1808,7 +1810,7 @@
   "BeqBP7": [
     {
       "type": 0,
-      "value": "Automatic Decompression"
+      "value": "自動展開"
     }
   ],
   "Bl4Iv0": [
@@ -1938,7 +1940,7 @@
     },
     {
       "type": 0,
-      "value": "と"
+      "value": " と "
     },
     {
       "type": 1,
@@ -1946,10 +1948,14 @@
     },
     {
       "type": 0,
-      "value": "の間に新しいステップを挿入します"
+      "value": " の間に新しいステップを挿入します"
     }
   ],
   "Czt6YV": [
+    {
+      "type": 0,
+      "value": "設定時刻 "
+    },
     {
       "type": 1,
       "value": "times"
@@ -1964,7 +1970,7 @@
   "D/xTXV": [
     {
       "type": 0,
-      "value": "ソース スキーマの表示"
+      "value": "ソース スキーマを表示する"
     }
   ],
   "D1lgsT": [
@@ -2006,7 +2012,7 @@
   "DQV7aK": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download '"
+      "value": "Alt または Option キーを押しながらクリックして '"
     },
     {
       "type": 1,
@@ -2014,7 +2020,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' をダウンロードします"
     }
   ],
   "DWd9vy": [
@@ -2044,7 +2050,7 @@
   "DZc8wP": [
     {
       "type": 0,
-      "value": "カスタム値がスキーマ ノードの型と一致しません"
+      "value": "カスタム値がスキーマ ノードの種類と一致しません"
     }
   ],
   "Dhu3IS": [
@@ -2112,7 +2118,7 @@
     },
     {
       "type": 0,
-      "value": "'の入力の型が一致しません"
+      "value": "' の入力の型が一致しません"
     }
   ],
   "E8iqLl": [
@@ -2164,7 +2170,7 @@
     },
     {
       "type": 0,
-      "value": "日ごと"
+      "value": " 日ごと"
     }
   ],
   "EaTGcN": [
@@ -2176,7 +2182,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "アレイ全体の入力に切り替える"
     }
   ],
   "EdzoIs": [
@@ -2208,7 +2214,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "この操作の要求履歴を表示します"
     }
   ],
   "EurkzL": [
@@ -2268,7 +2274,7 @@
   "FIL1Nt": [
     {
       "type": 0,
-      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+      "value": "条件が複雑すぎるか、無効です。基本モードに切り替えることができません"
     }
   ],
   "FIT7i0": [
@@ -2355,7 +2361,7 @@
   "FaBEfQ": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "追跡対象プロパティ"
     }
   ],
   "Fcvgvg": [
@@ -2403,7 +2409,7 @@
   "GCjJnP": [
     {
       "type": 0,
-      "value": "Enter a valid Json."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "GD3m4X": [
@@ -2427,7 +2433,7 @@
   "GEB1on": [
     {
       "type": 0,
-      "value": "これには 0 から 59 までの値が含まれています"
+      "value": "これには 0 から 59 までではない値が含まれています"
     }
   ],
   "GIUSQs": [
@@ -2511,7 +2517,7 @@
   "GyUe4C": [
     {
       "type": 0,
-      "value": "関数に関するオプションの変更"
+      "value": "関数に関するオプションを変更します"
     }
   ],
   "GzQQqH": [
@@ -2557,7 +2563,7 @@
   "H5VikC": [
     {
       "type": 0,
-      "value": "接続が無効です。マッピングは閉じたループを形成できません。"
+      "value": "接続が無効です。マッピングでは閉じたループを形成できません。"
     }
   ],
   "H8bEUn": [
@@ -2581,7 +2587,7 @@
   "HOchry": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one."
+      "value": "既存の接続参照を選択するか、新規に作成してください。"
     }
   ],
   "HQ8/tk": [
@@ -2605,13 +2611,13 @@
   "Hbqlzk": [
     {
       "type": 0,
-      "value": "Insert Expression"
+      "value": "式の挿入"
     }
   ],
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "アレイ項目の詳細の入力に切り替える"
     }
   ],
   "HfrUId": [
@@ -2623,7 +2629,7 @@
   "HmcHoE": [
     {
       "type": 0,
-      "value": "マニフェストの取得中にエラーが発生しました"
+      "value": "マニフェストの取得でエラーが発生しました"
     }
   ],
   "HoQiVa": [
@@ -2639,7 +2645,7 @@
     },
     {
       "type": 0,
-      "value": "の有効な値を入力してください。"
+      "value": " の有効な値を入力してください。"
     }
   ],
   "HsO1Rd": [
@@ -2655,7 +2661,7 @@
   "Hyp0Ao": [
     {
       "type": 0,
-      "value": "パラメーター \""
+      "value": "パラメーター '"
     },
     {
       "type": 1,
@@ -2663,7 +2669,7 @@
     },
     {
       "type": 0,
-      "value": "\"とその値を削除します"
+      "value": "' とその値の削除"
     }
   ],
   "HzS2gJ": [
@@ -2761,7 +2767,7 @@
   "IjEKvh": [
     {
       "type": 0,
-      "value": "Error executing the api '"
+      "value": "API '"
     },
     {
       "type": 1,
@@ -2769,13 +2775,13 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' の実行でエラーが発生しました。"
     }
   ],
   "Io48jC": [
     {
       "type": 0,
-      "value": "{1}認証の種類に対して、{0}プロパティが無効です。"
+      "value": "{1} 認証の種類に対して、{0} プロパティが無効です。"
     }
   ],
   "IooQu1": [
@@ -2853,7 +2859,7 @@
     },
     {
       "type": 0,
-      "value": "が含まれています。"
+      "value": " が含まれています。"
     }
   ],
   "JErLDT": [
@@ -2919,7 +2925,7 @@
   "Jpox7O": [
     {
       "type": 0,
-      "value": "有効にすると、このアクションは Dataverse トリガーの [実行] 設定からユーザーと共に実行されます。"
+      "value": "有効にすると、このアクションは Dataverse トリガーの [実行するアカウント名] 設定のユーザーによって実行されます。"
     }
   ],
   "Jq2Y/o": [
@@ -2961,7 +2967,7 @@
   "KP0Rr2": [
     {
       "type": 0,
-      "value": "有効な Double 番号を入力してください。"
+      "value": "有効な倍精度浮動小数点数を入力してください。"
     }
   ],
   "KX1poC": [
@@ -3158,7 +3164,7 @@
   "LvLksz": [
     {
       "type": 0,
-      "value": "Loading outputs"
+      "value": "出力の読み込み"
     }
   ],
   "LvpxiA": [
@@ -3296,13 +3302,13 @@
   "Mgcs5s": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "有効な数値を入力してください。"
     }
   ],
   "MirIsS": [
     {
       "type": 0,
-      "value": "コードを表示する"
+      "value": "コードの表示"
     }
   ],
   "MmBfD1": [
@@ -3350,7 +3356,7 @@
   "NHnG2S": [
     {
       "type": 0,
-      "value": "生成された XSLT が現在のマッピングと一致しません。"
+      "value": "生成された XSLT は現在のマッピングと一致しません。"
     }
   ],
   "NMpFs6": [
@@ -3440,7 +3446,7 @@
   "ODQCKj": [
     {
       "type": 0,
-      "value": "Converts the input to a JSON type value."
+      "value": "入力を JSON 型の値に変換します。"
     }
   ],
   "OEEuUu": [
@@ -3506,7 +3512,7 @@
   "OSP9JY": [
     {
       "type": 0,
-      "value": "対象ユーザーを入力します。"
+      "value": "対象ユーザーを入力してください。"
     }
   ],
   "OVvieE": [
@@ -3524,7 +3530,13 @@
   "OdoUEu": [
     {
       "type": 0,
-      "value": "Enable Static Result"
+      "value": "静的な結果の有効化"
+    }
+  ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
     }
   ],
   "OgJ9eG": [
@@ -3649,12 +3661,12 @@
   ],
   "PNk3n4": [
     {
-      "type": 0,
-      "value": "実行"
-    },
-    {
       "type": 1,
       "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " に実行"
     }
   ],
   "PORNMZ": [
@@ -3720,7 +3732,7 @@
   "Pk4cb+": [
     {
       "type": 0,
-      "value": "Tracked properties"
+      "value": "追跡対象プロパティ"
     }
   ],
   "Pq+4a+": [
@@ -3744,13 +3756,19 @@
   "PvWTxR": [
     {
       "type": 0,
-      "value": "関数の表示"
+      "value": "関数を表示する"
     }
   ],
   "Pvm0xB": [
     {
       "type": 0,
       "value": "入力文字列の Base 64 表現を返します"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -3780,7 +3798,7 @@
   "Q5w4Do": [
     {
       "type": 0,
-      "value": "/ を挿入して動的データまたは式を追加します"
+      "value": "/ を挿入して動的データまたは式を追加してください"
     }
   ],
   "Q8HCYK": [
@@ -3796,7 +3814,7 @@
     },
     {
       "type": 0,
-      "value": " Key"
+      "value": " キー"
     }
   ],
   "QGbUXX": [
@@ -3826,7 +3844,7 @@
   "QdJUaS": [
     {
       "type": 0,
-      "value": "Pencil icon"
+      "value": "鉛筆のアイコン"
     }
   ],
   "QeE0k/": [
@@ -3953,13 +3971,13 @@
   "RnBddN": [
     {
       "type": 0,
-      "value": "issue"
+      "value": "問題"
     }
   ],
   "Ro4+PC": [
     {
       "type": 0,
-      "value": "メモを追加できるのは、ステップの入力を編集した場合のみです。"
+      "value": "メモの追加は、ステップの入力を編集した場合にのみ可能です。"
     }
   ],
   "Rp5pHU": [
@@ -3971,7 +3989,7 @@
   "Rq2U5n": [
     {
       "type": 0,
-      "value": "式'"
+      "value": "認識されない式 '"
     },
     {
       "type": 1,
@@ -3979,7 +3997,7 @@
     },
     {
       "type": 0,
-      "value": "'を認識できません"
+      "value": "'"
     }
   ],
   "RvpHdu": [
@@ -4015,7 +4033,7 @@
   "SJFVxf": [
     {
       "type": 0,
-      "value": "懸案事項"
+      "value": "問題"
     }
   ],
   "SKXopi": [
@@ -4045,7 +4063,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "このノードのパラメーターの構成"
     }
   ],
   "SXb47U": [
@@ -4085,7 +4103,7 @@
   "Sr8PcK": [
     {
       "type": 0,
-      "value": "No operations found"
+      "value": "操作が見つかりません"
     }
   ],
   "SvQyvs": [
@@ -4121,7 +4139,7 @@
   "T7Xwii": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "間隔"
     }
   ],
   "T7zcR6": [
@@ -4151,7 +4169,7 @@
   "TLHUMf": [
     {
       "type": 0,
-      "value": "入力の読み込み中にエラーが発生"
+      "value": "入力の読み込みエラー"
     }
   ],
   "TNEttQ": [
@@ -4197,10 +4215,6 @@
     }
   ],
   "TZh8nV": [
-    {
-      "type": 0,
-      "value": " "
-    },
     {
       "type": 1,
       "value": "weekDays"
@@ -4306,10 +4320,6 @@
   ],
   "U4zovj": [
     {
-      "type": 0,
-      "value": "実行 "
-    },
-    {
       "type": 1,
       "value": "onTime"
     },
@@ -4320,6 +4330,10 @@
     {
       "type": 1,
       "value": "onDays"
+    },
+    {
+      "type": 0,
+      "value": " に実行"
     }
   ],
   "U7yRwM": [
@@ -4403,7 +4417,7 @@
     },
     {
       "type": 0,
-      "value": "'に終端のない接続チェーンがあります"
+      "value": "' に終端のない接続チェーンがあります"
     }
   ],
   "Umpr3z": [
@@ -4413,13 +4427,13 @@
     },
     {
       "type": 0,
-      "value": "週間ごと"
+      "value": " 週間ごと"
     }
   ],
   "Unc2tG": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal."
+      "value": "2 つの値が等しい場合は true を返します。"
     }
   ],
   "UnrrzF": [
@@ -4473,7 +4487,7 @@
   "VHm1Sr": [
     {
       "type": 0,
-      "value": "App Serviceリソースの選択"
+      "value": "App Service リソースの選択"
     }
   ],
   "VI5Sa8": [
@@ -4484,12 +4498,12 @@
   ],
   "VI7EqG": [
     {
-      "type": 0,
-      "value": "No results found for "
-    },
-    {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": " の結果が見つかりませんでした"
     }
   ],
   "VKAk5g": [
@@ -4578,6 +4592,12 @@
       "value": "\" をカスタム値として使用する"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4607,7 +4627,7 @@
     },
     {
       "type": 0,
-      "value": "内のすべてのテキストを選択"
+      "value": " のすべてのテキストを選択"
     }
   ],
   "WR1K3z": [
@@ -4625,7 +4645,7 @@
   "WTZvGW": [
     {
       "type": 0,
-      "value": "ワークフローには、次の操作で無効な接続があります: "
+      "value": "ワークフローには、次の操作に対する無効な接続があります: "
     },
     {
       "type": 1,
@@ -4759,7 +4779,7 @@
   "XRK+gt": [
     {
       "type": 0,
-      "value": "関数'"
+      "value": "関数 '"
     },
     {
       "type": 1,
@@ -4767,7 +4787,7 @@
     },
     {
       "type": 0,
-      "value": "'に終端のない接続チェーンがあります"
+      "value": "' に終端のない接続チェーンがあります"
     }
   ],
   "XTeLIw": [
@@ -4797,7 +4817,7 @@
   "XVTQT6": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "間隔"
     }
   ],
   "XbtEq9": [
@@ -4809,7 +4829,7 @@
   "Xew1Df": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is '"
+      "value": "詳細な診断情報: x-ms-client-request-id は '"
     },
     {
       "type": 1,
@@ -4817,7 +4837,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' です。"
     }
   ],
   "Xj0Gr/": [
@@ -4892,6 +4912,12 @@
       "value": "詳細情報"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -4935,7 +4961,7 @@
   "YJlS8E": [
     {
       "type": 0,
-      "value": "テキストを下線として書式設定します。ショートカット: Ctrl+U"
+      "value": "テキストを下線付きで書式設定します。ショートカット: Ctrl+U"
     }
   ],
   "YKXmKD": [
@@ -4989,7 +5015,7 @@
   "Ybzoim": [
     {
       "type": 0,
-      "value": "Required. The name of the action that has the values you want."
+      "value": "必須。求める値を持つアクションの名前。"
     }
   ],
   "YdQw4/": [
@@ -5013,7 +5039,7 @@
   "Yh5OVd": [
     {
       "type": 0,
-      "value": "カスタム値が、この入力で許可されている型の 1 つと一致しません"
+      "value": "カスタム値が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "YiOybp": [
@@ -5043,7 +5069,7 @@
   "Yw7Nfl": [
     {
       "type": 0,
-      "value": "Disable Static Result"
+      "value": "静的な結果の無効化"
     }
   ],
   "Z9PWl/": [
@@ -5057,7 +5083,7 @@
     },
     {
       "type": 0,
-      "value": " から"
+      "value": " から "
     },
     {
       "type": 1,
@@ -5065,7 +5091,7 @@
     },
     {
       "type": 0,
-      "value": "にする必要があります)"
+      "value": " にする必要があります)"
     }
   ],
   "ZBJiuD": [
@@ -5194,6 +5220,12 @@
       "value": "全画面表示"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5203,7 +5235,7 @@
   "amRYtC": [
     {
       "type": 0,
-      "value": "有効な浮動小数を入力してください。"
+      "value": "有効な float を入力してください。"
     }
   ],
   "aoUT/3": [
@@ -5379,7 +5411,7 @@
   "c7tRg/": [
     {
       "type": 0,
-      "value": "GZip または Deflate を使用して圧縮されている場合は、要求本文を圧縮解除します。この設定は HTTP トリガーにのみ適用されます。"
+      "value": "GZip または Deflate を使用して圧縮されている場合は、要求本文の圧縮を展開します。この設定は、HTTP トリガーにのみ適用されます。"
     }
   ],
   "c8UPLp": [
@@ -5409,7 +5441,7 @@
   "cP4UkW": [
     {
       "type": 0,
-      "value": "再試行ポリシーの間隔が無効です。ISO 8601 期間の形式と一致する必要があります"
+      "value": "再試行ポリシーの間隔が無効です。ISO 8601 の期間の形式と一致する必要があります"
     }
   ],
   "cR9RtV": [
@@ -5433,7 +5465,7 @@
   "ceVB5l": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output from an action."
+      "value": "アクションからのマルチパート出力に含まれるパートの本文を返します。"
     }
   ],
   "cgq/+y": [
@@ -5457,7 +5489,7 @@
   "cjcEOf": [
     {
       "type": 0,
-      "value": "入力ノードの種類が、この入力で許可されている型の 1 つと一致しません"
+      "value": "入力ノードの種類が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "cmTCsW": [
@@ -5487,7 +5519,7 @@
   "ctI9Pp": [
     {
       "type": 0,
-      "value": "マッピングをテストする前に XSLT を生成してください。"
+      "value": "マッピングをテストする前に、XSLT を生成してください。"
     }
   ],
   "cvp9VP": [
@@ -5505,7 +5537,7 @@
   "d020eg": [
     {
       "type": 0,
-      "value": "渡された配列または文字列から最初の要素を返します。"
+      "value": "渡された配列または文字列の最初の要素を返します"
     }
   ],
   "dBWIjR": [
@@ -5523,7 +5555,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "キー値モードに切り替え"
     }
   ],
   "dDYCuU": [
@@ -5671,7 +5703,7 @@
   "eFnLWK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) 中央アメリカ"
     }
   ],
   "eHgfpz": [
@@ -5707,7 +5739,7 @@
   "ehIBkh": [
     {
       "type": 0,
-      "value": "Enter an integer"
+      "value": "整数を入力してください"
     }
   ],
   "elD6+N": [
@@ -5773,7 +5805,7 @@
   "fElufw": [
     {
       "type": 0,
-      "value": "API Managementリソースの選択"
+      "value": "Azure API Management リソースの選択"
     }
   ],
   "fGcSFd": [
@@ -5913,7 +5945,7 @@
   "gKEaXI": [
     {
       "type": 0,
-      "value": "{label}の値をクリップボードにコピーします"
+      "value": "{label} の値をクリップボードにコピーします"
     }
   ],
   "gKq3Jv": [
@@ -5967,7 +5999,7 @@
   "gpUphl": [
     {
       "type": 0,
-      "value": "対象ユーザーを入力します。"
+      "value": "対象ユーザーを入力してください。"
     }
   ],
   "gu9o9z": [
@@ -5985,7 +6017,7 @@
   "h+W3VW": [
     {
       "type": 0,
-      "value": "数"
+      "value": "数値"
     }
   ],
   "h1lQDa": [
@@ -6102,7 +6134,7 @@
   "i0XjL5": [
     {
       "type": 0,
-      "value": "Search for operation"
+      "value": "操作の検索"
     }
   ],
   "i1EQYm": [
@@ -6138,7 +6170,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "[情報] タブ"
     }
   ],
   "iCSHJG": [
@@ -6238,7 +6270,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "[コード ビュー] タブ"
     }
   ],
   "iq+tiv": [
@@ -6500,7 +6532,7 @@
   "kxMDyM": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "l/9YHQ": [
@@ -6530,7 +6562,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "[監視] タブ"
     }
   ],
   "l72gf4": [
@@ -6572,7 +6604,7 @@
   "lUvgiW": [
     {
       "type": 0,
-      "value": "{0}の種類が{1}です。"
+      "value": "{0} の種類は {1} です。"
     }
   ],
   "lZT0JI": [
@@ -6590,15 +6622,7 @@
   "lexzgJ": [
     {
       "type": 0,
-      "value": "Remove all references to element ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the element."
+      "value": "すべての要素 {nodeName} への参照を削除してから、この要素を削除してください。"
     }
   ],
   "lgs5sf": [
@@ -6622,7 +6646,7 @@
   "loxzZD": [
     {
       "type": 0,
-      "value": "式の挿入 (エディターで / を入力して追加することもできます)"
+      "value": "式の挿入 (エディターで「/」を入力して追加することもできます)"
     }
   ],
   "lsKVU6": [
@@ -6722,7 +6746,7 @@
   "mPuXlv": [
     {
       "type": 0,
-      "value": "Invalid type on split on value '"
+      "value": "値 '"
     },
     {
       "type": 1,
@@ -6730,7 +6754,7 @@
     },
     {
       "type": 0,
-      "value": "', split on not in array."
+      "value": "' の分割の種類が無効です。分割が配列にありません。"
     }
   ],
   "mQotIu": [
@@ -6775,6 +6799,12 @@
       "value": "送信要求にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
     }
   ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
+    }
+  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6788,7 +6818,7 @@
     },
     {
       "type": 0,
-      "value": " Value"
+      "value": " 値"
     }
   ],
   "mwEHSX": [
@@ -6950,7 +6980,7 @@
   "o/FgET": [
     {
       "type": 0,
-      "value": "関数は現在の場所から削除され、現在他の場所に存在します。"
+      "value": "関数は現在の場所から削除され、現時点で別の場所に存在します。"
     }
   ],
   "o14STH": [
@@ -6976,7 +7006,7 @@
   "o2Cmny": [
     {
       "type": 0,
-      "value": "有効な URI を入力してください。"
+      "value": "有効な URL を入力してください。"
     }
   ],
   "o3SfI4": [
@@ -7072,13 +7102,13 @@
   "ox2Ou7": [
     {
       "type": 0,
-      "value": "Enter a valid JSON"
+      "value": "有効な JSON を入力してください"
     }
   ],
   "oxXV4+": [
     {
       "type": 0,
-      "value": "渡された引数値の最初の null 以外のオブジェクトを返します。"
+      "value": "渡された引数値のうち null 以外の最初のオブジェクトを返します。"
     }
   ],
   "p/0r2N": [
@@ -7096,7 +7126,7 @@
   "p1IEXb": [
     {
       "type": 0,
-      "value": "前の手順のデータを入力します。'/' 文字を入力してデータを追加することもできます。"
+      "value": "前の手順のデータを入力します。「/」文字を入力してデータを追加することもできます。"
     }
   ],
   "p1Qtm5": [
@@ -7228,13 +7258,13 @@
   "q4ChjK": [
     {
       "type": 0,
-      "value": "'手動' トリガーを持つワークフローを選択する"
+      "value": "'手動' トリガーを持つワークフローの選択"
     }
   ],
   "q5TkqE": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is false."
+      "value": "必須。式が false の場合に返す値。"
     }
   ],
   "q87X20": [
@@ -7252,7 +7282,7 @@
   "qAlTD5": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: '"
+      "value": "サポートされていないマニフェスト接続参照形式: '"
     },
     {
       "type": 1,
@@ -7266,7 +7296,7 @@
   "qBkxGU": [
     {
       "type": 0,
-      "value": "テキストを下線として書式設定します。ショートカット: ⌘U"
+      "value": "テキストを下線付きで書式設定します。ショートカット: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7332,6 +7362,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7351,7 +7387,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "既定の表示モードに切り替える"
     }
   ],
   "qnI4Y1": [
@@ -7363,7 +7399,7 @@
   "qr1lLG": [
     {
       "type": 0,
-      "value": "関数'"
+      "value": "関数 \""
     },
     {
       "type": 1,
@@ -7371,7 +7407,7 @@
     },
     {
       "type": 0,
-      "value": "'の入力の型が一致しません"
+      "value": "\" の入力の型が一致しません"
     }
   ],
   "qrxi0L": [
@@ -7413,7 +7449,7 @@
   "rAwCdh": [
     {
       "type": 0,
-      "value": "Connect via on-premises data gateway"
+      "value": "オンプレミス データ ゲートウェイ経由で接続"
     }
   ],
   "rAyuzv": [
@@ -7449,7 +7485,7 @@
   "rSIBjh": [
     {
       "type": 0,
-      "value": "Enter value for parameter."
+      "value": "パラメーターの値を入力してください。"
     }
   ],
   "raBiud": [
@@ -7473,7 +7509,7 @@
   "rsdJcV": [
     {
       "type": 0,
-      "value": "マップを構築するソース スキーマ要素を選択します"
+      "value": "マップを構築するソース スキーマ要素の選択"
     }
   ],
   "rv0Pn+": [
@@ -7521,7 +7557,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "[テスト] タブ"
     }
   ],
   "sFbnCs": [
@@ -7539,7 +7575,7 @@
   "sQ2vRs": [
     {
       "type": 0,
-      "value": "Add Case"
+      "value": "ケースの追加"
     }
   ],
   "sW47JR": [
@@ -7661,7 +7697,7 @@
   "tAeKNh": [
     {
       "type": 0,
-      "value": "Simple"
+      "value": "シンプル"
     }
   ],
   "tE7Zam": [
@@ -7715,7 +7751,7 @@
   "tMdcE1": [
     {
       "type": 0,
-      "value": "接続が無効です。完全な詳細を読み込むには、接続を更新してください"
+      "value": "接続が無効です。完全な詳細を読み込むために接続を更新してください"
     }
   ],
   "tNoZx2": [
@@ -7751,7 +7787,7 @@
   "tWV2mC": [
     {
       "type": 0,
-      "value": "1 時間ごとの"
+      "value": "毎時 "
     },
     {
       "type": 1,
@@ -7779,13 +7815,13 @@
   "tarDYT": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second."
+      "value": "1 番目の引数が 2 番目の引数より小さい場合は true を返します。"
     }
   ],
   "td5//c": [
     {
       "type": 0,
-      "value": "Collapse tree node"
+      "value": "ツリー ノードの折りたたみ"
     }
   ],
   "ti5TEd": [
@@ -7839,7 +7875,7 @@
   "uM1i27": [
     {
       "type": 0,
-      "value": "Specify a retry count from 1 to 90"
+      "value": "再試行回数を 1 から 90 までで指定する"
     }
   ],
   "uN4zFU": [
@@ -7857,7 +7893,7 @@
   "uOWkHS": [
     {
       "type": 0,
-      "value": "動的出力を取得できませんでした。その結果、この操作の出力は後続のアクションでは表示されない可能性があります。エラーの詳細: "
+      "value": "動的出力を取得できませんでした。その結果、この操作の出力が後続のアクションで表示されない可能性があります。エラーの詳細: "
     },
     {
       "type": 1,
@@ -8075,7 +8111,7 @@
   "vvSHR8": [
     {
       "type": 0,
-      "value": "要素に移動して子を表示"
+      "value": "要素に移動して子を表示する"
     }
   ],
   "vwH/XV": [
@@ -8099,7 +8135,7 @@
   "w0pI5M": [
     {
       "type": 0,
-      "value": "No results found for the specified filters"
+      "value": "指定されたフィルターの結果が見つかりませんでした"
     }
   ],
   "w16qh+": [
@@ -8195,7 +8231,7 @@
   "wkvUUA": [
     {
       "type": 0,
-      "value": "入力の種類が一致しません"
+      "value": "入力の種類の不一致"
     }
   ],
   "wl7X0l": [
@@ -8339,7 +8375,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "テキスト モードに切り替え"
     }
   ],
   "xYyPR8": [
@@ -8363,7 +8399,7 @@
   "xwD1VZ": [
     {
       "type": 0,
-      "value": "Loading inputs"
+      "value": "入力の読み込み中"
     }
   ],
   "xwEX2/": [
@@ -8405,7 +8441,7 @@
   "yF2R//": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string."
+      "value": "文字列から文字のサブセットを返します。"
     }
   ],
   "yVFIAQ": [
@@ -8429,7 +8465,7 @@
   "yjierd": [
     {
       "type": 0,
-      "value": "Invalid expression type '"
+      "value": "式の型 '"
     },
     {
       "type": 1,
@@ -8437,7 +8473,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' が無効です。"
     }
   ],
   "yoCi15": [
@@ -8483,7 +8519,7 @@
     },
     {
       "type": 0,
-      "value": "フォルダーに移動"
+      "value": " フォルダーに移動"
     }
   ],
   "z3VuE+": [
@@ -8519,7 +8555,7 @@
   "zNesUZ": [
     {
       "type": 0,
-      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
+      "value": "再試行ポリシーは、接続の例外に加えて、間欠的な障害 (HTTP 状態コード 408、429、5xx として示されています) に適用されます。既定値は、4 回再試行するよう設定された指数間隔のポリシーです。"
     }
   ],
   "zOvGF8": [

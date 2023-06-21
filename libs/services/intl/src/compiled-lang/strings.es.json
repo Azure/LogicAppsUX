@@ -653,7 +653,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Esquemas existentes de"
     }
   ],
   "2gzGrJ": [
@@ -1405,7 +1405,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Cambiar al modo de vista de código"
     }
   ],
   "8ND+Yc": [
@@ -1596,6 +1596,12 @@
     {
       "type": 0,
       "value": "\", no se encuentra en las salidas."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2252,7 +2258,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Permite cambiar a la matriz de entrada completa."
     }
   ],
   "EdzoIs": [
@@ -2284,7 +2290,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Ver el historial de solicitudes de esta operación"
     }
   ],
   "EurkzL": [
@@ -2709,7 +2715,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Permite cambiar a las entradas con detalles para el elemento de matriz."
     }
   ],
   "HfrUId": [
@@ -2811,7 +2817,7 @@
   "IPbMdl": [
     {
       "type": 0,
-      "value": "Vista Código"
+      "value": "Vista de código"
     }
   ],
   "IPwWgu": [
@@ -3699,6 +3705,12 @@
       "value": "Habilitar resultado estático"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3923,6 +3935,12 @@
     {
       "type": 0,
       "value": "Devuelve la representación de base 64 de la cadena de entrada."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4239,7 +4257,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Configurar parámetros para este nodo"
     }
   ],
   "SXb47U": [
@@ -4776,6 +4794,12 @@
       "value": "\" como un valor personalizado"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5090,6 +5114,12 @@
       "value": "Más información"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5390,6 +5420,12 @@
     {
       "type": 0,
       "value": "Pantalla completa"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -5721,7 +5757,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Cambiar al modo de valor de clave"
     }
   ],
   "dDYCuU": [
@@ -6370,7 +6406,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Pestaña Acerca de"
     }
   ],
   "iCSHJG": [
@@ -6482,7 +6518,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Pestaña Vista de código"
     }
   ],
   "iq+tiv": [
@@ -6774,7 +6810,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Pestaña Supervisión"
     }
   ],
   "l72gf4": [
@@ -7009,6 +7045,12 @@
     {
       "type": 0,
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la solicitud saliente."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
     }
   ],
   "mvrlkP": [
@@ -7590,6 +7632,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7609,7 +7657,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Cambiar al modo de vista predeterminada"
     }
   ],
   "qnI4Y1": [
@@ -7779,7 +7827,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Pestaña Pruebas"
     }
   ],
   "sFbnCs": [
@@ -8605,7 +8653,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Cambiar al modo de texto"
     }
   ],
   "xYyPR8": [

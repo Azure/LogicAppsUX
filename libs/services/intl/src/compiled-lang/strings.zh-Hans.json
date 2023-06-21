@@ -1387,7 +1387,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "切换到代码视图模式"
     }
   ],
   "8ND+Yc": [
@@ -1578,6 +1578,12 @@
     {
       "type": 0,
       "value": "\" 无效，在输出中找不到它。"
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2216,7 +2222,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "切换到输入整个数组"
     }
   ],
   "EdzoIs": [
@@ -2651,7 +2657,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "切换到数组项的详细信息输入"
     }
   ],
   "HfrUId": [
@@ -3619,6 +3625,12 @@
       "value": "启用静态结果"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3843,6 +3855,12 @@
     {
       "type": 0,
       "value": "返回输入字符串的 Base 64 表示形式"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4678,6 +4696,12 @@
       "value": "”作为自定义值"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5000,6 +5024,12 @@
       "value": "详细信息"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5300,6 +5330,12 @@
     {
       "type": 0,
       "value": "全屏"
+    }
+  ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
     }
   ],
   "ahsVI/": [
@@ -5635,7 +5671,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "切换到键值模式"
     }
   ],
   "dDYCuU": [
@@ -6927,6 +6963,12 @@
       "value": "限制逻辑应用，使其不在传出请求中包含工作流元数据标头。"
     }
   ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
+    }
+  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -7492,6 +7534,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7511,7 +7559,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "切换到默认视图模式"
     }
   ],
   "qnI4Y1": [
@@ -8503,7 +8551,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "切换到文本模式"
     }
   ],
   "xYyPR8": [
