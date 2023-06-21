@@ -10,6 +10,7 @@ import {
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { createSelector } from '@reduxjs/toolkit';
 import { useContext, useMemo } from 'react';
@@ -22,9 +23,16 @@ export interface DesignerCommandBarProps {
   isDisabled: boolean;
   onRefresh(): void;
   isDarkMode: boolean;
+  updateStandardApp(definition: LogicAppsV2.WorkflowDefinition): void;
 }
 
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefreshing, isDisabled, onRefresh, isDarkMode }) => {
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
+  isRefreshing,
+  isDisabled,
+  onRefresh,
+  isDarkMode,
+  updateStandardApp,
+}) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
@@ -42,6 +50,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
+    updateStandardApp(definition);
     await vscode.postMessage({
       command: ExtensionCommand.save,
       definition,

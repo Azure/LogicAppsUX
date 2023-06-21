@@ -132,6 +132,10 @@ export const App = () => {
     onError: onRunInstanceError,
   });
 
+  const updateStandardApp = (definition: LogicAppsV2.WorkflowDefinition) => {
+    setStandardApp({ ...standardApp, definition: definition } as StandardApp);
+  };
+
   useEffect(() => {
     refetch();
   }, [isMonitoringView, runId, services, refetch]);
@@ -155,6 +159,7 @@ export const App = () => {
         isRefreshing={isRefetching}
         onRefresh={refetch}
         isDarkMode={theme === Theme.Dark}
+        updateStandardApp={updateStandardApp}
       />
     );
 
