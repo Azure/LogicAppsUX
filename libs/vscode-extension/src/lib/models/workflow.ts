@@ -75,6 +75,7 @@ export interface ICallbackUrlResponse {
 export enum WorkflowProjectType {
   Nuget = 'Nuget',
   Bundle = 'Bundle',
+  Functions = 'Functions',
 }
 
 export interface ISettingToAdd {
