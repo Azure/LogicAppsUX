@@ -32,6 +32,7 @@ export async function uninstallFuncCoreTools(context: IActionContext, packageMan
       return { label: localize('uninstall', 'Uninstall {0} package', pm), data: pm };
     });
     packageManager = (await context.ui.showQuickPick(picks, { placeHolder, stepName: 'multipleFuncInstalls' })).data;
+    context.telemetry.properties.packageManager = packageManager;
   }
 
   switch (packageManager) {

@@ -5,10 +5,10 @@
 import { extensionCommand, wingetFuncPackageName, PackageManager } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { commands } from 'vscode';
 
 export async function installOrUpdateFuncCoreTools(context: IActionContext, packageManagers: PackageManager[]): Promise<void> {
   ext.outputChannel.show();
@@ -27,7 +27,7 @@ export async function installOrUpdateFuncCoreTools(context: IActionContext, pack
       break;
     case PackageManager.brew:
     case PackageManager.npm:
-      await commands.executeCommand(extensionCommand.azureFunctionsInstallOrUpdateFuncCoreTools);
+      await executeOnFunctions(extensionCommand.azureFunctionsInstallOrUpdateFuncCoreTools, context);
       break;
     default:
       throw new RangeError(localize('invalidPackageManager', 'Invalid package manager "{0}".', packageManager));

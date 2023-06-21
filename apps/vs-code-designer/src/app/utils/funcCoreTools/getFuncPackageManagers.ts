@@ -3,11 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { funcPackageName, PackageManager, Platform, wingetFuncPackageName } from '../../../constants';
-import {
-  getFuncCoreToolsBrewPackageName,
-  isBrewPackageInstalled,
-  tryGetInstalledBrewPackageName,
-} from '../packageManagers/getBrewPackageName';
+import { tryGetInstalledBrewPackageName } from '../packageManagers/getBrewPackageName';
 import { executeCommand } from './cpUtils';
 import { FuncVersion } from '@microsoft/vscode-extension';
 
@@ -29,12 +25,7 @@ export async function getFuncPackageManagers(isFuncInstalled: boolean): Promise<
     }
 
     if (process.platform == Platform.mac) {
-      if (
-        isBrewPackageInstalled(getFuncCoreToolsBrewPackageName(FuncVersion.v4)) ||
-        isBrewPackageInstalled(getFuncCoreToolsBrewPackageName(FuncVersion.v3)) ||
-        isBrewPackageInstalled(getFuncCoreToolsBrewPackageName(FuncVersion.v2)) ||
-        isBrewPackageInstalled(getFuncCoreToolsBrewPackageName(FuncVersion.v1))
-      ) {
+      if (hasBrew(isFuncInstalled)) {
         result.push(PackageManager.brew);
       }
     }

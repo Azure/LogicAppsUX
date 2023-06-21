@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { PackageManager, wingetFuncPackageName } from '../../../constants';
 import { localize } from '../../../localize';
-import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
@@ -50,7 +49,7 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
           const result: MessageItem = await context.ui.showWarningMessage(message, selectUninstall, DialogResponses.dontWarnAgain);
 
           if (result === selectUninstall) {
-            await executeOnFunctions(uninstallFuncCoreTools, context, context, packageManagers);
+            await uninstallFuncCoreTools(context, packageManagers);
           } else if (result === DialogResponses.dontWarnAgain) {
             await updateGlobalSetting(showMultiCoreToolsWarningKey, false);
           }
