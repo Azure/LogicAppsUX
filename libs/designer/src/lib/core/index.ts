@@ -21,3 +21,4 @@ export { resetWorkflowState } from './state/global';
 export { validateParameter } from './utils/parameters/helper';
 export { getOutputTokenSections, getExpressionTokenSections } from './utils/tokens';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
+export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';

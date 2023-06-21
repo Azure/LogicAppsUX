@@ -9,8 +9,8 @@ export const useMonitoringView = () => {
   return useSelector((state: RootState) => state.designerOptions.isMonitoringView);
 };
 
-export const useIsConsumption = () => {
-  return useSelector((state: RootState) => state.designerOptions.isConsumption);
+export const useLegacyWorkflowParameters = () => {
+  return useSelector((state: RootState) => state.designerOptions.useLegacyWorkflowParameters);
 };
 
 export const useIsXrmConnectionReferenceMode = () => {

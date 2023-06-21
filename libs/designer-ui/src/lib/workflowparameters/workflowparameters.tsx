@@ -58,7 +58,7 @@ type OnClickHandler = () => void;
 export interface WorkflowParametersProps {
   isEditable?: boolean;
   isReadOnly?: boolean;
-  isConsumption?: boolean;
+  useLegacy?: boolean;
   parameters: WorkflowParameterDefinition[];
   validationErrors?: Record<string, Record<string, string | undefined>>;
   onDismiss?: OnClickHandler;
@@ -76,7 +76,7 @@ export interface WorkflowParametersState {
 export function WorkflowParameters({
   parameters = [],
   isReadOnly,
-  isConsumption,
+  useLegacy,
   onDismiss,
   onManageParameters,
   onAddParameter,
@@ -100,14 +100,25 @@ export function WorkflowParameters({
   };
 
   const renderTitleAndDescription = (): JSX.Element => {
-    const description1 = intl.formatMessage({
-      defaultMessage: 'Parameters are shared across workflows in a Logic App.',
-      description: 'Description for Workflow Parameters Part 1',
-    });
-    const description2 = intl.formatMessage({
-      defaultMessage: 'To reference a parameter, use the dynamic content list.',
-      description: 'Description for Workflow Parameters Part 2',
-    });
+    const description1 = useLegacy
+      ? intl.formatMessage({
+          defaultMessage: 'Create, manage Logic Apps parameters, give it a default value.',
+          description: 'Description for Workflow Parameters Part 1 for Legacy Parameters mode.',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'Parameters are shared across workflows in a Logic App.',
+          description: 'Description for Workflow Parameters Part 1',
+        });
+    const description2 = useLegacy
+      ? intl.formatMessage({
+          defaultMessage:
+            'Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation.',
+          description: 'Description for Workflow Parameters Part 2 for Legacy Parameters mode.',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'To reference a parameter, use the dynamic content list.',
+          description: 'Description for Workflow Parameters Part 2',
+        });
 
     return (
       <div className="msla-workflow-parameters-empty">
@@ -145,7 +156,7 @@ export function WorkflowParameters({
         key={item?.id}
         definition={item ?? { id: 'id', type: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY }}
         isReadOnly={isReadOnly}
-        isConsumption={isConsumption}
+        useLegacy={useLegacy}
         isInverted={isInverted}
         onChange={onUpdateParameter}
         onDelete={onDeleteParameter}
@@ -172,7 +183,7 @@ export function WorkflowParameters({
         <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
       </div>
 
-      <InfoBar isInverted={isInverted} />
+      {useLegacy ? null : <InfoBar isInverted={isInverted} />}
       <div className="msla-workflow-parameters-add">
         <CommandBarButton disabled={isReadOnly} text={createText} iconProps={addIcon} onClick={handleAddParameter} />
       </div>

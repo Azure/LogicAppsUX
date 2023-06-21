@@ -27,7 +27,7 @@ const OptionsStateSet = ({ options, children }: any) => {
         readOnly: options.readOnly,
         isMonitoringView: options.isMonitoringView,
         isDarkMode: options.isDarkMode,
-        isConsumption: options.isConsumption,
+        useLegacyWorkflowParameters: options.useLegacyWorkflowParameters,
         isXrmConnectionReferenceMode: options.isXrmConnectionReferenceMode,
       })
     );

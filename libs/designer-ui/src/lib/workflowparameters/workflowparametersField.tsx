@@ -74,7 +74,7 @@ export interface WorkflowparameterFieldProps {
   validationErrors?: Record<string, string | undefined>;
   setName: (value: string | undefined | ((prevVar: string | undefined) => string)) => void;
   onChange?: WorkflowParameterUpdateHandler;
-  isConsumption?: boolean;
+  useLegacy?: boolean;
   isReadOnly?: boolean;
   isEditable?: boolean;
 }
@@ -87,7 +87,7 @@ export const WorkflowparameterField = ({
   onChange,
   isEditable,
   isReadOnly,
-  isConsumption,
+  useLegacy,
 }: WorkflowparameterFieldProps): JSX.Element => {
   const [valueWarningMessage, setValueWarningMessage] = useState(getValueWarningMessage(definition.value, definition.type));
   const [type, setType] = useState(definition.type);
@@ -186,7 +186,7 @@ export const WorkflowparameterField = ({
     onChange?.({
       id: definition.id,
       newDefinition: { ...definition, name: newValue, type, value, defaultValue },
-      isConsumption,
+      useLegacy,
     });
   };
 
@@ -196,7 +196,7 @@ export const WorkflowparameterField = ({
     onChange?.({
       id: definition.id,
       newDefinition: { ...definition, name, type: newType, value, defaultValue },
-      isConsumption,
+      useLegacy,
     });
 
     setType(newType);
@@ -214,7 +214,7 @@ export const WorkflowparameterField = ({
     onChange?.({
       id: definition.id,
       newDefinition: { ...definition, name, type, value, defaultValue },
-      isConsumption,
+      useLegacy,
     });
   };
 
@@ -229,7 +229,7 @@ export const WorkflowparameterField = ({
     onChange?.({
       id: definition.id,
       newDefinition: { ...definition, name, type, value, defaultValue },
-      isConsumption,
+      useLegacy,
     });
   };
 
@@ -282,7 +282,7 @@ export const WorkflowparameterField = ({
           <Text className="msla-workflow-parameter-read-only">{type}</Text>
         )}
       </div>
-      {!isConsumption ? (
+      {!useLegacy ? (
         <div className="msla-workflow-parameter-field">
           <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
             {valueTitle}

@@ -209,7 +209,7 @@ const DesignerEditorConsumption = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, isConsumption: true }}>
+      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, useLegacyWorkflowParameters: true }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider workflow={{ definition: parsedDefinition, connectionReferences, parameters }}>
             <div style={{ height: 'inherit', width: 'inherit' }}>
