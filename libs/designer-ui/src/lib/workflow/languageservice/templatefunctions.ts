@@ -2960,7 +2960,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE,
         signatures: [
           {
-            definition: `convertTimeZone(timestamp: string, sourceTimeZone: string, destinationTimeZone: string, format?: string)`,
+            definition: `dateDifference(startTimestamp: string, endTimestamp: string)`,
             documentation: Resources.TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE,
             parameters: [
               {
