@@ -70,7 +70,7 @@ export class ManifestParser {
       isInputSchema: true,
       keyPrefix: 'inputs.$',
       excludeAdvanced: false,
-      excludeInternal: true,
+      excludeInternal: false,
       useAliasedIndexing: true,
     };
 
