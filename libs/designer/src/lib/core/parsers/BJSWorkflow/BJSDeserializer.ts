@@ -53,7 +53,7 @@ export const Deserialize = (
     };
     allActionNames.push(tID);
   } else {
-    // Workflow has no trigger, create a Placeholder trigger node
+    // Workflow has no trigger, create a placeholder trigger node to reference during initialization
     const tID = constants.NODE.TYPE.PLACEHOLDER_TRIGGER;
     triggerNode = createWorkflowNode(tID, WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE);
     allActions[tID] = { ...triggerNode };
