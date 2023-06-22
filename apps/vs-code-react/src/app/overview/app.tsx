@@ -15,7 +15,17 @@ import { IntlProvider } from 'react-intl';
 import { QueryClientProvider, useInfiniteQuery, useMutation } from 'react-query';
 import invariant from 'tiny-invariant';
 
-const queryClient = getReactQueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: true,
+    },
+  },
+});
 
 export interface AppProps {
   apiVersion: string;

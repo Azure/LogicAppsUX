@@ -6,14 +6,23 @@ import './export.less';
 import { Navigation } from './navigation/navigation';
 import { Text } from '@fluentui/react';
 import type { OnErrorFn } from '@formatjs/intl';
-import { getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { useCallback } from 'react';
 import { IntlProvider } from 'react-intl';
-import { QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
 import { Outlet, useOutletContext } from 'react-router-dom';
 
-const queryClient = getReactQueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: true,
+    },
+  },
+});
 
 export const ExportApp: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);

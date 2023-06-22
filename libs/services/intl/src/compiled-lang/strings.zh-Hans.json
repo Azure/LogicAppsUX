@@ -1066,6 +1066,12 @@
       "value": "天"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1583,7 +1589,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "正在开发"
     }
   ],
   "9YGcT2": [
@@ -2780,6 +2786,12 @@
       "value": "(UTC-12:00)国际日期变更线西"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3628,7 +3640,7 @@
   "Oep6va": [
     {
       "type": 0,
-      "value": "Submit"
+      "value": "提交"
     }
   ],
   "OgJ9eG": [
@@ -3860,7 +3872,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "关闭"
     }
   ],
   "Q+ZZHI": [
@@ -4699,7 +4711,7 @@
   "Vqs8hE": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "操作"
     }
   ],
   "W070M2": [
@@ -5027,7 +5039,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "选择 Swagger 函数应用资源"
     }
   ],
   "Y9kBz5": [
@@ -6966,7 +6978,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "提出问题或描述你希望如何更改此流"
     }
   ],
   "mvrlkP": [
@@ -7537,7 +7549,7 @@
   "qVgQfW": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜索"
     }
   ],
   "qc5S69": [

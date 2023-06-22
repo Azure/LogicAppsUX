@@ -1050,6 +1050,12 @@
       "value": "日"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1551,7 +1557,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "開発中"
     }
   ],
   "9YGcT2": [
@@ -2736,6 +2742,12 @@
       "value": "(UTC-12:00) 国際日付変更線 西側"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3536,7 +3548,7 @@
   "Oep6va": [
     {
       "type": 0,
-      "value": "Submit"
+      "value": "送信"
     }
   ],
   "OgJ9eG": [
@@ -3768,7 +3780,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "閉じる"
     }
   ],
   "Q+ZZHI": [
@@ -4595,7 +4607,7 @@
   "Vqs8hE": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "アクション"
     }
   ],
   "W070M2": [
@@ -4915,7 +4927,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "Swagger 関数アプリ リソースの選択"
     }
   ],
   "Y9kBz5": [
@@ -6802,7 +6814,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "このフローを変更する方法について質問するか、説明してください"
     }
   ],
   "mvrlkP": [
@@ -7365,7 +7377,7 @@
   "qVgQfW": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "検索してください"
     }
   ],
   "qc5S69": [
