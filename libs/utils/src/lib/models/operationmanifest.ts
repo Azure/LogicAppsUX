@@ -72,6 +72,7 @@ export enum ConnectionReferenceKeyFormat {
   ApiManagement = 'apimanagement',
   Function = 'function',
   OpenApi = 'openapi',
+  OpenApiConnection = 'openapiconnection',
   ServiceProvider = 'serviceprovider',
   HybridTrigger = 'hybridtrigger',
 }

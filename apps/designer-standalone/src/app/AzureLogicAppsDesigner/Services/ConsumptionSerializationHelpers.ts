@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { clone } from '@microsoft/utils-logic-apps';
+import { clone, startsWith } from '@microsoft/utils-logic-apps';
 
 ///////////////////////////////////////////////////////////////////////////////
 // This was mostly copied straight from what we have in portal
@@ -42,7 +42,7 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
   // Alter connection references in actions
   Object.entries(workflow?.definition?.actions ?? {}).forEach(([key, action]: [key: string, value: any]) => {
     const { referenceName } = action.inputs?.host?.connection ?? {};
-    if (referenceName) {
+    if (referenceName && !startsWith(action.type, 'openapiconnection')) {
       workflow.definition.actions[key].inputs.host.connection = {
         name: `@parameters('$connections')['${referenceName}']['connectionId']`,
       };
@@ -52,7 +52,7 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
   // Alter connection references in triggers
   Object.entries(workflow?.definition?.triggers ?? {}).forEach(([key, trigger]: [key: string, value: any]) => {
     const { referenceName } = trigger.inputs?.host?.connection ?? {};
-    if (referenceName) {
+    if (referenceName && !startsWith(trigger.type, 'openapiconnection')) {
       workflow.definition.triggers[key].inputs.host.connection = {
         name: `@parameters('$connections')['${referenceName}']['connectionId']`,
       };

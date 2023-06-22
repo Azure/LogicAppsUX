@@ -29,7 +29,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid, startsWith } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -316,10 +316,10 @@ const getDesignerServices = (
   });
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
-    openApiConnectionMode: false, // This should be turned on for Open Api testing.
+    openApiConnectionMode: true, // This should be turned on for Open Api testing.
     apiHubServiceDetails: {
       apiVersion: '2018-07-01-preview',
-      openApiVersion: undefined, //'2022-09-01-preview', Uncomment to test Open Api
+      openApiVersion: '2022-09-01-preview', //Uncomment to test Open Api
       subscriptionId,
       location,
     },
@@ -337,7 +337,12 @@ const getDesignerServices = (
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
     getAppIdentity: () => workflow?.identity,
-    isExplicitAuthRequiredForManagedIdentity: () => true,
+    isExplicitAuthRequiredForManagedIdentity: () => false,
+    getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
+      return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
+        ? 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2023-01-31-preview/workflowdefinition.json#'
+        : undefined;
+    },
   };
 
   const functionService = new BaseFunctionService({

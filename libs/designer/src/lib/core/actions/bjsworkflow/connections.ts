@@ -407,6 +407,7 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.OpenApi:
+    case ConnectionReferenceKeyFormat.OpenApiConnection:
       return getOpenApiConnectionReferenceKey((operationDefinition as LogicAppsV2.OpenApiOperationAction).inputs);
     default:
       throw Error('No known connection reference key type');
