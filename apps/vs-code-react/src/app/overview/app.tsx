@@ -7,12 +7,11 @@ import { StandardRunService } from '@microsoft/designer-client-services-logic-ap
 import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import { getReactQueryClient } from '@microsoft/logic-apps-designer';
 import type { Runs } from '@microsoft/utils-logic-apps';
 import { HttpClient } from '@microsoft/vscode-extension';
 import { useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
-import { QueryClientProvider, useInfiniteQuery, useMutation } from 'react-query';
+import { QueryClient, QueryClientProvider, useInfiniteQuery, useMutation } from 'react-query';
 import invariant from 'tiny-invariant';
 
 const queryClient = new QueryClient({
