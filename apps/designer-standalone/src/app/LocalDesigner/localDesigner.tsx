@@ -56,6 +56,8 @@ const operationManifestServiceConsumption = new ConsumptionOperationManifestServ
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
+  subscriptionId: 'subid',
+  location: 'location',
 });
 
 const searchServiceStandard = new StandardSearchService({
@@ -72,8 +74,6 @@ const searchServiceStandard = new StandardSearchService({
 });
 
 const searchServiceConsumption = new ConsumptionSearchService({
-  baseUrl: '/url',
-  apiVersion: '2018-11-01',
   httpClient,
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
@@ -81,7 +81,6 @@ const searchServiceConsumption = new ConsumptionSearchService({
     location: '',
   },
   isDev: true,
-  showStatefulOperations: true,
 });
 
 const oAuthService = new BaseOAuthService({

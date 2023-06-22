@@ -1061,6 +1061,12 @@
       "value": "Gün"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -2769,6 +2775,12 @@
       "value": "(UTC-12:00) Uluslararası Tarih Çizgisi Batı"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3580,7 +3592,7 @@
   "Oep6va": [
     {
       "type": 0,
-      "value": "Submit"
+      "value": "Gönder"
     }
   ],
   "OgJ9eG": [
@@ -3812,7 +3824,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Kapat"
     }
   ],
   "Q+ZZHI": [
@@ -4654,7 +4666,7 @@
   "Vqs8hE": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Eylemler"
     }
   ],
   "W070M2": [
@@ -7454,7 +7466,7 @@
   "qVgQfW": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Ara"
     }
   ],
   "qc5S69": [

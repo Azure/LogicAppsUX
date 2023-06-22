@@ -1,4 +1,25 @@
 # Logic Apps Designer
+## [2.35.0](https://github.com/Azure/LogicAppsUX/compare/v2.34.0...v2.35.0) (2023-06-22)
+
+
+### Features
+
+* **designer:** Adding initial support for Open Api Connection for consumption ([#2812](https://github.com/Azure/LogicAppsUX/issues/2812)) ([6bb91c4](https://github.com/Azure/LogicAppsUX/commit/6bb91c4e9cc42864f6c1dca6ae7a5726b8b826c2))
+* **vscode:** Allow custom code functions to be written in VSCode ([#2757](https://github.com/Azure/LogicAppsUX/issues/2757)) ([467d3cc](https://github.com/Azure/LogicAppsUX/commit/467d3ccf94d29f185774271efa66596204c42a96)), closes [#2644](https://github.com/Azure/LogicAppsUX/issues/2644) [#2427](https://github.com/Azure/LogicAppsUX/issues/2427)
+
+
+### Bug Fixes
+
+* **designer:**  Parse of xml inputs/outputs in monitoring view ([#2798](https://github.com/Azure/LogicAppsUX/issues/2798)) ([f1c489c](https://github.com/Azure/LogicAppsUX/commit/f1c489c8aa7c1df964abad91ac1445c795b1ba98))
+* **Designer:** Add connectionReferenceKeyFormat for hybrid triggers for deserialization ([#2787](https://github.com/Azure/LogicAppsUX/issues/2787)) ([eabb5f9](https://github.com/Azure/LogicAppsUX/commit/eabb5f93297febbca1181d594c8c448379f160f0))
+* **Designer:** Added conditions for Parameters panel loading state ([#2785](https://github.com/Azure/LogicAppsUX/issues/2785)) ([b6b6fba](https://github.com/Azure/LogicAppsUX/commit/b6b6fba918ce3a090db5d18c59fd180307d68d17))
+* **designer:** Added timeDifference template Function ([#2801](https://github.com/Azure/LogicAppsUX/issues/2801)) ([d499457](https://github.com/Azure/LogicAppsUX/commit/d499457d0b144a47cdab7a3388ce90c9bbd2411e))
+* **designer:** Checks all nodes (including switch cases) for nodeIds when adding a new node ([#2814](https://github.com/Azure/LogicAppsUX/issues/2814)) ([3cf16e7](https://github.com/Azure/LogicAppsUX/commit/3cf16e75de5effa3957310101c78bf8b8a8aef99))
+* **designer:** Parameters with visibility "internal" should hide in UI on flow load ([#2786](https://github.com/Azure/LogicAppsUX/issues/2786)) ([6e875f3](https://github.com/Azure/LogicAppsUX/commit/6e875f340b7a26401d9623beca6577465b40e794))
+* **designer:** Removing isConsumption option to more feature specific one ([#2802](https://github.com/Azure/LogicAppsUX/issues/2802)) ([6bc85ae](https://github.com/Azure/LogicAppsUX/commit/6bc85ae149d0f1c5fcf3b81b155ff919978238b9))
+* **Designer:** Workflows without triggers now properly deserialize ([#2804](https://github.com/Azure/LogicAppsUX/issues/2804)) ([4e5a294](https://github.com/Azure/LogicAppsUX/commit/4e5a29445442231f9b5fe0f5d2f10edd3b11009f))
+* **vscode:** Invalid connection message when switching blades/tabs in vscode ([#2783](https://github.com/Azure/LogicAppsUX/issues/2783)) ([12c81dd](https://github.com/Azure/LogicAppsUX/commit/12c81dd9eb52d2282dbc3f1515bc2a55d212a94c))
+
 ## [2.34.0](https://github.com/Azure/LogicAppsUX/compare/v2.33.0...v2.34.0) (2023-06-20)
 
 
