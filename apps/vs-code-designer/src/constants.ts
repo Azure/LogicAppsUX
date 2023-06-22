@@ -20,6 +20,10 @@ export const funcIgnoreFileName = '.funcignore';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
+// Azurite
+export const azuriteExtensionId = 'Azurite.azurite';
+export const azuriteLocationSetting = 'azurite.location';
+
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
@@ -126,6 +130,7 @@ export enum extensionCommand {
   reportIssue = 'azureLogicAppsStandard.reportIssue',
   installDotNetSDK = 'azureLogicAppsStandard.installDotNetSDK',
   uninstallDotNetSDK = 'azureLogicAppsStandard.uninstallDotNetSDK',
+  azureAzuriteStart = 'azurite.start',
 }
 
 // Context
