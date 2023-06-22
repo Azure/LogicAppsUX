@@ -3,13 +3,12 @@ import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { getConnection } from '../../queries/connections';
 import { getConnector, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
-import { ErrorLevel, updateErrorDetails } from '../../state/operation/operationMetadataSlice';
+import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import {
   getConnectionReference,
   isConnectionMultiAuthManagedIdentityType,
-  isConnectionReferenceValid,
   isConnectionSingleAuthManagedIdentityType,
 } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
@@ -17,7 +16,6 @@ import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
 import type { IOperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectionService, WorkflowService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Connection, ConnectionParameter, Connector, OperationManifest, LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import {
   ResourceIdentityType,
@@ -75,40 +73,20 @@ const updateNodeConnectionAndProperties = async (
   dispatch(changeConnectionMapping(payload));
 
   const newState = getState() as RootState;
-  const operationInfo = newState.operations.operationInfo[nodeId];
-  const reference = getConnectionReference(newState.connections, nodeId);
-  const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
-
-  if (isValidConnection) {
-    updateDynamicDataInNode(
-      nodeId,
-      isRootNodeInGraph(nodeId, 'root', newState.workflow.nodesMetadata),
-      operationInfo,
-      reference,
-      newState.operations.dependencies[nodeId],
-      newState.operations.inputParameters[nodeId],
-      newState.operations.settings[nodeId],
-      getAllVariables(newState.tokens.variables),
-      dispatch,
-      getState,
-      newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
-    );
-  } else {
-    dispatch(
-      updateErrorDetails({
-        id: nodeId,
-        errorInfo: {
-          level: ErrorLevel.Connection,
-          message: getIntl().formatMessage({
-            defaultMessage: 'Invalid connection, please update your connection to load complete details',
-            description: 'Error message to show on connection error after selecting a connection',
-          }),
-        },
-      })
-    );
-  }
+  return updateDynamicDataInNode(
+    nodeId,
+    isRootNodeInGraph(nodeId, 'root', newState.workflow.nodesMetadata),
+    newState.operations.operationInfo[nodeId],
+    getConnectionReference(newState.connections, nodeId),
+    newState.operations.dependencies[nodeId],
+    newState.operations.inputParameters[nodeId],
+    newState.operations.settings[nodeId],
+    getAllVariables(newState.tokens.variables),
+    dispatch,
+    getState,
+    newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
+  );
 };
-
 const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
   if (isConnectionMultiAuthManagedIdentityType(connection, connector) || isConnectionSingleAuthManagedIdentityType(connection)) {
     const identity = WorkflowService().getAppIdentity?.();
