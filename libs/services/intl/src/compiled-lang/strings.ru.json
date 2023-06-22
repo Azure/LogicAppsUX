@@ -1095,6 +1095,12 @@
       "value": "День"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1612,7 +1618,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "В разработке"
     }
   ],
   "9YGcT2": [
@@ -2879,6 +2885,12 @@
       "value": "(UTC-12:00) Меридиан смены дат"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3760,7 +3772,7 @@
   "Oep6va": [
     {
       "type": 0,
-      "value": "Submit"
+      "value": "Отправить"
     }
   ],
   "OgJ9eG": [
@@ -3992,7 +4004,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Закрыть"
     }
   ],
   "Q+ZZHI": [
@@ -4860,7 +4872,7 @@
   "Vqs8hE": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Действия"
     }
   ],
   "W070M2": [
@@ -5180,7 +5192,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "Выберите ресурс приложения-функции Swagger"
     }
   ],
   "Y9kBz5": [
@@ -7144,7 +7156,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "Задайте вопрос или опишите, как нужно изменить этот поток"
     }
   ],
   "mvrlkP": [
@@ -7740,7 +7752,7 @@
   "qVgQfW": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Поиск"
     }
   ],
   "qc5S69": [

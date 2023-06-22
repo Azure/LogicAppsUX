@@ -1084,6 +1084,12 @@
       "value": "Dia"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1601,7 +1607,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "Em desenvolvimento"
     }
   ],
   "9YGcT2": [
@@ -2846,6 +2852,12 @@
       "value": "(UTC-12:00) Oeste da Linha de Data Internacional"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3716,7 +3728,7 @@
   "Oep6va": [
     {
       "type": 0,
-      "value": "Submit"
+      "value": "Submeter"
     }
   ],
   "OgJ9eG": [
@@ -3948,7 +3960,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Fechar"
     }
   ],
   "Q+ZZHI": [
@@ -4805,7 +4817,7 @@
   "Vqs8hE": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Ações"
     }
   ],
   "W070M2": [
@@ -5125,7 +5137,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "Selecionar um recurso da Aplicação de Funções do Swagger"
     }
   ],
   "Y9kBz5": [
@@ -7082,7 +7094,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "Faça uma pergunta ou descreva como pretende alterar este fluxo"
     }
   ],
   "mvrlkP": [
@@ -7667,7 +7679,7 @@
   "qVgQfW": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Pesquisar"
     }
   ],
   "qc5S69": [
