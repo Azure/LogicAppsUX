@@ -1,15 +1,31 @@
 import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
 import { BaseSearchService } from '../base';
-import type { AzureOperationsFetchResponse, ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
+import type { AzureOperationsFetchResponse, BaseSearchServiceOptions, ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
 import type { QueryParameters } from '../httpClient';
-import type { Connector } from '@microsoft/utils-logic-apps';
-import { connectorsSearchResultsMock } from '@microsoft/utils-logic-apps';
+import type { BuiltInOperation, Connector, DiscoveryOperation } from '@microsoft/utils-logic-apps';
+import { ArgumentException, connectorsSearchResultsMock } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
+interface StandardSearchServiceOptions extends BaseSearchServiceOptions {
+  apiVersion: string;
+  baseUrl: string;
+  showStatefulOperations?: boolean;
+}
+
 export class StandardSearchService extends BaseSearchService {
-  // Operations
+  constructor(public override readonly options: StandardSearchServiceOptions) {
+    super(options);
+
+    const { baseUrl, apiVersion } = options;
+
+    if (!baseUrl) {
+      throw new ArgumentException('baseUrl required');
+    } else if (!apiVersion) {
+      throw new ArgumentException('apiVersion required');
+    }
+  }
 
   public async getAllOperations(): Promise<DiscoveryOpArray> {
     return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getBuiltInOperations()]).then((values) =>
@@ -19,8 +35,10 @@ export class StandardSearchService extends BaseSearchService {
 
   // TODO - Need to add extra filtering for trigger/action
   async getBuiltInOperations(): Promise<DiscoveryOpArray> {
+    const filterOperation = (operation: DiscoveryOperation<BuiltInOperation>) =>
+      filterStateful(operation, !!this.options.showStatefulOperations);
     if (this._isDev) {
-      return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(this.options.showStatefulOperations)]);
+      return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(filterOperation)]);
     }
     const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
     const uri = `${baseUrl}/operations`;
@@ -30,7 +48,7 @@ export class StandardSearchService extends BaseSearchService {
     };
     const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
 
-    return [...response.value, ...getClientBuiltInOperations(showStatefulOperations)];
+    return [...response.value, ...getClientBuiltInOperations(filterOperation)];
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {
@@ -87,15 +105,23 @@ export class StandardSearchService extends BaseSearchService {
 
   // TODO - Need to add extra filtering for trigger/action
   public async getBuiltInConnectors(): Promise<Connector[]> {
+    const filterConnector = (connector: Connector) => filterStateful(connector, !!this.options.showStatefulOperations);
     if (this._isDev) {
-      return Promise.resolve([...connectorsSearchResultsMock, ...getClientBuiltInConnectors(this.options.showStatefulOperations)]);
+      return Promise.resolve([...connectorsSearchResultsMock, ...getClientBuiltInConnectors(filterConnector)]);
     }
-    const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
+    const { apiVersion, baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/operationGroups`;
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
     };
     const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
-    return [...response.value, ...getClientBuiltInConnectors(showStatefulOperations)];
+    return [...response.value, ...getClientBuiltInConnectors(filterConnector)];
   }
+}
+
+function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connector, showStateful: boolean): boolean {
+  if (operation.properties.capabilities === undefined) return true;
+  return showStateful
+    ? operation.properties.capabilities.includes('Stateful') || !operation.properties.capabilities.includes('Stateless')
+    : operation.properties.capabilities.includes('Stateless') || !operation.properties.capabilities.includes('Stateful');
 }
