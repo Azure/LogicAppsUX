@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.28.2",
+  "version": "2.28.3",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
