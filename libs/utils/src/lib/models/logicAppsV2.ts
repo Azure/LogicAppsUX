@@ -100,6 +100,17 @@ export interface OpenApiOperationInputs extends RetryableActionInputs {
   parameters?: any;
 }
 
+export interface HybridTriggerOperation extends Trigger {
+  inputs: HybridTriggerConnectionInfo;
+}
+
+export interface HybridTriggerConnectionInfo {
+  host: HybridTriggerConnectionHost;
+  schema?: any;
+  operationId: string;
+  parameters: any;
+}
+
 export type OpenApiConnectionNotificationTrigger = OpenApiConnectionWebhookTrigger;
 
 export type ApiConnectionHeaders = string | Record<string, string>;
@@ -117,7 +128,7 @@ export interface HybridTriggerConnectionHost {
 }
 
 export interface HybridTriggerConnectionHostType {
-  name: ApiConnectionHostConnection;
+  name: string;
 }
 
 export interface ApiConnectionHostType {
