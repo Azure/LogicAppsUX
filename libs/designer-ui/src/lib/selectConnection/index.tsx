@@ -49,6 +49,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     return {
       ...connection,
       ...connection.properties,
+      // 'invalid' being truthy is being used to determine whether the details list row is disabled
       invalid:
         errors.length > 0 ? (
           <div className="msla-connection-error-icon-container">
