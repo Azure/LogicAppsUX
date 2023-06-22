@@ -1,21 +1,38 @@
 import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
-import type { ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
+import * as ClientOperationsData from '../base/operations';
+import type { BaseSearchServiceOptions, ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
 import type { QueryParameters } from '../httpClient';
-import * as ClientOperationsData from '../standard/operations';
-import * as AzureResourceOperationsData from './operations';
+import * as OperationsData from './operations';
 import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
-export class ConsumptionSearchService extends BaseSearchService {
-  // Operations
+interface ConsumptionSearchServiceOptions extends BaseSearchServiceOptions {
+  openApiConnectionMode?: boolean;
+}
 
+export class ConsumptionSearchService extends BaseSearchService {
+  constructor(public override readonly options: ConsumptionSearchServiceOptions) {
+    super(options);
+  }
+
+  //#region Operations
   public async getAllOperations(): Promise<DiscoveryOpArray> {
     if (this._isDev) return Promise.resolve(this.getBuiltInOperations());
 
     return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getBuiltInOperations()]).then((values) =>
       values.flat()
     );
+  }
+
+  public override async getAllAzureOperations(): Promise<DiscoveryOpArray> {
+    const azureOperations = await super.getAllAzureOperations();
+    return this._updateOperationsIfNeeded(azureOperations);
+  }
+
+  public override async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
+    const azureOperations = await super.getAzureOperationsByPage(page);
+    return this._updateOperationsIfNeeded(azureOperations);
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
@@ -41,34 +58,50 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
 
   public getBuiltInOperations(): Promise<DiscoveryOpArray> {
-    const clientBuiltInOperations = getClientBuiltInOperations(true);
+    const clientBuiltInOperations = getClientBuiltInOperations();
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.slidingWindowOperation,
-      ClientOperationsData.inlineCodeOperation,
       ClientOperationsData.composeOperation,
-      ClientOperationsData.flatFileDecodingOperations,
-      ClientOperationsData.flatFileEncodingOperations,
-      ClientOperationsData.integrationAccountArtifactLookupOperation,
-      ClientOperationsData.liquidJsonToJsonOperation,
-      ClientOperationsData.liquidJsonToTextOperation,
-      ClientOperationsData.liquidXmlToJsonOperation,
-      ClientOperationsData.liquidXmlToTextOperation,
-      ClientOperationsData.xmlTransformOperation,
-      ClientOperationsData.xmlValidationOperation,
-      AzureResourceOperationsData.apiManagementActionOperation,
-      AzureResourceOperationsData.apiManagementTriggerOperation,
-      AzureResourceOperationsData.appServiceActionOperation,
-      AzureResourceOperationsData.appServiceTriggerOperation,
-      AzureResourceOperationsData.functionOperation,
-      AzureResourceOperationsData.invokeWorkflowOperation,
-      AzureResourceOperationsData.selectBatchWorkflowOperation,
-      // AzureResourceOperationsData.selectBatchWorkflowTriggerOperation,
+      OperationsData.inlineCodeOperation,
+      OperationsData.flatFileDecodingOperations,
+      OperationsData.flatFileEncodingOperations,
+      OperationsData.integrationAccountArtifactLookupOperation,
+      OperationsData.liquidJsonToJsonOperation,
+      OperationsData.liquidJsonToTextOperation,
+      OperationsData.liquidXmlToJsonOperation,
+      OperationsData.liquidXmlToTextOperation,
+      OperationsData.xmlTransformOperation,
+      OperationsData.xmlValidationOperation,
+      OperationsData.apiManagementActionOperation,
+      OperationsData.apiManagementTriggerOperation,
+      OperationsData.appServiceActionOperation,
+      OperationsData.appServiceTriggerOperation,
+      OperationsData.functionOperation,
+      OperationsData.invokeWorkflowOperation,
+      OperationsData.sendToBatchOperation,
+      OperationsData.batchTriggerOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
 
-  // Connectors
+  private _updateOperationsIfNeeded(operations: DiscoveryOpArray): DiscoveryOpArray {
+    if (this.options.openApiConnectionMode) {
+      return operations.map((operation) => {
+        if (!operation.properties.operationType) {
+          // eslint-disable-next-line no-param-reassign
+          operation.properties.operationType = 'OpenApiConnection';
+        }
 
+        return operation;
+      });
+    } else {
+      return operations;
+    }
+  }
+
+  //#endregion
+
+  //#region Connectors
   public override async getAllConnectors(): Promise<Connector[]> {
     if (this._isDev) return Promise.resolve(this.getBuiltInConnectors());
 
@@ -78,19 +111,19 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
 
   public getBuiltInConnectors(): Promise<Connector[]> {
-    const clientBuiltInConnectors = getClientBuiltInConnectors(true);
+    const clientBuiltInConnectors = getClientBuiltInConnectors();
     const consumptionBuiltIn: any[] = [
-      ClientOperationsData.inlineCodeGroup,
       ClientOperationsData.dataOperationsGroup,
-      ClientOperationsData.flatFileGroup,
-      ClientOperationsData.integrationAccountGroup,
-      ClientOperationsData.liquidGroup,
-      ClientOperationsData.xmlGroup,
-      AzureResourceOperationsData.apiManagementGroup,
-      AzureResourceOperationsData.appServiceGroup,
-      AzureResourceOperationsData.functionGroup,
-      AzureResourceOperationsData.invokeWorkflowGroup,
-      AzureResourceOperationsData.selectBatchWorkflowGroup,
+      OperationsData.inlineCodeGroup,
+      OperationsData.flatFileGroup,
+      OperationsData.integrationAccountGroup,
+      OperationsData.liquidGroup,
+      OperationsData.xmlGroup,
+      OperationsData.apiManagementGroup,
+      OperationsData.appServiceGroup,
+      OperationsData.functionGroup,
+      OperationsData.invokeWorkflowGroup,
+      OperationsData.selectBatchWorkflowGroup,
     ];
     return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
   }
@@ -116,4 +149,5 @@ export class ConsumptionSearchService extends BaseSearchService {
       return { value: [] };
     }
   }
+  //#endregion
 }

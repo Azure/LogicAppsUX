@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import { serializeOperation } from '../../../core/actions/bjsworkflow/serializer';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import type { RootState } from '../../../core/store';
-import type { PanelTab } from '@microsoft/designer-ui';
+import type { PanelTabFn } from '@microsoft/designer-ui';
 import { Peek } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
@@ -28,12 +28,15 @@ export const CodeViewTab = () => {
   return <Peek input={content} />;
 };
 
-export const codeViewTab: PanelTab = {
-  title: 'Code View',
+export const codeViewTab: PanelTabFn = (intl) => ({
+  title: intl.formatMessage({ defaultMessage: 'Code View', description: 'The tab label for the code view tab on the operation panel' }),
   name: constants.PANEL_TAB_NAMES.CODE_VIEW,
-  description: 'Code View Tab',
+  description: intl.formatMessage({
+    defaultMessage: 'Code View Tab',
+    description: 'An accessability label that describes the code view tab',
+  }),
   visible: true,
   content: <CodeViewTab />,
-  order: 1,
+  order: 3,
   icon: 'Info',
-};
+});

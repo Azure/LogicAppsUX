@@ -6,12 +6,14 @@ import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
   switchToWorkflowParameters,
+  useIsDesignerDirty,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { createSelector } from '@reduxjs/toolkit';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,9 +23,16 @@ export interface DesignerCommandBarProps {
   isDisabled: boolean;
   onRefresh(): void;
   isDarkMode: boolean;
+  updateStandardApp(definition: LogicAppsV2.WorkflowDefinition): void;
 }
 
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefreshing, isDisabled, onRefresh, isDarkMode }) => {
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
+  isRefreshing,
+  isDisabled,
+  onRefresh,
+  isDarkMode,
+  updateStandardApp,
+}) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
@@ -41,6 +50,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
+    updateStandardApp(definition);
     await vscode.postMessage({
       command: ExtensionCommand.save,
       definition,
@@ -85,7 +95,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     disableGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
   });
 
-  const allOperationErrors = useSelector((state: RootState) => {
+  const designerIsDirty = useIsDesignerDirty();
+
+  const allInputErrors = useSelector((state: RootState) => {
     return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
       Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
         parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
@@ -106,7 +118,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     return validationErrorToShow;
   });
 
-  const isSaveDisabled = isSaving || allOperationErrors.length > 0 || !!allWorkflowParameterErrors;
+  const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
+
+  const isSaveDisabled = isSaving || haveErrors || !designerIsDirty;
 
   const desingerItems: ICommandBarItemProps[] = [
     {

@@ -393,8 +393,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   });
 
   const gatewayTooltipText = intl.formatMessage({
-    defaultMessage: 'Select this if you are configuring an on-prem connection',
-    description: 'Tooltip for on-prem gateway connection checkbox',
+    defaultMessage: "Select this checkbox if you're setting up an on-premises connection.",
+    description: 'Tooltip for the on-premises data gateway connection checkbox',
   });
 
   const legacyMultiAuthLabelText = intl.formatMessage({

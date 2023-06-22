@@ -7,6 +7,7 @@ export enum ContentType {
 
 export interface IHostService {
   fetchAndDisplayContent(title: string, url: string, type: ContentType): void;
+  openWorkflowParametersBlade?(): void;
 }
 
 let service: IHostService;

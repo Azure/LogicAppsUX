@@ -83,7 +83,6 @@ export const AuthenticationEditor = ({
   initialValue,
   getTokenPicker,
   onChange,
-  ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
   const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
@@ -146,6 +145,16 @@ export const AuthenticationEditor = ({
     description: 'Label for Authentication Type dropdown',
   });
 
+  const expandedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to code view mode',
+    description: 'Label for editor toggle button when in expanded mode',
+  });
+
+  const collapsedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to default view mode',
+    description: 'Label for editor toggle button when in collapsed mode',
+  });
+
   return (
     <div className="msla-authentication-editor-container">
       {codeView ? (
@@ -170,7 +179,12 @@ export const AuthenticationEditor = ({
         </div>
       )}
       <div className="msla-authentication-default-view-mode">
-        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView} disabled={!isValid || props.readOnly} />
+        <EditorCollapseToggle
+          label={codeView ? collapsedLabel : expandedLabel}
+          collapsed={codeView}
+          toggleCollapsed={toggleCodeView}
+          disabled={!isValid}
+        />
       </div>
     </div>
   );

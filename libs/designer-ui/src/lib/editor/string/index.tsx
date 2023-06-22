@@ -41,6 +41,7 @@ export const StringEditor = ({
         tokens: baseEditorProps.BasePlugins?.tokens ?? true,
         clearEditor: clearEditorOnTokenInsertion,
         singleValueSegment: clearEditorOnTokenInsertion,
+        ...baseEditorProps.BasePlugins,
       }}
       valueType={valueType}
       readonly={baseEditorProps.readonly}
@@ -48,6 +49,7 @@ export const StringEditor = ({
       onBlur={handleBlur}
       onFocus={baseEditorProps.onFocus}
       labelId={labelId}
+      dataAutomationId={baseEditorProps.dataAutomationId}
     >
       {singleLine ? <SingleLine /> : null}
       <Change setValue={onValueChange} />

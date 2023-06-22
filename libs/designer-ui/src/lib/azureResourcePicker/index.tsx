@@ -1,5 +1,7 @@
-import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, Spinner, Text } from '@fluentui/react';
-import { useMemo } from 'react';
+import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox, Spinner, Text } from '@fluentui/react';
+import { labelCase } from '@microsoft/utils-logic-apps';
+import Fuse from 'fuse.js';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 
@@ -23,6 +25,14 @@ export interface AzureResourcePickerProps extends AssistedConnectionProps {
   selectedSubResource?: any;
 }
 
+const fuseOptions: Fuse.IFuseOptions<{ id: string; text: string }> = {
+  includeScore: true,
+  minMatchCharLength: 2,
+  includeMatches: true,
+  threshold: 0.4,
+  keys: ['text'],
+};
+
 export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
   const {
     resourceType,
@@ -39,20 +49,46 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
     fetchSubResourcesCallback,
   } = props;
 
+  const intl = useIntl();
+
   const itemsQuery = useQuery([resourceType], async () => getResourcesCallback?.() ?? [], {
     enabled: true,
     staleTime: 1000 * 60 * 60 * 24,
   });
 
   const resources = useMemo(() => ((itemsQuery?.data ?? []) as any[]).sort((a, b) => a.name.localeCompare(b.name)), [itemsQuery.data]);
+  const resourceNames = useMemo(() => resources.map((resource) => resource.name), [resources]);
 
   const gridTemplateColumns = useMemo(() => '2fr '.repeat(headers.length - 1) + '1fr', [headers.length]);
+
+  const [searchTerm, setSearchTerm] = useState<string | null>(null);
+  const searchText = intl.formatMessage({
+    defaultMessage: 'Search',
+    description: 'Search box placeholder text',
+  });
+  const fuseObject = useMemo(
+    () =>
+      new Fuse(
+        resourceNames.map((name) => ({ text: labelCase(name), id: name })),
+        fuseOptions
+      ),
+    [resourceNames]
+  );
+  const searchResourceNames = useMemo(() => {
+    if (!searchTerm) return resourceNames;
+    return fuseObject.search(searchTerm).map((result) => result.item.id);
+  }, [resourceNames, fuseObject, searchTerm]);
+
+  const searchFilteredResources = useMemo(() => {
+    return resources.filter((resource) => searchResourceNames.includes(resource.name));
+  }, [resources, searchResourceNames]);
 
   return (
     <div style={{ width: '100%' }}>
       <Label className="label" required>
         {titleText}
       </Label>
+      <SearchBox placeholder={searchText} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
       <div className="msla-azure-resources-container">
         <div className="msla-azure-resource-list-header" style={{ gridTemplateColumns }}>
           {headers.map((header) => (
@@ -64,7 +100,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
         ) : itemsQuery?.isSuccess ? (
           <div className="msla-azure-resources-list-container" style={{ gridTemplateColumns }} data-is-scrollable>
             <List
-              items={resources.map((resource) => ({
+              items={searchFilteredResources.map((resource) => ({
                 ...resource,
                 selected: selectedResourceId === resource.id,
               }))}

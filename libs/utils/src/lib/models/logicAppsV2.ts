@@ -100,6 +100,17 @@ export interface OpenApiOperationInputs extends RetryableActionInputs {
   parameters?: any;
 }
 
+export interface HybridTriggerOperation extends Trigger {
+  inputs: HybridTriggerConnectionInfo;
+}
+
+export interface HybridTriggerConnectionInfo {
+  host: HybridTriggerConnectionHost;
+  schema?: any;
+  operationId: string;
+  parameters: any;
+}
+
 export type OpenApiConnectionNotificationTrigger = OpenApiConnectionWebhookTrigger;
 
 export type ApiConnectionHeaders = string | Record<string, string>;
@@ -117,7 +128,7 @@ export interface HybridTriggerConnectionHost {
 }
 
 export interface HybridTriggerConnectionHostType {
-  name: ApiConnectionHostConnection;
+  name: string;
 }
 
 export interface ApiConnectionHostType {
@@ -881,6 +892,24 @@ export interface TraceSubexpression {
   value: any;
 }
 
+export interface RetryHistory {
+  startTime: string;
+  endTime: string;
+  code?: string;
+  clientRequestId?: string;
+  serviceRequestId?: string;
+  error?: RetryHistoryError;
+}
+
+export interface RetryHistoryError {
+  error?: ErrorShape;
+}
+
+export interface ErrorShape {
+  code: string;
+  message: string;
+}
+
 /* Run action definition types */
 export interface WorkflowRunAction {
   inputsLink: {
@@ -894,6 +923,7 @@ export interface WorkflowRunAction {
     secureData?: Record<string, any>;
     contentSize: number;
   };
+  retryHistory: RetryHistory[];
   startTime: string;
   endTime: string;
   correlation: {

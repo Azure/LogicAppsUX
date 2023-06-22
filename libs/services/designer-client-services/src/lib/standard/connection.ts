@@ -2,7 +2,8 @@ import type { BaseConnectionServiceOptions } from '../base';
 import { BaseConnectionService } from '../base';
 import { apiManagementConnectorId, azureFunctionConnectorId } from '../base/operationmanifest';
 import type { HttpResponse } from '../common/exceptions';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult } from '../connection';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
+import type { IHttpClient } from '../httpClient';
 import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
@@ -96,7 +97,11 @@ const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
 
-export interface StandardConnectionServiceOptions extends BaseConnectionServiceOptions {
+export interface StandardConnectionServiceOptions {
+  apiVersion: string;
+  baseUrl: string;
+  httpClient: IHttpClient;
+  apiHubServiceDetails: BaseConnectionServiceOptions;
   workflowAppDetails?: {
     appName: string;
     identity?: ManagedIdentity;
@@ -112,15 +117,28 @@ interface ConnectionCreationClient {
   connectionCreationFunc: CreateConnectionFunc;
 }
 
-export class StandardConnectionService extends BaseConnectionService {
-  constructor(public override readonly options: StandardConnectionServiceOptions) {
-    super(options);
-    const { readConnections } = options;
+export class StandardConnectionService extends BaseConnectionService implements IConnectionService {
+  constructor(private readonly _options: StandardConnectionServiceOptions) {
+    super(_options.apiHubServiceDetails);
+    const { apiHubServiceDetails, readConnections } = _options;
     if (!readConnections) {
       throw new ArgumentException('readConnections required');
+    } else if (!apiHubServiceDetails) {
+      throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
 
     this._vVersion = 'V2';
+  }
+
+  async getConnector(connectorId: string): Promise<Connector> {
+    if (!isArmResourceId(connectorId)) {
+      const { apiVersion, baseUrl, httpClient } = this._options;
+      return httpClient.get<Connector>({
+        uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
+      });
+    } else {
+      return this._getAzureConnector(connectorId);
+    }
   }
 
   override async getConnections(connectorId?: string): Promise<Connection[]> {
@@ -128,7 +146,7 @@ export class StandardConnectionService extends BaseConnectionService {
       return this.getConnectionsForConnector(connectorId);
     }
 
-    const [localConnections, apiHubConnections] = await Promise.all([this.options.readConnections(), this.getConnectionsInApiHub()]);
+    const [localConnections, apiHubConnections] = await Promise.all([this._options.readConnections(), this.getConnectionsInApiHub()]);
     const serviceProviderConnections = (localConnections[serviceProviderLocation] || {}) as Record<string, ServiceProviderConnectionModel>;
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
     const apimConnections = (localConnections[apimLocation] || {}) as Record<string, APIManagementConnectionModel>;
@@ -171,7 +189,7 @@ export class StandardConnectionService extends BaseConnectionService {
 
     try {
       const connection = isArmResourceId(connector.id)
-        ? await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo, shouldTestConnection)
+        ? await this._createConnectionInApiHub(connectionName, connector.id, connectionInfo, shouldTestConnection)
         : await this.createConnectionInLocal(connectionName, connector, connectionInfo, parametersMetadata as ConnectionParametersMetadata);
 
       LoggerService().endTrace(logId, { status: Status.Success });
@@ -197,7 +215,7 @@ export class StandardConnectionService extends BaseConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<Connection> {
-    const { writeConnection, connectionCreationClients } = this.options;
+    const { writeConnection, connectionCreationClients } = this._options;
     const connectionCreationClientName = parametersMetadata.connectionMetadata?.connectionCreationClient;
     if (connectionCreationClientName) {
       if (connectionCreationClients?.[connectionCreationClientName]) {
@@ -225,23 +243,19 @@ export class StandardConnectionService extends BaseConnectionService {
       parametersMetadata
     );
 
-    await this.options.writeConnection?.(connectionsData);
+    await this._options.writeConnection?.(connectionsData);
     this._connections[connection.id] = connection;
 
     return connection;
   }
 
-  private async createConnectionInApiHub(
+  private async _createConnectionInApiHub(
     connectionName: string,
     connectorId: string,
     connectionInfo: ConnectionCreationInfo,
     shouldTestConnection: boolean
   ): Promise<Connection> {
-    const {
-      httpClient,
-      apiHubServiceDetails: { apiVersion, baseUrl },
-      workflowAppDetails,
-    } = this.options;
+    const { workflowAppDetails } = this._options;
     const intl = getIntl();
 
     // NOTE: Block connection creation if identity does not exist on Logic App.
@@ -254,14 +268,8 @@ export class StandardConnectionService extends BaseConnectionService {
       );
     }
 
-    const connectionId = this.getConnectionRequestPath(connectionName);
-    const connection = await httpClient.put<any, Connection>({
-      uri: `${baseUrl}${connectionId}`,
-      queryParameters: { 'api-version': apiVersion },
-      content: connectionInfo?.alternativeParameterValues
-        ? this._getRequestForCreateConnectionWithAlternativeParameters(connectorId, connectionName, connectionInfo)
-        : this._getRequestForCreateConnection(connectorId, connectionName, connectionInfo),
-    });
+    const connectionId = this.getAzureConnectionRequestPath(connectionName);
+    const connection = await this.createConnectionInApiHub(connectionName, connectorId, connectionInfo);
 
     try {
       await this._createConnectionAclIfNeeded(connection);
@@ -285,12 +293,15 @@ export class StandardConnectionService extends BaseConnectionService {
   }
 
   // Run when assigning a conneciton to an operation
-  async setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void> {
+  override async setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void> {
     await this._createConnectionAclIfNeeded(connection, identityId);
   }
 
   private async _createConnectionAclIfNeeded(connection: Connection, identityId?: string): Promise<void> {
-    const { tenantId, workflowAppDetails } = this.options;
+    const {
+      apiHubServiceDetails: { tenantId },
+      workflowAppDetails,
+    } = this._options;
     if (!isArmResourceId(connection.id) || !workflowAppDetails) {
       return;
     }
@@ -320,7 +331,11 @@ export class StandardConnectionService extends BaseConnectionService {
         await this._createAccessPolicyInConnection(connection.id, appName, identityDetailsForApiHubAuth, connection.location as string);
       }
     } catch {
-      LoggerService().log({ level: LogEntryLevel.Error, area: 'ConnectionACLCreate', message: 'Acl creation failed for connection.' });
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'ConnectionACLCreate',
+        message: 'Acl creation failed for connection.',
+      });
     }
   }
 
@@ -328,7 +343,7 @@ export class StandardConnectionService extends BaseConnectionService {
     const {
       apiHubServiceDetails: { apiVersion },
       httpClient,
-    } = this.options;
+    } = this._options;
 
     // TODO: Handle nextLink from this response as well.
     const response = await httpClient.get<any>({
@@ -349,7 +364,7 @@ export class StandardConnectionService extends BaseConnectionService {
     const {
       apiHubServiceDetails: { apiVersion, baseUrl },
       httpClient,
-    } = this.options;
+    } = this._options;
     const { principalId: objectId, tenantId } = identityDetails;
     const policyName = `${appName}-${objectId}`;
 
@@ -499,7 +514,7 @@ export class StandardConnectionService extends BaseConnectionService {
     connectionData: ServiceProviderConnectionModel
   ): Promise<HttpResponse<any>> {
     try {
-      const { httpClient, baseUrl, apiVersion } = this.options;
+      const { httpClient, baseUrl, apiVersion } = this._options;
       const response = await httpClient.post<any, any>({
         uri: `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${requestUrl}`,
         queryParameters: { 'api-version': apiVersion },

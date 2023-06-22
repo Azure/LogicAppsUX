@@ -2,8 +2,8 @@ import constants from '../../../../common/constants';
 import { useShowIdentitySelector } from '../../../../core/state/connection/connectionSelector';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
-import { ErrorLevel } from '../../../../core/state/operation/operationMetadataSlice';
-import { useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
+import { DynamicLoadStatus, ErrorLevel } from '../../../../core/state/operation/operationMetadataSlice';
+import { useNodesInitialized, useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
@@ -34,9 +34,9 @@ import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, TokenType } from '@microsoft/designer-ui';
-import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
+import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -50,6 +50,7 @@ export const ParametersTab = () => {
   }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly();
+  const nodesInitialized = useNodesInitialized();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
@@ -64,7 +65,22 @@ export const ParametersTab = () => {
     description: 'Message to show when there are no parameters to author in operation.',
   });
 
-  if (!operationInfo && !nodeMetadata?.subgraphType) {
+  const isLoading = useMemo(() => {
+    if (!operationInfo && !nodeMetadata?.subgraphType) return true;
+    if (!nodesInitialized) return true;
+    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.STARTED) return true;
+    return false;
+  }, [inputs?.dynamicLoadStatus, nodeMetadata?.subgraphType, nodesInitialized, operationInfo]);
+
+  const noVisibleParams = useMemo(() => {
+    return !hasParametersToAuthor(inputs?.parameterGroups ?? {});
+  }, [inputs?.parameterGroups]);
+  const showNoParamsMessage = useMemo(() => {
+    const haveDynamicInputsError = errorInfo?.level === ErrorLevel.DynamicInputs;
+    return noVisibleParams && !haveDynamicInputsError;
+  }, [errorInfo?.level, noVisibleParams]);
+
+  if (isLoading) {
     return (
       <div className="msla-loading-container">
         <Spinner size={SpinnerSize.large} />
@@ -90,9 +106,7 @@ export const ParametersTab = () => {
           {errorInfo.message}
         </MessageBar>
       ) : null}
-      {!hasParametersToAuthor(inputs?.parameterGroups ?? {}) ? (
-        <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar>
-      ) : null}
+      {showNoParamsMessage ? <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar> : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
@@ -105,8 +119,13 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {operationInfo && connectionName.isLoading === false && showConnectionDisplay ? (
-        <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />
+      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
+        <ConnectionDisplay
+          connectionName={connectionName.result}
+          nodeId={selectedNodeId}
+          isLoading={connectionName.isLoading}
+          readOnly={!!readOnly}
+        />
       ) : null}
       {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
@@ -131,7 +150,6 @@ const ParameterSection = ({
   const {
     isTrigger,
     nodeInputs,
-    nodeMetadata,
     operationInfo,
     dependencies,
     settings: nodeSettings,
@@ -145,7 +163,6 @@ const ParameterSection = ({
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
       nodeInputs: state.operations.inputParameters[nodeId],
-      nodeMetadata: state.operations.actionMetadata[nodeId],
       operationInfo: state.operations.operationInfo[nodeId],
       dependencies: state.operations.dependencies[nodeId],
       settings: state.operations.settings[nodeId],
@@ -187,7 +204,6 @@ const ParameterSection = ({
         operationInfo,
         connectionReference,
         nodeInputs,
-        nodeMetadata,
         dependencies,
         getAllVariables(variables),
         nodeSettings,
@@ -221,7 +237,6 @@ const ParameterSection = ({
         operationInfo,
         connectionReference,
         nodeInputs,
-        nodeMetadata,
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
@@ -254,7 +269,6 @@ const ParameterSection = ({
         operationInfo,
         connectionReference,
         nodeInputs,
-        nodeMetadata,
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
@@ -428,12 +442,12 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
   return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
 
-export const parametersTab: PanelTab = {
-  title: 'Parameters',
+export const parametersTab: PanelTabFn = (intl) => ({
+  title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
   name: constants.PANEL_TAB_NAMES.PARAMETERS,
-  description: 'Request History',
+  description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
   visible: true,
   content: <ParametersTab />,
   order: 0,
   icon: 'Info',
-};
+});

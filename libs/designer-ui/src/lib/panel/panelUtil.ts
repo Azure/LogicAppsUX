@@ -1,3 +1,5 @@
+import type { IntlShape } from 'react-intl';
+
 /* eslint-disable no-param-reassign */
 export enum PanelLocation {
   Left = 'LEFT',
@@ -14,7 +16,7 @@ export enum PanelSize {
   Small = '300px',
   Medium = '630px',
 }
-
+export type PanelTabFn = (intl: IntlShape) => PanelTab;
 export interface PanelTab {
   name: string;
   title: string;

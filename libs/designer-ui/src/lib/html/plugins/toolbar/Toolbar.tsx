@@ -1,10 +1,13 @@
 import { isApple } from '../../../helper';
-import clockWiseArrow from '../icons/arrow-clockwise.svg';
-import counterClockWiseArrow from '../icons/arrow-counterclockwise.svg';
+import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
+import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
+import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
+import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
+import { useTheme } from '@fluentui/react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -49,6 +52,7 @@ interface toolbarProps {
 export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
+  const { isInverted } = useTheme();
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -172,7 +176,11 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         className="toolbar-item spaced"
         aria-label="Undo"
       >
-        <img className={'format'} src={counterClockWiseArrow} alt={'counter clockwise arrow'} />
+        <img
+          className={'format'}
+          src={isInverted ? counterClockWiseArrowDark : counterClockWiseArrowLight}
+          alt={'counter clockwise arrow'}
+        />
       </button>
       <button
         onMouseDown={(e) => {
@@ -187,7 +195,7 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         className="toolbar-item"
         aria-label="Redo"
       >
-        <img className={'format'} src={clockWiseArrow} alt={'clockwise arrow'} />
+        <img className={'format'} src={isInverted ? clockWiseArrowDark : clockWiseArrowLight} alt={'clockwise arrow'} />
       </button>
       <Divider />
       <BlockFormatDropDown disabled={readonly} blockType={blockType} editor={editor} />

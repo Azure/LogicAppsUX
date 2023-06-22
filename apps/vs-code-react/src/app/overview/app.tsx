@@ -44,11 +44,11 @@ export const App: React.FC<AppProps> = (props) => {
   }, []);
 
   return (
-    <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
         <OverviewApp {...props} />
-      </QueryClientProvider>
-    </IntlProvider>
+      </IntlProvider>
+    </QueryClientProvider>
   );
 };
 
@@ -63,7 +63,7 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
       workflowName: workflowProperties.name,
       httpClient,
     });
-  }, [baseUrl, apiVersion, accessToken, workflowProperties.name]);
+  }, [baseUrl, apiVersion, accessToken, workflowProperties.name, hostVersion]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
     if (pageParam) {

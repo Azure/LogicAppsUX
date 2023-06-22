@@ -12,7 +12,13 @@ Now, your remote logic apps still appear in the Azure window, but in the Resourc
 
 Extension toolbar buttons have now migrated to the Workspace section.
 
-![Azure Logic Apps in Resources tab.](assets/logicAppResources.png)
+![Azure Logic Apps in Resources tab.](/apps/vs-code-designer/src/assets/logicAppResources.png)
+
+## Azure Logic Apps (Standard) Custom Code Workspace
+
+We are excited to announce a new feature in Logic Apps that allows users to author their own custom code using the .NET Framework. With this new feature, users can create custom code actions that can be used in their Logic Apps workflows.
+
+Please note that this feature is currently in private preview and is only available on Windows. We encourage users to try out this new feature and provide feedback to help us improve it.
 
 ## Known issues
 
