@@ -1050,6 +1050,12 @@
       "value": "일"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1543,7 +1549,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "개발 중"
     }
   ],
   "9YGcT2": [
@@ -2728,6 +2734,12 @@
       "value": "(UTC-12:00) 날짜 변경선 서쪽"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3528,7 +3540,7 @@
   "Oep6va": [
     {
       "type": 0,
-      "value": "Submit"
+      "value": "제출"
     }
   ],
   "OgJ9eG": [
@@ -3760,7 +3772,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "닫기"
     }
   ],
   "Q+ZZHI": [
@@ -4591,7 +4603,7 @@
   "Vqs8hE": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "작업"
     }
   ],
   "W070M2": [
@@ -4911,7 +4923,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "Swagger 함수 앱 리소스 선택"
     }
   ],
   "Y9kBz5": [
@@ -6798,7 +6810,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "질문을 하거나 이 흐름을 변경할 방법을 설명하세요."
     }
   ],
   "mvrlkP": [
@@ -7361,7 +7373,7 @@
   "qVgQfW": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "검색"
     }
   ],
   "qc5S69": [

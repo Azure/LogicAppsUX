@@ -1085,6 +1085,12 @@
       "value": "Nap"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1594,7 +1600,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "Fejlesztés alatt"
     }
   ],
   "9YGcT2": [
@@ -2817,6 +2823,12 @@
       "value": "(UTC-12:00) Nemzetközi dátumválasztó vonal – nyugat"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3676,7 +3688,7 @@
   "Oep6va": [
     {
       "type": 0,
-      "value": "Submit"
+      "value": "Küldés"
     }
   ],
   "OgJ9eG": [
@@ -3908,7 +3920,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Bezárás"
     }
   ],
   "Q+ZZHI": [
@@ -4750,7 +4762,7 @@
   "Vqs8hE": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Műveletek"
     }
   ],
   "W070M2": [
@@ -5070,7 +5082,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "Válassza ki egy Swagger-függvényalkalmazás erőforrását."
     }
   ],
   "Y9kBz5": [
@@ -7024,7 +7036,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "Tegyen fel egy kérdést, vagy írja le, hogyan szeretné módosítani ezt a folyamatot."
     }
   ],
   "mvrlkP": [
@@ -7598,7 +7610,7 @@
   "qVgQfW": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Keresés"
     }
   ],
   "qc5S69": [
