@@ -28,10 +28,9 @@ import {
   ConsumptionSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { guid } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
-import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
@@ -48,7 +47,7 @@ const DesignerEditorConsumption = () => {
   const isMonitoringView = useIsMonitoringView();
   const showChatBot = useShowChatBot();
 
-  const queryClient = useQueryClient();
+  const queryClient = getReactQueryClient();
 
   // const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -212,7 +211,6 @@ const getDesignerServices = (
   loggerService?: any,
   queryClient?: any
 ): any => {
-  console.log('### Getting services');
   const baseUrl = 'https://management.azure.com';
   const workflowName = workflowId.split('/').splice(-1)[0];
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);

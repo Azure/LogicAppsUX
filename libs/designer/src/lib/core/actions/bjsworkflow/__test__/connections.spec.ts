@@ -1,4 +1,5 @@
 import Constants from '../../../../common/constants';
+import { getReactQueryClient } from '../../../ReactQueryProvider';
 import {
   getConnectionMappingForNode,
   getLegacyConnectionReferenceKey,
@@ -58,6 +59,8 @@ describe('connection workflow mappings', () => {
     jest.resetAllMocks();
     jest.resetModules();
     jest.restoreAllMocks();
+
+    getReactQueryClient().clear();
   });
 
   it('should get the correct connectionId for OpenApi', async () => {

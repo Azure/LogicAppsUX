@@ -3,7 +3,6 @@ import { DesignerWrapper } from './app/DesignerShell/designer';
 import './polyfills';
 import { store } from './state/store';
 import { initializeIcons } from '@fluentui/react';
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
@@ -12,9 +11,7 @@ initializeIcons();
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 root.render(
-  <StrictMode>
-    <Provider store={store}>
-      <DesignerWrapper />
-    </Provider>
-  </StrictMode>
+  <Provider store={store}>
+    <DesignerWrapper />
+  </Provider>
 );

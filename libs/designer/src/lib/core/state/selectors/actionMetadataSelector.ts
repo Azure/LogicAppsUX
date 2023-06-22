@@ -68,10 +68,12 @@ export const useOperationManifest = (operationInfo: NodeOperation, enabled = tru
     {
       enabled: !!connectorId && !!operationId && enabled,
       placeholderData: undefined,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
+      refetchOnMount: false,
+      staleTime: 1000 * 60 * 60 * 24, // 24 hours
     }
   );
 };

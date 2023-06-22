@@ -5,38 +5,32 @@ interface ProviderProps {
   children: React.ReactNode;
 }
 
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchInterval: false,
+        refetchIntervalInBackground: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        refetchOnMount: false,
+        staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      },
+    },
+  });
+
 let reactQueryClient: QueryClient | undefined;
 
 export const getReactQueryClient = (): QueryClient => {
   if (!reactQueryClient) {
-    reactQueryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchInterval: false,
-          refetchIntervalInBackground: false,
-          refetchOnWindowFocus: false,
-          refetchOnReconnect: false,
-          refetchOnMount: false,
-        },
-      },
-    });
+    reactQueryClient = createQueryClient();
   }
   return reactQueryClient;
 };
 
 export const ReactQueryProvider = (props: ProviderProps) => {
   if (!reactQueryClient) {
-    reactQueryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchInterval: false,
-          refetchIntervalInBackground: false,
-          refetchOnWindowFocus: false,
-          refetchOnReconnect: false,
-          refetchOnMount: false,
-        },
-      },
-    });
+    reactQueryClient = createQueryClient();
   }
   return (
     <QueryClientProvider client={reactQueryClient}>

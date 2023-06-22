@@ -34,8 +34,8 @@ export const ExportApp: React.FC = () => {
   }, []);
 
   return vscodeState.initialized ? (
-    <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
         <div className="msla-export">
           <Text variant="xxLarge" className="msla-export-title" block>
             Export logic app
@@ -48,8 +48,8 @@ export const ExportApp: React.FC = () => {
           />
           <Navigation />
         </div>
-      </QueryClientProvider>
-    </IntlProvider>
+      </IntlProvider>
+    </QueryClientProvider>
   ) : null;
 };
 

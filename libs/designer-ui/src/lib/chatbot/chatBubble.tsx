@@ -64,22 +64,20 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
             <div className={'msla-bubble-disclaimer'}>{resources?.AIGeneratedDisclaimer}</div>
             {onThumbsReactionClicked && (
               <div className={'msla-bubble-reactions'}>
-                <>
-                  <ThumbsReactionButton
-                    resources={resources?.ThumbReaction}
-                    onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
-                    isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
-                    isDownvote={false}
-                    disabled={disabled}
-                  />
-                  <ThumbsReactionButton
-                    resources={resources?.ThumbReaction}
-                    onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
-                    isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
-                    isDownvote={true}
-                    disabled={disabled}
-                  />
-                </>
+                <ThumbsReactionButton
+                  resources={resources?.ThumbReaction}
+                  onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
+                  isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
+                  isDownvote={false}
+                  disabled={disabled}
+                />
+                <ThumbsReactionButton
+                  resources={resources?.ThumbReaction}
+                  onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
+                  isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
+                  isDownvote={true}
+                  disabled={disabled}
+                />
               </div>
             )}
           </div>
