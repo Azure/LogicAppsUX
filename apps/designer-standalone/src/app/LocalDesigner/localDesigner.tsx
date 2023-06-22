@@ -31,24 +31,19 @@ const connectionServiceStandard = new StandardConnectionService({
     subscriptionId: '',
     resourceGroup: '',
     location: '',
+    httpClient,
   },
   workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
   readConnections: () => Promise.resolve({}),
 });
 
 const connectionServiceConsumption = new ConsumptionConnectionService({
-  baseUrl: '/url',
-  apiVersion: '2018-11-01',
+  apiVersion: '2018-07-01-preview',
+  baseUrl: '/baseUrl',
+  subscriptionId: '',
+  resourceGroup: '',
+  location: '',
   httpClient,
-  apiHubServiceDetails: {
-    apiVersion: '2018-07-01-preview',
-    baseUrl: '/baseUrl',
-    subscriptionId: '',
-    resourceGroup: '',
-    location: '',
-  },
-  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
-  readConnections: () => Promise.resolve({}),
 });
 
 const operationManifestServiceStandard = new StandardOperationManifestService({
@@ -61,6 +56,8 @@ const operationManifestServiceConsumption = new ConsumptionOperationManifestServ
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
+  subscriptionId: 'subid',
+  location: 'location',
 });
 
 const searchServiceStandard = new StandardSearchService({
@@ -77,8 +74,6 @@ const searchServiceStandard = new StandardSearchService({
 });
 
 const searchServiceConsumption = new ConsumptionSearchService({
-  baseUrl: '/url',
-  apiVersion: '2018-11-01',
   httpClient,
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
@@ -86,7 +81,6 @@ const searchServiceConsumption = new ConsumptionSearchService({
     location: '',
   },
   isDev: true,
-  showStatefulOperations: true,
 });
 
 const oAuthService = new BaseOAuthService({
@@ -152,7 +146,7 @@ export const LocalDesigner = () => {
     readOnly: isReadOnly,
     isMonitoringView,
     isDarkMode,
-    isConsumption,
+    useLegacyWorkflowParameters: isConsumption,
   };
 
   return (
