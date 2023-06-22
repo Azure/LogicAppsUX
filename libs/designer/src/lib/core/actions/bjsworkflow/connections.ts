@@ -445,7 +445,7 @@ export function getLegacyConnectionReferenceKey(operationDefinition: any): strin
 }
 
 function getHybridTriggerConnectionReferenceKey(operationDefinition: LogicAppsV2.HybridTriggerConnectionInfo): string {
-  const hostName =  operationDefinition.host.connection.name;
+  const hostName = operationDefinition.host.connection.name;
   // hostName of the format: `@parameters('$connections')['${referenceKey}']['connectionId']`
   const startDelimiter = "['";
   const endDelimiter = "']";
