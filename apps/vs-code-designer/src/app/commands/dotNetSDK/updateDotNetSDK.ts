@@ -38,7 +38,7 @@ export async function updateDotNetSDK(context: IActionContext): Promise<void> {
     }
 
     case Platform.mac:
-      await executeCommand(ext.outputChannel, undefined, 'brew', 'install', `${dotnet}@${dotNetSDKMajorVersion}`);
+      await executeCommand(ext.outputChannel, undefined, 'brew', 'upgrade', `${dotnet}@${dotNetSDKMajorVersion}`);
       break;
   }
 }

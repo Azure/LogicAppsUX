@@ -41,6 +41,27 @@ export async function installDotNetSDK(context: IActionContext): Promise<void> {
 
     case Platform.mac:
       await executeCommand(ext.outputChannel, undefined, 'brew', 'install', `${dotnet}@${dotNetSDKMajorVersion}`);
+      await executeCommand(
+        ext.outputChannel,
+        undefined,
+        'export',
+        'DOTNET_ROOT',
+        '=',
+        `$(brew --prefix ${dotnet}@${dotNetSDKMajorVersion})/libexec`,
+        '>>',
+        '~/.bash_profile'
+      );
+      await executeCommand(
+        ext.outputChannel,
+        undefined,
+        'export',
+        'PATH',
+        '=',
+        `$(brew --prefix ${dotnet}@${dotNetSDKMajorVersion})/bin:$PATH`,
+        '>>',
+        '~/.bash_profile'
+      );
+      await executeCommand(ext.outputChannel, undefined, 'source', '~/.bash_profile');
       break;
   }
 }
