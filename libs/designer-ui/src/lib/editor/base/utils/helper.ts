@@ -1,10 +1,11 @@
 import { AuthenticationType } from '../../..';
 import { AUTHENTICATION_PROPERTIES, containsToken, PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE } from '../../../authentication/util';
+import constants from '../../../constants';
 import type { ValueSegment, TokenType } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { format } from '@microsoft/utils-logic-apps';
+import { format, guid } from '@microsoft/utils-logic-apps';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isTextNode } from 'lexical';
 
@@ -316,4 +317,14 @@ export const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
     }
   }
   return false;
+};
+
+export const insertQutationForStringType = (segments: ValueSegment[], type?: string) => {
+  if (type === constants.SWAGGER.TYPE.STRING) {
+    addStringLiteralSegment(segments);
+  }
+};
+
+const addStringLiteralSegment = (segments: ValueSegment[]): void => {
+  segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: `"` });
 };

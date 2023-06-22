@@ -54,7 +54,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const updateItems = (newItems: DictionaryEditorItemProps[]) => {
     setItems(newItems);
-    const objectValue = convertItemsToSegments(newItems);
+    const objectValue = convertItemsToSegments(newItems, keyType, valueType);
     setCollapsedValue(objectValue);
 
     if (!collapsed) {
@@ -83,8 +83,10 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           isValid={isValid}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
+          keyType={keyType}
+          valueType={valueType}
           getTokenPicker={getTokenPicker}
-          setItems={updateItems}
+          setItems={(newItems: DictionaryEditorItemProps[]) => setItems(newItems)}
           setIsValid={setIsValid}
           setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
           onBlur={handleBlur}
@@ -107,7 +109,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           <EditorCollapseToggle
             label={collapsed ? collapsedLabel : expandedLabel}
             collapsed={collapsed}
-            disabled={!isValid}
+            disabled={collapsed && !isValid}
             toggleCollapsed={toggleCollapsed}
           />
         ) : null}

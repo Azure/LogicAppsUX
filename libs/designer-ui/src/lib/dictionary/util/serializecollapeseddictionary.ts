@@ -1,4 +1,5 @@
 import type { DictionaryEditorItemProps } from '..';
+import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../editor/base/utils/helper';
@@ -6,7 +7,12 @@ import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
-export const serializeDictionary = (editor: LexicalEditor, setItems: (items: DictionaryEditorItemProps[]) => void) => {
+export const serializeDictionary = (
+  editor: LexicalEditor,
+  setItems: (items: DictionaryEditorItemProps[]) => void,
+  keyType?: string,
+  valueType?: string
+) => {
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
@@ -19,14 +25,15 @@ export const serializeDictionary = (editor: LexicalEditor, setItems: (items: Dic
     const returnItems: DictionaryEditorItemProps[] = [];
 
     for (const [key, value] of Object.entries(jsonEditor)) {
-      const newKey = key.toString();
-      const newValue = (value as string).toString();
+      const newKey = keyType === constants.SWAGGER.TYPE.STRING ? (key as string) : JSON.stringify(key);
+      const newValue = valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value);
       returnItems.push({
         id: guid(),
-        key: convertStringToSegments(newKey as string, true, nodeMap),
-        value: convertStringToSegments(newValue as string, true, nodeMap),
+        key: convertStringToSegments(newKey, true, nodeMap),
+        value: convertStringToSegments(newValue, true, nodeMap),
       });
     }
+    console.log(returnItems);
     setItems(returnItems);
   });
 };

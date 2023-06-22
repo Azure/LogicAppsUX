@@ -13,9 +13,10 @@ import { $getRoot } from 'lexical';
 
 export interface CollapsedDictionaryValidationProps {
   className?: string;
-  tokensEnabled?: boolean;
   isValid?: boolean;
   collapsedValue?: ValueSegment[];
+  keyType?: string;
+  valueType?: string;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
@@ -24,6 +25,8 @@ export interface CollapsedDictionaryValidationProps {
 export const CollapsedDictionaryValidation = ({
   className,
   isValid,
+  keyType,
+  valueType,
   setIsValid,
   setItems,
   collapsedValue,
@@ -43,7 +46,8 @@ export const CollapsedDictionaryValidation = ({
         newValiditity = isValidDictionary(editorString);
         setIsValid(newValiditity);
         if (newValiditity) {
-          serializeDictionary(editor, setItems);
+          serializeDictionary(editor, setItems, keyType, valueType);
+          setCollapsedValue(serializeEditorState(editorState));
         } else {
           setCollapsedValue(serializeEditorState(editorState));
         }
