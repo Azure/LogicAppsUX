@@ -154,10 +154,17 @@ export const workflowParametersSlice = createSlice({
         name: name ?? '',
         ...(useLegacy ? { defaultValue } : {}),
       };
-      state.validationErrors[id] = {
+      const newErrorObj = {
         ...state.validationErrors[id],
         ...validationErrors,
       };
+      if (!newErrorObj.name) delete newErrorObj.name;
+      if (!newErrorObj.value) delete newErrorObj.value;
+      if (Object.keys(newErrorObj).length === 0) {
+        delete state.validationErrors[id];
+      } else {
+        state.validationErrors[id] = newErrorObj;
+      }
       state.isDirty = true;
     },
     setIsWorkflowParametersDirty: (state, action: PayloadAction<boolean>) => {

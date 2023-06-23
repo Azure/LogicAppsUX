@@ -9,7 +9,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #a4262c;
+    background-color: @ms-color-errorLight;
     margin-right: 8px;
     display: inline-block;
   }
@@ -21,7 +21,7 @@
     min-height: 24px;
     font: 14px/24px @semibold-font-family;
     color: white;
-    background-color: #a4262c;
+    background-color: @ms-color-errorLight;
     text-align: center;
   }
 
@@ -29,7 +29,7 @@
     display: flex;
     gap: 12px;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 
     .msla-error-category-title {
       font: 18px/24px @semibold-font-family;
@@ -45,10 +45,9 @@
   }
 
   &.disabled {
-    color: grey;
-
+    color: @ms-color-disabledLight;
     .msla-error-number-dot {
-      background-color: grey;
+      background-color: @ms-color-disabledLight;
     }
   }
 }
@@ -62,7 +61,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   box-shadow: 0 0px 0px rgba(0, 0, 0, 0), 0 0px 0px rgba(0, 0, 0, 0);
 
   &:focus {
@@ -72,10 +71,6 @@
   &:focus,
   &:hover {
     box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
-  }
-
-  &.msla-selected {
-    box-shadow: 0 0 3.6px #0078d4, 0 0 14.4px #0078d4;
   }
 
   .msla-error-card-header {
@@ -97,9 +92,10 @@
     }
 
     .msla-error-card-icon {
-      font-size: 18px/24px @semibold-font-family;
       min-width: 24px;
       min-height: 24px;
+      text-align: center;
+      font: 18px/24px @semibold-font-family;
     }
   }
 
@@ -125,7 +121,7 @@
     align-self: flex-end;
     font: 14px/20px @semibold-font-family;
     text-align: right;
-    color: #0078d4;
+    color: @brandColor;
   }
 }
 
@@ -140,16 +136,29 @@
       box-shadow: 0 1.2px 3.6px rgba(255, 255, 255, 0.1), 0 6.4px 14.4px rgba(255, 255, 255, 0.13);
     }
 
-    &.msla-selected {
-      box-shadow: 0 0 3.6px #85caff, 0 0 14.4px #85caff;
-    }
-
     .msla-error-card-button-hint {
       // align at flex end
       align-self: flex-end;
       font: 14px/20px @semibold-font-family;
       text-align: right;
-      color: #85caff;
+      color: @brandColorLight;
+    }
+  }
+
+  .msla-error-category-container {
+    .msla-error-dot {
+      background-color: @ms-color-errorDark;
+    }
+
+    .msla-error-number-dot {
+      background-color: @ms-color-errorDark;
+    }
+
+    &.disabled {
+      color: @ms-color-disabledDark;
+      .msla-error-number-dot {
+        background-color: @ms-color-disabledDark;
+      }
     }
   }
 }

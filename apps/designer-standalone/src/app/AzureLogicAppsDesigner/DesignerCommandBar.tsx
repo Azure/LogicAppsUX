@@ -25,7 +25,8 @@ const iconClass = mergeStyles({
 
 const classNames = mergeStyleSets({
   azureBlue: [{ color: 'rgb(0, 120, 212)' }, iconClass],
-  azureGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
+  azureGrey: [{ color: '#A19F9D' }, iconClass],
+  azureRed: [{ color: 'rgb(194, 57, 52)' }, iconClass],
 });
 
 export const DesignerCommandBar = ({
@@ -126,8 +127,8 @@ export const DesignerCommandBar = ({
       text: 'Errors',
       disabled: !haveErrors,
       iconProps: {
-        iconName: 'ErrorBadge',
-        style: { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] },
+        iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
+        style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
       },
       onClick: () => !!dispatch(switchToErrorsPanel()),
     },

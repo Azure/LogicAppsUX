@@ -102,7 +102,7 @@ const ErrorCategory = (props: any) => {
         <span className="msla-error-number-dot">{numErrors}</span>
         <span className="msla-error-category-title">{title}</span>
       </div>
-      {isExpanded || numErrors === 0 ? <div className="msla-error-category-body">{children}</div> : null}
+      {isExpanded && numErrors > 0 ? <div className="msla-error-category-body">{children}</div> : null}
     </div>
   );
 };
