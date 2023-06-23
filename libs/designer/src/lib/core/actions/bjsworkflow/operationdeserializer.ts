@@ -149,7 +149,7 @@ export const initializeOperationMetadata = async (
   );
 
   LoggerService().log({
-    level: LogEntryLevel.Trace,
+    level: LogEntryLevel.Verbose,
     area: 'initializeOperationMetadata',
     message: 'Workflow Operation Metadata initialized',
   });
