@@ -9,6 +9,7 @@ import {
   serializeBJSWorkflow,
   updateCallbackUrl,
   switchToWorkflowParameters,
+  switchToErrorsPanel,
   useIsDesignerDirty,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
@@ -119,6 +120,16 @@ export const DesignerCommandBar = ({
       },
       iconProps: { iconName: 'Parameter' },
       onClick: () => !!dispatch(switchToWorkflowParameters()),
+    },
+    {
+      key: 'errors',
+      text: 'Errors',
+      disabled: !haveErrors,
+      iconProps: {
+        iconName: 'ErrorBadge',
+        style: { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] },
+      },
+      onClick: () => !!dispatch(switchToErrorsPanel()),
     },
     {
       key: 'fileABug',

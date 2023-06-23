@@ -1,10 +1,10 @@
-import { clearPanel } from '../../core/state/panel/panelSlice';
-import { useBrandColor, useIconUri } from '../../core/state/selectors/actionMetadataSelector';
-import { useNodeDisplayName, useNodeIds } from '../../core/state/workflow/workflowSelectors';
-import { setFocusNode } from '../../core/state/workflow/workflowSlice';
-import { IconButton, Panel, PanelType, SearchBox, useTheme, Text, FocusTrapZone } from '@fluentui/react';
+import { clearPanel } from '../../../core/state/panel/panelSlice';
+import { useBrandColor, useIconUri } from '../../../core/state/selectors/actionMetadataSelector';
+import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
+import { setFocusNode } from '../../../core/state/workflow/workflowSlice';
+import { IconButton, SearchBox, Text, FocusTrapZone } from '@fluentui/react';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
-import { OperationSearchCard, PanelLocation } from '@microsoft/designer-ui';
+import { OperationSearchCard } from '@microsoft/designer-ui';
 import { labelCase } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
@@ -45,7 +45,6 @@ export type NodeSearchPanelProps = {
 
 export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
   const { displayRuntimeInfo } = props;
-  const { isInverted } = useTheme();
   const allNodeNames = useNodeIds();
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
   const intl = useIntl();
@@ -68,30 +67,19 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     defaultMessage: 'Search for operation',
     description: 'Placeholder for search box that searches operations',
   });
+
   return (
-    <Panel
-      isLightDismiss
-      type={props.panelLocation === PanelLocation.Right ? PanelType.medium : PanelType.customNear}
-      isOpen={!props.isCollapsed}
-      onDismiss={props.toggleCollapse}
-      hasCloseButton={false}
-      overlayProps={{ isDarkThemed: isInverted }}
-      focusTrapZoneProps={{ disabled: props.isCollapsed, forceFocusInsideTrap: true }}
-      layerProps={props.layerProps}
-      customWidth={props.width}
-    >
-      <FocusTrapZone>
-        <div className="msla-app-action-header">
-          <Text variant="xLarge">{goToOperationHeader}</Text>
-          <IconButton onClick={props.toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
-        </div>
-        <div style={{ padding: 20 }}>
-          <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
-        </div>
-        {searchNodeNames.map((node) => {
-          return <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />;
-        })}
-      </FocusTrapZone>
-    </Panel>
+    <FocusTrapZone>
+      <div className="msla-app-action-header">
+        <Text variant="xLarge">{goToOperationHeader}</Text>
+        <IconButton onClick={props.toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
+      </div>
+      <div style={{ padding: 20 }}>
+        <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
+      </div>
+      {searchNodeNames.map((node) => (
+        <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />
+      ))}
+    </FocusTrapZone>
   );
 };

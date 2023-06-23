@@ -1,4 +1,4 @@
-import constants from '../../../../common/constants';
+import constants from '../../../../../common/constants';
 import { getStatusString, ValuesPanel } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { isNullOrEmpty } from '@microsoft/utils-logic-apps';

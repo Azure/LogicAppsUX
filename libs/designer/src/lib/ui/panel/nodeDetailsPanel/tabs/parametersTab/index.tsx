@@ -1,22 +1,22 @@
-import constants from '../../../../common/constants';
-import { useShowIdentitySelector } from '../../../../core/state/connection/connectionSelector';
-import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, ErrorLevel } from '../../../../core/state/operation/operationMetadataSlice';
-import { useNodesInitialized, useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
-import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
+import constants from '../../../../../common/constants';
+import { useShowIdentitySelector } from '../../../../../core/state/connection/connectionSelector';
+import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
+import { useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
+import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
   useNodeConnectionName,
   useOperationInfo,
-} from '../../../../core/state/selectors/actionMetadataSelector';
-import type { VariableDeclaration } from '../../../../core/state/tokens/tokensSlice';
-import { updateVariableInfo } from '../../../../core/state/tokens/tokensSlice';
-import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow/workflowSelectors';
-import type { AppDispatch, RootState } from '../../../../core/store';
-import { getConnectionReference } from '../../../../core/utils/connectors/connections';
-import { isRootNodeInGraph } from '../../../../core/utils/graph';
+} from '../../../../../core/state/selectors/actionMetadataSelector';
+import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
+import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
+import { useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import type { AppDispatch, RootState } from '../../../../../core/store';
+import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
+import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
@@ -24,12 +24,12 @@ import {
   remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
-} from '../../../../core/utils/parameters/helper';
-import type { TokenGroup } from '../../../../core/utils/tokens';
-import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
-import { getAllVariables, getAvailableVariables } from '../../../../core/utils/variables';
-import { SettingsSection } from '../../../settings/settingsection';
-import type { Settings } from '../../../settings/settingsection';
+} from '../../../../../core/utils/parameters/helper';
+import type { TokenGroup } from '../../../../../core/utils/tokens';
+import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../../core/utils/tokens';
+import { getAllVariables, getAvailableVariables } from '../../../../../core/utils/variables';
+import { SettingsSection } from '../../../../settings/settingsection';
+import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';

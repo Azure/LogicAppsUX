@@ -12,7 +12,7 @@ export { useIsWorkflowDirty, useNodeDisplayName, useNodeMetadata } from './state
 export { useIsWorkflowParametersDirty } from './state/workflowparameters/workflowparametersselector';
 export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
 export { serializeWorkflow } from './actions/bjsworkflow/serializer';
-export { changePanelNode, clearPanel, switchToWorkflowParameters, collapsePanel } from './state/panel/panelSlice';
+export { changePanelNode, clearPanel, switchToWorkflowParameters, switchToErrorsPanel, collapsePanel } from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
 export { useSelectedNodeId } from './state/panel/panelSelectors';

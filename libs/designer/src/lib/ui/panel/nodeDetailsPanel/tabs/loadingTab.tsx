@@ -1,4 +1,4 @@
-import constants from '../../../common/constants';
+import constants from '../../../../common/constants';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 

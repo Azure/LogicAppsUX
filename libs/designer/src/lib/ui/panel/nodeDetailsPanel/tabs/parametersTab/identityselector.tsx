@@ -1,8 +1,8 @@
-import constants from '../../../../common/constants';
-import { updateIdentityChangeInConection } from '../../../../core/actions/bjsworkflow/connections';
-import { ErrorLevel, updateErrorDetails } from '../../../../core/state/operation/operationMetadataSlice';
-import type { AppDispatch, RootState } from '../../../../core/store';
-import { getConnectionReference, isIdentityPresentInLogicApp } from '../../../../core/utils/connectors/connections';
+import constants from '../../../../../common/constants';
+import { updateIdentityChangeInConection } from '../../../../../core/actions/bjsworkflow/connections';
+import { ErrorLevel, updateErrorDetails } from '../../../../../core/state/operation/operationMetadataSlice';
+import type { AppDispatch, RootState } from '../../../../../core/store';
+import { getConnectionReference, isIdentityPresentInLogicApp } from '../../../../../core/utils/connectors/connections';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown, FontSizes, Label } from '@fluentui/react';
 import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';

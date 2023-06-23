@@ -1,0 +1,155 @@
+@import (reference) '../variables.less';
+
+.msla-error-panel-body {
+  padding: 24px 0px;
+}
+
+.msla-error-category-container {
+  .msla-error-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #a4262c;
+    margin-right: 8px;
+    display: inline-block;
+  }
+
+  .msla-error-number-dot {
+    padding: 0px 8px;
+    border-radius: 12px;
+    min-width: 24px;
+    min-height: 24px;
+    font: 14px/24px @semibold-font-family;
+    color: white;
+    background-color: #a4262c;
+    text-align: center;
+  }
+
+  .msla-error-category-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .msla-error-category-title {
+      font: 18px/24px @semibold-font-family;
+      text-align: left;
+    }
+  }
+
+  .msla-error-category-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  &.disabled {
+    color: grey;
+
+    .msla-error-number-dot {
+      background-color: grey;
+    }
+  }
+}
+
+.msla-error-card {
+  padding: 12px 16px;
+  border: 1px solid #c8c6c4;
+  border-radius: 2px;
+  color: #323130;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 0px 0px rgba(0, 0, 0, 0), 0 0px 0px rgba(0, 0, 0, 0);
+
+  &:focus {
+    outline: 0;
+  }
+
+  &:focus,
+  &:hover {
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+  }
+
+  &.msla-selected {
+    box-shadow: 0 0 3.6px #0078d4, 0 0 14.4px #0078d4;
+  }
+
+  .msla-error-card-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    > img {
+      height: 24px;
+      width: 24px;
+      border-radius: 2px;
+    }
+
+    .msla-error-card-title {
+      align-self: center;
+      flex: 1;
+      font: 14px/20px @semibold-font-family;
+      text-align: left;
+    }
+
+    .msla-error-card-icon {
+      font-size: 18px/24px @semibold-font-family;
+      min-width: 24px;
+      min-height: 24px;
+    }
+  }
+
+  .msla-error-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .msla-error-card-subsection {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .msla-error-card-subtitle {
+      font: 13px/24px @semibold-font-family;
+      text-align: left;
+    }
+  }
+
+  .msla-error-card-button-hint {
+    // align at flex end
+    align-self: flex-end;
+    font: 14px/20px @semibold-font-family;
+    text-align: right;
+    color: #0078d4;
+  }
+}
+
+.msla-theme-dark {
+  .msla-error-card {
+    background-color: @ms-color-white;
+    box-shadow: 0 0px 0px rgba(255, 255, 255, 0), 0 0px 0px rgba(255, 255, 255, 0);
+    color: @ms-color-black;
+
+    &:focus,
+    &:hover {
+      box-shadow: 0 1.2px 3.6px rgba(255, 255, 255, 0.1), 0 6.4px 14.4px rgba(255, 255, 255, 0.13);
+    }
+
+    &.msla-selected {
+      box-shadow: 0 0 3.6px #85caff, 0 0 14.4px #85caff;
+    }
+
+    .msla-error-card-button-hint {
+      // align at flex end
+      align-self: flex-end;
+      font: 14px/20px @semibold-font-family;
+      text-align: right;
+      color: #85caff;
+    }
+  }
+}

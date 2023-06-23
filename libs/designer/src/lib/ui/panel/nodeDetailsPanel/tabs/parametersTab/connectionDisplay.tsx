@@ -1,9 +1,8 @@
-import constants from '../../../../common/constants';
-import { useIsOperationMissingConnection } from '../../../../core/state/connection/connectionSelector';
-import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { isolateTab } from '../../../../core/state/panel/panelSlice';
-import { useIsConnectionRequired, useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
-import '../../../../core/utils/connectors/connections';
+import constants from '../../../../../common/constants';
+import { useIsOperationMissingConnection } from '../../../../../core/state/connection/connectionSelector';
+import { useIsXrmConnectionReferenceMode } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { isolateTab } from '../../../../../core/state/panel/panelSlice';
+import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { Label, Link, Spinner, SpinnerSize } from '@fluentui/react';
 import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';

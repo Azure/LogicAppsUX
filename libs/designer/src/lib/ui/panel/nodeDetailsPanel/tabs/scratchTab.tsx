@@ -1,6 +1,6 @@
-import constants from '../../../common/constants';
-import type { TokenGroup } from '../../../core/utils/tokens';
-import { getExpressionTokenSections } from '../../../core/utils/tokens';
+import constants from '../../../../common/constants';
+import type { TokenGroup } from '../../../../core/utils/tokens';
+import { getExpressionTokenSections } from '../../../../core/utils/tokens';
 import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
 import {
   BaseEditor,

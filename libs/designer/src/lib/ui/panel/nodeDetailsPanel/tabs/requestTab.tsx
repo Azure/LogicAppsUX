@@ -1,4 +1,4 @@
-import constants from '../../../common/constants';
+import constants from '../../../../common/constants';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 import { RequestPanel } from '@microsoft/designer-ui';
 

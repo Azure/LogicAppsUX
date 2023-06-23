@@ -1,24 +1,24 @@
-import constants from '../../../common/constants';
-import type { AppDispatch, RootState } from '../../../core';
-import type { ConnectionPayload } from '../../../core/actions/bjsworkflow/connections';
+import constants from '../../../../common/constants';
+import type { AppDispatch, RootState } from '../../../../core';
+import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
   getApiHubAuthentication,
   getConnectionMetadata,
   getConnectionProperties,
   needsOAuth,
   updateNodeConnection,
-} from '../../../core/actions/bjsworkflow/connections';
-import { getUniqueConnectionName } from '../../../core/queries/connections';
-import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
-import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
-import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
+} from '../../../../core/actions/bjsworkflow/connections';
+import { getUniqueConnectionName } from '../../../../core/queries/connections';
+import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../../core/state/connection/connectionSelector';
+import { useMonitoringView } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
+import { isolateTab, showDefaultTabs } from '../../../../core/state/panel/panelSlice';
+import { useOperationInfo, useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import {
   getAssistedConnectionProps,
   getConnectionParametersForAzureConnection,
   getSupportedParameterSets,
-} from '../../../core/utils/connectors/connections';
+} from '../../../../core/utils/connectors/connections';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService, ConnectionService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';

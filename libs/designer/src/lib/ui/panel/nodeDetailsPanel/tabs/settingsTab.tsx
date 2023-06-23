@@ -1,5 +1,5 @@
-import constants from '../../../common/constants';
-import { SettingsPanel } from '../../settings/';
+import constants from '../../../../common/constants';
+import { SettingsPanel } from '../../../settings/';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 
 export const settingsTab: PanelTabFn = (intl) => ({

@@ -1,5 +1,5 @@
-import constants from '../../../common/constants';
-import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
+import constants from '../../../../common/constants';
+import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useConnectorEnvironmentBadge,
   useConnectorName,
@@ -7,7 +7,7 @@ import {
   useOperationDescription,
   useOperationDocumentation,
   useOperationInfo,
-} from '../../../core/state/selectors/actionMetadataSelector';
+} from '../../../../core/state/selectors/actionMetadataSelector';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 import { About } from '@microsoft/designer-ui';
 
