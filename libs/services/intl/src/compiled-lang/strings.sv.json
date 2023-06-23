@@ -3365,6 +3365,12 @@
       "value": "Hanterad identitet"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5615,6 +5621,12 @@
       "value": "Returnerar brödtexten för en del i en åtgärds flerdelade utdata."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6843,6 +6855,12 @@
     {
       "type": 0,
       "value": "Kortkommando för åtgärder(actionName).outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

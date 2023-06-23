@@ -3265,6 +3265,12 @@
       "value": "Identitas terkelola"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5496,6 +5502,12 @@
       "value": "Menampilkan isi dari sebagian output beberapa bagian dari tindakan."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6685,6 +6697,12 @@
     {
       "type": 0,
       "value": "Pintasan untuk tindakan('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

@@ -3269,6 +3269,12 @@
       "value": "受控識別"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5520,6 +5526,12 @@
       "value": "傳回來自動作 multipart 輸出中一部分的本文。"
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6701,6 +6713,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body 的速記"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

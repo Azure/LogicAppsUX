@@ -1630,7 +1630,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "Vývoj"
     }
   ],
   "9YGcT2": [
@@ -3473,6 +3473,12 @@
       "value": "Spravovaná identita"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5200,7 +5206,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "Vyberte prostředek aplikace funkcí Swagger"
     }
   ],
   "Y9kBz5": [
@@ -5751,6 +5757,12 @@
     {
       "type": 0,
       "value": "Vrátí text pro určitou část ve výstupu akce s několika částmi."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
     }
   ],
   "cgq/+y": [
@@ -7005,6 +7017,12 @@
       "value": "Zkratka pro actions('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -7164,7 +7182,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "Položte otázku nebo popište, jak chcete změnit tento tok"
     }
   ],
   "mvrlkP": [

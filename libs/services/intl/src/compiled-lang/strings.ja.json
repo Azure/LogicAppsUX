@@ -3257,6 +3257,12 @@
       "value": "マネージド ID"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5480,6 +5486,12 @@
       "value": "アクションからのマルチパート出力に含まれるパートの本文を返します。"
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6653,6 +6665,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body の短縮形"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [
