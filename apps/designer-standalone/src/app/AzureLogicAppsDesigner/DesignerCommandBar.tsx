@@ -75,7 +75,7 @@ export const DesignerCommandBar = ({
 
   const haveErrors = useMemo(
     () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
-    [allInputErrors, haveWorkflowParameterErrors, haveSettingsErrors]
+    [allInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
   );
 
   const saveIsDisabled = isSaving || haveErrors || !designerIsDirty;

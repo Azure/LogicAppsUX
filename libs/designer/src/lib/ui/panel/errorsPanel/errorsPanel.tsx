@@ -109,8 +109,8 @@ export const ErrorPanel = (props: CommonPanelProps) => {
   });
 
   const inputErrorsSubsectionHeader = intl.formatMessage({
-    defaultMessage: 'Input Errors',
-    description: 'Header for the input errors subsection',
+    defaultMessage: 'Parameter Errors',
+    description: 'Header for the node parameter errors subsection',
   });
 
   const settingsErrorsSubsectionHeader = intl.formatMessage({
@@ -122,11 +122,6 @@ export const ErrorPanel = (props: CommonPanelProps) => {
     defaultMessage: 'Connections Errors',
     description: 'Header for the connections errors subsection',
   });
-
-  // const otherErrorsSubsectionHeader = intl.formatMessage({
-  //   defaultMessage: 'Other Errors',
-  //   description: 'Header for the other errors subsection',
-  // });
 
   return (
     <FocusTrapZone>
