@@ -105,7 +105,7 @@ export const panelSlice = createSlice({
         state.registeredTabs[tabName] = {
           ...state.registeredTabs[tabName],
           tabErrors: {
-            ...state.registeredTabs[tabName].tabErrors,
+            ...state.registeredTabs?.[tabName]?.tabErrors,
             [nodeId]: hasErrors,
           },
         };

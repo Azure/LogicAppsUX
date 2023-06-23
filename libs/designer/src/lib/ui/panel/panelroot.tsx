@@ -4,19 +4,25 @@ import { useCurrentPanelModePanelMode, useIsPanelCollapsed } from '../../core/st
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ErrorPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
+import { usePanelTabs } from './nodeDetailsPanel/tabInitialization';
 import { NodeSearchPanel } from './nodeSearchPanel/nodeSearchPanel';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParametersPanel';
 import { Panel, PanelType } from '@fluentui/react';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { PanelLocation, PanelSize } from '@microsoft/designer-ui';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface PanelRootProps {
   panelLocation?: PanelLocation;
   displayRuntimeInfo: boolean;
 }
+
+const layerProps = {
+  hostId: 'msla-layer-host',
+  eventBubblingEnabled: true,
+};
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const { panelLocation, displayRuntimeInfo } = props;
@@ -27,26 +33,26 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const collapsed = useIsPanelCollapsed();
   const currentPanelMode = useCurrentPanelModePanelMode();
 
+  usePanelTabs(); // This initializes tabs for the node details panel, can't be run twice so it lives here instead of in the panel
+
   const [width, setWidth] = useState(PanelSize.Auto);
 
   useEffect(() => {
-    collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
+    setWidth(collapsed ? PanelSize.Auto : PanelSize.Medium);
   }, [collapsed]);
 
-  const dismissPanel = () => dispatch(clearPanel());
+  const dismissPanel = useCallback(() => dispatch(clearPanel()), [dispatch]);
 
-  const layerProps = {
-    hostId: 'msla-layer-host',
-    eventBubblingEnabled: true,
-  };
-
-  const commonPanelProps: CommonPanelProps = {
-    isCollapsed: collapsed,
-    toggleCollapse: dismissPanel,
-    width,
-    layerProps,
-    panelLocation: panelLocation ?? PanelLocation.Right,
-  };
+  const commonPanelProps: CommonPanelProps = useMemo(
+    () => ({
+      isCollapsed: collapsed,
+      toggleCollapse: dismissPanel,
+      width,
+      layerProps,
+      panelLocation: panelLocation ?? PanelLocation.Right,
+    }),
+    [collapsed, dismissPanel, panelLocation, width]
+  );
 
   return !currentPanelMode ? (
     <NodeDetailsPanel {...commonPanelProps} />
@@ -62,15 +68,16 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       layerProps={layerProps}
       customWidth={width}
     >
-      {currentPanelMode === 'WorkflowParameters' ? (
-        <WorkflowParametersPanel {...commonPanelProps} />
-      ) : currentPanelMode === 'Discovery' ? (
-        <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
-      ) : currentPanelMode === 'NodeSearch' ? (
-        <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
-      ) : currentPanelMode === 'Error' ? (
-        <ErrorPanel {...commonPanelProps} />
-      ) : null // Caught above
+      {
+        currentPanelMode === 'WorkflowParameters' ? (
+          <WorkflowParametersPanel {...commonPanelProps} />
+        ) : currentPanelMode === 'Discovery' ? (
+          <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
+        ) : currentPanelMode === 'NodeSearch' ? (
+          <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
+        ) : currentPanelMode === 'Error' ? (
+          <ErrorPanel {...commonPanelProps} />
+        ) : null // Caught above
       }
     </Panel>
   );

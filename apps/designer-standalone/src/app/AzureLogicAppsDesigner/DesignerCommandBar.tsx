@@ -12,6 +12,8 @@ import {
   switchToErrorsPanel,
   useIsDesignerDirty,
   useAllSettingsValidationErrors,
+  useWorkflowParameterValidationErrors,
+  useAllConnectionErrors,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -64,23 +66,16 @@ export const DesignerCommandBar = ({
       )
     );
   });
-  const allWorkflowParameterErrors = useSelector((state: RootState) => {
-    let validationErrorToShow = null;
-    for (const parameter of Object.entries(state.workflowParameters.validationErrors) ?? []) {
-      if (parameter?.[1]?.value) {
-        validationErrorToShow = {
-          name: state.workflowParameters.definitions[parameter[0]]?.name,
-          msg: parameter[1].value,
-        };
-      }
-    }
-    return validationErrorToShow;
-  });
+  const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
+  const haveWorkflowParameterErrors = Object.keys(allWorkflowParameterErrors ?? {}).length > 0;
   const allSettingsErrors = useAllSettingsValidationErrors();
+  const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
+  const allConnectionErrors = useAllConnectionErrors();
+  const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
 
   const haveErrors = useMemo(
-    () => allInputErrors.length > 0 || !!allWorkflowParameterErrors || !!allSettingsErrors,
-    [allInputErrors, allWorkflowParameterErrors, allSettingsErrors]
+    () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
+    [allInputErrors, haveWorkflowParameterErrors, haveSettingsErrors]
   );
 
   const saveIsDisabled = isSaving || haveErrors || !designerIsDirty;
@@ -116,7 +111,7 @@ export const DesignerCommandBar = ({
         return (
           <>
             {item.text}
-            {allWorkflowParameterErrors ? (
+            {haveWorkflowParameterErrors ? (
               <div style={{ display: 'inline-block', marginLeft: 8 }}>
                 <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
               </div>

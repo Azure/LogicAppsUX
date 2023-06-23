@@ -1,19 +1,17 @@
-import { changePanelNode, setFocusNode, useNodeDisplayName } from '../../../core';
+import { setFocusNode, useNodeDisplayName } from '../../../core';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
-import { showDefaultTabs } from '../../../core/state/panel/panelSlice';
+import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { NodeErrorCard } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 interface ErrorCardProps {
   nodeId: string;
-  inputErrors?: string[];
-  settingsErrors?: string[];
-  otherErrors?: string[];
+  errors?: Record<string, string[]>;
 }
 
 export const NodeErrors = (props: ErrorCardProps) => {
-  const { nodeId, inputErrors, settingsErrors, otherErrors } = props;
+  const { nodeId, errors } = props;
 
   const dispatch = useDispatch();
 
@@ -22,20 +20,8 @@ export const NodeErrors = (props: ErrorCardProps) => {
 
   const onClick = useCallback(() => {
     dispatch(setFocusNode(nodeId));
-    dispatch(changePanelNode(nodeId));
-    dispatch(showDefaultTabs());
+    dispatch(switchToOperationPanel(nodeId));
   }, [dispatch, nodeId]);
 
-  return (
-    <NodeErrorCard
-      id={nodeId}
-      title={nodeDisplayName}
-      brandColor={brandColor}
-      iconUri={iconUri}
-      inputErrors={inputErrors}
-      settingsErrors={settingsErrors}
-      otherErrors={otherErrors}
-      onClick={onClick}
-    />
-  );
+  return <NodeErrorCard id={nodeId} title={nodeDisplayName} brandColor={brandColor} iconUri={iconUri} errors={errors} onClick={onClick} />;
 };

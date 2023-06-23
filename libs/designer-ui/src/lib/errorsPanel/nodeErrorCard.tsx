@@ -9,21 +9,10 @@ export interface NodeErrorCardProps {
   iconUri?: string;
   isLoading?: boolean;
   onClick?(): void;
-  inputErrors?: string[];
-  settingsErrors?: string[];
-  otherErrors?: string[];
+  errors?: Record<string, string[]>;
 }
 
-export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({
-  id,
-  title,
-  iconUri,
-  isLoading,
-  onClick,
-  inputErrors,
-  settingsErrors,
-  otherErrors,
-}) => {
+export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri, isLoading, onClick, errors }) => {
   const intl = useIntl();
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
@@ -48,21 +37,6 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({
     description: 'Hint for the button on the error card',
   });
 
-  const inputErrorsSubtitle = intl.formatMessage({
-    defaultMessage: 'Input Errors',
-    description: 'Subtitle for the input errors section',
-  });
-
-  const settingsErrorsSubtitle = intl.formatMessage({
-    defaultMessage: 'Settings Errors',
-    description: 'Subtitle for the settings errors section',
-  });
-
-  const otherErrorsSubtitle = intl.formatMessage({
-    defaultMessage: 'Other Errors',
-    description: 'Subtitle for the other errors section',
-  });
-
   return (
     <div key={id} className="msla-error-card" onClick={handleClick}>
       <div className="msla-error-card-header">
@@ -74,18 +48,25 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({
         </span>
       </div>
       <div className="msla-error-card-body">
-        <ErrorSubsection subtitle={inputErrorsSubtitle} errors={inputErrors} />
-        <ErrorSubsection subtitle={settingsErrorsSubtitle} errors={settingsErrors} />
-        <ErrorSubsection subtitle={otherErrorsSubtitle} errors={otherErrors} />
+        {Object.entries(errors ?? {}).map(([subtitle, values]) => (
+          <ErrorSubsection key={subtitle} subtitle={subtitle} errors={values} />
+        ))}
       </div>
     </div>
   );
 };
 
-const ErrorSubsection = (props: any) => {
+interface ErrorSubsectionProps {
+  subtitle: string;
+  errors: string[];
+}
+
+const ErrorSubsection = (props: ErrorSubsectionProps) => {
   const { subtitle, errors } = props;
 
-  if (!errors?.length) return null;
+  // create new errors array with no empty values
+  const filteredErrors = errors?.filter((e: string) => e);
+  if (!filteredErrors?.length) return null;
 
   return (
     <div className="msla-error-card-subsection">
