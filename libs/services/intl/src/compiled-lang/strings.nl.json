@@ -3369,6 +3369,12 @@
       "value": "Beheerde identiteit"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5627,6 +5633,12 @@
       "value": "Retourneert de hoofdtekst voor een onderdeel in een meerdelige uitvoer van een actie."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6855,6 +6867,12 @@
     {
       "type": 0,
       "value": "Verkorte versie van acties('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

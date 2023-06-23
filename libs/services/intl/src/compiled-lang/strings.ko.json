@@ -3249,6 +3249,12 @@
       "value": "관리 ID"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5476,6 +5482,12 @@
       "value": "작업에서 다중 파트 출력의 파트에 대한 본문을 반환합니다."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6649,6 +6661,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body의 축약형"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

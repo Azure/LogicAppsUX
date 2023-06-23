@@ -3381,6 +3381,12 @@
       "value": "Felügyelt identitás"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5639,6 +5645,12 @@
       "value": "Egy művelet többrészes kimenetéből az egyik rész törzsét adja vissza."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6871,6 +6883,12 @@
     {
       "type": 0,
       "value": "Az actions('actionName').outputs.body rövid függvényneve."
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

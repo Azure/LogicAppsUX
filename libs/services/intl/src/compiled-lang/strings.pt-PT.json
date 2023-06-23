@@ -3421,6 +3421,12 @@
       "value": "Identidade gerida"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5690,6 +5696,12 @@
       "value": "Devolve o corpo de uma parte numa saída de várias partes a partir de uma ação."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6933,6 +6945,12 @@
     {
       "type": 0,
       "value": "Forma abreviada de ações (\"actionName\").outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

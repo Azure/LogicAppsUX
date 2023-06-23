@@ -3465,6 +3465,12 @@
       "value": "Управляемое удостоверение"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5745,6 +5751,12 @@
       "value": "Возвращает текст части в составных выходных данных какого-либо действия."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6995,6 +7007,12 @@
     {
       "type": 0,
       "value": "Сокращение для actions('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

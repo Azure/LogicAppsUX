@@ -3485,6 +3485,12 @@
       "value": "Tożsamość zarządzana"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5769,6 +5775,12 @@
       "value": "Zwraca treść części w wieloczęściowych danych wyjściowych z akcji."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -7019,6 +7031,12 @@
     {
       "type": 0,
       "value": "Skrót dla actions('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
     }
   ],
   "loxzZD": [

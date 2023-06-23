@@ -1568,7 +1568,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "Geliştirme Aşamasında"
     }
   ],
   "9YGcT2": [
@@ -3301,6 +3301,12 @@
       "value": "Yönetilen kimlik"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -4986,7 +4992,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "Bir Swagger İşlev Uygulaması kaynağı seçin"
     }
   ],
   "Y9kBz5": [
@@ -5537,6 +5543,12 @@
     {
       "type": 0,
       "value": "Bir eylemden çok parçalı çıkışında, bir parçanın gövdesini döndürür."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
     }
   ],
   "cgq/+y": [
@@ -6733,6 +6745,12 @@
       "value": "actions('eylemAdı').outputs.body için kısayol"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -6892,7 +6910,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "Soru sorun veya bu akışı nasıl değiştirmek istediğinizi açıklayın"
     }
   ],
   "mvrlkP": [
