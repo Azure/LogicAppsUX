@@ -19,3 +19,4 @@ export { default as Constants } from './common/constants';
 export { serializeWorkflow as serializeBJSWorkflow } from './core/actions/bjsworkflow/serializer';
 export { updateCallbackUrl } from './core/actions/bjsworkflow/initialize';
 export { ReactQueryProvider } from './core/ReactQueryProvider';
+export { isOpenApiSchemaVersion } from './common/utilities/Utils';

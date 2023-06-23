@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { isOpenApiSchemaVersion } from '@microsoft/logic-apps-designer';
 import { clone } from '@microsoft/utils-logic-apps';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -6,6 +7,7 @@ import { clone } from '@microsoft/utils-logic-apps';
 
 export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: any): Promise<any> => {
   const workflow = clone(_workflow);
+  const isOpenApiSchema = isOpenApiSchemaVersion(workflow.definition);
 
   // Initialize parameters if they don't exist
   if (!workflow?.parameters) workflow['parameters'] = {};
@@ -21,57 +23,63 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
     else delete workflow.parameters[key];
   });
 
-  // Move connection data to parameters
-  if (workflow?.connections) {
-    workflow.parameters = {
-      ...workflow.parameters,
-      $connections: {
-        value: {
-          ...workflow.connections,
+  if (isOpenApiSchema) {
+    if (workflow?.connections) {
+      workflow.connectionReferences = workflow.connections;
+    }
+  } else {
+    // Move connection data to parameters
+    if (workflow?.connections) {
+      workflow.parameters = {
+        ...workflow.parameters,
+        $connections: {
+          value: {
+            ...workflow.connections,
+          },
         },
-      },
+      };
+    }
+
+    // Set default empty connection object in definition for older schemas
+    workflow.definition.parameters['$connections'] = {
+      type: 'Object',
+      defaultValue: {},
     };
-  }
 
-  // Set default empty connection object in definition
-  workflow.definition.parameters['$connections'] = {
-    type: 'Object',
-    defaultValue: {},
-  };
-
-  // Alter connection references in actions
-  Object.entries(workflow?.definition?.actions ?? {}).forEach(([key, action]: [key: string, value: any]) => {
-    const { referenceName } = action.inputs?.host?.connection ?? {};
-    if (referenceName) {
-      workflow.definition.actions[key].inputs.host.connection = {
-        name: `@parameters('$connections')['${referenceName}']['connectionId']`,
-      };
-    }
-  });
-
-  // Alter connection references in triggers
-  Object.entries(workflow?.definition?.triggers ?? {}).forEach(([key, trigger]: [key: string, value: any]) => {
-    const { referenceName } = trigger.inputs?.host?.connection ?? {};
-    if (referenceName) {
-      workflow.definition.triggers[key].inputs.host.connection = {
-        name: `@parameters('$connections')['${referenceName}']['connectionId']`,
-      };
-    }
-  });
-
-  // Move connection references to root parameters
-  if (workflow?.connectionReferences) {
-    if (!workflow.parameters?.$connections) {
-      workflow.parameters.$connections = { value: {} };
-    }
-    Object.entries(workflow.connectionReferences ?? {}).forEach(([key, connection]: [key: string, value: any]) => {
-      workflow.parameters.$connections.value[key] = {
-        connectionId: connection.connection.id,
-        connectionName: connection.connectionName,
-        id: connection.api.id,
-      };
+    // Alter connection references in actions
+    Object.entries(workflow?.definition?.actions ?? {}).forEach(([key, action]: [key: string, value: any]) => {
+      const { referenceName } = action.inputs?.host?.connection ?? {};
+      if (referenceName) {
+        workflow.definition.actions[key].inputs.host.connection = {
+          name: `@parameters('$connections')['${referenceName}']['connectionId']`,
+        };
+      }
     });
-    delete workflow.connectionReferences;
+
+    // Alter connection references in triggers
+    Object.entries(workflow?.definition?.triggers ?? {}).forEach(([key, trigger]: [key: string, value: any]) => {
+      const { referenceName } = trigger.inputs?.host?.connection ?? {};
+      if (referenceName) {
+        workflow.definition.triggers[key].inputs.host.connection = {
+          name: `@parameters('$connections')['${referenceName}']['connectionId']`,
+        };
+      }
+    });
+
+    // Move connection references to root parameters
+    if (workflow?.connectionReferences) {
+      if (!workflow.parameters?.$connections) {
+        workflow.parameters.$connections = { value: {} };
+      }
+      Object.entries(workflow.connectionReferences ?? {}).forEach(([key, connection]: [key: string, value: any]) => {
+        workflow.parameters.$connections.value[key] = {
+          connectionId: connection.connection.id,
+          connectionName: connection.connectionName,
+          id: connection.api.id,
+        };
+      });
+      delete workflow.connectionReferences;
+    }
   }
 
   // Remove connections from workflow root

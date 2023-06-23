@@ -11,6 +11,7 @@ export interface ConnectionReference {
   connection: { id: string };
   connectionName?: string;
   connectionProperties?: Record<string, any>;
+  connectionRuntimeUrl?: string;
   authentication?: ApiHubAuthentication;
   impersonation?: Impersonation;
 }

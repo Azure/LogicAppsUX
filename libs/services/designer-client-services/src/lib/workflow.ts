@@ -21,6 +21,11 @@ export interface IWorkflowService {
    * Checks if explicit authentication is needed for managed identity connections.
    */
   isExplicitAuthRequiredForManagedIdentity?(): boolean;
+
+  /**
+   * Gets definition schema version from current operation types.
+   */
+  getDefinitionSchema?(operationInfos: { type: string; kind?: string }[]): string;
 }
 
 let service: IWorkflowService;
