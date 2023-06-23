@@ -1,19 +1,18 @@
 import { LogicAppResolver } from './LogicAppResolver';
-import { executeOnAzurite } from './app/azuriteExtension/executeOnAzuriteExt';
-import { updateAzuriteConfiguration } from './app/azuriteExtension/updateAzuriteConfiguration';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { validateDotNetSDKIsLatest } from './app/commands/dotNetSDK/validateDotNetSDKIsLatest';
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { activateAzurite } from './app/utils/azurite/activateAzurite';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { getPackageManager } from './app/utils/packageManagers/getPackageManager';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
-import { azuriteLocationSetting, extensionCommand, logicAppFilter } from './constants';
+import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
@@ -25,7 +24,6 @@ import {
   getAzExtResourceType,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import * as os from 'os';
 import * as vscode from 'vscode';
 
 const perfStats = {
@@ -62,12 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
     });
 
-    const azuriteDir = `${os.homedir()}\\.azurite`;
-    await updateAzuriteConfiguration(activateContext, azuriteLocationSetting, azuriteDir);
-    activateContext.telemetry.properties.azuriteLocation = azuriteDir;
-
-    await executeOnAzurite(activateContext, extensionCommand.azureAzuriteStart);
-    activateContext.telemetry.properties.azuriteStart = 'true';
+    await activateAzurite(activateContext);
 
     registerEvent(
       extensionCommand.validateLogicAppProjects,
