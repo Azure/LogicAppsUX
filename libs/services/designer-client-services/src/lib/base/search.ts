@@ -177,7 +177,7 @@ export abstract class BaseSearchService implements ISearchService {
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
-    const { value } = await this.getAzureResourceByPage(uri, { 'api-version': openApiVersion ? openApiVersion : apiVersion }, page);
+    const { value } = await this.getAzureResourceByPage(uri, { 'api-version': openApiVersion ?? apiVersion }, page);
 
     return this.moveGeneralInformation(value);
   }

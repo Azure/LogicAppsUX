@@ -151,11 +151,13 @@ const DesignerEditorConsumption = () => {
         await Promise.all(
           Object.keys(connectionReferences).map(async (referenceKey) => {
             const reference = connectionReferences[referenceKey];
-            const { api, connection, connectionProperties } = reference;
+            const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
             newConnectionsObj[referenceKey] = {
               api,
               connection,
+              connectionId: isOpenApiSchemaVersion(definition) ? undefined : connection.id,
               connectionProperties,
+              connectionRuntimeUrl,
             };
           })
         );
@@ -310,10 +312,10 @@ const getDesignerServices = (
   });
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
-    openApiConnectionMode: true, // This should be turned on for Open Api testing.
+    openApiConnectionMode: false, // This should be turned on for Open Api testing.
     apiHubServiceDetails: {
       apiVersion: '2018-07-01-preview',
-      openApiVersion: '2022-09-01-preview', //Uncomment to test Open Api
+      openApiVersion: undefined, //'2022-09-01-preview', //Uncomment to test Open Api
       subscriptionId,
       location,
     },

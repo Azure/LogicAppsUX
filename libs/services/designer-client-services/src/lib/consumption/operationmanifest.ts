@@ -20,7 +20,7 @@ import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { ArgumentException, UnsupportedException, endsWith, startsWith } from '@microsoft/utils-logic-apps';
+import { ArgumentException, UnsupportedException, startsWith } from '@microsoft/utils-logic-apps';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;
@@ -92,12 +92,10 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     };
 
     try {
-      const response = !endsWith(operationId, 'sendmessage')
-        ? await httpClient.get<any>({
-            uri: `${baseUrl}${connectorId}/apiOperations/${operationName}`,
-            queryParameters,
-          })
-        : sendMessageManifest;
+      const response = await httpClient.get<any>({
+        uri: `${baseUrl}${connectorId}/apiOperations/${operationName}`,
+        queryParameters,
+      });
 
       const {
         properties: { brandColor, description, iconUri, manifest, api, operationType },
@@ -121,6 +119,8 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
 }
 
 const openapiconnection = 'openapiconnection';
+const openapiconnectionwebhook = 'openapiconnectionwebhook';
+const openapiconnectionnotification = 'openapiconnectionnotification';
 const composenew = 'composenew';
 const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
 const liquidjsontojson = 'liquidjsontojson';
@@ -142,7 +142,13 @@ const invokeworkflow = 'invokeworkflow';
 const sendtobatch = 'sendtobatch';
 const batch = 'batch';
 
-const supportedConsumptionManifestTypes = [...supportedBaseManifestTypes, appservice, openapiconnection];
+const supportedConsumptionManifestTypes = [
+  ...supportedBaseManifestTypes,
+  appservice,
+  openapiconnection,
+  openapiconnectionwebhook,
+  openapiconnectionnotification,
+];
 
 const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   ...supportedBaseManifestObjects,
@@ -167,315 +173,3 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [sendtobatch, sendToBatchManifest],
   [batch, batchTriggerManifest],
 ]);
-
-const sbConnector = {
-  properties: {
-    name: 'servicebus',
-    connectionParameters: {
-      connectionString: {
-        type: 'securestring',
-        uiDefinition: {
-          displayName: 'Connection String',
-          description: 'Azure Service Bus Connection String',
-          tooltip: 'Provide Azure Service Bus Connection String',
-          constraints: {
-            required: 'true',
-          },
-        },
-      },
-    },
-    connectionParameterSets: {
-      uiDefinition: {
-        displayName: 'Authentication Type',
-        description: 'Type of authentication to be used',
-      },
-      values: [
-        {
-          name: 'connectionstringauth',
-          uiDefinition: {
-            displayName: 'Access Key',
-            description: 'Provide connection string to access your Azure Service Bus.',
-          },
-          parameters: {
-            connectionString: {
-              type: 'securestring',
-              uiDefinition: {
-                displayName: 'Connection String',
-                description: 'Azure Service Bus Connection String',
-                tooltip: 'Provide Azure Service Bus Connection String',
-                constraints: {
-                  required: 'true',
-                },
-              },
-            },
-          },
-          metadata: {
-            allowSharing: false,
-          },
-        },
-        {
-          name: 'aadAuth',
-          uiDefinition: {
-            displayName: 'Azure AD Integrated',
-            description: 'Use Azure Active Directory to access your Azure Service Bus.',
-          },
-          parameters: {
-            token: {
-              type: 'oauthSetting',
-              oAuthSettings: {
-                identityProvider: 'aadcertificate',
-                clientId: '9375045e-1161-46c7-be76-4feb94bdcbbb',
-                scopes: [],
-                redirectMode: 'GlobalPerConnector',
-                redirectUrl: 'https://global.consent.azure-apim.net/redirect/servicebus',
-                properties: {
-                  IsFirstParty: 'True',
-                  AzureActiveDirectoryResourceId: 'https://servicebus.azure.net',
-                  IsOnbehalfofLoginSupported: true,
-                },
-                customParameters: {
-                  grantType: {
-                    value: 'code',
-                  },
-                  resourceUri: {
-                    value: 'https://servicebus.azure.net',
-                  },
-                  loginUriAAD: {
-                    value: 'https://login.windows.net',
-                  },
-                },
-              },
-              uiDefinition: {
-                displayName: 'Login with your Credentials',
-                description: 'Sign in with your Azure Active Directory credentials',
-                tooltip: 'Provide Azure Active Directory credentials',
-                constraints: {
-                  required: 'true',
-                  hidden: 'false',
-                },
-              },
-            },
-            namespaceEndpoint: {
-              type: 'string',
-              uiDefinition: {
-                displayName: 'Namespace Endpoint',
-                description: 'Provide Service Bus Namespace Endpoint (e.g: sb://testsb.servicebus.windows.net/)',
-                tooltip: 'Provide Service Bus Namespace Endpoint (e.g: sb://testsb.servicebus.windows.net/)',
-                constraints: {
-                  required: 'true',
-                },
-              },
-            },
-          },
-          metadata: {
-            allowSharing: false,
-          },
-        },
-        {
-          name: 'managedIdentityAuth',
-          uiDefinition: {
-            displayName: 'Logic Apps Managed Identity',
-            description: 'Create a connection using a LogicApps Managed Identity',
-          },
-          parameters: {
-            token: {
-              type: 'managedIdentity',
-              managedIdentitySettings: {
-                resourceUri: 'https://servicebus.azure.net',
-              },
-              uiDefinition: {
-                displayName: 'LogicApps Managed Identity',
-                description: 'Sign in with a Logic Apps Managed Identity',
-                tooltip: 'Managed Identity',
-                constraints: {
-                  location: 'logicapp',
-                  required: 'true',
-                },
-              },
-            },
-            namespaceEndpoint: {
-              type: 'string',
-              uiDefinition: {
-                displayName: 'Namespace Endpoint',
-                description: 'Provide Service Bus Namespace Endpoint (e.g: sb://testsb.servicebus.windows.net/)',
-                tooltip: 'Provide Service Bus Namespace Endpoint (e.g: sb://testsb.servicebus.windows.net/)',
-                constraints: {
-                  required: 'true',
-                },
-              },
-            },
-          },
-          metadata: {
-            allowSharing: true,
-          },
-        },
-      ],
-    },
-    metadata: {
-      source: 'marketplace',
-      brandColor: '#c4d5ff',
-      useNewApimVersion: true,
-    },
-    runtimeUrls: ['https://logic-apis-westus.azure-apim.net/apim/servicebus'],
-    generalInformation: {
-      iconUrl: 'https://connectoricons-prod.azureedge.net/u/shgogna/globalperconnector-train2/1.0.1641.3328/servicebus/icon.png',
-      displayName: 'Service Bus',
-      description:
-        'Connect to Azure Service Bus to send and receive messages. You can perform actions such as send to queue, send to topic, receive from queue, receive from subscription, etc.',
-      releaseTag: 'Production',
-      tier: 'Premium',
-    },
-    capabilities: ['actions'],
-    isExportSupported: true,
-  },
-  id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/westus/managedApis/servicebus',
-  name: 'servicebus',
-  type: 'Microsoft.Web/locations/managedApis',
-  location: 'westus',
-};
-
-const sendMessageManifest = {
-  properties: {
-    summary: 'Send message',
-    description: 'This operation sends a message to a queue or topic.',
-    pageable: false,
-    isChunkingSupported: false,
-    annotation: {
-      status: 'Production',
-      family: 'MyOperation',
-      revision: 1,
-    },
-    api: {
-      name: sbConnector.name,
-      displayName: sbConnector.properties.generalInformation.displayName,
-      description: sbConnector.properties.generalInformation.description,
-      iconUri: sbConnector.properties.generalInformation.iconUrl,
-      brandColor: sbConnector.properties.metadata.brandColor,
-      category: 'Standard',
-      id: sbConnector.id,
-      type: sbConnector.type,
-    },
-    isWebhook: false,
-    isNotification: false,
-    manifest: {
-      inputs: {
-        type: 'object',
-        properties: {
-          message: {
-            type: 'object',
-            properties: {
-              ContentData: {
-                format: 'byte',
-                description: 'Content of the message',
-                type: 'string',
-                title: 'Content',
-                'x-ms-property-name-alias': 'message/ContentData',
-              },
-              ContentType: {
-                description: 'Content type of the message content',
-                type: 'string',
-                title: 'Content Type',
-                'x-ms-property-name-alias': 'message/ContentType',
-              },
-              MessageId: {
-                description: 'This is a user-defined value that Service Bus can use to identify duplicate messages, if enabled.',
-                type: 'string',
-                title: 'Message Id',
-                'x-ms-visibility': 'advanced',
-                'x-ms-property-name-alias': 'message/MessageId',
-              },
-            },
-            required: [],
-            'x-ms-property-name-alias': 'message',
-          },
-          entityName: {
-            type: 'string',
-            'x-ms-property-name-alias': 'entityName',
-            title: 'Queue/Topic name',
-            'x-ms-dynamic-list': {
-              dynamicState: {
-                operationId: 'GetEntities',
-                parameters: {},
-              },
-              itemValuePath: 'Name',
-              itemTitlePath: 'DisplayName',
-            },
-          },
-          systemProperties: {
-            type: 'string',
-            default: 'None',
-            'x-ms-property-name-alias': 'systemProperties',
-            title: 'System properties',
-            description:
-              'System properties - None or Run Details. Run Details will add run metadata property details as custom properties in the message.',
-            'x-ms-dynamic-list': {
-              dynamicState: {
-                operationId: 'GetSystemProperties',
-                parameters: {},
-              },
-            },
-          },
-        },
-        required: ['message', 'entityName'],
-      },
-      inputsLocation: ['inputs', 'parameters'],
-      isInputsOptional: false,
-      outputs: {
-        type: 'object',
-        properties: {
-          headers: {
-            type: 'object',
-            properties: {
-              myHeader: {
-                type: 'string',
-                'x-ms-property-name-alias': 'headers/myHeader',
-              },
-            },
-            'x-ms-property-name-alias': 'headers',
-          },
-          body: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                number: {
-                  type: 'number',
-                  'x-ms-property-name-alias': 'number',
-                },
-                alias: {
-                  type: 'string',
-                  format: 'date-time',
-                  'x-ms-property-name-alias': 'alias',
-                },
-              },
-              required: [],
-            },
-            'x-ms-property-name-alias': 'body',
-          },
-        },
-      },
-      isOutputsOptional: false,
-      settings: {
-        secureData: {},
-        trackedProperties: {
-          scopes: ['Action'],
-        },
-        retryPolicy: {
-          scopes: ['Action'],
-        },
-      },
-      includeRootOutputs: false,
-      connectionReference: {
-        referenceKeyFormat: 'openapiconnection',
-      },
-      connector: sbConnector,
-      statusBadge: {
-        name: 'Production',
-        description: 'Production',
-      },
-      operationOptions: 'None',
-    },
-    operationType: 'OpenApiConnection',
-    operationKind: 'NotSpecified',
-  },
-};
