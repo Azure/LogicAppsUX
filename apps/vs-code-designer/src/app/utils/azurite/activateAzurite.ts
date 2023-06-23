@@ -18,19 +18,23 @@ import * as os from 'os';
  */
 export async function activateAzurite(context: IActionContext): Promise<void> {
   const userAzuriteDir = await getAzuriteConfiguration(context, azuriteLocationSetting);
-  const defaultAzuriteDir = `${os.homedir()}\\.azurite`;
-  const azuriteDir = await context.ui.showInputBox({
-    placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
-    prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
-    value: userAzuriteDir ?? defaultAzuriteDir,
-  });
 
-  if (azuriteDir) {
-    await updateAzuriteConfiguration(context, azuriteLocationSetting, azuriteDir);
-    context.telemetry.properties.azuriteLocation = azuriteDir;
-  } else {
-    await updateAzuriteConfiguration(context, azuriteLocationSetting, defaultAzuriteDir);
-    context.telemetry.properties.azuriteLocation = defaultAzuriteDir;
+  // User has not configured azurite.location.
+  if (!userAzuriteDir) {
+    const defaultAzuriteDir = `${os.homedir()}\\.azurite`;
+    const azuriteDir = await context.ui.showInputBox({
+      placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
+      prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
+      value: defaultAzuriteDir,
+    });
+
+    if (azuriteDir) {
+      await updateAzuriteConfiguration(context, azuriteLocationSetting, azuriteDir);
+      context.telemetry.properties.azuriteLocation = azuriteDir;
+    } else {
+      await updateAzuriteConfiguration(context, azuriteLocationSetting, defaultAzuriteDir);
+      context.telemetry.properties.azuriteLocation = defaultAzuriteDir;
+    }
   }
 
   await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
