@@ -72,7 +72,7 @@ export enum ConnectionReferenceKeyFormat {
   ApiManagement = 'apimanagement',
   Function = 'function',
   OpenApi = 'openapi',
-  OpenApiConnection = 'openapiconnection',
+  OpenApiConnection = 'openapiconnection', // TODO: This can change when backend fixes a value, right now this is not used by any manifest.
   ServiceProvider = 'serviceprovider',
   HybridTrigger = 'hybridtrigger',
 }

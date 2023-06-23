@@ -28,7 +28,7 @@ import {
   ConsumptionSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { DesignerProvider, BJSWorkflowProvider, Designer, isOpenApiSchemaVersion } from '@microsoft/logic-apps-designer';
 import { guid, startsWith } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
 import { useQueryClient } from 'react-query';
@@ -151,16 +151,10 @@ const DesignerEditorConsumption = () => {
         await Promise.all(
           Object.keys(connectionReferences).map(async (referenceKey) => {
             const reference = connectionReferences[referenceKey];
-            const {
-              api: { id: apiId },
-              connection: { id: connectionId },
-              connectionName,
-              connectionProperties,
-            } = reference;
+            const { api, connection, connectionProperties } = reference;
             newConnectionsObj[referenceKey] = {
-              id: apiId,
-              connectionId,
-              connectionName,
+              api,
+              connection,
               connectionProperties,
             };
           })
@@ -371,7 +365,8 @@ const getDataForConsumption = (data: any) => {
   const properties = data?.properties as any;
 
   const definition = removeProperties(properties?.definition, ['parameters']);
-  const connections = properties?.parameters?.$connections?.value ?? {};
+  const connections =
+    (isOpenApiSchemaVersion(definition) ? properties?.connectionReferences : properties?.parameters?.$connections?.value) ?? {};
 
   const workflow = { definition, connections };
   const connectionsData: Record<string, any> = {};
@@ -393,9 +388,9 @@ const formatConnectionReferencesForConsumption = (connectionReferences: Record<s
 
 const formatConnectionReferenceForConsumption = (connectionReference: any): any => {
   const connectionReferenceCopy = { ...connectionReference };
-  connectionReferenceCopy.connection = { id: connectionReference.connectionId };
+  connectionReferenceCopy.connection = connectionReference.connection ?? { id: connectionReference.connectionId };
   delete connectionReferenceCopy.connectionId;
-  connectionReferenceCopy.api = { id: connectionReference.id };
+  connectionReferenceCopy.api = connectionReference.api ?? { id: connectionReference.id };
   delete connectionReferenceCopy.id;
   return connectionReferenceCopy;
 };
