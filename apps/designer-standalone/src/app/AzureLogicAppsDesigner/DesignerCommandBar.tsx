@@ -11,6 +11,7 @@ import {
   switchToWorkflowParameters,
   switchToErrorsPanel,
   useIsDesignerDirty,
+  useAllSettingsValidationErrors,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -75,8 +76,12 @@ export const DesignerCommandBar = ({
     }
     return validationErrorToShow;
   });
+  const allSettingsErrors = useAllSettingsValidationErrors();
 
-  const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
+  const haveErrors = useMemo(
+    () => allInputErrors.length > 0 || !!allWorkflowParameterErrors || !!allSettingsErrors,
+    [allInputErrors, allWorkflowParameterErrors, allSettingsErrors]
+  );
 
   const saveIsDisabled = isSaving || haveErrors || !designerIsDirty;
   const items: ICommandBarItemProps[] = [

@@ -1,9 +1,9 @@
 import type { RootState } from '../../../core';
+import { useAllSettingsValidationErrors } from '../../../core/state/setting/settingSelector';
 import { useWorkflowParameterValidationErrors } from '../../../core/state/workflowparameters/workflowparametersselector';
 import { NodeErrors } from './nodeErrors';
 import { WorkflowParameterErrors } from './workflowParameterErrors';
-import { FocusTrapZone, IconButton, Text, css } from '@fluentui/react';
-// import { useWorkflowParameterValidationErrors } from '../../../core/state/workflowparameters/workflowparametersselector';
+import { FocusTrapZone, IconButton, Text } from '@fluentui/react';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -28,6 +28,25 @@ export const ErrorPanel = (props: CommonPanelProps) => {
     return Object.values(allInputErrors).reduce((acc, curr) => acc + curr.length, 0);
   }, [allInputErrors]);
 
+  const allRawSettingsErrors = useAllSettingsValidationErrors();
+  const allSettingsErrors: Record<string, string[]> = useMemo(() => {
+    const validationErrorToShow: Record<string, string[]> = {};
+    for (const [nodeId, v] of Object.entries(allRawSettingsErrors ?? {})) {
+      const errors = v.map((setting) => setting.message ?? '');
+      if (errors.length > 0) validationErrorToShow[nodeId] = errors;
+    }
+    return validationErrorToShow;
+  }, [allRawSettingsErrors]);
+
+  const numSettingsErrors = useMemo(() => {
+    return Object.values(allSettingsErrors).reduce((acc, curr) => acc + curr.length, 0);
+  }, [allSettingsErrors]);
+
+  const allNodesWithErrors = useMemo(
+    () => [...new Set([...Object.keys(allInputErrors ?? {}), ...Object.keys(allSettingsErrors ?? {})])],
+    [allInputErrors, allSettingsErrors]
+  );
+
   const workflowParameterNames: Record<string, string> = useSelector((state: RootState) =>
     Object.entries(state.workflowParameters.definitions).reduce((acc: any, curr: any) => {
       // eslint-disable-next-line no-param-reassign
@@ -40,7 +59,9 @@ export const ErrorPanel = (props: CommonPanelProps) => {
     return Object.values(workflowParametersErrors ?? {}).reduce((acc, curr) => acc + Object.keys(curr).length, 0);
   }, [workflowParametersErrors]);
 
-  const totalNumErrors = useMemo(() => numInputErrors + numWorkflowParametersErrors, [numInputErrors, numWorkflowParametersErrors]);
+  const numOperationErrors = useMemo(() => numInputErrors + numSettingsErrors, [numInputErrors, numSettingsErrors]);
+
+  const totalNumErrors = useMemo(() => numOperationErrors + numWorkflowParametersErrors, [numOperationErrors, numWorkflowParametersErrors]);
 
   const errorPanelHeader = intl.formatMessage({
     defaultMessage: 'Errors',
@@ -70,17 +91,16 @@ export const ErrorPanel = (props: CommonPanelProps) => {
       </div>
       <div className="msla-error-panel-body">
         <ErrorCategory title={workflowParametersCategoryHeader} numErrors={numWorkflowParametersErrors}>
-          {numWorkflowParametersErrors > 0 ? (
-            <WorkflowParameterErrors parameterNames={workflowParameterNames} errors={workflowParametersErrors} />
-          ) : null}
+          <WorkflowParameterErrors parameterNames={workflowParameterNames} errors={workflowParametersErrors} />
         </ErrorCategory>
 
-        <ErrorCategory title={inputErrorsCategoryHeader} numErrors={numInputErrors}>
-          {Object.entries(allInputErrors).map(([nodeId, errors]: any) => (
-            <NodeErrors key={nodeId} nodeId={nodeId} inputErrors={errors} />
+        <ErrorCategory title={inputErrorsCategoryHeader} numErrors={numOperationErrors}>
+          {allNodesWithErrors.map((nodeId: string) => (
+            <NodeErrors key={nodeId} nodeId={nodeId} inputErrors={allInputErrors?.[nodeId]} settingsErrors={allSettingsErrors?.[nodeId]} />
           ))}
         </ErrorCategory>
 
+        {/* This shouldn't get hit since we disable the panel when there are no errors (but just in case) */}
         {totalNumErrors === 0 ? (
           <div className="msla-error-panel-no-errors">
             <Text variant="medium">{noErrorsText}</Text>
@@ -96,13 +116,15 @@ const ErrorCategory = (props: any) => {
 
   const [isExpanded, setIsExpanded] = useState(true);
 
+  if (numErrors === 0) return null;
+
   return (
-    <div className={css('msla-error-category-container', numErrors === 0 && 'disabled')}>
+    <div className="msla-error-category-container">
       <div className="msla-error-category-header" onClick={() => setIsExpanded(!isExpanded)}>
         <span className="msla-error-number-dot">{numErrors}</span>
         <span className="msla-error-category-title">{title}</span>
       </div>
-      {isExpanded && numErrors > 0 ? <div className="msla-error-category-body">{children}</div> : null}
+      {isExpanded ? <div className="msla-error-category-body">{children}</div> : null}
     </div>
   );
 };

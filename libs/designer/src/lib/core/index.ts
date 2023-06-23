@@ -11,6 +11,8 @@ export { discardAllChanges, setFocusNode, setIsWorkflowDirty } from './state/wor
 export { useIsWorkflowDirty, useNodeDisplayName, useNodeMetadata } from './state/workflow/workflowSelectors';
 export { useIsWorkflowParametersDirty } from './state/workflowparameters/workflowparametersselector';
 export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
+export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
+export { useWorkflowParameterValidationErrors } from './state/workflowparameters/workflowparametersselector';
 export { serializeWorkflow } from './actions/bjsworkflow/serializer';
 export { changePanelNode, clearPanel, switchToWorkflowParameters, switchToErrorsPanel, collapsePanel } from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
