@@ -28,8 +28,14 @@ import {
   ConsumptionSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
-import { guid } from '@microsoft/utils-logic-apps';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  isOpenApiSchemaVersion,
+  getReactQueryClient,
+} from '@microsoft/logic-apps-designer';
+import { guid, startsWith } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -150,17 +156,13 @@ const DesignerEditorConsumption = () => {
         await Promise.all(
           Object.keys(connectionReferences).map(async (referenceKey) => {
             const reference = connectionReferences[referenceKey];
-            const {
-              api: { id: apiId },
-              connection: { id: connectionId },
-              connectionName,
-              connectionProperties,
-            } = reference;
+            const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
             newConnectionsObj[referenceKey] = {
-              id: apiId,
-              connectionId,
-              connectionName,
+              api,
+              connection,
+              connectionId: isOpenApiSchemaVersion(definition) ? undefined : connection.id,
               connectionProperties,
+              connectionRuntimeUrl,
             };
           })
         );
@@ -317,7 +319,7 @@ const getDesignerServices = (
     openApiConnectionMode: false, // This should be turned on for Open Api testing.
     apiHubServiceDetails: {
       apiVersion: '2018-07-01-preview',
-      openApiVersion: undefined, //'2022-09-01-preview', Uncomment to test Open Api
+      openApiVersion: undefined, //'2022-09-01-preview', //Uncomment to test Open Api
       subscriptionId,
       location,
     },
@@ -335,7 +337,12 @@ const getDesignerServices = (
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
     getAppIdentity: () => workflow?.identity,
-    isExplicitAuthRequiredForManagedIdentity: () => true,
+    isExplicitAuthRequiredForManagedIdentity: () => false,
+    getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
+      return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
+        ? 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2023-01-31-preview/workflowdefinition.json#'
+        : undefined;
+    },
   };
 
   const functionService = new BaseFunctionService({
@@ -364,7 +371,8 @@ const getDataForConsumption = (data: any) => {
   const properties = data?.properties as any;
 
   const definition = removeProperties(properties?.definition, ['parameters']);
-  const connections = properties?.parameters?.$connections?.value ?? {};
+  const connections =
+    (isOpenApiSchemaVersion(definition) ? properties?.connectionReferences : properties?.parameters?.$connections?.value) ?? {};
 
   const workflow = { definition, connections };
   const connectionsData: Record<string, any> = {};
@@ -386,9 +394,9 @@ const formatConnectionReferencesForConsumption = (connectionReferences: Record<s
 
 const formatConnectionReferenceForConsumption = (connectionReference: any): any => {
   const connectionReferenceCopy = { ...connectionReference };
-  connectionReferenceCopy.connection = { id: connectionReference.connectionId };
+  connectionReferenceCopy.connection = connectionReference.connection ?? { id: connectionReference.connectionId };
   delete connectionReferenceCopy.connectionId;
-  connectionReferenceCopy.api = { id: connectionReference.id };
+  connectionReferenceCopy.api = connectionReference.api ?? { id: connectionReference.id };
   delete connectionReferenceCopy.id;
   return connectionReferenceCopy;
 };
