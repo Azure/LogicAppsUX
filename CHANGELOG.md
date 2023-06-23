@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [2.36.0](https://github.com/Azure/LogicAppsUX/compare/v2.35.0...v2.36.0) (2023-06-23)
+
+
+### Features
+
+* **designer:** Adding serialization and deserialization changes for Open Api Connection ([#2834](https://github.com/Azure/LogicAppsUX/issues/2834)) ([a1c7d41](https://github.com/Azure/LogicAppsUX/commit/a1c7d41f7d7a84ab8ace0f8cb59ba5316293574b))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed breaking log in Portal ([#2839](https://github.com/Azure/LogicAppsUX/issues/2839)) ([1883e05](https://github.com/Azure/LogicAppsUX/commit/1883e05965617754fbe31b9c31b6eec258a4e024))
+* **Designer:** Removed duplicate service calls ([#2806](https://github.com/Azure/LogicAppsUX/issues/2806)) ([52741e2](https://github.com/Azure/LogicAppsUX/commit/52741e2415b5245b9b25bc72dcd855261b688d53))
+* **vscode:** Resolution of local settings when creating access policy for connection ([#2824](https://github.com/Azure/LogicAppsUX/issues/2824)) ([531a286](https://github.com/Azure/LogicAppsUX/commit/531a286fecaf63a7f53ec0c6f655a42bfdcfef3b))
 
 ## [2.35.0](https://github.com/Azure/LogicAppsUX/compare/v2.34.0...v2.35.0) (2023-06-22)
 
