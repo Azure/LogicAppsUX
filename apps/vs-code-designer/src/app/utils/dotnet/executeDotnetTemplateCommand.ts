@@ -5,6 +5,7 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand, wrapArgInQuotes } from '../funcCoreTools/cpUtils';
+import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension';
 import * as path from 'path';
@@ -85,14 +86,16 @@ export async function validateDotnetInstalled(context: IActionContext): Promise<
 export async function getFramework(context: IActionContext, workingDirectory: string | undefined): Promise<string> {
   if (!cachedFramework) {
     let versions = '';
+    const dotnetBinariesLocation = getWorkspaceSetting<string>('dotnetPath');
+
     try {
-      versions += await executeCommand(undefined, workingDirectory, 'dotnet', '--version');
+      versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--version');
     } catch {
       // ignore
     }
 
     try {
-      versions += await executeCommand(undefined, workingDirectory, 'dotnet', '--list-sdks');
+      versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--list-sdks');
     } catch {
       // ignore
     }

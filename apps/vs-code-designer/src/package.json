@@ -684,6 +684,18 @@
             "type": "string",
             "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
           },
+          "azureLogicAppsStandard.dotnetPath": {
+            "scope": "resource",
+            "type": "string",
+            "default": "dotnet",
+            "description": "The path for dotnet binaries"
+          },
+          "azureLogicAppsStandard.funcCoreToolsPath": {
+            "scope": "resource",
+            "type": "string",
+            "default": "func",
+            "description": "The path for func core tools binaries"
+          },
           "azureLogicAppsStandard.projectSubpath": {
             "scope": "resource",
             "type": "string",
