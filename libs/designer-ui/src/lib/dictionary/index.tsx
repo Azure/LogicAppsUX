@@ -37,7 +37,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   valueTitle,
   dictionaryType = DictionaryType.DEFAULT,
   keyType = constants.SWAGGER.TYPE.STRING,
-  valueType,
+  valueType = constants.SWAGGER.TYPE.STRING,
   getTokenPicker,
   onChange,
   ...baseEditorProps
