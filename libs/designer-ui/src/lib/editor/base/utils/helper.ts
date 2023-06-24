@@ -28,15 +28,6 @@ export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean
   return collapsedValue?.length === 1;
 };
 
-export const initializeDictionaryValidation = (initialValue?: ValueSegment[]): boolean => {
-  const editorString = initialValue?.map((segment) => segment.value).join('');
-  return !editorString || isValidDictionary(editorString);
-};
-
-export const isValidDictionary = (s: string): boolean => {
-  return s.startsWith('{') && s.endsWith('}') && validateDictionaryStrings(s);
-};
-
 export const validateDictionaryStrings = (s: string): boolean => {
   try {
     JSON.parse(s);

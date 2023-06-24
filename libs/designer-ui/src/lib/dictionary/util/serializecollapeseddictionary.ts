@@ -10,6 +10,7 @@ import { $getRoot } from 'lexical';
 export const serializeDictionary = (
   editor: LexicalEditor,
   setItems: (items: DictionaryEditorItemProps[]) => void,
+  setIsValid: (isValid: boolean) => void,
   keyType?: string,
   valueType?: string
 ) => {
@@ -19,21 +20,21 @@ export const serializeDictionary = (
     let jsonEditor;
     try {
       jsonEditor = JSON.parse(editorString);
-    } catch (e) {
-      console.log(e);
-    }
-    const returnItems: DictionaryEditorItemProps[] = [];
+      const returnItems: DictionaryEditorItemProps[] = [];
 
-    for (const [key, value] of Object.entries(jsonEditor)) {
-      const newKey = keyType === constants.SWAGGER.TYPE.STRING ? (key as string) : JSON.stringify(key);
-      const newValue = valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value);
-      returnItems.push({
-        id: guid(),
-        key: convertStringToSegments(newKey, true, nodeMap),
-        value: convertStringToSegments(newValue, true, nodeMap),
-      });
+      for (const [key, value] of Object.entries(jsonEditor)) {
+        const newKey = keyType === constants.SWAGGER.TYPE.STRING ? (key as string) : JSON.stringify(key);
+        const newValue = valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value);
+        returnItems.push({
+          id: guid(),
+          key: convertStringToSegments(newKey, true, nodeMap),
+          value: convertStringToSegments(newValue, true, nodeMap),
+        });
+      }
+      setItems(returnItems);
+      setIsValid(true);
+    } catch (e) {
+      setIsValid(false);
     }
-    console.log(returnItems);
-    setItems(returnItems);
   });
 };

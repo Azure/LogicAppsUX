@@ -2,7 +2,7 @@ import type { DictionaryEditorItemProps } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
-import { getChildrenNodes, isValidDictionary, showCollapsedValidation } from '../../editor/base/utils/helper';
+import { getChildrenNodes, showCollapsedValidation } from '../../editor/base/utils/helper';
 import { serializeDictionary } from '../util/serializecollapeseddictionary';
 import { css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -10,6 +10,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { EditorState } from 'lexical';
 import { $getRoot } from 'lexical';
+import { useEffect } from 'react';
 
 export interface CollapsedDictionaryValidationProps {
   className?: string;
@@ -34,20 +35,20 @@ export const CollapsedDictionaryValidation = ({
 }: CollapsedDictionaryValidationProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
 
+  useEffect(() => {
+    serializeDictionary(editor, setItems, setIsValid, keyType, valueType);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot());
-      let newValiditity = true;
       if (!editorString.trim().length || editorString === '{}') {
-        setIsValid(newValiditity);
+        setIsValid(true);
         setItems([{ key: [], value: [], id: guid() }]);
         setCollapsedValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: editorString }]);
       } else {
-        newValiditity = isValidDictionary(editorString);
-        setIsValid(newValiditity);
-        if (newValiditity) {
-          serializeDictionary(editor, setItems, keyType, valueType);
-        }
+        serializeDictionary(editor, setItems, setIsValid, keyType, valueType);
         setCollapsedValue(serializeEditorState(editorState));
       }
     });

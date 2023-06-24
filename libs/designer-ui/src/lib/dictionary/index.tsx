@@ -2,7 +2,6 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { initializeDictionaryValidation } from '../editor/base/utils/helper';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
 import { convertItemsToSegments } from './util/deserializecollapseddictionary';
@@ -46,7 +45,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   const [collapsed, setCollapsed] = useState(!initialItems ?? false);
   const [items, setItems] = useState(initialItems);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
-  const [isValid, setIsValid] = useState(initializeDictionaryValidation(initialValue));
+  const [isValid, setIsValid] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
