@@ -1607,7 +1607,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "En desarrollo"
     }
   ],
   "9YGcT2": [
@@ -3413,6 +3413,12 @@
       "value": "Identidad administrada"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -5129,7 +5135,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "Selección de un recurso de Swagger Function App"
     }
   ],
   "Y9kBz5": [
@@ -5680,6 +5686,12 @@
     {
       "type": 0,
       "value": "Devuelve el cuerpo de una parte en una salida de varias partes de una acción."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
     }
   ],
   "cgq/+y": [
@@ -6911,6 +6923,12 @@
       "value": "Forma abreviada de actions('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -7062,7 +7080,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "Haga una pregunta o describa cómo quiere cambiar este flujo"
     }
   ],
   "mvrlkP": [

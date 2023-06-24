@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.34.0",
+  "version": "2.36.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -307,34 +307,42 @@
         "category": "Azure Logic Apps"
       }
     ],
+    "submenus": [
+      {
+        "id": "azureLogicAppsStandard.submenus.workspaceActions",
+        "icon": "assets/logicapp.png",
+        "label": "Azure Logic Apps"
+      }
+    ],
     "menus": {
-      "azureWorkspaceDeploy": [
+      "azureLogicAppsStandard.submenus.workspaceActions": [
+        {
+          "command": "azureLogicAppsStandard.createNewProject",
+          "group": "1_create@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.createNewCodeProject",
+          "when": "isWindows",
+          "group": "1_create@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCodeless",
+          "group": "1_create@3"
+        },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "when": "view == azureWorkspace",
-          "group": "navigation@1"
+          "group": "2_deploy@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.exportLogicApp",
+          "group": "3_export@1"
         }
       ],
       "view/title": [
         {
-          "command": "azureLogicAppsStandard.createNewProject",
-          "when": "view == azureWorkspace",
-          "group": "navigation@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.createNewCodeProject",
-          "when": "view == azureWorkspace && isWindows",
-          "group": "navigation@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "submenu": "azureLogicAppsStandard.submenus.workspaceActions",
           "when": "view == azureWorkspace",
           "group": "navigation@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.exportLogicApp",
-          "when": "view == azureWorkspace",
-          "group": "navigation@4"
         }
       ],
       "view/item/context": [
