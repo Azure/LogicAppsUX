@@ -3,7 +3,6 @@ import type { RootState } from '../../state/store';
 import { useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } from '../../state/workflowLoadingSelectors';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ParametersData } from './Models/Workflow';
-import type { WorkflowApp } from './Models/WorkflowApp';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
 import { HttpClient } from './Services/HttpClient';
 import {
@@ -11,7 +10,6 @@ import {
   saveWorkflowConsumption,
   useCurrentTenantId,
   useWorkflowAndArtifactsConsumption,
-  useWorkflowApp,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
@@ -56,19 +54,12 @@ const DesignerEditorConsumption = () => {
   const queryClient = getReactQueryClient();
 
   // const workflowName = workflowId.split('/').splice(-1)[0];
-  const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const {
     data: workflowAndArtifactsData,
     isLoading: isWorkflowAndArtifactsLoading,
     isError: isWorklowAndArtifactsError,
     error: workflowAndArtifactsError,
   } = useWorkflowAndArtifactsConsumption(workflowId);
-  const {
-    data: workflowAppData,
-    isLoading: isWorkflowAppLoading,
-    isError: isWorkflowAppError,
-    error: workflowAppError,
-  } = useWorkflowApp(siteResourceId, true);
   const { data: tenantId } = useCurrentTenantId();
   const [designerID, setDesignerID] = React.useState(guid());
 
@@ -78,27 +69,14 @@ const DesignerEditorConsumption = () => {
   );
   const { definition } = workflow;
 
-  const getConnectionConfiguration = async (_connectionId: string): Promise<any> => {
-    return undefined;
-  };
-
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
   const services = React.useMemo(
-    () =>
-      getDesignerServices(
-        workflowId,
-        workflowAppData as WorkflowApp,
-        getConnectionConfiguration,
-        tenantId,
-        canonicalLocation,
-        undefined,
-        queryClient
-      ),
+    () => getDesignerServices(workflowId, workflow as any, tenantId, canonicalLocation, undefined, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflowAppData, tenantId, canonicalLocation, designerID]
+    [workflowId, workflow, tenantId, canonicalLocation, designerID]
   );
 
   const [parsedDefinition, setParsedDefinition] = React.useState<any>(undefined);
@@ -120,22 +98,9 @@ const DesignerEditorConsumption = () => {
     }
   }, []);
 
-  const isLoading = React.useMemo(
-    () => isWorkflowAndArtifactsLoading || isWorkflowAppLoading,
-    [isWorkflowAndArtifactsLoading, isWorkflowAppLoading]
-  );
-
-  const isError = React.useMemo(() => isWorklowAndArtifactsError || isWorkflowAppError, [isWorklowAndArtifactsError, isWorkflowAppError]);
-
-  const error = React.useMemo(() => workflowAndArtifactsError ?? workflowAppError, [workflowAndArtifactsError, workflowAppError]);
-
-  if (!parsedDefinition || isLoading) {
+  if (!parsedDefinition || isWorkflowAndArtifactsLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
-  }
-
-  if (isError) {
-    throw error;
   }
 
   if (isWorklowAndArtifactsError) throw workflowAndArtifactsError;
@@ -147,7 +112,6 @@ const DesignerEditorConsumption = () => {
       ...workflow,
       definition,
       parameters,
-      connections: {},
     };
 
     try {
@@ -207,7 +171,6 @@ const DesignerEditorConsumption = () => {
 const getDesignerServices = (
   workflowId: string,
   workflow: any,
-  getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   location: string,
   loggerService?: any,
@@ -260,7 +223,6 @@ const getDesignerServices = (
       ['connectionProviders/http', 'httpswaggeraction'],
       ['connectionProviders/http', 'httpswaggertrigger'],
     ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
-    getConfiguration,
     schemaClient: {
       getLogicAppSwagger: (args: any) => childWorkflowService.getLogicAppSwagger(args.parameters.workflowId),
       getApimOperationSchema: (args: any) => {
@@ -291,13 +253,8 @@ const getDesignerServices = (
         return apimService.getOperations(configuration?.connection?.apiId);
       },
     },
-    apiHubServiceDetails: {
-      apiVersion: '2018-07-01-preview',
-      baseUrl,
-      subscriptionId,
-      resourceGroup,
-    },
-    workflowReferenceId: '',
+    apiVersion: '2018-07-01-preview',
+    workflowReferenceId: workflowId,
   });
   const gatewayService = new BaseGatewayService({
     baseUrl,
@@ -316,10 +273,10 @@ const getDesignerServices = (
   });
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
-    openApiConnectionMode: false, // This should be turned on for Open Api testing.
+    openApiConnectionMode: true, // This should be turned on for Open Api testing.
     apiHubServiceDetails: {
       apiVersion: '2018-07-01-preview',
-      openApiVersion: undefined, //'2022-09-01-preview', //Uncomment to test Open Api
+      openApiVersion: '2022-09-01-preview', //Uncomment to test Open Api
       subscriptionId,
       location,
     },
@@ -375,11 +332,10 @@ const getDataForConsumption = (data: any) => {
     (isOpenApiSchemaVersion(definition) ? properties?.connectionReferences : properties?.parameters?.$connections?.value) ?? {};
 
   const workflow = { definition, connections };
-  const connectionsData: Record<string, any> = {};
   const connectionReferences = formatConnectionReferencesForConsumption(connections);
   const parameters: ParametersData = formatWorkflowParametersForConsumption(properties);
 
-  return { workflow, connectionsData, connectionReferences, parameters };
+  return { workflow, connectionReferences, parameters };
 };
 
 const removeProperties = (obj: any = {}, props: string[] = []): Object => {
