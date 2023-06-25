@@ -4617,6 +4617,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";MLckJz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required. A string that contains the start time.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[必要項。包含開始時間的字串。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MOsuw2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+10:00) Guam, Port Moresby]]></Val>
@@ -7695,6 +7704,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";cfUHfs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Returns the difference between two dates as a timespan string]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[以時間範圍字串傳回兩個日期之間的差異]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";cgq/+y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select an identity]]></Val>
@@ -9383,6 +9401,15 @@
           <Val><![CDATA[Shorthand for actions('actionName').outputs.body]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[actions('actionName').outputs.body 的速記]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";lkgjxD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required. A string that contains the end time.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[必要項。包含結束時間的字串。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
