@@ -113,6 +113,10 @@ const initializeOperationDetails = async (
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
     connector = manifest.properties?.connector;
 
+    if (connector && connector.id !== operationInfo.connectorId) {
+      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo, connectorId: connector.id }));
+    }
+
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, presetParameterValues);
