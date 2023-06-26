@@ -1,5 +1,5 @@
 import { store } from '../../../core/store';
-import { PanelRoot } from '../panelRoot_TEMP';
+import { PanelRoot } from '../panelRoot';
 import { Provider } from 'react-redux';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
