@@ -26,15 +26,22 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
   for (let index = 0; index < itemsToConvert.length; index++) {
     const { key, value } = itemsToConvert[index];
     // todo: we should have some way of handle formatting better
+    const convertedKeyType = convertValueType(key, keyType);
     const updatedKey = key.map((segment) => {
-      return { ...segment, value: keyType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n') };
+      return {
+        ...segment,
+        value: convertedKeyType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n'),
+      };
     });
-    const convertedKeyType = convertValueType(updatedKey, keyType);
 
+    const convertedValueType = convertValueType(value, valueType);
     const updatedValue = value.map((segment) => {
-      return { ...segment, value: valueType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n') };
+      return {
+        ...segment,
+        value: convertedValueType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n'),
+      };
     });
-    const convertedValueType = convertValueType(updatedValue, valueType);
+
     insertQutationForStringType(parsedItems, convertedKeyType);
     parsedItems.push(...updatedKey);
     insertQutationForStringType(parsedItems, convertedKeyType);
