@@ -4,7 +4,7 @@ import type { AzureOperationsFetchResponse, BaseSearchServiceOptions, Continuati
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
 import type { QueryParameters } from '../httpClient';
 import type { BuiltInOperation, Connector, DiscoveryOperation, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
-import { ArgumentException, connectorsSearchResultsMock, equals } from '@microsoft/utils-logic-apps';
+import { ArgumentException, connectorsSearchResultsMock } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
@@ -48,7 +48,7 @@ export class StandardSearchService extends BaseSearchService {
     };
     const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
-    const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAPIOperations(response.value);
+    const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
     return [...filteredApiOperations, ...getClientBuiltInOperations(filterOperation)];
   }
@@ -118,7 +118,7 @@ export class StandardSearchService extends BaseSearchService {
     };
     const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
-    const filteredApiConnectors = isAzureConnectorsEnabled ? response.value : filterAPIConnectors(response.value);
+    const filteredApiConnectors = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
     return [...filteredApiConnectors, ...getClientBuiltInConnectors(filterConnector)];
   }
@@ -131,16 +131,10 @@ function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connec
     : operation.properties.capabilities.includes('Stateless') || !operation.properties.capabilities.includes('Stateful');
 }
 
-function filterAPIConnectors(rawConnectors: Connector[]): Connector[] {
-  return rawConnectors.filter((rawConnector: Connector) => {
-    return !equals(rawConnector.name, 'dataOperationNew') && !needsAzureConnection(rawConnector);
-  });
-}
-
-function filterAPIOperations(
-  rawOperations: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]
-): DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[] {
-  return rawOperations.filter((rawOperation: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>) => !needsAzureConnection(rawOperation));
+function filterAzureConnection<T extends Connector | DiscoveryOperation<SomeKindOfAzureOperationDiscovery>>(rawConnections: T[]): T[] {
+  return rawConnections.filter(
+    (rawConnection: Connector | DiscoveryOperation<SomeKindOfAzureOperationDiscovery>) => !needsAzureConnection(rawConnection)
+  );
 }
 
 function needsAzureConnection(connectorOrOperation: Connector | DiscoveryOperation<SomeKindOfAzureOperationDiscovery>): boolean {
