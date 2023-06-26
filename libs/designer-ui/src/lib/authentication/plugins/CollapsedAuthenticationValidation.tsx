@@ -46,8 +46,7 @@ export const CollapsedAuthenticationValidation = ({
           setIsValid(true);
         }
       });
-    } catch (e) {
-      console.log(e);
+    } catch {
       setIsValid(false);
     }
   }, [editor, setIsValid]);
