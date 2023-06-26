@@ -41,7 +41,7 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
   );
 
   return (
-    <div className="msla-error-card" onClick={handleClick}>
+    <div key="workflowParametersErrorCard" className="msla-error-card" onClick={handleClick} tabIndex={0}>
       <div className="msla-error-card-header">
         <div className="msla-error-card-icon">
           <Icon iconName="Parameter" />

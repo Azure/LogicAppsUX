@@ -38,7 +38,7 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri
   });
 
   return (
-    <div key={id} className="msla-error-card" onClick={handleClick}>
+    <div key={id} className="msla-error-card" onClick={handleClick} tabIndex={0}>
       <div className="msla-error-card-header">
         {cardIcon}
         <span className="msla-error-card-title">{title}</span>
