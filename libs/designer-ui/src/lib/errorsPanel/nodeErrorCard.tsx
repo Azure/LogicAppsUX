@@ -1,5 +1,5 @@
-import { Text, Spinner, SpinnerSize, Icon } from '@fluentui/react';
-import { useMemo } from 'react';
+import { Text, Icon } from '@fluentui/react';
+import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface NodeErrorCardProps {
@@ -7,30 +7,17 @@ export interface NodeErrorCardProps {
   title: string;
   brandColor: string;
   iconUri?: string;
-  isLoading?: boolean;
   onClick?(): void;
   errors?: Record<string, string[]>;
 }
 
-export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri, isLoading, onClick, errors }) => {
+export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri, onClick, errors }) => {
   const intl = useIntl();
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
     onClick?.();
   };
-
-  const cardIcon = useMemo(
-    () =>
-      isLoading ? (
-        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
-      ) : iconUri ? (
-        <img className="panel-card-icon" src={iconUri} alt="" />
-      ) : (
-        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
-      ),
-    [iconUri, isLoading]
-  );
 
   const buttonHint = intl.formatMessage({
     defaultMessage: 'Open operation',
@@ -40,7 +27,7 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri
   return (
     <div key={id} className="msla-error-card" onClick={handleClick} tabIndex={0}>
       <div className="msla-error-card-header">
-        {cardIcon}
+        <img className="panel-card-icon" src={fallbackConnectorIconUrl(iconUri)} alt="" />
         <span className="msla-error-card-title">{title}</span>
         <span className="msla-error-card-button-hint">
           {buttonHint}
