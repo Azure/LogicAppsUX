@@ -1,6 +1,5 @@
 import { store } from '../../../core/store';
-import { PanelRoot } from '../panelRoot';
-import * as React from 'react';
+import { PanelRoot } from '../panelRoot_TEMP';
 import { Provider } from 'react-redux';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
@@ -19,7 +18,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
     const panel = renderer.render(
       <Provider store={store}>
         {' '}
-        <PanelRoot />{' '}
+        <PanelRoot displayRuntimeInfo={false} />{' '}
       </Provider>
     );
     expect(panel).toMatchSnapshot();
