@@ -38,10 +38,19 @@ export const CollapsedAuthenticationValidation = ({
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
-    if (errorMessage) {
+    try {
+      editor.getEditorState().read(() => {
+        const editorString = getChildrenNodes($getRoot());
+        const validationErrorMessage = validateAuthentication(editorString, setErrorMessage);
+        if (!validationErrorMessage) {
+          setIsValid(true);
+        }
+      });
+    } catch (e) {
+      console.log(e);
       setIsValid(false);
     }
-  }, [errorMessage, setIsValid]);
+  }, [editor, setIsValid]);
 
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
@@ -52,6 +61,7 @@ export const CollapsedAuthenticationValidation = ({
         setCollapsedValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: editorString }]);
       } else {
         const validationErrorMessage = validateAuthentication(editorString, setErrorMessage);
+        setIsValid(false);
         if (!validationErrorMessage) {
           setIsValid(true);
           serializeAuthentication(editor, setCurrentProps, setOption);
