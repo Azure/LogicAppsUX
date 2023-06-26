@@ -1087,7 +1087,7 @@
   "5fmV2Q": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "Os parâmetros utilizados no Logic App serão convertidos num modelo do Azure Resource Manager durante a geração do modelo de implementação."
     }
   ],
   "5hWg4V": [
@@ -2855,7 +2855,7 @@
   "ISaPr+": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Criar, gerir os parâmetros Logic Apps, atribuir-lhe um valor predefinido."
     }
   ],
   "IW2MjQ": [
@@ -3424,7 +3424,7 @@
   "MLckJz": [
     {
       "type": 0,
-      "value": "Required. A string that contains the start time."
+      "value": "Obrigatório. Uma cadeia que contenha a hora de início."
     }
   ],
   "MOsuw2": [
@@ -5699,7 +5699,7 @@
   "cfUHfs": [
     {
       "type": 0,
-      "value": "Returns the difference between two dates as a timespan string"
+      "value": "Devolve a diferença entre duas datas como uma cadeia de intervalo de tempo"
     }
   ],
   "cgq/+y": [
@@ -6950,7 +6950,7 @@
   "lkgjxD": [
     {
       "type": 0,
-      "value": "Required. A string that contains the end time."
+      "value": "Obrigatório. Uma cadeia que contenha a hora de fim."
     }
   ],
   "loxzZD": [
