@@ -72,7 +72,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         enabled: true,
         accessToken,
         subscriptionId: this.node.subscription.subscriptionId,
-        resourceGroupName: (this.context as IAzureConnectorsContext).resourceGroup,
+        resourceGroupName: this.node?.parent?.parent?.site.resourceGroup,
         location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
       },
