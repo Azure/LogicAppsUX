@@ -74,6 +74,7 @@ export const findChildNode = (node: ElementNode, nodeKey: string, tokenType?: To
   return foundNode;
 };
 
+// checks the equality of two value segments
 export const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
   if (a.length !== b.length) {
     return true;
@@ -99,4 +100,11 @@ export const insertQutationForStringType = (segments: ValueSegment[], type?: str
 
 const addStringLiteralSegment = (segments: ValueSegment[]): void => {
   segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: `"` });
+};
+
+export const removeQuotes = (s: string): string => {
+  if ((s.startsWith("'") && s.endsWith("'")) || (s.startsWith('"') && s.endsWith('"'))) {
+    return s.slice(1, -1);
+  }
+  return s;
 };

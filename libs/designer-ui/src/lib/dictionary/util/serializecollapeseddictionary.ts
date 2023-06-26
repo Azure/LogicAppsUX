@@ -2,7 +2,7 @@ import type { DictionaryEditorItemProps } from '..';
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
-import { getChildrenNodes } from '../../editor/base/utils/helper';
+import { getChildrenNodes, removeQuotes } from '../../editor/base/utils/helper';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
@@ -23,8 +23,8 @@ export const serializeDictionary = (
       const returnItems: DictionaryEditorItemProps[] = [];
 
       for (const [key, value] of Object.entries(jsonEditor)) {
-        const newKey = keyType === constants.SWAGGER.TYPE.STRING ? (key as string) : JSON.stringify(key);
-        const newValue = valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value);
+        const newKey = keyType === constants.SWAGGER.TYPE.STRING ? (key as string) : removeQuotes(JSON.stringify(key));
+        const newValue = valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : removeQuotes(JSON.stringify(value));
         returnItems.push({
           id: guid(),
           key: convertStringToSegments(newKey, true, nodeMap),

@@ -2,7 +2,9 @@ import constants from '../../../constants';
 import { isEmpty } from '../../../dictionary/util/helper';
 import { ValueSegmentType, type ValueSegment } from '../../models/parameter';
 import { insertQutationForStringType } from './helper';
-import { guid } from '@microsoft/utils-logic-apps';
+import { convertSegmentsToString } from './parsesegments';
+import { isNumber } from '@microsoft/parsers-logic-apps';
+import { guid, isBoolean } from '@microsoft/utils-logic-apps';
 
 export interface KeyValueItem {
   id: string;
@@ -23,22 +25,43 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
 
   for (let index = 0; index < itemsToConvert.length; index++) {
     const { key, value } = itemsToConvert[index];
-    // Todo: we should have some way of handle formatting better
+    // todo: we should have some way of handle formatting better
     const updatedKey = key.map((segment) => {
       return { ...segment, value: keyType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n') };
     });
+    const convertedKeyType = convertValueType(updatedKey, keyType);
+
     const updatedValue = value.map((segment) => {
       return { ...segment, value: valueType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n') };
     });
-    insertQutationForStringType(parsedItems, keyType);
+    const convertedValueType = convertValueType(updatedValue, valueType);
+    insertQutationForStringType(parsedItems, convertedKeyType);
     parsedItems.push(...updatedKey);
-    insertQutationForStringType(parsedItems, keyType);
+    insertQutationForStringType(parsedItems, convertedKeyType);
     parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: ' : ' });
-    insertQutationForStringType(parsedItems, valueType);
+    insertQutationForStringType(parsedItems, convertedValueType);
     parsedItems.push(...updatedValue);
-    insertQutationForStringType(parsedItems, valueType);
+    insertQutationForStringType(parsedItems, convertedValueType);
     parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < itemsToConvert.length - 1 ? ',\n  ' : '\n}' });
   }
 
   return parsedItems;
+};
+
+// we want to default to string type when the value is type any
+export const convertValueType = (value: ValueSegment[], type?: string): string | undefined => {
+  if (type !== constants.SWAGGER.TYPE.ANY) {
+    return type;
+  }
+  const stringSegments = convertSegmentsToString(value).trim();
+  // checks for known types
+  if (
+    (stringSegments.startsWith('{') && stringSegments.endsWith('}')) ||
+    isNumber(stringSegments) ||
+    isBoolean(stringSegments) ||
+    /^\[.*\]$/.test(stringSegments)
+  ) {
+    return type;
+  }
+  return constants.SWAGGER.TYPE.STRING;
 };

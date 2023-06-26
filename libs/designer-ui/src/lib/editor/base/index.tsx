@@ -33,6 +33,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
+export { removeQuotes } from './utils/helper';
+
 export { testTokenSegment, outputToken, outputToken2 } from '../shared/testtokensegment';
 
 export interface ChangeState {
