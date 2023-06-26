@@ -3,7 +3,7 @@ import { BaseSearchService } from '../base';
 import type { AzureOperationsFetchResponse, BaseSearchServiceOptions, ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
 import type { QueryParameters } from '../httpClient';
-import type { BuiltInOperation, Connector, DiscoveryOperation } from '@microsoft/utils-logic-apps';
+import type { BuiltInOperation, Connector, DiscoveryOperation, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
 import { ArgumentException, connectorsSearchResultsMock } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
@@ -47,8 +47,10 @@ export class StandardSearchService extends BaseSearchService {
       workflowKind: showStatefulOperations ? 'Stateful' : 'Stateless',
     };
     const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
+    const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
+    const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
-    return [...response.value, ...getClientBuiltInOperations(filterOperation)];
+    return [...filteredApiOperations, ...getClientBuiltInOperations(filterOperation)];
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {
@@ -115,7 +117,10 @@ export class StandardSearchService extends BaseSearchService {
       'api-version': apiVersion,
     };
     const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
-    return [...response.value, ...getClientBuiltInConnectors(filterConnector)];
+    const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
+    const filteredApiConnectors = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
+
+    return [...filteredApiConnectors, ...getClientBuiltInConnectors(filterConnector)];
   }
 }
 
@@ -124,4 +129,12 @@ function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connec
   return showStateful
     ? operation.properties.capabilities.includes('Stateful') || !operation.properties.capabilities.includes('Stateless')
     : operation.properties.capabilities.includes('Stateless') || !operation.properties.capabilities.includes('Stateful');
+}
+
+function filterAzureConnection<T extends Connector | DiscoveryOperation<SomeKindOfAzureOperationDiscovery>>(rawConnections: T[]): T[] {
+  return rawConnections.filter((rawConnection: T) => !needsAzureConnection(rawConnection));
+}
+
+function needsAzureConnection(connectorOrOperation: Connector | DiscoveryOperation<SomeKindOfAzureOperationDiscovery>): boolean {
+  return (connectorOrOperation.properties.capabilities || []).indexOf('azureConnection') > -1;
 }
