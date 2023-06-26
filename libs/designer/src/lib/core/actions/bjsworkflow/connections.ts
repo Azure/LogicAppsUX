@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
+import { isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import { getConnection } from '../../queries/connections';
 import { getConnector, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
@@ -42,6 +43,7 @@ export interface UpdateConnectionPayload {
   connectionId: string;
   connectionProperties?: Record<string, any>;
   authentication?: ApiHubAuthentication;
+  connectionRuntimeUrl?: string;
 }
 
 export const updateNodeConnection = createAsyncThunk(
@@ -57,6 +59,9 @@ export const updateNodeConnection = createAsyncThunk(
         connectionId: connection.id,
         authentication: authentication ?? getApiHubAuthenticationIfRequired(),
         connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
+        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as RootState).workflow.originalDefinition)
+          ? connection.properties.connectionRuntimeUrl
+          : undefined,
       },
       dispatch,
       getState as () => RootState
@@ -142,11 +147,12 @@ export const updateIdentityChangeInConection = createAsyncThunk(
   'updateIdentityChangeInConection',
   async (payload: { nodeId: string; identity: string }, { dispatch, getState }): Promise<void> => {
     const { nodeId, identity } = payload;
+    const rootState = getState() as RootState;
     const userAssignedIdentity = identity !== Constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? identity : undefined;
     const {
       api: { id: connectorId },
       connection: { id: connectionId },
-    } = getConnectionReference((getState() as RootState).connections, nodeId);
+    } = getConnectionReference(rootState.connections, nodeId);
     const connector = await getConnector(connectorId);
     const connection = await getConnection(connectionId, connectorId);
 
@@ -160,6 +166,9 @@ export const updateIdentityChangeInConection = createAsyncThunk(
         connectionId,
         authentication: getApiHubAuthentication(userAssignedIdentity),
         connectionProperties: getConnectionProperties(connector, userAssignedIdentity),
+        connectionRuntimeUrl: isOpenApiSchemaVersion(rootState.workflow.originalDefinition)
+          ? (connection as Connection).properties.connectionRuntimeUrl
+          : undefined,
       },
       dispatch,
       getState as () => RootState
@@ -407,6 +416,7 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.OpenApi:
+    case ConnectionReferenceKeyFormat.OpenApiConnection:
       return getOpenApiConnectionReferenceKey((operationDefinition as LogicAppsV2.OpenApiOperationAction).inputs);
 
     case ConnectionReferenceKeyFormat.HybridTrigger:
