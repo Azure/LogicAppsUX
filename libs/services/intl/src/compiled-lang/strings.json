@@ -5,6 +5,12 @@
       "value": "Testing"
     }
   ],
+  "+0cO6t": [
+    {
+      "type": 0,
+      "value": "Create connection reference"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -469,12 +475,6 @@
       "value": "Required. The value to search the index of."
     }
   ],
-  "1UFeKx": [
-    {
-      "type": 0,
-      "value": "Workflow Parameters Errors"
-    }
-  ],
   "1VRGCF": [
     {
       "type": 0,
@@ -711,12 +711,6 @@
     {
       "type": 0,
       "value": "Loading connection..."
-    }
-  ],
-  "30njcn": [
-    {
-      "type": 0,
-      "value": "Create Connection"
     }
   ],
   "33+WHG": [
@@ -1151,6 +1145,12 @@
       "value": "Cancel"
     }
   ],
+  "6ZviI7": [
+    {
+      "type": 0,
+      "value": "Select connection reference"
+    }
+  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1461,12 +1461,6 @@
     {
       "type": 0,
       "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
-    }
-  ],
-  "8luJ2j": [
-    {
-      "type": 0,
-      "value": "Create Connection Reference"
     }
   ],
   "8mDG0V": [
@@ -1929,6 +1923,12 @@
     {
       "type": 0,
       "value": "Connection required"
+    }
+  ],
+  "CPm+OG": [
+    {
+      "type": 0,
+      "value": "Create connection"
     }
   ],
   "CaajcD": [
@@ -3531,6 +3531,12 @@
       "value": "Service Principal"
     }
   ],
+  "O1tedM": [
+    {
+      "type": 0,
+      "value": "No errors found."
+    }
+  ],
   "O27gKq": [
     {
       "type": 0,
@@ -3753,12 +3759,6 @@
       "value": "Succeeded"
     }
   ],
-  "PK9umg": [
-    {
-      "type": 0,
-      "value": "Connections Errors"
-    }
-  ],
   "PKMkb/": [
     {
       "type": 0,
@@ -3823,6 +3823,12 @@
       "value": "Aborted"
     }
   ],
+  "Peg6ZT": [
+    {
+      "type": 0,
+      "value": "Setting errors"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
@@ -3845,6 +3851,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Cairo"
+    }
+  ],
+  "PsmHyH": [
+    {
+      "type": 0,
+      "value": "Connection errors"
     }
   ],
   "PtqSHp": [
@@ -4277,12 +4289,6 @@
       "value": "Failed"
     }
   ],
-  "T9MsvL": [
-    {
-      "type": 0,
-      "value": "New Parameter"
-    }
-  ],
   "TEN+cR": [
     {
       "type": 0,
@@ -4401,6 +4407,12 @@
     {
       "type": 0,
       "value": "Invalid parameters"
+    }
+  ],
+  "To3RNy": [
+    {
+      "type": 0,
+      "value": "Workflow parameter errors"
     }
   ],
   "Ts5Pzr": [
@@ -5817,12 +5829,6 @@
       "value": "Input"
     }
   ],
-  "e+lgwV": [
-    {
-      "type": 0,
-      "value": "Operation Errors"
-    }
-  ],
   "e00zot": [
     {
       "type": 0,
@@ -5923,12 +5929,6 @@
     {
       "type": 0,
       "value": "Array"
-    }
-  ],
-  "evO2Ky": [
-    {
-      "type": 0,
-      "value": "No errors found :-)"
     }
   ],
   "exo9v7": [
@@ -6039,6 +6039,12 @@
     {
       "type": 0,
       "value": "Ignored"
+    }
+  ],
+  "g/7QyT": [
+    {
+      "type": 0,
+      "value": "Select connection"
     }
   ],
   "g076bL": [
@@ -6487,12 +6493,6 @@
       "value": "Test"
     }
   ],
-  "j+9X0D": [
-    {
-      "type": 0,
-      "value": "Settings Errors"
-    }
-  ],
   "j2MU0b": [
     {
       "type": 0,
@@ -6625,6 +6625,12 @@
       "value": "Yes"
     }
   ],
+  "k8cbQ1": [
+    {
+      "type": 0,
+      "value": "Parameter errors"
+    }
+  ],
   "kBOAkT": [
     {
       "type": 0,
@@ -6695,12 +6701,6 @@
     {
       "type": 0,
       "value": "Monday"
-    }
-  ],
-  "kk9Swm": [
-    {
-      "type": 0,
-      "value": "Parameter Errors"
     }
   ],
   "klpJg1": [
@@ -6963,12 +6963,6 @@
       "value": "', split on not in array."
     }
   ],
-  "mQotIu": [
-    {
-      "type": 0,
-      "value": "Select Connection"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7109,6 +7103,12 @@
     {
       "type": 0,
       "value": "Yes/No"
+    }
+  ],
+  "nPgYuI": [
+    {
+      "type": 0,
+      "value": "New parameter"
     }
   ],
   "nRpM02": [
@@ -7947,12 +7947,6 @@
       "value": "h"
     }
   ],
-  "tJMHcJ": [
-    {
-      "type": 0,
-      "value": "Select Connection Reference"
-    }
-  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -8173,6 +8167,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Greenland"
+    }
+  ],
+  "ui3KuP": [
+    {
+      "type": 0,
+      "value": "Operation errors"
     }
   ],
   "ui7GCl": [

@@ -33,19 +33,19 @@ export const ErrorPanel = (props: CommonPanelProps) => {
 
   /// Settings
 
-  const allRawSettingsErrors = useAllSettingsValidationErrors();
-  const allSettingsErrors: Record<string, string[]> = useMemo(() => {
+  const allRawSettingErrors = useAllSettingsValidationErrors();
+  const allSettingErrors: Record<string, string[]> = useMemo(() => {
     const validationErrorToShow: Record<string, string[]> = {};
-    for (const [nodeId, v] of Object.entries(allRawSettingsErrors ?? {})) {
+    for (const [nodeId, v] of Object.entries(allRawSettingErrors ?? {})) {
       const errors = v.map((setting) => setting.message ?? '');
       if (errors.length > 0) validationErrorToShow[nodeId] = errors;
     }
     return validationErrorToShow;
-  }, [allRawSettingsErrors]);
+  }, [allRawSettingErrors]);
 
-  const numSettingsErrors = useMemo(() => {
-    return Object.values(allSettingsErrors).reduce((acc, curr) => acc + curr.length, 0);
-  }, [allSettingsErrors]);
+  const numSettingErrors = useMemo(() => {
+    return Object.values(allSettingErrors).reduce((acc, curr) => acc + curr.length, 0);
+  }, [allSettingErrors]);
 
   /// Connections
 
@@ -61,30 +61,26 @@ export const ErrorPanel = (props: CommonPanelProps) => {
       return acc;
     }, {})
   );
-  const workflowParametersErrors = useWorkflowParameterValidationErrors();
-  const numWorkflowParametersErrors: number = useMemo(() => {
-    return Object.values(workflowParametersErrors ?? {}).reduce((acc, curr) => acc + Object.keys(curr).length, 0);
-  }, [workflowParametersErrors]);
+  const workflowParameterErrors = useWorkflowParameterValidationErrors();
+  const numWorkflowParameterErrors: number = useMemo(() => {
+    return Object.values(workflowParameterErrors ?? {}).reduce((acc, curr) => acc + Object.keys(curr).length, 0);
+  }, [workflowParameterErrors]);
 
   /// Aggregation
 
   const allNodesWithErrors = useMemo(
     () => [
-      ...new Set([
-        ...Object.keys(allInputErrors ?? {}),
-        ...Object.keys(allSettingsErrors ?? {}),
-        ...Object.keys(allConnectionErrors ?? {}),
-      ]),
+      ...new Set([...Object.keys(allInputErrors ?? {}), ...Object.keys(allSettingErrors ?? {}), ...Object.keys(allConnectionErrors ?? {})]),
     ],
-    [allConnectionErrors, allInputErrors, allSettingsErrors]
+    [allConnectionErrors, allInputErrors, allSettingErrors]
   );
 
   const numOperationErrors = useMemo(
-    () => numInputErrors + numSettingsErrors + numConnectionErrors,
-    [numInputErrors, numSettingsErrors, numConnectionErrors]
+    () => numInputErrors + numSettingErrors + numConnectionErrors,
+    [numInputErrors, numSettingErrors, numConnectionErrors]
   );
 
-  const totalNumErrors = useMemo(() => numOperationErrors + numWorkflowParametersErrors, [numOperationErrors, numWorkflowParametersErrors]);
+  const totalNumErrors = useMemo(() => numOperationErrors + numWorkflowParameterErrors, [numOperationErrors, numWorkflowParameterErrors]);
 
   /// INTL
 
@@ -94,33 +90,33 @@ export const ErrorPanel = (props: CommonPanelProps) => {
   });
 
   const noErrorsText = intl.formatMessage({
-    defaultMessage: 'No errors found :-)',
-    description: 'Text to display when there are no errors',
+    defaultMessage: 'No errors found.',
+    description: 'Text to show when no errors exist',
   });
 
   const inputErrorsCategoryHeader = intl.formatMessage({
-    defaultMessage: 'Operation Errors',
+    defaultMessage: 'Operation errors',
     description: 'Header for the input errors category',
   });
 
-  const workflowParametersCategoryHeader = intl.formatMessage({
-    defaultMessage: 'Workflow Parameters Errors',
-    description: 'Header for the workflow parameters errors category',
+  const workflowParameterErrorsCategoryHeader = intl.formatMessage({
+    defaultMessage: 'Workflow parameter errors',
+    description: 'Header for the workflow parameter errors category',
   });
 
   const inputErrorsSubsectionHeader = intl.formatMessage({
-    defaultMessage: 'Parameter Errors',
+    defaultMessage: 'Parameter errors',
     description: 'Header for the node parameter errors subsection',
   });
 
-  const settingsErrorsSubsectionHeader = intl.formatMessage({
-    defaultMessage: 'Settings Errors',
-    description: 'Header for the settings errors subsection',
+  const settingErrorsSubsectionHeader = intl.formatMessage({
+    defaultMessage: 'Setting errors',
+    description: 'Header for the setting errors subsection',
   });
 
-  const connectionsErrorsSubsectionHeader = intl.formatMessage({
-    defaultMessage: 'Connections Errors',
-    description: 'Header for the connections errors subsection',
+  const connectionErrorsSubsectionHeader = intl.formatMessage({
+    defaultMessage: 'Connection errors',
+    description: 'Header for the connection errors subsection',
   });
 
   return (
@@ -130,8 +126,8 @@ export const ErrorPanel = (props: CommonPanelProps) => {
         <IconButton onClick={props.toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
       </div>
       <div className="msla-error-panel-body">
-        <ErrorCategory title={workflowParametersCategoryHeader} numErrors={numWorkflowParametersErrors}>
-          <WorkflowParameterErrors parameterNames={workflowParameterNames} errors={workflowParametersErrors} />
+        <ErrorCategory title={workflowParameterErrorsCategoryHeader} numErrors={numWorkflowParameterErrors}>
+          <WorkflowParameterErrors parameterNames={workflowParameterNames} errors={workflowParameterErrors} />
         </ErrorCategory>
 
         <ErrorCategory title={inputErrorsCategoryHeader} numErrors={numOperationErrors}>
@@ -141,8 +137,8 @@ export const ErrorPanel = (props: CommonPanelProps) => {
               nodeId={nodeId}
               errors={{
                 [inputErrorsSubsectionHeader]: allInputErrors?.[nodeId],
-                [settingsErrorsSubsectionHeader]: allSettingsErrors?.[nodeId],
-                [connectionsErrorsSubsectionHeader]: [allConnectionErrors?.[nodeId]],
+                [settingErrorsSubsectionHeader]: allSettingErrors?.[nodeId],
+                [connectionErrorsSubsectionHeader]: [allConnectionErrors?.[nodeId]],
               }}
             />
           ))}

@@ -40,20 +40,20 @@ export const usePanelTabs = () => {
 
   const selectConnectionTabTitle = isXrmConnectionReferenceMode
     ? intl.formatMessage({
-        defaultMessage: 'Select Connection Reference',
+        defaultMessage: 'Select connection reference',
         description: 'Title for the select connection reference tab',
       })
     : intl.formatMessage({
-        defaultMessage: 'Select Connection',
+        defaultMessage: 'Select connection',
         description: 'Title for the select connection tab',
       });
   const createConnectionTabTitle = isXrmConnectionReferenceMode
     ? intl.formatMessage({
-        defaultMessage: 'Create Connection Reference',
+        defaultMessage: 'Create connection reference',
         description: 'Title for the create connection reference tab',
       })
     : intl.formatMessage({
-        defaultMessage: 'Create Connection',
+        defaultMessage: 'Create connection',
         description: 'Title for the create connection tab',
       });
 

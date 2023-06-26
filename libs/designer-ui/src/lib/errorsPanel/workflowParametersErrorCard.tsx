@@ -27,8 +27,8 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
   });
 
   const noNameFallback = intl.formatMessage({
-    defaultMessage: 'New Parameter',
-    description: 'Fallback for when a parameter has no name',
+    defaultMessage: 'New parameter',
+    description: "The default to use when a parameter doesn't have a name.",
   });
 
   const getParameterName = useCallback(
