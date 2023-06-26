@@ -13,6 +13,7 @@ interface CollapsedAuthenticationProps {
   setIsValid: (b: boolean) => void;
   getTokenPicker: GetTokenPickerHandler;
   setOption: (s: AuthenticationType) => void;
+  serializeValue: (value: ValueSegment[]) => void;
 }
 
 export const CollapsedAuthentication = ({
@@ -23,6 +24,7 @@ export const CollapsedAuthentication = ({
   getTokenPicker,
   setIsValid,
   setOption,
+  serializeValue,
 }: CollapsedAuthenticationProps): JSX.Element => {
   return (
     <div className="msla-authentication-editor-collapsed-container">
@@ -35,6 +37,7 @@ export const CollapsedAuthentication = ({
           setCurrentProps={setCurrentProps}
           setIsValid={setIsValid}
           setOption={setOption}
+          serializeValue={serializeValue}
         />
       </BaseEditor>
     </div>

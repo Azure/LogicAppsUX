@@ -1,12 +1,16 @@
-import type { DictionaryEditorItemProps } from '..';
-import constants from '../../constants';
-import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
-import { insertQutationForStringType } from '../../editor/base/utils/helper';
-import { isEmpty } from './helper';
+import constants from '../../../constants';
+import { isEmpty } from '../../../dictionary/util/helper';
+import { ValueSegmentType, type ValueSegment } from '../../models/parameter';
+import { insertQutationForStringType } from './helper';
 import { guid } from '@microsoft/utils-logic-apps';
 
-export const convertItemsToSegments = (items: DictionaryEditorItemProps[], keyType?: string, valueType?: string): ValueSegment[] => {
+export interface KeyValueItem {
+  id: string;
+  key: ValueSegment[];
+  value: ValueSegment[];
+}
+
+export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: string, valueType?: string): ValueSegment[] => {
   const itemsToConvert = items.filter((item) => {
     return !isEmpty(item);
   });

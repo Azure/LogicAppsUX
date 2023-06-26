@@ -1,6 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
+import { isTokenValueSegment } from '../editor/base/utils/helper';
 import type { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
 import { AuthenticationDropdown } from './AuthenticationDropdown';
@@ -84,12 +85,24 @@ export const AuthenticationEditor = ({
   onChange,
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
+  const [codeView, { toggle: toggleCodeView }] = useBoolean(initializeCollapsedView(initialValue));
   const [option, setOption] = useState<AuthenticationType>(type);
   const [collapsedValue, setCollapsedValue] = useState(initialValue);
   const [currentProps, setCurrentProps] = useState<AuthProps>(authenticationValue);
   const [isValid, setIsValid] = useState(false);
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
+
+  const serializeCollapsedValue = (value: ValueSegment[]): void => {
+    if (isTokenValueSegment(value)) {
+      onChange?.({
+        value: value,
+        viewModel: {
+          type: AuthenticationType.NONE,
+          authenticationValue: { basic: {}, clientCertificate: {}, raw: {}, msi: {}, aadOAuth: {} },
+        },
+      });
+    }
+  };
 
   useUpdateEffect(() => {
     const collapsedValue = parseAuthEditor(option, currentProps);
@@ -165,6 +178,7 @@ export const AuthenticationEditor = ({
           setIsValid={setIsValid}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
+          serializeValue={serializeCollapsedValue}
         />
       ) : (
         <div className="msla-authentication-editor-expanded-container">
@@ -226,4 +240,7 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
         return { key: type, text: type };
     }
   });
+};
+const initializeCollapsedView = (initialValue: ValueSegment[]): boolean => {
+  return isTokenValueSegment(initialValue);
 };

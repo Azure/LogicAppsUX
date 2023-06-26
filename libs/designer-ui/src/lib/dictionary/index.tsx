@@ -2,9 +2,9 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
+import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
-import { convertItemsToSegments } from './util/deserializecollapseddictionary';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -53,7 +53,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const updateItems = (newItems: DictionaryEditorItemProps[]) => {
     setItems(newItems);
-    const objectValue = convertItemsToSegments(newItems, keyType, valueType);
+    const objectValue = convertKeyValueItemToSegments(newItems, keyType, valueType);
     setCollapsedValue(objectValue);
 
     if (!collapsed) {
@@ -61,7 +61,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
     }
   };
 
-  const handleBlur = (): void => {
+  const handleCollapsedBlur = (): void => {
     onChange?.({ value: collapsedValue, viewModel: { items: isValid ? items : undefined } });
   };
 
@@ -88,7 +88,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           setItems={(newItems: DictionaryEditorItemProps[]) => setItems(newItems)}
           setIsValid={setIsValid}
           setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
-          onBlur={handleBlur}
+          onBlur={handleCollapsedBlur}
         />
       ) : (
         <ExpandedDictionary
