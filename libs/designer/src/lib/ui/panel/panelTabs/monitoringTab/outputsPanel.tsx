@@ -28,7 +28,7 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
     }),
     noOutputs: intl.formatMessage({
       defaultMessage: 'No outputs',
-      description: 'No utputs text',
+      description: 'No outputs text',
     }),
     showOutputs: intl.formatMessage({
       defaultMessage: 'Show raw outputs',

@@ -67,7 +67,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       throw new ArgumentException(
         intl.formatMessage({
           defaultMessage: 'Unsupported programming language.',
-          description: 'Exception for unsupported programming language',
+          description: 'The exception for an unsupported programming language.',
         })
       );
     }
