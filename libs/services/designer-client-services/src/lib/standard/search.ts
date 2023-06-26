@@ -132,9 +132,7 @@ function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connec
 }
 
 function filterAzureConnection<T extends Connector | DiscoveryOperation<SomeKindOfAzureOperationDiscovery>>(rawConnections: T[]): T[] {
-  return rawConnections.filter(
-    (rawConnection: Connector | DiscoveryOperation<SomeKindOfAzureOperationDiscovery>) => !needsAzureConnection(rawConnection)
-  );
+  return rawConnections.filter((rawConnection: T) => !needsAzureConnection(rawConnection));
 }
 
 function needsAzureConnection(connectorOrOperation: Connector | DiscoveryOperation<SomeKindOfAzureOperationDiscovery>): boolean {
