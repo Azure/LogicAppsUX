@@ -1053,7 +1053,7 @@
   "5fmV2Q": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "Parameter yang digunakan dalam Aplikasi Logika akan dikonversi menjadi templat Azure Resource Manager selama pembuatan templat penerapan."
     }
   ],
   "5hWg4V": [
@@ -2753,7 +2753,7 @@
   "ISaPr+": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Buat, kelola parameter Aplikasi Logika, berikan nilai default."
     }
   ],
   "IW2MjQ": [
@@ -3263,6 +3263,12 @@
     {
       "type": 0,
       "value": "Identitas terkelola"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String yang berisi waktu mulai."
     }
   ],
   "MOsuw2": [
@@ -5496,6 +5502,12 @@
       "value": "Menampilkan isi dari sebagian output beberapa bagian dari tindakan."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Menghasilkan selisih antara dua tanggal sebagai string rentang waktu"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6685,6 +6697,12 @@
     {
       "type": 0,
       "value": "Pintasan untuk tindakan('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String yang berisi waktu selesai."
     }
   ],
   "loxzZD": [

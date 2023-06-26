@@ -20,7 +20,7 @@ import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { ArgumentException, UnsupportedException, equals } from '@microsoft/utils-logic-apps';
+import { ArgumentException, UnsupportedException, startsWith } from '@microsoft/utils-logic-apps';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;
@@ -58,7 +58,7 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
         default:
           return getBuiltInOperationInfo(definition, isTrigger);
       }
-    } else if (equals(definition.type, openapiconnection)) {
+    } else if (startsWith(definition.type, openapiconnection)) {
       const { subscriptionId, location } = this.options;
       return {
         connectorId: `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}${definition.inputs.host.apiId}`,
@@ -98,7 +98,7 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
       });
 
       const {
-        properties: { brandColor, description, iconUri, manifest, api },
+        properties: { brandColor, description, iconUri, manifest, api, operationType },
       } = response;
 
       const operationManifest = {
@@ -106,6 +106,7 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
           brandColor: brandColor ?? api?.brandColor,
           description,
           iconUri: iconUri ?? api?.iconUri,
+          connection: startsWith(operationType, openapiconnection) ? { required: true } : undefined,
           ...manifest,
         },
       };
@@ -118,6 +119,8 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
 }
 
 const openapiconnection = 'openapiconnection';
+const openapiconnectionwebhook = 'openapiconnectionwebhook';
+const openapiconnectionnotification = 'openapiconnectionnotification';
 const composenew = 'composenew';
 const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
 const liquidjsontojson = 'liquidjsontojson';
@@ -139,7 +142,13 @@ const invokeworkflow = 'invokeworkflow';
 const sendtobatch = 'sendtobatch';
 const batch = 'batch';
 
-const supportedConsumptionManifestTypes = [...supportedBaseManifestTypes, appservice, openapiconnection];
+const supportedConsumptionManifestTypes = [
+  ...supportedBaseManifestTypes,
+  appservice,
+  openapiconnection,
+  openapiconnectionwebhook,
+  openapiconnectionnotification,
+];
 
 const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   ...supportedBaseManifestObjects,

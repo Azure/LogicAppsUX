@@ -1087,7 +1087,7 @@
   "5fmV2Q": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "Os parâmetros utilizados no Logic App serão convertidos num modelo do Azure Resource Manager durante a geração do modelo de implementação."
     }
   ],
   "5hWg4V": [
@@ -2855,7 +2855,7 @@
   "ISaPr+": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Criar, gerir os parâmetros Logic Apps, atribuir-lhe um valor predefinido."
     }
   ],
   "IW2MjQ": [
@@ -3419,6 +3419,12 @@
     {
       "type": 0,
       "value": "Identidade gerida"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia que contenha a hora de início."
     }
   ],
   "MOsuw2": [
@@ -5690,6 +5696,12 @@
       "value": "Devolve o corpo de uma parte numa saída de várias partes a partir de uma ação."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Devolve a diferença entre duas datas como uma cadeia de intervalo de tempo"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6933,6 +6945,12 @@
     {
       "type": 0,
       "value": "Forma abreviada de ações (\"actionName\").outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia que contenha a hora de fim."
     }
   ],
   "loxzZD": [

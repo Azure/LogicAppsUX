@@ -1076,7 +1076,7 @@
   "5fmV2Q": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "Parametrar som används i logikappen konverteras till Azure Resource Manager-mall vid skapande av distributionsmallen."
     }
   ],
   "5hWg4V": [
@@ -2814,7 +2814,7 @@
   "ISaPr+": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Skapa, hantera Logic Apps-parametrar, ge den ett standardvärde."
     }
   ],
   "IW2MjQ": [
@@ -3363,6 +3363,12 @@
     {
       "type": 0,
       "value": "Hanterad identitet"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Krävs. En sträng som innehåller starttiden."
     }
   ],
   "MOsuw2": [
@@ -5615,6 +5621,12 @@
       "value": "Returnerar brödtexten för en del i en åtgärds flerdelade utdata."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returnerar skillnaden mellan två datum som en tidsintervallsträng"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6843,6 +6855,12 @@
     {
       "type": 0,
       "value": "Kortkommando för åtgärder(actionName).outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Krävs. En sträng som innehåller sluttiden."
     }
   ],
   "loxzZD": [

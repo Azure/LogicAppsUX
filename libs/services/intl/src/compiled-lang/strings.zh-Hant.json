@@ -1061,7 +1061,7 @@
   "5fmV2Q": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "在部署範本產生期間，Logic Apps 中使用的參數將會轉換成 Azure Resource Manager 範本。"
     }
   ],
   "5hWg4V": [
@@ -2765,7 +2765,7 @@
   "ISaPr+": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "建立、管理 Logic Apps 參數，並設定預設值。"
     }
   ],
   "IW2MjQ": [
@@ -3267,6 +3267,12 @@
     {
       "type": 0,
       "value": "受控識別"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "必要項。包含開始時間的字串。"
     }
   ],
   "MOsuw2": [
@@ -5520,6 +5526,12 @@
       "value": "傳回來自動作 multipart 輸出中一部分的本文。"
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "以時間範圍字串傳回兩個日期之間的差異"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -6701,6 +6713,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body 的速記"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "必要項。包含結束時間的字串。"
     }
   ],
   "loxzZD": [
