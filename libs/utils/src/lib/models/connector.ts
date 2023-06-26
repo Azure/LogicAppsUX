@@ -8,6 +8,7 @@ export enum Capabilities {
   gateway,
   cloud,
   vnetgateway,
+  general,
 }
 
 export enum ConnectionParameterTypes {
