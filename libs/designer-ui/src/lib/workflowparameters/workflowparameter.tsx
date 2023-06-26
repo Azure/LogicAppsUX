@@ -16,7 +16,7 @@ const commandBarStyles: Partial<IButtonStyles> = {
 export interface WorkflowParameterUpdateEvent {
   id: string;
   newDefinition: WorkflowParameterDefinition;
-  isConsumption?: boolean;
+  useLegacy?: boolean;
 }
 
 export interface WorkflowParameterDeleteEvent {
@@ -39,7 +39,7 @@ export interface WorkflowParameterDefinition {
 export interface WorkflowParameterProps {
   definition: WorkflowParameterDefinition;
   isReadOnly?: boolean;
-  isConsumption?: boolean;
+  useLegacy?: boolean;
   validationErrors?: Record<string, string | undefined>;
   isInverted?: boolean;
   onChange?: WorkflowParameterUpdateHandler;
@@ -47,7 +47,7 @@ export interface WorkflowParameterProps {
   onRegisterLanguageProvider?: RegisterLanguageHandler;
 }
 
-export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
   const [name, setName] = useState(definition.name);
@@ -101,7 +101,7 @@ export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInv
             onChange={props.onChange}
             isEditable={isEditable}
             isReadOnly={isReadOnly}
-            isConsumption={isConsumption}
+            useLegacy={useLegacy}
           />
         ) : null}
       </div>
