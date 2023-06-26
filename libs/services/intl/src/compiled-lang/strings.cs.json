@@ -1111,6 +1111,12 @@
       "value": "Den"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Při generování šablony nasazení se parametry, které se používají v aplikaci Logic Apps, převedou na šablonu Azure Resource Manageru."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1619,6 +1625,12 @@
     {
       "type": 0,
       "value": "' – nelze najít ve výstupech."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "Vývoj"
     }
   ],
   "9YGcT2": [
@@ -2885,6 +2897,12 @@
       "value": "(UTC-12:00) Západní mezinárodní časová osa"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Vytvořte a spravujte parametry Logic Apps, nastavte jejich výchozí hodnoty."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3455,6 +3473,12 @@
       "value": "Spravovaná identita"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec, který obsahuje počáteční čas."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3763,6 +3787,12 @@
       "value": "Povolit statický výsledek"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Odeslat"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3987,6 +4017,12 @@
     {
       "type": 0,
       "value": "Vrátí reprezentaci Base 64 vstupního řetězce."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Zavřít"
     }
   ],
   "Q+ZZHI": [
@@ -4847,6 +4883,12 @@
       "value": "“ jako vlastní hodnotu"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Akce"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5161,6 +5203,12 @@
       "value": "Další informace"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Vyberte prostředek aplikace funkcí Swagger"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5463,6 +5511,12 @@
       "value": "Celá obrazovka"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5703,6 +5757,12 @@
     {
       "type": 0,
       "value": "Vrátí text pro určitou část ve výstupu akce s několika částmi."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Vrátí rozdíl mezi dvěma daty jako řetězec časového rozsahu"
     }
   ],
   "cgq/+y": [
@@ -6957,6 +7017,12 @@
       "value": "Zkratka pro actions('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec, který obsahuje koncový čas."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -7111,6 +7177,12 @@
     {
       "type": 0,
       "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Položte otázku nebo popište, jak chcete změnit tento tok"
     }
   ],
   "mvrlkP": [
@@ -7701,6 +7773,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Hledat"
     }
   ],
   "qc5S69": [

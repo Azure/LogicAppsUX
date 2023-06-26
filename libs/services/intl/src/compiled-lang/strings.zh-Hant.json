@@ -1058,6 +1058,12 @@
       "value": "日"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "在部署範本產生期間，Logic Apps 中使用的參數將會轉換成 Azure Resource Manager 範本。"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1554,6 +1560,12 @@
     {
       "type": 0,
       "value": "' 的分割無效，在輸出中找不到。"
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "開發中"
     }
   ],
   "9YGcT2": [
@@ -2750,6 +2762,12 @@
       "value": "(UTC-12:00) 國際換日線以西"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "建立、管理 Logic Apps 參數，並設定預設值。"
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3251,6 +3269,12 @@
       "value": "受控識別"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "必要項。包含開始時間的字串。"
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3539,6 +3563,12 @@
       "value": "啟用靜態結果"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "提交"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3767,6 +3797,12 @@
     {
       "type": 0,
       "value": "傳回輸入字串的 Base 64 表示法"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "關閉"
     }
   ],
   "Q+ZZHI": [
@@ -4606,6 +4642,12 @@
       "value": "\" 為自訂值"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "動作"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4924,6 +4966,12 @@
       "value": "詳細資訊"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "選取 Swagger 函數應用程式資源"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5226,6 +5274,12 @@
       "value": "全螢幕"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5470,6 +5524,12 @@
     {
       "type": 0,
       "value": "傳回來自動作 multipart 輸出中一部分的本文。"
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "以時間範圍字串傳回兩個日期之間的差異"
     }
   ],
   "cgq/+y": [
@@ -6655,6 +6715,12 @@
       "value": "actions('actionName').outputs.body 的速記"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "必要項。包含結束時間的字串。"
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -6809,6 +6875,12 @@
     {
       "type": 0,
       "value": "限制 Logic Apps 不要在傳出要求中包含工作流程中繼資料標頭。"
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "提出問題或描述您要如何變更此流程"
     }
   ],
   "mvrlkP": [
@@ -7366,6 +7438,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "搜尋"
     }
   ],
   "qc5S69": [

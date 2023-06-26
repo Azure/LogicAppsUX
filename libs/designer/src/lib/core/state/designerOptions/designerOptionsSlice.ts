@@ -24,7 +24,7 @@ const initialState: DesignerOptionsState = {
   isMonitoringView: false,
   isDarkMode: false,
   servicesInitialized: false,
-  isConsumption: false,
+  useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
 };
 
@@ -85,7 +85,7 @@ export const designerOptionsSlice = createSlice({
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDarkMode = action.payload.isDarkMode;
-      state.isConsumption = action.payload.isConsumption;
+      state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
     },
   },

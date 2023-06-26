@@ -1084,6 +1084,12 @@
       "value": "Día"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Los parámetros usados en la aplicación lógica se convertirán a una plantilla de Azure Resource Manager durante la generación de la plantilla de implementación."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1596,6 +1602,12 @@
     {
       "type": 0,
       "value": "\", no se encuentra en las salidas."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "En desarrollo"
     }
   ],
   "9YGcT2": [
@@ -2832,6 +2844,12 @@
       "value": "(UTC-12:00) Línea internacional de cambio de fecha del oeste"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Permite crear y administrar parámetros de Logic Apps, así como asignarles valores predeterminados."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3395,6 +3413,12 @@
       "value": "Identidad administrada"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Obligatorio. Cadena que contiene la hora de inicio."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3699,6 +3723,12 @@
       "value": "Habilitar resultado estático"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Enviar"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3923,6 +3953,12 @@
     {
       "type": 0,
       "value": "Devuelve la representación de base 64 de la cadena de entrada."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Cerrar"
     }
   ],
   "Q+ZZHI": [
@@ -4776,6 +4812,12 @@
       "value": "\" como un valor personalizado"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Acciones"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5090,6 +5132,12 @@
       "value": "Más información"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Selección de un recurso de Swagger Function App"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5392,6 +5440,12 @@
       "value": "Pantalla completa"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5632,6 +5686,12 @@
     {
       "type": 0,
       "value": "Devuelve el cuerpo de una parte en una salida de varias partes de una acción."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Devuelve la diferencia entre dos fechas como una cadena de intervalo de tiempo."
     }
   ],
   "cgq/+y": [
@@ -6863,6 +6923,12 @@
       "value": "Forma abreviada de actions('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Obligatorio. Cadena que contiene la hora de finalización."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -7009,6 +7075,12 @@
     {
       "type": 0,
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la solicitud saliente."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Haga una pregunta o describa cómo quiere cambiar este flujo"
     }
   ],
   "mvrlkP": [
@@ -7588,6 +7660,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Buscar"
     }
   ],
   "qc5S69": [

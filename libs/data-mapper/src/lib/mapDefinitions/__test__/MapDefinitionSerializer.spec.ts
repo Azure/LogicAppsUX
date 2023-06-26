@@ -2601,11 +2601,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const forLoopObject = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const actualForLoopObject = forLoopObject[`$for(${sourceArrayItemNode.key})`] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(2);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode1.qName);
-        expect(arrayElement[targetArrayItemPropNode2.name]).toEqual(sourceArrayItemPropNode2.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode1.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode2.name]).toEqual(sourceArrayItemPropNode2.qName);
       });
 
       it('Generates body with child objects loop', () => {
@@ -2690,10 +2690,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const forLoopObject = rootObject['ForLoop'] as MapDefinitionEntry;
         const actualForLoopObject = forLoopObject['$for(/root/generalData/address)'] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(1);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        const prop1Object = arrayElement[targetLoopChildObjectNode.name] as MapDefinitionEntry;
+        const prop1Object = actualForLoopObject[targetLoopChildObjectNode.name] as MapDefinitionEntry;
 
         const telNumberObject = prop1Object[targetLoopChildObjectPropNode1.name] as MapDefinitionEntry;
         expect(telNumberObject).toEqual(sourceLoopChildObjectPropNode1.qName);
@@ -2774,15 +2774,15 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const madeUpObject = rootObject['TargetMadeUp'] as MapDefinitionEntry;
         const complexArrayObject = madeUpObject[targetLoopNode.qName] as MapDefinitionEntry;
         const outerArrayObject = complexArrayObject[`$for(${sourceOuterArrayItemNode.key})`] as MapDefinitionEntry;
-        expect(outerArrayObject.length).toEqual(1);
+        const outerArrayObjectKeys = Object.keys(outerArrayObject);
+        expect(outerArrayObjectKeys.length).toEqual(1);
 
-        const outerArrayElement = outerArrayObject[0] as MapDefinitionEntry;
         const innerArray = `$for(${sourceInnerArrayItemNode.key.replace(`${sourceOuterArrayItemNode.key}/`, '')})`;
-        const innerArrayObject = outerArrayElement[innerArray] as MapDefinitionEntry;
-        expect(innerArrayObject.length).toEqual(1);
-        const innerArrayElement = innerArrayObject[0] as MapDefinitionEntry;
+        const innerArrayObject = outerArrayObject[innerArray] as MapDefinitionEntry;
+        const innerArrayObjectKeys = Object.keys(innerArrayObject);
+        expect(innerArrayObjectKeys.length).toEqual(1);
 
-        expect(innerArrayElement[targetInnerArrayItemPropNode.qName]).toEqual(sourceInnerArrayItemPropNode.name);
+        expect(innerArrayObject[targetInnerArrayItemPropNode.qName]).toEqual(sourceInnerArrayItemPropNode.name);
       });
 
       it('Generates body with many to one nested loops', () => {
@@ -2858,10 +2858,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const innerArray = `$for(${sourceInnerArrayItemNode.key.replace(`${sourceOuterArrayItemNode.key}/`, '')})`;
         const innerArrayObject = outerArrayObject[innerArray] as MapDefinitionEntry;
-        expect(innerArrayObject.length).toEqual(1);
-        const innerArrayElement = innerArrayObject[0] as MapDefinitionEntry;
+        const innerArrayObjectKeys = Object.keys(innerArrayObject);
+        expect(innerArrayObjectKeys.length).toEqual(1);
 
-        expect(innerArrayElement[targetArrayItemPropNode.qName]).toEqual(sourceInnerArrayItemPropNode.name);
+        expect(innerArrayObject[targetArrayItemPropNode.qName]).toEqual(sourceInnerArrayItemPropNode.name);
       });
 
       it('Generates body with function loop', () => {
@@ -2946,10 +2946,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const forLoopObject = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const actualForLoopObject = forLoopObject[`$for(${sourceArrayItemNode.key})`] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(1);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual('add(targetQuantity, rate)');
+        expect(actualForLoopObject[targetArrayItemPropNode.name]).toEqual('add(targetQuantity, rate)');
       });
 
       it('Generates body with index loop', () => {
@@ -3022,10 +3022,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const forLoopObject = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const actualForLoopObject = forLoopObject[`$for(${sourceArrayItemNode.key}, $a)`] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(1);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
       });
 
       it('Generates body with index and passthrough loop', () => {
@@ -3109,11 +3109,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const forLoopObject = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const actualForLoopObject = forLoopObject[`$for(${sourceArrayItemNode.key}, $a)`] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(2);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
-        expect(arrayElement[targetArrayItemPropNode2.name]).toEqual('$a');
+        expect(actualForLoopObject[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode2.name]).toEqual('$a');
       });
 
       it('Generates body with a sequence loop', () => {
@@ -3197,10 +3197,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const actualForLoopObject = forLoopObject[
           `$for(sort(${sourceArrayItemNode.key}, ${sourceArrayItemPropNode.name}))`
         ] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(1);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
       });
 
       it('Generates body with a sequence and index loop', () => {
@@ -3306,11 +3306,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const actualForLoopObject = forLoopObject[
           `$for(sort(${sourceArrayItemNode.key}, ${sourceArrayItemPropNode.name}), $a)`
         ] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(2);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
-        expect(arrayElement[targetArrayItemPropNode2.name]).toEqual('$a');
+        expect(actualForLoopObject[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode2.name]).toEqual('$a');
       });
 
       it('Generates body with 2 sequences and index loop', () => {
@@ -3436,11 +3436,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const actualForLoopObject = forLoopObject[
           `$for(sort(sort(${sourceArrayItemNode.key}, ${sourceArrayItemPropNode.name}), ${sourceArrayItemPropNode.name}), $a)`
         ] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(2);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
-        expect(arrayElement[targetArrayItemPropNode2.name]).toEqual('$a');
+        expect(actualForLoopObject[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode2.name]).toEqual('$a');
       });
 
       it('Generates body with function and index loop', () => {
@@ -3545,11 +3545,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const forLoopObject = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const actualForLoopObject = forLoopObject[`$for(${sourceArrayItemNode.key}, $a)`] as MapDefinitionEntry;
-        expect(actualForLoopObject.length).toEqual(1);
+        const actualForLoopObjectKeys = Object.keys(actualForLoopObject);
+        expect(actualForLoopObjectKeys.length).toEqual(2);
 
-        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
-        expect(arrayElement[targetArrayItemPropNode2.name]).toEqual('add(targetQuantity, $a)');
+        expect(actualForLoopObject[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(actualForLoopObject[targetArrayItemPropNode2.name]).toEqual('add(targetQuantity, $a)');
       });
 
       it('Generates body with many to one nested index loops', () => {
@@ -3657,11 +3657,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const innerArray = `$for(${sourceInnerArrayItemNode.key.replace(`${sourceOuterArrayItemNode.key}/`, '')}, $b)`;
         const innerArrayObject = outerArrayObject[innerArray] as MapDefinitionEntry;
-        expect(innerArrayObject.length).toEqual(1);
-        const innerArrayElement = innerArrayObject[0] as MapDefinitionEntry;
+        const innerArrayObjectKeys = Object.keys(innerArrayObject);
+        expect(innerArrayObjectKeys.length).toEqual(2);
 
-        expect(innerArrayElement[targetArrayItemPropNode1.qName]).toEqual('$b');
-        expect(innerArrayElement[targetArrayItemPropNode2.qName]).toEqual('$a');
+        expect(innerArrayObject[targetArrayItemPropNode1.qName]).toEqual('$b');
+        expect(innerArrayObject[targetArrayItemPropNode2.qName]).toEqual('$a');
       });
 
       it('Generates body with conditional looping', () => {
@@ -3765,10 +3765,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const complexArray1Object = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const forLoopObject = complexArray1Object[`$for(${sourceArrayItemNode.key})`] as MapDefinitionEntry;
         const ifObject = forLoopObject['$if(is-greater-than(Num, 10))'] as MapDefinitionEntry;
-        expect(ifObject.length).toEqual(1);
+        const ifObjectKeys = Object.keys(ifObject);
+        expect(ifObjectKeys.length).toEqual(1);
 
-        const arrayElement = ifObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(ifObject[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
       });
 
       it('Generates body with an index and a conditional looping', () => {
@@ -3884,10 +3884,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const complexArray1Object = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const forLoopObject = complexArray1Object[`$for(${sourceArrayItemNode.key}, $a)`] as MapDefinitionEntry;
         const ifObject = forLoopObject['$if(is-greater-than($a, 10))'] as MapDefinitionEntry;
-        expect(ifObject.length).toEqual(1);
+        const ifObjectKeys = Object.keys(ifObject);
+        expect(ifObjectKeys.length).toEqual(1);
 
-        const arrayElement = ifObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(ifObject[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
       });
 
       it('Generates body with custom value direct index access', () => {
@@ -4107,10 +4107,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const complexArray1Object = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const forLoopObject = complexArray1Object[`$for(${sourceArrayItemNode.key}, $a)`] as MapDefinitionEntry;
         const ifObject = forLoopObject['$if(is-greater-than($a, 10))'] as MapDefinitionEntry;
-        expect(ifObject.length).toEqual(1);
+        const ifObjectKeys = Object.keys(ifObject);
+        expect(ifObjectKeys.length).toEqual(1);
 
-        const arrayElement = ifObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual('/root/Nums/*[$a]/Num');
+        expect(ifObject[targetArrayItemPropNode.name]).toEqual('/root/Nums/*[$a]/Num');
       });
 
       it('Generates body with an index loop and direct index access', () => {
@@ -4215,10 +4215,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const complexArray1Object = rootObject[targetLoopNode.qName] as MapDefinitionEntry;
         const forLoopObject = complexArray1Object[`$for(${sourceArrayItemNode.key}, $a)`] as MapDefinitionEntry;
-        expect(forLoopObject.length).toEqual(1);
+        const forLoopObjectKeys = Object.keys(forLoopObject);
+        expect(forLoopObjectKeys.length).toEqual(1);
 
-        const arrayElement = forLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual('/root/Nums/*[$a]/Num');
+        expect(forLoopObject[targetArrayItemPropNode.name]).toEqual('/root/Nums/*[$a]/Num');
       });
     });
   });

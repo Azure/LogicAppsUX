@@ -2,11 +2,9 @@
 import type { RootState } from '../../state/store';
 import { useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } from '../../state/workflowLoadingSelectors';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
+import type { ParametersData } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
-import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
-import { FileSystemConnectionCreationClient } from './Services/FileSystemConnectionCreationClient';
 import { HttpClient } from './Services/HttpClient';
 import {
   listCallbackUrl,
@@ -30,10 +28,15 @@ import {
   ConsumptionSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
-import { guid, isArmResourceId } from '@microsoft/utils-logic-apps';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  isOpenApiSchemaVersion,
+  getReactQueryClient,
+} from '@microsoft/logic-apps-designer';
+import { guid, startsWith } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
-import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
@@ -50,7 +53,7 @@ const DesignerEditorConsumption = () => {
   const isMonitoringView = useIsMonitoringView();
   const showChatBot = useShowChatBot();
 
-  const queryClient = useQueryClient();
+  const queryClient = getReactQueryClient();
 
   // const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -69,37 +72,13 @@ const DesignerEditorConsumption = () => {
   const { data: tenantId } = useCurrentTenantId();
   const [designerID, setDesignerID] = React.useState(guid());
 
-  const { workflow, connectionsData, connectionReferences, parameters } = React.useMemo(
+  const { workflow, connectionReferences, parameters } = React.useMemo(
     () => getDataForConsumption(workflowAndArtifactsData),
     [workflowAndArtifactsData]
   );
   const { definition } = workflow;
 
-  // TODO: Rework this for Consumption
-  const addConnectionData = async (_connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
-    // addConnectionInJson(connectionAndSetting, connectionsData ?? {});
-    // addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
-  };
-
-  const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
-    if (!connectionId) {
-      return Promise.resolve();
-    }
-
-    const connectionName = connectionId.split('/').splice(-1)[0];
-    const connectionInfo =
-      connectionsData?.serviceProviderConnections?.[connectionName] ?? connectionsData?.apiManagementConnections?.[connectionName];
-
-    if (connectionInfo) {
-      // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
-      const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(JSON.stringify(connectionInfo), {});
-      delete resolvedConnectionInfo.displayName;
-
-      return {
-        connection: resolvedConnectionInfo,
-      };
-    }
-
+  const getConnectionConfiguration = async (_connectionId: string): Promise<any> => {
     return undefined;
   };
 
@@ -111,9 +90,7 @@ const DesignerEditorConsumption = () => {
     () =>
       getDesignerServices(
         workflowId,
-        connectionsData ?? {},
         workflowAppData as WorkflowApp,
-        addConnectionData,
         getConnectionConfiguration,
         tenantId,
         canonicalLocation,
@@ -121,7 +98,7 @@ const DesignerEditorConsumption = () => {
         queryClient
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, connectionsData, workflowAppData, tenantId, canonicalLocation, designerID]
+    [workflowId, workflowAppData, tenantId, canonicalLocation, designerID]
   );
 
   const [parsedDefinition, setParsedDefinition] = React.useState<any>(undefined);
@@ -179,20 +156,14 @@ const DesignerEditorConsumption = () => {
         await Promise.all(
           Object.keys(connectionReferences).map(async (referenceKey) => {
             const reference = connectionReferences[referenceKey];
-            if (isArmResourceId(reference?.connection?.id) && !connectionsData?.managedApiConnections?.[referenceKey]) {
-              const {
-                api: { id: apiId },
-                connection: { id: connectionId },
-                connectionName,
-                connectionProperties,
-              } = reference;
-              newConnectionsObj[referenceKey] = {
-                id: apiId,
-                connectionId,
-                connectionName,
-                connectionProperties,
-              };
-            }
+            const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
+            newConnectionsObj[referenceKey] = {
+              api,
+              connection,
+              connectionId: isOpenApiSchemaVersion(definition) ? undefined : connection.id,
+              connectionProperties,
+              connectionRuntimeUrl,
+            };
           })
         );
       }
@@ -210,7 +181,7 @@ const DesignerEditorConsumption = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, isConsumption: true }}>
+      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, useLegacyWorkflowParameters: true }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider workflow={{ definition: parsedDefinition, connectionReferences, parameters }}>
             <div style={{ height: 'inherit', width: 'inherit' }}>
@@ -235,51 +206,27 @@ const DesignerEditorConsumption = () => {
 
 const getDesignerServices = (
   workflowId: string,
-  connectionsData: ConnectionsData,
-  workflowApp: WorkflowApp,
-  addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
+  workflow: any,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   location: string,
   loggerService?: any,
   queryClient?: any
 ): any => {
-  console.log('### Getting services');
-
-  const siteResourceId = new ArmParser(workflowId).topmostResourceId;
-  const armUrl = 'https://management.azure.com';
-  const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
+  const baseUrl = 'https://management.azure.com';
   const workflowName = workflowId.split('/').splice(-1)[0];
-  const workflowIdWithHostRuntime = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}`;
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
   const connectionService = new ConsumptionConnectionService({
+    apiVersion: '2018-07-01-preview',
     baseUrl,
-    apiVersion,
-    httpClient,
-    apiHubServiceDetails: {
-      apiVersion: '2018-07-01-preview',
-      baseUrl: armUrl,
-      subscriptionId,
-      resourceGroup,
-      location,
-    },
+    subscriptionId,
+    resourceGroup,
+    location,
     tenantId,
-    workflowAppDetails: { appName: siteResourceId.split('/').splice(-1)[0], identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(connectionsData),
-    writeConnection: addConnection as any,
-    connectionCreationClients: {
-      FileSystem: new FileSystemConnectionCreationClient({
-        baseUrl: armUrl,
-        subscriptionId,
-        resourceGroup,
-        appName: siteResourceId.split('/').splice(-1)[0],
-        apiVersion: '2022-03-01',
-        httpClient,
-      }),
-    },
+    httpClient,
   });
   const apimService = new BaseApiManagementService({
     ...defaultServiceParams,
@@ -288,14 +235,8 @@ const getDesignerServices = (
     includeBasePathInTemplate: true,
     queryClient,
   });
-  const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl: armUrl, siteResourceId, httpClient, workflowName });
-  const artifactService = new ArtifactService({
-    apiVersion,
-    baseUrl: armUrl,
-    siteResourceId,
-    httpClient,
-    integrationAccountCallbackUrl: undefined,
-  });
+  const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl, siteResourceId: workflowId, httpClient, workflowName });
+
   const appServiceService = new BaseAppServiceService({
     ...defaultServiceParams,
     apiVersion: '2022-03-01',
@@ -349,22 +290,17 @@ const getDesignerServices = (
         }
         return apimService.getOperations(configuration?.connection?.apiId);
       },
-      getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
-      getMapArtifacts: (args: any) => {
-        const { mapType, mapSource } = args.parameters;
-        return artifactService.getMapArtifacts(mapType, mapSource);
-      },
     },
     apiHubServiceDetails: {
       apiVersion: '2018-07-01-preview',
-      baseUrl: armUrl,
+      baseUrl,
       subscriptionId,
       resourceGroup,
     },
     workflowReferenceId: '',
   });
   const gatewayService = new BaseGatewayService({
-    baseUrl: armUrl,
+    baseUrl,
     httpClient,
     apiVersions: {
       subscription: apiVersion,
@@ -372,10 +308,21 @@ const getDesignerServices = (
     },
   });
 
-  const operationManifestService = new ConsumptionOperationManifestService(defaultServiceParams);
+  const operationManifestService = new ConsumptionOperationManifestService({
+    ...defaultServiceParams,
+    apiVersion: '2022-09-01-preview',
+    subscriptionId,
+    location: location || 'location',
+  });
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
-    apiHubServiceDetails: { apiVersion: '2018-07-01-preview', subscriptionId, location },
+    openApiConnectionMode: false, // This should be turned on for Open Api testing.
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      openApiVersion: undefined, //'2022-09-01-preview', //Uncomment to test Open Api
+      subscriptionId,
+      location,
+    },
     isDev: false,
   });
 
@@ -388,13 +335,18 @@ const getDesignerServices = (
   });
 
   const workflowService = {
-    getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName, true),
-    getAppIdentity: () => workflowApp.identity,
-    isExplicitAuthRequiredForManagedIdentity: () => true,
+    getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
+    getAppIdentity: () => workflow?.identity,
+    isExplicitAuthRequiredForManagedIdentity: () => false,
+    getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
+      return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
+        ? 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2023-01-31-preview/workflowdefinition.json#'
+        : undefined;
+    },
   };
 
   const functionService = new BaseFunctionService({
-    baseUrl: armUrl,
+    baseUrl,
     apiVersion,
     subscriptionId,
     httpClient,
@@ -419,7 +371,8 @@ const getDataForConsumption = (data: any) => {
   const properties = data?.properties as any;
 
   const definition = removeProperties(properties?.definition, ['parameters']);
-  const connections = properties?.parameters?.$connections?.value ?? {};
+  const connections =
+    (isOpenApiSchemaVersion(definition) ? properties?.connectionReferences : properties?.parameters?.$connections?.value) ?? {};
 
   const workflow = { definition, connections };
   const connectionsData: Record<string, any> = {};
@@ -441,9 +394,9 @@ const formatConnectionReferencesForConsumption = (connectionReferences: Record<s
 
 const formatConnectionReferenceForConsumption = (connectionReference: any): any => {
   const connectionReferenceCopy = { ...connectionReference };
-  connectionReferenceCopy.connection = { id: connectionReference.connectionId };
+  connectionReferenceCopy.connection = connectionReference.connection ?? { id: connectionReference.connectionId };
   delete connectionReferenceCopy.connectionId;
-  connectionReferenceCopy.api = { id: connectionReference.id };
+  connectionReferenceCopy.api = connectionReference.api ?? { id: connectionReference.id };
   delete connectionReferenceCopy.id;
   return connectionReferenceCopy;
 };

@@ -1060,6 +1060,12 @@
       "value": "Dia"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Os parâmetros usados no Aplicativo Lógico serão convertidos no modelo do Azure Resource Manager durante a geração do modelo de implantação."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1552,6 +1558,12 @@
     {
       "type": 0,
       "value": "'. Não foi possível localizar nas saídas."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "Em desenvolvimento"
     }
   ],
   "9YGcT2": [
@@ -2788,6 +2800,12 @@
       "value": "(UTC-12:00) Linha de Data Internacional Oeste"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Crie, gerencie parâmetros de Aplicativos Lógicos, atribua a ele um valor padrão."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3335,6 +3353,12 @@
       "value": "Identidade gerenciada"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia de caracteres que contém o horário de início."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3623,6 +3647,12 @@
       "value": "Habilitar Resultado Estático"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Enviar"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3847,6 +3877,12 @@
     {
       "type": 0,
       "value": "Retorna a representação de base 64 da cadeia de caracteres de entrada"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Fechar"
     }
   ],
   "Q+ZZHI": [
@@ -4696,6 +4732,12 @@
       "value": "\" como um valor personalizado"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Ações"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5010,6 +5052,12 @@
       "value": "Mais Informações"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Selecionar um recurso do Aplicativo de Funções do Swagger"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5312,6 +5360,12 @@
       "value": "Tela Inteira"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5552,6 +5606,12 @@
     {
       "type": 0,
       "value": "Retorna o corpo de uma parte em uma saída de várias partes de uma ação."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Retorna a diferença entre duas datas como uma cadeia de caracteres de intervalo de tempo"
     }
   ],
   "cgq/+y": [
@@ -6791,6 +6851,12 @@
       "value": "Abreviação de actions('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia de caracteres que contém o horário de término."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -6945,6 +7011,12 @@
     {
       "type": 0,
       "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Faça uma pergunta ou descreva como você deseja alterar esse fluxo"
     }
   ],
   "mvrlkP": [
@@ -7524,6 +7596,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
     }
   ],
   "qc5S69": [

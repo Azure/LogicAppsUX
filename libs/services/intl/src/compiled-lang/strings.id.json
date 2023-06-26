@@ -1050,6 +1050,12 @@
       "value": "Hari"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameter yang digunakan dalam Aplikasi Logika akan dikonversi menjadi templat Azure Resource Manager selama pembuatan templat penerapan."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1546,6 +1552,12 @@
     {
       "type": 0,
       "value": "', tidak dapat menemukan dalam output."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "Dalam Pengembangan"
     }
   ],
   "9YGcT2": [
@@ -2738,6 +2750,12 @@
       "value": "(UTC-12:00) Batas Penanggalan Internasional Bagian Barat"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Buat, kelola parameter Aplikasi Logika, berikan nilai default."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3247,6 +3265,12 @@
       "value": "Identitas terkelola"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String yang berisi waktu mulai."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3535,6 +3559,12 @@
       "value": "Aktifkan Hasil Statik"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Kirim"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3759,6 +3789,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi base 64 dari string input"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Tutup"
     }
   ],
   "Q+ZZHI": [
@@ -4590,6 +4626,12 @@
       "value": "\" sebagai nilai kustom"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Tindakan"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4904,6 +4946,12 @@
       "value": "Info Selengkapnya"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Pilih sumber daya Aplikasi Fungsi Swagger"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5206,6 +5254,12 @@
       "value": "Layar Penuh"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5446,6 +5500,12 @@
     {
       "type": 0,
       "value": "Menampilkan isi dari sebagian output beberapa bagian dari tindakan."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Menghasilkan selisih antara dua tanggal sebagai string rentang waktu"
     }
   ],
   "cgq/+y": [
@@ -6639,6 +6699,12 @@
       "value": "Pintasan untuk tindakan('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String yang berisi waktu selesai."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -6793,6 +6859,12 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ajukan pertanyaan atau jelaskan bagaimana Anda ingin mengubah alur ini"
     }
   ],
   "mvrlkP": [
@@ -7350,6 +7422,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Cari"
     }
   ],
   "qc5S69": [

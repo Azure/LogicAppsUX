@@ -1072,6 +1072,12 @@
       "value": "Giorno"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "I parametri usati nell'app per la logica verranno convertiti in un modello di Azure Resource Manager durante la generazione del modello di distribuzione."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1568,6 +1574,12 @@
     {
       "type": 0,
       "value": "'' non è valido. Non è stato trovato negli output."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In fase di sviluppo"
     }
   ],
   "9YGcT2": [
@@ -2796,6 +2808,12 @@
       "value": "(UTC - 12.00 h) Linea cambiamento data internazionale (occidentale)"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Consente di creare e gestire i parametri delle app per la logica e assegnare loro un valore predefinito."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3327,6 +3345,12 @@
       "value": "Identità gestita"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'ora di inizio."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3615,6 +3639,12 @@
       "value": "Abilita risultato statico"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Invia"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3847,6 +3877,12 @@
     {
       "type": 0,
       "value": "Restituisce la rappresentazione Base 64 della stringa di input"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Chiudi"
     }
   ],
   "Q+ZZHI": [
@@ -4700,6 +4736,12 @@
       "value": "\" come valore personalizzato"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Azioni"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5014,6 +5056,12 @@
       "value": "Altre informazioni"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Selezionare una risorsa dell'app per le funzioni Swagger"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5316,6 +5364,12 @@
       "value": "Schermo intero"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5556,6 +5610,12 @@
     {
       "type": 0,
       "value": "Restituisce il corpo per una parte nell'output multiparte di un'azione."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Restituisce la differenza tra due date come stringa di intervallo di tempo"
     }
   ],
   "cgq/+y": [
@@ -6771,6 +6831,12 @@
       "value": "Abbreviazione per actions('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'ora di fine."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -6925,6 +6991,12 @@
     {
       "type": 0,
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella richiesta in uscita."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Porre una domanda o descrivere come si vuole modificare questo flusso"
     }
   ],
   "mvrlkP": [
@@ -7500,6 +7572,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Cerca"
     }
   ],
   "qc5S69": [

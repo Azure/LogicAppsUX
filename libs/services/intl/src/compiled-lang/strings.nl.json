@@ -1073,6 +1073,12 @@
       "value": "Dag"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "De parameters die in de logische app worden gebruikt, worden tijdens het genereren van de implementatiesjabloon omgezet naar een Azure Resource Manager-sjabloon."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1585,6 +1591,12 @@
     {
       "type": 0,
       "value": ", kan niet worden gevonden in de uitvoer."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In ontwikkeling"
     }
   ],
   "9YGcT2": [
@@ -2803,6 +2815,12 @@
       "value": "(UTC-12:00) Internationale Datumgrens West"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Logic Apps-parameters maken en beheren en geef een standaardwaarde opgeven."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3351,6 +3369,12 @@
       "value": "Beheerde identiteit"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Vereist. Een tekenreeks die de begintijd bevat."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3651,6 +3675,12 @@
       "value": "Statisch resultaat inschakelen"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Verzenden"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3879,6 +3909,12 @@
     {
       "type": 0,
       "value": "Er wordt een base 64-weergave van de ingevoerde tekenreeks geretourneerd"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Sluiten"
     }
   ],
   "Q+ZZHI": [
@@ -4721,6 +4757,12 @@
       "value": "\" als een aangepaste waarde"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Acties"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5035,6 +5077,12 @@
       "value": "Meer informatie"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Een functie-app-resource voor Swagger selecteren"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5337,6 +5385,12 @@
       "value": "Volledig scherm"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5577,6 +5631,12 @@
     {
       "type": 0,
       "value": "Retourneert de hoofdtekst voor een onderdeel in een meerdelige uitvoer van een actie."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Geeft als resultaat het verschil tussen twee datums als een tijdsduurtekenreeks"
     }
   ],
   "cgq/+y": [
@@ -6809,6 +6869,12 @@
       "value": "Verkorte versie van acties('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Vereist. Een tekenreeks die de eindtijd bevat."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -6963,6 +7029,12 @@
     {
       "type": 0,
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Stel een vraag of beschrijf hoe u deze stroom wilt wijzigen"
     }
   ],
   "mvrlkP": [
@@ -7527,6 +7599,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Zoeken"
     }
   ],
   "qc5S69": [

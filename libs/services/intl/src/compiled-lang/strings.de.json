@@ -1085,6 +1085,12 @@
       "value": "Tag"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "In der Logik-App verwendete Parameter werden während der Generierung von Bereitstellungsvorlagen in eine Azure Resource Manager-Vorlage konvertiert."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1601,6 +1607,12 @@
     {
       "type": 0,
       "value": "“. Er kann nicht in den Ausgaben gefunden werden."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In der Entwicklung"
     }
   ],
   "9YGcT2": [
@@ -2831,6 +2843,12 @@
       "value": "(UTC-12:00) Internationale Datumsgrenze West"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Hiermit werden Logic Apps-Parameter erstellt, verwaltet und mit einem Standardwert versehen."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3383,6 +3401,12 @@
       "value": "Verwaltete Identität"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge, welche die Startzeit enthält."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3687,6 +3711,12 @@
       "value": "Statisches Ergebnis aktivieren"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Übermitteln"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3915,6 +3945,12 @@
     {
       "type": 0,
       "value": "Gibt die Base64-Darstellung der Eingabezeichenfolge zurück."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Schließen"
     }
   ],
   "Q+ZZHI": [
@@ -4761,6 +4797,12 @@
       "value": "“ als benutzerdefinierter Wert"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Aktionen"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5079,6 +5121,12 @@
       "value": "Weitere Informationen"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Swagger-Funktions-App-Ressource auswählen"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5381,6 +5429,12 @@
       "value": "Vollbild"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5625,6 +5679,12 @@
     {
       "type": 0,
       "value": "Gibt den Teiltext einer mehrteiligen Ausgabe für eine Aktion zurück."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Gibt die Differenz zwischen zwei Datumsangaben als Zeitspanne zurück."
     }
   ],
   "cgq/+y": [
@@ -6861,6 +6921,12 @@
       "value": "Kompakteigenschaft für actions(\"Aktionsname\").outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge, welche die Endzeit enthält."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -7015,6 +7081,12 @@
     {
       "type": 0,
       "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in ausgehenden Anforderungen ein."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Stellen Sie eine Frage, oder beschreiben Sie, wie Sie diesen Flow ändern möchten"
     }
   ],
   "mvrlkP": [
@@ -7587,6 +7659,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Suchen"
     }
   ],
   "qc5S69": [

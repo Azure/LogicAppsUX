@@ -1085,6 +1085,12 @@
       "value": "Nap"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "A logikai alkalmazásban használt paramétereket Azure Resource Manager-sablonná konvertálja a rendszer az üzembe helyezési sablon létrehozása során."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1589,6 +1595,12 @@
     {
       "type": 0,
       "value": "” érték szerinti felosztás. Nem található a kimenetekben."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "Fejlesztés alatt"
     }
   ],
   "9YGcT2": [
@@ -2811,6 +2823,12 @@
       "value": "(UTC-12:00) Nemzetközi dátumválasztó vonal – nyugat"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Logic Apps-paramétereket hozhat létre és kezelhet, illetve alapértelmezett értéket adhat azoknak."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3363,6 +3381,12 @@
       "value": "Felügyelt identitás"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Kötelező. A kezdési időt tartalmazó sztring."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3667,6 +3691,12 @@
       "value": "Statikus eredmény engedélyezése"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Küldés"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3891,6 +3921,12 @@
     {
       "type": 0,
       "value": "A bemeneti sztringet Base 64 kódolású sztringként adja vissza."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Bezárás"
     }
   ],
   "Q+ZZHI": [
@@ -4729,6 +4765,12 @@
       "value": "“ használata egyéni értékként"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Műveletek"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5043,6 +5085,12 @@
       "value": "További információ"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Válassza ki egy Swagger-függvényalkalmazás erőforrását."
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5345,6 +5393,12 @@
       "value": "Teljes képernyős"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5589,6 +5643,12 @@
     {
       "type": 0,
       "value": "Egy művelet többrészes kimenetéből az egyik rész törzsét adja vissza."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Két dátum különbségét adja vissza időtartomány-sztringként"
     }
   ],
   "cgq/+y": [
@@ -6825,6 +6885,12 @@
       "value": "Az actions('actionName').outputs.body rövid függvényneve."
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Kötelező. A befejezési időt tartalmazó sztring."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -6983,6 +7049,12 @@
     {
       "type": 0,
       "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a kimenő Logic Apps-kérelemben való megjelenítésének letiltása."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Tegyen fel egy kérdést, vagy írja le, hogyan szeretné módosítani ezt a folyamatot."
     }
   ],
   "mvrlkP": [
@@ -7551,6 +7623,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Keresés"
     }
   ],
   "qc5S69": [
