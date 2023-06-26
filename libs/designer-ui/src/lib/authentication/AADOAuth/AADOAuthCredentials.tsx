@@ -5,7 +5,6 @@ import { AuthenticationProperty } from '../AuthenticationProperty';
 import { CertificateAuthentication } from '../CertificateAuth';
 import { AUTHENTICATION_PROPERTIES } from '../util';
 import { AuthenticationOAuthType } from './AADOAuth';
-import { AssertionErrorCode, AssertionException, format } from '@microsoft/utils-logic-apps';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface AadOAuthCredentialsProps {
@@ -30,32 +29,23 @@ export const AadOAuthCredentials = ({
     }));
   };
 
-  const RenderSelectedCredentials = (): JSX.Element => {
-    switch (selectedCredTypeKey) {
-      case AuthenticationOAuthType.SECRET:
-        return (
-          <AuthenticationProperty
-            initialValue={secret}
-            AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET}
-            getTokenPicker={getTokenPicker}
-            onBlur={updateOAuthTypeSecret}
-          />
-        );
-      case AuthenticationOAuthType.CERTIFICATE:
-        return (
-          <CertificateAuthentication
-            clientCertificateProps={clientCertificateProps}
-            isOAuth={true}
-            getTokenPicker={getTokenPicker}
-            setCurrentProps={setCurrentProps}
-          />
-        );
-      default:
-        throw new AssertionException(
-          AssertionErrorCode.UNSUPPORTED_OAUTH_CREDENTIAL_TYPE,
-          format("Unsupported OAuth credential type '{0}'.", selectedCredTypeKey)
-        );
-    }
-  };
-  return <RenderSelectedCredentials />;
+  return (
+    <>
+      {selectedCredTypeKey === AuthenticationOAuthType.SECRET ? (
+        <AuthenticationProperty
+          initialValue={secret}
+          AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET}
+          getTokenPicker={getTokenPicker}
+          onBlur={updateOAuthTypeSecret}
+        />
+      ) : selectedCredTypeKey === AuthenticationOAuthType.CERTIFICATE ? (
+        <CertificateAuthentication
+          clientCertificateProps={clientCertificateProps}
+          isOAuth={true}
+          getTokenPicker={getTokenPicker}
+          setCurrentProps={setCurrentProps}
+        />
+      ) : null}
+    </>
+  );
 };
