@@ -92,6 +92,14 @@ export const panelSlice = createSlice({
       state.selectedOperationId = '';
       state.addingTrigger = false;
     },
+    switchToErrorsPanel: (state) => {
+      state.collapsed = false;
+      state.currentState = 'Error';
+      state.selectedNode = '';
+      state.selectedOperationGroupId = '';
+      state.selectedOperationId = '';
+      state.addingTrigger = false;
+    },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
         state.registeredTabs[tab.name.toLowerCase()] = tab;
@@ -104,7 +112,7 @@ export const panelSlice = createSlice({
         state.registeredTabs[tabName] = {
           ...state.registeredTabs[tabName],
           tabErrors: {
-            ...state.registeredTabs[tabName].tabErrors,
+            ...state.registeredTabs?.[tabName]?.tabErrors,
             [nodeId]: hasErrors,
           },
         };
@@ -188,8 +196,9 @@ export const {
   isolateTab,
   selectPanelTab,
   setTabError,
-  switchToNodeSearchPanel,
   switchToWorkflowParameters,
+  switchToNodeSearchPanel,
+  switchToErrorsPanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

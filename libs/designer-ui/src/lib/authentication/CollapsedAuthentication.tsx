@@ -16,6 +16,7 @@ interface CollapsedAuthenticationProps {
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   setOption: (s: AuthenticationType) => void;
+  serializeValue: (value: ValueSegment[]) => void;
 }
 
 export const CollapsedAuthentication = ({
@@ -25,6 +26,7 @@ export const CollapsedAuthentication = ({
   setCurrentProps,
   setIsValid,
   setOption,
+  serializeValue,
   ...props
 }: CollapsedAuthenticationProps): JSX.Element => {
   return (
@@ -38,6 +40,7 @@ export const CollapsedAuthentication = ({
           setCurrentProps={setCurrentProps}
           setIsValid={setIsValid}
           setOption={setOption}
+          serializeValue={serializeValue}
         />
       </BaseEditor>
     </div>

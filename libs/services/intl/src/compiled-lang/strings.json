@@ -5,10 +5,22 @@
       "value": "Testing"
     }
   ],
+  "+0cO6t": [
+    {
+      "type": 0,
+      "value": "Create connection reference"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
       "value": "Function display"
+    }
+  ],
+  "+FcXe9": [
+    {
+      "type": 0,
+      "value": "Faulted"
     }
   ],
   "+Uvo/p": [
@@ -43,6 +55,18 @@
       "value": "Time zone"
     }
   ],
+  "+xXHdp": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
+  "/2V8bQ": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "/EU/oJ": [
     {
       "type": 0,
@@ -55,10 +79,10 @@
       "value": "Body"
     }
   ],
-  "/NDLmg": [
+  "/KRvvg": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "No values match your search."
     }
   ],
   "/NtebP": [
@@ -143,6 +167,12 @@
     {
       "type": 0,
       "value": "Missing required inputs"
+    }
+  ],
+  "/w/q/8": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "/yYyOq": [
@@ -233,6 +263,12 @@
       "value": "Save"
     }
   ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "Secure inputs or outputs enabled."
+    }
+  ],
   "0FzNJV": [
     {
       "type": 0,
@@ -285,12 +321,6 @@
     {
       "type": 0,
       "value": "Collapse"
-    }
-  ],
-  "0ZlNtf": [
-    {
-      "type": 0,
-      "value": "Succeeded with retries"
     }
   ],
   "0i/6TR": [
@@ -417,74 +447,10 @@
       "value": "Convert the parameter argument to a floating-point number"
     }
   ],
-  "1R6Vaa": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "no items matched."
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " item matched."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " items matched."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
   "1REk6u": [
     {
       "type": 0,
       "value": "Enter a valid email."
-    }
-  ],
-  "1TE0e8": [
-    {
-      "type": 0,
-      "value": "Required. The value to search the index of."
-    }
-  ],
-  "1VRGCF": [
-    {
-      "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
-    }
-  ],
-  "1YEc9e": [
-    {
-      "type": 0,
-      "value": "Enter a valid condition."
-    }
-  ],
-  "1ZDLZA": [
-    {
-      "type": 0,
-      "value": "Learn more"
     }
   ],
   "1ZSzl6": [
@@ -707,12 +673,6 @@
       "value": "Loading connection..."
     }
   ],
-  "30njcn": [
-    {
-      "type": 0,
-      "value": "Create Connection"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -853,12 +813,6 @@
       "value": "."
     }
   ],
-  "3kI7xF": [
-    {
-      "type": 0,
-      "value": "Faulted"
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -887,6 +841,18 @@
     {
       "type": 0,
       "value": "3"
+    }
+  ],
+  "3z6rhG": [
+    {
+      "type": 0,
+      "value": "Required. This value is the next integer after the highest integer that can be returned."
+    }
+  ],
+  "41eMpW": [
+    {
+      "type": 0,
+      "value": "Waiting"
     }
   ],
   "43xObP": [
@@ -1011,16 +977,16 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "53MgCQ": [
+    {
+      "type": 0,
+      "value": "Open panel"
+    }
+  ],
   "595Baw": [
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
-    }
-  ],
-  "5J7j9k": [
-    {
-      "type": 0,
-      "value": "Required. The XPath expression to evaluate."
     }
   ],
   "5OvGgn": [
@@ -1127,6 +1093,12 @@
       "value": "Required. The object to check if it is greater than value being compared to."
     }
   ],
+  "63CC7M": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1137,6 +1109,12 @@
     {
       "type": 0,
       "value": "Cancel"
+    }
+  ],
+  "6ZviI7": [
+    {
+      "type": 0,
+      "value": "Select connection reference"
     }
   ],
   "6fDYzG": [
@@ -1195,16 +1173,34 @@
       "value": "Required. The number to multiply Multiplicand 2 with."
     }
   ],
+  "6u6CS+": [
+    {
+      "type": 0,
+      "value": "Required. The value for which to find the index."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
       "value": "Start time"
     }
   ],
+  "6xRvni": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "78Vggn": [
+    {
+      "type": 0,
+      "value": "Enter username"
     }
   ],
   "7EZ2oY": [
@@ -1305,6 +1301,20 @@
       "value": "Copy URL"
     }
   ],
+  "7zsUT3": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "7zzPsK": [
     {
       "type": 0,
@@ -1333,12 +1343,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "89FJnl": [
-    {
-      "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
     }
   ],
   "8BoVtZ": [
@@ -1449,12 +1453,6 @@
     {
       "type": 0,
       "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
-    }
-  ],
-  "8luJ2j": [
-    {
-      "type": 0,
-      "value": "Create Connection Reference"
     }
   ],
   "8mDG0V": [
@@ -1799,6 +1797,12 @@
       "value": "Clear custom value"
     }
   ],
+  "BFTwRN": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -1815,6 +1819,12 @@
     {
       "type": 0,
       "value": "Start time"
+    }
+  ],
+  "BPYdTX": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "BQCPY7": [
@@ -1853,6 +1863,12 @@
       "value": "Automatic Decompression"
     }
   ],
+  "Bewmet": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
   "Bl4Iv0": [
     {
       "type": 0,
@@ -1881,6 +1897,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "BrvZNn": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions that must be true for the trigger to fire."
     }
   ],
   "BtL7UI": [
@@ -1919,10 +1941,38 @@
       "value": "Connection required"
     }
   ],
+  "CPm+OG": [
+    {
+      "type": 0,
+      "value": "Create connection"
+    }
+  ],
   "CaajcD": [
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "CafOCn": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "Cb6IEq": [
@@ -1947,6 +1997,12 @@
     {
       "type": 0,
       "value": "Output"
+    }
+  ],
+  "Cj3/LJ": [
+    {
+      "type": 0,
+      "value": "Must provide the parameter name."
     }
   ],
   "ClZW2r": [
@@ -2047,6 +2103,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DMuwuJ": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "DQV7aK": [
@@ -2173,6 +2235,12 @@
       "value": "Converts the parameter to a decimal number"
     }
   ],
+  "EKtYQF": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2267,12 +2335,6 @@
       "value": "Please select yes or no"
     }
   ],
-  "Ex4U46": [
-    {
-      "type": 0,
-      "value": "Use Invoker's Connection"
-    }
-  ],
   "ExaACE": [
     {
       "type": 0,
@@ -2309,12 +2371,6 @@
       "value": "Secure Outputs"
     }
   ],
-  "FGS2fS": [
-    {
-      "type": 0,
-      "value": "has failed"
-    }
-  ],
   "FIL1Nt": [
     {
       "type": 0,
@@ -2339,22 +2395,10 @@
       "value": "Returns a section of a string defined by the start index and the end index"
     }
   ],
-  "FNbA9+": [
+  "FOiBk/": [
     {
       "type": 0,
-      "value": "Expand"
-    }
-  ],
-  "FS+/Tb": [
-    {
-      "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
-    }
-  ],
-  "FS06y3": [
-    {
-      "type": 0,
-      "value": "Must provide name of parameter."
+      "value": "Errors"
     }
   ],
   "FT3jt6": [
@@ -2443,6 +2487,12 @@
       "value": "(UTC+02:00) Tripoli"
     }
   ],
+  "G+XvKn": [
+    {
+      "type": 0,
+      "value": "Returns a string with each item of an array joined by a delimiter"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -2459,12 +2509,6 @@
     {
       "type": 0,
       "value": "Returns the query from a URI"
-    }
-  ],
-  "GCjJnP": [
-    {
-      "type": 0,
-      "value": "Enter a valid Json."
     }
   ],
   "GD3m4X": [
@@ -2501,12 +2545,6 @@
     {
       "type": 0,
       "value": "Required. The object to find inside the Within collection."
-    }
-  ],
-  "GMkbFM": [
-    {
-      "type": 0,
-      "value": "Trigger conditions"
     }
   ],
   "GXXLuT": [
@@ -2639,6 +2677,12 @@
       "value": "Month"
     }
   ],
+  "HMiE+4": [
+    {
+      "type": 0,
+      "value": "Exit full screen"
+    }
+  ],
   "HOchry": [
     {
       "type": 0,
@@ -2735,6 +2779,12 @@
     {
       "type": 0,
       "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
+  "I3mifR": [
+    {
+      "type": 0,
+      "value": "Is skipped"
     }
   ],
   "I41vZ/": [
@@ -2843,12 +2893,6 @@
       "value": "'."
     }
   ],
-  "Io48jC": [
-    {
-      "type": 0,
-      "value": "The {0} properties are invalid for the {1} authentication type."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2897,6 +2941,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J62n9E": [
+    {
+      "type": 0,
+      "value": "Failed"
     }
   ],
   "J9wWry": [
@@ -2985,12 +3035,6 @@
     {
       "type": 0,
       "value": "Name:"
-    }
-  ],
-  "Jpox7O": [
-    {
-      "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "Jq2Y/o": [
@@ -3093,6 +3137,12 @@
       "value": "(UTC+02:00) Beirut"
     }
   ],
+  "KnjcUV": [
+    {
+      "type": 0,
+      "value": "Ignored"
+    }
+  ],
   "KwGA+K": [
     {
       "type": 0,
@@ -3165,6 +3215,12 @@
       "value": "Returns the scheme from a URI"
     }
   ],
+  "LTTgWN": [
+    {
+      "type": 0,
+      "value": "Required. The collection from which to take the first object."
+    }
+  ],
   "LV/BTE": [
     {
       "type": 0,
@@ -3195,12 +3251,6 @@
       "value": "Add new"
     }
   ],
-  "Li6x/B": [
-    {
-      "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
-    }
-  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -3229,6 +3279,12 @@
     {
       "type": 0,
       "value": "Add"
+    }
+  ],
+  "LtbkS7": [
+    {
+      "type": 0,
+      "value": "Returns the start of the day for the passed-in string timestamp."
     }
   ],
   "Lub7NN": [
@@ -3285,12 +3341,6 @@
       "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
     }
   ],
-  "M9mzP6": [
-    {
-      "type": 0,
-      "value": "Required. The number to add to Summand 2."
-    }
-  ],
   "MCQODe": [
     {
       "type": 0,
@@ -3307,6 +3357,12 @@
     {
       "type": 0,
       "value": "Required. The collections to evaluate. An object must be in all collections passed in to appear in the result."
+    }
+  ],
+  "MIX4f9": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
     }
   ],
   "MKTdNk": [
@@ -3405,6 +3461,12 @@
       "value": "Insert function"
     }
   ],
+  "MsCHhQ": [
+    {
+      "type": 0,
+      "value": "Timed Out"
+    }
+  ],
   "N0pS6Y": [
     {
       "type": 0,
@@ -3459,6 +3521,12 @@
       "value": "Enter unique property name"
     }
   ],
+  "Nh91qA": [
+    {
+      "type": 0,
+      "value": "Returns the value of the specified variable."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -3501,6 +3569,12 @@
       "value": "Tuesday"
     }
   ],
+  "O+3Y9f": [
+    {
+      "type": 0,
+      "value": "Has failed"
+    }
+  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3511,6 +3585,12 @@
     {
       "type": 0,
       "value": "Service Principal"
+    }
+  ],
+  "O1tedM": [
+    {
+      "type": 0,
+      "value": "No errors found."
     }
   ],
   "O27gKq": [
@@ -3541,12 +3621,6 @@
     {
       "type": 0,
       "value": "Operation options:"
-    }
-  ],
-  "OH94j3": [
-    {
-      "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -3669,6 +3743,28 @@
       "value": "Select a managed identity"
     }
   ],
+  "Os0h2Y": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "P+7G62": [
     {
       "type": 0,
@@ -3705,6 +3801,12 @@
       "value": "Default value"
     }
   ],
+  "P3Zpc4": [
+    {
+      "type": 0,
+      "value": "Custom Tracking Id"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -3715,30 +3817,6 @@
     {
       "type": 0,
       "value": "Input"
-    }
-  ],
-  "P8ZBF9": [
-    {
-      "type": 0,
-      "value": "Required. The collection to take the first object from."
-    }
-  ],
-  "PE1tsI": [
-    {
-      "type": 0,
-      "value": "No outputs"
-    }
-  ],
-  "PF87Ew": [
-    {
-      "type": 0,
-      "value": "Succeeded"
-    }
-  ],
-  "PKMkb/": [
-    {
-      "type": 0,
-      "value": "Required. The number to add to Summand 1."
     }
   ],
   "PNk3n4": [
@@ -3793,10 +3871,10 @@
       "value": "Schema Uri"
     }
   ],
-  "PaPPLr": [
+  "Peg6ZT": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Setting errors"
     }
   ],
   "PfCJlN": [
@@ -3821,6 +3899,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Cairo"
+    }
+  ],
+  "PsmHyH": [
+    {
+      "type": 0,
+      "value": "Connection errors"
     }
   ],
   "PtqSHp": [
@@ -3851,6 +3935,16 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "PytMJ0": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "Q+ZZHI": [
@@ -3905,6 +3999,28 @@
       "value": "Status code"
     }
   ],
+  "QKWoVr": [
+    {
+      "type": 0,
+      "value": "Missing required property '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "QZBPUx": [
     {
       "type": 0,
@@ -3929,28 +4045,10 @@
       "value": "Pencil icon"
     }
   ],
-  "QeE0k/": [
+  "QdhS3y": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
-    }
-  ],
-  "QePi+D": [
-    {
-      "type": 0,
-      "value": "Data type"
-    }
-  ],
-  "QiVbKW": [
-    {
-      "type": 0,
-      "value": "Exit Full Screen"
-    }
-  ],
-  "QknZQ1": [
-    {
-      "type": 0,
-      "value": "Loading..."
+      "value": "Workflow Parameters"
     }
   ],
   "Qn8qxn": [
@@ -3999,10 +4097,22 @@
       "value": "(UTC+12:00) Coordinated Universal Time+12"
     }
   ],
+  "R7X0wG": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "RJ3DuE": [
+    {
+      "type": 0,
+      "value": "Preview"
     }
   ],
   "RJes1w": [
@@ -4091,6 +4201,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "Rs7j3V": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that must be true."
     }
   ],
   "RvpHdu": [
@@ -4217,52 +4333,16 @@
       "value": "Test"
     }
   ],
-  "T0BFpC": [
-    {
-      "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
-    }
-  ],
   "T6VIym": [
     {
       "type": 0,
       "value": "Name"
     }
   ],
-  "T7Xwii": [
-    {
-      "type": 0,
-      "value": "Interval"
-    }
-  ],
-  "T7zcR6": [
-    {
-      "type": 0,
-      "value": "Required. The expressions that must be true."
-    }
-  ],
-  "T8Xqt9": [
-    {
-      "type": 0,
-      "value": "Failed"
-    }
-  ],
   "TEN+cR": [
     {
       "type": 0,
       "value": "Give feedback"
-    }
-  ],
-  "TI44R1": [
-    {
-      "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
-    }
-  ],
-  "TLHUMf": [
-    {
-      "type": 0,
-      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -4361,10 +4441,22 @@
       "value": "(UTC+02:00) Kaliningrad"
     }
   ],
+  "Tla33B": [
+    {
+      "type": 0,
+      "value": "Required. The value for which to find the index."
+    }
+  ],
   "Tmr/9e": [
     {
       "type": 0,
       "value": "Invalid parameters"
+    }
+  ],
+  "To3RNy": [
+    {
+      "type": 0,
+      "value": "Workflow parameter errors"
     }
   ],
   "Ts5Pzr": [
@@ -4517,6 +4609,12 @@
       "value": "' has an non-terminating connection chain"
     }
   ],
+  "Ug4sWZ": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "Umpr3z": [
     {
       "type": 0,
@@ -4541,6 +4639,28 @@
     {
       "type": 0,
       "value": "Source schema"
+    }
+  ],
+  "UnytRl": [
+    {
+      "type": 0,
+      "value": "The type for '"
+    },
+    {
+      "type": 1,
+      "value": "authenticationKey"
+    },
+    {
+      "type": 0,
+      "value": "' is '"
+    },
+    {
+      "type": 1,
+      "value": "propertyType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ur+wph": [
@@ -4577,6 +4697,12 @@
     {
       "type": 0,
       "value": "Week"
+    }
+  ],
+  "V8A+1J": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "VA7M1u": [
@@ -5037,6 +5163,12 @@
       "value": "Add children"
     }
   ],
+  "YDoc9z": [
+    {
+      "type": 0,
+      "value": "Trigger conditions"
+    }
+  ],
   "YHsAKl": [
     {
       "type": 0,
@@ -5315,6 +5447,12 @@
       "value": "Second"
     }
   ],
+  "aYTy7X": [
+    {
+      "type": 0,
+      "value": "Cancelled"
+    }
+  ],
   "ae7W0a": [
     {
       "type": 0,
@@ -5391,6 +5529,12 @@
       "value": "Subscription"
     }
   ],
+  "bJ7DWe": [
+    {
+      "type": 0,
+      "value": "Required. The value that is converted to binary."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5407,6 +5551,12 @@
     {
       "type": 0,
       "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+    }
+  ],
+  "bWOsvo": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
     }
   ],
   "bXFGpe": [
@@ -5433,44 +5583,22 @@
       "value": "Retry History"
     }
   ],
-  "bsgS8m": [
+  "bwlAWn": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Open operation"
     }
   ],
-  "bv9QPA": [
+  "byRkj+": [
     {
       "type": 0,
-      "value": "Date"
-    }
-  ],
-  "bwfJdj": [
-    {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
-      "type": 1,
-      "value": "sourceNodeId"
-    }
-  ],
-  "bxhkTi": [
-    {
-      "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "This operation has secure inputs or outputs enabled."
     }
   ],
   "byTBrn": [
     {
       "type": 0,
       "value": "Custom"
-    }
-  ],
-  "bzF/qn": [
-    {
-      "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
     }
   ],
   "c/+j08": [
@@ -5527,12 +5655,6 @@
       "value": "(UTC+09:00) Seoul"
     }
   ],
-  "cJm+ah": [
-    {
-      "type": 0,
-      "value": "Required. The value to search the index of."
-    }
-  ],
   "cK2A/V": [
     {
       "type": 0,
@@ -5587,12 +5709,6 @@
       "value": "Bold (⌘B)"
     }
   ],
-  "cj+kyo": [
-    {
-      "type": 0,
-      "value": "Cancelled"
-    }
-  ],
   "cjcEOf": [
     {
       "type": 0,
@@ -5645,6 +5761,12 @@
     {
       "type": 0,
       "value": "Returns the first element from the passed-in array or string."
+    }
+  ],
+  "d4Ddhp": [
+    {
+      "type": 0,
+      "value": "Download (Alt or Option + select)"
     }
   ],
   "dBWIjR": [
@@ -5763,12 +5885,6 @@
       "value": "Warnings"
     }
   ],
-  "dxh2CJ": [
-    {
-      "type": 0,
-      "value": "timed out"
-    }
-  ],
   "e+GuGo": [
     {
       "type": 0,
@@ -5785,12 +5901,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Tomsk"
-    }
-  ],
-  "e4Onhn": [
-    {
-      "type": 0,
-      "value": "Not specified"
     }
   ],
   "e9OvzW": [
@@ -5863,24 +5973,6 @@
     {
       "type": 0,
       "value": "Shared"
-    }
-  ],
-  "esOQ5p": [
-    {
-      "type": 0,
-      "value": "No values matching your search"
-    }
-  ],
-  "euC/DV": [
-    {
-      "type": 0,
-      "value": "Array"
-    }
-  ],
-  "exo9v7": [
-    {
-      "type": 0,
-      "value": "Unsupported programming language."
     }
   ],
   "f/lWTW": [
@@ -5981,10 +6073,10 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
-  "ftwXvc": [
+  "g/7QyT": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Select connection"
     }
   ],
   "g076bL": [
@@ -6123,6 +6215,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "gwEKLM": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "h+W3VW": [
@@ -6333,12 +6431,6 @@
       "value": "Required. The URI to parse."
     }
   ],
-  "iRARwF": [
-    {
-      "type": 0,
-      "value": "Unsupported authentication type {0}."
-    }
-  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -6399,6 +6491,12 @@
       "value": "Code View Tab"
     }
   ],
+  "ihCdw4": [
+    {
+      "type": 0,
+      "value": "Required. The number to add to Summand 2."
+    }
+  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -6415,18 +6513,6 @@
       "value": "s"
     }
   ],
-  "isnFBi": [
-    {
-      "type": 0,
-      "value": "Elements and mappings not connected to a target element are removed."
-    }
-  ],
-  "ixhS47": [
-    {
-      "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
-    }
-  ],
   "ixutP5": [
     {
       "type": 0,
@@ -6437,18 +6523,6 @@
     {
       "type": 0,
       "value": "Test"
-    }
-  ],
-  "j2MU0b": [
-    {
-      "type": 0,
-      "value": "Returns an object with a property removed"
-    }
-  ],
-  "j39557": [
-    {
-      "type": 0,
-      "value": "Returns the value of the variable specified."
     }
   ],
   "j5z8Vd": [
@@ -6559,16 +6633,16 @@
       "value": "Required. The base64 encoded string."
     }
   ],
-  "k41+13": [
-    {
-      "type": 0,
-      "value": "Skipped"
-    }
-  ],
   "k5tGEr": [
     {
       "type": 0,
       "value": "Yes"
+    }
+  ],
+  "k8cbQ1": [
+    {
+      "type": 0,
+      "value": "Parameter errors"
     }
   ],
   "kBOAkT": [
@@ -6631,28 +6705,56 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
-  "kYivbS": [
-    {
-      "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
   "kZCX7t": [
     {
       "type": 0,
       "value": "Monday"
     }
   ],
-  "klpJg1": [
+  "kcOhfh": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Elements and mappings that aren't connected to a target element are removed."
     }
   ],
-  "knylNW": [
+  "klY9UN": [
     {
-      "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that could be returned."
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "kuFK3E": [
@@ -6733,22 +6835,10 @@
       "value": "Return"
     }
   ],
-  "lUvgiW": [
-    {
-      "type": 0,
-      "value": "The type for {0} is {1}."
-    }
-  ],
   "lZT0JI": [
     {
       "type": 0,
       "value": "Add Group"
-    }
-  ],
-  "lcVG4C": [
-    {
-      "type": 0,
-      "value": "is skipped"
     }
   ],
   "lexzgJ": [
@@ -6903,16 +6993,16 @@
       "value": "', split on not in array."
     }
   ],
-  "mQotIu": [
-    {
-      "type": 0,
-      "value": "Select Connection"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
       "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+    }
+  ],
+  "mZQYLv": [
+    {
+      "type": 0,
+      "value": "Required. The XPath expression to evaluate."
     }
   ],
   "mZRMD9": [
@@ -7027,6 +7117,12 @@
       "value": "Required. The object to check if it is less than or equal to value being compared to."
     }
   ],
+  "nHIeXp": [
+    {
+      "type": 0,
+      "value": "Skipped"
+    }
+  ],
   "nHseED": [
     {
       "type": 0,
@@ -7049,6 +7145,12 @@
     {
       "type": 0,
       "value": "Yes/No"
+    }
+  ],
+  "nPgYuI": [
+    {
+      "type": 0,
+      "value": "New parameter"
     }
   ],
   "nRpM02": [
@@ -7097,6 +7199,12 @@
     {
       "type": 0,
       "value": "Adds an integer number of minutes to a string timestamp passed in"
+    }
+  ],
+  "nmFupX": [
+    {
+      "type": 0,
+      "value": "Has timed out"
     }
   ],
   "no/SMg": [
@@ -7457,12 +7565,6 @@
       "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
     }
   ],
-  "qPUX59": [
-    {
-      "type": 0,
-      "value": "is successful"
-    }
-  ],
   "qQoQFv": [
     {
       "type": 0,
@@ -7573,6 +7675,28 @@
       "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
     }
   ],
+  "qs9D+A": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -7663,6 +7787,12 @@
       "value": "Use left and right arrow keys to navigate between commands"
     }
   ],
+  "rh5g4p": [
+    {
+      "type": 0,
+      "value": "Is successful"
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7733,6 +7863,12 @@
     {
       "type": 0,
       "value": "Add Case"
+    }
+  ],
+  "sVQe34": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
     }
   ],
   "sW47JR": [
@@ -7885,12 +8021,6 @@
     {
       "type": 0,
       "value": "h"
-    }
-  ],
-  "tJMHcJ": [
-    {
-      "type": 0,
-      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
@@ -8085,6 +8215,12 @@
       "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
     }
   ],
+  "uanMWm": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -8113,6 +8249,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Greenland"
+    }
+  ],
+  "ui3KuP": [
+    {
+      "type": 0,
+      "value": "Operation errors"
     }
   ],
   "ui7GCl": [
@@ -8193,6 +8335,12 @@
       "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
     }
   ],
+  "vLereV": [
+    {
+      "type": 0,
+      "value": "Required. The collection from where to take the first Count objects."
+    }
+  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -8227,12 +8375,6 @@
     {
       "type": 0,
       "value": "Required. The name of the action whose outputs you want."
-    }
-  ],
-  "vcBAuU": [
-    {
-      "type": 0,
-      "value": "has timed out"
     }
   ],
   "vdKLiR": [
@@ -8345,12 +8487,6 @@
       "value": "Including dynamic content"
     }
   ],
-  "wHYQyg": [
-    {
-      "type": 0,
-      "value": "Timed Out"
-    }
-  ],
   "wPlTDB": [
     {
       "type": 0,
@@ -8459,10 +8595,22 @@
       "value": "Status Code"
     }
   ],
+  "x2JTW5": [
+    {
+      "type": 0,
+      "value": "Returns an object with the specified property removed."
+    }
+  ],
   "x3dWOL": [
     {
       "type": 0,
       "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+    }
+  ],
+  "x7IYBg": [
+    {
+      "type": 0,
+      "value": "Aborted"
     }
   ],
   "x8kTAX": [
@@ -8647,6 +8795,12 @@
       "value": "Select an existing connection or create a new one."
     }
   ],
+  "ypZV9w": [
+    {
+      "type": 0,
+      "value": "Returns the body for a part in a multipart output of the trigger"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
@@ -8675,6 +8829,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "yzqXMp": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "z/UY4k": [
@@ -8785,6 +8945,12 @@
     {
       "type": 0,
       "value": "Adds an integer number of a specified unit of time to a string timestamp passed in"
+    }
+  ],
+  "zsPNYN": [
+    {
+      "type": 0,
+      "value": "Required. The number to add to Summand 1."
     }
   ],
   "zxe9hh": [

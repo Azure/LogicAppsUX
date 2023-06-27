@@ -10,6 +10,8 @@ export type CollapsedDictionaryProps = {
   isValid?: boolean;
   readonly?: boolean;
   collapsedValue: ValueSegment[];
+  keyType?: string;
+  valueType?: string;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   setIsValid: (b: boolean) => void;
@@ -21,6 +23,8 @@ export type CollapsedDictionaryProps = {
 export const CollapsedDictionary = ({
   isValid,
   collapsedValue,
+  keyType,
+  valueType,
   setItems,
   setIsValid,
   setCollapsedValue,
@@ -52,6 +56,8 @@ export const CollapsedDictionary = ({
             className={'msla-collapsed-editor-validation'}
             isValid={isValid}
             setIsValid={setIsValid}
+            keyType={keyType}
+            valueType={valueType}
             setItems={setItems}
             collapsedValue={collapsedValue}
             setCollapsedValue={setCollapsedValue}
