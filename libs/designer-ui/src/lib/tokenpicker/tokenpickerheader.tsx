@@ -48,8 +48,8 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
     description: 'Full Screen token picker',
   });
   const fullScreenExitMessage = intl.formatMessage({
-    defaultMessage: 'Exit Full Screen',
-    description: 'Exit Full Screen token picker',
+    defaultMessage: 'Exit full screen',
+    description: "Token picker for 'Exit full screen'",
   });
 
   const handleCloseTokenPicker = () => {

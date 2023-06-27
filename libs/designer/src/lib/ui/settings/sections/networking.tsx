@@ -157,7 +157,7 @@ export const Networking = ({
   });
   const retryPolicyIntervalTitle = intl.formatMessage({
     defaultMessage: 'Interval',
-    description: 'title for retry interval setting',
+    description: 'Title for retry interval setting',
   });
   const retryPolicyIntervalDescription = intl.formatMessage({
     defaultMessage: 'Specify interval in ISO 8601 format.',
