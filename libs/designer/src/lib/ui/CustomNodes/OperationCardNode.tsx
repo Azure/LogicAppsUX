@@ -7,6 +7,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
+  useSecureInputsOutputs,
   useParameterStaticResult,
   useParameterValidationErrors,
   useTokenDependencies,
@@ -70,6 +71,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const runHistory = useRetryHistory(id);
+  const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
@@ -287,6 +289,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           contextMenuOptions={contextMenuOptions}
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults}
+          isSecureInputsOutputs={isSecureInputsOutputs}
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>

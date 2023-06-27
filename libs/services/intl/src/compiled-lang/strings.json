@@ -263,6 +263,12 @@
       "value": "Save"
     }
   ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "Secure inputs or outputs enabled."
+    }
+  ],
   "0FzNJV": [
     {
       "type": 0,
@@ -5503,6 +5509,12 @@
     {
       "type": 0,
       "value": "Open operation"
+    }
+  ],
+  "byRkj+": [
+    {
+      "type": 0,
+      "value": "This operation has secure inputs or outputs enabled."
     }
   ],
   "byTBrn": [
