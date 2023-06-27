@@ -10,7 +10,7 @@ export const ValueDownload: React.FC<ValueDownloadProps> = ({ href }) => {
 
   const Resources = {
     DOWNLOAD_PROMPT_MESSAGE: intl.formatMessage({
-      defaultMessage: 'Download (Alt/Option + click)',
+      defaultMessage: 'Download (Alt or Option + select)',
       description: 'Link text for the prompt to download large inputs or outputs',
     }),
   };

@@ -39,7 +39,10 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
     const type = DynamicallyAddedParameterType.Email;
     menuItems.push({
       type,
-      label: intl.formatMessage({ defaultMessage: 'Email', description: 'Label for Email type dynamically added parameter' }),
+      label: intl.formatMessage({
+        defaultMessage: 'Email',
+        description: 'Label for Email type dynamically added parameter',
+      }),
       icon: getIconForDynamicallyAddedParameterType(type),
     });
   }
@@ -48,7 +51,10 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
     const type = DynamicallyAddedParameterType.Number;
     menuItems.push({
       type,
-      label: intl.formatMessage({ defaultMessage: 'Number', description: 'Label for Number type dynamically added parameter' }),
+      label: intl.formatMessage({
+        defaultMessage: 'Number',
+        description: 'Label for Number type dynamically added parameter',
+      }),
       icon: getIconForDynamicallyAddedParameterType(type),
     });
   }
@@ -57,7 +63,10 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
     const type = DynamicallyAddedParameterType.Date;
     menuItems.push({
       type,
-      label: intl.formatMessage({ defaultMessage: 'Date', description: 'Label for Date type dynamically added parameter' }),
+      label: intl.formatMessage({
+        defaultMessage: 'Date',
+        description: 'The label for a dynamically added parameter that has Date type.',
+      }),
       icon: getIconForDynamicallyAddedParameterType(DynamicallyAddedParameterType.Date),
     });
   }

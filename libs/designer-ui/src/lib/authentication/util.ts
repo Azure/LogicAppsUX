@@ -147,7 +147,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'basicUsername',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter username',
-      description: 'Username Placeholder Text',
+      description: 'Username placeholder text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
   },

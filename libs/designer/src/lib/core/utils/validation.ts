@@ -291,7 +291,12 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
       }
     } catch {
       if (!parameterHasOnlyTokenBinding(parameterValue)) {
-        errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid Json.', description: 'Invalid Json' }));
+        errors.push(
+          intl.formatMessage({
+            defaultMessage: 'Enter a valid JSON.',
+            description: 'Invalid JSON',
+          })
+        );
       }
     }
   }
@@ -312,7 +317,12 @@ const validateConditionalEditor = (value: string, errors: string[]) => {
     if (value[indices[i] - 1] === '@' || (value.substring(indices[i] - 2, indices[i]) === '@{' && value[indices[i] + 4] === '}')) {
       continue;
     } else {
-      errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid condition.', description: 'Invalid Json' }));
+      errors.push(
+        intl.formatMessage({
+          defaultMessage: 'Enter a valid condition.',
+          description: 'Invalid condition',
+        })
+      );
       return;
     }
   }

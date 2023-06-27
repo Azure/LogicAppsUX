@@ -40,7 +40,7 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
     }),
     inputsError: intl.formatMessage({
       defaultMessage: 'Error loading inputs',
-      description: 'Error loading inputs text',
+      description: 'The text for the loading inputs error.',
     }),
   };
 

@@ -16,20 +16,20 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange, o
 
   const Resources = {
     RUN_AFTER_SUCCEEDED_STATUS: intl.formatMessage({
-      defaultMessage: 'is successful',
-      description: 'successful run',
+      defaultMessage: 'Is successful',
+      description: 'Successful run',
     }),
     RUN_AFTER_TIMEDOUT_STATUS: intl.formatMessage({
-      defaultMessage: 'has timed out',
-      description: 'timed out run',
+      defaultMessage: 'Has timed out',
+      description: 'Timed out run',
     }),
     RUN_AFTER_SKIPPED_STATUS: intl.formatMessage({
-      defaultMessage: 'is skipped',
-      description: 'skipped run',
+      defaultMessage: 'Is skipped',
+      description: 'Skipped run',
     }),
     RUN_AFTER_FAILED_STATUS: intl.formatMessage({
-      defaultMessage: 'has failed',
-      description: 'failed run',
+      defaultMessage: 'Has failed',
+      description: 'Failed run',
     }),
   };
 

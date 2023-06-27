@@ -17,7 +17,7 @@ export const BodyLinkValue: React.FC<ValueProps> = (props) => {
       { displayName }
     ),
     DOWNLOAD_PROMPT_MESSAGE: intl.formatMessage({
-      defaultMessage: 'Download (Alt/Option + click)',
+      defaultMessage: 'Download (Alt or Option + select)',
       description: 'Link text for the prompt to download large inputs or outputs',
     }),
   };

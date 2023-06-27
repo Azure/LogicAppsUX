@@ -118,8 +118,8 @@ export const Combobox = ({
 
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
-          defaultMessage: 'No values matching your search',
-          description: 'Label for when no values match search value',
+          defaultMessage: 'No values match your search.',
+          description: 'Label for when no values match search value.',
         });
         newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
       }

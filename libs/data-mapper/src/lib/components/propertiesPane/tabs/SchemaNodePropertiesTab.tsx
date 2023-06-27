@@ -68,7 +68,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
   const dataTypeLoc = intl.formatMessage({
     defaultMessage: 'Data type',
-    description: 'Data type of current node',
+    description: 'The data type of the current node.',
   });
 
   const noValueLabelLoc = intl.formatMessage({
