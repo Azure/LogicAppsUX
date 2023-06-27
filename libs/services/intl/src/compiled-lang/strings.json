@@ -5461,6 +5461,12 @@
       "value": "Provide parameters to test the output."
     }
   ],
+  "byRkj+": [
+    {
+      "type": 0,
+      "value": "This operation has secure inputs or outputs enabled."
+    }
+  ],
   "byTBrn": [
     {
       "type": 0,
@@ -7315,6 +7321,12 @@
     {
       "type": 0,
       "value": "Required. The values to combine into an array."
+    }
+  ],
+  "pUGn+r": [
+    {
+      "type": 0,
+      "value": "Secure inputs or outputs enabled."
     }
   ],
   "pXmFGf": [

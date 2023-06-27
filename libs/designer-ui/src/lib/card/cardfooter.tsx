@@ -31,6 +31,10 @@ const staticResultIconProps: IIconProps = {
   iconName: 'TestBeaker',
 };
 
+const lockIconProps: IIconProps = {
+  iconName: 'Lock',
+};
+
 export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDisplayName, connectionRequired, staticResultsEnabled }) => {
   const intl = useIntl();
 
@@ -54,6 +58,14 @@ export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDi
     defaultMessage: 'Comment',
     description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
+  const SECURE_INPUTS_OUTPUTS_TITLE = intl.formatMessage({
+    defaultMessage: 'Secure inputs or outputs enabled.',
+    description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
+  });
+  const SECURE_INPUTS_OUTPUTS_TOOLTIP = intl.formatMessage({
+    defaultMessage: 'This operation has secure inputs or outputs enabled.',
+    description: 'This operation has secure inputs or outputs enabled.',
+  });
 
   const connectionTitle = connectionDisplayName ? CONNECTION_NAME_DISPLAY : CONNECTION_CONTAINER_CONNECTION_REQUIRED;
 
@@ -65,6 +77,12 @@ export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDi
   };
 
   const badges: CardBadgeProps[] = [
+    {
+      active: true,
+      content: SECURE_INPUTS_OUTPUTS_TOOLTIP,
+      iconProps: lockIconProps,
+      title: SECURE_INPUTS_OUTPUTS_TITLE,
+    },
     ...(staticResultsEnabled ? [staticResultsBadge] : []),
     ...(commentBox && commentBox.comment
       ? [
