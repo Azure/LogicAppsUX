@@ -36,6 +36,13 @@ export const useOperationsInputParameters = (): Record<string, NodeInputs> => {
   return useSelector((rootState: RootState) => rootState.operations.inputParameters);
 };
 
+export const useSecureInputsOutputs = (nodeId: string): boolean => {
+  return useSelector(
+    (rootState: RootState) =>
+      !!(rootState.operations.settings?.[nodeId]?.secureInputs?.value || rootState.operations.settings?.[nodeId]?.secureOutputs?.value)
+  );
+};
+
 export const useParameterStaticResult = (nodeId: string): NodeStaticResults => {
   return useSelector((rootState: RootState) => rootState.operations.staticResults[nodeId]);
 };

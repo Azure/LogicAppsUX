@@ -4,7 +4,10 @@ import type { IIconProps } from '@fluentui/react';
 import { css, Icon, TooltipHost } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-export type CardFooterProps = Pick<CardProps, 'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled'>;
+export type CardFooterProps = Pick<
+  CardProps,
+  'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled' | 'isSecureInputsOutputs'
+>;
 
 interface CardBadgeBarProps {
   badges: CardBadgeProps[];
@@ -35,7 +38,13 @@ const lockIconProps: IIconProps = {
   iconName: 'Lock',
 };
 
-export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDisplayName, connectionRequired, staticResultsEnabled }) => {
+export const CardFooter: React.FC<CardFooterProps> = ({
+  commentBox,
+  connectionDisplayName,
+  connectionRequired,
+  staticResultsEnabled,
+  isSecureInputsOutputs,
+}) => {
   const intl = useIntl();
 
   const CONNECTION_NAME_DISPLAY = intl.formatMessage({
@@ -77,12 +86,6 @@ export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDi
   };
 
   const badges: CardBadgeProps[] = [
-    {
-      active: true,
-      content: SECURE_INPUTS_OUTPUTS_TOOLTIP,
-      iconProps: lockIconProps,
-      title: SECURE_INPUTS_OUTPUTS_TITLE,
-    },
     ...(staticResultsEnabled ? [staticResultsBadge] : []),
     ...(commentBox && commentBox.comment
       ? [
@@ -103,6 +106,9 @@ export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDi
             title: connectionTitle,
           },
         ]
+      : []),
+    ...(isSecureInputsOutputs
+      ? [{ active: true, content: SECURE_INPUTS_OUTPUTS_TOOLTIP, iconProps: lockIconProps, title: SECURE_INPUTS_OUTPUTS_TITLE }]
       : []),
   ];
 
