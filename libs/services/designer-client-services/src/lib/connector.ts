@@ -51,6 +51,7 @@ export interface IConnectorService {
    * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic values must be fetched.
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
    * @arg {any} dynamicState - Dynamic state required for invocation.
+   * @arg {boolean} [isManagedIdentityConnection] - Indicates if the connection is MSI based.
    * @return {Promise<ListDynamicValue[]>}
    */
   getListDynamicValues(
@@ -59,7 +60,8 @@ export interface IConnectorService {
     operationId: string,
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    isManagedIdentityConnection?: boolean
   ): Promise<ListDynamicValue[]>;
 
   /**
@@ -70,6 +72,7 @@ export interface IConnectorService {
    * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic schema must be fetched.
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
    * @arg {any} dynamicState - Dynamic state required for invocation.
+   * @arg {boolean} [isManagedIdentityConnection] - Indicates if the connection is MSI based.
    * @return {Promise<OpenAPIV2.SchemaObject>}
    */
   getDynamicSchema(
@@ -78,7 +81,8 @@ export interface IConnectorService {
     operationId: string,
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    isManagedIdentityConnection?: boolean
   ): Promise<OpenAPIV2.SchemaObject>;
 
   /**
@@ -89,6 +93,7 @@ export interface IConnectorService {
    * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic values must be fetched.
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter id.
    * @arg {any} dynamicState - Dynamic state required for invocation.
+   * @arg {boolean} [isManagedIdentityConnection] - Indicates if the connection is MSI based.
    * @return {Promise<TreeDynamicValue[]>}
    */
   getTreeDynamicValues(
@@ -97,7 +102,8 @@ export interface IConnectorService {
     operationId: string,
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    isManagedIdentityConnection?: boolean
   ): Promise<TreeDynamicValue[]>;
 }
 
