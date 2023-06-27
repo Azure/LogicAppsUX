@@ -70,7 +70,7 @@ export interface BaseEditorProps {
   labelId?: string;
   label?: string;
   valueType?: string;
-  tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   dataAutomationId?: string;
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -98,7 +98,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   labelId,
-  tokenPickerButtonEditorProps,
+  tokenPickerButtonProps,
   valueType,
   dataAutomationId,
   onFocus,
@@ -223,10 +223,7 @@ export const BaseEditor = ({
         </div>
 
         {tokens && isEditorFocused && !getInTokenPicker() ? (
-          createPortal(
-            <TokenPickerButton openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
-            document.body
-          )
+          createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
         ) : (
           <div />
         )}

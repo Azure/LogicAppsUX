@@ -1,5 +1,6 @@
 import type { AuthProps, MSIProps } from '..';
 import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES, containsUserAssignedIdentities } from '../util';
@@ -15,11 +16,13 @@ import { useIntl } from 'react-intl';
 interface MSIAuthenticationProps {
   msiProps: MSIProps;
   identity?: ManagedIdentity;
+  readonly?: boolean;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
-export const MSIAuthentication = ({ identity, msiProps, getTokenPicker, setCurrentProps }: MSIAuthenticationProps): JSX.Element => {
+export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...props }: MSIAuthenticationProps): JSX.Element => {
   const intl = useIntl();
   const { options, errorMessage: error } = getManagedIdentityData(identity, msiProps.msiIdentity, intl);
   const [errorMessage] = useState(error);
@@ -57,6 +60,7 @@ export const MSIAuthentication = ({ identity, msiProps, getTokenPicker, setCurre
       {identity?.type ? (
         <>
           <AuthenticationDropdown
+            readonly={props.readonly}
             dropdownLabel={MSIAuthLabel}
             dropdownPlaceholder={MSIAuthPlaceholder}
             errorMessage={errorMessage}
@@ -65,16 +69,16 @@ export const MSIAuthentication = ({ identity, msiProps, getTokenPicker, setCurre
             onChange={onManagedIdentityChange}
           />
           <AuthenticationProperty
+            {...props}
             initialValue={msiAudience}
             AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
-            getTokenPicker={getTokenPicker}
             onBlur={updateMsiAudience}
           />
         </>
       ) : (
         <MSIAuthenticationDefault
+          {...props}
           msiProps={msiProps}
-          getTokenPicker={getTokenPicker}
           onManagedIdentityChange={onManagedIdentityChange}
           onBlur={updateMsiAudience}
         />

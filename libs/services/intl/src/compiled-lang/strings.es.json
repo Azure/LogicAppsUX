@@ -6573,6 +6573,12 @@
       "value": "Devuelve el inicio del día en la marca de tiempo de una cadena pasada."
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,

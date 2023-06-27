@@ -6485,6 +6485,12 @@
       "value": "Retorna o início do dia para um carimbo de data/hora de cadeia de caracteres passado"
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,

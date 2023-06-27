@@ -73,7 +73,6 @@ interface AuthenticationEditorProps extends BaseEditorProps {
   type: AuthenticationType;
   options: AuthenticationEditorOptions;
   authenticationValue: AuthProps;
-  readOnly?: boolean;
 }
 
 export const AuthenticationEditor = ({
@@ -83,6 +82,8 @@ export const AuthenticationEditor = ({
   initialValue,
   getTokenPicker,
   onChange,
+  readonly,
+  ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
   const [codeView, { toggle: toggleCodeView }] = useBoolean(initializeCollapsedView(initialValue));
@@ -113,28 +114,56 @@ export const AuthenticationEditor = ({
   const renderAuthentication = () => {
     switch (option) {
       case AuthenticationType.BASIC:
-        return <BasicAuthentication basicProps={basic} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <BasicAuthentication
+            basicProps={basic}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            getTokenPicker={getTokenPicker}
+            readonly={readonly}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.CERTIFICATE:
         return (
           <CertificateAuthentication
             clientCertificateProps={clientCertificate}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
+            readonly={readonly}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.RAW:
-        return <RawAuthentication rawProps={raw} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <RawAuthentication
+            rawProps={raw}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            readonly={readonly}
+            getTokenPicker={getTokenPicker}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.MSI:
         return (
           <MSIAuthentication
             identity={options?.identity}
             msiProps={msi}
+            readonly={readonly}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.OAUTH:
-        return <ActiveDirectoryAuthentication OauthProps={aadOAuth} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <ActiveDirectoryAuthentication
+            OauthProps={aadOAuth}
+            readonly={readonly}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            getTokenPicker={getTokenPicker}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.NONE:
         return null;
       default:
@@ -179,10 +208,12 @@ export const AuthenticationEditor = ({
           setCurrentProps={setCurrentProps}
           setOption={setOption}
           serializeValue={serializeCollapsedValue}
+          readonly={readonly}
         />
       ) : (
         <div className="msla-authentication-editor-expanded-container">
           <AuthenticationDropdown
+            readonly={readonly}
             dropdownLabel={authenticationTypeLabel}
             selectedKey={option}
             options={getAuthenticationTypes(options.supportedAuthTypes)}

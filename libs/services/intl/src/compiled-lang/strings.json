@@ -6499,6 +6499,12 @@
       "value": "Returns the start of the day to a string timestamp passed in"
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,
