@@ -6369,6 +6369,24 @@
       "value": "s"
     }
   ],
+  "isnFBi": [
+    {
+      "type": 0,
+      "value": "Elements and mappings not connected to a target element are removed."
+    }
+  ],
+  "ixhS47": [
+    {
+      "type": 0,
+      "value": "Returns the start of the day to a string timestamp passed in"
+    }
+  ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,

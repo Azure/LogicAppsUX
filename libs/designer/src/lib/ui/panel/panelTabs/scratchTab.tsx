@@ -385,7 +385,7 @@ getTokenPicker={GetTokenPicker}
             items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
           />
         } */}
-        <BaseEditor initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} BasePlugins={{ tokens: true, treeView: true }} />
+        <BaseEditor initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} BasePlugins={{ treeView: true, tokens: true }} />
       </>
     );
   };

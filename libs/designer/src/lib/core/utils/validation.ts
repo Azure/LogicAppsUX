@@ -47,9 +47,10 @@ export function validateStaticParameterInfo(
     parameterName = formatParameterName(parameterTitle),
     pattern = parameterMetadata.pattern,
     type = parameterMetadata.type,
+    editor = parameterMetadata.editor,
     required = isParameterRequired(parameterMetadata),
     parameterErrorMessages: string[] = [],
-    typeError = validateType(type, parameterFormat ?? '', parameterValue),
+    typeError = validateType(type, parameterFormat ?? '', parameterValue, editor),
     isUnknown = parameterMetadata.info.isUnknown;
 
   if (typeError) {
@@ -96,12 +97,22 @@ export function validateStaticParameterInfo(
  * @arg {string} parameterValue - The stringified parameter value.
  * @return {string}
  */
-export function validateType(type: string, parameterFormat: string, parameterValue: string): string | undefined {
+export function validateType(type: string, parameterFormat: string, parameterValue: string, editor?: string): string | undefined {
   if (!parameterValue) {
     return;
   }
   const isExpression = isTemplateExpression(parameterValue.toString());
   const intl = getIntl();
+
+  if (editor === Constants.EDITOR.TABLE) {
+    if (isExpression) {
+      return;
+    }
+    if (!isValidJSONObjectFormat(parameterValue)) {
+      return intl.formatMessage({ defaultMessage: 'Enter a valid table.', description: 'Error validation message' });
+    }
+    return;
+  }
 
   switch (type.toLowerCase()) {
     case Constants.SWAGGER.TYPE.INTEGER:
@@ -416,6 +427,7 @@ function isValidJSONObjectFormat(value: string): boolean {
 }
 
 function isValidArrayFormat(value: string): boolean {
+  console.log(value);
   const trimmedValue = (value || '').trim();
   return startsWith(trimmedValue, '[') && endsWith(trimmedValue, ']');
 }
