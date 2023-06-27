@@ -1,8 +1,8 @@
-import * as React from 'react';
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { BodyLinkValue } from '../bodylink';
 import { RawValue } from '../raw';
 import type { ValueProps } from '../types';
+import * as React from 'react';
+import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/monitoring/values/_bodylink', () => {
   const classNames = {
@@ -48,7 +48,7 @@ describe('ui/monitoring/values/_bodylink', () => {
 
     const link = React.Children.only(text.props.children);
     expect(link.props['aria-labelledby']).toBe(displayName.props.id);
-    expect(link.props.children).toBe('Download (Alt/Option + click)');
+    expect(link.props.children).toBe('Download (Alt or Option + select)');
     expect(link.props.href).toBe(props.value.uri);
     expect(link.props.rel).toBe('noopener');
     expect(link.props.target).toBe('_blank');
