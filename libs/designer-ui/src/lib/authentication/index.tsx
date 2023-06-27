@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { initializeDictionaryValidation } from '../editor/base/utils/helper';
+import { isTokenValueSegment } from '../editor/base/utils/helper';
 import type { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
 import { AuthenticationDropdown } from './AuthenticationDropdown';
@@ -86,12 +86,24 @@ export const AuthenticationEditor = ({
   ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
+  const [codeView, { toggle: toggleCodeView }] = useBoolean(initializeCollapsedView(initialValue));
   const [option, setOption] = useState<AuthenticationType>(type);
   const [collapsedValue, setCollapsedValue] = useState(initialValue);
   const [currentProps, setCurrentProps] = useState<AuthProps>(authenticationValue);
-  const [isValid, setIsValid] = useState(initializeDictionaryValidation(initialValue));
+  const [isValid, setIsValid] = useState(false);
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
+
+  const serializeCollapsedValue = (value: ValueSegment[]): void => {
+    if (isTokenValueSegment(value)) {
+      onChange?.({
+        value: value,
+        viewModel: {
+          type: AuthenticationType.NONE,
+          authenticationValue: { basic: {}, clientCertificate: {}, raw: {}, msi: {}, aadOAuth: {} },
+        },
+      });
+    }
+  };
 
   useUpdateEffect(() => {
     const collapsedValue = parseAuthEditor(option, currentProps);
@@ -195,6 +207,7 @@ export const AuthenticationEditor = ({
           setIsValid={setIsValid}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
+          serializeValue={serializeCollapsedValue}
           readonly={readonly}
         />
       ) : (
@@ -214,7 +227,7 @@ export const AuthenticationEditor = ({
           label={codeView ? collapsedLabel : expandedLabel}
           collapsed={codeView}
           toggleCollapsed={toggleCodeView}
-          disabled={!isValid}
+          disabled={codeView && !isValid}
         />
       </div>
     </div>
@@ -258,4 +271,7 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
         return { key: type, text: type };
     }
   });
+};
+const initializeCollapsedView = (initialValue: ValueSegment[]): boolean => {
+  return isTokenValueSegment(initialValue);
 };

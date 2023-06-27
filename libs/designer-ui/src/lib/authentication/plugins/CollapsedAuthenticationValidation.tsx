@@ -2,8 +2,8 @@ import type { AuthenticationType, AuthProps } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
-import { getChildrenNodes, isValidAuthentication, showCollapsedValidation } from '../../editor/base/utils/helper';
-import { serializeAuthentication } from '../util';
+import { getChildrenNodes, isTokenValueSegment } from '../../editor/base/utils/helper';
+import { serializeAuthentication, validateAuthentication } from '../util';
 import { css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
@@ -11,7 +11,7 @@ import { guid } from '@microsoft/utils-logic-apps';
 import type { EditorState } from 'lexical';
 import { $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface CollapsedAuthenticationValidationProps {
   className?: string;
@@ -21,6 +21,7 @@ export interface CollapsedAuthenticationValidationProps {
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
   setIsValid: (b: boolean) => void;
   setOption: (s: AuthenticationType) => void;
+  serializeValue: (value: ValueSegment[]) => void;
 }
 
 export const CollapsedAuthenticationValidation = ({
@@ -31,34 +32,49 @@ export const CollapsedAuthenticationValidation = ({
   setCurrentProps,
   setIsValid,
   setOption,
+  serializeValue,
 }: CollapsedAuthenticationValidationProps): JSX.Element => {
   const [errorMessage, setErrorMessage] = useState('');
   const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    try {
+      editor.getEditorState().read(() => {
+        const editorString = getChildrenNodes($getRoot());
+        const validationErrorMessage = validateAuthentication(editorString, setErrorMessage);
+        if (!validationErrorMessage) {
+          setIsValid(true);
+        }
+      });
+    } catch {
+      setIsValid(false);
+    }
+  }, [editor, setIsValid]);
+
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot());
-      let newErrorMessage = '';
       if (!editorString.trim().length || editorString === '{}') {
-        setIsValid(newErrorMessage === '');
+        setIsValid(true);
         setCurrentProps({});
         setCollapsedValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: editorString }]);
       } else {
-        newErrorMessage = isValidAuthentication(editorString);
-        setErrorMessage(newErrorMessage);
-        setIsValid(newErrorMessage === '');
-        if (!newErrorMessage) {
+        const validationErrorMessage = validateAuthentication(editorString, setErrorMessage);
+        setIsValid(false);
+        if (!validationErrorMessage) {
+          setIsValid(true);
           serializeAuthentication(editor, setCurrentProps, setOption);
         } else {
-          setCollapsedValue(serializeEditorState(editorState));
+          const newCollapsedValue = serializeEditorState(editorState);
+          setCollapsedValue(newCollapsedValue);
+          serializeValue(newCollapsedValue);
         }
       }
     });
   };
 
   return (
-    <div
-      className={css(className ?? 'msla-base-editor-validation', isValid || showCollapsedValidation(collapsedValue) ? 'hidden' : undefined)}
-    >
+    <div className={css(className ?? 'msla-base-editor-validation', isValid || isTokenValueSegment(collapsedValue) ? 'hidden' : undefined)}>
       <OnChangePlugin ignoreSelectionChange onChange={onChange} />
       {errorMessage}
     </div>
