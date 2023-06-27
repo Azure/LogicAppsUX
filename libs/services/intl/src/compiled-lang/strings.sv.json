@@ -6491,6 +6491,12 @@
       "value": "Returnerar en dags start till en strängtidsstämpel som skickats in"
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,

@@ -6569,6 +6569,12 @@
       "value": "Retourne le début du jour en horodateur de chaîne transmis"
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,

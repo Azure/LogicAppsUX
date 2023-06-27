@@ -6519,6 +6519,12 @@
       "value": "Egy átadott sztring típusú időbélyegnek az év napját megadó összetevőjét adja vissza."
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,

@@ -6321,6 +6321,12 @@
       "value": "전달된 문자열 타임스탬프에 하루 시작을 반환합니다."
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,
