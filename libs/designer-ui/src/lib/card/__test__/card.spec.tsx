@@ -15,10 +15,18 @@ describe('lib/card', () => {
       draggable: false,
       id: 'id',
       title: 'title',
+      isSecureInputsOutputs: false,
+      runData: undefined,
     };
   });
 
   it('should render', () => {
+    const tree = renderer.create(<Card {...minimal} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render with lock secure icon', () => {
+    minimal.isSecureInputsOutputs = true;
     const tree = renderer.create(<Card {...minimal} />).toJSON();
     expect(tree).toMatchSnapshot();
   });

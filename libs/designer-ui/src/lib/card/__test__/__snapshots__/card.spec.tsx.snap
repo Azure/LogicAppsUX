@@ -528,3 +528,115 @@ exports[`lib/card should render with an icon 1`] = `
   </div>
 </div>
 `;
+
+exports[`lib/card should render with lock secure icon 1`] = `
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={1}
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <div
+              className="ms-Spinner msla-card-header-spinner root-110"
+            >
+              <div
+                className="ms-Spinner-circle ms-Spinner--medium circle-111"
+              />
+            </div>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        >
+          <div
+            className="ms-TooltipHost root-114"
+            onBlurCapture={[Function]}
+            onFocusCapture={[Function]}
+            onKeyDown={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+            role="none"
+          >
+            <i
+              aria-label="Secure inputs or outputs enabled.: This operation has secure inputs or outputs enabled."
+              className="panel-card-v2-badge active root-117"
+              data-icon-name="Lock"
+              role="img"
+              tabIndex={0}
+            >
+              
+            </i>
+            <div
+              hidden={true}
+              id="tooltip0"
+              style={
+                Object {
+                  "border": 0,
+                  "height": 1,
+                  "margin": -1,
+                  "overflow": "hidden",
+                  "padding": 0,
+                  "position": "absolute",
+                  "whiteSpace": "nowrap",
+                  "width": 1,
+                }
+              }
+            >
+              This operation has secure inputs or outputs enabled.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

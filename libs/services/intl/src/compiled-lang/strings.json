@@ -233,6 +233,12 @@
       "value": "Save"
     }
   ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "Secure inputs or outputs enabled."
+    }
+  ],
   "0FzNJV": [
     {
       "type": 0,
@@ -7321,12 +7327,6 @@
     {
       "type": 0,
       "value": "Required. The values to combine into an array."
-    }
-  ],
-  "pUGn+r": [
-    {
-      "type": 0,
-      "value": "Secure inputs or outputs enabled."
     }
   ],
   "pXmFGf": [

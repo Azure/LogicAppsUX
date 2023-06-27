@@ -69,7 +69,7 @@ export const CardFooter: React.FC<CardFooterProps> = ({
   });
   const SECURE_INPUTS_OUTPUTS_TITLE = intl.formatMessage({
     defaultMessage: 'Secure inputs or outputs enabled.',
-    description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
+    description: 'Secure inputs or outputs enabled.',
   });
   const SECURE_INPUTS_OUTPUTS_TOOLTIP = intl.formatMessage({
     defaultMessage: 'This operation has secure inputs or outputs enabled.',
