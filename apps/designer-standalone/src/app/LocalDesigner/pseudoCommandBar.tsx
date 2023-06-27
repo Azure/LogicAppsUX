@@ -3,7 +3,13 @@ import type { IModalStyles } from '@fluentui/react';
 import { ActionButton, Modal } from '@fluentui/react';
 import { MonacoEditor, EditorLanguage } from '@microsoft/designer-ui';
 import type { Workflow, AppDispatch } from '@microsoft/logic-apps-designer';
-import { resetDesignerDirtyState, serializeWorkflow, switchToWorkflowParameters, useIsDesignerDirty } from '@microsoft/logic-apps-designer';
+import {
+  useIsDesignerDirty,
+  resetDesignerDirtyState,
+  serializeWorkflow,
+  switchToWorkflowParameters,
+  switchToErrorsPanel,
+} from '@microsoft/logic-apps-designer';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -51,6 +57,7 @@ export const PseudoCommandBar = () => {
         onClick={() => dispatch(switchToWorkflowParameters())}
       />
       <ActionButton iconProps={{ iconName: 'Code' }} text="Code View" onClick={serializeCallback} />
+      <ActionButton iconProps={{ iconName: 'ErrorBadge' }} text="Errors" onClick={() => dispatch(switchToErrorsPanel())} />
 
       {/* Code view modal */}
       <Modal

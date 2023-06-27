@@ -946,3 +946,16 @@ export function hasInvalidChars(str: string, invalidChars: string[]): boolean {
 export function getResourceName(obj: any): string {
   return obj?.name ?? obj?.properties?.name ?? obj?.id ?? '';
 }
+
+/**
+ * Returns a filtered record object.
+ * @param data - The record to filter over.
+ * @param filter - The filter function.
+ * @returns {Record<string, T>} - The filtered record.
+ */
+
+export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: any) => boolean): Record<string, T> => {
+  return Object.entries(data)
+    .filter(([key, value]) => filter(key, value))
+    .reduce((res: any, [key, value]: any) => ({ ...res, [key]: value }), {});
+};

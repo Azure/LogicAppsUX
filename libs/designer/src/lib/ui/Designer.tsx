@@ -18,7 +18,7 @@ import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
-import { PanelRoot } from './panel/panelroot';
+import { PanelRoot } from './panel/panelRoot';
 import { setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';

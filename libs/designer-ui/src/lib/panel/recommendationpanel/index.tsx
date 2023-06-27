@@ -1,5 +1,5 @@
 export * from './browseResults';
-export * from './recommendationpanel';
+export * from './interfaces';
 export * from './searchResult';
 
 export * from './operationGroupDetails';
