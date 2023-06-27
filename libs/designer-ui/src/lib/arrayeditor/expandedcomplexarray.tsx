@@ -1,4 +1,4 @@
-import type { ComplexArrayItems, ValueSegment } from '..';
+import type { ComplexArrayItems, TokenPickerButtonEditorProps, ValueSegment } from '..';
 import { StringEditor } from '..';
 import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
@@ -18,7 +18,8 @@ export interface ExpandedComplexArrayProps {
   dimensionalSchema: ItemSchemaItemProps[];
   allItems: ComplexArrayItems[];
   canDeleteLastItem: boolean;
-  readOnly?: boolean;
+  readonly?: boolean;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: ComplexArrayItems[]) => void;
   itemKey?: string;
@@ -29,10 +30,9 @@ export const ExpandedComplexArray = ({
   dimensionalSchema,
   allItems,
   canDeleteLastItem,
-  readOnly,
-  getTokenPicker,
   setItems,
   isNested = false,
+  ...props
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
 
@@ -85,11 +85,10 @@ export const ExpandedComplexArray = ({
                     <div>
                       <Label> {schemaItem.title} </Label>
                       <ExpandedComplexArray
+                        {...props}
                         dimensionalSchema={schemaItem.items}
                         allItems={complexItem?.arrayItems ?? ([] as ComplexArrayItems[])}
                         canDeleteLastItem={canDeleteLastItem}
-                        readOnly={readOnly}
-                        getTokenPicker={getTokenPicker}
                         setItems={(newItems) => {
                           handleNestedArraySaved(newItems, index, i, schemaItem);
                         }}
@@ -104,7 +103,7 @@ export const ExpandedComplexArray = ({
                         {i === 0 ? (
                           <div className="msla-array-item-commands">
                             <ItemMenuButton
-                              disabled={!!readOnly}
+                              disabled={!!props.readonly}
                               itemKey={index}
                               visible={canDeleteLastItem || allItems.length > 1}
                               onDeleteItem={(index) => deleteItem(index)}
@@ -113,10 +112,10 @@ export const ExpandedComplexArray = ({
                         ) : null}
                       </div>
                       <StringEditor
+                        {...props}
                         valueType={schemaItem?.type}
                         className="msla-array-editor-container-expanded"
                         initialValue={complexItem?.value ?? []}
-                        getTokenPicker={getTokenPicker}
                         editorBlur={(newState) => handleArrayElementSaved(complexItem?.value ?? [], newState, index, i)}
                         placeholder={complexItem?.description}
                       />
@@ -130,6 +129,7 @@ export const ExpandedComplexArray = ({
       })}
       <div className="msla-array-toolbar">
         <DefaultButton
+          disabled={props.readonly}
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}

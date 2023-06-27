@@ -44,7 +44,7 @@ const customValueStyles: Partial<IComboBoxOptionStyles> = {
 const clearIcon: IIconProps = { iconName: 'Cancel' };
 const calloutProps = { gapSpace: 0 };
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
-const buttonStyles: Partial<IButtonStyles> = { root: { height: '28px', width: '30px', position: 'absolute', right: 0 } };
+const buttonStyles: Partial<IButtonStyles> = { root: { height: '30px', width: '30px', position: 'absolute', right: 0 } };
 
 export interface ComboboxItem {
   disabled?: boolean;
@@ -239,7 +239,6 @@ export const Combobox = ({
             onBlur={handleBlur}
             getTokenPicker={baseEditorProps.getTokenPicker}
             placeholder={baseEditorProps.placeholder}
-            tokenPickerButtonEditorProps={{ showOnLeft: true }}
             dataAutomationId={baseEditorProps.dataAutomationId}
           >
             <Change setValue={setValue} />

@@ -83,6 +83,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           isValid={isValid}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
+          tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
           getTokenPicker={getTokenPicker}
           setItems={updateItems}
           setIsValid={setIsValid}
@@ -98,6 +99,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           keyType={keyType}
           valueType={valueType}
           setItems={updateItems}
+          tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
           getTokenPicker={getTokenPicker}
         />
       )}

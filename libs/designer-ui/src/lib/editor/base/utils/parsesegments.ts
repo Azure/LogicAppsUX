@@ -180,7 +180,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
           data: segment,
           brandColor,
           icon: icon,
-          value: segmentValue,
+          value: segmentValue ?? value,
         });
         tokensEnabled && paragraph.append(token);
       } else if (title || name) {

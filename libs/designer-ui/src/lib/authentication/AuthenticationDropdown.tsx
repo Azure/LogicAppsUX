@@ -23,6 +23,7 @@ const dropdownStyle: Partial<IDropdownStyles> = {
 };
 
 interface AuthenticationDropdownProps {
+  readonly?: boolean;
   errorMessage?: string;
   selectedKey: string;
   dropdownPlaceholder?: string;
@@ -32,6 +33,7 @@ interface AuthenticationDropdownProps {
 }
 
 export const AuthenticationDropdown = ({
+  readonly,
   errorMessage,
   selectedKey,
   dropdownPlaceholder,
@@ -50,6 +52,7 @@ export const AuthenticationDropdown = ({
       ) : null}
 
       <Dropdown
+        disabled={readonly}
         styles={dropdownStyle}
         selectedKey={selectedKey}
         placeholder={dropdownPlaceholder}

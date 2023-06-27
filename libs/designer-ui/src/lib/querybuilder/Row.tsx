@@ -5,6 +5,7 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
 import { notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
@@ -46,6 +47,7 @@ type RowProps = {
   forceSingleCondition?: boolean;
   handleUpdateParent: (newProps: GroupItems, index: number) => void;
   clearEditorOnTokenInsertion?: boolean;
+  isSimpleQueryBuilder?: boolean;
 };
 
 export const Row = ({
@@ -64,6 +66,7 @@ export const Row = ({
   forceSingleCondition,
   readonly,
   clearEditorOnTokenInsertion,
+  isSimpleQueryBuilder,
   handleDeleteChild,
   handleUpdateParent,
 }: RowProps) => {
@@ -261,6 +264,7 @@ export const Row = ({
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
           onChange={handleKeyChange}
           editorBlur={handleKeySave}
+          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, insideEditor: !isSimpleQueryBuilder }}
         />
         <RowDropdown disabled={readonly || key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
@@ -272,6 +276,7 @@ export const Row = ({
           getTokenPicker={getTokenPicker}
           editorBlur={handleValueSave}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
+          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, insideEditor: true }}
         />
       </div>
       {forceSingleCondition ? null : (

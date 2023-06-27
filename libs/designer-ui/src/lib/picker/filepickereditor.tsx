@@ -1,5 +1,6 @@
 import type { BaseEditorProps, ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
+import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
 import { notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
 import { ValueSegmentType } from '../editor/models/parameter';
@@ -119,16 +120,12 @@ export const FilePickerEditor = ({
   return (
     <div className="msla-filepicker-editor-container">
       <BaseEditor
-        readonly={baseEditorProps.readonly}
+        {...baseEditorProps}
         className="msla-filepicker-editor"
         BasePlugins={{ ...baseEditorProps.BasePlugins }}
         initialValue={editorDisplayValue}
         onBlur={handleBlur}
-        onFocus={baseEditorProps.onFocus}
-        getTokenPicker={baseEditorProps.getTokenPicker}
-        placeholder={baseEditorProps.placeholder}
-        tokenPickerButtonEditorProps={{ showOnLeft: true }}
-        dataAutomationId={baseEditorProps.dataAutomationId}
+        tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left }}
       >
         <EditorValueChange
           pickerDisplayValue={pickerDisplayValue}

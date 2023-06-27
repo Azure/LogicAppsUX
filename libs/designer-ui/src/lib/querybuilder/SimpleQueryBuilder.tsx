@@ -99,6 +99,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
           groupedItems={[]}
           readonly={readonly}
           clearEditorOnTokenInsertion={true}
+          isSimpleQueryBuilder={true}
         />
       ) : (
         <StringEditor

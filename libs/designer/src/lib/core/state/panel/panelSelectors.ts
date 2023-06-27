@@ -48,3 +48,5 @@ export const useSelectedPanelTab = () => {
   const selectedPanelTabName = useSelectedPanelTabName();
   return useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs[selectedPanelTabName ?? '']));
 };
+
+export const usePanelLocation = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.panelLocation));

@@ -50,6 +50,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   readonly,
   labelId,
   placeholder,
+  tokenPickerButtonProps,
   dataAutomationId,
   getTokenPicker,
   onChange,
@@ -96,6 +97,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
             readonly={readonly}
             initialValue={initialValue}
             initialItems={items}
+            tokenPickerButtonProps={tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
             onChange={onItemsChange}
           />
