@@ -20,7 +20,7 @@ import {
   useRegisteredPanelTabs,
   useSelectedPanelTabName,
 } from '../../../core/state/panel/panelSelectors';
-import { setTabError, expandPanel, selectPanelTab } from '../../../core/state/panel/panelSlice';
+import { setTabError, expandPanel, selectPanelTab, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useIconUri, useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useWorkflowNode, useNodeDescription } from '../../../core/state/workflow/workflowSelectors';
 import { deleteSwitchCase, setNodeDescription, replaceId } from '../../../core/state/workflow/workflowSlice';
@@ -41,6 +41,8 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
+  const { panelLocation } = props;
+
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -82,6 +84,10 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
   }, [collapsed]);
+
+  useEffect(() => {
+    dispatch(updatePanelLocation(panelLocation));
+  }, [dispatch, panelLocation]);
 
   const collapse = useCallback(() => {
     dispatch(collapsePanel());
@@ -208,7 +214,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     toggleCollapse: dismissPanel,
     width,
     layerProps,
-    panelLocation: props.panelLocation ?? PanelLocation.Right,
+    panelLocation: panelLocation ?? PanelLocation.Right,
   };
 
   return (

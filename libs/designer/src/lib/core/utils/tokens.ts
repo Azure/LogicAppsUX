@@ -136,6 +136,7 @@ export const convertOutputsToTokens = (
       schema,
       value,
       alias,
+      description,
     } = outputs[outputKey];
     return {
       key: alias ? removeAliasingKeyRedundancies(key) : key,
@@ -145,6 +146,7 @@ export const convertOutputsToTokens = (
       name,
       type,
       value,
+      description,
       isAdvanced,
       outputInfo: {
         type: TokenType.OUTPUTS,

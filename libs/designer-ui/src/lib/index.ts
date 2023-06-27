@@ -83,6 +83,7 @@ export * from './telemetry/models';
 // export * from './textbox';
 export * from './tip';
 export * from './tokenpicker';
+export * from './editor/base/plugins/tokenpickerbutton';
 export * from './utils';
 export * from './workflow/schema/generator';
 export * from './workflowparameters';

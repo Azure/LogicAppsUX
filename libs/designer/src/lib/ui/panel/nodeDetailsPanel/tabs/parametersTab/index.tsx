@@ -4,7 +4,7 @@ import { useReadOnly } from '../../../../../core/state/designerOptions/designerO
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
-import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
+import { usePanelLocation, useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
@@ -33,7 +33,7 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { DynamicCallStatus, TokenPicker, TokenType } from '@microsoft/designer-ui';
+import { DynamicCallStatus, PanelLocation, TokenPicker, TokenPickerButtonLocation, TokenType } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
@@ -176,6 +176,7 @@ const ParameterSection = ({
   });
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
+  const panelLocation = usePanelLocation();
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -371,6 +372,9 @@ const ParameterSection = ({
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
+          tokenpickerButtonProps: {
+            location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
+          },
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '',
           getTokenPicker: (
