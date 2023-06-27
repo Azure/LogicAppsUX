@@ -151,9 +151,7 @@ export function loadInputValuesFromDefinition(
     const queriesInputs = getQueriesInputs(cloneInputValue, queriesInputParameters);
     result = result.concat(loadQueryValue(queriesInputs, queriesInputParameters));
 
-    const pathInputParameters = inputParameters.filter(
-      (parameter) => parameter.in === ParameterLocations.Path || parameter.schema.in === ParameterLocations.Path
-    );
+    const pathInputParameters = inputParameters.filter((parameter) => parameter.in === ParameterLocations.Path);
     const pathInputs = getPathInputs(cloneInputValue, pathInputParameters, operationPath, basePath, shouldUsePathTemplateFormat);
 
     result = result.concat(loadPathValue(pathInputs, pathInputParameters));

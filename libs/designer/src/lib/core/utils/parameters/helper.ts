@@ -24,7 +24,7 @@ import {
   clearDynamicInputs,
   updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
-import type { VariableDeclaration } from '../../state/tokensSlice';
+import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
@@ -69,8 +69,9 @@ import type {
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
-  ArrayType,
   removeQuotes,
+  ArrayType,
+  getOuterMostCommaIndex,
   RowDropdownOptions,
   GroupDropdownOptions,
   GroupType,
@@ -121,6 +122,7 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
+  createCopy,
   deleteObjectProperties,
   deleteObjectProperty,
   getObjectPropertyValue,
@@ -336,7 +338,7 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
 }
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
-  return !parameter.required && getVisibility(parameter) !== constants.VISIBILITY.IMPORTANT;
+  return !parameter.required && !equals(getVisibility(parameter), constants.VISIBILITY.IMPORTANT);
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
@@ -399,7 +401,11 @@ export function getParameterEditorProps(
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(value);
+    editorViewModel = editorOptions?.isOldFormat
+      ? toSimpleQueryBuilderViewModel(value)
+      : editorOptions?.isHybridEditor
+      ? toHybridConditionViewModel(value)
+      : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
@@ -416,6 +422,10 @@ export function getParameterEditorProps(
       displayValue = nodeMetadata?.[parameterValue[0].value];
     }
     editorViewModel = { displayValue, selectedItem: undefined };
+  } else if (editor === constants.EDITOR.RECURRENCE) {
+    if (parameterValue.some(isTokenValueSegment)) {
+      editor = undefined;
+    }
   }
 
   return { editor, editorOptions, editorViewModel, schema };
@@ -485,25 +495,76 @@ export const parseArrayItemSchema = (itemSchema: any, itemPath = ''): any => {
 };
 
 // Create SimpleQueryBuilder Editor View Model
-const toSimpleQueryBuilderViewModel = (input: any): { isOldFormat: boolean; items: RowItemProps } => {
-  let operand1: ValueSegment[], operand2: ValueSegment[], operation: string;
-  try {
-    operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
-    const operations = input.split(',');
-    const operand1String = operations[0].substring(operations[0].indexOf('(') + 1);
-    const operand2String = operations[1].substring(0, operations[1].lastIndexOf(')'));
-    operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true));
-    operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true));
-  } catch {
-    operation = 'equals';
-    operand1 = [];
-    operand2 = [];
+const toSimpleQueryBuilderViewModel = (
+  input: any
+): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
+  const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
+  let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
+  const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+  const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
+  // default value
+  if (!input || input.length === 0) {
+    return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
   }
 
+  if (!input.includes('@') || !input.includes(',')) {
+    return advancedModeResult;
+  }
+
+  try {
+    operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: input.substring(input.indexOf('@'), input.indexOf('(') + 1) };
+    const operandSubstring = input.substring(input.indexOf('(') + 1, input.lastIndexOf(')'));
+    const operand1String = operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring));
+    const operand2String = operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1);
+    operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true))[0];
+    operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true))[0];
+  } catch (e) {
+    return advancedModeResult;
+  }
   return {
     isOldFormat: true,
-    items: { type: GroupType.ROW, operator: operation, operand1, operand2 },
+    isRowFormat: true,
+    itemValue: [operationLiteral, operand1, separatorLiteral, operand2, endingLiteral],
   };
+};
+
+export const canConvertToComplexCondition = (input: any): boolean => {
+  if (!input) {
+    return false;
+  }
+  let inputKeys = Object.keys(input);
+  if (inputKeys.length !== 1) {
+    return false;
+  }
+  let dropdownVal = inputKeys[0];
+  if (dropdownVal === 'not') {
+    inputKeys = Object.keys(input?.['not']);
+    if (inputKeys.length !== 1) {
+      return false;
+    }
+    dropdownVal = inputKeys[0];
+  }
+  return Object.values<string>(RowDropdownOptions).includes(dropdownVal);
+};
+
+// Create HybridQueryBuilder Editor View Model
+export const toHybridConditionViewModel = (input: any): { items: GroupItemProps } => {
+  let modifiedInput = input;
+  // V1 designer does not add the "And" conditional when only one expression is entered
+  // Add the the "And" conditional if condition expression does not follow complex condition syntax,
+  // but the current condition is still valid
+  if (!getConditionalSelectedOption(input) && canConvertToComplexCondition(input)) {
+    modifiedInput = {
+      and: [input],
+    };
+  }
+  const getConditionOption = getConditionalSelectedOption(modifiedInput);
+  const items: GroupItemProps = {
+    type: GroupType.GROUP,
+    condition: getConditionOption,
+    items: recurseConditionalItems(modifiedInput, getConditionOption),
+  };
+  return { items };
 };
 
 // Create QueryBuilder Editor View Model
@@ -793,10 +854,10 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
   return true;
 }
 
-export function ensureExpressionValue(valueSegment: ValueSegment): void {
+export function ensureExpressionValue(valueSegment: ValueSegment, calculateValue = false): void {
   if (isTokenValueSegment(valueSegment)) {
     // eslint-disable-next-line no-param-reassign
-    valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, valueSegment.value);
+    valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, calculateValue ? undefined : valueSegment.value);
   }
 }
 
@@ -846,7 +907,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   }
 }
 
-function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
+export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
   const segments = parseEx(key);
   if (segments.length >= 2 && segments[0].value === OutputSource.Body && segments[1].value === '$') {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
@@ -863,7 +924,8 @@ export function generateExpressionFromKey(
   tokenKey: string,
   actionName: string | undefined,
   isInsideArray: boolean,
-  required: boolean
+  required: boolean,
+  overrideMethod = true
 ): string {
   const segments = parseEx(tokenKey);
   segments.shift();
@@ -871,7 +933,7 @@ export function generateExpressionFromKey(
   const result = [];
   // NOTE: Use @body for tokens that come from the body path like outputs.$.Body.weather
   let rootMethod = method;
-  if (!isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
+  if (overrideMethod && !isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
     segments.shift();
     rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   }
@@ -954,7 +1016,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
   // TODO: Need to have a full story for showing/hiding tokens that represent item().
   if (arrayDetails) {
     if (arrayDetails.loopSource) {
-      return `@items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
+      return `items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
     } else {
       return `${constants.ITEM}${propertyPath}`;
     }
@@ -1506,7 +1568,6 @@ export async function updateParameterAndDependencies(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   dependencies: NodeDependencies,
   variables: VariableDeclaration[],
   settings: Settings,
@@ -1570,7 +1631,6 @@ export async function updateParameterAndDependencies(
       connectionReference,
       dependenciesToUpdate,
       updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
-      nodeMetadata,
       settings,
       variables,
       dispatch,
@@ -1635,7 +1695,6 @@ export async function updateDynamicDataInNode(
   connectionReference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
@@ -1649,7 +1708,6 @@ export async function updateDynamicDataInNode(
     connectionReference,
     dependencies,
     nodeInputs,
-    nodeMetadata,
     settings,
     variables,
     dispatch,
@@ -1657,7 +1715,7 @@ export async function updateDynamicDataInNode(
     operationDefinition
   );
 
-  const { operations } = getState();
+  const { operations, workflowParameters } = getState();
   for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
     const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
     if (dependencyInfo.dependencyType === 'ListValues') {
@@ -1670,10 +1728,11 @@ export async function updateDynamicDataInNode(
           operationInfo,
           connectionReference,
           operations.inputParameters[nodeId],
-          operations.actionMetadata[nodeId],
           operations.dependencies[nodeId],
           false /* showErrorWhenNotReady */,
-          dispatch
+          dispatch,
+          /* idReplacements */ undefined,
+          workflowParameters.definitions
         );
       }
     }
@@ -1687,7 +1746,6 @@ async function loadDynamicData(
   connectionReference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
@@ -1702,8 +1760,8 @@ async function loadDynamicData(
       connectionReference,
       dependencies.outputs,
       nodeInputs,
-      nodeMetadata,
       settings,
+      rootState.workflowParameters.definitions,
       dispatch
     );
   }
@@ -1715,7 +1773,6 @@ async function loadDynamicData(
       operationInfo,
       connectionReference,
       nodeInputs,
-      nodeMetadata,
       variables,
       dispatch,
       rootState,
@@ -1730,7 +1787,6 @@ async function loadDynamicContentForInputsInNode(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   allInputs: NodeInputs,
-  nodeMetadata: any,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
   rootState: RootState,
@@ -1748,9 +1804,9 @@ async function loadDynamicContentForInputsInNode(
             operationInfo,
             info,
             allInputs,
-            nodeMetadata,
             variables,
             connectionReference,
+            rootState.workflowParameters.definitions,
             dispatch
           );
           const allInputParameters = getAllInputParameters(allInputs);
@@ -1810,11 +1866,11 @@ export async function loadDynamicTreeItemsForParameter(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
-  idReplacements: Record<string, string> = {}
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -1847,10 +1903,10 @@ export async function loadDynamicTreeItemsForParameter(
           selectedValue,
           dependencyInfo,
           nodeInputs,
-          nodeMetadata,
           operationInfo,
           connectionReference,
-          idReplacements
+          idReplacements,
+          workflowParameters
         );
 
         dispatch(
@@ -1895,11 +1951,11 @@ export async function loadDynamicValuesForParameter(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
-  idReplacements: Record<string, string> = {}
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -1927,10 +1983,10 @@ export async function loadDynamicValuesForParameter(
         const dynamicValues = await getDynamicValues(
           dependencyInfo,
           nodeInputs,
-          nodeMetadata,
           operationInfo,
           connectionReference,
-          idReplacements
+          idReplacements,
+          workflowParameters
         );
 
         dispatch(
@@ -1978,16 +2034,24 @@ async function tryGetInputDynamicSchema(
   operationInfo: NodeOperation,
   dependencyInfo: DependencyInfo,
   allInputs: NodeInputs,
-  nodeMetadata: any,
   variables: VariableDeclaration[],
   connectionReference: ConnectionReference | undefined,
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
   dispatch: Dispatch
 ): Promise<OpenAPIV2.SchemaObject | null> {
   try {
-    const schema = await getDynamicSchema(dependencyInfo, allInputs, nodeMetadata, operationInfo, connectionReference, variables);
+    const schema = await getDynamicSchema(
+      dependencyInfo,
+      allInputs,
+      operationInfo,
+      connectionReference,
+      variables,
+      /* idReplacements */ undefined,
+      workflowParameters
+    );
     return schema;
   } catch (error: any) {
-    if (!dependencyInfo.parameter?.required) {
+    if (!dependencyInfo.parameter?.required && !(dependencyInfo.parameter as InputParameter).value) {
       throw error;
     }
 
@@ -2078,12 +2142,25 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       return undefined;
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? (editorViewModel.value as string)
+        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat)
         : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
     default:
       return undefined;
   }
 }
+
+const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat: boolean): string | undefined => {
+  // if it is in advanced mode, we use loadParameterValue to get the value
+  if (!isRowFormat) {
+    return undefined;
+  }
+  // otherwise we iterate through row items and concatenate the values
+  let stringValue = '';
+  itemValue.forEach((segment) => {
+    stringValue += segment.value;
+  });
+  return stringValue;
+};
 
 export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
   const returnVal: any = {};
@@ -2189,8 +2266,7 @@ export function parameterHasValue(parameter: ParameterInfo): boolean {
 }
 
 export function parameterValidForDynamicCall(parameter: ParameterInfo): boolean {
-  const hasTokenSegment = parameter.value.some((segment) => segment.type === ValueSegmentType.TOKEN);
-  return parameter.required ? parameterHasValue(parameter) && !hasTokenSegment : !hasTokenSegment;
+  return !parameter.required || parameterHasValue(parameter);
 }
 
 export function getGroupAndParameterFromParameterKey(
@@ -2268,7 +2344,7 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
   }
 
   const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
-  const finalValue = clone(inputsValue);
+  const finalValue = createCopy(inputsValue);
 
   for (const propertyParameter of propertyNameParameters) {
     const { name, serialization } = propertyParameter;
@@ -2282,9 +2358,9 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
 
           // NOTE: Currently this only handles only one variable property name in the object
-          const keys = Object.keys(objectValue);
+          const keys = Object.keys(objectValue ?? {});
           if (keys.length !== 1) {
-            return inputsValue;
+            continue;
           }
 
           const propertyName = keys[0];
@@ -2301,6 +2377,11 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           const parameterLocation = propertyParameter.name.split('.');
           const pathParametersLocation = parameterReference.split('.');
           const uriValue = getObjectPropertyValue(finalValue, parameterLocation);
+
+          if (!uriValue) {
+            continue;
+          }
+
           const pathParameters = processPathInputs(uriValue, propertyParameter.default);
           safeSetObjectPropertyValue(finalValue, pathParametersLocation, pathParameters);
           safeSetObjectPropertyValue(finalValue, parameterLocation, propertyParameter.default);
@@ -2323,6 +2404,11 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
       switch (type) {
         case DeserializationType.ParentObjectProperties:
           const objectValue = getObjectPropertyValue(finalValue, propertySegments);
+
+          if (isNullOrUndefined(objectValue)) {
+            continue;
+          }
+
           const value = Object.keys(objectValue ?? {});
           objectValue[name.split('.').at(-1) as string] = value;
           safeSetObjectPropertyValue(finalValue, propertySegments, objectValue);
@@ -2330,11 +2416,21 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
 
         case DeserializationType.SwaggerOperationId:
           const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
-          const uri = getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath as string[]);
+          const uri = options?.swaggerOperation.uriPath ? getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath) : undefined;
+          const templatePath = options?.swaggerOperation.templatePath
+            ? getObjectPropertyValue(finalValue, options?.swaggerOperation.templatePath)
+            : undefined;
+
+          if (!method && !uri && !templatePath) {
+            continue;
+          }
+
           const operationId = getOperationIdFromDefinition(
             {
               method,
-              path: extractPathFromUri(uri, customSwagger?.api.basePath as string),
+              path: uri
+                ? extractPathFromUri(uri, customSwagger?.api.basePath as string)
+                : templatePath?.replace(customSwagger?.api.basePath, ''),
             },
             customSwagger as SwaggerParser
           );
@@ -2557,13 +2653,15 @@ export function updateTokenMetadata(
   if (token.arrayDetails && repetitionContext) {
     const repetitionReference = getRepetitionReference(repetitionContext, token.arrayDetails.loopSource);
     const repetitionValue = repetitionReference?.repetitionValue;
-    const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
-    token.arrayDetails = {
-      ...token.arrayDetails,
-      parentArrayKey: fullPath,
-      parentArrayName: path,
-    };
-    token.actionName = step;
+    if (repetitionValue) {
+      const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
+      token.arrayDetails = {
+        ...token.arrayDetails,
+        parentArrayKey: fullPath,
+        parentArrayName: path,
+      };
+      token.actionName = step;
+    }
 
     if (!token.arrayDetails.loopSource && equals(repetitionReference?.actionType, constants.NODE.TYPE.FOREACH)) {
       token.arrayDetails.loopSource = repetitionReference?.actionName;
@@ -2738,7 +2836,9 @@ function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYP
     return allOutputs;
   }
 
-  return allOutputs.filter((output) => equals(type, output.type));
+  return allOutputs.filter((output) => {
+    return !Array.isArray(output.type) && equals(type, output.type);
+  });
 }
 
 export function getTitleFromTokenName(tokenName: string, parentArray: string, parentArrayTitle?: string): string {

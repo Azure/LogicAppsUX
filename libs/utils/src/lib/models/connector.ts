@@ -8,6 +8,7 @@ export enum Capabilities {
   gateway,
   cloud,
   vnetgateway,
+  general,
 }
 
 export enum ConnectionParameterTypes {
@@ -164,12 +165,13 @@ export interface ConnectorProperty {
   environment?: string;
   purpose?: string;
   iconUri: string;
+  iconUrl?: string;
   runtimeUrls?: string[];
+  primaryRuntimeUrl?: string;
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   connectionAlternativeParameters?: ConnectionAlternativeParameters;
   swagger?: any;
-  [property: string]: any;
   wadlUrl?: string;
   brandColor?: string;
   termsOfUseUrl?: string;
@@ -186,6 +188,10 @@ export interface ConnectorProperty {
     displayName?: string;
     iconUrl?: string;
     description?: string;
+    releaseTag?: string;
+  };
+  externalDocs?: {
+    url: string;
   };
   integrationServiceEnvironment?: {
     id: string;

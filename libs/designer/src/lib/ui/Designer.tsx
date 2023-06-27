@@ -1,4 +1,5 @@
 import { useLayout } from '../core/graphlayout';
+import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
@@ -17,7 +18,7 @@ import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
-import { PanelRoot } from './panel/panelroot';
+import { PanelRoot } from './panel/panelRoot';
 import { setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
@@ -118,6 +119,12 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
   return null;
 };
 
+export const SearchPreloader = () => {
+  usePreloadOperationsQuery();
+  usePreloadConnectorsQuery();
+  return null;
+};
+
 export const Designer = (props: DesignerProps) => {
   const { backgroundProps, panelLocation, displayRuntimeInfo } = props;
 
@@ -196,6 +203,7 @@ export const Designer = (props: DesignerProps) => {
 
   return (
     <DndProvider options={DND_OPTIONS}>
+      <SearchPreloader />
       <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow

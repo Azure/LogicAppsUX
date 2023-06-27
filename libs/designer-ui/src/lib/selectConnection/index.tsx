@@ -1,4 +1,4 @@
-import type { IColumn } from '@fluentui/react';
+import type { IColumn, IDetailsRowProps, IRenderFunction } from '@fluentui/react';
 import {
   MessageBar,
   MessageBarType,
@@ -49,6 +49,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     return {
       ...connection,
       ...connection.properties,
+      // 'invalid' being truthy is being used to determine whether the details list row is disabled
       invalid:
         errors.length > 0 ? (
           <div className="msla-connection-error-icon-container">
@@ -77,11 +78,13 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   // Assign connection on initial load
   useEffect(() => {
     if (currentConnectionId) {
-      setSelect((currentSelect) => {
-        const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
-        currentSelect.setIndexSelected(index, true, false);
-        return currentSelect;
-      });
+      const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
+      if (index >= 0) {
+        setSelect((currentSelect) => {
+          currentSelect.setIndexSelected(index, true, false);
+          return currentSelect;
+        });
+      }
     }
   }, [connections, currentConnectionId]);
 
@@ -175,8 +178,8 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   });
 
   const checkButtonAriaLabel = intl.formatMessage({
-    defaultMessage: 'Check to select this connection',
-    description: 'aria label description for check button',
+    defaultMessage: 'Select the checkbox to choose this connection.',
+    description: 'Aria label description for check button',
   });
 
   const buttonAddText = intl.formatMessage({
@@ -199,6 +202,13 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     description: 'Aria label description for cancel button',
   });
 
+  const onRenderRow: IRenderFunction<IDetailsRowProps> = (props, defaultRender) => {
+    if (props?.item.invalid) {
+      return defaultRender?.({ ...props, disabled: true }) || null;
+    }
+    return defaultRender?.(props) || null;
+  };
+
   return (
     <div className="msla-select-connections-container">
       {showIdentityErrorBanner ? <MessageBar messageBarType={MessageBarType.error}>{identityErrorText}</MessageBar> : null}
@@ -218,6 +228,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
           selectionPreservedOnEmptyClick={true}
           enterModalSelectionOnTouch={true}
           checkButtonAriaLabel={checkButtonAriaLabel}
+          onRenderRow={onRenderRow}
         />
       </MarqueeSelection>
 

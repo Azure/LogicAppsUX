@@ -185,6 +185,7 @@ export default {
     TABLE: 'table',
     VARIABLE_NAME: 'variablename',
     HTML: 'html',
+    RECURRENCE: 'recurrence',
   },
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
@@ -323,6 +324,7 @@ export default {
       ELSE: 'else',
       SWITCH_CASE: 'switchcase',
       SWITCH_DEFAULT: 'switchdefault',
+      PLACEHOLDER_TRIGGER: 'builtin:newWorkflowTrigger',
       // Action and trigger types.
       API_CONNECTION_WEBHOOK: 'apiconnectionwebhook',
       API_CONNECTION: 'apiconnection',
@@ -898,6 +900,7 @@ export default {
     SELECT_APPSERVICE_ACTION: 'appservice',
     SELECT_APPSERVICE_TRIGGER: 'appservicetrigger',
     SELECT_FUNCTION_ACTION: 'azurefunction',
+    SELECT_SWAGGER_FUNCTION_ACTION: 'azureswaggerfunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',

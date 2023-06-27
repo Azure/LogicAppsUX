@@ -176,8 +176,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             isMonitoringView: this.isMonitoringView,
             workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
+            hostVersion: ext.extensionVersion,
           },
         });
+        await this.validateWorkflow(this.panelMetadata.workflowContent);
         break;
       }
       case ExtensionCommand.save: {
@@ -219,6 +221,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
   }
 
+  /**
+   * Saves workflow locally in the workflow.json.
+   * @param {string} filePath - File path of file to save the workflow.
+   * @param {any} workflow - Local workflow schema before changes .
+   * @param {any} workflowToSave - Workflow schema to save.
+   * @param {string} azureTenantId - Tenant id from azure.
+   * @param {string} workflowBaseManagementUri - Workflow base url.
+   */
   private async saveWorkflow(
     filePath: string,
     workflow: any,
@@ -237,23 +247,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         const definitionToSave: any = definition;
         const parametersFromDefinition = parameters;
 
-        if (connectionReferences) {
-          const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
-            this.context,
-            filePath,
-            connectionReferences,
-            azureTenantId,
-            workflowBaseManagementUri,
-            parametersFromDefinition
-          );
-
-          await saveConnectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
-
-          if (containsApiHubConnectionReference(connectionReferences)) {
-            window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
-          }
-        }
-
         if (parametersFromDefinition) {
           delete parametersFromDefinition.$connections;
           for (const parameterKey of Object.keys(parametersFromDefinition)) {
@@ -266,6 +259,22 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
         workflow.definition = definitionToSave;
 
+        if (connectionReferences) {
+          const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
+            this.context,
+            filePath,
+            connectionReferences,
+            azureTenantId,
+            workflowBaseManagementUri
+          );
+
+          await saveConnectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
+
+          if (containsApiHubConnectionReference(connectionReferences)) {
+            window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
+          }
+        }
+
         writeFileSync(filePath, JSON.stringify(workflow, null, 4));
       } catch (error) {
         window.showErrorMessage(`${localize('saveFailure', 'Workflow not saved.')} ${error.message}`, localize('OK', 'OK'));
@@ -274,6 +283,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     });
   }
 
+  /**
+   * Calls the validate api to validate the workflow schema.
+   * @param {any} workflow - Workflow schema to validate.
+   */
   private async validateWorkflow(workflow: any): Promise<void> {
     const url = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
     try {
@@ -281,7 +294,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         url,
         method: HTTP_METHODS.POST,
         headers: { ['Content-Type']: 'application/json' },
-        body: JSON.stringify({ properties: workflow }),
+        body: { properties: workflow },
       });
     } catch (error) {
       if (error.statusCode !== 404) {

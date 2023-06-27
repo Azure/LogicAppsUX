@@ -1,4 +1,4 @@
-import type { SimpleArrayItem, ValueSegment } from '..';
+import type { SimpleArrayItem, TokenPickerButtonEditorProps, ValueSegment } from '..';
 import { StringEditor } from '..';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
@@ -29,10 +29,10 @@ export interface ExpandedSimpleArrayProps {
   labelProps: LabelProps;
   items: SimpleArrayItem[];
   canDeleteLastItem: boolean;
-  readOnly?: boolean;
-  isTrigger?: boolean;
   placeholder?: string;
   valueType?: string;
+  readonly?: boolean;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: SimpleArrayItem[]) => void;
 }
@@ -41,12 +41,11 @@ export const ExpandedSimpleArray = ({
   labelProps,
   items,
   canDeleteLastItem,
-  readOnly,
-  isTrigger,
   placeholder,
   valueType,
-  getTokenPicker,
   setItems,
+  readonly,
+  ...props
 }: ExpandedSimpleArrayProps): JSX.Element => {
   const intl = useIntl();
 
@@ -76,7 +75,7 @@ export const ExpandedSimpleArray = ({
               {renderLabel(index, labelProps.text, true)}
               <div className="msla-array-item-commands">
                 <ItemMenuButton
-                  disabled={!!readOnly}
+                  disabled={!!readonly}
                   itemKey={index}
                   visible={canDeleteLastItem || items.length > 1}
                   onDeleteItem={(index) => deleteItem(index)}
@@ -84,19 +83,19 @@ export const ExpandedSimpleArray = ({
               </div>
             </div>
             <StringEditor
+              {...props}
               className="msla-array-editor-container-expanded"
               valueType={valueType}
               initialValue={item.value ?? []}
-              isTrigger={isTrigger}
               editorBlur={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
               placeholder={placeholder}
-              getTokenPicker={getTokenPicker}
             />
           </div>
         );
       })}
       <div className="msla-array-toolbar">
         <DefaultButton
+          disabled={readonly}
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}

@@ -4,9 +4,25 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
+## Azure Logic Apps (Standard) moves to the Resources tab
+
+🎉 Version 2.15.15 and later: The Azure Logic Apps extension now follows the design pattern that Azure extensions follow. Previously, in the Azure window, an Azure Logic Apps extension section showed your Azure subscriptions and associated "remote" logic apps hosted in Azure.
+
+Now, your remote logic apps still appear in the Azure window, but in the Resources section instead. You can see your remote logic apps when you expand the Logic App node.
+
+Extension toolbar buttons have now migrated to the Workspace section.
+
+![Azure Logic Apps in Resources tab.](/apps/vs-code-designer/src/assets/logicAppResources.png)
+
+## Azure Logic Apps (Standard) Custom Code Workspace
+
+We are excited to announce a new feature in Logic Apps that allows users to author their own custom code using the .NET Framework. With this new feature, users can create custom code actions that can be used in their Logic Apps workflows.
+
+Please note that this feature is currently in private preview and is only available on Windows. We encourage users to try out this new feature and provide feedback to help us improve it.
+
 ## Known issues
 
-You can see known issues [here](https://github.com/Azure/LogicAppsUX/issues).
+For known issues, see [GitHub issues - Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).
 
 ## Providing feedback
 

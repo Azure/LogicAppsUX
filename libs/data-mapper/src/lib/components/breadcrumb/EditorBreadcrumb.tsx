@@ -101,7 +101,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     let childItems: IContextualMenuItem[] = [];
     if (item && targetSchema) {
       const schemaKey = item.key;
-      const schemaNode = findNodeForKey(schemaKey, targetSchema.schemaTreeRoot);
+      const schemaNode = findNodeForKey(schemaKey, targetSchema.schemaTreeRoot, false);
       if (schemaNode) {
         childItems = schemaNode.children.map((childNode) => {
           return {
@@ -109,7 +109,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
             text: childNode.name,
             onClick: (_event, item) => {
               if (item) {
-                const newNode = findNodeForKey(item.key, schemaNode);
+                const newNode = findNodeForKey(item.key, schemaNode, false);
                 if (newNode) {
                   dispatch(setCurrentTargetSchemaNode(newNode));
                   return;
@@ -184,9 +184,7 @@ const convertToBreadcrumbItems = (
   const rootItem: IBreadcrumbItem = {
     key: schema.name,
     text: schema.name,
-    onClick: () => {
-      dispatch(setCurrentTargetSchemaNode(undefined));
-    },
+    disabled: true,
   };
 
   const breadcrumbItems = [rootItem];
@@ -198,7 +196,7 @@ const convertToBreadcrumbItems = (
         text: pathItem.name,
         onClick: (_event, item) => {
           if (item) {
-            const newNode = findNodeForKey(item.key, schema.schemaTreeRoot);
+            const newNode = findNodeForKey(item.key, schema.schemaTreeRoot, false);
             if (newNode) {
               dispatch(setCurrentTargetSchemaNode(newNode));
               return;

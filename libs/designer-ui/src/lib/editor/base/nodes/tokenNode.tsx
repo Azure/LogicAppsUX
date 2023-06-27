@@ -66,6 +66,11 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     };
   }
 
+  // This is to enable copy to clipboard, even though there are some cases where @{} isn't needed, for the time being it's easier to always include it when copying
+  getTextContent(_includeInert?: boolean | undefined, _includeDirectionless?: false | undefined): string {
+    return `@{${this.__data.value}}` ?? '';
+  }
+
   toString(): string {
     return `$[${this.__title},${this.__value},${this.__brandColor}]$`;
   }

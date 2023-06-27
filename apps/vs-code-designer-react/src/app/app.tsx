@@ -15,7 +15,7 @@ import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-ex
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const App = () => {
@@ -30,15 +30,16 @@ export const App = () => {
     readOnly,
     isLocal,
     apiVersion,
-    tenantId,
     oauthRedirectUrl,
     isMonitoringView,
     runId,
+    hostVersion,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const intl = useIntl();
+  const queryClient = useQueryClient();
 
   const intlText = {
     ERROR_APP: intl.formatMessage({
@@ -73,15 +74,28 @@ export const App = () => {
       baseUrl,
       apiVersion,
       apiHubServiceDetails ?? {},
-      tenantId,
       isLocal,
       connectionData,
       panelMetaData,
       fileSystemConnectionCreate,
       vscode,
-      oauthRedirectUrl
+      oauthRedirectUrl,
+      hostVersion,
+      queryClient
     );
-  }, [baseUrl, apiVersion, apiHubServiceDetails, tenantId, isLocal, connectionData, panelMetaData, vscode, oauthRedirectUrl, dispatch]);
+  }, [
+    baseUrl,
+    apiVersion,
+    apiHubServiceDetails,
+    isLocal,
+    connectionData,
+    panelMetaData,
+    vscode,
+    oauthRedirectUrl,
+    dispatch,
+    hostVersion,
+    queryClient,
+  ]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);
@@ -118,6 +132,10 @@ export const App = () => {
     onError: onRunInstanceError,
   });
 
+  const updateStandardApp = (definition: LogicAppsV2.WorkflowDefinition) => {
+    setStandardApp({ ...standardApp, definition: definition } as StandardApp);
+  };
+
   useEffect(() => {
     refetch();
   }, [isMonitoringView, runId, services, refetch]);
@@ -141,6 +159,7 @@ export const App = () => {
         isRefreshing={isRefetching}
         onRefresh={refetch}
         isDarkMode={theme === Theme.Dark}
+        updateStandardApp={updateStandardApp}
       />
     );
 

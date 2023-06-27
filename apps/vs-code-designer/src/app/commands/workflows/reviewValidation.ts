@@ -56,6 +56,7 @@ export async function reviewValidation(_context: IActionContext, node: vscode.Ur
               data: {
                 project: 'review',
                 reviewContent,
+                hostVersion: ext.extensionVersion,
               },
             });
             break;

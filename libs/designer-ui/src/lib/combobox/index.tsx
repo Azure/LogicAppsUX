@@ -44,7 +44,7 @@ const customValueStyles: Partial<IComboBoxOptionStyles> = {
 const clearIcon: IIconProps = { iconName: 'Cancel' };
 const calloutProps = { gapSpace: 0 };
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
-const buttonStyles: Partial<IButtonStyles> = { root: { height: '28px', width: '30px', position: 'absolute', right: 0 } };
+const buttonStyles: Partial<IButtonStyles> = { root: { height: '30px', width: '30px', position: 'absolute', right: 0 } };
 
 export interface ComboboxItem {
   disabled?: boolean;
@@ -118,8 +118,8 @@ export const Combobox = ({
 
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
-          defaultMessage: 'No values matching your search',
-          description: 'Label for when no values match search value',
+          defaultMessage: 'No values match your search.',
+          description: 'Label for when no values match search value.',
         });
         newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
       }
@@ -239,8 +239,7 @@ export const Combobox = ({
             onBlur={handleBlur}
             getTokenPicker={baseEditorProps.getTokenPicker}
             placeholder={baseEditorProps.placeholder}
-            isTrigger={baseEditorProps.isTrigger}
-            tokenPickerButtonEditorProps={{ showOnLeft: true }}
+            dataAutomationId={baseEditorProps.dataAutomationId}
           >
             <Change setValue={setValue} />
           </BaseEditor>

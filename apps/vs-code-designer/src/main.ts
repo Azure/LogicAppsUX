@@ -6,6 +6,7 @@ import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { startDesignTimeApi, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
+import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { tryGetFunctionProjectRoot } from './app/utils/verifyIsProject';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
@@ -52,6 +53,7 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
     validateFuncCoreToolsIsLatest();
 
+    ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

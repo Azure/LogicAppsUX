@@ -1,9 +1,11 @@
 import type { OutputToken } from '..';
 import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
+// import { TokenType } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
+import { convertUIElementNameToAutomationId } from '../../utils';
 import type { Token, TokenGroup } from '../models/token';
 import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -164,7 +166,11 @@ export const TokenPickerOptions = ({
             ) : null}
             <span> {section.label}</span>
             {searchQuery || !hasAdvanced(section.tokens) ? null : (
-              <button className="msla-token-picker-section-header-button" onClick={handleMoreLess}>
+              <button
+                className="msla-token-picker-section-header-button"
+                onClick={handleMoreLess}
+                data-automation-id={`msla-token-picker-section-header-button-${convertUIElementNameToAutomationId(section.label)}`}
+              >
                 <span> {moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>
             )}
@@ -175,14 +181,20 @@ export const TokenPickerOptions = ({
                 return (
                   <button
                     className="msla-token-picker-section-option"
+                    data-automation-id={`msla-token-picker-section-option-${j}`}
                     key={`token-picker-option-${j}`}
                     onClick={() => handleTokenClicked(token)}
                   >
                     <div className="msla-token-picker-section-option-text">
                       <div className="msla-token-picker-option-inner">
                         <div className="msla-token-picker-option-title">{token.title}</div>
-                        <div className="msla-token-picker-option-description">{token.description}</div>
+                        <div className="msla-token-picker-option-description" title={token.description}>
+                          {token.description}
+                        </div>
                       </div>
+                      {/* {token.type && token.outputInfo?.type !== TokenType.FX ? (
+                        <div className="msla-token-picker-option-type">{token.type}</div>
+                      ) : null} */}
                     </div>
                   </button>
                 );

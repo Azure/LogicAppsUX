@@ -106,6 +106,11 @@ export interface OperationMetadataState {
   staticResults: Record<string, NodeStaticResults>;
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
+  loadStatus: OperationMetadataLoadStatus;
+}
+
+interface OperationMetadataLoadStatus {
+  nodesInitialized: boolean;
 }
 
 const initialState: OperationMetadataState = {
@@ -119,6 +124,9 @@ const initialState: OperationMetadataState = {
   staticResults: {},
   repetitionInfos: {},
   errors: {},
+  loadStatus: {
+    nodesInitialized: false,
+  },
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {
@@ -215,6 +223,7 @@ export const operationMetadataSlice = createSlice({
           state.repetitionInfos[id] = repetitionInfo;
         }
       }
+      state.loadStatus.nodesInitialized = true;
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
       const { nodeId, groupId, inputs, newInputs: rawInputs, swagger } = action.payload;
@@ -333,7 +342,10 @@ export const operationMetadataSlice = createSlice({
       );
       if (index > -1) {
         state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].conditionalVisibility = value;
-        if (value === false) state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
+        if (value === false) {
+          state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
+          state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].preservedValue = undefined;
+        }
       }
     },
     updateParameterValidation: (
@@ -401,6 +413,8 @@ export const operationMetadataSlice = createSlice({
         delete state.staticResults[id];
         delete state.settings[id];
         delete state.actionMetadata[id];
+        delete state.repetitionInfos[id];
+        delete state.errors[id];
       }
     },
   },

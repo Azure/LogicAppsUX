@@ -2,9 +2,9 @@ name: Test Runner
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev/*, hotfix/*]
   pull_request:
-    branches: [main]
+    branches: [main, dev/*, hotfix/*]
 jobs:
   build:
     runs-on: ubuntu-latest

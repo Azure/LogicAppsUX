@@ -48,8 +48,8 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
     description: 'Full Screen token picker',
   });
   const fullScreenExitMessage = intl.formatMessage({
-    defaultMessage: 'Exit Full Screen',
-    description: 'Exit Full Screen token picker',
+    defaultMessage: 'Exit full screen',
+    description: "Token picker for 'Exit full screen'",
   });
 
   const handleCloseTokenPicker = () => {
@@ -58,7 +58,7 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
   };
   return (
     <div className="msla-token-picker-header">
-      <div className="msla-token-picker-header-close">
+      <div className="msla-token-picker-header-close" data-automation-id="msla-token-picker-header-close">
         {closeTokenPicker ? (
           <IconButton
             iconProps={{ iconName: 'Cancel' }}
@@ -69,7 +69,7 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
           />
         ) : null}
       </div>
-      <div className="msla-token-picker-header-expand">
+      <div className="msla-token-picker-header-expand" data-automation-id="msla-token-picker-header-expand">
         <IconButton
           iconProps={{ iconName: fullScreen ? 'BackToWindow' : 'FullScreen' }}
           title={fullScreen ? fullScreenExitMessage : fullScreenMessage}
@@ -78,7 +78,7 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
           styles={buttonStyles}
         />
       </div>
-      <div className="msla-token-picker-header-info">
+      <div className="msla-token-picker-header-info" data-automation-id="msla-token-picker-header-info">
         <IconButton
           iconProps={{ iconName: 'Info' }}
           title={infoMessage}

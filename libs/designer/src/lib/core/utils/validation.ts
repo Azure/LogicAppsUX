@@ -47,9 +47,10 @@ export function validateStaticParameterInfo(
     parameterName = formatParameterName(parameterTitle),
     pattern = parameterMetadata.pattern,
     type = parameterMetadata.type,
+    editor = parameterMetadata.editor,
     required = isParameterRequired(parameterMetadata),
     parameterErrorMessages: string[] = [],
-    typeError = validateType(type, parameterFormat ?? '', parameterValue),
+    typeError = validateType(type, parameterFormat ?? '', parameterValue, editor),
     isUnknown = parameterMetadata.info.isUnknown;
 
   if (typeError) {
@@ -96,12 +97,22 @@ export function validateStaticParameterInfo(
  * @arg {string} parameterValue - The stringified parameter value.
  * @return {string}
  */
-export function validateType(type: string, parameterFormat: string, parameterValue: string): string | undefined {
+export function validateType(type: string, parameterFormat: string, parameterValue: string, editor?: string): string | undefined {
   if (!parameterValue) {
     return;
   }
   const isExpression = isTemplateExpression(parameterValue.toString());
   const intl = getIntl();
+
+  if (editor === Constants.EDITOR.TABLE) {
+    if (isExpression) {
+      return;
+    }
+    if (!isValidJSONObjectFormat(parameterValue)) {
+      return intl.formatMessage({ defaultMessage: 'Enter a valid table.', description: 'Error validation message' });
+    }
+    return;
+  }
 
   switch (type.toLowerCase()) {
     case Constants.SWAGGER.TYPE.INTEGER:
@@ -179,7 +190,7 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
   switch (parameterFormat.toLowerCase()) {
     case Constants.SWAGGER.FORMAT.DOUBLE:
       if (!regex.double.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid double.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid Double number.', description: 'Error validation message' });
       }
       break;
 
@@ -253,7 +264,8 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
  */
 export function validateJSONParameter(parameterMetadata: ParameterInfo, parameterValue: ValueSegment[]): string[] {
   const intl = getIntl();
-  const isConditionEditor = parameterMetadata.editor === Constants.EDITOR.CONDITION && !parameterMetadata.editorOptions?.isOldFormat;
+  const { editor, editorOptions } = parameterMetadata;
+  const isConditionEditor = editor === Constants.EDITOR.CONDITION && !editorOptions?.isOldFormat;
   const value = isConditionEditor
     ? JSON.stringify(recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true))
     : parameterValueToJSONString(parameterValue, false, true);
@@ -279,7 +291,12 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
       }
     } catch {
       if (!parameterHasOnlyTokenBinding(parameterValue)) {
-        errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid Json.', description: 'Invalid Json' }));
+        errors.push(
+          intl.formatMessage({
+            defaultMessage: 'Enter a valid JSON.',
+            description: 'Invalid JSON',
+          })
+        );
       }
     }
   }
@@ -300,7 +317,12 @@ const validateConditionalEditor = (value: string, errors: string[]) => {
     if (value[indices[i] - 1] === '@' || (value.substring(indices[i] - 2, indices[i]) === '@{' && value[indices[i] + 4] === '}')) {
       continue;
     } else {
-      errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid condition.', description: 'Invalid Json' }));
+      errors.push(
+        intl.formatMessage({
+          defaultMessage: 'Enter a valid condition.',
+          description: 'Invalid condition',
+        })
+      );
       return;
     }
   }
@@ -405,6 +427,7 @@ function isValidJSONObjectFormat(value: string): boolean {
 }
 
 function isValidArrayFormat(value: string): boolean {
+  console.log(value);
   const trimmedValue = (value || '').trim();
   return startsWith(trimmedValue, '[') && endsWith(trimmedValue, ']');
 }

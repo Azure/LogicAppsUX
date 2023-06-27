@@ -1,0 +1,11 @@
+{
+  "name": "@microsoft/logic-apps-chatbot",
+  "version": "2.25.0",
+  "scripts": {
+    "yalcpush": "yalc push ../../dist/libs/chatbot"
+  },
+  "peerDependencies": {
+    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+  }
+}

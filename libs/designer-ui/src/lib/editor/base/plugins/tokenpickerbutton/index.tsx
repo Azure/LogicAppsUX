@@ -18,15 +18,25 @@ const expressionButtonProps: IIconProps = {
   iconName: 'Variable',
 };
 
+export enum TokenPickerButtonLocation {
+  Left = 'left',
+  Right = 'right',
+}
+
 export interface TokenPickerButtonEditorProps {
-  showOnLeft?: boolean;
+  location?: TokenPickerButtonLocation;
+  insideEditor?: boolean;
 }
 
 interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
   openTokenPicker: (mode: TokenPickerMode) => void;
 }
 
-export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
+export const TokenPickerButton = ({
+  location = TokenPickerButtonLocation.Left,
+  insideEditor,
+  openTokenPicker,
+}: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
@@ -57,18 +67,27 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
         const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
         if (anchorElement?.childNodes[0]?.nodeName === 'BR') {
-          boxElem.style.top = `${top - 15}px`;
+          // some of our editors have smaller heights, so we need to adjust the position of the tokenpicker button
+          if (rootElement.clientHeight === 24) {
+            boxElem.style.top = `${top - 16}px`;
+          } else {
+            boxElem.style.top = `${top - 15}px`;
+          }
         } else {
           boxElem.style.top = `${top - 20}px`;
         }
-        if (showOnLeft) {
-          boxElem.style.left = `${left - 38}px`;
-        } else {
+        if (location === TokenPickerButtonLocation.Right) {
           boxElem.style.left = `${right - 20}px`;
+        } else {
+          if (insideEditor) {
+            boxElem.style.left = `${left - 33}px`;
+          } else {
+            boxElem.style.left = `${left - 38}px`;
+          }
         }
       }
     }
-  }, [anchorKey, editor, showOnLeft]);
+  }, [anchorKey, editor, insideEditor, location]);
 
   useEffect(() => {
     window.addEventListener('resize', updatePosition);
@@ -85,7 +104,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
   }, [anchorKey, editor, updatePosition]);
 
   const dynamicContentButtonText = intl.formatMessage({
-    defaultMessage: `Insert data from previous step (You can also add by typing / in the editor)`,
+    defaultMessage: `Enter the data from previous step. You can also add data by typing the '/' character.`,
     description: 'Label for button to open dynamic content token picker',
   });
 
@@ -108,6 +127,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
               iconProps={dynamicContentIconProps}
               styles={{ root: 'top-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
+              data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
               onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
             />
           </TooltipHost>
@@ -116,6 +136,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
               iconProps={expressionButtonProps}
               styles={{ root: 'bottom-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
+              data-automation-id="msla-token-picker-entrypoint-button-expression"
               onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
             />
           </TooltipHost>

@@ -17,10 +17,10 @@ export default {
         foreach: {
           title: 'Select an output from previous steps',
           description: 'Select an output from previous steps',
-          required: true,
           type: 'array',
         },
       },
+      required: ['foreach'],
     },
     inputsLocation: [],
     isInputsOptional: false,

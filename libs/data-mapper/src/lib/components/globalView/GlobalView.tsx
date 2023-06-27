@@ -1,4 +1,4 @@
-import { reactFlowFitViewOptions, ReactFlowNodeType } from '../../constants/ReactFlowConstants';
+import { ReactFlowNodeType, reactFlowFitViewOptions } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
 import { useGlobalViewLayout } from '../../utils/ReactFlow.Util';
@@ -43,6 +43,7 @@ const GlobalViewReactFlowWrapper = () => {
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
@@ -51,6 +52,7 @@ const GlobalViewReactFlowWrapper = () => {
     undefined,
     sourceSchemaDictionary,
     targetSchemaDictionary,
+    functionNodeDictionary,
     connectionDictionary
   );
 

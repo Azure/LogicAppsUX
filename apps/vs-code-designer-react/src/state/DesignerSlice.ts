@@ -1,4 +1,4 @@
-import type { IApiHubServiceDetails, ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { ApiHubServiceDetails, ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -8,16 +8,16 @@ export interface designerState {
   connectionData: ConnectionsData;
   baseUrl: string;
   apiVersion: string;
-  apiHubServiceDetails: IApiHubServiceDetails;
+  apiHubServiceDetails: ApiHubServiceDetails;
   readOnly: boolean;
   isLocal: boolean;
   isMonitoringView: boolean;
   callbackInfo: ICallbackUrlResponse;
   runId: string;
-  tenantId: string;
   fileSystemConnections: Record<string, any>;
   iaMapArtifacts: ListDynamicValue[];
   oauthRedirectUrl: string;
+  hostVersion: string;
 }
 
 const initialState: designerState = {
@@ -31,6 +31,8 @@ const initialState: designerState = {
     subscriptionId: 'subscriptionId',
     resourceGroup: '',
     location: '',
+    tenantId: '',
+    httpClient: null as any,
   },
   readOnly: false,
   isLocal: true,
@@ -40,10 +42,10 @@ const initialState: designerState = {
     method: '',
   },
   runId: '',
-  tenantId: '',
   fileSystemConnections: {},
   iaMapArtifacts: [],
   oauthRedirectUrl: '',
+  hostVersion: '',
 };
 
 export const designerSlice = createSlice({
@@ -62,6 +64,7 @@ export const designerSlice = createSlice({
         oauthRedirectUrl,
         isMonitoringView,
         runId,
+        hostVersion,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -73,8 +76,8 @@ export const designerSlice = createSlice({
       state.isLocal = isLocal;
       state.isMonitoringView = isMonitoringView;
       state.runId = runId;
-      state.tenantId = apiHubServiceDetails?.tenantId;
       state.oauthRedirectUrl = oauthRedirectUrl;
+      state.hostVersion = hostVersion;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;
@@ -85,7 +88,7 @@ export const designerSlice = createSlice({
       action: PayloadAction<{
         panelMetadata: IDesignerPanelMetadata;
         connectionData: ConnectionsData;
-        apiHubServiceDetails: IApiHubServiceDetails;
+        apiHubServiceDetails: ApiHubServiceDetails;
       }>
     ) => {
       const { panelMetadata, connectionData, apiHubServiceDetails } = action.payload;

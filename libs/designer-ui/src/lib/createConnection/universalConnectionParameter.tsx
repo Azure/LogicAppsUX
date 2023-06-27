@@ -58,20 +58,21 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
   // Dropdown Parameter
   else if ((constraints?.allowedValues?.length ?? 0) > 0) {
-    const selectedKey = constraints?.allowedValues?.findIndex((_value) => _value.text === value);
-    if (selectedKey === -1) setValue(constraints?.allowedValues?.[0].text);
+    const selectedKey = constraints?.allowedValues?.findIndex((_value) => _value.value === value);
+    if (selectedKey === -1) setValue(constraints?.allowedValues?.[0].value);
     inputComponent = (
       <Dropdown
         id={`connection-param-${parameterKey}`}
         className="connection-parameter-input"
         selectedKey={selectedKey}
-        onChange={(e: any, newVal?: IDropdownOption) => setValue(newVal?.text)}
+        onChange={(e: any, newVal?: IDropdownOption) => setValue(newVal?.data ?? newVal?.text)}
         disabled={isLoading}
         ariaLabel={description}
         placeholder={description}
         options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
           key: index,
-          text: allowedValue.text ?? '',
+          text: allowedValue?.text ?? allowedValue.value,
+          data: allowedValue.value,
         }))}
       />
     );
@@ -84,6 +85,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
     inputComponent = (
       <TextField
+        styles={{ fieldGroup: { minHeight: '24px' } }}
         id={parameterKey}
         className="connection-parameter-input"
         disabled={isLoading}
@@ -93,6 +95,10 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
         ariaLabel={description}
         placeholder={description}
         value={value}
+        multiline={type !== 'password'}
+        autoAdjustHeight
+        resizable={false}
+        rows={1}
         onChange={(e: any, newVal?: string) => setValue(newVal)}
       />
     );

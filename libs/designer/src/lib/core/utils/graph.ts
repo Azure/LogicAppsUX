@@ -109,7 +109,7 @@ export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: 
 };
 
 export const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
-  return (graph.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
+  return (graph?.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
 };
 
 export const getNewNodeId = (state: WorkflowState, nodeId: string): string => {
@@ -207,19 +207,8 @@ export const isOperationNameValid = (
   }
 
   // Check for name uniqueness.
-  if (nodesMetadata[nodeId]?.subgraphType) {
-    // Check for subgraph node name uniqueness. ex - switch cases.
-    const { graphId } = nodesMetadata[nodeId];
-    const allSubGraphNodeNames = Object.keys(nodesMetadata)
-      .filter((id) => nodesMetadata[id].subgraphType && nodesMetadata[id].graphId === graphId)
-      .map((id) => idReplacements[id] ?? id);
-    return !allSubGraphNodeNames.some((nodeName) => equals(nodeName, name));
-  }
-
-  const allNodesExceptionSubGraphNodes = Object.keys(nodesMetadata)
-    .filter((id) => !nodesMetadata[id].subgraphType)
-    .map((id) => idReplacements[id] ?? id);
-  return !allNodesExceptionSubGraphNodes.some((nodeName) => equals(nodeName, name));
+  const allNodes = Object.keys(nodesMetadata).map((id) => idReplacements[id] ?? id);
+  return !allNodes.some((nodeName) => equals(nodeName, name));
 };
 
 export const transformOperationTitle = (title: string): string => title.replaceAll(' ', '_');

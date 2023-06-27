@@ -4,7 +4,7 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { updateRepetitionContext } from '../state/operation/operationMetadataSlice';
-import type { TokensState } from '../state/tokensSlice';
+import type { TokensState } from '../state/tokens/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
 import type { AppDispatch, RootState } from '../store';
@@ -32,7 +32,7 @@ import {
   shouldIncludeSelfForRepetitionReference,
 } from './parameters/helper';
 import { createTokenValueSegment } from './parameters/segment';
-import { hasSecureOutputs } from './setting';
+import { getSplitOnValue, hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
@@ -136,6 +136,7 @@ export const convertOutputsToTokens = (
       schema,
       value,
       alias,
+      description,
     } = outputs[outputKey];
     return {
       key: alias ? removeAliasingKeyRedundancies(key) : key,
@@ -145,6 +146,7 @@ export const convertOutputsToTokens = (
       name,
       type,
       value,
+      description,
       isAdvanced,
       outputInfo: {
         type: TokenType.OUTPUTS,
@@ -257,12 +259,20 @@ export const createValueSegmentFromToken = async (
   parameterId: string,
   token: OutputToken,
   addImplicitForeachIfNeeded: boolean,
+  addLatestActionName: boolean,
   rootState: RootState,
   dispatch: AppDispatch
 ): Promise<ValueSegment> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
   const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
   const tokenValueSegment = convertTokenToValueSegment(token, nodeType);
+
+  if (addLatestActionName && tokenValueSegment.token?.actionName) {
+    const newActionId = rootState.workflow.idReplacements[tokenValueSegment.token.actionName];
+    if (newActionId && newActionId !== tokenValueSegment.token.actionName) {
+      tokenValueSegment.token.actionName = newActionId;
+    }
+  }
 
   if (!addImplicitForeachIfNeeded) {
     return tokenValueSegment;
@@ -271,26 +281,20 @@ export const createValueSegmentFromToken = async (
   if (tokenValueSegment.token?.tokenType !== TokenType.PARAMETER && tokenValueSegment.token?.tokenType !== TokenType.VARIABLE) {
     const tokenOwnerActionName = token.outputInfo.actionName;
     const tokenOwnerOperationInfo = rootState.operations.operationInfo[tokenOwnerNodeId];
-    const { shouldAdd, parentArrayKey, parentArrayValue, repetitionContext } = await shouldAddForeach(
-      nodeId,
-      parameterId,
-      token,
-      rootState
-    );
+    const { shouldAdd, arrayDetails, repetitionContext } = await shouldAddForeach(nodeId, parameterId, token, rootState);
     let newRootState = rootState;
     let newRepetitionContext = repetitionContext;
 
     if (shouldAdd) {
-      const { payload: newState } = await dispatch(addForeachToNode({ arrayName: parentArrayValue, nodeId, token }));
+      const { payload: newState } = await dispatch(addForeachToNode({ arrayDetails, nodeId, token }));
       newRootState = newState as RootState;
       newRepetitionContext = await getRepetitionContext(
         nodeId,
-        getTriggerNodeId(newRootState.workflow),
         newRootState.operations.operationInfo,
         newRootState.operations.inputParameters,
-        newRootState.operations.settings,
         newRootState.workflow.nodesMetadata,
         /* includeSelf */ false,
+        getSplitOnValue(newRootState.workflow, newRootState.operations),
         newRootState.workflow.idReplacements
       );
     }
@@ -299,10 +303,10 @@ export const createValueSegmentFromToken = async (
       dispatch(updateRepetitionContext({ id: nodeId, repetition: newRepetitionContext }));
     }
 
-    if (parentArrayKey && newRepetitionContext) {
+    if (arrayDetails?.length && newRepetitionContext) {
       (tokenValueSegment.token as Token).arrayDetails = {
         ...tokenValueSegment.token?.arrayDetails,
-        loopSource: getForeachActionName(newRepetitionContext, parentArrayKey, tokenOwnerActionName),
+        loopSource: getForeachActionName(newRepetitionContext, arrayDetails[0].parentArrayKey, tokenOwnerActionName),
       };
     }
 
@@ -325,7 +329,7 @@ export const createValueSegmentFromToken = async (
           !!tokenValueSegment.token?.required
         );
       } else {
-        ensureExpressionValue(tokenValueSegment);
+        ensureExpressionValue(tokenValueSegment, /* calculateValue */ true);
       }
     }
 

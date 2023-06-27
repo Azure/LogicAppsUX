@@ -2,6 +2,7 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
+import { isNumber } from '@microsoft/parsers-logic-apps';
 import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/utils-logic-apps';
 import {
   isCallbackInfoWithRelativePath,
@@ -10,12 +11,15 @@ import {
   UnsupportedException,
   isString,
   getCallbackUrl,
+  isNullOrUndefined,
+  isBoolean,
 } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
+  updateCors?: () => void;
   accessToken?: string;
   workflowName: string;
   isDev?: boolean;
@@ -214,6 +218,7 @@ export class StandardRunService implements IRunService {
    */
   async getActionLinks(actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink }, nodeId: string): Promise<any> {
     const { inputsLink, outputsLink } = actionMetadata ?? {};
+    const { updateCors } = this.options;
     let inputs: Record<string, any> = {};
     let outputs: Record<string, any> = {};
 
@@ -223,12 +228,21 @@ export class StandardRunService implements IRunService {
       return Promise.resolve({ inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) });
     }
 
-    if (outputsLink && outputsLink.uri) {
-      outputs = await this.getContent(outputsLink);
+    try {
+      if (outputsLink && outputsLink.uri) {
+        outputs = await this.getContent(outputsLink);
+      }
+      if (inputsLink && inputsLink.uri) {
+        inputs = await this.getContent(inputsLink);
+      }
+    } catch (e: any) {
+      if (e.message.includes('Failed to fetch') && !isNullOrUndefined(updateCors)) {
+        updateCors();
+      } else {
+        throw new Error(e.message);
+      }
     }
-    if (inputsLink && inputsLink.uri) {
-      inputs = await this.getContent(inputsLink);
-    }
+
     return { inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) };
   }
 
@@ -239,14 +253,17 @@ export class StandardRunService implements IRunService {
    * @returns {BoundParameters} List of parametes.
    */
   parseActionLink(response: Record<string, any>, isInput: boolean): BoundParameters {
-    if (!response) {
+    if (isNullOrUndefined(response)) {
       return response;
     }
 
-    const dictionaryResponse = isString(response) ? { [isInput ? 'Inputs' : 'Outputs']: response } : response;
+    const dictionaryResponse =
+      isString(response) || isNumber(response as any) || Array.isArray(response) || isBoolean(response)
+        ? { [isInput ? 'Inputs' : 'Outputs']: response }
+        : response;
 
     return Object.keys(dictionaryResponse).reduce((prev, current) => {
-      return { ...prev, [current]: { displayName: current, value: dictionaryResponse[current] } };
+      return { ...prev, [current]: { displayName: current, value: dictionaryResponse[current].content ?? dictionaryResponse[current] } };
     }, {});
   }
 

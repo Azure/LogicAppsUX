@@ -6,6 +6,7 @@ import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
 import DeleteTokenNode from './plugins/DeleteTokenNode';
+import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditor';
 import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
@@ -26,7 +27,6 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
-import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
@@ -65,12 +65,11 @@ export interface BaseEditorProps {
   BasePlugins?: BasePlugins;
   initialValue: ValueSegment[];
   children?: React.ReactNode;
-  isTrigger?: boolean;
-  showCallbackTokens?: boolean;
   labelId?: string;
   label?: string;
   valueType?: string;
-  tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
+  dataAutomationId?: string;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -97,10 +96,9 @@ export const BaseEditor = ({
   initialValue,
   children,
   labelId,
-  isTrigger,
-  showCallbackTokens,
-  tokenPickerButtonEditorProps,
+  tokenPickerButtonProps,
   valueType,
+  dataAutomationId,
   onFocus,
   onBlur,
   getTokenPicker,
@@ -113,9 +111,17 @@ export const BaseEditor = ({
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
+  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElem(_floatingAnchorElem);
+    }
+  };
 
   useEffect(() => {
     if (containerRef.current && placeholderRef.current) {
+      onRef(containerRef.current);
       const containerWidth = containerRef.current.clientWidth;
       const placeholderWidth = placeholderRef.current.clientWidth;
       setIsOverflowed(placeholderWidth > containerWidth);
@@ -177,7 +183,7 @@ export const BaseEditor = ({
   return (
     <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
       <LexicalComposer initialConfig={initialConfig}>
-        <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef}>
+        <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
           {toolbar ? <Toolbar readonly={readonly} /> : null}
           <RichTextPlugin
             contentEditable={
@@ -193,14 +199,13 @@ export const BaseEditor = ({
           <span id={id} hidden={true}>
             {describedByMessage}
           </span>
-          {toolbar ? <ListPlugin /> : null}
           {treeView ? <TreeView /> : null}
           {autoFocus ? <AutoFocus /> : null}
           {history ? <History /> : null}
           {autoLink ? <AutoLink /> : null}
           {clearEditor ? <ClearEditor showButton={false} /> : null}
           {singleValueSegment ? <SingleValueSegment /> : null}
-          {tokens ? <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} /> : null}
+          {tokens ? <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} isEditorFocused={isEditorFocused} /> : null}
           <OnBlur command={handleBlur} />
           <OnFocus command={handleFocus} />
           <ReadOnly readonly={readonly} />
@@ -208,17 +213,15 @@ export const BaseEditor = ({
           {tokens ? <InsertTokenNode /> : null}
           {tokens ? <DeleteTokenNode /> : null}
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
+          {toolbar && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
           {children}
-          {(!isTrigger || showCallbackTokens) && tokens && getInTokenPicker()
+          {tokens && getInTokenPicker()
             ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, closeTokenPicker, tokenPickerClicked)
             : null}
         </div>
 
-        {(!isTrigger || showCallbackTokens) && tokens && isEditorFocused && !getInTokenPicker() ? (
-          createPortal(
-            <TokenPickerButton openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
-            document.body
-          )
+        {tokens && isEditorFocused && !getInTokenPicker() ? (
+          createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
         ) : (
           <div />
         )}

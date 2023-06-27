@@ -9,6 +9,7 @@ import { parseComplexItems, parseSimpleItems } from './util/serializecollapsedar
 import type { ItemSchemaItemProps } from './util/util';
 import { getOneDimensionalSchema, initializeComplexArrayItems, initializeSimpleArrayItems } from './util/util';
 import { useEffect, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export enum ArrayType {
   COMPLEX = 'complex',
@@ -62,15 +63,16 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   labelProps,
   itemSchema,
   placeholder,
-  getTokenPicker,
   onChange,
   castParameter,
+  dataAutomationId,
   ...baseEditorProps
 }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState<boolean>(false);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
   const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
+  const intl = useIntl();
 
   const isComplex = useMemo(() => arrayType === ArrayType.COMPLEX, [arrayType]);
 
@@ -82,9 +84,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   useEffect(() => {
     arrayType === ArrayType.COMPLEX
       ? initializeComplexArrayItems(initialValue, itemSchema, setItems, setIsValid, setCollapsed)
-      : initializeSimpleArrayItems(initialValue, setItems, setIsValid, setCollapsed);
+      : initializeSimpleArrayItems(initialValue, itemSchema.type, setItems, setIsValid, setCollapsed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dimensionalSchema]);
+  }, []);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -120,54 +122,60 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const handleBlur = (): void => {
     onChange?.({
       value: collapsedValue,
-      viewModel: { arrayType, itemSchema },
+      viewModel: { arrayType, itemSchema, uncastedValue: collapsedValue },
     });
   };
 
+  const expandedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to input entire array',
+    description: 'Label for editor toggle button when in expanded mode',
+  });
+
+  const collapsedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to detail inputs for array item',
+    description: 'Label for editor toggle button when in collapsed mode',
+  });
+
   return (
-    <div className="msla-array-editor-container">
+    <div className="msla-array-editor-container" data-automation-id={dataAutomationId}>
       {collapsed ? (
         <CollapsedArray
+          {...baseEditorProps}
           labelProps={labelProps}
           isValid={isValid}
           collapsedValue={collapsedValue}
-          isTrigger={baseEditorProps.isTrigger}
-          readOnly={baseEditorProps.readonly}
           itemSchema={itemSchema}
           isComplex={isComplex}
           setItems={isComplex ? updateComplexItems : updateSimpleItems}
           setIsValid={setIsValid}
-          getTokenPicker={getTokenPicker}
           onBlur={handleBlur}
           setCollapsedValue={setCollapsedValue}
         />
       ) : isComplex ? (
         <ExpandedComplexArray
+          {...baseEditorProps}
           dimensionalSchema={dimensionalSchema}
           allItems={items as ComplexArrayItems[]}
-          readOnly={baseEditorProps.readonly}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateComplexItems}
-          getTokenPicker={getTokenPicker}
         />
       ) : (
         <ExpandedSimpleArray
+          {...baseEditorProps}
           placeholder={placeholder}
           valueType={itemSchema.type}
           items={items as SimpleArrayItem[]}
           labelProps={labelProps}
-          readOnly={baseEditorProps.readonly}
-          isTrigger={baseEditorProps.isTrigger}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateSimpleItems}
-          getTokenPicker={getTokenPicker}
         />
       )}
       <div className="msla-array-commands">
         {!disableToggle ? (
           <EditorCollapseToggle
+            label={collapsed ? collapsedLabel : expandedLabel}
             collapsed={collapsed}
-            disabled={(!isValid || baseEditorProps.readonly) && collapsed}
+            disabled={!isValid && collapsed}
             toggleCollapsed={toggleCollapsed}
           />
         ) : null}

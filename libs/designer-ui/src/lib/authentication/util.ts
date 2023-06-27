@@ -40,7 +40,7 @@ export const AUTHENTICATION_PROPERTIES = {
     isRequired: true,
     key: 'aadOAuthAudience',
     placeHolder: intl.formatMessage({
-      defaultMessage: 'Enter audience',
+      defaultMessage: 'Enter the audience.',
       description: 'Audience Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -147,7 +147,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'basicUsername',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter username',
-      description: 'Username Placeholder Text',
+      description: 'Username placeholder text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
   },
@@ -220,7 +220,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'msiAudience',
     // TODO: Replace audience placeholder specific to environment (public azure, fairfax, mooncake)
     placeHolder: intl.formatMessage({
-      defaultMessage: 'Enter audience',
+      defaultMessage: 'Enter the audience.',
       description: 'MSI Audience Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,

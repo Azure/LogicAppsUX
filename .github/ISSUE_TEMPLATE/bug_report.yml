@@ -15,6 +15,7 @@ body:
          - Open Issue's tab: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue+sort%3Aupdated-desc+position
          - Closed Issues tab: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue+sort%3Aupdated-desc+position+is%3Aclosed
 
+        Please refer to the Troubleshooting Guide to help with filling in this information: https://aka.ms/lauxtsg
         The more information you fill in, the better we can help you.
 
   - type: textarea
@@ -47,6 +48,16 @@ body:
       options:
         - Preview
         - Generally Available
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tsgchecked
+    attributes:
+      label: Did you refer to the TSG before filing this issue? https://aka.ms/lauxtsg
+      options:
+        - 'Yes'
+        - 'No'
     validations:
       required: true
 

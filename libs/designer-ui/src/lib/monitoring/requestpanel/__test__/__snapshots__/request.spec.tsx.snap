@@ -34,6 +34,70 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
           role="textbox"
           tabIndex={0}
         >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in Method"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+                  data-icon-name="SelectAll"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of {label} to the clipboard"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+                  data-icon-name="Copy"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
           <pre
             className="prism-code language-json"
             style={
@@ -80,6 +144,70 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
           role="textbox"
           tabIndex={0}
         >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in URI"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+                  data-icon-name="SelectAll"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of {label} to the clipboard"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+                  data-icon-name="Copy"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
           <pre
             className="prism-code language-json"
             style={
@@ -149,7 +277,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
           }
         >
           <div
-            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-109"
+            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -166,9 +294,9 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
               >
                 <div
                   aria-label="Headers"
-                  className="ms-FocusZone css-127 ms-DetailsHeader root-111"
+                  className="ms-FocusZone css-139 ms-DetailsHeader root-123"
                   data-automationid="DetailsHeader"
-                  data-focuszone-id="FocusZone2"
+                  data-focuszone-id="FocusZone14"
                   onFocus={[Function]}
                   onKeyDown={[Function]}
                   onMouseDownCapture={[Function]}
@@ -178,7 +306,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   <div
                     aria-label="Key"
                     aria-sort="none"
-                    className="ms-DetailsHeader-cell is-actionable root-128"
+                    className="ms-DetailsHeader-cell is-actionable root-140"
                     data-automationid="ColumnsHeaderColumn"
                     data-is-draggable={false}
                     data-is-focusable="true"
@@ -192,17 +320,17 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                     }
                   >
                     <span
-                      className="cellTooltip-136"
+                      className="cellTooltip-148"
                     >
                       <span
-                        className="ms-DetailsHeader-cellTitle cellTitle-134"
-                        id="header1-$key"
+                        className="ms-DetailsHeader-cellTitle cellTitle-146"
+                        id="header13-$key"
                         onClick={[Function]}
                         onContextMenu={[Function]}
                       >
                         <span
-                          className="ms-DetailsHeader-cellName cellName-135"
-                          id="header1-$key-name"
+                          className="ms-DetailsHeader-cellName cellName-147"
+                          id="header13-$key-name"
                         >
                           Key
                         </span>
@@ -211,7 +339,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   </div>
                   <div
                     aria-hidden={true}
-                    className="ms-DetailsHeader-cellSizer cellSizer-118 cellSizerStart-119"
+                    className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerStart-131"
                     data-is-focusable={false}
                     data-sizer-index={0}
                     onBlur={[Function]}
@@ -222,7 +350,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   <div
                     aria-label="Value"
                     aria-sort="none"
-                    className="ms-DetailsHeader-cell is-actionable root-128"
+                    className="ms-DetailsHeader-cell is-actionable root-140"
                     data-automationid="ColumnsHeaderColumn"
                     data-is-draggable={false}
                     data-is-focusable="true"
@@ -236,17 +364,17 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                     }
                   >
                     <span
-                      className="cellTooltip-136"
+                      className="cellTooltip-148"
                     >
                       <span
-                        className="ms-DetailsHeader-cellTitle cellTitle-134"
-                        id="header1-$value"
+                        className="ms-DetailsHeader-cellTitle cellTitle-146"
+                        id="header13-$value"
                         onClick={[Function]}
                         onContextMenu={[Function]}
                       >
                         <span
-                          className="ms-DetailsHeader-cellName cellName-135"
-                          id="header1-$value-name"
+                          className="ms-DetailsHeader-cellName cellName-147"
+                          id="header13-$value-name"
                         >
                           Value
                         </span>
@@ -255,7 +383,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   </div>
                   <div
                     aria-hidden={true}
-                    className="ms-DetailsHeader-cellSizer cellSizer-118 cellSizerEnd-120"
+                    className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerEnd-132"
                     data-is-focusable={false}
                     data-sizer-index={1}
                     onBlur={[Function]}
@@ -283,8 +411,8 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   role="presentation"
                 >
                   <div
-                    className="ms-FocusZone css-127 focusZone-110"
-                    data-focuszone-id="FocusZone3"
+                    className="ms-FocusZone css-139 focusZone-122"
+                    data-focuszone-id="FocusZone15"
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onKeyDown={[Function]}
@@ -344,6 +472,70 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
           role="textbox"
           tabIndex={0}
         >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in Method"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+                  data-icon-name="SelectAll"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of {label} to the clipboard"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+                  data-icon-name="Copy"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
           <pre
             className="prism-code language-json"
             style={
@@ -390,6 +582,70 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
           role="textbox"
           tabIndex={0}
         >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in URI"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+                  data-icon-name="SelectAll"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of {label} to the clipboard"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+                  data-icon-name="Copy"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
           <pre
             className="prism-code language-json"
             style={
@@ -459,7 +715,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
           }
         >
           <div
-            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-109"
+            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -476,9 +732,9 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               >
                 <div
                   aria-label="Headers"
-                  className="ms-FocusZone css-127 ms-DetailsHeader root-111"
+                  className="ms-FocusZone css-139 ms-DetailsHeader root-123"
                   data-automationid="DetailsHeader"
-                  data-focuszone-id="FocusZone6"
+                  data-focuszone-id="FocusZone30"
                   onFocus={[Function]}
                   onKeyDown={[Function]}
                   onMouseDownCapture={[Function]}
@@ -488,7 +744,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   <div
                     aria-label="Key"
                     aria-sort="none"
-                    className="ms-DetailsHeader-cell is-actionable root-128"
+                    className="ms-DetailsHeader-cell is-actionable root-140"
                     data-automationid="ColumnsHeaderColumn"
                     data-is-draggable={false}
                     data-is-focusable="true"
@@ -502,17 +758,17 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                     }
                   >
                     <span
-                      className="cellTooltip-136"
+                      className="cellTooltip-148"
                     >
                       <span
-                        className="ms-DetailsHeader-cellTitle cellTitle-134"
-                        id="header5-$key"
+                        className="ms-DetailsHeader-cellTitle cellTitle-146"
+                        id="header29-$key"
                         onClick={[Function]}
                         onContextMenu={[Function]}
                       >
                         <span
-                          className="ms-DetailsHeader-cellName cellName-135"
-                          id="header5-$key-name"
+                          className="ms-DetailsHeader-cellName cellName-147"
+                          id="header29-$key-name"
                         >
                           Key
                         </span>
@@ -521,7 +777,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   </div>
                   <div
                     aria-hidden={true}
-                    className="ms-DetailsHeader-cellSizer cellSizer-118 cellSizerStart-119"
+                    className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerStart-131"
                     data-is-focusable={false}
                     data-sizer-index={0}
                     onBlur={[Function]}
@@ -532,7 +788,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   <div
                     aria-label="Value"
                     aria-sort="none"
-                    className="ms-DetailsHeader-cell is-actionable root-128"
+                    className="ms-DetailsHeader-cell is-actionable root-140"
                     data-automationid="ColumnsHeaderColumn"
                     data-is-draggable={false}
                     data-is-focusable="true"
@@ -546,17 +802,17 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                     }
                   >
                     <span
-                      className="cellTooltip-136"
+                      className="cellTooltip-148"
                     >
                       <span
-                        className="ms-DetailsHeader-cellTitle cellTitle-134"
-                        id="header5-$value"
+                        className="ms-DetailsHeader-cellTitle cellTitle-146"
+                        id="header29-$value"
                         onClick={[Function]}
                         onContextMenu={[Function]}
                       >
                         <span
-                          className="ms-DetailsHeader-cellName cellName-135"
-                          id="header5-$value-name"
+                          className="ms-DetailsHeader-cellName cellName-147"
+                          id="header29-$value-name"
                         >
                           Value
                         </span>
@@ -565,7 +821,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   </div>
                   <div
                     aria-hidden={true}
-                    className="ms-DetailsHeader-cellSizer cellSizer-118 cellSizerEnd-120"
+                    className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerEnd-132"
                     data-is-focusable={false}
                     data-sizer-index={1}
                     onBlur={[Function]}
@@ -593,8 +849,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   role="presentation"
                 >
                   <div
-                    className="ms-FocusZone css-127 focusZone-110"
-                    data-focuszone-id="FocusZone7"
+                    className="ms-FocusZone css-139 focusZone-122"
+                    data-focuszone-id="FocusZone31"
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onKeyDown={[Function]}
@@ -634,6 +890,70 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
           role="textbox"
           tabIndex={0}
         >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in Body"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+                  data-icon-name="SelectAll"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of {label} to the clipboard"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+                  data-icon-name="Copy"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
           <pre
             className="prism-code language-json"
             style={
@@ -779,6 +1099,70 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
           role="textbox"
           tabIndex={0}
         >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in Method"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+                  data-icon-name="SelectAll"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of {label} to the clipboard"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+                  data-icon-name="Copy"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
           <pre
             className="prism-code language-json"
             style={
@@ -825,6 +1209,70 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
           role="textbox"
           tabIndex={0}
         >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in URI"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+                  data-icon-name="SelectAll"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of {label} to the clipboard"
+              className="ms-Button ms-Button--icon root-109"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-110"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+                  data-icon-name="Copy"
+                  style={
+                    Object {
+                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
           <pre
             className="prism-code language-json"
             style={
@@ -894,7 +1342,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
           }
         >
           <div
-            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-109"
+            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -911,9 +1359,9 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
               >
                 <div
                   aria-label="Headers"
-                  className="ms-FocusZone css-127 ms-DetailsHeader root-111"
+                  className="ms-FocusZone css-139 ms-DetailsHeader root-123"
                   data-automationid="DetailsHeader"
-                  data-focuszone-id="FocusZone10"
+                  data-focuszone-id="FocusZone52"
                   onFocus={[Function]}
                   onKeyDown={[Function]}
                   onMouseDownCapture={[Function]}
@@ -923,7 +1371,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   <div
                     aria-label="Key"
                     aria-sort="none"
-                    className="ms-DetailsHeader-cell is-actionable root-128"
+                    className="ms-DetailsHeader-cell is-actionable root-140"
                     data-automationid="ColumnsHeaderColumn"
                     data-is-draggable={false}
                     data-is-focusable="true"
@@ -937,17 +1385,17 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                     }
                   >
                     <span
-                      className="cellTooltip-136"
+                      className="cellTooltip-148"
                     >
                       <span
-                        className="ms-DetailsHeader-cellTitle cellTitle-134"
-                        id="header9-$key"
+                        className="ms-DetailsHeader-cellTitle cellTitle-146"
+                        id="header51-$key"
                         onClick={[Function]}
                         onContextMenu={[Function]}
                       >
                         <span
-                          className="ms-DetailsHeader-cellName cellName-135"
-                          id="header9-$key-name"
+                          className="ms-DetailsHeader-cellName cellName-147"
+                          id="header51-$key-name"
                         >
                           Key
                         </span>
@@ -956,7 +1404,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   </div>
                   <div
                     aria-hidden={true}
-                    className="ms-DetailsHeader-cellSizer cellSizer-118 cellSizerStart-119"
+                    className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerStart-131"
                     data-is-focusable={false}
                     data-sizer-index={0}
                     onBlur={[Function]}
@@ -967,7 +1415,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   <div
                     aria-label="Value"
                     aria-sort="none"
-                    className="ms-DetailsHeader-cell is-actionable root-128"
+                    className="ms-DetailsHeader-cell is-actionable root-140"
                     data-automationid="ColumnsHeaderColumn"
                     data-is-draggable={false}
                     data-is-focusable="true"
@@ -981,17 +1429,17 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                     }
                   >
                     <span
-                      className="cellTooltip-136"
+                      className="cellTooltip-148"
                     >
                       <span
-                        className="ms-DetailsHeader-cellTitle cellTitle-134"
-                        id="header9-$value"
+                        className="ms-DetailsHeader-cellTitle cellTitle-146"
+                        id="header51-$value"
                         onClick={[Function]}
                         onContextMenu={[Function]}
                       >
                         <span
-                          className="ms-DetailsHeader-cellName cellName-135"
-                          id="header9-$value-name"
+                          className="ms-DetailsHeader-cellName cellName-147"
+                          id="header51-$value-name"
                         >
                           Value
                         </span>
@@ -1000,7 +1448,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   </div>
                   <div
                     aria-hidden={true}
-                    className="ms-DetailsHeader-cellSizer cellSizer-118 cellSizerEnd-120"
+                    className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerEnd-132"
                     data-is-focusable={false}
                     data-sizer-index={1}
                     onBlur={[Function]}
@@ -1028,8 +1476,8 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   role="presentation"
                 >
                   <div
-                    className="ms-FocusZone css-127 focusZone-110"
-                    data-focuszone-id="FocusZone11"
+                    className="ms-FocusZone css-139 focusZone-122"
+                    data-focuszone-id="FocusZone53"
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onKeyDown={[Function]}
@@ -1064,13 +1512,13 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
       >
         <a
           aria-label="Alt/Option + click to download 'Body'"
-          className="ms-Link root-141"
+          className="ms-Link root-153"
           href="[REDACTED]"
           onClick={[Function]}
           rel="noopener"
           target="_blank"
         >
-          Download (Alt/Option + click)
+          Download (Alt or Option + select)
         </a>
       </div>
     </section>

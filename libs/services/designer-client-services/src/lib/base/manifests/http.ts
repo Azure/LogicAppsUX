@@ -209,53 +209,86 @@ export const httpWithSwaggerManifest = {
     inputs: {
       type: 'object',
       properties: {
-        authentication: authenticationParameter,
-        // Dynamic Params
-        operationId: {
-          required: true,
-          type: 'string',
-          title: 'Swagger Operation',
-          description: 'Swagger Operation',
-          'x-ms-serialization': { skip: true },
-          'x-ms-deserialization': {
-            type: 'swaggeroperationid',
-            parameterReference: 'operationId',
-            options: {
-              swaggerOperation: { methodPath: ['operationDetails', 'method'], uriPath: ['operationDetails', 'uri'] },
+        inputs: {
+          type: 'object',
+          properties: {
+            authentication: authenticationParameter,
+            // Dynamic Params
+            operationId: {
+              required: true,
+              type: 'string',
+              title: 'Swagger Operation',
+              description: 'Swagger Operation',
+              'x-ms-serialization': { skip: true },
+              'x-ms-deserialization': {
+                type: 'swaggeroperationid',
+                parameterReference: 'inputs.operationId',
+                options: {
+                  swaggerOperation: {
+                    methodPath: ['inputs', 'operationDetails', 'method'],
+                    uriPath: ['inputs', 'operationDetails', 'uri'],
+                  },
+                },
+              },
+              'x-ms-dynamic-list': {
+                dynamicState: {
+                  operationId: 'getSwaggerOperations',
+                  parameters: {},
+                },
+                parameters: {
+                  swaggerUrl: {
+                    parameterReference: 'metadata.apiDefinitionUrl',
+                    required: true,
+                  },
+                },
+              },
+            },
+            operationDetails: {
+              title: 'Swagger Parameters',
+              description: 'Enter all swagger parameters',
+              'x-ms-dynamic-properties': {
+                dynamicState: {
+                  extension: {
+                    operationId: 'getSwaggerOperationSchema',
+                  },
+                  isInput: true,
+                },
+                parameters: {
+                  type: 'object',
+                  operationId: {
+                    parameterReference: 'inputs.operationId',
+                    required: true,
+                  },
+                  swaggerUrl: {
+                    parameterReference: 'metadata.apiDefinitionUrl',
+                    required: true,
+                  },
+                },
+              },
             },
           },
-          'x-ms-dynamic-list': {
-            dynamicState: {
-              operationId: 'getSwaggerOperations',
-              parameters: {},
-            },
-            parameters: {},
-          },
+          required: ['operationId'],
         },
-        operationDetails: {
-          title: 'Swagger Parameters',
-          description: 'Enter all swagger parameters',
-          'x-ms-dynamic-properties': {
-            dynamicState: {
-              extension: {
-                operationId: 'getSwaggerOperationSchema',
-              },
-              isInput: true,
+        metadata: {
+          type: 'object',
+          properties: {
+            apiDefinitionUrl: {
+              type: 'string',
+              hideInUI: true,
             },
-            parameters: {
-              type: 'object',
-              operationId: {
-                parameterReference: 'operationId',
-                required: true,
-              },
+            swaggerSource: {
+              type: 'string',
+              hideInUI: true,
+              default: 'custom',
             },
           },
+          required: ['apiDefinitionUrl', 'swaggerSource'],
         },
       },
-      required: ['operationId'],
+      required: ['inputs', 'metadata'],
     },
-    inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
-    inputsLocation: ['inputs'],
+    inputsLocationSwapMap: [{ source: ['inputs', 'operationDetails'], target: ['inputs'] }],
+    inputsLocation: [],
     isInputsOptional: false,
 
     outputs: {
@@ -273,7 +306,11 @@ export const httpWithSwaggerManifest = {
             parameters: {
               type: 'object',
               operationId: {
-                parameterReference: 'operationId',
+                parameterReference: 'inputs.operationId',
+                required: true,
+              },
+              swaggerUrl: {
+                parameterReference: 'metadata.apiDefinitionUrl',
                 required: true,
               },
             },

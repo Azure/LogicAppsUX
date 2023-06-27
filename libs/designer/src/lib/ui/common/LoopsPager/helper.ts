@@ -17,10 +17,6 @@ export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): num
     return iterationCount;
   }
 
-  if (typeof repetitionCount === 'number') {
-    return repetitionCount;
-  }
-
   // Foreach actions have a foreachItemsCount property in its inputsLink's metadata object when using the 2016-06-01 or later API.
   if (inputsLink) {
     const { metadata } = inputsLink;
@@ -30,6 +26,10 @@ export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): num
         return foreachItemsCount;
       }
     }
+  }
+
+  if (typeof repetitionCount === 'number') {
+    return repetitionCount;
   }
 
   return undefined;

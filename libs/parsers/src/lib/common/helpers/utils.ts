@@ -146,10 +146,10 @@ export function getParameterDynamicSchema(parameter: SchemaObject): ParameterDyn
 }
 
 export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, excludeInternal: boolean, prefix?: string): OutputMetadata {
-  if (schema.type === 'array' && prefix !== undefined) {
+  if (schema.type === 'array') {
     return {
       array: {
-        collectionPath: prefix,
+        collectionPath: prefix ?? '',
         required,
       },
     };

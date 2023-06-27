@@ -1,3 +1,4 @@
+import { convertUIElementNameToAutomationId } from '../../utils';
 import { useCardKeyboardInteraction } from '../hooks';
 import { getCardStyle } from '../utils';
 import AddNodeIcon from './addNodeIcon.svg';
@@ -70,7 +71,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
   });
 
   const actionTooltipBody = intl.formatMessage({
-    defaultMessage: 'Actions perform operations on data or communicate between systems to execute.',
+    defaultMessage: 'Actions perform operations on data, communicate between systems, or run other tasks.',
     description: 'Description of what Actions are, on a tooltip about Actions',
   });
 
@@ -98,6 +99,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
           className={css('msla-panel-card-container', selected && 'msla-panel-card-container-selected')}
           style={getCardStyle(brandColor)}
           data-testid={`card-${title}`}
+          data-automation-id={`card-${convertUIElementNameToAutomationId(title)}`}
           onClick={handleClick}
           onKeyDown={keyboardInteraction.keyDown}
           onKeyUp={keyboardInteraction.keyUp}

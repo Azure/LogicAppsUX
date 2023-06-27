@@ -5,11 +5,11 @@ import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
 import { GlobalView } from '../components/globalView/GlobalView';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
+import { NotificationTypes, errorNotificationAutoHideDuration } from '../components/notification/Notification';
 import {
+  PropertiesPane,
   basePropPaneContentHeight,
   canvasAreaAndPropPaneMargin,
-  PropertiesPane,
   propPaneTopBarHeight,
 } from '../components/propertiesPane/PropertiesPane';
 import { SidePane, SidePanelTabValue } from '../components/sidePane/SidePane';
@@ -19,6 +19,7 @@ import { generateDataMapXslt } from '../core/queries/datamap';
 import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../mapDefinitions';
+import { generateMapMetadata } from '../mapDefinitions/MapMetadataSerializer';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { collectErrorsForMapChecker } from '../utils/MapChecker.Utils';
 import './ReactFlowStyleOverrides.css';
@@ -91,7 +92,8 @@ const useStyles = makeStyles({
 });
 
 export interface DataMapperDesignerProps {
-  saveStateCall: (dataMapDefinition: string, dataMapXslt: string) => void;
+  saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
+  saveXsltCall: (dataMapXslt: string) => void;
   saveDraftStateCall?: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
@@ -101,7 +103,8 @@ export interface DataMapperDesignerProps {
 }
 
 export const DataMapperDesigner = ({
-  saveStateCall,
+  saveMapDefinitionCall,
+  saveXsltCall,
   saveDraftStateCall,
   addSchemaFromFile,
   readCurrentSchemaOptions,
@@ -120,6 +123,7 @@ export const DataMapperDesigner = ({
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchemaOrdering);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const functions = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
   const { centerViewHeight, centerViewWidth } = useCenterViewSize();
@@ -130,6 +134,7 @@ export const DataMapperDesigner = ({
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
   const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
+  const [showMapOverview, setShowMapOverview] = useState(false);
   const [showGlobalView, setShowGlobalView] = useState(false);
 
   const dataMapDefinition = useMemo<string>(() => {
@@ -161,8 +166,6 @@ export const DataMapperDesigner = ({
     return '';
   }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, saveDraftStateCall]);
 
-  const showMapOverview = useMemo<boolean>(() => !targetSchema || !currentTargetSchemaNode, [targetSchema, currentTargetSchemaNode]);
-
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (addSchemaFromFile) {
       // Will cause DM to ping VS Code to check schema file is in appropriate folder, then we will make getSchema API call
@@ -183,35 +186,62 @@ export const DataMapperDesigner = ({
       );
     }
 
+    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
+
+    saveMapDefinitionCall(dataMapDefinition, mapMetadata);
+
+    dispatch(
+      saveDataMap({
+        sourceSchemaExtended: sourceSchema,
+        targetSchemaExtended: targetSchema,
+      })
+    );
+  }, [
+    currentConnections,
+    flattenedTargetSchema,
+    functions,
+    saveMapDefinitionCall,
+    dataMapDefinition,
+    dispatch,
+    sourceSchema,
+    targetSchema,
+  ]);
+
+  const onGenerateClick = useCallback(() => {
+    const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
+
+    if (errors.length > 0) {
+      dispatch(
+        showNotification({
+          type: NotificationTypes.MapHasErrorsAtSave,
+          msgParam: errors.length,
+          autoHideDurationMs: errorNotificationAutoHideDuration,
+        })
+      );
+    }
+
     generateDataMapXslt(dataMapDefinition)
       .then((xsltStr) => {
-        saveStateCall(dataMapDefinition, xsltStr);
+        saveXsltCall(xsltStr);
 
-        dispatch(
-          saveDataMap({
-            sourceSchemaExtended: sourceSchema,
-            targetSchemaExtended: targetSchema,
-          })
-        );
-
-        LogService.log(LogCategory.DataMapperDesigner, 'onSaveClick', {
-          message: 'Successfully saved map definition and generated xslt',
+        LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          message: 'Successfully generated xslt',
         });
       })
       .catch((error: Error) => {
-        LogService.error(LogCategory.DataMapperDesigner, 'onSaveClick', {
+        LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
           message: error.message,
         });
 
         dispatch(
           showNotification({
-            type: NotificationTypes.SaveFailed,
+            type: NotificationTypes.GenerateFailed,
             msgBody: error.message,
             autoHideDurationMs: errorNotificationAutoHideDuration,
           })
         );
       });
-  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, saveStateCall, dispatch, sourceSchema, targetSchema]);
+  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, dispatch, saveXsltCall]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
@@ -265,8 +295,8 @@ export const DataMapperDesigner = ({
   };
 
   const getCanvasAreaHeight = () => {
-    // PropPane isn't shown when in Overview, so canvas can use full height
-    if (showMapOverview) {
+    // PropPane isn't shown when in the other views, so canvas can use full height
+    if (showMapOverview || showGlobalView) {
       return centerViewHeight - 8;
     }
 
@@ -291,8 +321,10 @@ export const DataMapperDesigner = ({
           onRedoClick={onRedoClick}
           onTestClick={() => setTestMapPanelOpen(true)}
           showMapOverview={showMapOverview}
+          setShowMapOverview={setShowMapOverview}
           showGlobalView={showGlobalView}
           setShowGlobalView={setShowGlobalView}
+          onGenerateClick={onGenerateClick}
         />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
@@ -315,15 +347,12 @@ export const DataMapperDesigner = ({
                       backgroundColor: tokens.colorNeutralBackground4,
                     }}
                   >
-                    {showMapOverview ? (
-                      showGlobalView ? (
-                        <GlobalView />
-                      ) : (
-                        <MapOverview />
-                      )
+                    {!currentTargetSchemaNode || showMapOverview ? (
+                      <MapOverview />
+                    ) : showGlobalView ? (
+                      <GlobalView />
                     ) : (
                       <ReactFlowProvider>
-                        {/* TODO: Update width calculations once Code View becomes resizable */}
                         <ReactFlowWrapper
                           canvasBlockHeight={getCanvasAreaHeight()}
                           canvasBlockWidth={centerViewWidth}
@@ -346,7 +375,7 @@ export const DataMapperDesigner = ({
                 </Stack>
               </div>
 
-              {!showMapOverview && (
+              {!(showMapOverview || showGlobalView) && (
                 <PropertiesPane
                   selectedItemKey={selectedItemKey ?? ''}
                   isExpanded={isPropPaneExpanded}
@@ -374,7 +403,7 @@ export const DataMapperDesigner = ({
           setFunctionDisplayExpanded={setFunctionDisplayExpanded}
           useExpandedFunctionCards={useExpandedFunctionCards}
         />
-        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
+        <TestMapPanel mapDefinition={dataMapDefinition} isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
   );

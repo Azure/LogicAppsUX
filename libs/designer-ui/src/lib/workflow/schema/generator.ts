@@ -22,12 +22,8 @@ type SchemaObject = OpenAPIV2.SchemaObject;
  * @return {SchemaObject}
  */
 export function generateSchemaFromJsonString(jsonString: string): SchemaObject {
-  try {
-    const value = JSON.parse(jsonString ? jsonString : '{}');
-    return generateSchemaFromValue(value);
-  } catch {
-    return {};
-  }
+  const value = JSON.parse(jsonString);
+  return generateSchemaFromValue(value);
 }
 
 export function generateSchemaFromValue(value: any): SchemaObject {

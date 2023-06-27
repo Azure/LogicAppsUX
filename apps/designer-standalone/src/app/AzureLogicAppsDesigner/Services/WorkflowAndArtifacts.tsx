@@ -2,18 +2,22 @@ import { environment } from '../../../environments/environment';
 import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
+import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
 
-const consumptionApiVersion = '2019-05-01';
+const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
+const consumptionApiVersion = '2019-05-01';
+
 export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
   return useQuery(
     ['workflowArtifactsStandard', workflowId],
     async () => {
       const artifacts = [Artifact.ConnectionsFile, Artifact.ParametersFile];
-      const uri = `https://management.azure.com${validateResourceId(workflowId)}?api-version=2020-06-01&$expand=${artifacts.join(',')}`;
+      const uri = `${baseUrl}${validateResourceId(workflowId)}?api-version=${standardApiVersion}&$expand=${artifacts.join(',')}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -39,15 +43,42 @@ export const useWorkflowAndArtifactsConsumption = (workflowId: string) => {
 };
 
 const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<Workflow> => {
-  // const artifacts = ['properties/connectionParameters', 'properties/swagger'];
-  // const uri = `${workflowId}?api-version=${consumptionApiVersion}&$expand=${artifacts.join(',')}`;
-  const uri = `https://management.azure.com${workflowId}?api-version=${consumptionApiVersion}`;
+  const uri = `${baseUrl}${workflowId}?api-version=${consumptionApiVersion}`;
   const response = await axios.get(uri, {
     headers: {
       Authorization: `Bearer ${environment.armToken}`,
     },
   });
   return response.data;
+};
+
+export const useRunInstanceStandard = (
+  workflowName: string,
+  onRunInstanceSuccess: (data: LogicAppsV2.RunInstanceDefinition) => void,
+  appId?: string,
+  runId?: string
+) => {
+  return useQuery(
+    ['getRunInstance', appId, workflowName, runId],
+    async () => {
+      const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
+        `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+        {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        }
+      );
+      return results.data;
+    },
+    {
+      enabled: !!workflowName && !!runId,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      onSuccess: onRunInstanceSuccess,
+    }
+  );
 };
 
 export const listCallbackUrl = async (
@@ -58,9 +89,7 @@ export const listCallbackUrl = async (
   let callbackInfo: any;
   if (triggerName) {
     const result = await axios.post(
-      `https://management.azure.com${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${
-        isConsumption ? '2016-10-01' : standardApiVersion
-      }`,
+      `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${isConsumption ? '2016-10-01' : standardApiVersion}`,
       null,
       {
         headers: {
@@ -95,11 +124,11 @@ export const listCallbackUrl = async (
   };
 };
 
-export const useWorkflowApp = (siteResourceId: string) => {
+export const useWorkflowApp = (siteResourceId: string, isConsumption = false) => {
   return useQuery(
     ['workflowApp', siteResourceId],
     async () => {
-      const uri = `https://management.azure.com${siteResourceId}?api-version=2018-11-01`;
+      const uri = `${baseUrl}${siteResourceId}?api-version=${!isConsumption ? '2018-11-01' : '2016-10-01'}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -120,7 +149,7 @@ export const useAppSettings = (siteResourceId: string) => {
   return useQuery(
     ['appSettings', siteResourceId],
     async () => {
-      const uri = `https://management.azure.com${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
+      const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
       const response = await axios.post(uri, null, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -153,7 +182,17 @@ export const useCurrentTenantId = () => {
 };
 
 export const getConnectionStandard = async (connectionId: string) => {
-  const response = await axios.get(`https://management.azure.com${connectionId}?api-version=2018-07-01-preview`, {
+  const response = await axios.get(`${baseUrl}${connectionId}?api-version=2018-07-01-preview`, {
+    headers: {
+      Authorization: `Bearer ${environment.armToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const getConnectionConsumption = async (connectionId: string) => {
+  const response = await axios.get(`${baseUrl}${connectionId}?api-version=2018-07-01-preview`, {
     headers: {
       Authorization: `Bearer ${environment.armToken}`,
     },
@@ -197,7 +236,31 @@ export const saveWorkflowStandard = async (
       }
     }
 
-    await axios.post(`https://management.azure.com${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
+    await axios.post(`${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
+      headers: {
+        'If-Match': '*',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workflow: any): Promise<any> => {
+  const workflowToSave = await convertDesignerWorkflowToConsumptionWorkflow(workflow);
+
+  const outputWorkflow: Workflow = {
+    ...outdatedWorkflow,
+    properties: {
+      ...outdatedWorkflow.properties,
+      ...workflowToSave,
+    },
+  };
+
+  try {
+    await axios.put(`${baseUrl}${validateResourceId(outdatedWorkflow.id)}?api-version=2016-10-01`, JSON.stringify(outputWorkflow), {
       headers: {
         'If-Match': '*',
         'Content-Type': 'application/json',
@@ -233,7 +296,7 @@ const validateWorkflow = async (
   }
 
   const response = await axios.post(
-    `https://management.azure.com${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${
+    `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${
       isConsumption ? consumptionApiVersion : standardApiVersion
     }`,
     requestPayload,

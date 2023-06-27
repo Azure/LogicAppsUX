@@ -1,9 +1,9 @@
+import { getBrandColorRgbA } from '../../card/utils';
 import Constants from '../../constants';
 import { ValueDownload } from './valuedownload';
 import { ValueLink } from './valuelink';
 import { ValueList } from './valuelist';
 import type { BoundParameters } from '@microsoft/utils-logic-apps';
-import { hexToRgbA } from '@microsoft/utils-logic-apps';
 import React from 'react';
 
 export interface ValuesPanelProps {
@@ -36,7 +36,7 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
   isDownload,
 }) => {
   const borderStyle = {
-    borderColor: hexToRgbA(brandColor, 0.7),
+    borderColor: getBrandColorRgbA(brandColor, 0.7),
   };
 
   return (

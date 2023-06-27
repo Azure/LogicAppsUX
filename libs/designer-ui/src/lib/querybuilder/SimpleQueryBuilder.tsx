@@ -1,5 +1,5 @@
 import type { GroupItems, RowItemProps } from '.';
-import { GroupType } from '.';
+import { RowDropdownOptions, GroupType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
@@ -7,15 +7,16 @@ import { StringEditor } from '../editor/string';
 import { Row } from './Row';
 import type { IButtonStyles, IStyle } from '@fluentui/react';
 import { ActionButton, FontSizes } from '@fluentui/react';
-import { isBoolean, isNumber } from '@microsoft/parsers-logic-apps';
+import { isNumber, isBoolean } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
-import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
-import { useState } from 'react';
+import { useFunctionalState } from '@react-hookz/web';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SimpleQueryBuilderProps {
   readonly?: boolean;
-  items: RowItemProps;
+  itemValue: ValueSegment[];
+  isRowFormat?: boolean;
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
 }
@@ -34,14 +35,12 @@ const buttonStyles: IButtonStyles = {
   rootPressed: removeStyle,
 };
 
-const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' }];
-
-export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }: SimpleQueryBuilderProps) => {
+export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChange }: SimpleQueryBuilderProps) => {
   const intl = useIntl();
 
-  const [getRootProp, setRootProp] = useFunctionalState<GroupItems>(items);
-  const [currValue, setCurrValue] = useState<string>(convertRootPropToValue(items));
-  const [isAdvanced, setIsAdvanced] = useState(false);
+  const [getRootProp, setRootProp] = useFunctionalState<RowItemProps | undefined>(convertAdvancedValueToRootProp(itemValue));
+  const [advancedValue, setAdvancedValue] = useState<ValueSegment[]>(itemValue);
+  const [isRowFormat, setIsRowFormat] = useState(convertAdvancedValueToRootProp(itemValue) !== undefined);
 
   const advancedButtonLabel = intl.formatMessage({
     defaultMessage: 'Edit in advanced mode',
@@ -53,103 +52,163 @@ export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }
     description: 'Button Label when clicked to swith to basic editor',
   });
 
-  useUpdateEffect(() => {
-    onChange?.({
-      value: emptyValue,
-      viewModel: { items: getRootProp(), isOldFormat: true, value: removeQuotes(currValue) },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currValue]);
+  const invalidRowFormat = intl.formatMessage({
+    defaultMessage: 'Condition is too complex or invalid. Unable to switch to basic mode',
+    description: 'Error message when unable to switch to basic mode',
+  });
+
+  useEffect(() => {
+    const rootPropValue = convertAdvancedValueToRootProp(itemValue);
+    setAdvancedValue(itemValue);
+    setRootProp(rootPropValue);
+  }, [itemValue, setRootProp]);
 
   const handleUpdateParent = (newProps: GroupItems) => {
-    setCurrValue(convertRootPropToValue(newProps as RowItemProps));
-    setRootProp(newProps);
+    const updatedAdvancedValue = convertRootPropToValue(newProps as RowItemProps);
+    setAdvancedValue(updatedAdvancedValue);
+    setRootProp(newProps as RowItemProps);
+    onChange?.({
+      value: updatedAdvancedValue,
+      viewModel: { isOldFormat: true, itemValue: updatedAdvancedValue, isRowFormat: true },
+    });
   };
 
   const handleUpdateRootProps = (newState: ChangeState) => {
-    setCurrValue(newState.value[0].value);
-    setRootProp(convertValueToRootProp(newState.value, items));
+    const updatedAdvancedValue = newState.value;
+    setAdvancedValue(updatedAdvancedValue);
+    setRootProp(convertAdvancedValueToRootProp(updatedAdvancedValue));
+    onChange?.({
+      value: updatedAdvancedValue,
+      viewModel: { isOldFormat: true, itemValue: updatedAdvancedValue, isRowFormat: !!getRootProp() },
+    });
   };
 
   return (
     <div className="msla-querybuilder-container">
-      {isAdvanced ? (
-        <StringEditor
-          className={'msla-simple-querybuilder-editor-container'}
-          initialValue={[{ id: guid(), type: ValueSegmentType.LITERAL, value: currValue }]}
-          getTokenPicker={getTokenPicker}
-          BasePlugins={{ tokens: false }}
-          editorBlur={handleUpdateRootProps}
-        />
-      ) : (
+      {isRowFormat ? (
         <Row
           isTop={false}
           isBottom={false}
           index={0}
-          operand1={items.operand1}
-          operand2={items.operand2}
-          operator={items.operator}
+          operand1={getRootProp()?.operand1}
+          operand2={getRootProp()?.operand2}
+          operator={getRootProp()?.operator}
           getTokenPicker={getTokenPicker}
           handleUpdateParent={handleUpdateParent}
           forceSingleCondition={true}
           groupedItems={[]}
           readonly={readonly}
           clearEditorOnTokenInsertion={true}
+          isSimpleQueryBuilder={true}
+        />
+      ) : (
+        <StringEditor
+          className={'msla-simple-querybuilder-editor-container'}
+          initialValue={advancedValue}
+          getTokenPicker={getTokenPicker}
+          onChange={handleUpdateRootProps}
         />
       )}
       <ActionButton
         className="msla-simple-querybuilder-advanced-button"
-        disabled={readonly}
+        disabled={readonly || !getRootProp()}
+        title={readonly || !getRootProp() ? invalidRowFormat : isRowFormat ? advancedButtonLabel : basicButtonLabel}
         styles={buttonStyles}
         onClick={() => {
-          setIsAdvanced(!isAdvanced);
+          if (isRowFormat) {
+            setAdvancedValue(convertRootPropToValue(getRootProp() as RowItemProps));
+          } else {
+            setRootProp(convertAdvancedValueToRootProp(advancedValue));
+          }
+          setIsRowFormat(!isRowFormat);
         }}
       >
-        {isAdvanced ? basicButtonLabel : advancedButtonLabel}
+        {isRowFormat ? advancedButtonLabel : basicButtonLabel}
       </ActionButton>
     </div>
   );
 };
 
-const convertRootPropToValue = (rootProps: RowItemProps): string => {
-  const op1: string = rootProps.operand1?.[0]?.value ? getOperationValue(rootProps.operand1?.[0]) : 'null';
-  const op2: string = rootProps.operand2?.[0]?.value ? getOperationValue(rootProps.operand2?.[0]) : 'null';
-  return `@${rootProps.operator}(${op1},${op2})`;
+const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
+  const operandLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${rootProps.operator}(` };
+  const op1: ValueSegment = getOperationValue(rootProps.operand1[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
+  const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+  const op2: ValueSegment = getOperationValue(rootProps.operand2[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
+  const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
+  return [operandLiteral, op1, separatorLiteral, op2, endingLiteral];
 };
 
-const convertValueToRootProp = (value: ValueSegment[], items: RowItemProps): GroupItems => {
-  const input = value[0].value;
-  const operation: string = input.substring(input.indexOf('@') + 1, input.indexOf('('));
-  const operations = input.split(',');
-  const operand1Value = removeQuotes(operations[0].substring(operations[0].indexOf('(') + 1).trim());
-  const operand2Value = removeQuotes(operations[1].substring(0, operations[1].lastIndexOf(')')).trim());
-  const operand1: ValueSegment[] =
-    items.operand1.length === 1 && operand1Value === items.operand1[0].value
-      ? items.operand1
-      : [{ id: guid(), type: ValueSegmentType.LITERAL, value: operand1Value }];
-  const operand2: ValueSegment[] =
-    items.operand2.length === 1 && operand2Value === items.operand2[0].value
-      ? items.operand2
-      : [{ id: guid(), type: ValueSegmentType.LITERAL, value: operand2Value }];
-  return { operator: operation, operand1, operand2, type: GroupType.ROW };
+const convertAdvancedValueToRootProp = (value: ValueSegment[]): RowItemProps | undefined => {
+  if (!value || value.length === 0 || value[0].value === '') {
+    return { operator: 'equals', operand1: [], operand2: [], type: GroupType.ROW };
+  }
+  const nodeMap = new Map<string, ValueSegment>();
+  let stringValue = '';
+  value.forEach((segment) => {
+    if (segment.type === ValueSegmentType.LITERAL) {
+      stringValue += segment.value;
+    } else if (segment.type === ValueSegmentType.TOKEN) {
+      stringValue += segment.value;
+      nodeMap?.set(segment.value, segment);
+    }
+  });
+  if (!stringValue.includes('@') || !stringValue.includes(',')) {
+    return undefined;
+  }
+  let operator: string, operand1: ValueSegment[], operand2: ValueSegment[];
+  try {
+    operator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+    if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
+      return undefined;
+    }
+    const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, stringValue.lastIndexOf(')'));
+    const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
+    const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
+    operand1 = [nodeMap.get(operand1String) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: operand1String }];
+    operand2 = [nodeMap.get(operand2String) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: operand2String }];
+  } catch {
+    return undefined;
+  }
+
+  return { operator, operand1, operand2, type: GroupType.ROW };
 };
 
-const getOperationValue = (valSegment?: ValueSegment): string => {
+export const getOuterMostCommaIndex = (input: string): number => {
+  let outermostCommaIndex = -1;
+  let openParenthesesCount = 0;
+
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === '(') {
+      openParenthesesCount++;
+    } else if (input[i] === ')') {
+      openParenthesesCount--;
+    } else if (input[i] === ',' && openParenthesesCount === 0) {
+      outermostCommaIndex = i;
+      break;
+    }
+  }
+  return outermostCommaIndex;
+};
+
+const getOperationValue = (valSegment?: ValueSegment): ValueSegment | undefined => {
   if (!valSegment) {
-    return '';
+    return undefined;
+  }
+  if (valSegment.token) {
+    return valSegment;
   }
   const currValue = valSegment.value;
   const opeartionHasQuote = checkIfShouldHaveQuotes(valSegment);
-  return `${opeartionHasQuote ? "'" : ''}${currValue}${opeartionHasQuote ? "'" : ''}`;
+  return { id: valSegment.id, type: valSegment.type, value: `${opeartionHasQuote ? "'" : ''}${currValue}${opeartionHasQuote ? "'" : ''}` };
 };
 
-export function checkIfShouldHaveQuotes(valSegment: ValueSegment): boolean {
+const checkIfShouldHaveQuotes = (valSegment: ValueSegment): boolean => {
   const value = valSegment.value;
-  if (valSegment.type === ValueSegmentType.TOKEN || (value && (isNumber(value) || isBoolean(value)))) {
+  if (value && (isNumber(value) || isBoolean(value))) {
     return false;
   }
   return true;
-}
+};
 
 export const removeQuotes = (s: string): string => {
   if ((s.startsWith("'") && s.endsWith("'")) || (s.startsWith('"') && s.endsWith('"'))) {

@@ -1,13 +1,15 @@
 import {
+  canConvertToComplexCondition,
   getParameterEditorProps,
   parameterValueToJSONString,
   parameterValueToString,
   getExpressionValueForOutputToken,
   updateParameterWithValues,
   toArrayViewModelSchema,
+  toHybridConditionViewModel,
 } from '../helper';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/parsers-logic-apps';
 import { DynamicValuesType, ExpressionType } from '@microsoft/parsers-logic-apps';
 
@@ -1995,12 +1997,6 @@ describe('core/utils/parameters/helper', () => {
           editorOptions: options,
           editorViewModel: {
             ...options,
-            items: {
-              operand1: [],
-              operand2: [],
-              operator: 'equals',
-              type: 'row',
-            },
           },
           schema: inputSchema,
         });
@@ -2511,6 +2507,124 @@ describe('core/utils/parameters/helper', () => {
       expect(updatedInputParameters[1].value).toBe('test2');
       expect(updatedInputParameters[2].value).toBe('test1');
       expect(updatedInputParameters[9].value).toBe('Normal');
+    });
+  });
+
+  describe('canConvertToComplexCondition', () => {
+    const equalsObject = {
+      equals: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    const containsObject = {
+      contains: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    const invalidObject = {
+      invalidKey: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    test('returns true if input has only one key and it is a valid dropdown value', () => {
+      const result = canConvertToComplexCondition(equalsObject);
+      expect(result).toBe(true);
+    });
+
+    test('returns false if input has more than one key', () => {
+      const input = {
+        ...equalsObject,
+        ...containsObject,
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input has "not" key but its value has more than one key', () => {
+      const input = {
+        not: {
+          ...equalsObject,
+          ...containsObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns true if input has "not" key and its value has only one valid dropdown value', () => {
+      const input = {
+        not: {
+          ...containsObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(true);
+    });
+
+    test('returns false if input has "not" key but its value is not a valid dropdown value', () => {
+      const input = {
+        not: {
+          ...invalidObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input is an empty object', () => {
+      const input = {};
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input is undefined', () => {
+      const result = canConvertToComplexCondition(undefined);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input is null', () => {
+      const result = canConvertToComplexCondition(null);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('toHybridConditionViewModel', () => {
+    const greaterObject = {
+      greater: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+    const emptyCondition = { items: { condition: undefined, items: [], type: 'group' } };
+    test('returns empty array of items if input is an empty object', () => {
+      const input = {};
+      const result = toHybridConditionViewModel(input);
+      expect(result).toEqual(emptyCondition);
+    });
+
+    test('returns false if input is undefined', () => {
+      const result = toHybridConditionViewModel(undefined);
+      expect(result).toEqual(emptyCondition);
+    });
+
+    test('returns false if input is null', () => {
+      const result = toHybridConditionViewModel(null);
+      expect(result).toEqual(emptyCondition);
+    });
+
+    it('should return the correct view model with "and" condition added', () => {
+      const result = toHybridConditionViewModel(greaterObject);
+      expect(result.items.type).toEqual(GroupType.GROUP);
+      expect(result.items.condition).not.toBeUndefined();
+      expect(result.items.condition).toEqual(GroupDropdownOptions.AND);
+      expect(result.items.items.length).toEqual(1);
+      expect(result.items.items[0].type).toEqual('row');
+    });
+
+    it('should return the correct view model without adding "and" condition', () => {
+      const input = {
+        or: [greaterObject],
+      };
+      const result = toHybridConditionViewModel(input);
+      expect(result.items.type).toEqual(GroupType.GROUP);
+      expect(result.items.condition).not.toBeUndefined();
+      expect(result.items.condition).toEqual(GroupDropdownOptions.OR);
+      expect(result.items.items.length).toEqual(1);
+      expect(result.items.items[0].type).toEqual('row');
     });
   });
 });

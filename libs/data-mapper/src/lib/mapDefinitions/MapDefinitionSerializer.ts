@@ -11,12 +11,13 @@ import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, 
 import {
   collectConditionalValues,
   collectFunctionValue,
+  collectSequenceValue,
+  extractScopeFromLoop,
   getInputValues,
   getSourceKeyOfLastLoop,
   isValidToMakeMapDefinition,
 } from '../utils/DataMap.Utils';
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
-import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import yaml from 'js-yaml';
@@ -42,10 +43,16 @@ export const convertToMapDefinition = (
       generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     }
 
-    generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+    generateMapDefinitionBody(mapDefinition, connections);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
-    return yaml.dump(mapDefinition, { replacer: yamlReplacer }).replaceAll(/'"|"'/g, '"');
+    return yaml
+      .dump(mapDefinition, {
+        replacer: yamlReplacer,
+        noRefs: true,
+        sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray),
+      })
+      .replaceAll(/'"|"'/g, '"');
   }
 
   return '';
@@ -81,22 +88,16 @@ export const generateMapDefinitionHeader = (
 };
 
 // Exported for testing purposes
-export const generateMapDefinitionBody = (
-  mapDefinition: MapDefinitionEntry,
-  connections: ConnectionDictionary,
-  targetSchemaSortArray: string[]
-): void => {
+export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
-  const targetSchemaConnections = Object.entries(connections)
-    .filter(([key, connection]) => {
-      const selfNode = connection.self.node;
-      if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
-        return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
-      } else {
-        return false;
-      }
-    })
-    .sort((nodeA, nodeB) => targetSchemaSortArray.indexOf(nodeA[0]) - targetSchemaSortArray.indexOf(nodeB[0]));
+  const targetSchemaConnections = Object.entries(connections).filter(([key, connection]) => {
+    const selfNode = connection.self.node;
+    if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
+      return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
+    } else {
+      return false;
+    }
+  });
 
   targetSchemaConnections.forEach(([_key, connection]) => {
     const flattenedInputs = flattenInputs(connection.inputs);
@@ -286,7 +287,7 @@ const addLoopingToNewPathItems = (
             const inputConnection = indexConnection.inputs[0][0];
             const inputKey = isConnectionUnit(inputConnection) && inputConnection.node.key;
 
-            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection)})`;
+            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})`;
           } else {
             loopValue = `${mapNodeParams.for}(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, '')})`;
           }
@@ -299,22 +300,25 @@ const addLoopingToNewPathItems = (
         } else {
           // Loop with an index
           if (!prevPathItemWasConditional) {
-            const indexFunctionKey = sourceNode.reactFlowKey;
-            const sourceSchemaNodeConnection = connections[indexFunctionKey].inputs[0][0];
-            const sourceSchemaNode = isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node;
-            const indexFunctionInput = connections[indexFunctionKey];
+            const functionKey = sourceNode.reactFlowKey;
+            const functionConnection = connections[functionKey];
+            const sequenceValueResult = collectSequenceValue(sourceNode.node, functionConnection, connections, true);
 
-            if (sourceSchemaNode && isSchemaNodeExtended(sourceSchemaNode)) {
-              const valueToTrim = findLast(
-                sourceSchemaNode.pathToRoot,
-                (pathItem) => pathItem.repeating && pathItem.key !== sourceSchemaNode.key
-              )?.key;
-              loopValue = sourceSchemaNode.key.replace(`${valueToTrim}/`, '');
-              loopValue = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
+            newPath.forEach((pathItem) => {
+              const extractedScope = extractScopeFromLoop(pathItem.key);
+
+              if (extractedScope) {
+                sequenceValueResult.sequenceValue = sequenceValueResult.sequenceValue.replaceAll(`${extractedScope}/`, '');
+              }
+            });
+
+            if (sequenceValueResult.hasIndex) {
+              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue}, ${getIndexValueForCurrentConnection(
+                functionConnection,
+                connections
+              )})`;
             } else {
-              LogService.error(LogCategory.DataMapUtils, 'addLoopingToNewPathItems', {
-                message: `Failed to generate proper loopValue: ${loopValue}`,
-              });
+              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})`;
             }
 
             // For entry
@@ -344,12 +348,16 @@ const addLoopingToNewPathItems = (
   });
 
   const selfNode = rootTargetConnection.self.node;
+  const isSchemaNode = isSchemaNodeExtended(selfNode);
 
   // Object within the loop
-  newPath.push({
-    key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
-    arrayIndex: isSchemaNodeExtended(selfNode) ? selfNode.arrayItemIndex : undefined,
-  });
+  // Skipping ArrayItem items for now, they will come into play with direct access arrays
+  if (isSchemaNode && !selfNode.nodeProperties.find((prop) => prop === SchemaNodeProperty.ArrayItem)) {
+    newPath.push({
+      key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
+      arrayIndex: isSchemaNodeExtended(selfNode) ? selfNode.arrayItemIndex : undefined,
+    });
+  }
 };
 
 const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {
@@ -388,4 +396,25 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
 
     return true;
   });
+};
+
+const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[]): number => {
+  const potentialKeyObjects = targetSchemaSortArray.filter((node, _index, origArray) => {
+    if (node.endsWith(nameA)) {
+      const trimmedNode = node.substring(0, node.indexOf(nameA) - 1);
+      const hasNodeB = origArray.find((nodeB) => nodeB === `${trimmedNode}/${nameB}`);
+
+      return !!hasNodeB;
+    }
+
+    return false;
+  });
+
+  if (potentialKeyObjects.length === 0) {
+    return 0;
+  }
+
+  const keyA = potentialKeyObjects[0];
+  const trimmedNode = keyA.substring(0, keyA.indexOf(nameA) - 1);
+  return targetSchemaSortArray.indexOf(keyA) - targetSchemaSortArray.indexOf(`${trimmedNode}/${nameB}`);
 };

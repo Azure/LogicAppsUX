@@ -73,7 +73,6 @@ interface AuthenticationEditorProps extends BaseEditorProps {
   type: AuthenticationType;
   options: AuthenticationEditorOptions;
   authenticationValue: AuthProps;
-  readOnly?: boolean;
 }
 
 export const AuthenticationEditor = ({
@@ -83,6 +82,7 @@ export const AuthenticationEditor = ({
   initialValue,
   getTokenPicker,
   onChange,
+  readonly,
   ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
@@ -102,28 +102,56 @@ export const AuthenticationEditor = ({
   const renderAuthentication = () => {
     switch (option) {
       case AuthenticationType.BASIC:
-        return <BasicAuthentication basicProps={basic} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <BasicAuthentication
+            basicProps={basic}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            getTokenPicker={getTokenPicker}
+            readonly={readonly}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.CERTIFICATE:
         return (
           <CertificateAuthentication
             clientCertificateProps={clientCertificate}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
+            readonly={readonly}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.RAW:
-        return <RawAuthentication rawProps={raw} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <RawAuthentication
+            rawProps={raw}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            readonly={readonly}
+            getTokenPicker={getTokenPicker}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.MSI:
         return (
           <MSIAuthentication
             identity={options?.identity}
             msiProps={msi}
+            readonly={readonly}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.OAUTH:
-        return <ActiveDirectoryAuthentication OauthProps={aadOAuth} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <ActiveDirectoryAuthentication
+            OauthProps={aadOAuth}
+            readonly={readonly}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            getTokenPicker={getTokenPicker}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.NONE:
         return null;
       default:
@@ -146,6 +174,16 @@ export const AuthenticationEditor = ({
     description: 'Label for Authentication Type dropdown',
   });
 
+  const expandedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to code view mode',
+    description: 'Label for editor toggle button when in expanded mode',
+  });
+
+  const collapsedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to default view mode',
+    description: 'Label for editor toggle button when in collapsed mode',
+  });
+
   return (
     <div className="msla-authentication-editor-container">
       {codeView ? (
@@ -157,10 +195,12 @@ export const AuthenticationEditor = ({
           setIsValid={setIsValid}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
+          readonly={readonly}
         />
       ) : (
         <div className="msla-authentication-editor-expanded-container">
           <AuthenticationDropdown
+            readonly={readonly}
             dropdownLabel={authenticationTypeLabel}
             selectedKey={option}
             options={getAuthenticationTypes(options.supportedAuthTypes)}
@@ -170,7 +210,12 @@ export const AuthenticationEditor = ({
         </div>
       )}
       <div className="msla-authentication-default-view-mode">
-        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView} disabled={!isValid || props.readOnly} />
+        <EditorCollapseToggle
+          label={codeView ? collapsedLabel : expandedLabel}
+          collapsed={codeView}
+          toggleCollapsed={toggleCodeView}
+          disabled={!isValid}
+        />
       </div>
     </div>
   );

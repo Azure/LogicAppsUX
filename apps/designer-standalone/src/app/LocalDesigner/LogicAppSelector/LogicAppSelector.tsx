@@ -1,9 +1,10 @@
-import type { AppDispatch, RootState } from '../../../state/store';
-import { changeResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
+import type { AppDispatch } from '../../../state/store';
+import { useResourcePath, useIsMonitoringView } from '../../../state/workflowLoadingSelectors';
+import { setResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown, DropdownMenuItemType } from '@fluentui/react';
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const fileOptions = [
   // General
@@ -53,21 +54,19 @@ const fileOptions = [
 ];
 
 export const LocalLogicAppSelector: React.FC = () => {
-  const { resourcePath, monitoringView } = useSelector((state: RootState) => {
-    const { resourcePath, monitoringView } = state.workflowLoader;
-    return { resourcePath, monitoringView };
-  });
+  const resourcePath = useResourcePath();
+  const isMonitoringView = useIsMonitoringView();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(changeResourcePath((item?.key as string) ?? ''));
-      if (monitoringView) {
+      dispatch(setResourcePath((item?.key as string) ?? ''));
+      if (isMonitoringView) {
         dispatch(loadRun());
       }
       dispatch(loadWorkflow());
     },
-    [dispatch, monitoringView]
+    [dispatch, isMonitoringView]
   );
 
   return (

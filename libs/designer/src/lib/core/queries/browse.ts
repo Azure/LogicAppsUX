@@ -66,6 +66,54 @@ export const useAllOperations = () => {
   return useMemo(() => ({ data, isLoading }), [data, isLoading]);
 };
 
+// Query to return an array of fetched triggers
+export const useAllTriggers = () => {
+  const allOperations = useAllOperations();
+  return useMemo(
+    () => ({
+      ...allOperations,
+      data: allOperations.data.filter((operation) => !!operation.properties?.trigger),
+    }),
+    [allOperations]
+  );
+};
+
+// Query to return an array of api ids that have fetched triggers
+export const useAllApiIdsWithTriggers = () => {
+  const allTriggers = useAllTriggers();
+  return useMemo(
+    () => ({
+      ...allTriggers,
+      data: allTriggers.data.map((trigger) => trigger?.properties.api.id),
+    }),
+    [allTriggers]
+  );
+};
+
+// Query to return an array of fetched actions
+export const useAllActions = () => {
+  const allOperations = useAllOperations();
+  return useMemo(
+    () => ({
+      ...allOperations,
+      data: allOperations.data.filter((operation) => !operation.properties?.trigger),
+    }),
+    [allOperations]
+  );
+};
+
+// Query to return an array of api ids that have fetched actions
+export const useAllApiIdsWithActions = () => {
+  const allActions = useAllActions();
+  return useMemo(
+    () => ({
+      ...allActions,
+      data: allActions.data.map((action) => action?.properties.api.id),
+    }),
+    [allActions]
+  );
+};
+
 // Intended to be used in some root component, will handle the fetching
 export const usePreloadOperationsQuery = (): any => {
   const {

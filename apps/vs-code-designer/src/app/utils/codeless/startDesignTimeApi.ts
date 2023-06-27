@@ -3,11 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  ProjectDirectoryPath,
   defaultVersionRange,
   designerStartApi,
   extensionBundleId,
   hostFileName,
   localSettingsFileName,
+  logicAppKind,
   workflowDesignerLoadTimeout,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -47,6 +49,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     Values: {
       AzureWebJobsSecretStorageType: 'Files',
       FUNCTIONS_WORKER_RUNTIME: os.platform() === 'win32' ? WorkerRuntime.DotnetIsolated : WorkerRuntime.Node,
+      APP_KIND: logicAppKind,
     },
   };
   if (!ext.workflowDesignTimePort) {
@@ -63,7 +66,10 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       localize('azureFunctions.designTimeApi', 'Starting workflow design time api. It might take a few seconds.'),
       'OK'
     );
+
     const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
+    settingsFileContent.Values[ProjectDirectoryPath] = path.join(designTimeDirectory.fsPath);
+
     if (designTimeDirectory) {
       await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
       await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);

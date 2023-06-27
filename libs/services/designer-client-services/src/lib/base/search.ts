@@ -4,7 +4,7 @@ import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
 import { Status } from '../logging/logEntry';
 import type { ISearchService } from '../search';
-import * as ClientOperationsData from '../standard/operations';
+import * as ClientOperationsData from './operations';
 import type {
   ArmResource,
   BuiltInOperation,
@@ -18,7 +18,6 @@ import type {
 import { equals, ArgumentException } from '@microsoft/utils-logic-apps';
 
 export interface ContinuationTokenResponse<T> {
-  // danielle to move
   value: T;
   nextLink: string;
 }
@@ -27,15 +26,13 @@ export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOp
 export type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
 
 export interface BaseSearchServiceOptions {
-  apiVersion: string;
-  baseUrl: string;
   apiHubServiceDetails: {
     apiVersion: string;
     subscriptionId: string;
     location: string;
+    openApiVersion?: string;
   };
   httpClient: IHttpClient;
-  showStatefulOperations?: boolean;
   isDev?: boolean;
 }
 
@@ -45,12 +42,8 @@ export abstract class BaseSearchService implements ISearchService {
   _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
 
   constructor(public readonly options: BaseSearchServiceOptions) {
-    const { apiHubServiceDetails, apiVersion, baseUrl, isDev } = options;
-    if (!baseUrl) {
-      throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
-      throw new ArgumentException('apiVersion required');
-    } else if (!apiHubServiceDetails) {
+    const { apiHubServiceDetails, isDev } = options;
+    if (!apiHubServiceDetails) {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
     this._isDev = isDev || false;
@@ -66,17 +59,17 @@ export abstract class BaseSearchService implements ISearchService {
   public abstract getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray>;
   public abstract getBuiltInOperations(): Promise<DiscoveryOpArray>;
 
-  async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
+  async getAzureResourceByPage(
+    uri: string,
+    queryParams?: any,
+    pageNumber = 0,
+    pageSize = 2500
+  ): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) return { value: [], hasMore: false };
 
-    const {
-      apiHubServiceDetails: { apiVersion },
-      httpClient,
-    } = this.options;
+    const { httpClient } = this.options;
 
-    const pageSize = 250; // This is the number of results that can be returned in a single call
     const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
       $top: pageSize.toString(),
       $skiptoken: (pageNumber * pageSize).toString(),
       ...queryParams,
@@ -84,46 +77,10 @@ export abstract class BaseSearchService implements ISearchService {
 
     try {
       const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
-      return { value, hasMore: !!nextLink || value.length !== 0 };
+      return { value, hasMore: !!nextLink };
     } catch (error) {
       return { value: [], hasMore: false };
     }
-  }
-
-  async batchAzureResourceRequests(uri: string, queryParams?: any): Promise<any[]> {
-    const batchSize = 50; // Number of calls to make in parallel
-
-    const output: any[] = [];
-    let batchIteration = 0;
-    let continueFetching = true;
-
-    while (continueFetching) {
-      await Promise.all(
-        Array.from(Array(batchSize).keys()).map(async (index) => {
-          const pageNum = batchIteration * batchSize + index;
-          const { value, hasMore } = await this.getAzureResourceByPage(uri, queryParams, pageNum);
-          output.push(...value);
-          if (index === batchSize - 1) {
-            continueFetching = hasMore;
-          }
-        })
-      );
-      batchIteration++;
-    }
-
-    return output;
-  }
-
-  async pagedBatchAzureResourceRequests(batchIteration: number, uri: string, queryParams?: any, batchSize = 50): Promise<any[]> {
-    const output: any[] = [];
-    await Promise.all(
-      Array.from(Array(batchSize).keys()).map(async (index) => {
-        const pageNum = batchIteration * batchSize + index;
-        const { value } = await this.getAzureResourceByPage(uri, queryParams, pageNum);
-        output.push(...value);
-      })
-    );
-    return output;
   }
 
   async getAzureResourceRecursive(uri: string, queryParams: any): Promise<any[]> {
@@ -133,7 +90,7 @@ export abstract class BaseSearchService implements ISearchService {
       try {
         const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
         value.push(...newValue);
-        if (nextLink && newValue.length !== 0) return await requestPage(nextLink, value);
+        if (nextLink) return await requestPage(nextLink, value);
         return value;
       } catch (error) {
         return value;
@@ -160,7 +117,8 @@ export abstract class BaseSearchService implements ISearchService {
       $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
     };
 
-    const operations = await this.batchAzureResourceRequests(uri, queryParameters);
+    // const operations = await this.batchAzureResourceRequests(uri, queryParameters);
+    const operations = await this.getAzureResourceRecursive(uri, queryParameters);
 
     LoggerService().endTrace(traceId, { status: Status.Success });
     return operations;
@@ -168,7 +126,7 @@ export abstract class BaseSearchService implements ISearchService {
 
   async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
     const {
-      apiHubServiceDetails: { location, subscriptionId },
+      apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
     if (this._isDev) {
       if (page === 0) return Promise.resolve(azureOperationsResponse);
@@ -178,10 +136,12 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
     const queryParameters: QueryParameters = {
       $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
+      'api-version': apiVersion,
     };
 
-    const values = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
-    return values;
+    // const values = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
+    const { value } = await this.getAzureResourceByPage(uri, queryParameters, page);
+    return value;
   }
 
   abstract getAllConnectors(): Promise<Connector[]>;
@@ -197,7 +157,8 @@ export abstract class BaseSearchService implements ISearchService {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-    const responseArray = await this.batchAzureResourceRequests(uri);
+    // const responseArray = await this.batchAzureResourceRequests(uri);
+    const responseArray = await this.getAzureResourceRecursive(uri, undefined);
     return this.moveGeneralInformation(responseArray);
   }
 
@@ -212,11 +173,13 @@ export abstract class BaseSearchService implements ISearchService {
     }
 
     const {
-      apiHubServiceDetails: { location, subscriptionId },
+      apiHubServiceDetails: { location, subscriptionId, apiVersion, openApiVersion },
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-    const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
-    return this.moveGeneralInformation(responseArray);
+    // const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
+    const { value } = await this.getAzureResourceByPage(uri, { 'api-version': openApiVersion ?? apiVersion }, page);
+
+    return this.moveGeneralInformation(value);
   }
 
   async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
@@ -229,7 +192,9 @@ export abstract class BaseSearchService implements ISearchService {
         'api-version': apiVersion,
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
-      const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      // const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      const response = await this.getAzureResourceRecursive(uri, queryParameters);
+
       return response;
     } catch (error) {
       return [];
@@ -246,7 +211,9 @@ export abstract class BaseSearchService implements ISearchService {
         'api-version': apiVersion,
         $filter: `${ISE_RESOURCE_ID} eq null`,
       };
-      const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      // const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      const response = await this.getAzureResourceRecursive(uri, queryParameters);
+
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
       return locationFilteredResponse;
     } catch (error) {
@@ -299,7 +266,9 @@ export abstract class BaseSearchService implements ISearchService {
   }
 }
 
-export function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOperation<BuiltInOperation>[] {
+export function getClientBuiltInOperations(
+  filterOperation?: (operation: DiscoveryOperation<BuiltInOperation>) => boolean
+): DiscoveryOperation<BuiltInOperation>[] {
   const allOperations: DiscoveryOperation<BuiltInOperation>[] = [
     ClientOperationsData.requestOperation,
     ClientOperationsData.responseOperation,
@@ -337,10 +306,10 @@ export function getClientBuiltInOperations(showStatefulOperations = false): Disc
     ClientOperationsData.getPastTimeOperation,
     ClientOperationsData.currentTimeOperation,
   ];
-  return allOperations.filter((operation) => filterStateful(operation, showStatefulOperations));
+  return filterOperation ? allOperations.filter(filterOperation) : allOperations;
 }
 
-export function getClientBuiltInConnectors(showStatefulOperations = false): Connector[] {
+export function getClientBuiltInConnectors(filterConnector?: (connector: Connector) => boolean): Connector[] {
   const allConnectors: any[] = [
     ClientOperationsData.requestGroup,
     ClientOperationsData.httpGroup,
@@ -349,12 +318,5 @@ export function getClientBuiltInConnectors(showStatefulOperations = false): Conn
     ClientOperationsData.scheduleGroup,
     ClientOperationsData.dateTimeGroup,
   ];
-  return allConnectors.filter((connector) => filterStateful(connector, showStatefulOperations));
-}
-
-function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connector, showStateful: boolean): boolean {
-  if (operation.properties.capabilities === undefined) return true;
-  return showStateful
-    ? operation.properties.capabilities.includes('Stateful') || !operation.properties.capabilities.includes('Stateless')
-    : operation.properties.capabilities.includes('Stateless') || !operation.properties.capabilities.includes('Stateful');
+  return filterConnector ? allConnectors.filter(filterConnector) : allConnectors;
 }

@@ -1,6 +1,6 @@
 import constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
-import { getApiManagementSwagger, getConnection } from '../../queries/connections';
+import { getConnection } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
@@ -21,7 +21,7 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType } from '@microsoft/utils-logic-apps';
+import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType, getResourceName } from '@microsoft/utils-logic-apps';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   const { connectionsMapping, connectionReferences } = state;
@@ -49,8 +49,12 @@ export async function isConnectionReferenceValid(
     return false;
   }
 
-  const connection = await getConnection(reference.connection.id, connectorId);
-  return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
+  try {
+    const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
+    return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
+  } catch (error: any) {
+    return false;
+  }
 }
 
 export function getAssistedConnectionProps(connector: Connector, manifest?: OperationManifest): AssistedConnectionProps | undefined {
@@ -68,7 +72,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
     const functionAppsCallback = () => FunctionService().fetchFunctionApps();
-    const functionsCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
+    const fetchSubResourcesCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
     const functionAppsLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Function Apps...',
       description: 'Text for loading function apps',
@@ -79,7 +83,9 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       description: 'Label for function app selection',
     });
 
-    const getColumns = (functionApp: any) => [functionApp?.name, functionApp?.properties?.resourceGroup, functionApp?.location];
+    const getColumns = (functionApp: any) => [getResourceName(functionApp), functionApp?.properties?.resourceGroup, functionApp?.location];
+
+    const getSubResourceName = (azureFunction: any) => getResourceName(azureFunction).split('/')?.[1] ?? azureFunction?.id;
 
     return {
       resourceType: 'functionApps',
@@ -89,8 +95,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       getColumns,
       getResourcesCallback: functionAppsCallback,
       loadingText: functionAppsLoadingText,
-      getSubResourceName: (azureFunction: any) => azureFunction.name.split('/')[1],
-      fetchSubResourcesCallback: functionsCallback,
+      getSubResourceName,
+      fetchSubResourcesCallback,
     };
   } else if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
     const apiInstancesCallback = () => ApiManagementService().fetchApiManagementInstances();
@@ -101,8 +107,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     });
 
     const apisLabel = intl.formatMessage({
-      defaultMessage: 'Select an api from apim instance',
-      description: 'Label for api selection',
+      defaultMessage: 'Select an API from an API Management instance',
+      description: 'Label for API selection',
     });
 
     const getColumns = (apimInstance: any) => [apimInstance?.name, apimInstance?.id.split('/')[4], apimInstance?.location];
@@ -140,7 +146,7 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
   } else if (connectionType === ConnectionType.ApiManagement) {
     // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
-    const { api } = await getApiManagementSwagger(apimApiId);
+    const { api } = await ApiManagementService().fetchApiMSwagger(apimApiId);
     const baseUrl = api.host ? (api.schemes?.length ? `${api.schemes.at(-1)}://${api.host}` : `http://${api.host}`) : 'NotFound';
     const fullUrl = api.basePath ? `${baseUrl}${api.basePath}` : baseUrl;
     const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';

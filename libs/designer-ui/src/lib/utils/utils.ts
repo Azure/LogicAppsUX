@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { isBuiltInConnector, isCustomConnector } from '@microsoft/utils-logic-apps';
+import { equals, isBuiltInConnector, isCustomConnector } from '@microsoft/utils-logic-apps';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
@@ -14,7 +14,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
     return '--';
   }
 
-  const seconds = Math.round(Math.abs(milliseconds / 1000));
+  const seconds = Math.round(Math.abs(milliseconds / 100)) / 10;
   if (seconds < 60) {
     if (abbreviated) {
       return intl.formatMessage(
@@ -111,6 +111,19 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       }
     );
   }
+}
+
+/**
+ * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
+ * @arg {string} startTime - The start time of the duration
+ * @arg {string} endTime - The end time of the duration
+ * @arg {boolean} [abbreviated=true] - True if the string should be abbreviated, e.g., "s" instead of "second(s)".
+ */
+export function getDurationStringFromTimes(startTime: string, endTime: string, abbreviated = true): string {
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const duration = end.getTime() - start.getTime();
+  return getDurationString(duration, abbreviated);
 }
 
 /**
@@ -266,66 +279,65 @@ export function getStatusString(status: string, hasRetries: boolean): string {
       return intl.formatMessage({
         defaultMessage: 'Aborted',
 
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.CANCELLED:
       return intl.formatMessage({
         defaultMessage: 'Cancelled',
 
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.FAILED:
       return intl.formatMessage({
         defaultMessage: 'Failed',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.FAULTED:
       return intl.formatMessage({
         defaultMessage: 'Faulted',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.IGNORED:
       return intl.formatMessage({
         defaultMessage: 'Ignored',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.SKIPPED:
       return intl.formatMessage({
         defaultMessage: 'Skipped',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.SUCCEEDED:
       return hasRetries
         ? intl.formatMessage({
             defaultMessage: 'Succeeded with retries',
-            description:
-              'This is a status message to be shown in a monitoring view. This refers to the succeeded status of a previous action.',
+            description: 'The status message to show in monitoring view.. This refers to the succeeded status of a previous action.',
           })
         : intl.formatMessage({
             defaultMessage: 'Succeeded',
-            description: 'This is a status message to be shown in a monitoring view',
+            description: 'The status message to show in monitoring view.',
           });
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
         defaultMessage: 'Timed Out',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.WAITING:
       return intl.formatMessage({
         defaultMessage: 'Waiting',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.NOT_SPECIFIED:
     default:
       return intl.formatMessage({
         defaultMessage: 'Not specified',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
   }
 }
@@ -352,4 +364,17 @@ export const getConnectorCategoryString = (connectorId: string): string => {
   });
 
   return isBuiltInConnector(connectorId) ? builtInText : isCustomConnector(connectorId) ? customText : azureText;
+};
+
+export const convertUIElementNameToAutomationId = (uiElementName: string): string => {
+  return uiElementName?.replace(/\W/g, '_')?.toLowerCase();
+};
+
+export const getPreviewTag = (status: string | undefined): string | undefined => {
+  return equals(status, 'preview')
+    ? getIntl().formatMessage({
+        defaultMessage: 'Preview',
+        description: 'The preview tag for a preview connector.',
+      })
+    : undefined;
 };

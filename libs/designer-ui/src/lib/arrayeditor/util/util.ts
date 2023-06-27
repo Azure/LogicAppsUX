@@ -1,7 +1,6 @@
 import type { ArrayItemSchema, ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
 import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
@@ -95,13 +94,8 @@ export const convertComplexItemsToArray = (
 
       // we need to convert to string to extract tokens to repopulate later
       const stringValue = convertSegmentsToString(segments, nodeMap);
-      const castedValue = castParameter?.(
-        [{ id: guid(), type: ValueSegmentType.LITERAL, value: stringValue }],
-        itemSchema.type,
-        itemSchema.format,
-        suppressCasting
-      );
-      return castedValue ?? stringValue;
+      const castedValue = castParameter?.(segments, itemSchema.type, itemSchema.format, suppressCasting);
+      return suppressCasting ? stringValue : castedValue;
     }
   }
   return returnItem;
@@ -109,41 +103,38 @@ export const convertComplexItemsToArray = (
 
 export const initializeSimpleArrayItems = (
   initialValue: ValueSegment[],
+  valueType: string,
   setItems: (items: SimpleArrayItem[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed: (b: boolean) => void
-): void => {
+) => {
   const nodeMap = new Map<string, ValueSegment>();
   const stringifiedCollapsedValue = convertSegmentsToString(initialValue, nodeMap);
-  validationAndSerializeSimpleArray(stringifiedCollapsedValue, nodeMap, setItems, setIsValid, setCollapsed);
-  return;
+  validationAndSerializeSimpleArray(stringifiedCollapsedValue, nodeMap, valueType, setItems, setIsValid, setCollapsed);
 };
 
 export const validationAndSerializeSimpleArray = (
   editorString: string,
   nodeMap: Map<string, ValueSegment>,
+  valueType: string,
   setItems: (items: SimpleArrayItem[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed?: (b: boolean) => void
 ): void => {
   try {
     const strippedEditorString = editorString.replace(/\s+/g, '');
-    if (
-      !strippedEditorString.length ||
-      strippedEditorString === '[]' ||
-      strippedEditorString === 'null' ||
-      strippedEditorString === '[null]'
-    ) {
-      setItems([]);
+    if (!strippedEditorString.length || strippedEditorString === 'null' || strippedEditorString === '[null]') {
+      setItems([{ key: guid(), value: [] }]);
     } else {
       const jsonEditor = JSON.parse(editorString);
-      if (typeof jsonEditor === 'number' || typeof jsonEditor === 'string' || typeof jsonEditor === 'boolean') {
-        throw Error();
-      }
       const returnItems: SimpleArrayItem[] = [];
       for (const [, value] of Object.entries(jsonEditor)) {
         returnItems.push({
-          value: convertStringToSegments(value as string, true, nodeMap),
+          value: convertStringToSegments(
+            valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value),
+            true,
+            nodeMap
+          ),
           key: guid(),
         });
       }

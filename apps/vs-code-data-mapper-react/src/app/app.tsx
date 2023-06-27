@@ -3,13 +3,14 @@ import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeU
 import type { AppDispatch, RootState } from '../state/Store';
 import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
+  getFileNameAndPath,
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
+  InitDataMapperApiService,
   defaultDataMapperApiServiceOptions,
   getFunctions,
   getSelectedSchema,
-  InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -34,6 +35,7 @@ export const App = () => {
   const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
+  const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
   const sourceSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchemaFilename);
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
@@ -45,18 +47,19 @@ export const App = () => {
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
+  if (runtimePort) {
+    InitDataMapperApiService({
+      ...defaultDataMapperApiServiceOptions,
+      port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
+    });
+  }
+
   const sendMsgToVsix = useCallback(
     (msg: MessageToVsix) => {
       vscode.postMessage(msg);
     },
     [vscode]
   );
-
-  const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
-    saveDataMapDefinition(dataMapDefinition);
-
-    saveDataMap(dataMapXslt);
-  };
 
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
     sendMsgToVsix({
@@ -71,14 +74,14 @@ export const App = () => {
     });
   }, [sendMsgToVsix]);
 
-  const saveDataMapDefinition = (dataMapDefinition: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string, _mapMetadata: string) => {
     sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
     });
   };
 
-  const saveDataMap = (dataMapXslt: string) => {
+  const saveXsltCall = (dataMapXslt: string) => {
     sendMsgToVsix({
       command: 'saveDataMapXslt',
       data: dataMapXslt,
@@ -168,11 +171,13 @@ export const App = () => {
     const getSelectedSchemaTrees = async () => {
       try {
         if (sourceSchemaFilename) {
-          dispatch(changeSourceSchema(await getSelectedSchema(sourceSchemaFilename)));
+          const [fileName, filePath] = getFileNameAndPath(sourceSchemaFilename);
+          dispatch(changeSourceSchema(await getSelectedSchema(fileName, filePath)));
         }
 
         if (targetSchemaFilename) {
-          dispatch(changeTargetSchema(await getSelectedSchema(targetSchemaFilename)));
+          const [fileName, filePath] = getFileNameAndPath(targetSchemaFilename);
+          dispatch(changeTargetSchema(await getSelectedSchema(fileName, filePath)));
         }
       } catch (error) {
         handleRscLoadError(error);
@@ -198,6 +203,7 @@ export const App = () => {
     >
       <DataMapDataProvider
         xsltFilename={xsltFilename}
+        xsltContent={xsltContent}
         mapDefinition={mapDefinition}
         sourceSchema={sourceSchema}
         targetSchema={targetSchema}
@@ -207,7 +213,8 @@ export const App = () => {
         theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
       >
         <DataMapperDesigner
-          saveStateCall={saveStateCall}
+          saveMapDefinitionCall={saveMapDefinitionCall}
+          saveXsltCall={saveXsltCall}
           saveDraftStateCall={saveDraftDataMapDefinition}
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}

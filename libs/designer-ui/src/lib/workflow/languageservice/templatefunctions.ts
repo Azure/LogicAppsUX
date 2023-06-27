@@ -39,11 +39,11 @@ const Resources = {
     description: 'Label for combining strings together',
   }),
   TOKEN_PARAMETER_CONCAT_ALL: intl.formatMessage({
-    defaultMessage: 'Required. The string to combine into a single string.',
+    defaultMessage: 'Required. One of the strings to combine into a single string.',
     description: 'Required string parameter required to combine strings',
   }),
   TOKEN_FUNCTION_FUNCTION_SUBSTRING: intl.formatMessage({
-    defaultMessage: 'Returns a subset of characters from a string',
+    defaultMessage: 'Returns a subset of characters from a string.',
     description: 'Label for description of custom substring Function',
   }),
   TOKEN_PARAMETER_SUBSTRING_TEXT: intl.formatMessage({
@@ -111,18 +111,18 @@ const Resources = {
   }),
   TOKEN_FUNCTION_FUNCTION_INDEXOF: intl.formatMessage({
     defaultMessage: 'Returns the first index of a value within a string (case-insensitive, invariant culture)',
-    description: 'Label for description of custom indexOf Function',
+    description: "Label for the description of a custom 'indexOf' function",
   }),
   TOKEN_PARAMETER_INDEXOF_TEXT: intl.formatMessage({
     defaultMessage: 'Required. The string that may contain the value.',
     description: 'Required text parameter to apply indexOf function on',
   }),
   TOKEN_PARAMETER_INDEXOF_SEARCHTEXT: intl.formatMessage({
-    defaultMessage: 'Required. The value to search the index of.',
-    description: 'Required text parameter to search indexOf function with',
+    defaultMessage: 'Required. The value for which to find the index.',
+    description: "Required. The text parameter for which to find the index with the 'indexOf' function.",
   }),
   TOKEN_FUNCTION_FUNCTION_NTHINDEXOF: intl.formatMessage({
-    defaultMessage: 'Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)',
+    defaultMessage: "Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture).",
     description: 'Label for description of custom nthIndexOf Function',
   }),
   TOKEN_PARAMETER_NTHINDEXOF_TEXT: intl.formatMessage({
@@ -130,7 +130,7 @@ const Resources = {
     description: 'Required text parameter to apply nthIndexOf function on',
   }),
   TOKEN_PARAMETER_NTHINDEXOF_SEARCHTEXT: intl.formatMessage({
-    defaultMessage: 'Required. The value to search the index of.',
+    defaultMessage: 'Required. The value for which to find the index.',
     description: 'Required text parameter to search nthIndexOf function with',
   }),
   TOKEN_PARAMETER_NTHINDEXOF_OCCURRENCE: intl.formatMessage({
@@ -260,12 +260,12 @@ const Resources = {
     description: 'Required collection parameters to check union function on',
   }),
   TOKEN_FUNCTION_COLLECTION_FIRST: intl.formatMessage({
-    defaultMessage: 'Returns the first element in the array or string passed in',
+    defaultMessage: 'Returns the first element from the passed-in array or string.',
     description: 'Label for description of custom first Function',
   }),
   TOKEN_PARAMETER_FIRST_COLLECTION: intl.formatMessage({
-    defaultMessage: 'Required. The collection to take the first object from.',
-    description: 'Required collection parameter to apply first function on',
+    defaultMessage: 'Required. The collection from which to take the first object.',
+    description: "Required. The collection parameter on which to apply the 'first' function.",
   }),
   TOKEN_FUNCTION_COLLECTION_LAST: intl.formatMessage({
     defaultMessage: 'Returns the last element in the array or string passed in',
@@ -273,7 +273,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_LAST_COLLECTION: intl.formatMessage({
     defaultMessage: 'Required. The collection to take the last object from.',
-    description: 'Required collection parameter to apply last function on',
+    description: "The required collection parameter for applying the 'last' function.",
   }),
   TOKEN_FUNCTION_COLLECTION_TAKE: intl.formatMessage({
     defaultMessage: 'Returns the first Count elements from the array or string passed in',
@@ -281,7 +281,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_TAKE_COLLECTION: intl.formatMessage({
     defaultMessage: 'Required. The collection from where to take the first Count objects.',
-    description: 'Required collection parameter to apply take function on',
+    description: "Required. The collection parameter on which to apply the 'take' function.",
   }),
   TOKEN_PARAMETER_TAKE_COUNT: intl.formatMessage({
     defaultMessage: 'Required. The number of objects to take from the Collection. Must be a positive integer.',
@@ -301,7 +301,7 @@ const Resources = {
   }),
   TOKEN_FUNCTION_COLLECTION_JOIN: intl.formatMessage({
     defaultMessage: 'Returns a string with each item of an array joined by a delimiter',
-    description: 'Label for description of custom join Function',
+    description: "Label for description of the custom 'join' function",
   }),
   TOKEN_PARAMETER_JOIN_COLLECTION: intl.formatMessage({
     defaultMessage: 'Required. The collection to join items from.',
@@ -328,11 +328,11 @@ const Resources = {
     description: 'Required value parameter to return given if function is true',
   }),
   TOKEN_PARAMETER_IF_VALUEIFFALSE: intl.formatMessage({
-    defaultMessage: "Required. The value to return if the expression is 'false'.",
+    defaultMessage: 'Required. The value to return if the expression is false.',
     description: 'Required value parameter to return given if function is false',
   }),
   TOKEN_FUNCTION_LOGICAL_EQUALS: intl.formatMessage({
-    defaultMessage: 'Returns true if two values are equal',
+    defaultMessage: 'Returns true if two values are equal.',
     description: 'Label for description of custom equals Function',
   }),
   TOKEN_PARAMETER_EQUALS_OBJECT: intl.formatMessage({
@@ -345,7 +345,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_AND_EXPRESSION: intl.formatMessage({
     defaultMessage: 'Required. The expressions that must be true.',
-    description: 'Required expression parameters to apply and function',
+    description: "Required. The expression parameters on which to apply the 'and' function.",
   }),
   TOKEN_FUNCTION_LOGICAL_OR: intl.formatMessage({
     defaultMessage: 'Returns true if either parameter is true',
@@ -364,7 +364,7 @@ const Resources = {
     description: 'Required expression parameter to apply not function',
   }),
   TOKEN_FUNCTION_LOGICAL_LESS: intl.formatMessage({
-    defaultMessage: 'Returns true if the first argument is less than the second',
+    defaultMessage: 'Returns true if the first argument is less than the second.',
     description: 'Label for description of custom less Function',
   }),
   TOKEN_PARAMETER_LESS_VALUE: intl.formatMessage({
@@ -416,7 +416,7 @@ const Resources = {
     description: 'Label for conversion functions',
   }),
   TOKEN_FUNCTION_CONVERSION_JSON: intl.formatMessage({
-    defaultMessage: 'Convert the input to a JSON type value',
+    defaultMessage: 'Converts the input to a JSON type value.',
     description: 'Label for description of custom json Function',
   }),
   TOKEN_PARAMETER_JSON_VALUE: intl.formatMessage({
@@ -493,7 +493,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_BINARY_VALUE: intl.formatMessage({
     defaultMessage: 'Required. The value that is converted to binary.',
-    description: 'Required string parameter to be converted using binary function',
+    description: "Required. The string parameter to convert with the 'binary' function.",
   }),
   TOKEN_FUNCTION_CONVERSION_DATAURITOBINARY: intl.formatMessage({
     defaultMessage: 'Returns a binary representation of a data URI',
@@ -609,7 +609,7 @@ const Resources = {
   }),
   TOKEN_FUNCTION_CONVERSION_TRIGGERMULTIPARTBODY: intl.formatMessage({
     defaultMessage: 'Returns the body for a part in a multipart output of the trigger',
-    description: 'Label for description of custom triggerMultipartBody Function',
+    description: "Label for the description of the custom 'triggerMultipartBody' function",
   }),
   TOKEN_PARAMETER_TRIGGERMULTIPARTBODY_INDEX: intl.formatMessage({
     defaultMessage: 'Required. The index of the part to retrieve.',
@@ -640,8 +640,8 @@ const Resources = {
     description: 'Required string parameter to be used as key for formDataMultiValues function',
   }),
   TOKEN_FUNCTION_CONVERSION_MULTIPARTBODY: intl.formatMessage({
-    defaultMessage: 'Returns the body for a part in a multipart output of an action',
-    description: 'Label for description of custom multipartBody Function',
+    defaultMessage: 'Returns the body for a part in a multipart output from an action.',
+    description: "Label for the description of the custom 'multipartBody' function",
   }),
   TOKEN_PARAMETER_MULTIPARTBODY_ACTIONNAME: intl.formatMessage({
     defaultMessage: 'Required. The name of the action with a multipart response.',
@@ -688,8 +688,8 @@ const Resources = {
     description: 'Required integer parameter to be used as lower bound for rand function',
   }),
   TOKEN_PARAMETER_RAND_MAXVALUE: intl.formatMessage({
-    defaultMessage: 'Required. This value is the next integer after the highest integer that could be returned.',
-    description: 'Required integer parameter to be used as upper bound for rand function',
+    defaultMessage: 'Required. This value is the next integer after the highest integer that can be returned.',
+    description: "Required. The integer parameter to use as the upper bound for the 'rand' function.",
   }),
   TOKEN_FUNCTION_MATH_ADD: intl.formatMessage({
     defaultMessage: 'Returns the result from adding the two numbers',
@@ -697,11 +697,11 @@ const Resources = {
   }),
   TOKEN_PARAMETER_ADD_SUMMAND1: intl.formatMessage({
     defaultMessage: 'Required. The number to add to Summand 2.',
-    description: 'Required number parameter to be summed in add function',
+    description: "Required. The number parameter to sum in the 'add' function.",
   }),
   TOKEN_PARAMETER_ADD_SUMMAND2: intl.formatMessage({
     defaultMessage: 'Required. The number to add to Summand 1.',
-    description: 'Required number parameter to be summed in add function',
+    description: "Required. The number parameter to sum in the 'add' function.",
   }),
   TOKEN_FUNCTION_MATH_SUB: intl.formatMessage({
     defaultMessage: 'Returns the result from subtracting two numbers',
@@ -864,9 +864,21 @@ const Resources = {
     defaultMessage: 'Converts a string timestamp passed in from a source time zone to a target time zone',
     description: 'Label for description of custom convertTimeZone Function',
   }),
+  TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE: intl.formatMessage({
+    defaultMessage: 'Returns the difference between two dates as a timespan string',
+    description: 'Label for description of custom dateDifference Function',
+  }),
+  TOKEN_PARAMETER_DATEDIFFERENCE_STARTTIMESTAMP: intl.formatMessage({
+    defaultMessage: 'Required. A string that contains the start time.',
+    description: 'Required string parameter for start time',
+  }),
+  TOKEN_PARAMETER_DATEDIFFERENCE_ENDTIMESTAMP: intl.formatMessage({
+    defaultMessage: 'Required. A string that contains the end time.',
+    description: 'Required string parameter for end time',
+  }),
   TOKEN_PARAMETER_SOURCETIMEZONE: intl.formatMessage({
     defaultMessage:
-      'Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details.',
+      "Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'.",
     description: 'Required string parameter for source time zone',
   }),
   TOKEN_PARAMETER_DESTINATIONTIMEZONE: intl.formatMessage({
@@ -899,8 +911,8 @@ const Resources = {
     description: 'Label for description of custom startOfHour Function',
   }),
   TOKEN_FUNCTION_DATETIME_STARTOFDAY: intl.formatMessage({
-    defaultMessage: 'Returns the start of the day to a string timestamp passed in',
-    description: 'Label for description of custom startOfDay Function',
+    defaultMessage: 'Returns the start of the day for the passed-in string timestamp.',
+    description: "Label for the description of a custom 'startOfDay' function",
   }),
   TOKEN_FUNCTION_DATETIME_STARTOFMONTH: intl.formatMessage({
     defaultMessage: 'Returns the start of the month of a string timestamp',
@@ -949,7 +961,7 @@ const Resources = {
     description: 'Label for description of custom actions Function',
   }),
   TOKEN_PARAMETER_ACTIONS_ACTIONNAME: intl.formatMessage({
-    defaultMessage: 'Required. The name of the action whose values you want.',
+    defaultMessage: 'Required. The name of the action that has the values you want.',
     description: 'Required string parameter to determine action wanted',
   }),
   TOKEN_FUNCTION_REFERENCE_OUTPUTS: intl.formatMessage({
@@ -993,8 +1005,8 @@ const Resources = {
     description: 'Label for description of custom iterationIndexes Function',
   }),
   TOKEN_FUNCTION_REFERENCE_VARIABLES: intl.formatMessage({
-    defaultMessage: 'Returns the value of the variable specified.',
-    description: 'Label for description of custom variables Function',
+    defaultMessage: 'Returns the value of the specified variable.',
+    description: "Label for the description of the custom 'variables' function",
   }),
   TOKEN_PARAMETER_VARIABLES_VARIABLENAME: intl.formatMessage({
     defaultMessage: 'Required. The name of the variable whose value you want.',
@@ -1054,7 +1066,7 @@ const Resources = {
     description: 'Label for URI manipulation functions',
   }),
   TOKEN_FUNCTION_MANIPULATION_COALESCE: intl.formatMessage({
-    defaultMessage: 'Returns the first non-null object in the arguments passed in',
+    defaultMessage: 'Returns the first non-null object in the passed-in argument values.',
     description: 'Label for description of custom coalesce Function',
   }),
   TOKEN_PARAMETER_COALESCE_ALL: intl.formatMessage({
@@ -1086,8 +1098,8 @@ const Resources = {
     description: 'Required parameter for new/existing property value in setProperty function',
   }),
   TOKEN_FUNCTION_MANIPULATION_REMOVEPROPERTY: intl.formatMessage({
-    defaultMessage: 'Returns an object with a property removed',
-    description: 'Label for description of custom removeProperty Function',
+    defaultMessage: 'Returns an object with the specified property removed.',
+    description: "Label for description of the custom 'removeProperty' function",
   }),
   TOKEN_PARAMETER_REMOVEPROPERTY_OBJECT: intl.formatMessage({
     defaultMessage: 'Required. The object to remove the property from.',
@@ -1107,7 +1119,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_XPATH_XPATH: intl.formatMessage({
     defaultMessage: 'Required. The XPath expression to evaluate.',
-    description: 'Required xpath parameter to identify which xPath to evaluate',
+    description: 'Required. The xpath parameter to identify the xPath to evaluate.',
   }),
 };
 
@@ -2941,6 +2953,28 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
           },
         ],
         isAdvanced: false,
+      },
+      {
+        name: 'dateDifference',
+        defaultSignature: 'dateDifference(startTimestamp, endTimestamp)',
+        description: Resources.TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE,
+        signatures: [
+          {
+            definition: `dateDifference(startTimestamp: string, endTimestamp: string)`,
+            documentation: Resources.TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE,
+            parameters: [
+              {
+                name: 'startTimestamp',
+                documentation: Resources.TOKEN_PARAMETER_DATEDIFFERENCE_STARTTIMESTAMP,
+              },
+              {
+                name: 'endTimestamp',
+                documentation: Resources.TOKEN_PARAMETER_DATEDIFFERENCE_ENDTIMESTAMP,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
       },
       {
         name: 'convertTimeZone',

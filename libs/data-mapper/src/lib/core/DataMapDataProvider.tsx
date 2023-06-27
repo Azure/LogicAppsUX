@@ -6,7 +6,7 @@ import { SchemaType } from '../models/Schema';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
-import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
+import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
 import { loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
+  xsltContent: string;
   mapDefinition?: MapDefinitionEntry;
   sourceSchema?: Schema;
   targetSchema?: Schema;
@@ -27,6 +28,7 @@ export interface DataMapDataProviderProps {
 
 const DataProviderInner = ({
   xsltFilename,
+  xsltContent,
   mapDefinition,
   sourceSchema,
   targetSchema,
@@ -46,7 +48,8 @@ const DataProviderInner = ({
 
   useEffect(() => {
     dispatch(setXsltFilename(xsltFilename ?? ''));
-  }, [dispatch, xsltFilename]);
+    dispatch(setXsltContent(xsltContent ?? ''));
+  }, [dispatch, xsltFilename, xsltContent]);
 
   useEffect(() => {
     if (mapDefinition && extendedSourceSchema && extendedTargetSchema && fetchedFunctions) {

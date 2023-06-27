@@ -15,14 +15,13 @@ import {
 } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
 import {
   convertSchemaToSchemaExtended,
   convertToMapDefinition,
   flattenSchemaIntoSortArray,
+  loadMapDefinition,
   MapDefinitionDeserializer,
 } from '@microsoft/logic-apps-data-mapper';
-import * as yaml from 'js-yaml';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -91,7 +90,7 @@ export const DevSerializationTester = () => {
     }
 
     const mapDefinitionDeserializer = new MapDefinitionDeserializer(
-      yaml.load(inputMapDefinition ?? '') as MapDefinitionEntry,
+      loadMapDefinition(inputMapDefinition ?? ''),
       sourceSchemaExtended,
       targetSchemaExtended,
       fetchedFunctions

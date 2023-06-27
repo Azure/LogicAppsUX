@@ -1,13 +1,13 @@
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
-import { store } from '../../core/state/Store';
 import type { RootState } from '../../core/state/Store';
+import { store } from '../../core/state/Store';
 import { SchemaType } from '../../models';
 import { isFunctionInputSlotAvailable, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
 import { makeStaticStyles, tokens } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import type { Position as HandlePosition, HandleType, Connection as ReactFlowConnection } from 'reactflow';
 import { Handle } from 'reactflow';
-import type { HandleType, Position as HandlePosition, Connection as ReactFlowConnection } from 'reactflow';
 
 // Override ReactFlow's handle classes
 const useStaticStyles = makeStaticStyles({
@@ -111,7 +111,7 @@ export default HandleWrapper;
 
 const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boolean => {
   const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-  const functionDictionary = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
+  const functionDictionary = store.getState().dataMap.curDataMapOperation.functionNodes;
   const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
   const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
 
@@ -124,7 +124,7 @@ const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boole
     connectionDictionary
   ) {
     // Target must be either a function or target schema node
-    const targetFunctionNode = functionDictionary[connection.target];
+    const targetFunctionNode = functionDictionary[connection.target]?.functionData;
     const currentTargetConnection = connectionDictionary[connection.target];
 
     return targetFunctionNode ? isFunctionInputSlotAvailable(currentTargetConnection, targetFunctionNode.maxNumberOfInputs) : true;
@@ -134,12 +134,12 @@ const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boole
 };
 
 const isValidConnectionFromFunctionNode = (connection: ReactFlowConnection) => {
-  const functionDictionary = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
+  const functionDictionary = store.getState().dataMap.curDataMapOperation.functionNodes;
   const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
   const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
 
   if (connection.source && connection.target && flattenedTargetSchema && functionDictionary && connectionDictionary) {
-    const targetFunctionNode = functionDictionary[connection.target];
+    const targetFunctionNode = functionDictionary[connection.target]?.functionData;
     const targetNodeConnection = connectionDictionary[connection.target];
 
     if (targetFunctionNode) {

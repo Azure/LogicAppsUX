@@ -97,6 +97,10 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     setCurrentPage(prevFailedRepetition + 1);
   };
 
+  if (currentPage > forEachItemsCount) {
+    onPagerChange({ value: forEachItemsCount });
+  }
+
   const failedIterationProps =
     failedRepetitions.length > 0
       ? {

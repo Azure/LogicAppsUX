@@ -13,7 +13,7 @@ import type { ConnectionDictionary, ConnectionUnit } from '../models/Connection'
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
-import { getFunctionBrandingForCategory, isFunctionData } from './Function.Utils';
+import { functionsForLocation, getFunctionBrandingForCategory } from './Function.Utils';
 import type { LayoutNode, RootLayoutNode } from './Layout.Utils';
 import { applyCustomLayout, convertDataMapNodesToLayoutTree, convertWholeDataMapToLayoutTree } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
@@ -59,7 +59,7 @@ const placeholderReactFlowNode: ReactFlowNode = {
 
 export const useLayout = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
-  currentFunctionNodes: FunctionDictionary,
+  functionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary,
   selectedItemKey: string | undefined,
@@ -72,6 +72,8 @@ export const useLayout = (
 
   useEffect(() => {
     if (currentTargetSchemaNode) {
+      const visibleFunctionNodes = functionsForLocation(functionNodes, currentTargetSchemaNode.key);
+
       // Sort source schema nodes according to their order in the schema
       const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
         (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
@@ -80,7 +82,7 @@ export const useLayout = (
       // Build a nicely formatted tree for easier layouting
       const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(
         sortedSourceSchemaNodes,
-        currentFunctionNodes,
+        visibleFunctionNodes,
         currentTargetSchemaNode,
         connections
       );
@@ -91,7 +93,7 @@ export const useLayout = (
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
             placeholderReactFlowNode,
-            ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, currentFunctionNodes, [
+            ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, visibleFunctionNodes, [
               currentTargetSchemaNode,
               ...currentTargetSchemaNode.children,
             ]),
@@ -125,7 +127,7 @@ export const useLayout = (
   }, [
     currentTargetSchemaNode,
     currentSourceSchemaNodes,
-    currentFunctionNodes,
+    functionNodes,
     connections,
     sourceSchemaOrdering,
     selectedItemKey,
@@ -139,12 +141,12 @@ export const convertToReactFlowNodes = (
   layoutTree: RootLayoutNode,
   selectedNodeId: string | undefined,
   currentSourceSchemaNodes: SchemaNodeExtended[],
-  currentFunctionNodes: FunctionDictionary,
+  functionNodes: FunctionDictionary,
   currentTargetSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<CardProps>[] => {
   return [
     ...convertSourceSchemaToReactFlowNodes(layoutTree.children[0], currentSourceSchemaNodes),
-    ...convertFunctionsToReactFlowParentAndChildNodes(layoutTree.children[1], selectedNodeId, currentFunctionNodes),
+    ...convertFunctionsToReactFlowParentAndChildNodes(layoutTree.children[1], selectedNodeId, functionNodes),
     ...convertTargetSchemaToReactFlowNodes(layoutTree.children[2], currentTargetSchemaNodes),
   ];
 };
@@ -221,11 +223,11 @@ export const convertSchemaToReactFlowNodes = (
 const convertFunctionsToReactFlowParentAndChildNodes = (
   functionsLayoutTree: LayoutNode,
   selectedNodeId: string | undefined,
-  currentFunctionNodes: FunctionDictionary
+  functionNodes: FunctionDictionary
 ): ReactFlowNode<FunctionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
-
-  Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode], idx) => {
+  Object.entries(functionNodes).forEach(([functionKey, fnNode], idx) => {
+    const functionData = fnNode.functionData;
     const layoutNode = functionsLayoutTree.children?.find((node) => node.id === functionKey);
     const isSelectedNode = functionKey === selectedNodeId;
 
@@ -246,11 +248,11 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
     reactFlowNodes.push({
       id: functionKey,
       data: {
-        functionData: fnNode,
+        functionData,
         displayHandle: true,
-        functionBranding: getFunctionBrandingForCategory(fnNode.category),
+        functionBranding: getFunctionBrandingForCategory(functionData.category),
         disabled: false,
-        dataTestId: `${fnNode.key}-${idx}`, // For e2e testing
+        dataTestId: `${functionData.key}-${idx}`, // For e2e testing
       },
       type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
@@ -328,6 +330,7 @@ export const useGlobalViewLayout = (
   selectedNodeId: string | undefined,
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
+  functionsNodes: FunctionDictionary,
   connections: ConnectionDictionary
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode<CardProps>[]>([]);
@@ -335,19 +338,11 @@ export const useGlobalViewLayout = (
   //const [diagramSize, setDiagramSize] = useState<Size2D>({ width: 0, height: 0 });
 
   useEffect(() => {
-    const functionDictionary: FunctionDictionary = {};
-    Object.entries(connections).forEach(([connectionKey, connectionValue]) => {
-      const connectionNode = connectionValue.self.node;
-      if (isFunctionData(connectionNode)) {
-        functionDictionary[connectionKey] = connectionNode;
-      }
-    });
-
     // Build a nicely formatted tree for easier layouting
     const layoutTreeFromCanvasNodes = convertWholeDataMapToLayoutTree(
       flattenedSourceSchema,
       flattenedTargetSchema,
-      functionDictionary,
+      functionsNodes,
       connections
     );
 
@@ -361,7 +356,7 @@ export const useGlobalViewLayout = (
             computedLayoutTree,
             selectedNodeId,
             Object.values(flattenedSourceSchema),
-            functionDictionary,
+            functionsNodes,
             Object.values(flattenedTargetSchema)
           ),
         ]);
@@ -389,7 +384,7 @@ export const useGlobalViewLayout = (
           message: `${error}`,
         });
       });
-  }, [connections, flattenedSourceSchema, flattenedTargetSchema, selectedNodeId]);
+  }, [connections, flattenedSourceSchema, flattenedTargetSchema, functionsNodes, selectedNodeId]);
 
   return [reactFlowNodes, reactFlowEdges];
 };
@@ -423,7 +418,7 @@ const addChildNodesForOverview = (
 ): void => {
   const baseSchemaNodeData = {
     schemaType: isSourceSchema ? SchemaType.Source : SchemaType.Target,
-    displayChevron: !isSourceSchema && sourceSchemaSpecified,
+    displayChevron: false,
     displayHandle: false,
     disabled: false,
     connectionStatus: !isSourceSchema && targetSchemaStates ? targetSchemaStates[curNode.key] : undefined,

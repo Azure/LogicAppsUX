@@ -1,12 +1,18 @@
 import { isApple } from '../../../helper';
-import clockWiseArrow from '../icons/arrow-clockwise.svg';
-import counterClockWiseArrow from '../icons/arrow-counterclockwise.svg';
+import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
+import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
+import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
+import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
+import { useTheme } from '@fluentui/react';
+import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
@@ -17,6 +23,7 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
+  COMMAND_PRIORITY_NORMAL,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
@@ -45,6 +52,7 @@ interface toolbarProps {
 export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
+  const { isInverted } = useTheme();
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -123,9 +131,35 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
           return false;
         },
         COMMAND_PRIORITY_CRITICAL
+      ),
+      activeEditor.registerCommand<boolean>(
+        TOGGLE_LINK_COMMAND,
+        (payload) => {
+          setCanRedo(payload);
+          return false;
+        },
+        COMMAND_PRIORITY_NORMAL
       )
     );
   }, [editor, activeEditor, updateToolbar]);
+
+  // close dropdowns when panel is scrolled
+  useEffect(() => {
+    function handleScroll() {
+      activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
+    }
+
+    const scrollableContent = document.querySelector('.ms-Panel-scrollableContent');
+    if (scrollableContent) {
+      scrollableContent.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (scrollableContent) {
+        scrollableContent.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [activeEditor]);
 
   return (
     <div className="msla-html-editor-toolbar">
@@ -142,7 +176,11 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         className="toolbar-item spaced"
         aria-label="Undo"
       >
-        <img className={'format'} src={counterClockWiseArrow} alt={'counter clockwise arrow'} />
+        <img
+          className={'format'}
+          src={isInverted ? counterClockWiseArrowDark : counterClockWiseArrowLight}
+          alt={'counter clockwise arrow'}
+        />
       </button>
       <button
         onMouseDown={(e) => {
@@ -157,7 +195,7 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         className="toolbar-item"
         aria-label="Redo"
       >
-        <img className={'format'} src={clockWiseArrow} alt={'clockwise arrow'} />
+        <img className={'format'} src={isInverted ? clockWiseArrowDark : clockWiseArrowLight} alt={'clockwise arrow'} />
       </button>
       <Divider />
       <BlockFormatDropDown disabled={readonly} blockType={blockType} editor={editor} />
@@ -165,6 +203,8 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
       <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={readonly} />
       <Divider />
       <Format activeEditor={activeEditor} readonly={readonly} />
+      <ListPlugin />
+      <LinkPlugin />
     </div>
   );
 };

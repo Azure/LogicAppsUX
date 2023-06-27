@@ -34,6 +34,7 @@ import {
   useParentRunIndex,
   useRunInstance,
   useShouldNodeFocus,
+  useRetryHistory,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -68,8 +69,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
-
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const runHistory = useRetryHistory(id);
+  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
@@ -129,7 +130,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         isDragging: monitor.isDragging(),
       }),
     }),
-    [readOnly, metadata]
+    [readOnly, metadata, dependencies]
   );
 
   const selected = useIsNodeSelected(id);
@@ -143,8 +144,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema }));
-  }, [dispatch, hasSchema, id, isMonitoringView]);
+    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
+  }, [dispatch, hasSchema, id, isMonitoringView, runHistory]);
 
   const brandColor = useBrandColor(id);
   const iconUri = useIconUri(id);
@@ -190,13 +191,13 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     };
   };
 
-  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()]; // danielle look here
+  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
   const opQuery = useOperationQuery(id);
 
   const isLoading = useMemo(
-    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading || connectionResult.isLoading,
-    [opQuery.isLoading, connectionResult.isLoading, isRepetitionLoading, isRepetitionRefetching]
+    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading,
+    [opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
   );
 
   const opManifestErrorText = intl.formatMessage({
@@ -279,7 +280,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isDragging={isDragging}
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
-          runData={{ status: statusRun, duration: durationRun }}
+          runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}
           selected={selected}

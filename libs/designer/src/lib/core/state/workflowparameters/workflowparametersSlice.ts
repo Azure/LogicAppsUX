@@ -42,7 +42,7 @@ export const validateParameter = (
       const { name } = data;
       if (!name) {
         return intl.formatMessage({
-          defaultMessage: 'Must provide name of parameter.',
+          defaultMessage: 'Must provide the parameter name.',
           description: 'Error message when the workflow parameter name is empty.',
         });
       }
@@ -135,12 +135,12 @@ export const workflowParametersSlice = createSlice({
       const {
         id,
         newDefinition: { name, type, value, defaultValue },
-        isConsumption = false,
+        useLegacy = false,
       } = action.payload;
       const validationErrors = {
         name: validateParameter(id, { name }, 'name', state.definitions),
-        value: validateParameter(id, { name, type, value, defaultValue }, 'value', state.definitions, isConsumption ? false : true),
-        ...(isConsumption
+        value: validateParameter(id, { name, type, value, defaultValue }, 'value', state.definitions, useLegacy ? false : true),
+        ...(useLegacy
           ? {
               defaultValue: validateParameter(id, { name, type, value, defaultValue }, 'defaultValue', state.definitions),
             }
@@ -152,12 +152,19 @@ export const workflowParametersSlice = createSlice({
         type,
         value,
         name: name ?? '',
-        ...(isConsumption ? { defaultValue } : {}),
+        ...(useLegacy ? { defaultValue } : {}),
       };
-      state.validationErrors[id] = {
+      const newErrorObj = {
         ...state.validationErrors[id],
         ...validationErrors,
       };
+      if (!newErrorObj.name) delete newErrorObj.name;
+      if (!newErrorObj.value) delete newErrorObj.value;
+      if (Object.keys(newErrorObj).length === 0) {
+        delete state.validationErrors[id];
+      } else {
+        state.validationErrors[id] = newErrorObj;
+      }
       state.isDirty = true;
     },
     setIsWorkflowParametersDirty: (state, action: PayloadAction<boolean>) => {

@@ -1,4 +1,4 @@
-import { TrafficLightDot } from '..';
+import { TrafficLightDot, convertUIElementNameToAutomationId } from '..';
 import constants from '../constants';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import type { PanelTab } from './panelUtil';
@@ -54,19 +54,38 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, nodeId
         overflowBehavior="menu"
         overflowAriaLabel={overflowLabel}
       >
-        {Object.entries(tabs).map(([name, { visible, tabErrors, title }]) => {
-          return visible && tabErrors?.[nodeId] ? (
-            <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRenderer} />
-          ) : visible ? (
-            <PivotItem key={name} itemKey={name} headerText={title} />
-          ) : null;
-        })}
+        {Object.entries(tabs)
+          .slice() //This makes the sort non destructive
+          .sort(([, a], [, b]) => a.order - b.order)
+          .map(([name, { visible, tabErrors, title }]) => {
+            return visible && tabErrors?.[nodeId] ? (
+              <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRendererWithErrors} />
+            ) : visible ? (
+              <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRenderer} />
+            ) : null;
+          })}
       </Pivot>
     </div>
   );
 };
 
-function customRenderer(
+function customRenderer(link?: IPivotItemProps, defaultRenderer?: (link?: IPivotItemProps) => JSX.Element | null): JSX.Element | null {
+  if (!link || !defaultRenderer) {
+    return null;
+  }
+
+  return (
+    <div
+      data-automation-id={`msla-panel-pivot-item-${convertUIElementNameToAutomationId(
+        link.headerText === undefined ? '' : link.headerText
+      )}`}
+    >
+      {defaultRenderer({ ...link, itemIcon: undefined })}
+    </div>
+  );
+}
+
+function customRendererWithErrors(
   link?: IPivotItemProps,
   defaultRenderer?: (link?: IPivotItemProps) => JSX.Element | null,
   isInverted?: boolean
@@ -75,12 +94,17 @@ function customRenderer(
   if (!link || !defaultRenderer) {
     return null;
   }
+
   return (
-    <>
+    <div
+      data-automation-id={`msla-panel-pivot-item-with-errors-${convertUIElementNameToAutomationId(
+        link.headerText === undefined ? '' : link.headerText
+      )}`}
+    >
       {defaultRenderer({ ...link, itemIcon: undefined })}
       <span className="msla-workflowpanel-pivot-error-icon">
         <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
       </span>
-    </>
+    </div>
   );
 }

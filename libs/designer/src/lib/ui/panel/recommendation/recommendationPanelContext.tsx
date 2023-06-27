@@ -1,8 +1,6 @@
-import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
-import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
@@ -16,11 +14,11 @@ import { BrowseView } from './browseView';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
-import { Link, Icon } from '@fluentui/react';
-import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
+import { Link, Icon, IconButton, Text } from '@fluentui/react';
+import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
+import { equals, guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -38,9 +36,8 @@ export type RecommendationPanelContextProps = {
 } & CommonPanelProps;
 
 export const RecommendationPanelContext = (props: RecommendationPanelContextProps) => {
-  const { displayRuntimeInfo } = props;
+  const { displayRuntimeInfo, toggleCollapse } = props;
   const dispatch = useDispatch<AppDispatch>();
-  const isConsumption = useIsConsumption();
   const isTrigger = useIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
@@ -79,16 +76,19 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
   const relationshipIds = useRelationshipIds();
   const isParallelBranch = useIsParallelBranch();
 
-  const isAzureResourceActionId = useCallback((id: string) => {
-    const azureResourceOperationIds = Object.values(Constants.AZURE_RESOURCE_ACTION_TYPES);
-    return azureResourceOperationIds.some((_id) => areApiIdsEqual(id, _id));
+  const hasAzureResourceSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+    return operation.properties.capabilities?.some((capability) => equals(capability, 'azureResourceSelection'));
+  }, []);
+
+  const hasSwaggerSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+    return operation.properties.capabilities?.some((capability) => equals(capability, 'swaggerSelection'));
   }, []);
 
   const startAzureResourceSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.AZURE_RESOURCE);
   }, []);
 
-  const startHttpSwaggerSelection = useCallback(() => {
+  const startSwaggerSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
 
@@ -99,12 +99,12 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
       });
       if (!operation) return;
       dispatch(selectOperationId(operation.id));
-      if (isAzureResourceActionId(operation.id) && isConsumption) {
+      if (hasAzureResourceSelection(operation)) {
         startAzureResourceSelection();
         return;
       }
-      if (operation.id === 'httpswaggeraction' || operation.id === 'httpswaggertrigger') {
-        startHttpSwaggerSelection();
+      if (hasSwaggerSelection(operation)) {
+        startSwaggerSelection();
         return;
       }
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
@@ -113,13 +113,13 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
     [
       allOperations,
       dispatch,
-      isAzureResourceActionId,
-      isConsumption,
+      hasAzureResourceSelection,
+      hasSwaggerSelection,
       isParallelBranch,
       isTrigger,
       relationshipIds,
       startAzureResourceSelection,
-      startHttpSwaggerSelection,
+      startSwaggerSelection,
     ]
   );
 
@@ -129,8 +129,16 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
     description: 'Text for the Details page navigation heading',
   });
 
+  const headingText = isTrigger
+    ? intl.formatMessage({ defaultMessage: 'Add a trigger', description: 'Text for the "Add Trigger" page header' })
+    : intl.formatMessage({ defaultMessage: 'Add an action', description: 'Text for the "Add Action" page header' });
+
   return (
-    <RecommendationPanel placeholder={''} {...props}>
+    <>
+      <div className="msla-app-action-header">
+        <Text variant="xLarge">{headingText}</Text>
+        <IconButton onClick={toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
+      </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -182,6 +190,6 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
           ),
         }[selectionState ?? '']
       }
-    </RecommendationPanel>
+    </>
   );
 };

@@ -73,6 +73,7 @@ export async function createNewProjectInternal(context: IActionContext, options:
   await wizard.execute();
 
   await createArtifactsFolder(context as IFunctionWizardContext);
+  await createLibFolder(context as IFunctionWizardContext);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
@@ -80,4 +81,10 @@ export async function createNewProjectInternal(context: IActionContext, options:
 async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
+}
+
+async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'custom', 'net472'), { recursive: true });
 }

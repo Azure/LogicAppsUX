@@ -33,6 +33,7 @@ export interface AppProps {
   corsNotice?: string;
   accessToken?: string;
   onOpenRun(run: RunDisplayItem): void;
+  hostVersion?: string;
 }
 
 export const App: React.FC<AppProps> = (props) => {
@@ -43,17 +44,17 @@ export const App: React.FC<AppProps> = (props) => {
   }, []);
 
   return (
-    <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
         <OverviewApp {...props} />
-      </QueryClientProvider>
-    </IntlProvider>
+      </IntlProvider>
+    </QueryClientProvider>
   );
 };
 
-const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseUrl, accessToken, onOpenRun, corsNotice }) => {
+const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseUrl, accessToken, onOpenRun, corsNotice, hostVersion }) => {
   const runService = useMemo(() => {
-    const httpClient = new HttpClient({ accessToken: accessToken, baseUrl, apiHubBaseUrl: '' });
+    const httpClient = new HttpClient({ accessToken: accessToken, baseUrl, apiHubBaseUrl: '', hostVersion });
 
     return new StandardRunService({
       baseUrl,
@@ -62,7 +63,7 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
       workflowName: workflowProperties.name,
       httpClient,
     });
-  }, [baseUrl, apiVersion, accessToken, workflowProperties.name]);
+  }, [baseUrl, apiVersion, accessToken, workflowProperties.name, hostVersion]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
     if (pageParam) {

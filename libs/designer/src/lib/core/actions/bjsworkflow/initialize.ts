@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -6,14 +5,14 @@ import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/c
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
-import type { UpdateUpstreamNodesPayload } from '../../state/tokensSlice';
-import { updateTokens, updateUpstreamNodes } from '../../state/tokensSlice';
+import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
+import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
+import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
@@ -38,7 +37,14 @@ import type {
   IOAuthService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  WorkflowService,
+  LoggerService,
+  LogEntryLevel,
+  OperationManifestService,
+  FunctionService,
+  ApiManagementService,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { SchemaProperty, InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
@@ -53,8 +59,16 @@ import {
   ManifestParser,
   PropertyName,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
-import { clone, equals, ConnectionReferenceKeyFormat, unmap, getObjectPropertyValue } from '@microsoft/utils-logic-apps';
+import type { CustomSwaggerServiceDetails, OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
+import {
+  CustomSwaggerServiceNames,
+  UnsupportedException,
+  clone,
+  equals,
+  ConnectionReferenceKeyFormat,
+  unmap,
+  getObjectPropertyValue,
+} from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -65,7 +79,7 @@ export interface ServiceOptions {
   workflowService: IWorkflowService;
 }
 
-export const parseWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
+export const updateWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
   dispatch(
     initializeParameters(
       Object.keys(parameters).reduce(
@@ -80,8 +94,9 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 };
 
 export const getInputParametersFromManifest = (
-  nodeId: string,
+  _nodeId: string,
   manifest: OperationManifest,
+  presetParameterValues?: Record<string, any>,
   customSwagger?: SwaggerParser,
   stepDefinition?: any
 ): NodeInputsWithDependencies => {
@@ -134,11 +149,22 @@ export const getInputParametersFromManifest = (
       ),
       '',
       primaryInputParametersInArray,
-      (!inputsLocation || !!inputsLocation.length) && !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
+      !operationData.metadata?.noUnknownParametersWithManifest &&
+        (!inputsLocation || !!inputsLocation.length) &&
+        !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
       false /* useDefault */
     );
   } else {
     loadParameterValuesArrayFromDefault(primaryInputParametersInArray);
+  }
+
+  if (presetParameterValues) {
+    for (const [parameterName, parameterValue] of Object.entries(presetParameterValues)) {
+      const parameter = primaryInputParametersInArray.find((parameter) => parameter.name === parameterName);
+      if (parameter) {
+        parameter.value = parameterValue;
+      }
+    }
   }
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
@@ -189,7 +215,7 @@ export const getOutputParametersFromManifest = (
       };
     }, {});
 
-    manifestToParse = getUpdatedManifestForSpiltOn(manifestToParse, splitOnValue);
+    manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
   }
 
   const operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
@@ -292,7 +318,7 @@ export const updateOutputsAndTokens = async (
 
   // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
   if (shouldProcessSettings && isTrigger) {
-    const isSplitOnSupported = getSplitOnOptions(nodeOutputs).length > 0;
+    const isSplitOnSupported = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
     if (settings.splitOn?.isSupported !== isSplitOnSupported) {
       dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
     }
@@ -435,12 +461,46 @@ export const getCustomSwaggerIfNeeded = async (
   manifestProperties: OperationManifestProperties,
   stepDefinition?: any
 ): Promise<SwaggerParser | undefined> => {
-  const swaggerUrlLocation = manifestProperties.customSwagger?.location;
-  if (!swaggerUrlLocation || !stepDefinition) {
+  if (!manifestProperties.customSwagger || !stepDefinition) {
     return undefined;
   }
 
-  return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
+  const { location, service } = manifestProperties.customSwagger;
+
+  if (!location && !service) {
+    return undefined;
+  }
+
+  return location
+    ? getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, location))
+    : getSwaggerFromService(
+        service as CustomSwaggerServiceDetails,
+        getObjectPropertyValue(stepDefinition, manifestProperties.inputsLocation ?? ['inputs'])
+      );
+};
+
+const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails, stepInputs: any): Promise<SwaggerParser> => {
+  const { name, operationId, parameters } = serviceDetails;
+  let service: any;
+  switch (name) {
+    case CustomSwaggerServiceNames.Function:
+      service = FunctionService();
+      break;
+    case CustomSwaggerServiceNames.ApiManagement:
+      service = ApiManagementService();
+      break;
+    default:
+      throw new UnsupportedException(`The custom swagger service name '${name}' is not supported`);
+  }
+
+  if (!service || !service[operationId]) {
+    throw new UnsupportedException(`The custom swagger service name '${name}' for operation '${operationId}' is not supported`);
+  }
+
+  const operationParameters = Object.keys(parameters).map((parameterName) =>
+    getObjectPropertyValue(stepInputs, parameters[parameterName].parameterReference.split('.'))
+  );
+  return service[operationId](...operationParameters);
 };
 
 export const updateInvokerSettings = (

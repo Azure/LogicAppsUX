@@ -5,7 +5,6 @@ import { getIntl } from '@microsoft/intl-logic-apps';
 import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import {
   UnsupportedException,
-  isArmResourceId,
   ArgumentException,
   ConnectorServiceErrorCode,
   ConnectorServiceException,
@@ -15,23 +14,14 @@ import type { IntlShape } from 'react-intl';
 
 type GetSchemaFunction = (args: Record<string, any>) => Promise<OpenAPIV2.SchemaObject>;
 type GetValuesFunction = (args: Record<string, any>) => Promise<ListDynamicValue[]>;
-type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
 export interface BaseConnectorServiceOptions {
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
   clientSupportedOperations: OperationInfo[];
-  getConfiguration: GetConfigurationFunction;
-  schemaClient: Record<string, GetSchemaFunction>;
-  valuesClient: Record<string, GetValuesFunction>;
-  apiHubServiceDetails: {
-    apiVersion: string;
-    baseUrl: string;
-    subscriptionId: string;
-    resourceGroup: string;
-  };
-  workflowReferenceId: string;
+  schemaClient?: Record<string, GetSchemaFunction>;
+  valuesClient?: Record<string, GetValuesFunction>;
 }
 
 export abstract class BaseConnectorService implements IConnectorService {
@@ -52,101 +42,42 @@ export abstract class BaseConnectorService implements IConnectorService {
     }
   }
 
-  async getLegacyDynamicContent(
+  abstract getLegacyDynamicContent(
     connectionId: string,
     connectorId: string,
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties
-  ): Promise<any> {
-    return this._executeAzureDynamicApi(connectionId, connectorId, parameters, managedIdentityProperties);
-  }
+  ): Promise<any>;
 
-  async getListDynamicValues(
+  abstract getListDynamicValues(
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeMetadata: any
-  ): Promise<ListDynamicValue[]> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
-    const { operationId: dynamicOperation } = dynamicState;
+    isManagedIdentityConnection?: boolean
+  ): Promise<ListDynamicValue[]>;
 
-    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
-
-    if (this._isClientSupportedOperation(connectorId, operationId)) {
-      if (!this.options.valuesClient[dynamicOperation]) {
-        throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the values client.`);
-      }
-      return this.options.valuesClient[dynamicOperation]({
-        operationId,
-        parameters: invokeParameters,
-        configuration,
-        nodeMetadata,
-      });
-    }
-
-    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    const response = await httpClient.post({
-      uri,
-      queryParameters: { 'api-version': apiVersion },
-      content: { parameters: invokeParameters, configuration },
-    });
-    return this._getResponseFromDynamicApi(response, uri);
-  }
-
-  async getDynamicSchema(
+  abstract getDynamicSchema(
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeMetadata: any
-  ): Promise<OpenAPIV2.SchemaObject> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
-    const {
-      extension: { operationId: dynamicOperation },
-      isInput,
-    } = dynamicState;
+    isManagedIdentityConnection?: boolean
+  ): Promise<OpenAPIV2.SchemaObject>;
 
-    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
-
-    if (this._isClientSupportedOperation(connectorId, operationId)) {
-      if (!this.options.schemaClient[dynamicOperation]) {
-        throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the schema client.`);
-      }
-      return this.options.schemaClient[dynamicOperation]({
-        operationId,
-        parameters: invokeParameters,
-        configuration,
-        isInput,
-        nodeMetadata,
-      });
-    }
-
-    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    const response = await httpClient.post({
-      uri,
-      queryParameters: { 'api-version': apiVersion },
-      content: { parameters: invokeParameters, configuration },
-    });
-    return this._getResponseFromDynamicApi(response, uri);
-  }
-
-  getTreeDynamicValues(
+  abstract getTreeDynamicValues(
     _connectionId: string | undefined,
     _connectorId: string,
     _operationId: string,
     _parameterAlias: string | undefined,
     _parameters: Record<string, any>,
-    _dynamicState: any
-  ): Promise<TreeDynamicValue[]> {
-    throw new UnsupportedException('Unsupported dynamic call connector method - getTreeDynamicValues');
-  }
+    _dynamicState: any,
+    isManagedIdentityConnection?: boolean
+  ): Promise<TreeDynamicValue[]>;
 
   protected _isClientSupportedOperation(connectorId: string, operationId: string): boolean {
     return this.options.clientSupportedOperations.some(
@@ -155,7 +86,6 @@ export abstract class BaseConnectorService implements IConnectorService {
   }
 
   protected _getInvokeParameters(parameters: Record<string, any>, dynamicState: any): Record<string, any> {
-    // tslint:disable-line: no-any
     const invokeParameters = { ...parameters };
     const additionalParameters = dynamicState.parameters;
 
@@ -189,7 +119,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     }
   }
 
-  protected _getErrorMessageFromConnectorResponse(
+  private _getErrorMessageFromConnectorResponse(
     response: any,
     defaultErrorMessage: string,
     intl: IntlShape,
@@ -227,21 +157,20 @@ export abstract class BaseConnectorService implements IConnectorService {
       : errorMessage;
   }
 
-  private async _executeAzureDynamicApi(
+  protected async _executeAzureDynamicApi(
     connectionId: string,
-    connectorId: string,
+    dynamicInvokeUrl: string,
+    dynamicInvokeApiVersion: string,
     parameters: Record<string, any>,
-    managedIdentityProperties?: ManagedIdentityRequestProperties
+    managedIdentityProperties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
   ): Promise<any> {
-    const { baseUrl, apiVersion, apiHubServiceDetails, httpClient } = this.options;
+    const { baseUrl, apiVersion, httpClient } = this.options;
     const intl = getIntl();
     const method = parameters['method'];
     const isManagedIdentityTypeConnection = !!managedIdentityProperties;
     const uri = isManagedIdentityTypeConnection
-      ? `${baseUrl}/dynamicInvoke`
-      : isArmResourceId(connectorId)
-      ? pathCombine(`${apiHubServiceDetails.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
-      : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
+      ? `${dynamicInvokeUrl}/dynamicInvoke`
+      : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']);
 
     if (isManagedIdentityTypeConnection) {
       const request = {
@@ -255,7 +184,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       try {
         const response = await httpClient.post({
           uri,
-          queryParameters: { 'api-version': apiVersion },
+          queryParameters: { 'api-version': dynamicInvokeApiVersion },
           content: { request, properties: managedIdentityProperties },
         });
 
@@ -267,7 +196,7 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: "Error executing the api ''{parameters}''.",
+                  defaultMessage: "Error occurred while executing the following API parameters: ''{parameters}''",
                   description:
                     'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
                 },
@@ -285,7 +214,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       try {
         const options = {
           uri,
-          queryParameters: { 'api-version': apiHubServiceDetails.apiVersion, ...parameters['queries'] },
+          queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },
           headers: parameters['headers'],
         };
         const bodyContent = parameters['body'];

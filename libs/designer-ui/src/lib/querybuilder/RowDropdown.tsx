@@ -27,17 +27,17 @@ export enum RowDropdownOptions {
 
 const items: DropdownItem[] = [
   { key: RowDropdownOptions.CONTAINS, displayName: 'contains', value: RowDropdownOptions.CONTAINS },
-  { key: RowDropdownOptions.NOTCONTAINS, displayName: '!contain', value: RowDropdownOptions.NOTCONTAINS },
-  { key: RowDropdownOptions.EQUALS, displayName: '=', value: RowDropdownOptions.EQUALS },
-  { key: RowDropdownOptions.NOTEQUALS, displayName: '!=', value: RowDropdownOptions.NOTEQUALS },
-  { key: RowDropdownOptions.GREATER, displayName: '>', value: RowDropdownOptions.GREATER },
-  { key: RowDropdownOptions.GREATEROREQUALS, displayName: '>=', value: RowDropdownOptions.GREATEROREQUALS },
-  { key: RowDropdownOptions.LESS, displayName: '<', value: RowDropdownOptions.LESS },
-  { key: RowDropdownOptions.LESSOREQUALS, displayName: '<=', value: RowDropdownOptions.LESSOREQUALS },
+  { key: RowDropdownOptions.NOTCONTAINS, displayName: 'does not contain', value: RowDropdownOptions.NOTCONTAINS },
+  { key: RowDropdownOptions.EQUALS, displayName: 'is equal to', value: RowDropdownOptions.EQUALS },
+  { key: RowDropdownOptions.NOTEQUALS, displayName: 'is not equal to', value: RowDropdownOptions.NOTEQUALS },
+  { key: RowDropdownOptions.GREATER, displayName: 'is greater than', value: RowDropdownOptions.GREATER },
+  { key: RowDropdownOptions.GREATEROREQUALS, displayName: 'is greater or equal to', value: RowDropdownOptions.GREATEROREQUALS },
+  { key: RowDropdownOptions.LESS, displayName: 'is less than', value: RowDropdownOptions.LESS },
+  { key: RowDropdownOptions.LESSOREQUALS, displayName: 'is less or equal to', value: RowDropdownOptions.LESSOREQUALS },
   { key: RowDropdownOptions.STARTSWITH, displayName: 'starts with', value: RowDropdownOptions.STARTSWITH },
-  { key: RowDropdownOptions.NOTSTARTSWITH, displayName: '!start with', value: RowDropdownOptions.NOTSTARTSWITH },
+  { key: RowDropdownOptions.NOTSTARTSWITH, displayName: 'does not start with', value: RowDropdownOptions.NOTSTARTSWITH },
   { key: RowDropdownOptions.ENDSWITH, displayName: 'ends with', value: RowDropdownOptions.ENDSWITH },
-  { key: RowDropdownOptions.NOTENDSWITH, displayName: '!end with', value: RowDropdownOptions.NOTENDSWITH },
+  { key: RowDropdownOptions.NOTENDSWITH, displayName: 'does not end with', value: RowDropdownOptions.NOTENDSWITH },
 ];
 
 export const RowDropdown = ({ condition, disabled, onChange }: RowDropdownProps) => {

@@ -198,12 +198,18 @@ export const applyConnectionValue = (
 };
 
 export const isValidCustomValueByType = (customValue: string, tgtDataType: NormalizedDataType) => {
-  switch (tgtDataType) {
-    case NormalizedDataType.String:
-      return customValue.startsWith('"') && customValue.endsWith('"');
+  if (tgtDataType === NormalizedDataType.Any) {
+    return true;
+  }
 
-    case NormalizedDataType.Number:
+  switch (tgtDataType) {
+    case NormalizedDataType.String: {
+      return customValue.startsWith('"') && customValue.endsWith('"');
+    }
+
+    case NormalizedDataType.Number: {
       return !isNaN(Number(customValue));
+    }
 
     case NormalizedDataType.Integer: {
       const integerMatch = customValue.match(/^[-+]?[0-9]*$/g);
@@ -215,27 +221,74 @@ export const isValidCustomValueByType = (customValue: string, tgtDataType: Norma
       return decimalMatch ? decimalMatch.length > 0 : false;
     }
 
-    case NormalizedDataType.Boolean:
-      return customValue === 'true' || customValue === 'false';
+    case NormalizedDataType.Boolean: {
+      return customValue === '$true' || customValue === '$false';
+    }
 
-    case NormalizedDataType.Binary:
+    case NormalizedDataType.Binary: {
       // TODO
       return true;
+    }
 
+    case NormalizedDataType.Array:
+    case NormalizedDataType.Complex:
+    case NormalizedDataType.Object:
     case NormalizedDataType.DateTime:
-      // TODO
-      return true;
-
-    case NormalizedDataType.Any:
-      return true;
-
-    default:
+    default: {
       return false;
+    }
   }
 };
 
-export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
-  srcDataType === NormalizedDataType.Any || tgtDataType === NormalizedDataType.Any || srcDataType === tgtDataType;
+export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) => {
+  if (srcDataType === NormalizedDataType.Any || tgtDataType === NormalizedDataType.Any) {
+    return true;
+  }
+
+  switch (tgtDataType) {
+    case NormalizedDataType.String: {
+      return srcDataType === NormalizedDataType.String;
+    }
+
+    case NormalizedDataType.Integer: {
+      return srcDataType === NormalizedDataType.Integer;
+    }
+
+    case NormalizedDataType.Number:
+    case NormalizedDataType.Decimal: {
+      return (
+        srcDataType === NormalizedDataType.Decimal ||
+        srcDataType === NormalizedDataType.Integer ||
+        srcDataType === NormalizedDataType.Number
+      );
+    }
+
+    case NormalizedDataType.Boolean: {
+      return srcDataType === NormalizedDataType.Boolean;
+    }
+
+    case NormalizedDataType.Binary: {
+      return srcDataType === NormalizedDataType.Binary;
+    }
+
+    case NormalizedDataType.DateTime: {
+      return srcDataType === NormalizedDataType.DateTime;
+    }
+
+    case NormalizedDataType.Array: {
+      return srcDataType === NormalizedDataType.Array;
+    }
+
+    case NormalizedDataType.Complex:
+    case NormalizedDataType.Object: {
+      return srcDataType === NormalizedDataType.Object || srcDataType === NormalizedDataType.Complex;
+    }
+
+    default: {
+      return false;
+    }
+  }
+};
 
 export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | undefined, tgtMaxNumInputs: number) => {
   // Make sure there's available inputs (unless it's an unbounded input)

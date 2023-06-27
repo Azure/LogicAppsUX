@@ -21,22 +21,16 @@ import {
   equals,
 } from '@microsoft/utils-logic-apps';
 
-export interface IApiHubServiceDetails {
+export interface ApiHubServiceDetails {
   apiVersion: string;
   baseUrl: string;
+  httpClient: IHttpClient;
   subscriptionId: string;
   resourceGroup: string;
   location: string;
-}
-
-export interface BaseConnectionServiceOptions {
-  apiVersion: string;
-  baseUrl: string;
   locale?: string;
   filterByLocation?: boolean;
   tenantId?: string;
-  httpClient: IHttpClient;
-  apiHubServiceDetails: IApiHubServiceDetails;
 }
 
 export type getAccessTokenType = () => Promise<string>;
@@ -58,16 +52,17 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected _vVersion: 'V1' | 'V2' = 'V1';
 
-  constructor(public readonly options: BaseConnectionServiceOptions) {
-    const { apiVersion, baseUrl, apiHubServiceDetails } = options;
+  constructor(protected readonly options: ApiHubServiceDetails) {
+    const { apiVersion, baseUrl, httpClient } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
     } else if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!apiHubServiceDetails) {
-      throw new ArgumentException('apiHubServiceDetails required for workflow app');
+    } else if (!httpClient) {
+      throw new ArgumentException('httpclient required');
     }
-    this._subscriptionResourceGroupWebUrl = `/subscriptions/${apiHubServiceDetails.subscriptionId}/resourceGroups/${apiHubServiceDetails.resourceGroup}/providers/Microsoft.Web`;
+
+    this._subscriptionResourceGroupWebUrl = `/subscriptions/${options.subscriptionId}/resourceGroups/${options.resourceGroup}/providers/Microsoft.Web`;
   }
 
   async getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger> {
@@ -75,10 +70,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       return { connector: await this.getConnector(connectorId), swagger: null as any };
     }
 
-    const {
-      apiHubServiceDetails: { apiVersion },
-      httpClient,
-    } = this.options;
+    const { apiVersion, httpClient } = this.options;
     const [connector, swagger] = await Promise.all([
       this.getConnector(connectorId),
       httpClient.get<OpenAPIV2.Document>({ uri: connectorId, queryParameters: { 'api-version': apiVersion, export: 'true' } }),
@@ -98,28 +90,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     return new SwaggerParser(swaggerDoc);
   }
 
-  async getConnector(connectorId: string): Promise<Connector> {
-    if (!isArmResourceId(connectorId)) {
-      const { apiVersion, baseUrl, httpClient } = this.options;
-      return httpClient.get<Connector>({
-        uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
-      });
-    } else {
-      const {
-        apiHubServiceDetails: { apiVersion },
-        httpClient,
-      } = this.options;
-      const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion } });
-
-      return {
-        ...response,
-        properties: {
-          ...response.properties,
-          ...response.properties.generalInformation,
-        },
-      };
-    }
-  }
+  abstract getConnector(connectorId: string): Promise<Connector>;
 
   async getConnection(connectionId: string): Promise<Connection> {
     if (isArmResourceId(connectionId)) {
@@ -135,9 +106,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     return connection;
   }
 
-  async getConnections(_connectorId?: string): Promise<Connection[]> {
-    throw new Error('Should be implemented in extending class');
-  }
+  abstract getConnections(connectorId?: string): Promise<Connection[]>;
 
   abstract createConnection(
     connectionId: string,
@@ -147,15 +116,43 @@ export abstract class BaseConnectionService implements IConnectionService {
     shouldTestConnection?: boolean
   ): Promise<Connection>;
 
-  abstract setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
+  protected async createConnectionInApiHub(
+    connectionName: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo
+  ): Promise<Connection> {
+    const { httpClient, apiVersion, baseUrl } = this.options;
+
+    const connectionId = this.getAzureConnectionRequestPath(connectionName);
+    const connection = await httpClient.put<any, Connection>({
+      uri: `${baseUrl}${connectionId}`,
+      queryParameters: { 'api-version': apiVersion },
+      content: connectionInfo?.alternativeParameterValues
+        ? this._getRequestForCreateConnectionWithAlternativeParameters(connectorId, connectionName, connectionInfo)
+        : this._getRequestForCreateConnection(connectorId, connectionName, connectionInfo),
+    });
+
+    return connection;
+  }
+
+  protected async _getAzureConnector(connectorId: string): Promise<Connector> {
+    const { apiVersion, httpClient } = this.options;
+    const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion } });
+
+    return {
+      ...response,
+      properties: {
+        ...response.properties,
+        ...response.properties.generalInformation,
+      },
+    };
+  }
 
   protected _getRequestForCreateConnection(connectorId: string, _connectionName: string, connectionInfo: ConnectionCreationInfo): any {
     const parameterValues = connectionInfo?.connectionParameters;
     const parameterValueSet = connectionInfo?.connectionParametersSet;
     const displayName = connectionInfo?.displayName;
-    const {
-      apiHubServiceDetails: { location },
-    } = this.options;
+    const { location } = this.options;
 
     return {
       properties: {
@@ -175,9 +172,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   ): any {
     const alternativeParameterValues = connectionInfo?.alternativeParameterValues ?? {};
     const displayName = connectionInfo?.displayName;
-    const {
-      apiHubServiceDetails: { location },
-    } = this.options;
+    const { location } = this.options;
 
     return {
       properties: {
@@ -200,16 +195,16 @@ export abstract class BaseConnectionService implements IConnectionService {
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult>;
 
+  async setupConnectionIfNeeded(_connection: Connection, _identityId?: string): Promise<void> {
+    // No action needed, implementation class should override if there is any
+  }
+
   protected async testConnection(connection: Connection): Promise<void> {
     let response: HttpResponse<any> | undefined = undefined;
-    try {
-      const testLinks = connection.properties?.testLinks;
-      if (!testLinks || testLinks.length === 0) return;
-      response = await this.requestTestConnection(connection);
-      if (response) this.handleTestConnectionResponse(response);
-    } catch (error: any) {
-      return Promise.reject(error);
-    }
+    const testLinks = connection.properties?.testLinks;
+    if (!testLinks || testLinks.length === 0) return;
+    response = await this.requestTestConnection(connection);
+    if (response) this.handleTestConnectionResponse(response);
   }
 
   protected async requestTestConnection(connection: Connection): Promise<HttpResponse<any> | undefined> {
@@ -228,7 +223,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       else if (equals(method, HTTP_METHODS.DELETE)) response = await httpClient.delete<any>(requestOptions);
       return response;
     } catch (error: any) {
-      return Promise.reject(error);
+      return Promise.reject(error?.content ?? error);
     }
   }
 
@@ -251,10 +246,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     if (isArmResourceId(connectorId)) {
       // Right now there isn't a name $filter for custom connections, so we need to filter them manually
       if (isCustomConnector(connectorId)) {
-        const {
-          apiHubServiceDetails: { location, apiVersion },
-          httpClient,
-        } = this.options;
+        const { location, apiVersion, httpClient } = this.options;
         const response = await httpClient.get<ConnectionsResponse>({
           uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
           queryParameters: {
@@ -268,10 +260,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         return filteredConnections;
       }
 
-      const {
-        apiHubServiceDetails: { location, apiVersion },
-        httpClient,
-      } = this.options;
+      const { location, apiVersion, httpClient } = this.options;
       const response = await httpClient.get<ConnectionsResponse>({
         uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
         queryParameters: {
@@ -292,10 +281,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   protected async getConnectionInApiHub(connectionId: string): Promise<Connection> {
-    const {
-      apiHubServiceDetails: { apiVersion },
-      httpClient,
-    } = this.options;
+    const { apiVersion, httpClient } = this.options;
     const connection = await httpClient.get<Connection>({
       uri: connectionId,
       queryParameters: { 'api-version': apiVersion },
@@ -305,12 +291,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   protected async getConnectionsInApiHub(): Promise<Connection[]> {
-    const {
-      filterByLocation,
-      httpClient,
-      apiHubServiceDetails: { apiVersion },
-      locale,
-    } = this.options;
+    const { filterByLocation, httpClient, apiVersion, locale } = this.options;
 
     const uri = `${this._subscriptionResourceGroupWebUrl}/connections`;
 
@@ -330,20 +311,15 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
   }
 
-  protected getConnectionRequestPath(connectionName: string): string {
-    const {
-      apiHubServiceDetails: { subscriptionId, resourceGroup },
-    } = this.options;
+  protected getAzureConnectionRequestPath(connectionName: string): string {
+    const { subscriptionId, resourceGroup } = this.options;
     return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
   }
 
   async deleteConnection(connectionId: string): Promise<void> {
-    const {
-      httpClient,
-      apiHubServiceDetails: { apiVersion },
-    } = this.options;
+    const { httpClient, apiVersion } = this.options;
     const request = {
-      uri: this.getConnectionRequestPath(connectionId),
+      uri: this.getAzureConnectionRequestPath(connectionId),
       queryParameters: { 'api-version': apiVersion },
     };
     await httpClient.delete<any>(request);
@@ -363,7 +339,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     connectionName: string,
     i: number
   ): Promise<string> {
-    const connectionId = this.getConnectionRequestPath(connectionName);
+    const connectionId = this.getAzureConnectionRequestPath(connectionName);
     const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
 
     if (isUnique) {
@@ -377,7 +353,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   protected _testConnectionIdUniquenessInApiHub(id: string): Promise<boolean> {
     const request = {
       uri: id,
-      queryParameters: { 'api-version': this.options.apiHubServiceDetails.apiVersion },
+      queryParameters: { 'api-version': this.options.apiVersion },
     };
 
     return this.options.httpClient

@@ -513,7 +513,7 @@ const getSplitOnValue = (
   operationId?: string,
   definition?: LogicAppsV2.TriggerDefinition
 ): string | undefined => {
-  if (definition?.splitOn) {
+  if (definition) {
     return definition.splitOn;
   } else {
     if (manifest) {
@@ -563,7 +563,7 @@ const isSplitOnSupported = (
   definition?: LogicAppsV2.OperationDefinition
 ): boolean => {
   const existingSplitOn = getSplitOn(manifest, swagger, operationId, definition);
-  return isTrigger && (getSplitOnOptions(nodeOutputs).length > 0 || existingSplitOn.enabled);
+  return isTrigger && (getSplitOnOptions(nodeOutputs, !!manifest).length > 0 || existingSplitOn.enabled);
 };
 
 const getTimeout = (

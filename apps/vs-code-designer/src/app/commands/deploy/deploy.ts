@@ -163,6 +163,10 @@ async function deploy(
       ext.outputChannel.appendLog(noSubpathWarning);
     }
 
+    if (isWorkflowApp) {
+      await cleanupPublishBinPath(context, effectiveDeployFsPath);
+    }
+
     deployProjectPathForWorkflowApp = isWorkflowApp
       ? await getProjectPathToDeploy(node, workspaceFolder, settingsToExclude, deployFsPath, identityWizardContext)
       : undefined;
@@ -178,6 +182,21 @@ async function deploy(
 
   await node.loadAllChildren(context);
   await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
+}
+
+/**
+ * Azure functions task `_GenerateFunctionsExtensionsMetadataPostPublish` moves `NetFxWorker`
+ * in `bin/` of publish path, It needs to be reverted as it's a special case where we have a
+ * Azure Function Extension inside a Logic App Extension.
+ * @param context {@link IActionContext}
+ * @param fsPath publish path for logic app extension
+ */
+async function cleanupPublishBinPath(context: IActionContext, fsPath: string): Promise<void> {
+  const netFxWorkerBinPath = path.join(fsPath, 'bin', 'NetFxWorker');
+  const netFxWorkerAssetPath = path.join(fsPath, 'NetFxWorker');
+  if (await fse.pathExists(netFxWorkerBinPath)) {
+    return fse.move(netFxWorkerBinPath, netFxWorkerAssetPath, { overwrite: true });
+  }
 }
 
 async function validateGlobSettings(context: IActionContext, fsPath: string): Promise<void> {

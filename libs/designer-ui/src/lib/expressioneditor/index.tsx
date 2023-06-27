@@ -105,6 +105,7 @@ export function ExpressionEditor({
         wordWrap="bounded"
         wordWrapColumn={200}
         automaticLayout={true}
+        data-automation-id="msla-expression-editor"
       />
       <div
         className="msla-expression-editor-expand"
