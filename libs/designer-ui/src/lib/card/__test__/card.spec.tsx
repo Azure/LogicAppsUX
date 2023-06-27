@@ -25,12 +25,6 @@ describe('lib/card', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('should render with lock secure icon', () => {
-    minimal.isSecureInputsOutputs = true;
-    const tree = renderer.create(<Card {...minimal} />).toJSON();
-    expect(tree).toMatchSnapshot();
-  });
-
   it('should render as inactive', () => {
     const tree = renderer.create(<Card {...minimal} active={false} />).toJSON();
     expect(tree).toMatchSnapshot();

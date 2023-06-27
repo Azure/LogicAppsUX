@@ -40,7 +40,7 @@ export interface CardProps {
   onClick?(): void;
   runData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined;
   setFocus?: boolean;
-  isSecureInputsOutputs: boolean;
+  isSecureInputsOutputs?: boolean;
 }
 
 export interface BadgeProps {
