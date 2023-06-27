@@ -185,8 +185,8 @@ export const Notification = (props: NotificationProps) => {
         description: 'Error message for circular logic connection validation',
       }),
       [NotificationTypes.ElementsAndMappingsRemoved]: intl.formatMessage({
-        defaultMessage: 'Elements and mappings not connected to a target element are removed.',
-        description: 'Message on switching levels with nodes/mappings not connected to a target schema node',
+        defaultMessage: "Elements and mappings that aren't connected to a target element are removed.",
+        description: 'The message to show when switching levels without connecting nodes or mappings to a target schema node.',
       }),
     }),
     [intl, issueLoc, issuesLoc, msgParam]

@@ -48,7 +48,7 @@ exports[`ui/monitoring/values/value should render a body link value 1`] = `
       rel="noopener"
       target="_blank"
     >
-      Download (Alt/Option + click)
+      Download (Alt or Option + select)
     </a>
   </div>
 </section>
