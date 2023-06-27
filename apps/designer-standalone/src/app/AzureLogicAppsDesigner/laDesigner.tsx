@@ -341,10 +341,7 @@ const getDesignerServices = (
     apiHubServiceDetails: {
       apiVersion: '2018-07-01-preview',
       baseUrl: armUrl,
-      subscriptionId,
-      resourceGroup,
     },
-    workflowReferenceId: '',
   });
   const gatewayService = new BaseGatewayService({
     baseUrl: armUrl,
