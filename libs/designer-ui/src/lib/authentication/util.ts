@@ -547,17 +547,14 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
     );
     if (missingProperties.length === 0) {
       const authenticationKeys = Object.keys(authentication);
+      const hasPassword = authenticationKeys.includes(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD.name);
+      const hasPfx = authenticationKeys.includes(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX.name);
+      const hasSecret = authenticationKeys.includes(AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET.name);
       if (
-        (authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD.name) !== -1 &&
-          authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX.name) !== -1 &&
-          authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET.name) !== -1) ||
-        (authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD.name) === -1 &&
-          authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX.name) === -1 &&
-          authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET.name) === -1) ||
-        (authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET.name) !== -1 &&
-          authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX.name) !== -1) ||
-        (authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET.name) !== -1 &&
-          authenticationKeys.indexOf(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD.name) !== -1)
+        (hasPassword && hasPfx && hasSecret) ||
+        (!hasPassword && !hasPfx && !hasSecret) ||
+        (hasSecret && hasPfx) ||
+        (hasSecret && hasPassword)
       ) {
         return intl.formatMessage({
           defaultMessage: "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.",
