@@ -42,7 +42,7 @@ export const validateParameter = (
       const { name } = data;
       if (!name) {
         return intl.formatMessage({
-          defaultMessage: 'Must provide name of parameter.',
+          defaultMessage: 'Must provide the parameter name.',
           description: 'Error message when the workflow parameter name is empty.',
         });
       }

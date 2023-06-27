@@ -93,31 +93,31 @@ export const General = ({
   });
   const triggerConditionsTitle = intl.formatMessage({
     defaultMessage: 'Trigger conditions',
-    description: 'title for trigger conditions setting',
+    description: 'Title for trigger conditions setting',
   });
   const triggerConditionsTooltipText = intl.formatMessage({
-    defaultMessage: 'Specify one or more expressions which must be true for the trigger to fire.',
-    description: 'description of tigger confition expression setting',
+    defaultMessage: 'Specify one or more expressions that must be true for the trigger to fire.',
+    description: 'The description for the trigger condition expression setting.',
   });
   const clientTrackingId = intl.formatMessage({
     defaultMessage: 'Custom Tracking Id',
-    description: 'title for client tracking id setting',
+    description: 'Title for client tracking id setting',
   });
   const clientTrackingIdTooltipText = intl.formatMessage({
     defaultMessage: 'Set the tracking id for the run. For split-on this tracking id is for the initiating request.',
-    description: 'description of tracking id input field of split on setting',
+    description: 'Description of tracking id input field of split on setting',
   });
   const arrayDropdownTitle = intl.formatMessage({
     defaultMessage: 'Array',
-    description: 'title for array dropdown input setting',
+    description: 'Title for array dropdown input setting',
   });
   const invokerConnectionTitle = intl.formatMessage({
     defaultMessage: "Use Invoker's Connection",
-    description: 'title for invoker connection',
+    description: 'Title for invoker connection',
   });
   const invokerConnectionTooltipText = intl.formatMessage({
     defaultMessage: 'When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.',
-    description: 'description of invoker connection setting',
+    description: 'Description of invoker connection setting',
   });
 
   const splitOnLabel = <SettingLabel labelText={splitOnTitle} infoTooltipText={splitOnTooltipText} isChild={false} />;
