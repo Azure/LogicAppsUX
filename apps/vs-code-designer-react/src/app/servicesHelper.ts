@@ -172,7 +172,6 @@ export const getDesignerServices = (
       },
     },
     apiHubServiceDetails,
-    workflowReferenceId: '',
   });
 
   const operationManifestService = new StandardOperationManifestService({
