@@ -35,7 +35,7 @@ export const TestTab = ({ currentTargetSchemaNodeKey }: TestTabProps) => {
 
   const provideParamsLoc = intl.formatMessage({
     defaultMessage: 'Provide parameters to test the output.',
-    description: 'Test tab parameters description',
+    description: 'The description for the test tab parameters.',
   });
 
   const inputLoc = intl.formatMessage({

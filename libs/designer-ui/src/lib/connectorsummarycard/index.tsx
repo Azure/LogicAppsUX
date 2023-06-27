@@ -1,6 +1,6 @@
 import { InfoDot } from '../infoDot';
 import { Text, css } from '@fluentui/react';
-import { fallbackConnectorUrl, isBuiltInConnector } from '@microsoft/utils-logic-apps';
+import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 
 export interface ConnectorSummaryCardProps {
@@ -21,7 +21,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   const handleClick = () => onClick?.(id);
 
   const ConnectorImage = useCallback(() => {
-    const src = fallbackConnectorUrl(iconUrl);
+    const src = fallbackConnectorIconUrl(iconUrl);
     return <img className={css('msla-connector-summary-image', !isCard && 'large')} alt={connectorName} src={src} />;
   }, [connectorName, iconUrl, isCard]);
 
