@@ -65,6 +65,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   placeholder,
   onChange,
   castParameter,
+  dataAutomationId,
   ...baseEditorProps
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
@@ -83,8 +84,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   useEffect(() => {
     arrayType === ArrayType.COMPLEX
       ? initializeComplexArrayItems(initialValue, itemSchema, setItems, setIsValid, setCollapsed)
-      : initializeSimpleArrayItems(initialValue, setItems, setIsValid, setCollapsed);
-  }, [arrayType, initialValue, itemSchema]);
+      : initializeSimpleArrayItems(initialValue, itemSchema.type, setItems, setIsValid, setCollapsed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -135,7 +137,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   });
 
   return (
-    <div className="msla-array-editor-container">
+    <div className="msla-array-editor-container" data-automation-id={dataAutomationId}>
       {collapsed ? (
         <CollapsedArray
           {...baseEditorProps}
@@ -173,7 +175,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           <EditorCollapseToggle
             label={collapsed ? collapsedLabel : expandedLabel}
             collapsed={collapsed}
-            disabled={baseEditorProps.readonly || (!isValid && collapsed)}
+            disabled={!isValid && collapsed}
             toggleCollapsed={toggleCollapsed}
           />
         ) : null}

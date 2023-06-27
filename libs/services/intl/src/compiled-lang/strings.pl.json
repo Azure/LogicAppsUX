@@ -1115,6 +1115,12 @@
       "value": "Dzień"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parametry używane w aplikacji logiki zostaną przekształcone na szablon usługi Azure Resource Manager podczas generowania szablonu wdrożenia."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1436,7 +1442,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Przełącz do trybu widoku kodu"
     }
   ],
   "8ND+Yc": [
@@ -1627,6 +1633,12 @@
     {
       "type": 0,
       "value": "”, dlatego nie można znaleźć w danych wyjściowych."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "W trakcie opracowywania"
     }
   ],
   "9YGcT2": [
@@ -2294,7 +2306,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Przełącz się na wprowadzanie całej tablicy"
     }
   ],
   "EdzoIs": [
@@ -2770,7 +2782,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Przełącz się na szczegółowe dane wejściowe dla elementu tablicy"
     }
   ],
   "HfrUId": [
@@ -2891,6 +2903,12 @@
     {
       "type": 0,
       "value": "(UTC-12:00) Międzynarodowa linia zmiany daty — Zachód"
+    }
+  ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Aby tworzyć parametry usługi Logic Apps i zarządzać nimi, nadaj wartość domyślną."
     }
   ],
   "IW2MjQ": [
@@ -3467,6 +3485,12 @@
       "value": "Tożsamość zarządzana"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zawierający czas rozpoczęcia."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3771,6 +3795,12 @@
       "value": "Włącz wynik statyczny"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Prześlij"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3995,6 +4025,12 @@
     {
       "type": 0,
       "value": "Zwraca reprezentację base 64 ciągu wejściowego"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Zamknij"
     }
   ],
   "Q+ZZHI": [
@@ -4863,6 +4899,12 @@
       "value": "” jako wartości niestandardowej"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Akcje"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5177,6 +5219,12 @@
       "value": "Więcej informacji"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Wybierz zasób aplikacji funkcji struktury Swagger"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5479,6 +5527,12 @@
       "value": "Pełny ekran"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5721,6 +5775,12 @@
       "value": "Zwraca treść części w wieloczęściowych danych wyjściowych z akcji."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Zwraca różnicę między dwiema datami jako ciąg przedziału czasu"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -5808,7 +5868,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Przełącz do trybu klucz-wartość"
     }
   ],
   "dDYCuU": [
@@ -6973,6 +7033,12 @@
       "value": "Skrót dla actions('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zawierający czas zakończenia."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -7127,6 +7193,12 @@
     {
       "type": 0,
       "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do żądania wychodzącego."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Zadaj pytanie lub opisz, jak chcesz zmienić ten przepływ"
     }
   ],
   "mvrlkP": [
@@ -7719,6 +7791,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Wyszukaj"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7738,7 +7816,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Przełącz do trybu widoku domyślnego"
     }
   ],
   "qnI4Y1": [
@@ -8734,7 +8812,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Przełącz do trybu tekstowego"
     }
   ],
   "xYyPR8": [

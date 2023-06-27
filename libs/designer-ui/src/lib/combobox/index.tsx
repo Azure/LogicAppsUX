@@ -239,6 +239,7 @@ export const Combobox = ({
             onBlur={handleBlur}
             getTokenPicker={baseEditorProps.getTokenPicker}
             placeholder={baseEditorProps.placeholder}
+            dataAutomationId={baseEditorProps.dataAutomationId}
           >
             <Change setValue={setValue} />
           </BaseEditor>

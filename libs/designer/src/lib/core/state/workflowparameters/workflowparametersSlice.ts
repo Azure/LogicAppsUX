@@ -135,12 +135,12 @@ export const workflowParametersSlice = createSlice({
       const {
         id,
         newDefinition: { name, type, value, defaultValue },
-        isConsumption = false,
+        useLegacy = false,
       } = action.payload;
       const validationErrors = {
         name: validateParameter(id, { name }, 'name', state.definitions),
-        value: validateParameter(id, { name, type, value, defaultValue }, 'value', state.definitions, isConsumption ? false : true),
-        ...(isConsumption
+        value: validateParameter(id, { name, type, value, defaultValue }, 'value', state.definitions, useLegacy ? false : true),
+        ...(useLegacy
           ? {
               defaultValue: validateParameter(id, { name, type, value, defaultValue }, 'defaultValue', state.definitions),
             }
@@ -152,7 +152,7 @@ export const workflowParametersSlice = createSlice({
         type,
         value,
         name: name ?? '',
-        ...(isConsumption ? { defaultValue } : {}),
+        ...(useLegacy ? { defaultValue } : {}),
       };
       state.validationErrors[id] = {
         ...state.validationErrors[id],

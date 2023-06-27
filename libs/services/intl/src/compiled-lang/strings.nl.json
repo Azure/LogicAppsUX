@@ -642,7 +642,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Bestaande schema's van"
     }
   ],
   "2gzGrJ": [
@@ -1073,6 +1073,12 @@
       "value": "Dag"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "De parameters die in de logische app worden gebruikt, worden tijdens het genereren van de implementatiesjabloon omgezet naar een Azure Resource Manager-sjabloon."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1394,7 +1400,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Overschakelen naar de codeweergavemodus"
     }
   ],
   "8ND+Yc": [
@@ -1585,6 +1591,12 @@
     {
       "type": 0,
       "value": ", kan niet worden gevonden in de uitvoer."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In ontwikkeling"
     }
   ],
   "9YGcT2": [
@@ -2226,7 +2238,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Overschakelen naar de volledige matrix invoeren"
     }
   ],
   "EdzoIs": [
@@ -2258,7 +2270,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "De aanvraaggeschiedenis voor deze bewerking weergeven"
     }
   ],
   "EurkzL": [
@@ -2680,7 +2692,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Overschakelen naar detailinvoer voor het matrixobject"
     }
   ],
   "HfrUId": [
@@ -2801,6 +2813,12 @@
     {
       "type": 0,
       "value": "(UTC-12:00) Internationale Datumgrens West"
+    }
+  ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Logic Apps-parameters maken en beheren en geef een standaardwaarde opgeven."
     }
   ],
   "IW2MjQ": [
@@ -3351,6 +3369,12 @@
       "value": "Beheerde identiteit"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Vereist. Een tekenreeks die de begintijd bevat."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3651,6 +3675,12 @@
       "value": "Statisch resultaat inschakelen"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Verzenden"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3879,6 +3909,12 @@
     {
       "type": 0,
       "value": "Er wordt een base 64-weergave van de ingevoerde tekenreeks geretourneerd"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Sluiten"
     }
   ],
   "Q+ZZHI": [
@@ -4180,7 +4216,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Parameters voor dit knooppunt configureren"
     }
   ],
   "SXb47U": [
@@ -4721,6 +4757,12 @@
       "value": "\" als een aangepaste waarde"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Acties"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5035,6 +5077,12 @@
       "value": "Meer informatie"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Een functie-app-resource voor Swagger selecteren"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5337,6 +5385,12 @@
       "value": "Volledig scherm"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5579,6 +5633,12 @@
       "value": "Retourneert de hoofdtekst voor een onderdeel in een meerdelige uitvoer van een actie."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Geeft als resultaat het verschil tussen twee datums als een tijdsduurtekenreeks"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -5666,7 +5726,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Schakelen naar de modus voor belangrijkste waarde"
     }
   ],
   "dDYCuU": [
@@ -6300,7 +6360,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Tabblad Info"
     }
   ],
   "iCSHJG": [
@@ -6412,7 +6472,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Tabblad Codeweergave"
     }
   ],
   "iq+tiv": [
@@ -6704,7 +6764,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Tabblad Bewaking"
     }
   ],
   "l72gf4": [
@@ -6807,6 +6867,12 @@
     {
       "type": 0,
       "value": "Verkorte versie van acties('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Vereist. Een tekenreeks die de eindtijd bevat."
     }
   ],
   "loxzZD": [
@@ -6963,6 +7029,12 @@
     {
       "type": 0,
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Stel een vraag of beschrijf hoe u deze stroom wilt wijzigen"
     }
   ],
   "mvrlkP": [
@@ -7529,6 +7601,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Zoeken"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7548,7 +7626,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Overschakelen naar de standaardweergavemodus"
     }
   ],
   "qnI4Y1": [
@@ -7718,7 +7796,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Tabblad Testen"
     }
   ],
   "sFbnCs": [
@@ -8536,7 +8614,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Schakelen naar de tekstmodus"
     }
   ],
   "xYyPR8": [

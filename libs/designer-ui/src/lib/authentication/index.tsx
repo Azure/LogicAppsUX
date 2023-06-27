@@ -214,7 +214,7 @@ export const AuthenticationEditor = ({
           label={codeView ? collapsedLabel : expandedLabel}
           collapsed={codeView}
           toggleCollapsed={toggleCodeView}
-          disabled={!isValid || readonly}
+          disabled={!isValid}
         />
       </div>
     </div>

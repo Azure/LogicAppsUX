@@ -1073,6 +1073,12 @@
       "value": "Day"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1569,6 +1575,12 @@
     {
       "type": 0,
       "value": "', cannot find in outputs."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "In-Development"
     }
   ],
   "9YGcT2": [
@@ -2783,6 +2795,12 @@
       "value": "(UTC-12:00) International Date Line West"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -3303,6 +3321,12 @@
       "value": "Managed identity"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the start time."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3591,6 +3615,12 @@
       "value": "Enable Static Result"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submit"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3815,6 +3845,12 @@
     {
       "type": 0,
       "value": "Returns the base 64 representation of the input string"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "Q+ZZHI": [
@@ -4657,6 +4693,12 @@
       "value": "\" as a custom value"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4971,6 +5013,12 @@
       "value": "More Info"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Select a Swagger Function App resource"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5273,6 +5321,12 @@
       "value": "Full Screen"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5513,6 +5567,12 @@
     {
       "type": 0,
       "value": "Returns the body for a part in a multipart output from an action."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Returns the difference between two dates as a timespan string"
     }
   ],
   "cgq/+y": [
@@ -6723,6 +6783,12 @@
       "value": "Shorthand for actions('actionName').outputs.body"
     }
   ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Required. A string that contains the end time."
+    }
+  ],
   "loxzZD": [
     {
       "type": 0,
@@ -6877,6 +6943,12 @@
     {
       "type": 0,
       "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ask a question or describe how you want to change this flow"
     }
   ],
   "mvrlkP": [
@@ -7445,6 +7517,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "qc5S69": [

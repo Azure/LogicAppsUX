@@ -653,7 +653,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Esquemas existentes de"
     }
   ],
   "2gzGrJ": [
@@ -1084,6 +1084,12 @@
       "value": "Día"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Los parámetros usados en la aplicación lógica se convertirán a una plantilla de Azure Resource Manager durante la generación de la plantilla de implementación."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1405,7 +1411,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Cambiar al modo de vista de código"
     }
   ],
   "8ND+Yc": [
@@ -1596,6 +1602,12 @@
     {
       "type": 0,
       "value": "\", no se encuentra en las salidas."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "En desarrollo"
     }
   ],
   "9YGcT2": [
@@ -2252,7 +2264,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Permite cambiar a la matriz de entrada completa."
     }
   ],
   "EdzoIs": [
@@ -2284,7 +2296,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Ver el historial de solicitudes de esta operación"
     }
   ],
   "EurkzL": [
@@ -2709,7 +2721,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Permite cambiar a las entradas con detalles para el elemento de matriz."
     }
   ],
   "HfrUId": [
@@ -2811,7 +2823,7 @@
   "IPbMdl": [
     {
       "type": 0,
-      "value": "Vista Código"
+      "value": "Vista de código"
     }
   ],
   "IPwWgu": [
@@ -2830,6 +2842,12 @@
     {
       "type": 0,
       "value": "(UTC-12:00) Línea internacional de cambio de fecha del oeste"
+    }
+  ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Permite crear y administrar parámetros de Logic Apps, así como asignarles valores predeterminados."
     }
   ],
   "IW2MjQ": [
@@ -3395,6 +3413,12 @@
       "value": "Identidad administrada"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Obligatorio. Cadena que contiene la hora de inicio."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3699,6 +3723,12 @@
       "value": "Habilitar resultado estático"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Enviar"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3923,6 +3953,12 @@
     {
       "type": 0,
       "value": "Devuelve la representación de base 64 de la cadena de entrada."
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Cerrar"
     }
   ],
   "Q+ZZHI": [
@@ -4239,7 +4275,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Configurar parámetros para este nodo"
     }
   ],
   "SXb47U": [
@@ -4776,6 +4812,12 @@
       "value": "\" como un valor personalizado"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Acciones"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5090,6 +5132,12 @@
       "value": "Más información"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Selección de un recurso de Swagger Function App"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5392,6 +5440,12 @@
       "value": "Pantalla completa"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5634,6 +5688,12 @@
       "value": "Devuelve el cuerpo de una parte en una salida de varias partes de una acción."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Devuelve la diferencia entre dos fechas como una cadena de intervalo de tiempo."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -5721,7 +5781,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Cambiar al modo de valor de clave"
     }
   ],
   "dDYCuU": [
@@ -6370,7 +6430,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Pestaña Acerca de"
     }
   ],
   "iCSHJG": [
@@ -6482,7 +6542,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Pestaña Vista de código"
     }
   ],
   "iq+tiv": [
@@ -6774,7 +6834,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Pestaña Supervisión"
     }
   ],
   "l72gf4": [
@@ -6861,6 +6921,12 @@
     {
       "type": 0,
       "value": "Forma abreviada de actions('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Obligatorio. Cadena que contiene la hora de finalización."
     }
   ],
   "loxzZD": [
@@ -7009,6 +7075,12 @@
     {
       "type": 0,
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la solicitud saliente."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Haga una pregunta o describa cómo quiere cambiar este flujo"
     }
   ],
   "mvrlkP": [
@@ -7590,6 +7662,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Buscar"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7609,7 +7687,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Cambiar al modo de vista predeterminada"
     }
   ],
   "qnI4Y1": [
@@ -7779,7 +7857,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Pestaña Pruebas"
     }
   ],
   "sFbnCs": [
@@ -8605,7 +8683,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Cambiar al modo de texto"
     }
   ],
   "xYyPR8": [

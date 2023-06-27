@@ -22,7 +22,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function display]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Exibição de função]]></Val>
+            <Val><![CDATA[Exibição da função]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -31,7 +31,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Alt text for down chevron]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Texto alt para divisa inferior]]></Val>
+            <Val><![CDATA[Texto alt para divisa para baixo]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -39,6 +39,9 @@
       <Item ItemId=";+ZSBrq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Context menu for {title} card]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Menu de contexto para cartão de {title}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -63,6 +66,9 @@
       <Item ItemId=";/EU/oJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. A string that contains the time zone name of the source time zone. See 'Default Time Zones' at 'https://go.microsoft.com/fwlink/?linkid=2238292'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Necessário. Uma cadeia de caracteres que contém o nome do fuso horário do fuso horário de origem. Consulte "Fusos horários padrão" em "https://go.microsoft.com/fwlink/?linkid=2238292".]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -249,6 +255,9 @@
       <Item ItemId=";04AwK7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error code: ''{errorCode}'', Message: ''{message}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Código de erro: '{errorCode}', Mensagem: '{message}'.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -282,6 +291,9 @@
       <Item ItemId=";08e2rO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A identidade gerenciada usada com esta operação não existe mais. Para continuar, configure uma identidade ou altere a conexão.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -450,6 +462,9 @@
       <Item ItemId=";0qcKzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{parameterName} is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{parameterName} não está mais presente no esquema de operação. Ele deve ser removido antes que o fluxo de trabalho seja salvo novamente.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -642,6 +657,9 @@
       <Item ItemId=";1REk6u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid email.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Insira um email válido.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -694,7 +712,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Actions perform operations on data, communicate between systems, or run other tasks.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[As ações executam operações em dados, se comunicam entre sistemas ou executam outras tarefas.]]></Val>
+            <Val><![CDATA[As ações executam operações em dados, comunicam-se entre sistemas ou executam outras tarefas.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -829,7 +847,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an API from an API Management instance]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Selecione uma API de uma Gerenciamento de API instância]]></Val>
+            <Val><![CDATA[Selecionar uma API de uma API Management instância]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1000,7 +1018,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading connection...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Carregando conexão...]]></Val>
+            <Val><![CDATA[Carregando a conexão...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1027,7 +1045,7 @@
         <Str Cat="Text">
           <Val><![CDATA[alt text for button icon]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[texto alt para ícone de botão]]></Val>
+            <Val><![CDATA[Texto alt para ícone de botão]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1081,7 +1099,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Remove all mappings within source element `{nodeName}` first.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Remova todos os mapeamentos no elemento de origem '{nodeName}' primeiro.]]></Val>
+            <Val><![CDATA[Remova todos os mapeamentos no elemento de origem "{nodeName}" primeiro.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1279,7 +1297,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Execuções {onDays}]]></Val>
+            <Val><![CDATA[Executa {onDays}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1360,7 +1378,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{parameterName} is required.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{parameterName} é necessário.]]></Val>
+            <Val><![CDATA[O {parameterName} é necessário.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1449,6 +1467,9 @@
       <Item ItemId=";5akc1Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported 'in' value : ''{value}'' in Parameter]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Valor ''in' não suportado: '{value}' no parâmetro]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1475,6 +1496,15 @@
           <Val><![CDATA[Day]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Dia]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";5fmV2Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Os parâmetros usados no Aplicativo Lógico serão convertidos no modelo do Azure Resource Manager durante a geração do modelo de implantação.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1536,6 +1566,9 @@
       <Item ItemId=";62Ypnr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error loading operation data]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Erro ao carregar dados da operação]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1569,6 +1602,9 @@
       <Item ItemId=";6fDYzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed to load the schema. Please try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Falha ao carregar o esquema. Tente novamente.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1576,7 +1612,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has too many inputs assigned to it]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[O ''{functionName}'' função tem muitas entradas atribuídas a ela]]></Val>
+            <Val><![CDATA[A função ''{functionName}'' tem muitas entradas atribuídas a ela]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1809,6 +1845,9 @@
       <Item ItemId=";83G5rr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify the interval.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Especifique o intervalo.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1889,6 +1928,15 @@
           <Val><![CDATA[Cannot render designer due to multiple triggers in definition.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Não é possível renderizar o designer devido à presença de vários gatilhos na definição.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8LhQeL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to code view mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Alternar para modo de exibição de código]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2148,6 +2196,18 @@
       <Item ItemId=";9W0lck" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid split on value ''{splitOn}'', cannot find in outputs.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Divisão inválida no valor ''{splitOn}'. Não foi possível localizar nas saídas.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";9W3giy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[In-Development]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Em desenvolvimento]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2208,6 +2268,9 @@
       <Item ItemId=";A5Ferh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Source element removed from view.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Elemento de origem removido da exibição.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2269,7 +2332,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture).]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Retorna o índice para a n-th ocorrência de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável).]]></Val>
+            <Val><![CDATA[Retorna o índice para a n-º de ocorrência de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2286,6 +2349,9 @@
       <Item ItemId=";AheXMN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select frequency.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Selecionar a frequência.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2515,7 +2581,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Expant list of sibling elements]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Lista expanta de elementos irmãos]]></Val>
+            <Val><![CDATA[Expandir lista de elementos irmãos]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2532,6 +2598,9 @@
       <Item ItemId=";BeqBP7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Automatic Decompression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Descompactação automática]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2808,6 +2877,9 @@
       <Item ItemId=";DQV7aK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Alt/Option + click to download ''{displayName}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Alt/Option + clique para baixar ''{displayName}'']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2932,7 +3004,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select timezone.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Selecione o fuso horário.]]></Val>
+            <Val><![CDATA[Selecionar fuso horário.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2941,7 +3013,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema node ''{nodeName}'' has an input with a mismatched type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[O nó de ''{nodeName}'' tem uma entrada com um tipo incompatível]]></Val>
+            <Val><![CDATA[O nó de esquema ''{nodeName}'' tem uma entrada com um tipo incompatível]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3027,6 +3099,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";EdeHLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to input entire array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mudar para a matriz de entrada integral]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EdzoIs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[1]]></Val>
@@ -3076,7 +3157,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Use Invoker's Connection]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Usar Conexão do Chamador]]></Val>
+            <Val><![CDATA[Usar a conexão do chamador]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3112,7 +3193,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Go To Operation]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ir para a Operação]]></Val>
+            <Val><![CDATA[Ir para Operação]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3147,6 +3228,9 @@
       <Item ItemId=";FIL1Nt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Condition is too complex or invalid. Unable to switch to basic mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A condição é muito complexa ou inválida. Não é possível mudar para o modo básico.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3294,6 +3378,9 @@
       <Item ItemId=";FaBEfQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Propriedades Rastreadas]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3363,6 +3450,9 @@
       <Item ItemId=";GCjJnP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Insira um JSON válido.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3397,7 +3487,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a value that is not between 0 and 59]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Isso contém um valor que não está entre 0 e 59]]></Val>
+            <Val><![CDATA[Contém um valor que não está entre 0 e 59]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3523,7 +3613,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Modify options regarding functions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Modificar opções referentes a funções]]></Val>
+            <Val><![CDATA[Modificar opções relacionadas a funções]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3586,7 +3676,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Invalid connection, mapping must not form a closed loop.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Conexão inválida. O mapeamento não deve formar um loop fechado.]]></Val>
+            <Val><![CDATA[Conexão inválida, o mapeamento não deve formar um loop fechado.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3663,6 +3753,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";HfinO2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to detail inputs for array item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mudar para entradas detalhadas do item da matriz]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";HfrUId" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select a card to see the content]]></Val>
@@ -3712,7 +3811,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Remove parameter "{parameterName}" and its value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Remover parâmetro "{parameterName}" e seu valor]]></Val>
+            <Val><![CDATA[Remover o parâmetro "{parameterName}" e seu valor]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3807,6 +3906,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ISaPr+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create, manage Logic Apps parameters, give it a default value.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Crie, gerencie parâmetros de Aplicativos Lógicos, atribua a ele um valor padrão.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IW2MjQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Converts a string timestamp passed in from a UTC to a target time zone]]></Val>
@@ -3846,6 +3954,9 @@
       <Item ItemId=";IjEKvh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error executing the api ''{parameters}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Erro ao executar os ''{parameters}'' da API.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3853,7 +3964,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The '{0}' properties are invalid for the '{1}' authentication type.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[As '{0}' não são válidas para o tipo '{1}' autenticação.]]></Val>
+            <Val><![CDATA[As propriedades ''{0}'' são inválidas para o tipo de autenticação ''{1}''.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4033,7 +4144,7 @@
         <Str Cat="Text">
           <Val><![CDATA[When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Quando habilitada, esta ação será executada com o usuário na configuração "Executar como" no gatilho Dataverse.]]></Val>
+            <Val><![CDATA[Quando habilitada, essa ação será executada com o usuário na configuração "Executar como" no gatilho do Dataverse.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4300,7 +4411,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading Api Management service instances...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Carregando instâncias do serviço de Gerenciamento de API...]]></Val>
+            <Val><![CDATA[Carregando instâncias de serviço de Gerenciamento de API...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4407,6 +4518,9 @@
       <Item ItemId=";LvLksz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading outputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Carregando saídas]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4527,6 +4641,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";MLckJz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required. A string that contains the start time.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Obrigatório. Uma cadeia de caracteres que contém o horário de início.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MOsuw2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+10:00) Guam, Port Moresby]]></Val>
@@ -4611,6 +4734,9 @@
       <Item ItemId=";Mgcs5s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Insira um número válido.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4789,7 +4915,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading Files...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Carregando Arquivos...]]></Val>
+            <Val><![CDATA[Carregando arquivos ...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4806,6 +4932,9 @@
       <Item ItemId=";ODQCKj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Converts the input to a JSON type value.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Converter a entrada em um valor do tipo JSON.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4931,6 +5060,15 @@
           <Val><![CDATA[Enable Static Result]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Habilitar Resultado Estático]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Oep6va" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Submit]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Enviar]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5101,7 +5239,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Execuções {onTime}]]></Val>
+            <Val><![CDATA[Executa {onTime}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5199,6 +5337,9 @@
       <Item ItemId=";Pk4cb+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tracked properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Propriedades Rastreadas]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5243,6 +5384,15 @@
           <Val><![CDATA[Returns the base 64 representation of the input string]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Retorna a representação de base 64 da cadeia de caracteres de entrada]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Px7S/2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Close]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fechar]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5304,6 +5454,9 @@
       <Item ItemId=";Q8zxeb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{name} Key]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nome (chave)]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5346,6 +5499,9 @@
       <Item ItemId=";QdJUaS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Pencil icon]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ícone de lápis]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5471,15 +5627,6 @@
           <Val><![CDATA[Required. The string that is split.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Necessário. A cadeia de caracteres que é dividida.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";RZ1MIN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Switch to input entire array]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Mudar para a matriz de entrada integral]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6345,15 +6492,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";VXQbMw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Switch to detail inputs for array item]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Mudar para entradas detalhadas do item da matriz]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";VZHick" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>
@@ -6404,6 +6542,15 @@
           <Val><![CDATA[Use "{value}" as a custom value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Usar "{value}" como um valor personalizado]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Vqs8hE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Actions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ações]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6791,6 +6938,15 @@
           <Val><![CDATA[More Info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Mais Informações]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Y5XAbg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a Swagger Function App resource]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Selecionar um recurso do Aplicativo de Funções do Swagger]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7218,6 +7374,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ahW8Iv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copilot]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Copilot]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ahsVI/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter Pfx]]></Val>
@@ -7569,6 +7734,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";cfUHfs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Returns the difference between two dates as a timespan string]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Retorna a diferença entre duas datas como uma cadeia de caracteres de intervalo de tempo]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";cgq/+y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select an identity]]></Val>
@@ -7668,15 +7842,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";d+MjsE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid dictionary.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Insira um dicionário válido.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";d020eg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the first element from the passed-in array or string.]]></Val>
@@ -7700,6 +7865,15 @@
           <Val><![CDATA[Add a trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Adicionar um gatilho]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dD8y1n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to key value mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mudar para o modo de valor de chave]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9231,15 +9405,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";lcxLiq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Please enter a valid array]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Insira uma matriz válida]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";lexzgJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove all references to element ' {nodeName} ' before you remove the element.]]></Val>
@@ -9272,6 +9437,15 @@
           <Val><![CDATA[Shorthand for actions('actionName').outputs.body]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Abreviação de actions('actionName').outputs.body]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";lkgjxD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required. A string that contains the end time.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Obrigatório. Uma cadeia de caracteres que contém o horário de término.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9488,6 +9662,15 @@
           <Val><![CDATA[Limit Logic Apps to not include workflow metadata headers in the outgoing request.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";mkd0Jx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ask a question or describe how you want to change this flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Faça uma pergunta ou descreva como você deseja alterar esse fluxo]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10317,6 +10500,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";qVgQfW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pesquisar]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";qc5S69" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the number of elements in an array or string]]></Val>
@@ -10331,6 +10523,15 @@
           <Val><![CDATA[Example: {example}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Exemplo: {example}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";qij+Vf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to default view mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Alternar para modo de exibição padrão]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11744,6 +11945,15 @@
           <Val><![CDATA[Code]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Código]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";xXVu2y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to text mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mudar para o modo de texto]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

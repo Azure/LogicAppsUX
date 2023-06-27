@@ -44,6 +44,7 @@ export const ExpandedSimpleArray = ({
   placeholder,
   valueType,
   setItems,
+  readonly,
   ...props
 }: ExpandedSimpleArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -74,7 +75,7 @@ export const ExpandedSimpleArray = ({
               {renderLabel(index, labelProps.text, true)}
               <div className="msla-array-item-commands">
                 <ItemMenuButton
-                  disabled={!!props.readonly}
+                  disabled={!!readonly}
                   itemKey={index}
                   visible={canDeleteLastItem || items.length > 1}
                   onDeleteItem={(index) => deleteItem(index)}
@@ -94,7 +95,7 @@ export const ExpandedSimpleArray = ({
       })}
       <div className="msla-array-toolbar">
         <DefaultButton
-          disabled={props.readonly}
+          disabled={readonly}
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}

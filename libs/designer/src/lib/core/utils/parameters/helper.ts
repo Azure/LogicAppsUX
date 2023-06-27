@@ -2358,9 +2358,9 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
 
           // NOTE: Currently this only handles only one variable property name in the object
-          const keys = Object.keys(objectValue);
+          const keys = Object.keys(objectValue ?? {});
           if (keys.length !== 1) {
-            return inputsValue;
+            continue;
           }
 
           const propertyName = keys[0];
@@ -2377,6 +2377,11 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           const parameterLocation = propertyParameter.name.split('.');
           const pathParametersLocation = parameterReference.split('.');
           const uriValue = getObjectPropertyValue(finalValue, parameterLocation);
+
+          if (!uriValue) {
+            continue;
+          }
+
           const pathParameters = processPathInputs(uriValue, propertyParameter.default);
           safeSetObjectPropertyValue(finalValue, pathParametersLocation, pathParameters);
           safeSetObjectPropertyValue(finalValue, parameterLocation, propertyParameter.default);
@@ -2399,6 +2404,11 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
       switch (type) {
         case DeserializationType.ParentObjectProperties:
           const objectValue = getObjectPropertyValue(finalValue, propertySegments);
+
+          if (isNullOrUndefined(objectValue)) {
+            continue;
+          }
+
           const value = Object.keys(objectValue ?? {});
           objectValue[name.split('.').at(-1) as string] = value;
           safeSetObjectPropertyValue(finalValue, propertySegments, objectValue);
@@ -2406,11 +2416,21 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
 
         case DeserializationType.SwaggerOperationId:
           const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
-          const uri = getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath as string[]);
+          const uri = options?.swaggerOperation.uriPath ? getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath) : undefined;
+          const templatePath = options?.swaggerOperation.templatePath
+            ? getObjectPropertyValue(finalValue, options?.swaggerOperation.templatePath)
+            : undefined;
+
+          if (!method && !uri && !templatePath) {
+            continue;
+          }
+
           const operationId = getOperationIdFromDefinition(
             {
               method,
-              path: extractPathFromUri(uri, customSwagger?.api.basePath as string),
+              path: uri
+                ? extractPathFromUri(uri, customSwagger?.api.basePath as string)
+                : templatePath?.replace(customSwagger?.api.basePath, ''),
             },
             customSwagger as SwaggerParser
           );

@@ -939,6 +939,9 @@
       <Item ItemId=";2gOfQI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Existing schemas from]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Существующие схемы из]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1500,6 +1503,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";5fmV2Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Параметры, используемые в приложении логики, будут преобразованы в шаблон Azure Resource Manager в ходе создания шаблона развертывания.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";5hWg4V" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select element]]></Val>
@@ -1923,6 +1935,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";8LhQeL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to code view mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Переключиться в режим просмотра кода]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";8ND+Yc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please enable managed identity for the logic app.]]></Val>
@@ -2180,6 +2201,15 @@
           <Val><![CDATA[Invalid split on value ''{splitOn}'', cannot find in outputs.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Недопустимое значение разделения "{splitOn}". Не удается найти его в выходных данных.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";9W3giy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[In-Development]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[В разработке]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3075,6 +3105,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";EdeHLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to input entire array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Переключиться на ввод всего массива]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EdzoIs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[1]]></Val>
@@ -3105,6 +3144,9 @@
       <Item ItemId=";Ek0mSE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[View the request history for this operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Просмотреть журнал запросов для этой операции]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3607,7 +3649,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Workflow has settings validation errors on the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Рабочий процесс содержит ошибки проверки параметров для следующих операций: {invalidNodes}]]></Val>
+            <Val><![CDATA[В рабочем процессе есть ошибки проверки для следующих операций: {invalidNodes}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3678,6 +3720,9 @@
       <Item ItemId=";HOchry" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an existing connection reference or create a new one.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Выберите существующую ссылку на подключение или создайте новую.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3711,6 +3756,18 @@
       <Item ItemId=";Hbqlzk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert Expression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Вставить выражение]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HfinO2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to detail inputs for array item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Переключиться на подробные входные данные элемента массива]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3745,7 +3802,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid value for {parameterName}.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Введите допустимое значение для {parameterName}.]]></Val>
+            <Val><![CDATA[Введите допустимое значение параметра {parameterName}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3858,6 +3915,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ISaPr+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create, manage Logic Apps parameters, give it a default value.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Создание параметров Logic Apps, управление ими и присвоение им значений по умолчанию.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IW2MjQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Converts a string timestamp passed in from a UTC to a target time zone]]></Val>
@@ -3880,7 +3946,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{label} To add dynamic data, press the Alt + '/' keys.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{label} чтобы добавить динамические данные, нажмите клавиши ALT + "/".]]></Val>
+            <Val><![CDATA[{label} Чтобы добавить динамические данные, нажмите клавиши ALT + "/".]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3952,7 +4018,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Formatting options for font size]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Параметры форматирования для размера шрифта]]></Val>
+            <Val><![CDATA[Параметры форматирования — размер шрифта]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4587,6 +4653,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";MLckJz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required. A string that contains the start time.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Обязательно. Строка, которая содержит время начала.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MOsuw2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+10:00) Guam, Port Moresby]]></Val>
@@ -4753,7 +4828,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The generated XSLT does not match the current mapping.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Созданный XSLT не соответствует текущему сопоставлению.]]></Val>
+            <Val><![CDATA[Созданный XSLT не совпадает с текущим сопоставлением.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4762,7 +4837,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-03:00) Araguaina]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-03:00) Арагуаяна]]></Val>
+            <Val><![CDATA[(UTC-03:00) Арагуаина]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4995,6 +5070,18 @@
       <Item ItemId=";OdoUEu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Включить статический результат]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Oep6va" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Submit]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Отправить]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5313,6 +5400,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Px7S/2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Close]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Закрыть]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Q+ZZHI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-10:00) Hawaii]]></Val>
@@ -5479,7 +5575,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Location]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Местоположение]]></Val>
+            <Val><![CDATA[Расположение]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5543,15 +5639,6 @@
           <Val><![CDATA[Required. The string that is split.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Обязательное поле. Строка, которая будет разделена.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";RZ1MIN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Switch to input entire array]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Переключиться на ввод всего массива]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5631,6 +5718,9 @@
       <Item ItemId=";RnBddN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[issue]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[проблема]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5638,7 +5728,7 @@
         <Str Cat="Text">
           <Val><![CDATA[You can add notes only when you edit a step's inputs.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Добавлять заметки можно только при изменении входных данных шага.]]></Val>
+            <Val><![CDATA[Можно добавлять заметки только при редактировании входных данных какого-либо шага]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5664,6 +5754,9 @@
       <Item ItemId=";RvpHdu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+11:00) Solomon Is., New Caledonia]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+11:00) Соломоновы острова, Новая Каледония]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5680,7 +5773,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as bold. Shortcut: ⌘B]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Форматирование текста полужирным шрифтом. Ярлык: ⌘B]]></Val>
+            <Val><![CDATA[Форматировать текст полужирным шрифтом. Сочетание клавиш: ⌘B]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5725,7 +5818,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The input node type doesn't match the schema node's type.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Тип входного узла не соответствует типу узла схемы.]]></Val>
+            <Val><![CDATA[Тип входного узла не совпадает с типом узла схемы.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5751,6 +5844,9 @@
       <Item ItemId=";SToblZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Configure parameters for this node]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Настройте параметры для этого узла]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5802,6 +5898,9 @@
       <Item ItemId=";Sr8PcK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No operations found]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Операции не найдены.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5971,7 +6070,7 @@
         <Str Cat="Text">
           <Val><![CDATA[on {weekDays} {frequencyDesc}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[в {weekDays} {frequencyDesc}]]></Val>
+            <Val><![CDATA[по {weekDays} {frequencyDesc}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6079,7 +6178,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Target schema element]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Целевой элемент схемы]]></Val>
+            <Val><![CDATA[Элемент целевой схемы]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6115,7 +6214,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Runs {onTime} {onDays}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Запуски {onTime} {onDays}]]></Val>
+            <Val><![CDATA[Запуск: {onTime} {onDays}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6223,7 +6322,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema node ''{nodeName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Узел схемы ''{nodeName}'' имеет цепочку невыключаемого подключения]]></Val>
+            <Val><![CDATA[У узла схемы ''{nodeName}'' незавершенная цепочка подключений]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6232,7 +6331,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Every {interval} weeks]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Каждую {interval} нед.]]></Val>
+            <Val><![CDATA[Каждые {interval} нед.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6240,6 +6339,9 @@
       <Item ItemId=";Unc2tG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if two values are equal.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Возвращает значение true, если два значения равны.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6319,7 +6421,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an App Service resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Выберите Служба приложений ресурса]]></Val>
+            <Val><![CDATA[Выберите ресурс Службы приложений]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6336,6 +6438,9 @@
       <Item ItemId=";VI7EqG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for {searchTerm}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Не найдены результаты по запросу {searchTerm}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6402,15 +6507,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";VXQbMw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Switch to detail inputs for array item]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Переключиться на подробные входные данные элемента массива]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";VZHick" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>
@@ -6465,6 +6561,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Vqs8hE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Actions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Действия]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";W070M2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[of {max}]]></Val>
@@ -6496,7 +6601,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select all text in {label}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Select all текст в {label}]]></Val>
+            <Val><![CDATA[Выделите весь {label}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6523,7 +6628,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Workflow has invalid connections on the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Рабочий процесс имеет недопустимые подключения для следующих операций: {invalidNodes}]]></Val>
+            <Val><![CDATA[В рабочем процессе есть недопустимые подключения для следующих операций: {invalidNodes}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6694,7 +6799,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has an non-terminating connection chain]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Функция ''{functionName}'' имеет не завершаюю цепочку подключений]]></Val>
+            <Val><![CDATA[У функции ''{functionName}'' незавершенная цепочка подключений]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6738,6 +6843,9 @@
       <Item ItemId=";Xew1Df" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Дополнительные диагностические сведения: x-ms-client-request-id — "{clientRequestId}".]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6849,6 +6957,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Y5XAbg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a Swagger Function App resource]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Выберите ресурс приложения-функции Swagger]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Y9kBz5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a binary representation of a data URI]]></Val>
@@ -6862,7 +6979,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Body Item]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Основной элемент]]></Val>
+            <Val><![CDATA[Элемент текста]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6907,7 +7024,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: Ctrl+U]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Форматирование текста как подчеркивания. Ярлык: CTRL+U]]></Val>
+            <Val><![CDATA[Форматировать текст подчеркнутым. Сочетание клавиш: CTRL+U]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6934,7 +7051,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as bold. Shortcut: Ctrl+B]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Форматирование текста полужирным шрифтом. Ярлык: CTRL+B]]></Val>
+            <Val><![CDATA[Форматировать текст полужирным шрифтом. Сочетание клавиш: CTRL+B]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6987,6 +7104,9 @@
       <Item ItemId=";Ybzoim" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the action that has the values you want.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Требуется. Имя действия с нужными значениями.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6994,7 +7114,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as italic. Shortcut: ⌘I]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Форматирование текста курсивом. Ярлык: ⌘I]]></Val>
+            <Val><![CDATA[Форматировать текст курсивом. Сочетание клавиш: ⌘I]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7021,7 +7141,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Custom value does not match one of the allowed types for this input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Пользовательское значение не соответствует одному из разрешенных типов для этого входного значения]]></Val>
+            <Val><![CDATA[Пользовательское значение не совпадает с одним из разрешенных типов для этого входного значения]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7065,6 +7185,9 @@
       <Item ItemId=";Yw7Nfl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Disable Static Result]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Отключить статический результат]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7072,7 +7195,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy count is invalid (Must be from {min} to {max})]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Недопустимое число политик повторных попыток (должно быть от {min} до {max})]]></Val>
+            <Val><![CDATA[Недопустимое количество политик повтора (должно быть от {min} до {max})]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7243,7 +7366,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Location]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Местоположение]]></Val>
+            <Val><![CDATA[Расположение]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7266,6 +7389,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ahW8Iv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copilot]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Copilot]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ahsVI/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter Pfx]]></Val>
@@ -7279,7 +7411,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid float.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Введите допустимое число с плавающей точкой.]]></Val>
+            <Val><![CDATA[Введите допустимое значение с плавающей точкой.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7288,7 +7420,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading resources...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Идет загрузка ресурсов...]]></Val>
+            <Val><![CDATA[Загрузка ресурсов...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7459,7 +7591,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Custom]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Пользовательское]]></Val>
+            <Val><![CDATA[Настроить]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7576,7 +7708,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy interval is invalid, must match ISO 8601 duration format]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Недопустимый интервал политики повторных попыток. Он должен соответствовать формату длительности ISO 8601]]></Val>
+            <Val><![CDATA[Недопустимый интервал политики повтора. Необходимо указать длительность в формате ISO 8601]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7611,6 +7743,18 @@
       <Item ItemId=";ceVB5l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the body for a part in a multipart output from an action.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Возвращает текст части в составных выходных данных какого-либо действия.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";cfUHfs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Returns the difference between two dates as a timespan string]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Возвращает разницу между двумя датами в виде строки временного диапазона]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7645,7 +7789,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Input node type does not match one of the allowed types for this input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Тип входного узла не соответствует одному из разрешенных типов для этого ввода]]></Val>
+            <Val><![CDATA[Тип входного узла не совпадает с одним из разрешенных типов для этого входного значения]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7690,7 +7834,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Generate XSLT first before attempting to test mappings.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Прежде чем тестировать сопоставления, сначала создайте XSLT.]]></Val>
+            <Val><![CDATA[Создайте XSLT перед попыткой тестирования сопоставлений.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7713,20 +7857,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";d+MjsE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid dictionary.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Введите допустимый словарь.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";d020eg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the first element from the passed-in array or string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Возвращает первый элемент из переданного массива или строки.]]></Val>
+            <Val><![CDATA[Возвращает первый элемент в переданном массиве или переданной строке.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7735,7 +7870,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Schema is missing required inputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[В схеме отсутствуют обязательные входные данные]]></Val>
+            <Val><![CDATA[В схеме отсутствуют необходимые входные данные]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7745,6 +7880,15 @@
           <Val><![CDATA[Add a trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Добавить триггер]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dD8y1n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to key value mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Переключиться в режим значений ключей]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7780,7 +7924,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Generate]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Сформировать]]></Val>
+            <Val><![CDATA[Создать]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7789,7 +7933,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Frequency]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Частота]]></Val>
+            <Val><![CDATA[Периодичность]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7834,7 +7978,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Italic (Ctrl+I)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Курсив (Ctrl+I)]]></Val>
+            <Val><![CDATA[Курсив (CTRL+I)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7897,7 +8041,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ввод]]></Val>
+            <Val><![CDATA[Входные данные]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7959,6 +8103,9 @@
       <Item ItemId=";eFnLWK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-06:00) Central America]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC-06:00) Центральная Америка]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8010,6 +8157,9 @@
       <Item ItemId=";ehIBkh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter an integer]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Введите целое число]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8080,7 +8230,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Empty dynamic content icon]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Пустой значок динамического содержимого]]></Val>
+            <Val><![CDATA[Значок пустого динамического содержимого]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8107,7 +8257,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select an API Management resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Выберите Управление API ресурса]]></Val>
+            <Val><![CDATA[Выберите ресурс Управления API Azure]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8143,7 +8293,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading connection data...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Загрузка данных подключения...]]></Val>
+            <Val><![CDATA[Загрузка данных подключения…]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8187,6 +8337,9 @@
       <Item ItemId=";fp8Ry3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+08:00) Пекин, Чунцин, Гонконг, Урумчи]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8203,7 +8356,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Email]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Электронная почта]]></Val>
+            <Val><![CDATA[Адрес электронной почты]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8293,7 +8446,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as italic. Shortcut: Ctrl+I]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Форматирование текста курсивом. Ярлык: CTRL+I]]></Val>
+            <Val><![CDATA[Форматировать текст курсивом. Сочетание клавиш: CTRL+I]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8302,7 +8455,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copy the value of '{label}' to the clipboard]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Копировать значение '{label}' в буфер обмена]]></Val>
+            <Val><![CDATA[Копировать значение "{label}" в буфер обмена]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8356,7 +8509,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Email]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Электронная почта]]></Val>
+            <Val><![CDATA[Адрес электронной почты]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8508,6 +8661,9 @@
       <Item ItemId=";hZqQdt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+02:00) Газа, Хеврон]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8586,6 +8742,9 @@
       <Item ItemId=";i0XjL5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Search for operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Поиск операции]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8629,7 +8788,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains an invalid value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Содержит недопустимое значение]]></Val>
+            <Val><![CDATA[Содержится недопустимое значение]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8637,6 +8796,9 @@
       <Item ItemId=";iB8YKD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[About Tab]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Вкладка "Сведения"]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8778,6 +8940,9 @@
       <Item ItemId=";ifnOUI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Code View Tab]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Вкладка "Просмотр кода"]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8848,7 +9013,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Repeating]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Повторять]]></Val>
+            <Val><![CDATA[Повтор]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9028,7 +9193,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select Fields]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Выбрать поля]]></Val>
+            <Val><![CDATA[Выберите поля]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9037,7 +9202,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Duplicate property name]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Повторяющееся имя свойства]]></Val>
+            <Val><![CDATA[Дублирующееся имя свойства]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9144,6 +9309,9 @@
       <Item ItemId=";kxMDyM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Введите допустимый код JSON.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9168,6 +9336,9 @@
       <Item ItemId=";l536iI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Monitoring Tab]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Вкладка "Мониторинг"]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9220,7 +9391,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Return]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Вернуть]]></Val>
+            <Val><![CDATA[Вернуться]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9229,7 +9400,7 @@
         <Str Cat="Text">
           <Val><![CDATA[The type for '{0}' is '{1}'.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Тип для '{0}' является '{1}'.]]></Val>
+            <Val><![CDATA[Тип "{0}": "{1}".]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9252,18 +9423,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";lcxLiq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Please enter a valid array]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Введите допустимый массив]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";lexzgJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove all references to element ' {nodeName} ' before you remove the element.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Удалите все ссылки на элемент "{nodeName}" перед удалением этого элемента.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9294,11 +9459,20 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";lkgjxD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required. A string that contains the end time.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Обязательно. Строка, которая содержит время окончания.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";loxzZD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert Expression (You can also add by typing / in the editor)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Вставить выражение (можно также добавить, введя /в редакторе)]]></Val>
+            <Val><![CDATA[Вставить выражение (для добавления также можно ввести "/" в редакторе)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9316,7 +9490,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Underline (Ctrl+U)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Подчеркивание (Ctrl+U)]]></Val>
+            <Val><![CDATA[Подчеркнутый (CTRL+U)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9334,7 +9508,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Map checker]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Проверка карты]]></Val>
+            <Val><![CDATA[Средство проверки карт]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9441,6 +9615,9 @@
       <Item ItemId=";mPuXlv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid type on split on value ''{splitOn}'', split on not in array.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Недопустимый тип значения разделения "{splitOn}". Разделение отсутствует в массиве.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9448,7 +9625,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select Connection]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Выбрать подключение]]></Val>
+            <Val><![CDATA[Выбор подключения]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9507,6 +9684,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";mkd0Jx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ask a question or describe how you want to change this flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Задайте вопрос или опишите, как нужно изменить этот поток]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";mvrlkP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter password as plain text or use a secure parameter]]></Val>
@@ -9519,6 +9705,9 @@
       <Item ItemId=";mvu5xN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{name} Value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Значение {name}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9652,7 +9841,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Custom]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Пользовательское]]></Val>
+            <Val><![CDATA[Настроить]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9760,7 +9949,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function was removed from the current location and currently exists elsewhere.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Функция была удалена из текущего расположения и в настоящее время существует в другом месте.]]></Val>
+            <Val><![CDATA[Функция удалена из текущего расположения и в настоящее время находится в другом месте.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9850,7 +10039,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Settings]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Параметры]]></Val>
+            <Val><![CDATA[Настройки]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9930,6 +10119,9 @@
       <Item ItemId=";ox2Ou7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid JSON]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Введите допустимый код JSON]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9937,7 +10129,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Returns the first non-null object in the passed-in argument values.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Возвращает первый объект, отличный от NULL, в переданных значениях аргументов.]]></Val>
+            <Val><![CDATA[Возвращает первый объект, отличный от null, в переданных значениях аргументов.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9964,7 +10156,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter the data from previous step. You can also add data by typing the '/' character.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Введите данные предыдущего шага. Вы также можете добавить данные, введя символ "/".]]></Val>
+            <Val><![CDATA[Введите данные из предыдущего шага. Также можно добавить данные, введя символ "/".]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10162,7 +10354,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select workflow with 'manual' trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Выберите рабочий процесс с триггером "вручную"]]></Val>
+            <Val><![CDATA[Выберите рабочий процесс с триггером "manual"]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10170,6 +10362,9 @@
       <Item ItemId=";q5TkqE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value to return if the expression is false.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Требуется. Значение, которое возвращается при значении "false" у выражения.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10194,6 +10389,9 @@
       <Item ItemId=";qAlTD5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: ''{referenceKeyFormat}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Формат ссылки на подключение манифеста не поддерживается: ''{referenceKeyFormat}'']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10201,7 +10399,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: ⌘U]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Форматирование текста как подчеркивания. Ярлык: ⌘U]]></Val>
+            <Val><![CDATA[Форматировать текст подчеркнутым. Сочетание клавиш: ⌘U]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10323,6 +10521,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";qVgQfW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Поиск]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";qc5S69" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the number of elements in an array or string]]></Val>
@@ -10341,6 +10548,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";qij+Vf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to default view mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Переключиться в режим просмотра по умолчанию]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";qnI4Y1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value that is converted to an integer.]]></Val>
@@ -10354,7 +10570,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Function ''{nodeName}'' has an input with a mismatched type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Функция ''{nodeName}'' имеет входные данные с несоответствуют типом]]></Val>
+            <Val><![CDATA[У функции ''{nodeName}'' не совпадает тип входных данных]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10416,6 +10632,9 @@
       <Item ItemId=";rAwCdh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connect via on-premises data gateway]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Подключаться через локальный шлюз данных]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10459,7 +10678,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select this checkbox if you're setting up an on-premises connection.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Установите этот флажок, если вы выполняете настройку локального подключения.]]></Val>
+            <Val><![CDATA[Установите этот флажок, если выполняется настройка подключения в локальной среде.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10467,6 +10686,9 @@
       <Item ItemId=";rSIBjh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter value for parameter.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Введите значение параметра.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10501,7 +10723,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select source schema elements to build your map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Выберите исходные элементы схемы для сборки карты]]></Val>
+            <Val><![CDATA[Выберите элементы исходной схемы для сборки карты]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10572,6 +10794,9 @@
       <Item ItemId=";sEqLTV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Testing Tab]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Вкладка "Тестирование"]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10596,6 +10821,9 @@
       <Item ItemId=";sQ2vRs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add Case]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Добавить инструкцию Case]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10612,7 +10840,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Formatting options for font family]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Параметры форматирования для семейства шрифтов]]></Val>
+            <Val><![CDATA[Параметры форматирования — семейство шрифтов]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10801,7 +11029,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select Connection Reference]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Выберите ссылку на подключение]]></Val>
+            <Val><![CDATA[Выбор ссылки на подключение]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10828,7 +11056,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Invalid connection, please update your connection to load complete details]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Недопустимое подключение. Обновите подключение, чтобы загрузить полные сведения]]></Val>
+            <Val><![CDATA[Недопустимое подключение. Обновите подключение, чтобы загрузить полные сведения.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10917,6 +11145,9 @@
       <Item ItemId=";tarDYT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if the first argument is less than the second.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Возвращает значение true, если первый аргумент меньше второго.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11004,6 +11235,9 @@
       <Item ItemId=";uM1i27" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify a retry count from 1 to 90]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Укажите количество повторных попыток от 1 до 90]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11056,7 +11290,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Show me]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Покажите мне]]></Val>
+            <Val><![CDATA[Показать]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11163,6 +11397,9 @@
       <Item ItemId=";uwuGU0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+06:30) Yangon (Rangoon)]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+06:30) Янгон (Рангун)]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11188,7 +11425,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Trigger date]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Дата запуска]]></Val>
+            <Val><![CDATA[Дата активации]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11251,7 +11488,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Outputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Выводы]]></Val>
+            <Val><![CDATA[Выходные данные]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11359,7 +11596,7 @@
         <Str Cat="Text">
           <Val><![CDATA[This contains a duplicate value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Содержит повторяющееся значение]]></Val>
+            <Val><![CDATA[Содержится дубликат значения]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11376,6 +11613,9 @@
       <Item ItemId=";w0pI5M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No results found for the specified filters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Не найдены результаты для указанных фильтров.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11518,7 +11758,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Input type mismatch]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Несоответствие типа входных данных]]></Val>
+            <Val><![CDATA[Типы входных данных не совпадают]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11730,6 +11970,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";xXVu2y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to text mode]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Переключиться в текстовый режим]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";xYyPR8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the path from a URI. If path is not specified, returns '/']]></Val>
@@ -11823,6 +12072,9 @@
       <Item ItemId=";yF2R//" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a subset of characters from a string.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Возвращает подмножество символов из строки.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11856,6 +12108,9 @@
       <Item ItemId=";yjierd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid expression type ''{type}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Недопустимый тип выражения "{type}".]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11917,7 +12172,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Navigate to {folderName} folder]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Перейти к {folderName} папке]]></Val>
+            <Val><![CDATA[Перейти в папку {folderName}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

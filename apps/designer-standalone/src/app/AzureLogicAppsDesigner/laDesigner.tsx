@@ -3,7 +3,6 @@ import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
-import { ApiManagementService } from './Services/ApiManagement';
 import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
 import { FileSystemConnectionCreationClient } from './Services/FileSystemConnectionCreationClient';
@@ -22,7 +21,7 @@ import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot } from '@microsoft/chatbot';
 import {
-  ApiManagementInstanceService,
+  BaseApiManagementService,
   BaseAppServiceService,
   BaseFunctionService,
   BaseGatewayService,
@@ -34,11 +33,12 @@ import {
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId } from '@microsoft/utils-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
 import * as React from 'react';
+import type { QueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
@@ -50,15 +50,9 @@ const DesignerEditor = () => {
     id: state.workflowLoader.resourcePath!,
   }));
 
-  const {
-    readOnly: isReadOnly,
-    darkMode: isDarkMode,
-    monitoringView,
-    runId,
-    appId,
-    showChatBot,
-    language,
-  } = useSelector((state: RootState) => state.workflowLoader);
+  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language } = useSelector(
+    (state: RootState) => state.workflowLoader
+  );
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -71,9 +65,10 @@ const DesignerEditor = () => {
   const connectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const parameters = data?.properties.files[Artifact.ParametersFile] ?? {};
+  const queryClient = getReactQueryClient();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (monitoringView) {
+    if (isMonitoringView) {
       const standardAppInstance = {
         ...workflow,
         definition: runDefinition.properties.workflow.properties.definition,
@@ -128,7 +123,8 @@ const DesignerEditor = () => {
         addConnectionData,
         getConnectionConfiguration,
         tenantId,
-        canonicalLocation
+        canonicalLocation,
+        queryClient
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID]
@@ -201,7 +197,7 @@ const DesignerEditor = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
+      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters }}
@@ -234,7 +230,8 @@ const getDesignerServices = (
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
-  location: string
+  location: string,
+  queryClient: QueryClient
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -242,6 +239,8 @@ const getDesignerServices = (
   const workflowName = workflowId.split('/').splice(-1)[0];
   const workflowIdWithHostRuntime = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}`;
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
+
+  const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
   const connectionService = new StandardConnectionService({
     baseUrl,
@@ -253,8 +252,9 @@ const getDesignerServices = (
       subscriptionId,
       resourceGroup,
       location,
+      tenantId,
+      httpClient,
     },
-    tenantId,
     workflowAppDetails: { appName: siteResourceId.split('/').splice(-1)[0], identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
@@ -269,11 +269,12 @@ const getDesignerServices = (
       }),
     },
   });
-  const apimService = new ApiManagementInstanceService({
+  const apiManagementService = new BaseApiManagementService({
     apiVersion: '2019-12-01',
     baseUrl,
     subscriptionId,
     httpClient,
+    queryClient,
   });
   const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl: armUrl, siteResourceId, httpClient, workflowName });
   const artifactService = new ArtifactService({
@@ -283,12 +284,9 @@ const getDesignerServices = (
     httpClient,
     integrationAccountCallbackUrl: undefined,
   });
-  const apiManagementService = new ApiManagementService({ service: apimService });
   const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
   const connectorService = new StandardConnectorService({
-    apiVersion,
-    baseUrl,
-    httpClient,
+    ...defaultServiceParams,
     clientSupportedOperations: [
       ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
@@ -357,24 +355,17 @@ const getDesignerServices = (
     },
   });
 
-  const operationManifestService = new StandardOperationManifestService({
-    apiVersion,
-    baseUrl,
-    httpClient,
-  });
+  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const searchService = new StandardSearchService({
-    baseUrl,
-    apiVersion,
-    httpClient,
+    ...defaultServiceParams,
     apiHubServiceDetails: { apiVersion: '2018-07-01-preview', subscriptionId, location },
     showStatefulOperations: isStateful,
     isDev: false,
   });
 
   const oAuthService = new BaseOAuthService({
+    ...defaultServiceParams,
     apiVersion: '2018-07-01-preview',
-    baseUrl,
-    httpClient,
     subscriptionId,
     resourceGroup,
     location,
@@ -393,12 +384,6 @@ const getDesignerServices = (
     httpClient,
   });
 
-  // const loggerService = new Stan({
-  //   resourceID: workflowId,
-  //   designerVersion: packagejson.dependencies['@microsoft/logic-apps-designer'],
-  //   designerID,
-  // });
-
   const runService = new StandardRunService({
     apiVersion,
     baseUrl,
@@ -416,7 +401,7 @@ const getDesignerServices = (
     loggerService: null,
     oAuthService,
     workflowService,
-    apimService,
+    apimService: apiManagementService,
     functionService,
     runService,
   };

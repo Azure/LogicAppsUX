@@ -631,7 +631,7 @@
   "2gOfQI": [
     {
       "type": 0,
-      "value": "Existing schemas from"
+      "value": "Skema yang ada dari"
     }
   ],
   "2gzGrJ": [
@@ -1050,6 +1050,12 @@
       "value": "Hari"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Parameter yang digunakan dalam Aplikasi Logika akan dikonversi menjadi templat Azure Resource Manager selama pembuatan templat penerapan."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1355,7 +1361,7 @@
   "8LhQeL": [
     {
       "type": 0,
-      "value": "Switch to code view mode"
+      "value": "Alihkan ke mode tampilan kode"
     }
   ],
   "8ND+Yc": [
@@ -1459,7 +1465,7 @@
   "8zkvmc": [
     {
       "type": 0,
-      "value": "Menguji"
+      "value": "Pengujian"
     }
   ],
   "9/UeTh": [
@@ -1546,6 +1552,12 @@
     {
       "type": 0,
       "value": "', tidak dapat menemukan dalam output."
+    }
+  ],
+  "9W3giy": [
+    {
+      "type": 0,
+      "value": "Dalam Pengembangan"
     }
   ],
   "9YGcT2": [
@@ -2180,7 +2192,7 @@
   "EdeHLs": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Beralih ke input seluruh array"
     }
   ],
   "EdzoIs": [
@@ -2212,7 +2224,7 @@
   "Ek0mSE": [
     {
       "type": 0,
-      "value": "View the request history for this operation"
+      "value": "Lihat riwayat permintaan untuk operasi ini"
     }
   ],
   "EurkzL": [
@@ -2615,7 +2627,7 @@
   "HfinO2": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Beralih ke input detail untuk item array"
     }
   ],
   "HfrUId": [
@@ -2736,6 +2748,12 @@
     {
       "type": 0,
       "value": "(UTC-12:00) Batas Penanggalan Internasional Bagian Barat"
+    }
+  ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Buat, kelola parameter Aplikasi Logika, berikan nilai default."
     }
   ],
   "IW2MjQ": [
@@ -3247,6 +3265,12 @@
       "value": "Identitas terkelola"
     }
   ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String yang berisi waktu mulai."
+    }
+  ],
   "MOsuw2": [
     {
       "type": 0,
@@ -3535,6 +3559,12 @@
       "value": "Aktifkan Hasil Statik"
     }
   ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Kirim"
+    }
+  ],
   "OgJ9eG": [
     {
       "type": 0,
@@ -3759,6 +3789,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi base 64 dari string input"
+    }
+  ],
+  "Px7S/2": [
+    {
+      "type": 0,
+      "value": "Tutup"
     }
   ],
   "Q+ZZHI": [
@@ -4053,7 +4089,7 @@
   "SToblZ": [
     {
       "type": 0,
-      "value": "Configure parameters for this node"
+      "value": "Konfigurasikan parameter untuk node ini"
     }
   ],
   "SXb47U": [
@@ -4590,6 +4626,12 @@
       "value": "\" sebagai nilai kustom"
     }
   ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Tindakan"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4904,6 +4946,12 @@
       "value": "Info Selengkapnya"
     }
   ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Pilih sumber daya Aplikasi Fungsi Swagger"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5206,6 +5254,12 @@
       "value": "Layar Penuh"
     }
   ],
+  "ahW8Iv": [
+    {
+      "type": 0,
+      "value": "Copilot"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5448,6 +5502,12 @@
       "value": "Menampilkan isi dari sebagian output beberapa bagian dari tindakan."
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Menghasilkan selisih antara dua tanggal sebagai string rentang waktu"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -5535,7 +5595,7 @@
   "dD8y1n": [
     {
       "type": 0,
-      "value": "Switch to key value mode"
+      "value": "Beralih ke mode nilai kunci"
     }
   ],
   "dDYCuU": [
@@ -6154,7 +6214,7 @@
   "iB8YKD": [
     {
       "type": 0,
-      "value": "About Tab"
+      "value": "Tentang Tab"
     }
   ],
   "iCSHJG": [
@@ -6258,7 +6318,7 @@
   "ifnOUI": [
     {
       "type": 0,
-      "value": "Code View Tab"
+      "value": "Tab Tampilan Kode"
     }
   ],
   "iq+tiv": [
@@ -6550,7 +6610,7 @@
   "l536iI": [
     {
       "type": 0,
-      "value": "Monitoring Tab"
+      "value": "Tab Pemantauan"
     }
   ],
   "l72gf4": [
@@ -6637,6 +6697,12 @@
     {
       "type": 0,
       "value": "Pintasan untuk tindakan('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String yang berisi waktu selesai."
     }
   ],
   "loxzZD": [
@@ -6793,6 +6859,12 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
+    }
+  ],
+  "mkd0Jx": [
+    {
+      "type": 0,
+      "value": "Ajukan pertanyaan atau jelaskan bagaimana Anda ingin mengubah alur ini"
     }
   ],
   "mvrlkP": [
@@ -7352,6 +7424,12 @@
       "value": "days"
     }
   ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Cari"
+    }
+  ],
   "qc5S69": [
     {
       "type": 0,
@@ -7371,7 +7449,7 @@
   "qij+Vf": [
     {
       "type": 0,
-      "value": "Switch to default view mode"
+      "value": "Alihkan ke mode tampilan default"
     }
   ],
   "qnI4Y1": [
@@ -7541,7 +7619,7 @@
   "sEqLTV": [
     {
       "type": 0,
-      "value": "Testing Tab"
+      "value": "Tab Pengujian"
     }
   ],
   "sFbnCs": [
@@ -8367,7 +8445,7 @@
   "xXVu2y": [
     {
       "type": 0,
-      "value": "Switch to text mode"
+      "value": "Beralih ke mode teks"
     }
   ],
   "xYyPR8": [

@@ -2,8 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { parseHostJson } from '../funcConfig/host';
+import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { getFileOrFolderContent } from '../utils/codeless/apiUtils';
 import { tryParseFuncVersion } from '../utils/funcCoreTools/funcVersion';
 import { getIconPath } from '../utils/tree/assets';
@@ -26,11 +28,13 @@ import {
   LogFilesTreeItem,
   SiteFilesTreeItem,
 } from '@microsoft/vscode-azext-azureappservice';
+import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import type { ResolvedAppResourceBase } from '@microsoft/vscode-azext-utils/hostapi';
 import { ProjectResource, ProjectSource, latestGAVersion } from '@microsoft/vscode-extension';
-import type { ApplicationSettings, FuncHostRequest, FuncVersion, IParsedHostJson } from '@microsoft/vscode-extension';
+import type { ApplicationSettings, FuncHostRequest, FuncVersion, ILocalSettingsJson, IParsedHostJson } from '@microsoft/vscode-extension';
+import * as path from 'path';
 
 export function isLogicAppResourceTree(ti: unknown): ti is ResolvedAppResourceBase {
   return (ti as unknown as LogicAppResourceTree).instance === LogicAppResourceTree.instance;
@@ -191,10 +195,12 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
     return result;
   }
 
-  public async getApplicationSettings(context: IActionContext): Promise<ApplicationSettings> {
-    const client = await this.site.createClient(context);
-    const appSettings: StringDictionary = await client.listApplicationSettings();
-    return appSettings.properties || {};
+  public async getApplicationSettings(context: IDeployContext): Promise<ApplicationSettings> {
+    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(
+      context,
+      path.join(context.effectiveDeployFsPath, localSettingsFileName)
+    );
+    return localSettings.Values || {};
   }
 
   public async setApplicationSetting(context: IActionContext, key: string, value: string): Promise<void> {
