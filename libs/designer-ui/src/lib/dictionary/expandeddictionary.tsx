@@ -1,5 +1,5 @@
 import type { DictionaryEditorItemProps } from '.';
-import type { ChangeState } from '..';
+import type { ChangeState, TokenPickerButtonEditorProps } from '..';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
@@ -20,18 +20,18 @@ export interface ExpandedDictionaryProps {
   valueTitle?: string;
   valueType?: string;
   setItems: (items: DictionaryEditorItemProps[]) => void;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
 }
 
 export const ExpandedDictionary = ({
   items,
-  readonly,
   keyTitle,
   keyType,
   valueTitle,
   valueType,
-  getTokenPicker,
   setItems,
+  ...props
 }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,12 +76,11 @@ export const ExpandedDictionary = ({
           <div key={item.id} className="msla-dictionary-editor-item">
             <div className="msla-dictionary-item-cell" aria-label={`dict-item-${index}`} ref={(el) => (editorRef.current[index] = el)}>
               <StringEditor
+                {...props}
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
-                readonly={readonly}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
-                getTokenPicker={getTokenPicker}
                 onFocus={() => addItem(index)}
                 valueType={keyType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.KEY)}
@@ -89,18 +88,17 @@ export const ExpandedDictionary = ({
             </div>
             <div className="msla-dictionary-item-cell" ref={(el) => (editorRef.current[index] = el)}>
               <StringEditor
+                {...props}
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
-                readonly={readonly}
                 BasePlugins={{ tokens: true, autoFocus: false }}
-                getTokenPicker={getTokenPicker}
                 onFocus={() => addItem(index)}
                 valueType={valueType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.VALUE)}
               />
             </div>
-            <DictionaryDeleteButton items={items} index={index} setItems={setItems} />
+            <DictionaryDeleteButton items={items} index={index} setItems={setItems} disabled={props.readonly} />
           </div>
         );
       })}
