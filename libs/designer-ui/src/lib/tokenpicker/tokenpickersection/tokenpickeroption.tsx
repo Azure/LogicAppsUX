@@ -1,6 +1,7 @@
 import type { OutputToken } from '..';
 import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
+// import { TokenType } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
@@ -187,8 +188,13 @@ export const TokenPickerOptions = ({
                     <div className="msla-token-picker-section-option-text">
                       <div className="msla-token-picker-option-inner">
                         <div className="msla-token-picker-option-title">{token.title}</div>
-                        <div className="msla-token-picker-option-description">{token.description}</div>
+                        <div className="msla-token-picker-option-description" title={token.description}>
+                          {token.description}
+                        </div>
                       </div>
+                      {/* {token.type && token.outputInfo?.type !== TokenType.FX ? (
+                        <div className="msla-token-picker-option-type">{token.type}</div>
+                      ) : null} */}
                     </div>
                   </button>
                 );

@@ -6581,6 +6581,12 @@
       "value": "Devolve o início do dia a um carimbo de data/hora de cadeia transmitido"
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,

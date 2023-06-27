@@ -1,9 +1,10 @@
-import type { PanelTab } from '@microsoft/designer-ui';
+import type { PanelLocation, PanelTab } from '@microsoft/designer-ui';
 
 export interface PanelState {
   collapsed: boolean;
   selectedNode: string;
   currentState?: 'Discovery' | 'WorkflowParameters' | 'NodeSearch';
+  panelLocation?: PanelLocation;
   isParallelBranch: boolean;
   relationshipIds: RelationshipIds;
   registeredTabs: Record<string, PanelTab>;
