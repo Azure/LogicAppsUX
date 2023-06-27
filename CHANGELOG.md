@@ -1,5 +1,21 @@
 # Logic Apps Designer
 
+## [2.37.0](https://github.com/Azure/LogicAppsUX/compare/v2.36.0...v2.37.0) (2023-06-27)
+
+### Features
+
+- **designer:** Consumption: Adding dynamic content api support for Open Api ([#2857](https://github.com/Azure/LogicAppsUX/issues/2857)) ([4eb98a2](https://github.com/Azure/LogicAppsUX/commit/4eb98a245e7db5108f23ecdc49cca26f8590b309))
+- **Designer:** Errors Panel ([#2843](https://github.com/Azure/LogicAppsUX/issues/2843)) ([21d1ebe](https://github.com/Azure/LogicAppsUX/commit/21d1ebe74d3e6d8ffdb940657d9fb0ba1643c4bb))
+- **vscode:** Organize Azure workspace commands into submenu ([#2840](https://github.com/Azure/LogicAppsUX/issues/2840)) ([da02da5](https://github.com/Azure/LogicAppsUX/commit/da02da598fac298a50baa88a4e9941859cb5d01a))
+
+### Bug Fixes
+
+- **Designer:** Fixed filtering of cloud capability parameters ([#2852](https://github.com/Azure/LogicAppsUX/issues/2852)) ([9582f56](https://github.com/Azure/LogicAppsUX/commit/9582f56f5f47d215e1d309bc8256bd63f1236735))
+- **designer:** Moving Token Picker EntryPoint to Left ([#2406](https://github.com/Azure/LogicAppsUX/issues/2406)) ([7c9c883](https://github.com/Azure/LogicAppsUX/commit/7c9c8831c2ec651d1235c6ec24f1cffeb86ffdab))
+- **designer:** Undefined edge on new workflow causing operation panel to get stuck ([#2862](https://github.com/Azure/LogicAppsUX/issues/2862)) ([ace56ec](https://github.com/Azure/LogicAppsUX/commit/ace56eccc779cc121b339cff51dbe67f32eb340e))
+- **vscode:** Filter connectors and operations according to azure connection capabilities ([#2851](https://github.com/Azure/LogicAppsUX/issues/2851)) ([1e1eae8](https://github.com/Azure/LogicAppsUX/commit/1e1eae823fa9b1f80d35b77f66cdc9c9a4876840))
+- **vscode:** Get correct resource group name to get connections in monitoring view ([#2844](https://github.com/Azure/LogicAppsUX/issues/2844)) ([80a74f1](https://github.com/Azure/LogicAppsUX/commit/80a74f1319946faa3c884f19e553e35235626097))
+
 ## [2.36.0](https://github.com/Azure/LogicAppsUX/compare/v2.35.0...v2.36.0) (2023-06-23)
 
 - **designer:** Adding serialization and deserialization changes for Open Api Connection ([#2834](https://github.com/Azure/LogicAppsUX/issues/2834)) ([a1c7d41](https://github.com/Azure/LogicAppsUX/commit/a1c7d41f7d7a84ab8ace0f8cb59ba5316293574b))

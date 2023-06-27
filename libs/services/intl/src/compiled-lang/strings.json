@@ -5,6 +5,12 @@
       "value": "Testing"
     }
   ],
+  "+0cO6t": [
+    {
+      "type": 0,
+      "value": "Create connection reference"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -667,12 +673,6 @@
       "value": "Loading connection..."
     }
   ],
-  "30njcn": [
-    {
-      "type": 0,
-      "value": "Create Connection"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -977,6 +977,12 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "53MgCQ": [
+    {
+      "type": 0,
+      "value": "Open panel"
+    }
+  ],
   "595Baw": [
     {
       "type": 0,
@@ -1103,6 +1109,12 @@
     {
       "type": 0,
       "value": "Cancel"
+    }
+  ],
+  "6ZviI7": [
+    {
+      "type": 0,
+      "value": "Select connection reference"
     }
   ],
   "6fDYzG": [
@@ -1433,12 +1445,6 @@
     {
       "type": 0,
       "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
-    }
-  ],
-  "8luJ2j": [
-    {
-      "type": 0,
-      "value": "Create Connection Reference"
     }
   ],
   "8mDG0V": [
@@ -1927,6 +1933,12 @@
       "value": "Connection required"
     }
   ],
+  "CPm+OG": [
+    {
+      "type": 0,
+      "value": "Create connection"
+    }
+  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2351,6 +2363,12 @@
     {
       "type": 0,
       "value": "Returns a section of a string defined by the start index and the end index"
+    }
+  ],
+  "FOiBk/": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "FT3jt6": [
@@ -3551,6 +3569,12 @@
       "value": "Service Principal"
     }
   ],
+  "O1tedM": [
+    {
+      "type": 0,
+      "value": "No errors found."
+    }
+  ],
   "O27gKq": [
     {
       "type": 0,
@@ -3813,6 +3837,12 @@
       "value": "Schema Uri"
     }
   ],
+  "Peg6ZT": [
+    {
+      "type": 0,
+      "value": "Setting errors"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
@@ -3835,6 +3865,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Cairo"
+    }
+  ],
+  "PsmHyH": [
+    {
+      "type": 0,
+      "value": "Connection errors"
     }
   ],
   "PtqSHp": [
@@ -3951,6 +3987,12 @@
     {
       "type": 0,
       "value": "Pencil icon"
+    }
+  ],
+  "QdhS3y": [
+    {
+      "type": 0,
+      "value": "Workflow Parameters"
     }
   ],
   "Qn8qxn": [
@@ -4353,6 +4395,12 @@
     {
       "type": 0,
       "value": "Invalid parameters"
+    }
+  ],
+  "To3RNy": [
+    {
+      "type": 0,
+      "value": "Workflow parameter errors"
     }
   ],
   "Ts5Pzr": [
@@ -5457,6 +5505,12 @@
       "value": "Retry History"
     }
   ],
+  "bwlAWn": [
+    {
+      "type": 0,
+      "value": "Open operation"
+    }
+  ],
   "byRkj+": [
     {
       "type": 0,
@@ -5939,6 +5993,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
+  "g/7QyT": [
+    {
+      "type": 0,
+      "value": "Select connection"
     }
   ],
   "g076bL": [
@@ -6507,6 +6567,12 @@
       "value": "Yes"
     }
   ],
+  "k8cbQ1": [
+    {
+      "type": 0,
+      "value": "Parameter errors"
+    }
+  ],
   "kBOAkT": [
     {
       "type": 0,
@@ -6861,12 +6927,6 @@
       "value": "', split on not in array."
     }
   ],
-  "mQotIu": [
-    {
-      "type": 0,
-      "value": "Select Connection"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7019,6 +7079,12 @@
     {
       "type": 0,
       "value": "Yes/No"
+    }
+  ],
+  "nPgYuI": [
+    {
+      "type": 0,
+      "value": "New parameter"
     }
   ],
   "nRpM02": [
@@ -7869,12 +7935,6 @@
       "value": "h"
     }
   ],
-  "tJMHcJ": [
-    {
-      "type": 0,
-      "value": "Select Connection Reference"
-    }
-  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -8101,6 +8161,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Greenland"
+    }
+  ],
+  "ui3KuP": [
+    {
+      "type": 0,
+      "value": "Operation errors"
     }
   ],
   "ui7GCl": [

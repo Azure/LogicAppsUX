@@ -1,5 +1,5 @@
 import type { Connector, OperationManifest } from '@microsoft/utils-logic-apps';
-import { fallbackConnectorUrl } from '@microsoft/utils-logic-apps';
+import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
 
 export function getBrandColorFromManifest(manifest: OperationManifest): string {
   return manifest.properties?.brandColor ?? getBrandColorFromConnector(manifest.properties?.connector);
@@ -22,5 +22,5 @@ export function getIconUriFromConnector(connector: Connector | undefined): strin
   const {
     properties: { iconUrl, iconUri, generalInformation },
   } = connector;
-  return fallbackConnectorUrl(iconUrl ?? iconUri ?? generalInformation?.iconUrl);
+  return fallbackConnectorIconUrl(iconUrl ?? iconUri ?? generalInformation?.iconUrl);
 }

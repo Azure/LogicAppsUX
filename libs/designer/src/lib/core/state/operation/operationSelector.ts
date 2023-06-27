@@ -6,6 +6,12 @@ import { ErrorLevel } from './operationMetadataSlice';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
+export const useOperationVisuals = (nodeId: string) => {
+  return useSelector((rootState: RootState) => {
+    return rootState.operations.operationMetadata[nodeId];
+  });
+};
+
 export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {
   const nodeInputs = rootState.operations.inputParameters[nodeId];
   const allParameters: ParameterInfo[] = [];
@@ -32,6 +38,17 @@ export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined => 
   });
 };
 
+export const useAllConnectionErrors = (): Record<string, string> => {
+  return useSelector((rootState: RootState) =>
+    Object.entries(rootState.operations.errors ?? {}).reduce((acc: any, [nodeId, errors]) => {
+      const connectionError = errors?.[ErrorLevel.Connection];
+      // eslint-disable-next-line no-param-reassign
+      if (connectionError) acc[nodeId] = connectionError.message;
+      return acc;
+    }, {})
+  );
+};
+
 export const useOperationsInputParameters = (): Record<string, NodeInputs> => {
   return useSelector((rootState: RootState) => rootState.operations.inputParameters);
 };
@@ -47,8 +64,8 @@ export const useParameterStaticResult = (nodeId: string): NodeStaticResults => {
   return useSelector((rootState: RootState) => rootState.operations.staticResults[nodeId]);
 };
 
-export const useTokenDependencies = (nodeId: string) =>
-  useSelector((rootState: RootState) => {
+export const useTokenDependencies = (nodeId: string) => {
+  return useSelector((rootState: RootState) => {
     const operationInputParameters = rootState.operations.inputParameters[nodeId];
     if (!operationInputParameters) {
       return new Set();
@@ -65,6 +82,11 @@ export const useTokenDependencies = (nodeId: string) =>
     }
     return dependencies;
   });
+};
+
+export const useAllOperationErrors = () => {
+  return useSelector((rootState: RootState) => rootState.operations.errors);
+};
 
 export const useParameterValidationErrors = (nodeId: string) => {
   return useSelector((rootState: RootState) => {
