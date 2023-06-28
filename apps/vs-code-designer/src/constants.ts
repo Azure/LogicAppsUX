@@ -22,7 +22,8 @@ export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps
 
 // Azurite
 export const azuriteExtensionId = 'Azurite.azurite';
-export const azuriteLocationSetting = 'azurite.location';
+export const azuriteExtensionPrefix = 'azurite';
+export const azuriteLocationSetting = 'location';
 
 // Functions
 export const func = 'func';

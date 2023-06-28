@@ -2,11 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { azuriteLocationSetting, extensionCommand } from '../../../constants';
+import { azuriteExtensionPrefix, azuriteLocationSetting, extensionCommand } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
-import { getAzuriteConfiguration } from '../../azuriteExtension/getAzuriteConfiguration';
-import { updateAzuriteConfiguration } from '../../azuriteExtension/updateAzuriteConfiguration';
+import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as os from 'os';
 
@@ -17,8 +16,8 @@ import * as os from 'os';
  * User can specify location.
  */
 export async function activateAzurite(context: IActionContext): Promise<void> {
-  const userAzuriteDir = await getAzuriteConfiguration(context, azuriteLocationSetting);
-
+  const userAzuriteDir: string = getGlobalSetting(azuriteLocationSetting, azuriteExtensionPrefix);
+  context.telemetry.properties.azuriteLocation = userAzuriteDir;
   // User has not configured azurite.location.
   if (!userAzuriteDir) {
     const defaultAzuriteDir = `${os.homedir()}\\.azurite`;
@@ -29,10 +28,10 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
     });
 
     if (azuriteDir) {
-      await updateAzuriteConfiguration(context, azuriteLocationSetting, azuriteDir);
+      await updateGlobalSetting(azuriteLocationSetting, azuriteDir, azuriteExtensionPrefix);
       context.telemetry.properties.azuriteLocation = azuriteDir;
     } else {
-      await updateAzuriteConfiguration(context, azuriteLocationSetting, defaultAzuriteDir);
+      await updateGlobalSetting(azuriteLocationSetting, defaultAzuriteDir, azuriteExtensionPrefix);
       context.telemetry.properties.azuriteLocation = defaultAzuriteDir;
     }
   }
