@@ -40,6 +40,7 @@ export interface CardProps {
   onClick?(): void;
   runData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined;
   setFocus?: boolean;
+  isSecureInputsOutputs?: boolean;
 }
 
 export interface BadgeProps {
@@ -78,6 +79,7 @@ export const Card: React.FC<CardProps> = ({
   onClick,
   runData = {},
   setFocus,
+  isSecureInputsOutputs,
 }) => {
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
@@ -159,6 +161,7 @@ export const Card: React.FC<CardProps> = ({
             connectionDisplayName={connectionDisplayName}
             connectionRequired={connectionRequired}
             staticResultsEnabled={staticResultsEnabled}
+            isSecureInputsOutputs={isSecureInputsOutputs}
           />
         </div>
         {contextMenuOptions?.length > 0 ? (

@@ -6,7 +6,6 @@ import { AuthenticationProperty } from '../AuthenticationProperty';
 import { CertificateAuthentication } from '../CertificateAuth';
 import { AUTHENTICATION_PROPERTIES } from '../util';
 import { AuthenticationOAuthType } from './AADOAuth';
-import { AssertionErrorCode, AssertionException, format } from '@microsoft/utils-logic-apps';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface AadOAuthCredentialsProps {
@@ -33,32 +32,23 @@ export const AadOAuthCredentials = ({
     }));
   };
 
-  const RenderSelectedCredentials = (): JSX.Element => {
-    switch (selectedCredTypeKey) {
-      case AuthenticationOAuthType.SECRET:
-        return (
-          <AuthenticationProperty
-            {...props}
-            initialValue={secret}
-            AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET}
-            onBlur={updateOAuthTypeSecret}
-          />
-        );
-      case AuthenticationOAuthType.CERTIFICATE:
-        return (
-          <CertificateAuthentication
-            {...props}
-            clientCertificateProps={clientCertificateProps}
-            isOAuth={true}
-            setCurrentProps={setCurrentProps}
-          />
-        );
-      default:
-        throw new AssertionException(
-          AssertionErrorCode.UNSUPPORTED_OAUTH_CREDENTIAL_TYPE,
-          format("Unsupported OAuth credential type '{0}'.", selectedCredTypeKey)
-        );
-    }
-  };
-  return <RenderSelectedCredentials />;
+  return (
+    <>
+      {selectedCredTypeKey === AuthenticationOAuthType.SECRET ? (
+        <AuthenticationProperty
+          {...props}
+          initialValue={secret}
+          AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET}
+          onBlur={updateOAuthTypeSecret}
+        />
+      ) : selectedCredTypeKey === AuthenticationOAuthType.CERTIFICATE ? (
+        <CertificateAuthentication
+          {...props}
+          clientCertificateProps={clientCertificateProps}
+          isOAuth={true}
+          setCurrentProps={setCurrentProps}
+        />
+      ) : null}
+    </>
+  );
 };
