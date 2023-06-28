@@ -2,7 +2,7 @@ import { TokenPickerMode } from '../../../tokenpicker';
 import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
 import { Icon, Text, css, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { LexicalTypeaheadMenuPlugin, TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
+import { LexicalTypeaheadMenuPlugin, MenuOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import type { TextNode } from 'lexical';
 import { $getSelection, $isRangeSelection } from 'lexical';
 import type { ReactNode } from 'react';
@@ -10,7 +10,7 @@ import { useCallback } from 'react';
 import * as ReactDOM from 'react-dom';
 import { useIntl } from 'react-intl';
 
-class TokenOption extends TypeaheadOption {
+class TokenOption extends MenuOption {
   title: string;
   keywords: Array<string>;
   icon: (selected: boolean, inverted: boolean) => ReactNode;
