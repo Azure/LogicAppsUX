@@ -174,11 +174,12 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
           LoggerService().endTrace(traceId, { status: Status.Success });
         })
         .catch((err) => {
+          const graphAsString = JSON.stringify(elkGraph);
           LoggerService().log({
             level: LogEntryLevel.Error,
             area: 'useLayout',
             error: err,
-            message: err.message,
+            message: `${err?.message} - ${graphAsString}`,
             traceId: traceId,
           });
           LoggerService().endTrace(traceId, { status: Status.Failure });

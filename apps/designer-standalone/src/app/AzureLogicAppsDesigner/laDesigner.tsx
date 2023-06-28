@@ -33,13 +33,12 @@ import {
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId } from '@microsoft/utils-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
 import * as React from 'react';
 import type { QueryClient } from 'react-query';
-import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
@@ -66,7 +65,7 @@ const DesignerEditor = () => {
   const connectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const parameters = data?.properties.files[Artifact.ParametersFile] ?? {};
-  const queryClient = useQueryClient();
+  const queryClient = getReactQueryClient();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (isMonitoringView) {
@@ -253,8 +252,9 @@ const getDesignerServices = (
       subscriptionId,
       resourceGroup,
       location,
+      tenantId,
+      httpClient,
     },
-    tenantId,
     workflowAppDetails: { appName: siteResourceId.split('/').splice(-1)[0], identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
@@ -341,10 +341,7 @@ const getDesignerServices = (
     apiHubServiceDetails: {
       apiVersion: '2018-07-01-preview',
       baseUrl: armUrl,
-      subscriptionId,
-      resourceGroup,
     },
-    workflowReferenceId: '',
   });
   const gatewayService = new BaseGatewayService({
     baseUrl: armUrl,

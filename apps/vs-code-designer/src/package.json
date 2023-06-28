@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.33.0",
+  "version": "2.38.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -68,8 +68,18 @@
         }
       },
       {
+        "command": "azureLogicAppsStandard.createNewCodeProject",
+        "title": "Create new logic app workspace...",
+        "category": "Azure Logic Apps",
+        "preview": true,
+        "icon": {
+          "light": "assets/light/CreateNewCodeProject.svg",
+          "dark": "assets/dark/CreateNewCodeProject.svg"
+        }
+      },
+      {
         "command": "azureLogicAppsStandard.createCodeless",
-        "title": "Create Workflow...",
+        "title": "Create workflow...",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/Codeless.svg",
@@ -297,29 +307,42 @@
         "category": "Azure Logic Apps"
       }
     ],
+    "submenus": [
+      {
+        "id": "azureLogicAppsStandard.submenus.workspaceActions",
+        "icon": "assets/logicapp.png",
+        "label": "Azure Logic Apps"
+      }
+    ],
     "menus": {
-      "azureWorkspaceDeploy": [
+      "azureLogicAppsStandard.submenus.workspaceActions": [
+        {
+          "command": "azureLogicAppsStandard.createNewProject",
+          "group": "1_create@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.createNewCodeProject",
+          "when": "isWindows",
+          "group": "1_create@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCodeless",
+          "group": "1_create@3"
+        },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "when": "view == azureWorkspace",
-          "group": "navigation@1"
+          "group": "2_deploy@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.exportLogicApp",
+          "group": "3_export@1"
         }
       ],
       "view/title": [
         {
-          "command": "azureLogicAppsStandard.createNewProject",
-          "when": "view == azureWorkspace",
-          "group": "navigation@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "submenu": "azureLogicAppsStandard.submenus.workspaceActions",
           "when": "view == azureWorkspace",
           "group": "navigation@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.exportLogicApp",
-          "when": "view == azureWorkspace",
-          "group": "navigation@4"
         }
       ],
       "view/item/context": [
@@ -592,6 +615,10 @@
           "when": "resourceFilename==workflow.json"
         },
         {
+          "command": "azureLogicAppsStandard.createNewCodeProject",
+          "when": "isWindows"
+        },
+        {
           "command": "azureLogicAppsStandard.viewContent",
           "when": "never"
         },
@@ -755,6 +782,7 @@
     "onCommand:azureLogicAppsStandard.openDesigner",
     "onCommand:azureLogicAppsStandard.viewContent",
     "onCommand:azureLogicAppsStandard.createNewProject",
+    "onCommand:azureLogicAppsStandard.createNewCodeProject",
     "onCommand:azureLogicAppsStandard.createCodeless",
     "onCommand:azureLogicAppsStandard.deploy",
     "onCommand:azureLogicAppsStandard.deploySlot",

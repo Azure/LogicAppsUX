@@ -5,10 +5,22 @@
       "value": "測試"
     }
   ],
+  "+0cO6t": [
+    {
+      "type": 0,
+      "value": "Create connection reference"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
       "value": "函數顯示"
+    }
+  ],
+  "+FcXe9": [
+    {
+      "type": 0,
+      "value": "Faulted"
     }
   ],
   "+Uvo/p": [
@@ -39,6 +51,18 @@
       "value": "時區"
     }
   ],
+  "+xXHdp": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
+  "/2V8bQ": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "/EU/oJ": [
     {
       "type": 0,
@@ -51,10 +75,10 @@
       "value": "本文"
     }
   ],
-  "/NDLmg": [
+  "/KRvvg": [
     {
       "type": 0,
-      "value": "等待中"
+      "value": "No values match your search."
     }
   ],
   "/NtebP": [
@@ -139,6 +163,12 @@
     {
       "type": 0,
       "value": "遺漏必要的輸入"
+    }
+  ],
+  "/w/q/8": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "/yYyOq": [
@@ -229,6 +259,12 @@
       "value": "儲存"
     }
   ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "Secure inputs or outputs enabled."
+    }
+  ],
   "0FzNJV": [
     {
       "type": 0,
@@ -281,12 +317,6 @@
     {
       "type": 0,
       "value": "摺疊"
-    }
-  ],
-  "0ZlNtf": [
-    {
-      "type": 0,
-      "value": "重試後成功"
     }
   ],
   "0i/6TR": [
@@ -413,63 +443,10 @@
       "value": "將參數引數轉換為浮點數"
     }
   ],
-  "1R6Vaa": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "沒有任何相符項目。"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " 個相符項目。"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
   "1REk6u": [
     {
       "type": 0,
       "value": "輸入有效的電子郵件。"
-    }
-  ],
-  "1TE0e8": [
-    {
-      "type": 0,
-      "value": "必要。要搜尋其索引的值。"
-    }
-  ],
-  "1VRGCF": [
-    {
-      "type": 0,
-      "value": "指定一或多個必須為 true 的運算式，才可引發觸發程序。"
-    }
-  ],
-  "1YEc9e": [
-    {
-      "type": 0,
-      "value": "輸入有效的條件。"
-    }
-  ],
-  "1ZDLZA": [
-    {
-      "type": 0,
-      "value": "深入了解"
     }
   ],
   "1ZSzl6": [
@@ -696,12 +673,6 @@
       "value": "正在載入連線..."
     }
   ],
-  "30njcn": [
-    {
-      "type": 0,
-      "value": "建立連線"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -834,12 +805,6 @@
       "value": " 結尾。"
     }
   ],
-  "3kI7xF": [
-    {
-      "type": 0,
-      "value": "已故障"
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -868,6 +833,18 @@
     {
       "type": 0,
       "value": "3"
+    }
+  ],
+  "3z6rhG": [
+    {
+      "type": 0,
+      "value": "Required. This value is the next integer after the highest integer that can be returned."
+    }
+  ],
+  "41eMpW": [
+    {
+      "type": 0,
+      "value": "Waiting"
     }
   ],
   "43xObP": [
@@ -996,16 +973,16 @@
       "value": "(UTC+08:45) 尤克拉"
     }
   ],
+  "53MgCQ": [
+    {
+      "type": 0,
+      "value": "Open panel"
+    }
+  ],
   "595Baw": [
     {
       "type": 0,
       "value": "(UTC+09:00) 大阪，北海道，東京"
-    }
-  ],
-  "5J7j9k": [
-    {
-      "type": 0,
-      "value": "必要。要評估的 XPath 運算式。"
     }
   ],
   "5OvGgn": [
@@ -1058,6 +1035,12 @@
       "value": "日"
     }
   ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "在部署範本產生期間，Logic Apps 中使用的參數將會轉換成 Azure Resource Manager 範本。"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1106,6 +1089,12 @@
       "value": "必要。要檢查其是否大於比較值的物件。"
     }
   ],
+  "63CC7M": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1116,6 +1105,12 @@
     {
       "type": 0,
       "value": "取消"
+    }
+  ],
+  "6ZviI7": [
+    {
+      "type": 0,
+      "value": "Select connection reference"
     }
   ],
   "6fDYzG": [
@@ -1174,16 +1169,34 @@
       "value": "必要。要乘以被乘數 2 的數字。"
     }
   ],
+  "6u6CS+": [
+    {
+      "type": 0,
+      "value": "Required. The value for which to find the index."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
       "value": "開始時間"
     }
   ],
+  "6xRvni": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "更新來源結構描述"
+    }
+  ],
+  "78Vggn": [
+    {
+      "type": 0,
+      "value": "Enter username"
     }
   ],
   "7EZ2oY": [
@@ -1284,6 +1297,20 @@
       "value": "複製 URL"
     }
   ],
+  "7zsUT3": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "7zzPsK": [
     {
       "type": 0,
@@ -1312,12 +1339,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "89FJnl": [
-    {
-      "type": 0,
-      "value": "驗證類型 {1} 的屬性 {0} 無效。"
     }
   ],
   "8BoVtZ": [
@@ -1428,12 +1449,6 @@
     {
       "type": 0,
       "value": "在非同步模式下，若遠端伺服器指出已接受該要求進行處理，且回應為 202 (已接受)，Logic Apps 引擎會繼續輪詢回應位置標頭中所指定的 URL，直到達到終止狀態為止。"
-    }
-  ],
-  "8luJ2j": [
-    {
-      "type": 0,
-      "value": "選取連線參考"
     }
   ],
   "8mDG0V": [
@@ -1559,7 +1574,7 @@
   "9W3giy": [
     {
       "type": 0,
-      "value": "In-Development"
+      "value": "開發中"
     }
   ],
   "9YGcT2": [
@@ -1767,6 +1782,12 @@
       "value": "清除自訂值"
     }
   ],
+  "BFTwRN": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -1783,6 +1804,12 @@
     {
       "type": 0,
       "value": "開始時間"
+    }
+  ],
+  "BPYdTX": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "BQCPY7": [
@@ -1821,6 +1848,12 @@
       "value": "自動解壓縮"
     }
   ],
+  "Bewmet": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
   "Bl4Iv0": [
     {
       "type": 0,
@@ -1849,6 +1882,12 @@
     {
       "type": 0,
       "value": "選取受控身分識別"
+    }
+  ],
+  "BrvZNn": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions that must be true for the trigger to fire."
     }
   ],
   "BtL7UI": [
@@ -1887,10 +1926,38 @@
       "value": "需要連線"
     }
   ],
+  "CPm+OG": [
+    {
+      "type": 0,
+      "value": "Create connection"
+    }
+  ],
   "CaajcD": [
     {
       "type": 0,
       "value": "(UTC+13:00) 薩摩亞"
+    }
+  ],
+  "CafOCn": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "Cb6IEq": [
@@ -1915,6 +1982,12 @@
     {
       "type": 0,
       "value": "輸出"
+    }
+  ],
+  "Cj3/LJ": [
+    {
+      "type": 0,
+      "value": "Must provide the parameter name."
     }
   ],
   "ClZW2r": [
@@ -2019,6 +2092,12 @@
     {
       "type": 0,
       "value": "選取值"
+    }
+  ],
+  "DMuwuJ": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "DQV7aK": [
@@ -2145,6 +2224,12 @@
       "value": "將參數轉換為十進位數字"
     }
   ],
+  "EKtYQF": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2239,12 +2324,6 @@
       "value": "請選取 [是] 或 [否]"
     }
   ],
-  "Ex4U46": [
-    {
-      "type": 0,
-      "value": "使用叫用者的連線"
-    }
-  ],
   "ExaACE": [
     {
       "type": 0,
@@ -2281,12 +2360,6 @@
       "value": "安全輸出"
     }
   ],
-  "FGS2fS": [
-    {
-      "type": 0,
-      "value": "已失敗"
-    }
-  ],
   "FIL1Nt": [
     {
       "type": 0,
@@ -2311,22 +2384,10 @@
       "value": "傳回起始索引和結束索引所定義之字串的區段"
     }
   ],
-  "FNbA9+": [
+  "FOiBk/": [
     {
       "type": 0,
-      "value": "展開"
-    }
-  ],
-  "FS+/Tb": [
-    {
-      "type": 0,
-      "value": "傳回 multipart 觸發程序輸出中一部分的本文"
-    }
-  ],
-  "FS06y3": [
-    {
-      "type": 0,
-      "value": "必須提供參數的名稱。"
+      "value": "Errors"
     }
   ],
   "FT3jt6": [
@@ -2404,6 +2465,12 @@
       "value": "(UTC+02:00) 的黎波里"
     }
   ],
+  "G+XvKn": [
+    {
+      "type": 0,
+      "value": "Returns a string with each item of an array joined by a delimiter"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -2420,12 +2487,6 @@
     {
       "type": 0,
       "value": "傳回 URI 的查詢"
-    }
-  ],
-  "GCjJnP": [
-    {
-      "type": 0,
-      "value": "請輸入有效的 JSON。"
     }
   ],
   "GD3m4X": [
@@ -2462,12 +2523,6 @@
     {
       "type": 0,
       "value": "必要。要在 Within 集合中尋找的物件。"
-    }
-  ],
-  "GMkbFM": [
-    {
-      "type": 0,
-      "value": "觸發條件"
     }
   ],
   "GXXLuT": [
@@ -2600,6 +2655,12 @@
       "value": "月"
     }
   ],
+  "HMiE+4": [
+    {
+      "type": 0,
+      "value": "Exit full screen"
+    }
+  ],
   "HOchry": [
     {
       "type": 0,
@@ -2698,6 +2759,12 @@
       "value": "不支援在驗證中的屬性使用動態內容。"
     }
   ],
+  "I3mifR": [
+    {
+      "type": 0,
+      "value": "Is skipped"
+    }
+  ],
   "I41vZ/": [
     {
       "type": 0,
@@ -2756,6 +2823,12 @@
       "value": "(UTC-12:00) 國際換日線以西"
     }
   ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "建立、管理 Logic Apps 參數，並設定預設值。"
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
@@ -2788,12 +2861,6 @@
     {
       "type": 0,
       "value": "執行 API {parameters} 時發生錯誤。"
-    }
-  ],
-  "Io48jC": [
-    {
-      "type": 0,
-      "value": "{1} 驗證類型的 {0} 屬性無效。"
     }
   ],
   "IooQu1": [
@@ -2844,6 +2911,12 @@
     {
       "type": 0,
       "value": "。"
+    }
+  ],
+  "J62n9E": [
+    {
+      "type": 0,
+      "value": "Failed"
     }
   ],
   "J9wWry": [
@@ -2932,12 +3005,6 @@
     {
       "type": 0,
       "value": "名稱:"
-    }
-  ],
-  "Jpox7O": [
-    {
-      "type": 0,
-      "value": "啟用時，此動作會從 Dataverse 觸發程序中的 [執行身分] 設定與使用者一起執行。"
     }
   ],
   "Jq2Y/o": [
@@ -3029,6 +3096,12 @@
       "value": "(UTC+02:00) 貝魯特"
     }
   ],
+  "KnjcUV": [
+    {
+      "type": 0,
+      "value": "Ignored"
+    }
+  ],
   "KwGA+K": [
     {
       "type": 0,
@@ -3101,6 +3174,12 @@
       "value": "傳回 URI 的配置"
     }
   ],
+  "LTTgWN": [
+    {
+      "type": 0,
+      "value": "Required. The collection from which to take the first object."
+    }
+  ],
   "LV/BTE": [
     {
       "type": 0,
@@ -3131,12 +3210,6 @@
       "value": "新增"
     }
   ],
-  "Li6x/B": [
-    {
-      "type": 0,
-      "value": "驗證類型 {0} 遺漏必要屬性 {1}"
-    }
-  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -3165,6 +3238,12 @@
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "LtbkS7": [
+    {
+      "type": 0,
+      "value": "Returns the start of the day for the passed-in string timestamp."
     }
   ],
   "Lub7NN": [
@@ -3221,12 +3300,6 @@
       "value": "選擇性。您希望從此範圍內之最上層動作輸入及輸出的範圍動作名稱。"
     }
   ],
-  "M9mzP6": [
-    {
-      "type": 0,
-      "value": "必要。要加到被加數 2 的數字。"
-    }
-  ],
   "MCQODe": [
     {
       "type": 0,
@@ -3245,6 +3318,12 @@
       "value": "必要。要評估的集合。物件必須位於所有傳入的集合內，才會出現於結果中。"
     }
   ],
+  "MIX4f9": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "MKTdNk": [
     {
       "type": 0,
@@ -3255,6 +3334,12 @@
     {
       "type": 0,
       "value": "受控識別"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "必要項。包含開始時間的字串。"
     }
   ],
   "MOsuw2": [
@@ -3335,6 +3420,12 @@
       "value": "插入函數"
     }
   ],
+  "MsCHhQ": [
+    {
+      "type": 0,
+      "value": "Timed Out"
+    }
+  ],
   "N0pS6Y": [
     {
       "type": 0,
@@ -3389,6 +3480,12 @@
       "value": "輸入唯一屬性名稱"
     }
   ],
+  "Nh91qA": [
+    {
+      "type": 0,
+      "value": "Returns the value of the specified variable."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -3431,6 +3528,12 @@
       "value": "星期二"
     }
   ],
+  "O+3Y9f": [
+    {
+      "type": 0,
+      "value": "Has failed"
+    }
+  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3441,6 +3544,12 @@
     {
       "type": 0,
       "value": "服務主體"
+    }
+  ],
+  "O1tedM": [
+    {
+      "type": 0,
+      "value": "No errors found."
     }
   ],
   "O27gKq": [
@@ -3471,12 +3580,6 @@
     {
       "type": 0,
       "value": "作業選項:"
-    }
-  ],
-  "OH94j3": [
-    {
-      "type": 0,
-      "value": "驗證類型 {0} 遺漏必要屬性 {1}"
     }
   ],
   "OH9xlX": [
@@ -3548,7 +3651,7 @@
   "Oep6va": [
     {
       "type": 0,
-      "value": "Submit"
+      "value": "提交"
     }
   ],
   "OgJ9eG": [
@@ -3599,6 +3702,28 @@
       "value": "選取受控身分識別"
     }
   ],
+  "Os0h2Y": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "P+7G62": [
     {
       "type": 0,
@@ -3635,6 +3760,12 @@
       "value": "預設值"
     }
   ],
+  "P3Zpc4": [
+    {
+      "type": 0,
+      "value": "Custom Tracking Id"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -3645,30 +3776,6 @@
     {
       "type": 0,
       "value": "輸入"
-    }
-  ],
-  "P8ZBF9": [
-    {
-      "type": 0,
-      "value": "必要。要從中取出第一個物件的集合。"
-    }
-  ],
-  "PE1tsI": [
-    {
-      "type": 0,
-      "value": "沒有輸出"
-    }
-  ],
-  "PF87Ew": [
-    {
-      "type": 0,
-      "value": "已成功"
-    }
-  ],
-  "PKMkb/": [
-    {
-      "type": 0,
-      "value": "必要。要加到被加數 1 的數字。"
     }
   ],
   "PNk3n4": [
@@ -3727,10 +3834,10 @@
       "value": "結構描述 URI"
     }
   ],
-  "PaPPLr": [
+  "Peg6ZT": [
     {
       "type": 0,
-      "value": "已中止"
+      "value": "Setting errors"
     }
   ],
   "PfCJlN": [
@@ -3755,6 +3862,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 開羅"
+    }
+  ],
+  "PsmHyH": [
+    {
+      "type": 0,
+      "value": "Connection errors"
     }
   ],
   "PtqSHp": [
@@ -3784,7 +3897,17 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "關閉"
+    }
+  ],
+  "PytMJ0": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "Q+ZZHI": [
@@ -3839,6 +3962,28 @@
       "value": "狀態碼"
     }
   ],
+  "QKWoVr": [
+    {
+      "type": 0,
+      "value": "Missing required property '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "QZBPUx": [
     {
       "type": 0,
@@ -3863,28 +4008,10 @@
       "value": "鉛筆圖示"
     }
   ],
-  "QeE0k/": [
+  "QdhS3y": [
     {
       "type": 0,
-      "value": "必要。轉換成二進位的值。"
-    }
-  ],
-  "QePi+D": [
-    {
-      "type": 0,
-      "value": "資料類型"
-    }
-  ],
-  "QiVbKW": [
-    {
-      "type": 0,
-      "value": "結束全螢幕"
-    }
-  ],
-  "QknZQ1": [
-    {
-      "type": 0,
-      "value": "正在載入..."
+      "value": "Workflow Parameters"
     }
   ],
   "Qn8qxn": [
@@ -3933,10 +4060,22 @@
       "value": "(UTC+12:00) 國際標準時間+12"
     }
   ],
+  "R7X0wG": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
       "value": "名稱"
+    }
+  ],
+  "RJ3DuE": [
+    {
+      "type": 0,
+      "value": "Preview"
     }
   ],
   "RJes1w": [
@@ -4014,6 +4153,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "Rs7j3V": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that must be true."
     }
   ],
   "RvpHdu": [
@@ -4140,52 +4285,16 @@
       "value": "測試"
     }
   ],
-  "T0BFpC": [
-    {
-      "type": 0,
-      "value": "為執行設定追蹤識別碼。若為分割，此追蹤識別碼適用於起始要求。"
-    }
-  ],
   "T6VIym": [
     {
       "type": 0,
       "value": "名稱"
     }
   ],
-  "T7Xwii": [
-    {
-      "type": 0,
-      "value": "間隔"
-    }
-  ],
-  "T7zcR6": [
-    {
-      "type": 0,
-      "value": "必要。必須為 true 的運算式。"
-    }
-  ],
-  "T8Xqt9": [
-    {
-      "type": 0,
-      "value": "失敗"
-    }
-  ],
   "TEN+cR": [
     {
       "type": 0,
       "value": "提供意見反應"
-    }
-  ],
-  "TI44R1": [
-    {
-      "type": 0,
-      "value": "傳回其每個陣列項目皆以分隔符號聯結的字串"
-    }
-  ],
-  "TLHUMf": [
-    {
-      "type": 0,
-      "value": "載入輸入時發生錯誤"
     }
   ],
   "TNEttQ": [
@@ -4284,10 +4393,22 @@
       "value": "(UTC+02:00) 卡里寧格勒"
     }
   ],
+  "Tla33B": [
+    {
+      "type": 0,
+      "value": "Required. The value for which to find the index."
+    }
+  ],
   "Tmr/9e": [
     {
       "type": 0,
       "value": "參數無效"
+    }
+  ],
+  "To3RNy": [
+    {
+      "type": 0,
+      "value": "Workflow parameter errors"
     }
   ],
   "Ts5Pzr": [
@@ -4444,6 +4565,12 @@
       "value": "' 有未終止的連線鏈結"
     }
   ],
+  "Ug4sWZ": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "Umpr3z": [
     {
       "type": 0,
@@ -4468,6 +4595,28 @@
     {
       "type": 0,
       "value": "來源結構描述"
+    }
+  ],
+  "UnytRl": [
+    {
+      "type": 0,
+      "value": "The type for '"
+    },
+    {
+      "type": 1,
+      "value": "authenticationKey"
+    },
+    {
+      "type": 0,
+      "value": "' is '"
+    },
+    {
+      "type": 1,
+      "value": "propertyType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ur+wph": [
@@ -4504,6 +4653,12 @@
     {
       "type": 0,
       "value": "週"
+    }
+  ],
+  "V8A+1J": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "VA7M1u": [
@@ -4627,7 +4782,7 @@
   "Vqs8hE": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "動作"
     }
   ],
   "W070M2": [
@@ -4951,7 +5106,7 @@
   "Y5XAbg": [
     {
       "type": 0,
-      "value": "Select a Swagger Function App resource"
+      "value": "選取 Swagger 函數應用程式資源"
     }
   ],
   "Y9kBz5": [
@@ -4970,6 +5125,12 @@
     {
       "type": 0,
       "value": "新增子系"
+    }
+  ],
+  "YDoc9z": [
+    {
+      "type": 0,
+      "value": "Trigger conditions"
     }
   ],
   "YHsAKl": [
@@ -5250,6 +5411,12 @@
       "value": "秒"
     }
   ],
+  "aYTy7X": [
+    {
+      "type": 0,
+      "value": "Cancelled"
+    }
+  ],
   "ae7W0a": [
     {
       "type": 0,
@@ -5326,6 +5493,12 @@
       "value": "訂用帳戶"
     }
   ],
+  "bJ7DWe": [
+    {
+      "type": 0,
+      "value": "Required. The value that is converted to binary."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5342,6 +5515,12 @@
     {
       "type": 0,
       "value": "根據預設，Logic App 執行個體會同時執行或平行執行。此控制項會變更新執行排入佇列的方式，且啟用後無法變更。若要盡可能執行多個平行執行個體，請維持此控制項關閉。若要限制平行執行次數，請開啟此控制項，然後選取限制。若要連續執行，請選取 1 做為限制。"
+    }
+  ],
+  "bWOsvo": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
     }
   ],
   "bXFGpe": [
@@ -5368,48 +5547,22 @@
       "value": "重試歷程記錄"
     }
   ],
-  "bsgS8m": [
+  "bwlAWn": [
     {
       "type": 0,
-      "value": "預覽"
+      "value": "Open operation"
     }
   ],
-  "bv9QPA": [
+  "byRkj+": [
     {
       "type": 0,
-      "value": "日期"
-    }
-  ],
-  "bwfJdj": [
-    {
-      "type": 0,
-      "value": "在 "
-    },
-    {
-      "type": 1,
-      "value": "sourceNodeId"
-    },
-    {
-      "type": 0,
-      "value": " 之後執行"
-    }
-  ],
-  "bxhkTi": [
-    {
-      "type": 0,
-      "value": "提供參數以測試輸出。"
+      "value": "This operation has secure inputs or outputs enabled."
     }
   ],
   "byTBrn": [
     {
       "type": 0,
       "value": "自訂"
-    }
-  ],
-  "bzF/qn": [
-    {
-      "type": 0,
-      "value": "必要。要從中取出第一個計數物件的集合。"
     }
   ],
   "c/+j08": [
@@ -5466,12 +5619,6 @@
       "value": "(UTC+09:00) 首爾"
     }
   ],
-  "cJm+ah": [
-    {
-      "type": 0,
-      "value": "必要。要搜尋其索引的值。"
-    }
-  ],
   "cK2A/V": [
     {
       "type": 0,
@@ -5508,6 +5655,12 @@
       "value": "傳回來自動作 multipart 輸出中一部分的本文。"
     }
   ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "以時間範圍字串傳回兩個日期之間的差異"
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -5518,12 +5671,6 @@
     {
       "type": 0,
       "value": "粗體 (⌘B)"
-    }
-  ],
-  "cj+kyo": [
-    {
-      "type": 0,
-      "value": "已取消"
     }
   ],
   "cjcEOf": [
@@ -5578,6 +5725,12 @@
     {
       "type": 0,
       "value": "從傳入的陣列或字串傳回第一個元素。"
+    }
+  ],
+  "d4Ddhp": [
+    {
+      "type": 0,
+      "value": "Download (Alt or Option + select)"
     }
   ],
   "dBWIjR": [
@@ -5696,12 +5849,6 @@
       "value": "警告"
     }
   ],
-  "dxh2CJ": [
-    {
-      "type": 0,
-      "value": "逾時"
-    }
-  ],
   "e+GuGo": [
     {
       "type": 0,
@@ -5718,12 +5865,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) 托木斯克"
-    }
-  ],
-  "e4Onhn": [
-    {
-      "type": 0,
-      "value": "未指定"
     }
   ],
   "e9OvzW": [
@@ -5796,24 +5937,6 @@
     {
       "type": 0,
       "value": "已共用"
-    }
-  ],
-  "esOQ5p": [
-    {
-      "type": 0,
-      "value": "沒有值符合您的搜尋"
-    }
-  ],
-  "euC/DV": [
-    {
-      "type": 0,
-      "value": "陣列"
-    }
-  ],
-  "exo9v7": [
-    {
-      "type": 0,
-      "value": "不支援的程式設計語言。"
     }
   ],
   "f/lWTW": [
@@ -5914,10 +6037,10 @@
       "value": "(UTC+08:00) 北京，重慶，香港特別行政區，烏魯木齊"
     }
   ],
-  "ftwXvc": [
+  "g/7QyT": [
     {
       "type": 0,
-      "value": "已略過"
+      "value": "Select connection"
     }
   ],
   "g076bL": [
@@ -6056,6 +6179,12 @@
     {
       "type": 0,
       "value": "選取批次工作流程資源"
+    }
+  ],
+  "gwEKLM": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "h+W3VW": [
@@ -6255,12 +6384,6 @@
       "value": "必要。用於剖析的 URI。"
     }
   ],
-  "iRARwF": [
-    {
-      "type": 0,
-      "value": "不支援驗證類型 {0}。"
-    }
-  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -6321,6 +6444,12 @@
       "value": "程式碼檢視索引標籤"
     }
   ],
+  "ihCdw4": [
+    {
+      "type": 0,
+      "value": "Required. The number to add to Summand 2."
+    }
+  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -6337,34 +6466,16 @@
       "value": " 秒鐘"
     }
   ],
-  "isnFBi": [
+  "ixutP5": [
     {
       "type": 0,
-      "value": "未連線到目標元素的元素和對應已移除。"
-    }
-  ],
-  "ixhS47": [
-    {
-      "type": 0,
-      "value": "傳回傳入字串時間戳記的每天開始時間"
+      "value": "Enter a valid table."
     }
   ],
   "iy8rNf": [
     {
       "type": 0,
       "value": "測試"
-    }
-  ],
-  "j2MU0b": [
-    {
-      "type": 0,
-      "value": "傳回已移除屬性的物件"
-    }
-  ],
-  "j39557": [
-    {
-      "type": 0,
-      "value": "傳回指定變數的值。"
     }
   ],
   "j5z8Vd": [
@@ -6475,16 +6586,16 @@
       "value": "必要。base64 編碼的字串。"
     }
   ],
-  "k41+13": [
-    {
-      "type": 0,
-      "value": "已跳過"
-    }
-  ],
   "k5tGEr": [
     {
       "type": 0,
       "value": "是"
+    }
+  ],
+  "k8cbQ1": [
+    {
+      "type": 0,
+      "value": "Parameter errors"
     }
   ],
   "kBOAkT": [
@@ -6547,28 +6658,45 @@
       "value": "(UTC+04:00) 阿布達比，馬斯喀特"
     }
   ],
-  "kYivbS": [
-    {
-      "type": 0,
-      "value": "下載 (Alt/Option + 按一下)"
-    }
-  ],
   "kZCX7t": [
     {
       "type": 0,
       "value": "星期一"
     }
   ],
-  "klpJg1": [
+  "kcOhfh": [
     {
       "type": 0,
-      "value": "輸入使用者名稱"
+      "value": "Elements and mappings that aren't connected to a target element are removed."
     }
   ],
-  "knylNW": [
+  "klY9UN": [
     {
-      "type": 0,
-      "value": "必要。此值是接續在可傳回之最高整數後的整數。"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "kuFK3E": [
@@ -6649,22 +6777,10 @@
       "value": "傳回"
     }
   ],
-  "lUvgiW": [
-    {
-      "type": 0,
-      "value": "{0} 的類型為 {1}。"
-    }
-  ],
   "lZT0JI": [
     {
       "type": 0,
       "value": "新增群組"
-    }
-  ],
-  "lcVG4C": [
-    {
-      "type": 0,
-      "value": "已跳過"
     }
   ],
   "lexzgJ": [
@@ -6689,6 +6805,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body 的速記"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "必要項。包含結束時間的字串。"
     }
   ],
   "loxzZD": [
@@ -6805,16 +6927,16 @@
       "value": "' 上的分割類型無效，分割不在陣列中。"
     }
   ],
-  "mQotIu": [
-    {
-      "type": 0,
-      "value": "選取連線"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
       "value": "驗證類型 'ActiveDirectoryOAuth' 遺漏必要屬性 'secret' 或 'pfx' 以及 'password'。"
+    }
+  ],
+  "mZQYLv": [
+    {
+      "type": 0,
+      "value": "Required. The XPath expression to evaluate."
     }
   ],
   "mZRMD9": [
@@ -6850,7 +6972,7 @@
   "mkd0Jx": [
     {
       "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
+      "value": "提出問題或描述您要如何變更此流程"
     }
   ],
   "mvrlkP": [
@@ -6929,6 +7051,12 @@
       "value": "必要。要檢查其是否小於或等於比較值的物件。"
     }
   ],
+  "nHIeXp": [
+    {
+      "type": 0,
+      "value": "Skipped"
+    }
+  ],
   "nHseED": [
     {
       "type": 0,
@@ -6951,6 +7079,12 @@
     {
       "type": 0,
       "value": "是/否"
+    }
+  ],
+  "nPgYuI": [
+    {
+      "type": 0,
+      "value": "New parameter"
     }
   ],
   "nRpM02": [
@@ -6999,6 +7133,12 @@
     {
       "type": 0,
       "value": "將整數分鐘數新增至傳入的字串時間戳記中"
+    }
+  ],
+  "nmFupX": [
+    {
+      "type": 0,
+      "value": "Has timed out"
     }
   ],
   "no/SMg": [
@@ -7359,12 +7499,6 @@
       "value": "請檢查字串是否以值結尾 (不區分大小寫，不因文化特性而異)"
     }
   ],
-  "qPUX59": [
-    {
-      "type": 0,
-      "value": "已成功"
-    }
-  ],
   "qQoQFv": [
     {
       "type": 0,
@@ -7413,7 +7547,7 @@
   "qVgQfW": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜尋"
     }
   ],
   "qc5S69": [
@@ -7462,6 +7596,28 @@
     {
       "type": 0,
       "value": "非同步回應可讓邏輯應用程式回應 202 (已接受)，來表示已接受該要求進行處理。將會提供位置標頭來擷取最終狀態。"
+    }
+  ],
+  "qs9D+A": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "r/n6/9": [
@@ -7554,6 +7710,12 @@
       "value": "使用向左鍵及向右鍵來瀏覽命令"
     }
   ],
+  "rh5g4p": [
+    {
+      "type": 0,
+      "value": "Is successful"
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7624,6 +7786,12 @@
     {
       "type": 0,
       "value": "新增案例"
+    }
+  ],
+  "sVQe34": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
     }
   ],
   "sW47JR": [
@@ -7776,12 +7944,6 @@
     {
       "type": 0,
       "value": " 小時"
-    }
-  ],
-  "tJMHcJ": [
-    {
-      "type": 0,
-      "value": "選取連線參考"
     }
   ],
   "tLZ9Sh": [
@@ -7976,6 +8138,12 @@
       "value": "限制此動作的重試與非同步回應之間的持續時間上限。注意: 這不會改變單一要求的要求逾時。"
     }
   ],
+  "uanMWm": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -8004,6 +8172,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 格陵蘭"
+    }
+  ],
+  "ui3KuP": [
+    {
+      "type": 0,
+      "value": "Operation errors"
     }
   ],
   "ui7GCl": [
@@ -8084,6 +8258,12 @@
       "value": "傳回字串內值的最後一個索引 (不區分大小寫，不因文化特性而異)"
     }
   ],
+  "vLereV": [
+    {
+      "type": 0,
+      "value": "Required. The collection from where to take the first Count objects."
+    }
+  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -8118,12 +8298,6 @@
     {
       "type": 0,
       "value": "必要。您需要之輸出所屬動作的名稱。"
-    }
-  ],
-  "vcBAuU": [
-    {
-      "type": 0,
-      "value": "已逾時"
     }
   ],
   "vdKLiR": [
@@ -8236,12 +8410,6 @@
       "value": "包括動態內容"
     }
   ],
-  "wHYQyg": [
-    {
-      "type": 0,
-      "value": "逾時"
-    }
-  ],
   "wPlTDB": [
     {
       "type": 0,
@@ -8350,10 +8518,22 @@
       "value": "狀態碼"
     }
   ],
+  "x2JTW5": [
+    {
+      "type": 0,
+      "value": "Returns an object with the specified property removed."
+    }
+  ],
   "x3dWOL": [
     {
       "type": 0,
       "value": "(UTC+01:00) 阿姆斯特丹，柏林，伯恩，羅馬，斯德哥爾摩，維也納"
+    }
+  ],
+  "x7IYBg": [
+    {
+      "type": 0,
+      "value": "Aborted"
     }
   ],
   "x8kTAX": [
@@ -8538,6 +8718,12 @@
       "value": "選取現有的連線或建立新的連線。"
     }
   ],
+  "ypZV9w": [
+    {
+      "type": 0,
+      "value": "Returns the body for a part in a multipart output of the trigger"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
@@ -8566,6 +8752,12 @@
     {
       "type": 0,
       "value": "連線閘道"
+    }
+  ],
+  "yzqXMp": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "z/UY4k": [
@@ -8676,6 +8868,12 @@
     {
       "type": 0,
       "value": "將使用指定時間單位的整數新增至傳入的字串時間戳記"
+    }
+  ],
+  "zsPNYN": [
+    {
+      "type": 0,
+      "value": "Required. The number to add to Summand 1."
     }
   ],
   "zxe9hh": [
