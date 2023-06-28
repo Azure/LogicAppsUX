@@ -77,7 +77,6 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
 };
 
 const traverseDefinition = (operation: any, callback: (operation: any) => void) => {
-  // Need to check in `actions`, `else.actions`, `default.actions`, `Object.values(cases).actions`
   const children = {
     ...(operation?.actions ?? {}),
     ...(operation?.else?.actions ?? {}),
