@@ -16,7 +16,10 @@ export * from './card/addActionCard';
 export { ChatInput } from './chatbot/chatInputBox';
 export { ChatBubble } from './chatbot/chatBubble';
 export { ConversationMessage } from './chatbot/conversationMessage';
-export { ConversationItem, ConversationItemType } from './chatbot/conversationItem';
+export * from './chatbot/conversationItem';
+export { ProgressCardWithStopButton } from './chatbot/progressCardWithStopButton';
+export { ChatSuggestionGroup, ChatSuggestion } from './chatbot/chatSuggestion';
+export * from './chatbot/promptGuide';
 export * from './checkbox';
 // export * from './colorizer'
 export * from './code';

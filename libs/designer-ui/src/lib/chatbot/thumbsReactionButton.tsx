@@ -1,30 +1,43 @@
+import Dislike from './images/Dislike.svg';
+import DislikeFilled from './images/DislikeFilled.svg';
+import Like from './images/Like.svg';
+import LikeFilled from './images/LikeFilled.svg';
 import { getTheme, IconButton } from '@fluentui/react';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 export interface IThumbsReactionButtonProps {
   isDownvote: boolean;
-  resources?: {
-    Upvote: string;
-    Downvote: string;
-  };
   isVoted: boolean;
   onClick: () => void;
   disabled?: boolean;
 }
 
-export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isVoted, resources, onClick, isDownvote, disabled }) => {
-  const iconProps = isDownvote ? { iconName: isVoted ? 'DislikeSolid' : 'Dislike' } : { iconName: isVoted ? 'LikeSolid' : 'Like' };
+export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isVoted, onClick, isDownvote, disabled }) => {
+  const icon = isDownvote ? (isVoted ? DislikeFilled : Dislike) : isVoted ? LikeFilled : Like;
+  const intl = useIntl();
+  const intlText = {
+    upvote: intl.formatMessage({
+      defaultMessage: 'Like',
+      description: 'Chatbot user feedback like button title',
+    }),
+    downvote: intl.formatMessage({
+      defaultMessage: 'Dislike',
+      description: 'Chatbot user feedback dislike button title',
+    }),
+  };
 
   return (
     <IconButton
-      title={isDownvote ? resources?.Downvote : resources?.Upvote}
-      iconProps={iconProps}
+      title={isDownvote ? intlText.downvote : intlText.upvote}
       styles={getIconButtonStyles(isVoted)}
       onClick={onClick}
       disabled={disabled}
       toggle={true}
       checked={isVoted}
-    />
+    >
+      <img src={icon} alt={isDownvote ? intlText.downvote : intlText.upvote} />
+    </IconButton>
   );
 };
 

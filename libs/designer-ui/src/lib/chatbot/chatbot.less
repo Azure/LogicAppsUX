@@ -28,6 +28,11 @@
 .msla-bubble-footer {
   padding-top: 12px;
   gap: 4px;
+  flex-direction: column;
+}
+
+.msla-chat-bubble-footer {
+  display: flex;
 }
 
 .msla-bubble-footer-actions {
@@ -37,16 +42,11 @@
 }
 
 .msla-bubble-footer-disclaimer {
-  font-size: 12px;
+  font-size: 10px;
   color: #707070;
   height: 32px;
   display: flex;
   justify-content: center;
-  align-items: center;
-}
-
-.msla-bubble-footer {
-  display: flex;
   align-items: center;
 }
 
@@ -60,4 +60,304 @@
 .msla-bubble-reactions {
   flex-grow: 2;
   text-align: right;
+}
+
+.msla-assistant-error-container {
+  border: 1px solid rgb(237, 235, 233);
+  border-radius: 10px;
+  background: rgb(250, 249, 248);
+  padding: 12px;
+  margin-top: 12px;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.msla-assistant-error-session-id-container {
+  flex: 1 1 auto;
+}
+
+.msla-assistant-error-session-id {
+  margin-right: 5px;
+  font-weight: 600;
+}
+
+.msla-connections-message {
+  padding-bottom: 8px;
+}
+
+.msla-connections-bubble {
+  &.is-hidden {
+    display: none;
+  }
+}
+
+.msla-connection-status-root {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  padding-left: 8px;
+}
+
+.msla-connection-status {
+  display: flex;
+  align-items: center;
+}
+
+.msla-connection-status-text {
+  display: flex;
+  flex-direction: horizontal;
+  gap: 4;
+  flex-wrap: wrap;
+}
+
+.msla-connection-status-bold-text {
+  font-weight: 600;
+  padding-left: 5px;
+}
+
+.msla-connection-status-spinner {
+  padding-right: 8px;
+}
+
+.msla-connection-status-icon {
+  padding-right: 8px;
+  color: red;
+
+  &.is-connected {
+    color: green;
+  }
+}
+
+.msla-prompt-guide-card-container {
+  background-color: @ms-color-black;
+  border: 1px solid @ms-color-themePrimary;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  padding: 8px 12px 8px 12px;
+  margin-bottom: 16px;
+
+  &.is-dark-mode {
+    background-color: @ms-color-white;
+  }
+}
+
+.msla-prompt-guide-card-header {
+  display: flex;
+  flex-direction: row;
+  column-gap: 8px;
+  align-items: center;
+  font-weight: 600;
+
+  .ms-Icon {
+    color: @ms-color-themePrimary;
+  }
+}
+
+.msla-prompt-guide-card-description {
+  color: @ms-color-neutralQuaternaryAlt;
+  font-size: 12px;
+
+  &.is-dark-mode {
+    background-color: @ms-color-neutralQuaternary;
+  }
+}
+
+.msla-flow-diff-preview-description {
+  margin-bottom: 8px;
+}
+
+.msla-flow-diff-preview-operation-list {
+  width: 100%;
+  list-style: none;
+  padding: 0px;
+}
+
+.msla-flowpreview-root {
+  display: flex;
+  flex-direction: column;
+}
+
+.msla-flowpreview-title {
+  padding: 0px;
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+
+  &.is-action {
+    margin-top: 16px;
+  }
+}
+
+.msla-flowpreview-title-icon {
+  margin-right: 8px;
+  vertical-align: -0.15em;
+  color: @ms-color-themePrimary;
+}
+
+.msla-flowpreview-description {
+  padding: 0px;
+  margin: 0 0 12px;
+  color: @ms-color-neutralTertiaryAlt;
+  font-size: 14px;
+}
+
+.msla-flowpreview-operation {
+  display: flex;
+  width: auto;
+  padding: 7px 10px;
+  margin-bottom: 12px;
+  border: 1px solid @ms-color-neutralTertiary;
+  border-left-width: 4px;
+  border-radius: 4px;
+  align-items: center;
+  font-size: 14px;
+  background: @ms-color-black;
+  box-shadow: rgba(0, 0, 0, 0.133) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px 0px;
+
+  &.is-button {
+    cursor: pointer;
+
+    :hover {
+      background: @ms-color-neutralPrimaryAlt;
+    }
+
+    :active {
+      background: @ms-color-neutralPrimary;
+    }
+  }
+
+  &.is-disabled {
+    background: @ms-color-bodyText;
+    color: @ms-color-neutralLight;
+    border-left-color: @ms-color-neutralLight;
+
+    .msla-flowpreview-operation-connection .ms-Icon {
+      color: @ms-color-neutralLight;
+    }
+
+    .msla-api-icon-icon {
+      filter: grayscale(80%);
+    }
+  }
+}
+
+.msla-flowpreview-operation-icon {
+  margin-right: 10px;
+}
+
+.msla-flowpreview-operation-label {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 2;
+  font-size: 12px;
+}
+
+.msla-flowpreview-operation-name {
+  flex: 1 1 auto;
+  font-weight: 600;
+}
+
+.msla-flowpreview-operation-connection {
+  flex: 1 1 auto;
+  color: @ms-color-neutralQuaternaryAlt;
+}
+
+.msla-flowpreview-operation-statusicon {
+  padding-right: 4px;
+}
+
+.msla-flowpreview-arrowdown {
+  margin-top: 12px;
+  font-size: 16px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.msla-flowpreview-blockcontainer {
+  width: 100%;
+}
+
+.msla-flowpreview-blocksubactionscontainer {
+  padding-left: 14px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 16px;
+  width: 100%;
+}
+
+.msla-flowpreview-blocksubactions {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-basis: 250;
+  flex-grow: 1;
+}
+
+.msla-flowpreview-blockinvisiblesubactions {
+  background-color: transparent;
+  flex-basis: 250;
+  flex-grow: 1;
+  height: 0px;
+  width: 250px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.msla-flowpreview-blocksubactions-label {
+  padding: 0px;
+  padding-left: 4px;
+  margin: -6px 0px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+  color: @ms-color-neutralQuaternaryAlt;
+}
+
+.msla-flowpreview-blocksubactions-icon {
+  margin-right: 8px;
+  vertical-align: -0.15em;
+  font-size: 14px;
+}
+
+.msla-operationsneedattention-description {
+  margin-bottom: 8px;
+}
+
+.msla-operationsneedattention-list {
+  width: 100%;
+  list-style: none;
+  padding: 0px;
+}
+
+.msla-operationsfixedstatus-root {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  padding-left: 8px;
+  padding-top: 4px;
+}
+
+.msla-operationsfixedstatus-status {
+  display: flex;
+  align-items: center;
+}
+
+.msla-operationsfixedstatus-text {
+  display: flex;
+  white-space: pre-wrap;
+  flex-wrap: wrap;
+}
+
+.msla-operationsfixedstatus-icon {
+  padding-right: 8;
+  color: green;
 }
