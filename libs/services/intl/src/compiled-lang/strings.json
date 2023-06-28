@@ -263,6 +263,12 @@
       "value": "Save"
     }
   ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "Secure inputs or outputs enabled."
+    }
+  ],
   "0FzNJV": [
     {
       "type": 0,
@@ -1295,6 +1301,20 @@
       "value": "Copy URL"
     }
   ],
+  "7zsUT3": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "7zzPsK": [
     {
       "type": 0,
@@ -1323,12 +1343,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "89FJnl": [
-    {
-      "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
     }
   ],
   "8BoVtZ": [
@@ -1937,6 +1951,28 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "CafOCn": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "Cb6IEq": [
@@ -2857,12 +2893,6 @@
       "value": "'."
     }
   ],
-  "Io48jC": [
-    {
-      "type": 0,
-      "value": "The {0} properties are invalid for the {1} authentication type."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3219,12 +3249,6 @@
     {
       "type": 0,
       "value": "Add new"
-    }
-  ],
-  "Li6x/B": [
-    {
-      "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
     }
   ],
   "LlYz9c": [
@@ -3599,12 +3623,6 @@
       "value": "Operation options:"
     }
   ],
-  "OH94j3": [
-    {
-      "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
-    }
-  ],
   "OH9xlX": [
     {
       "type": 0,
@@ -3723,6 +3741,28 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "Os0h2Y": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -3957,6 +3997,28 @@
     {
       "type": 0,
       "value": "Status code"
+    }
+  ],
+  "QKWoVr": [
+    {
+      "type": 0,
+      "value": "Missing required property '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -4577,6 +4639,28 @@
     {
       "type": 0,
       "value": "Source schema"
+    }
+  ],
+  "UnytRl": [
+    {
+      "type": 0,
+      "value": "The type for '"
+    },
+    {
+      "type": 1,
+      "value": "authenticationKey"
+    },
+    {
+      "type": 0,
+      "value": "' is '"
+    },
+    {
+      "type": 1,
+      "value": "propertyType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ur+wph": [
@@ -5505,6 +5589,12 @@
       "value": "Open operation"
     }
   ],
+  "byRkj+": [
+    {
+      "type": 0,
+      "value": "This operation has secure inputs or outputs enabled."
+    }
+  ],
   "byTBrn": [
     {
       "type": 0,
@@ -6341,12 +6431,6 @@
       "value": "Required. The URI to parse."
     }
   ],
-  "iRARwF": [
-    {
-      "type": 0,
-      "value": "Unsupported authentication type {0}."
-    }
-  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -6749,12 +6833,6 @@
     {
       "type": 0,
       "value": "Return"
-    }
-  ],
-  "lUvgiW": [
-    {
-      "type": 0,
-      "value": "The type for {0} is {1}."
     }
   ],
   "lZT0JI": [
@@ -7595,6 +7673,28 @@
     {
       "type": 0,
       "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+    }
+  ],
+  "qs9D+A": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "r/n6/9": [

@@ -15,6 +15,8 @@ describe('lib/card', () => {
       draggable: false,
       id: 'id',
       title: 'title',
+      isSecureInputsOutputs: false,
+      runData: undefined,
     };
   });
 
