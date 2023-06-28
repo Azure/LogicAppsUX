@@ -9,6 +9,7 @@ import {
   dotNetSDKLatestVersion,
   dotNetSDKMajorVersion,
   dotNetSDKVersionSetting,
+  versionRegex,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
@@ -115,7 +116,6 @@ export async function getNewestDotNetSDKVersion(
 ): Promise<string | undefined> {
   let version: string | null;
   let match: RegExpMatchArray | null;
-  const versionRegex = /\b\d+\.\d+\.\d+\b/g;
 
   try {
     switch (packageManager) {
