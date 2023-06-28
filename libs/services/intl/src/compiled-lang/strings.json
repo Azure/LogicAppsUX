@@ -3785,6 +3785,12 @@
       "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
     }
   ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Save this workflow"
+    }
+  ],
   "OdNhwc": [
     {
       "type": 0,
@@ -8245,6 +8251,12 @@
       "value": "Type"
     }
   ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Test this workflow"
+    }
+  ],
   "tUCptx": [
     {
       "type": 0,
@@ -9131,6 +9143,12 @@
     {
       "type": 0,
       "value": "Converts a string, with optionally a locale and a format to a date"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Stop"
     }
   ],
   "ziXw25": [

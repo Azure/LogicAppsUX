@@ -1,10 +1,10 @@
-import { Confirm } from '../dialogs/confirm';
+import { Confirm } from '../../dialogs/confirm';
 import { ChatBubble } from './chatBubble';
 import { UndoStatus, type AssistantReplyWithFlowItem } from './conversationItem';
 import { FeedbackMessage } from './feedbackMessage';
-import { FlowDiffPreview } from './flowDiffPreview';
 import React from 'react';
 import { useIntl } from 'react-intl';
+import { FlowDiffPreview } from './flowDiffPreview';
 
 type AssistantReplyWithFlowProps = {
   item: AssistantReplyWithFlowItem;

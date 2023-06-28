@@ -1,7 +1,7 @@
-import Dislike from './images/Dislike.svg';
-import DislikeFilled from './images/DislikeFilled.svg';
-import Like from './images/Like.svg';
-import LikeFilled from './images/LikeFilled.svg';
+import Dislike from '../images/Dislike.svg';
+import DislikeFilled from '../images/DislikeFilled.svg';
+import Like from '../images/Like.svg';
+import LikeFilled from '../images/LikeFilled.svg';
 import { getTheme, IconButton } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';

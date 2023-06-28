@@ -1,4 +1,4 @@
-import type { OperationInfo } from './flowDiffPreview';
+import type { OperationInfo } from "./flowDiffPreview";
 
 export enum FlowOrigin {
   FromNL2Flow = 'fromNL2Flow',
@@ -63,12 +63,12 @@ export type AssistantGreetingItem = BaseConversationItem & {
 
 export type AssistantErrorItem = BaseConversationItem & {
   type: ConversationItemType.ReplyError;
-  error: unknown;
+  error: any;
   reaction: ChatEntryReaction | undefined;
   askFeedback: boolean;
   chatSessionId: string;
-  __rawRequest: unknown;
-  __rawResponse: unknown;
+  __rawRequest: any;
+  __rawResponse: any;
 };
 
 export type AssistantReplyItem = BaseConversationItem & {
@@ -78,8 +78,8 @@ export type AssistantReplyItem = BaseConversationItem & {
   askFeedback: boolean;
   isMarkdownText: boolean;
   correlationId?: string;
-  __rawRequest: unknown;
-  __rawResponse: unknown;
+  __rawRequest: any;
+  __rawResponse: any;
 };
 
 export type ConnectionsSetupItem = BaseConversationItem & {
@@ -100,8 +100,8 @@ export type AssistantReplyWithFlowItem = BaseConversationItem & {
   askFeedback: boolean;
   undoStatus: UndoStatus;
   correlationId?: string;
-  __rawRequest: unknown;
-  __rawResponse: unknown;
+  __rawRequest: any;
+  __rawResponse: any;
 };
 
 export enum UndoStatus {

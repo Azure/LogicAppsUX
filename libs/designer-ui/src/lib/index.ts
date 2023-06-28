@@ -13,13 +13,7 @@ export * from './card/types';
 export * from './card/hooks';
 export * from './card/images/dynamicsvgs/trafficlightsvgs';
 export * from './card/addActionCard';
-export { ChatInput } from './chatbot/chatInputBox';
-export { ChatBubble } from './chatbot/chatBubble';
-export { ConversationMessage } from './chatbot/conversationMessage';
-export * from './chatbot/conversationItem';
-export { ProgressCardWithStopButton } from './chatbot/progressCardWithStopButton';
-export { ChatSuggestionGroup, ChatSuggestion } from './chatbot/chatSuggestion';
-export * from './chatbot/promptGuide';
+export * from './chatbot/index';
 export * from './checkbox';
 // export * from './colorizer'
 export * from './code';

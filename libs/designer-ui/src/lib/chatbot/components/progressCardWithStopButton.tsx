@@ -1,12 +1,13 @@
 import { animations } from './animations';
 import type { IContainerWithProgressBarStyles } from './containerWithProgressBar';
 import { ContainerWithProgressBar } from './containerWithProgressBar';
-import StopGenerating from './images/StopGenerating.svg';
+import StopGenerating from '../images/StopGenerating.svg';
 import type { IStyle } from '@fluentui/react';
 import { getTheme, keyframes, mergeStyleSets } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 export type ProgressCardWithStopButtonProps = {
   progressState: string;
@@ -23,6 +24,13 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
   styles,
   dataAutomationId,
 }) => {
+  const intl = useIntl();
+  const intlText = {
+    stopButtonAltText: intl.formatMessage({
+      defaultMessage: 'Stop',
+      description: 'Chatbot stop generating flow button alt text'
+    })
+  }
   const classNames = mergeStyleSets(getStyles(), styles);
   return (
     <div className={animations.progressCardEnter}>
@@ -31,7 +39,7 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
       </ContainerWithProgressBar>
       {onStopButtonClick && stopButtonLabel && (
         <div className={classNames.stopContainer}>
-          <img src={StopGenerating} alt={'Stop'} />
+          <img src={StopGenerating} alt={intlText.stopButtonAltText} />
           <ActionButton
             text={stopButtonLabel}
             iconProps={{ styles: { root: { paddingBottom: 3 } } }}

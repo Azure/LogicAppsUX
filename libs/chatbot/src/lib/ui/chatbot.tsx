@@ -125,6 +125,16 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
         description: 'Chatbot query start of sentence for editing the workflow that the user can should complete.',
       }),
     },
+    chatSuggestion: {
+      saveButton: intl.formatMessage({
+        defaultMessage: 'Save this workflow',
+        description: 'Chatbot suggestion button to save workflow',
+      }),
+      testButton: intl.formatMessage({
+        defaultMessage: 'Test this workflow',
+        description: 'Chatbot suggestion button to test this workflow',
+      }),
+    },
   };
 
   const onSubmitInputQuery = useCallback(() => {
@@ -253,14 +263,14 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
           <ChatSuggestionGroup>
             {canSaveCurrentFlow && (
               <ChatSuggestion
-                text={'Save'}
+                text={intlText.chatSuggestion.saveButton}
                 iconName={'Save'}
                 onClick={() => saveCurrentFlow(false) /*TODO: add method to save workflow*/}
               />
             )}
             {canTestCurrentFlow && (
               <ChatSuggestion
-                text={'Test this flow'}
+                text={intlText.chatSuggestion.testButton}
                 iconName={'TestBeaker'}
                 onClick={() => testCurrentFlow(false) /*TODO: add method to test workflow*/}
               />
