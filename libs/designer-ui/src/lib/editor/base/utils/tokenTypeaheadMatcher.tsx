@@ -1,8 +1,8 @@
-import type { QueryMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin';
+import type { MenuTextMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import type { LexicalEditor } from 'lexical';
 import { useCallback } from 'react';
 
-export type TriggerFn = (text: string, editor: LexicalEditor) => QueryMatch | null;
+export type TriggerFn = (text: string, editor: LexicalEditor) => MenuTextMatch | null;
 export const PUNCTUATION = '\\.,\\+\\*\\?\\$\\@\\|#{}\\(\\)\\^\\-\\[\\]\\\\/!%\'"~=<>_:;';
 export function useTokenTypeaheadTriggerMatch(
   trigger: string,
