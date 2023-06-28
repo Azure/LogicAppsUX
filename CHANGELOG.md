@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [2.38.0](https://github.com/Azure/LogicAppsUX/compare/v2.37.0...v2.38.0) (2023-06-28)
+
+
+### Bug Fixes
+
+* **designer:** Dictionary Editor - object support & Authentication Editor - support for collapsed editor ([#2854](https://github.com/Azure/LogicAppsUX/issues/2854)) ([a2fd568](https://github.com/Azure/LogicAppsUX/commit/a2fd5680a3469762691bc30a0ca04ddd156dbff3))
+* **designer:** Disable selection of invalid connections for selectConnectionsTab ([#2816](https://github.com/Azure/LogicAppsUX/issues/2816)) ([2e76692](https://github.com/Azure/LogicAppsUX/commit/2e76692c45c7c5919a0176843d95e37a97d4e2ce))
+* **designer:** Show lock icon for actions with secure inputs/outputs ([#2866](https://github.com/Azure/LogicAppsUX/issues/2866)) ([66c3899](https://github.com/Azure/LogicAppsUX/commit/66c38994c69f348ddda30dea9ad2b3e7aec5db01))
+* **designer:** Update Lexical to fix componentGovernance security vulnerabilities ([#2868](https://github.com/Azure/LogicAppsUX/issues/2868)) ([dac86a9](https://github.com/Azure/LogicAppsUX/commit/dac86a93dff54f8b39275aee2f906783da7a7235))
 
 ## [2.37.0](https://github.com/Azure/LogicAppsUX/compare/v2.36.0...v2.37.0) (2023-06-27)
 
