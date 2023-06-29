@@ -112,6 +112,7 @@ const DesignerEditorConsumption = () => {
       ...workflow,
       definition,
       parameters,
+      connectionReferences,
     };
 
     try {

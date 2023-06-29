@@ -47,23 +47,11 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
     };
 
     // Alter connection references in actions
-    Object.entries(workflow?.definition?.actions ?? {}).forEach(([key, action]: [key: string, value: any]) => {
-      const { referenceName } = action.inputs?.host?.connection ?? {};
-      if (referenceName) {
-        workflow.definition.actions[key].inputs.host.connection = {
-          name: `@parameters('$connections')['${referenceName}']['connectionId']`,
-        };
-      }
-    });
+    traverseDefinition(workflow?.definition, alterOperationConnectionReference);
 
     // Alter connection references in triggers
-    Object.entries(workflow?.definition?.triggers ?? {}).forEach(([key, trigger]: [key: string, value: any]) => {
-      const { referenceName } = trigger.inputs?.host?.connection ?? {};
-      if (referenceName) {
-        workflow.definition.triggers[key].inputs.host.connection = {
-          name: `@parameters('$connections')['${referenceName}']['connectionId']`,
-        };
-      }
+    Object.values(workflow?.definition?.triggers ?? {}).forEach((trigger: any) => {
+      alterOperationConnectionReference(trigger);
     });
 
     // Move connection references to root parameters
@@ -86,4 +74,34 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
   delete workflow?.connections;
 
   return workflow;
+};
+
+const traverseDefinition = (operation: any, callback: (operation: any) => void) => {
+  const children = {
+    ...(operation?.actions ?? {}),
+    ...(operation?.else?.actions ?? {}),
+    ...(operation?.default?.actions ?? {}),
+    ...(Object.values(operation?.cases ?? {}).reduce(
+      (acc: any, curr: any) => ({
+        ...acc,
+        ...curr.actions,
+      }),
+      {}
+    ) as any),
+  };
+
+  Object.values(children).forEach((child: any) => {
+    callback(child);
+    traverseDefinition(child, callback);
+  });
+  callback(operation);
+};
+
+const alterOperationConnectionReference = (operation: any) => {
+  const { referenceName } = operation.inputs?.host?.connection ?? {};
+  if (referenceName) {
+    operation.inputs.host.connection = {
+      name: `@parameters('$connections')['${referenceName}']['connectionId']`,
+    };
+  }
 };
