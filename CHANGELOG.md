@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.39.0](https://github.com/Azure/LogicAppsUX/compare/v2.38.0...v2.39.0) (2023-06-29)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed consumption standalone connection serialization ([#2873](https://github.com/Azure/LogicAppsUX/issues/2873)) ([384145d](https://github.com/Azure/LogicAppsUX/commit/384145d9c375696ae1af53724ef4eb06d9a16b2c))
+
 ## [2.38.0](https://github.com/Azure/LogicAppsUX/compare/v2.37.0...v2.38.0) (2023-06-28)
 
 
