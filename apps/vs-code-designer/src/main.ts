@@ -57,6 +57,7 @@ export async function activate(context: vscode.ExtensionContext) {
       if (projectPath) {
         if (autoStartDesignTime) {
           startDesignTimeApi(projectPath);
+          activateContext.telemetry.properties.startDesignTimeApi = 'true';
         } else if (showStartDesignTimeWarning) {
           const message = localize('startDesignTimeApi', 'Always start design time on launch?');
           const confirm = { title: 'Yes (Recommended)' };
