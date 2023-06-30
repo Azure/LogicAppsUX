@@ -8,6 +8,7 @@ import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
 import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as os from 'os';
+import * as path from 'path';
 
 /**
  * Prompts user to set azurite.location and Start Azurite.
@@ -20,7 +21,7 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
   context.telemetry.properties.azuriteLocation = userAzuriteDir;
   // User has not configured azurite.location.
   if (!userAzuriteDir) {
-    const defaultAzuriteDir = `${os.homedir()}\\.azurite`;
+    const defaultAzuriteDir = path.join(os.homedir(), '.azurite');
     const azuriteDir = await context.ui.showInputBox({
       placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
       prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
