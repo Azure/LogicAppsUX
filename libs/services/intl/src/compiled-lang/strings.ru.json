@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Создать ссылку на подключение"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Со сбоем"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Нет выходных данных"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Время ожидания истекло"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Нет значений, отвечающих условиям поиска"
     }
   ],
   "/NtebP": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Если параметр включен, это действие будет запускаться с пользователем из параметра \"Запуск от имени\" в триггере Dataverse."
     }
   ],
   "/yYyOq": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Безопасные входные или выходные данные включены."
     }
   ],
   "0FzNJV": [
@@ -842,13 +842,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Обязательно. Это значение — следующее целое число после наибольшего целого числа, которое можно вернуть."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Ожидание"
     }
   ],
   "43xObP": [
@@ -980,7 +980,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Открыть панель"
     }
   ],
   "595Baw": [
@@ -1096,7 +1096,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Ошибка при загрузке входных данных"
     }
   ],
   "6OSgRP": [
@@ -1114,7 +1114,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Выберите ссылку на подключение"
     }
   ],
   "6fDYzG": [
@@ -1176,7 +1176,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Обязательно. Значение, для которого нужно найти индекс."
     }
   ],
   "6ueRYm": [
@@ -1188,7 +1188,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Тип данных"
     }
   ],
   "73iM9+": [
@@ -1200,7 +1200,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Введите имя пользователя"
     }
   ],
   "7EZ2oY": [
@@ -1304,7 +1304,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Неподдерживаемый тип проверки подлинности \""
     },
     {
       "type": 1,
@@ -1312,7 +1312,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "7zzPsK": [
@@ -1822,7 +1822,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Выполнено после нескольких попыток"
     }
   ],
   "BHe7qY": [
@@ -1846,7 +1846,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Не указано"
     }
   ],
   "BQCPY7": [
@@ -1888,7 +1888,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Массив"
     }
   ],
   "Bl4Iv0": [
@@ -1924,7 +1924,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Укажите выражения, которые должны быть истинными для срабатывания триггера."
     }
   ],
   "BtL7UI": [
@@ -1966,7 +1966,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Создать подключение"
     }
   ],
   "CaajcD": [
@@ -1978,7 +1978,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Свойства '"
     },
     {
       "type": 1,
@@ -1986,7 +1986,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' недопустимы для проверки подлинности '"
     },
     {
       "type": 1,
@@ -1994,7 +1994,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "'."
     }
   ],
   "Cb6IEq": [
@@ -2024,7 +2024,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Необходимо указать имя параметра."
     }
   ],
   "ClZW2r": [
@@ -2130,7 +2130,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Дата"
     }
   ],
   "DQV7aK": [
@@ -2260,7 +2260,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Задает ИД отслеживания для запуска. При использовании splitOn этот ИД будет использован для инициирующего запроса."
     }
   ],
   "ERAWZA": [
@@ -2420,7 +2420,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Ошибки"
     }
   ],
   "FT3jt6": [
@@ -2534,7 +2534,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Возвращает строку с каждым элементом массива, присоединенным с помощью разделителя"
     }
   ],
   "G/CC5/": [
@@ -2732,7 +2732,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Выйти из полноэкранного режима"
     }
   ],
   "HOchry": [
@@ -2836,7 +2836,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Пропускается"
     }
   ],
   "I41vZ/": [
@@ -2998,7 +2998,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Сбой"
     }
   ],
   "J9wWry": [
@@ -3214,7 +3214,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Проигнорировано"
     }
   ],
   "KwGA+K": [
@@ -3292,7 +3292,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Обязательное поле. Коллекция, из которой нужно взять первый объект."
     }
   ],
   "LV/BTE": [
@@ -3358,7 +3358,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Возвращает начало дня для метки времени, переданной в функцию в формате строки."
     }
   ],
   "Lub7NN": [
@@ -3436,7 +3436,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Неподдерживаемый язык программирования."
     }
   ],
   "MKTdNk": [
@@ -3538,7 +3538,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Время ожидания истекло"
     }
   ],
   "N0pS6Y": [
@@ -3598,7 +3598,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Возвращает значение указанной переменной."
     }
   ],
   "NnD8gF": [
@@ -3646,7 +3646,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Завершилось ошибкой"
     }
   ],
   "O+8vRv": [
@@ -3664,7 +3664,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Ошибок не обнаружено."
     }
   ],
   "O27gKq": [
@@ -3820,7 +3820,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Отсутствуют обязательные свойства \""
     },
     {
       "type": 1,
@@ -3828,7 +3828,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "\" для типа проверки подлинности \""
     },
     {
       "type": 1,
@@ -3836,7 +3836,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "P+7G62": [
@@ -3878,7 +3878,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Настраиваемый ИД отслеживания"
     }
   ],
   "P4rEwD": [
@@ -3948,7 +3948,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Ошибки настроек"
     }
   ],
   "PfCJlN": [
@@ -3978,7 +3978,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Ошибки подключения"
     }
   ],
   "PtqSHp": [
@@ -4014,7 +4014,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Запуск после "
     },
     {
       "type": 1,
@@ -4076,7 +4076,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Отсутствует обязательное свойство \""
     },
     {
       "type": 1,
@@ -4084,7 +4084,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "\" для типа проверки подлинности \""
     },
     {
       "type": 1,
@@ -4092,7 +4092,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "QZBPUx": [
@@ -4122,7 +4122,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Параметры рабочего процесса"
     }
   ],
   "Qn8qxn": [
@@ -4174,7 +4174,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Введите допустимое условие."
     }
   ],
   "RFjYpH": [
@@ -4186,7 +4186,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Предварительный просмотр"
     }
   ],
   "RJes1w": [
@@ -4302,7 +4302,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Обязательно. Выражения, которые должны иметь значение true."
     }
   ],
   "RvpHdu": [
@@ -4540,7 +4540,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Обязательно. Значение, для которого нужно найти индекс."
     }
   ],
   "Tmr/9e": [
@@ -4552,7 +4552,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Ошибки в параметрах рабочего процесса"
     }
   ],
   "Ts5Pzr": [
@@ -4708,7 +4708,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Развернуть"
     }
   ],
   "Umpr3z": [
@@ -4740,7 +4740,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4748,7 +4748,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "' имеет тип '"
     },
     {
       "type": 1,
@@ -4798,7 +4798,7 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Интервал"
     }
   ],
   "VA7M1u": [
@@ -5262,7 +5262,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Условия триггера"
     }
   ],
   "YHsAKl": [
@@ -5546,7 +5546,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Отменено"
     }
   ],
   "ae7W0a": [
@@ -5628,7 +5628,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Требуется. Значение, которое преобразуется в двоичный файл."
     }
   ],
   "bSZ0lL": [
@@ -5652,7 +5652,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Использовать подключение вызвавшего"
     }
   ],
   "bXFGpe": [
@@ -5682,13 +5682,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Операция открытия"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Для этой операции включены защищенные входные или выходные данные."
     }
   ],
   "byTBrn": [
@@ -5862,7 +5862,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Скачать (ALT или Option + выбор)"
     }
   ],
   "dBWIjR": [
@@ -6168,7 +6168,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Выберите подключение"
     }
   ],
   "g076bL": [
@@ -6320,7 +6320,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Производится загрузка..."
     }
   ],
   "h+W3VW": [
@@ -6616,7 +6616,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Требуется. Число, которое прибавляется к слагаемому 2."
     }
   ],
   "iq+tiv": [
@@ -6764,7 +6764,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Ошибки параметров"
     }
   ],
   "kBOAkT": [
@@ -6836,7 +6836,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Элементы и сопоставления, не связанные с целевым элементом, удаляются."
     }
   ],
   "klY9UN": [
@@ -6847,7 +6847,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "не найдено соответствующих элементов."
             }
           ]
         },
@@ -6858,7 +6858,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " соответствующих элемента."
             }
           ]
         },
@@ -6869,18 +6869,22 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " соответствующих элементов."
             }
           ]
         },
         "one": {
           "value": [
             {
+              "type": 0,
+              "value": "Найден "
+            },
+            {
               "type": 7
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " соответствующий элемент."
             }
           ]
         },
@@ -6891,7 +6895,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " соответствующих элемента."
             }
           ]
         }
@@ -7146,7 +7150,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Обязательное поле. Выражение XPath для вычисления."
     }
   ],
   "mZRMD9": [
@@ -7264,7 +7268,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Пропущено"
     }
   ],
   "nHseED": [
@@ -7294,7 +7298,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Новый параметр"
     }
   ],
   "nRpM02": [
@@ -7348,7 +7352,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Время ожидания истекло"
     }
   ],
   "no/SMg": [
@@ -7844,7 +7848,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Недопустимое свойство '"
     },
     {
       "type": 1,
@@ -7852,7 +7856,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' для типа проверки подлинности '"
     },
     {
       "type": 1,
@@ -7956,7 +7960,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Успешно."
     }
   ],
   "rsdJcV": [
@@ -8034,7 +8038,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Укажите параметры для проверки выходных данных."
     }
   ],
   "sW47JR": [
@@ -8384,7 +8388,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Выполнено"
     }
   ],
   "uc/PoD": [
@@ -8420,7 +8424,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Ошибки операции"
     }
   ],
   "ui7GCl": [
@@ -8504,7 +8508,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Обязательное поле. Коллекция, для которой необходимо получить указанное количество объектов с начала."
     }
   ],
   "vQcQkU": [
@@ -8764,7 +8768,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Возвращает объект с удаленным указанным свойством."
     }
   ],
   "x3dWOL": [
@@ -8776,7 +8780,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Прервано"
     }
   ],
   "x8kTAX": [
@@ -8964,7 +8968,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Возвращает тело части в составных выходных данных триггера"
     }
   ],
   "yqRrQ/": [
@@ -9000,7 +9004,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Узнать больше"
     }
   ],
   "z/UY4k": [
@@ -9112,7 +9116,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Требуется. Число, которое прибавляется к слагаемому 1."
     }
   ],
   "zxe9hh": [

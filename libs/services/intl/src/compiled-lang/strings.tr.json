@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Bağlantı başvurusu oluşturun"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Hatalı"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Çıkış yok"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Zaman aşımına uğradı"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Aramanızla eşleşen değer yok."
     }
   ],
   "/NtebP": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Etkinleştirildiğinde, bu eylem, Dataverse tetikleyicisindeki \"Farklı çalıştır\" ayarındaki kullanıcıyla birlikte çalışır."
     }
   ],
   "/yYyOq": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Güvenli girişler veya çıkışlar etkinleştirildi."
     }
   ],
   "0FzNJV": [
@@ -834,13 +834,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Bekliyor"
     }
   ],
   "43xObP": [
@@ -968,7 +968,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Paneli aç"
     }
   ],
   "595Baw": [
@@ -1084,7 +1084,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Girişler yüklenirken hata oluştu"
     }
   ],
   "6OSgRP": [
@@ -1102,7 +1102,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Bağlantı başvurusunu seçin"
     }
   ],
   "6fDYzG": [
@@ -1164,7 +1164,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Gerekli. Dizinin bulunacağı değer."
     }
   ],
   "6ueRYm": [
@@ -1176,7 +1176,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Veri türü"
     }
   ],
   "73iM9+": [
@@ -1188,7 +1188,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Kullanıcı adını girin"
     }
   ],
   "7EZ2oY": [
@@ -1292,7 +1292,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Desteklenmeyen kimlik doğrulama türü:'"
     },
     {
       "type": 1,
@@ -1788,7 +1788,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Yeniden denemeler ile başarılı oldu"
     }
   ],
   "BHe7qY": [
@@ -1812,7 +1812,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Belirtilmedi"
     }
   ],
   "BQCPY7": [
@@ -1854,7 +1854,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Dizi"
     }
   ],
   "Bl4Iv0": [
@@ -1890,7 +1890,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Tetikleyicinin başlatılması için doğru olması gereken bir veya daha fazla ifade belirtin."
     }
   ],
   "BtL7UI": [
@@ -1932,7 +1932,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Bağlantı oluştur"
     }
   ],
   "CaajcD": [
@@ -1944,7 +1944,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1952,7 +1952,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' özellikleri '"
     },
     {
       "type": 1,
@@ -1960,7 +1960,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' kimlik doğrulama türü için geçersiz."
     }
   ],
   "Cb6IEq": [
@@ -1990,7 +1990,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Parametre adı belirtmelisiniz."
     }
   ],
   "ClZW2r": [
@@ -2096,7 +2096,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Tarih"
     }
   ],
   "DQV7aK": [
@@ -2226,7 +2226,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Çalıştırmanın izleme kimliğini ayarlayın. Bölünmüş izleme için bu izleme kimliği isteği başlatmaya yarar."
     }
   ],
   "ERAWZA": [
@@ -2382,7 +2382,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Hatalar"
     }
   ],
   "FT3jt6": [
@@ -2474,7 +2474,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Bir dizinin her öğesinin bir sınırlandırıcı ile birleştirildiği bir dize döndürür"
     }
   ],
   "G/CC5/": [
@@ -2664,7 +2664,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Tam ekrandan çık"
     }
   ],
   "HOchry": [
@@ -2764,7 +2764,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Atlandı"
     }
   ],
   "I41vZ/": [
@@ -2926,7 +2926,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Başarısız"
     }
   ],
   "J9wWry": [
@@ -3120,7 +3120,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Yok Sayıldı"
     }
   ],
   "KwGA+K": [
@@ -3198,7 +3198,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Gerekli. İlk nesnenin alınacağı koleksiyon."
     }
   ],
   "LV/BTE": [
@@ -3264,7 +3264,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Geçirilen dize zaman damgası için günün başlangıcını döndürür."
     }
   ],
   "Lub7NN": [
@@ -3342,7 +3342,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Desteklenmeyen bilgisayar dili."
     }
   ],
   "MKTdNk": [
@@ -3444,7 +3444,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Zaman Aşımı Oluştu"
     }
   ],
   "N0pS6Y": [
@@ -3504,7 +3504,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Belirtilen değişkenin değerini döndürür."
     }
   ],
   "NnD8gF": [
@@ -3552,7 +3552,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Başarısız oldu"
     }
   ],
   "O+8vRv": [
@@ -3570,7 +3570,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Hata bulunamadı."
     }
   ],
   "O27gKq": [
@@ -3726,15 +3726,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -3742,7 +3734,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' kimlik doğrulama türü için gerekli '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özellikleri eksik"
     }
   ],
   "P+7G62": [
@@ -3784,7 +3784,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Özel İzleme Kimliği"
     }
   ],
   "P4rEwD": [
@@ -3854,7 +3854,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Ayar hataları"
     }
   ],
   "PfCJlN": [
@@ -3884,7 +3884,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Bağlantı hataları"
     }
   ],
   "PtqSHp": [
@@ -3919,12 +3919,12 @@
   ],
   "PytMJ0": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " düğümünden sonra çalıştır"
     }
   ],
   "Q+ZZHI": [
@@ -3982,15 +3982,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -3998,7 +3990,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' kimlik doğrulama türü için gerekli '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özelliği eksik"
     }
   ],
   "QZBPUx": [
@@ -4028,7 +4028,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "İş Akışı Parametreleri"
     }
   ],
   "Qn8qxn": [
@@ -4080,7 +4080,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Geçerli bir koşul girin."
     }
   ],
   "RFjYpH": [
@@ -4092,7 +4092,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Önizleme"
     }
   ],
   "RJes1w": [
@@ -4186,7 +4186,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Gerekli. Doğru olması gereken ifadeler."
     }
   ],
   "RvpHdu": [
@@ -4420,7 +4420,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Gerekli. Dizinin bulunacağı değer."
     }
   ],
   "Tmr/9e": [
@@ -4432,7 +4432,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "İş akışı parametresi hataları"
     }
   ],
   "Ts5Pzr": [
@@ -4588,7 +4588,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Genişlet"
     }
   ],
   "Umpr3z": [
@@ -4620,7 +4620,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4628,7 +4628,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "' türü '"
     },
     {
       "type": 1,
@@ -4678,7 +4678,7 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Aralık"
     }
   ],
   "VA7M1u": [
@@ -5142,7 +5142,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Tetikleyici koşulları"
     }
   ],
   "YHsAKl": [
@@ -5426,7 +5426,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "İptal Edildi"
     }
   ],
   "ae7W0a": [
@@ -5508,7 +5508,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Gerekli. İkiliye dönüştürülen değer."
     }
   ],
   "bSZ0lL": [
@@ -5532,7 +5532,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Başlatıcının Bağlantısını Kullan"
     }
   ],
   "bXFGpe": [
@@ -5562,13 +5562,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "İşlemi aç"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Bu işlemde güvenli girişler veya çıkışlar etkinleştirilmiş."
     }
   ],
   "byTBrn": [
@@ -5742,7 +5742,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "İndir (Alt veya Option tuşu + seç)"
     }
   ],
   "dBWIjR": [
@@ -6048,7 +6048,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Bağlantı seçin"
     }
   ],
   "g076bL": [
@@ -6192,7 +6192,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Yükleniyor..."
     }
   ],
   "h+W3VW": [
@@ -6462,7 +6462,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Gerekli. Toplanan 2'ye eklenecek sayı."
     }
   ],
   "iq+tiv": [
@@ -6484,7 +6484,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Geçerli bir tablo girin."
     }
   ],
   "iy8rNf": [
@@ -6610,7 +6610,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Parametre hataları"
     }
   ],
   "kBOAkT": [
@@ -6682,7 +6682,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Hedef öğeye bağlı olmayan öğeler ve eşlemeler kaldırılır."
     }
   ],
   "klY9UN": [
@@ -6693,7 +6693,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "öğe eşleşmedi."
             }
           ]
         },
@@ -6704,7 +6704,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " öğe eşleşti."
             }
           ]
         },
@@ -6715,7 +6715,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " öğe eşleşti."
             }
           ]
         }
@@ -6970,7 +6970,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Gerekli. Değerlendirilecek XPath ifadesi."
     }
   ],
   "mZRMD9": [
@@ -7088,7 +7088,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Atlandı"
     }
   ],
   "nHseED": [
@@ -7118,7 +7118,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Yeni parametre"
     }
   ],
   "nRpM02": [
@@ -7172,7 +7172,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Zaman aşımına uğradı"
     }
   ],
   "no/SMg": [
@@ -7646,15 +7646,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -7662,7 +7654,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' kimlik doğrulama türü için geçersiz '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özelliği."
     }
   ],
   "r/n6/9": [
@@ -7758,7 +7758,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Başarılı"
     }
   ],
   "rsdJcV": [
@@ -7836,7 +7836,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Çıkışı test etmek için parametreleri belirtin."
     }
   ],
   "sW47JR": [
@@ -8186,7 +8186,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Başarılı"
     }
   ],
   "uc/PoD": [
@@ -8222,7 +8222,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "İşlem hataları"
     }
   ],
   "ui7GCl": [
@@ -8306,7 +8306,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Gerekli. İlk Count nesnenin alınacağı koleksiyon."
     }
   ],
   "vQcQkU": [
@@ -8562,7 +8562,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Belirtilen özelliğin kaldırılmış olduğu bir nesne döndürür."
     }
   ],
   "x3dWOL": [
@@ -8574,7 +8574,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Durduruldu"
     }
   ],
   "x8kTAX": [
@@ -8762,7 +8762,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Tetikleyicinin çok parçalı çıkışında, bir parçanın gövdesini döndürür"
     }
   ],
   "yqRrQ/": [
@@ -8798,7 +8798,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Daha fazla bilgi edinin"
     }
   ],
   "z/UY4k": [
@@ -8910,7 +8910,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Gerekli. Toplanan 1'e eklenecek sayı."
     }
   ],
   "zxe9hh": [
