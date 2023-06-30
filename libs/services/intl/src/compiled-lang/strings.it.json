@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Con errori"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Nessun output"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Scaduto"
     }
   ],
   "/EU/oJ": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Se abilitata, questa azione verrà eseguita con l'utente dall'impostazione \"Esegui come\" nel trigger Dataverse."
     }
   ],
   "/yYyOq": [
@@ -840,7 +840,7 @@
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "In attesa"
     }
   ],
   "43xObP": [
@@ -968,7 +968,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Apri pannello"
     }
   ],
   "595Baw": [
@@ -1084,7 +1084,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Errore durante il caricamento degli input"
     }
   ],
   "6OSgRP": [
@@ -1176,7 +1176,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Tipo di dati"
     }
   ],
   "73iM9+": [
@@ -1188,7 +1188,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Immetti nome utente"
     }
   ],
   "7EZ2oY": [
@@ -1799,7 +1799,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Operazione riuscita in più tentativi"
     }
   ],
   "BHe7qY": [
@@ -1823,7 +1823,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Non specificato"
     }
   ],
   "BQCPY7": [
@@ -1943,7 +1943,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Crea connessione"
     }
   ],
   "CaajcD": [
@@ -2107,7 +2107,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Data"
     }
   ],
   "DQV7aK": [
@@ -2229,7 +2229,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio."
     }
   ],
   "ERAWZA": [
@@ -2389,7 +2389,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Errori"
     }
   ],
   "FT3jt6": [
@@ -2492,7 +2492,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Restituisce una stringa con ogni elemento di una matrice unito da un delimitatore"
     }
   ],
   "G/CC5/": [
@@ -2682,7 +2682,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Esci dalla visualizzazione a schermo intero"
     }
   ],
   "HOchry": [
@@ -2948,7 +2948,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Operazione non riuscita"
     }
   ],
   "J9wWry": [
@@ -3153,7 +3153,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Ignorato"
     }
   ],
   "KwGA+K": [
@@ -3375,7 +3375,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Linguaggio di programmazione non supportato."
     }
   ],
   "MKTdNk": [
@@ -3477,7 +3477,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Timeout"
     }
   ],
   "N0pS6Y": [
@@ -3603,7 +3603,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Non sono stati trovati errori."
     }
   ],
   "O27gKq": [
@@ -3825,7 +3825,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "ID di traccia personalizzato"
     }
   ],
   "P4rEwD": [
@@ -3895,7 +3895,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Errori delle impostazioni"
     }
   ],
   "PfCJlN": [
@@ -3925,7 +3925,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Errori di connessione"
     }
   ],
   "PtqSHp": [
@@ -3961,7 +3961,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Esegui dopo "
     },
     {
       "type": 1,
@@ -4069,7 +4069,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Parametri flusso di lavoro"
     }
   ],
   "Qn8qxn": [
@@ -4121,7 +4121,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Immetti una condizione valida."
     }
   ],
   "RFjYpH": [
@@ -4133,7 +4133,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Anteprima"
     }
   ],
   "RJes1w": [
@@ -4238,7 +4238,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Obbligatorio. Le espressioni che devono essere true."
     }
   ],
   "RvpHdu": [
@@ -4644,7 +4644,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Espandi"
     }
   ],
   "Umpr3z": [
@@ -4734,7 +4734,7 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Intervallo"
     }
   ],
   "VA7M1u": [
@@ -5198,7 +5198,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Condizioni del trigger"
     }
   ],
   "YHsAKl": [
@@ -5482,7 +5482,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Operazione annullata"
     }
   ],
   "ae7W0a": [
@@ -5564,7 +5564,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Obbligatorio. Valore convertito in un valore binario."
     }
   ],
   "bSZ0lL": [
@@ -5588,7 +5588,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Usa connessione dell'invoker"
     }
   ],
   "bXFGpe": [
@@ -5624,7 +5624,7 @@
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Per questa operazione sono abilitati input o output sicuri."
     }
   ],
   "byTBrn": [
@@ -6108,7 +6108,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Selezionare la connessione"
     }
   ],
   "g076bL": [
@@ -6252,7 +6252,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Caricamento..."
     }
   ],
   "h+W3VW": [
@@ -6537,7 +6537,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Obbligatorio. Numero da aggiungere all'addendo 2."
     }
   ],
   "iq+tiv": [
@@ -6768,7 +6768,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "nessun elemento corrispondente."
             }
           ]
         },
@@ -6779,7 +6779,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementi corrispondenti."
             }
           ]
         },
@@ -6790,7 +6790,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " elemento corrispondente."
             }
           ]
         },
@@ -6801,7 +6801,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementi corrispondenti."
             }
           ]
         }
@@ -7056,7 +7056,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Obbligatorio. Espressione XPath da valutare."
     }
   ],
   "mZRMD9": [
@@ -7170,7 +7170,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Ignorato"
     }
   ],
   "nHseED": [
@@ -7200,7 +7200,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Nuovo parametro"
     }
   ],
   "nRpM02": [
@@ -7929,7 +7929,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Specificare i parametri per il test dell'output."
     }
   ],
   "sW47JR": [
@@ -8279,7 +8279,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Operazione riuscita"
     }
   ],
   "uc/PoD": [
@@ -8399,7 +8399,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Obbligatorio. Raccolta da cui recuperare i primi oggetti Count."
     }
   ],
   "vQcQkU": [
@@ -8671,7 +8671,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Operazione interrotta"
     }
   ],
   "x8kTAX": [
@@ -8859,7 +8859,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Restituisce il corpo per una parte nell'output multiparte del trigger"
     }
   ],
   "yqRrQ/": [
@@ -8895,7 +8895,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Altre informazioni"
     }
   ],
   "z/UY4k": [
@@ -9007,7 +9007,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Obbligatorio. Numero da aggiungere all'addendo 1."
     }
   ],
   "zxe9hh": [
