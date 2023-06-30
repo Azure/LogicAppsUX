@@ -1,6 +1,6 @@
 import Constants from '../../../common/constants';
 import { getInterpolatedExpression } from './helper';
-import { isOutputTokenValueSegment, isTokenValueSegment } from './segment';
+import { isTokenValueSegment } from './segment';
 import type { ValueSegment } from '@microsoft/designer-ui';
 import { equals, format } from '@microsoft/utils-logic-apps';
 
@@ -42,7 +42,7 @@ export function addFoldingCastToExpression(
   if (template) {
     const stringifiedExpressions = valueSegments.map((expression) => {
       const { token, value } = expression;
-      return isOutputTokenValueSegment(expression)
+      return isTokenValueSegment(expression)
         ? addCastToExpression(token?.format ?? '', '', value, token?.type, Constants.SWAGGER.TYPE.STRING)
         : `'${value}'`;
     });
