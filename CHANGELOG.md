@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.38.1](https://github.com/Azure/LogicAppsUX/compare/v2.38.0...v2.38.1) (2023-06-30)
+
+
+### Bug Fixes
+
+* **Designer:** Select Connection panel now shows recently created connections ([#2890](https://github.com/Azure/LogicAppsUX/issues/2890)) ([da2baa0](https://github.com/Azure/LogicAppsUX/commit/da2baa01ef312460d68be5867e24cedb265fa13b))
+
 ## [2.38.0](https://github.com/Azure/LogicAppsUX/compare/v2.37.0...v2.38.0) (2023-06-28)
 
 
