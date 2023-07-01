@@ -1,6 +1,6 @@
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '../connector';
+import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { ArgumentException, UnsupportedException, isArmResourceId } from '@microsoft/utils-logic-apps';
 
@@ -43,7 +43,6 @@ export class StandardConnectorService extends BaseConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any
   ): Promise<ListDynamicValue[]> {
@@ -77,7 +76,6 @@ export class StandardConnectorService extends BaseConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any
   ): Promise<OpenAPIV2.SchemaObject> {
@@ -115,9 +113,8 @@ export class StandardConnectorService extends BaseConnectorService {
     _connectionId: string | undefined,
     _connectorId: string,
     _operationId: string,
-    _parameterAlias: string | undefined,
     _parameters: Record<string, any>,
-    _dynamicState: any
+    _dynamicState: TreeDynamicExtension
   ): Promise<TreeDynamicValue[]> {
     throw new UnsupportedException('Unsupported dynamic call connector method - getTreeDynamicValues');
   }

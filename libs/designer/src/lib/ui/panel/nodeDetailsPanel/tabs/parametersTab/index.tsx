@@ -253,13 +253,11 @@ const ParameterSection = ({
     },
     getDisplayValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
-      const propertyPath = dependency.filePickerInfo?.fullTitlePath ?? dependency.filePickerInfo?.browse.itemFullTitlePath;
-      return getPropertyValue(selectedItem, propertyPath ?? '');
+      return getPropertyValue(selectedItem, dependency.filePickerInfo?.fullTitlePath ?? '');
     },
     getValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
-      const propertyPath = dependency.filePickerInfo?.valuePath ?? dependency.filePickerInfo?.browse.itemValuePath;
-      return getPropertyValue(selectedItem, propertyPath ?? '');
+      return getPropertyValue(selectedItem, dependency.filePickerInfo?.valuePath ?? '');
     },
     onFolderNavigation: (selectedItem: any | undefined): void => {
       loadDynamicTreeItemsForParameter(

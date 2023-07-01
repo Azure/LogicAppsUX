@@ -1,4 +1,4 @@
-import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '../connector';
+import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -58,7 +58,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
     isManagedIdentityConnection?: boolean
@@ -68,7 +67,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
     isManagedIdentityConnection?: boolean
@@ -78,9 +76,8 @@ export abstract class BaseConnectorService implements IConnectorService {
     _connectionId: string | undefined,
     _connectorId: string,
     _operationId: string,
-    _parameterAlias: string | undefined,
     _parameters: Record<string, any>,
-    _dynamicState: any,
+    _dynamicState: TreeDynamicExtension,
     isManagedIdentityConnection?: boolean
   ): Promise<TreeDynamicValue[]>;
 
