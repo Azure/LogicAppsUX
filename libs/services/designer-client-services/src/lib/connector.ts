@@ -1,3 +1,4 @@
+import type { DynamicTreeExtension } from '@microsoft/parsers-logic-apps';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
@@ -27,6 +28,11 @@ export interface ManagedIdentityRequestProperties {
   };
 }
 
+export interface TreeDynamicExtension {
+  dynamicState: DynamicTreeExtension;
+  selectionState?: any;
+}
+
 export interface IConnectorService {
   /**
    * Gets the dynamic content for values/schema/tree items for azure operations backed by swagger.
@@ -48,7 +54,6 @@ export interface IConnectorService {
    * @arg {string | undefined} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {string} operationId - The operation id.
-   * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic values must be fetched.
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
    * @arg {any} dynamicState - Dynamic state required for invocation.
    * @arg {boolean} [isManagedIdentityConnection] - Indicates if the connection is MSI based.
@@ -58,7 +63,6 @@ export interface IConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
     isManagedIdentityConnection?: boolean
@@ -69,7 +73,6 @@ export interface IConnectorService {
    * @arg {string | undefined} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {string} operationId - The operation id.
-   * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic schema must be fetched.
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
    * @arg {any} dynamicState - Dynamic state required for invocation.
    * @arg {boolean} [isManagedIdentityConnection] - Indicates if the connection is MSI based.
@@ -79,7 +82,6 @@ export interface IConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
     isManagedIdentityConnection?: boolean
@@ -90,9 +92,8 @@ export interface IConnectorService {
    * @arg {string} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {string} operationId - The operation id for the parameter whose dynamic values must be fetched.
-   * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic values must be fetched.
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter id.
-   * @arg {any} dynamicState - Dynamic state required for invocation.
+   * @arg {TreeDynamicExtension} dynamicExtension - Dynamic state required for invocation along with selection object.
    * @arg {boolean} [isManagedIdentityConnection] - Indicates if the connection is MSI based.
    * @return {Promise<TreeDynamicValue[]>}
    */
@@ -100,9 +101,8 @@ export interface IConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any,
+    dynamicState: TreeDynamicExtension,
     isManagedIdentityConnection?: boolean
   ): Promise<TreeDynamicValue[]>;
 }
