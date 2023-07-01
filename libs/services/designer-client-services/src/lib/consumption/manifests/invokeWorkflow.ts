@@ -22,7 +22,6 @@ export const invokeWorkflowManifest = {
           'x-ms-dynamic-properties': {
             dynamicState: {
               extension: { operationId: 'getLogicAppSwagger' },
-              parameters: {},
               isInput: true,
             },
             parameters: {

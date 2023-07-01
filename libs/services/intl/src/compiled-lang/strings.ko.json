@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "오류"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "출력 없음"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "시간 초과됨"
     }
   ],
   "/EU/oJ": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "활성화하면 이 동작은 Dataverse 트리거의 \"실행\" 설정에서 사용자와 함께 실행됩니다."
     }
   ],
   "/yYyOq": [
@@ -840,7 +840,7 @@
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "대기 중"
     }
   ],
   "43xObP": [
@@ -968,7 +968,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "패널 열기"
     }
   ],
   "595Baw": [
@@ -1176,7 +1176,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "데이터 형식"
     }
   ],
   "73iM9+": [
@@ -1188,7 +1188,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "사용자 이름 입력"
     }
   ],
   "7EZ2oY": [
@@ -1769,7 +1769,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "성공했지만 다시 시도해야 함"
     }
   ],
   "BHe7qY": [
@@ -1793,7 +1793,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "지정되지 않음"
     }
   ],
   "BQCPY7": [
@@ -1835,7 +1835,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "배열"
     }
   ],
   "Bl4Iv0": [
@@ -1913,7 +1913,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "연결 만들기"
     }
   ],
   "CaajcD": [
@@ -2077,7 +2077,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "날짜"
     }
   ],
   "DQV7aK": [
@@ -2207,7 +2207,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "실행에 대한 추적 ID를 설정합니다. 분할을 위해 이 추적 ID는 시작 요청에 해당합니다."
     }
   ],
   "ERAWZA": [
@@ -2363,7 +2363,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "오류"
     }
   ],
   "FT3jt6": [
@@ -2444,7 +2444,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "구분 기호로 결합된 배열의 각 항목이 포함된 문자열을 반환합니다."
     }
   ],
   "G/CC5/": [
@@ -2634,7 +2634,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "전체 화면 종료"
     }
   ],
   "HOchry": [
@@ -2896,7 +2896,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "실패함"
     }
   ],
   "J9wWry": [
@@ -3079,7 +3079,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "무시됨"
     }
   ],
   "KwGA+K": [
@@ -3301,7 +3301,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "지원되지 않는 프로그래밍 언어입니다."
     }
   ],
   "MKTdNk": [
@@ -3403,7 +3403,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "시간 초과"
     }
   ],
   "N0pS6Y": [
@@ -3529,7 +3529,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "오류가 없습니다."
     }
   ],
   "O27gKq": [
@@ -3743,7 +3743,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "사용자 지정 추적 ID"
     }
   ],
   "P4rEwD": [
@@ -3813,7 +3813,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "설정 오류"
     }
   ],
   "PfCJlN": [
@@ -3843,7 +3843,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "연결 오류"
     }
   ],
   "PtqSHp": [
@@ -3878,12 +3878,12 @@
   ],
   "PytMJ0": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 다음에 실행"
     }
   ],
   "Q+ZZHI": [
@@ -3987,7 +3987,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "워크플로 매개 변수"
     }
   ],
   "Qn8qxn": [
@@ -4039,7 +4039,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "유효한 조건을 입력하세요."
     }
   ],
   "RFjYpH": [
@@ -4051,7 +4051,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "미리 보기"
     }
   ],
   "RJes1w": [
@@ -4134,7 +4134,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "필수. true여야 하는 식입니다."
     }
   ],
   "RvpHdu": [
@@ -4540,7 +4540,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "확장"
     }
   ],
   "Umpr3z": [
@@ -5090,7 +5090,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "트리거 조건"
     }
   ],
   "YHsAKl": [
@@ -5374,7 +5374,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "취소됨"
     }
   ],
   "ae7W0a": [
@@ -5456,7 +5456,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "필수 사항으로, 이진으로 변환되는 값입니다."
     }
   ],
   "bSZ0lL": [
@@ -5480,7 +5480,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "호출자의 연결 사용"
     }
   ],
   "bXFGpe": [
@@ -5516,7 +5516,7 @@
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "이 작업에는 입력 및 출력 보호가 활성화되어 있습니다."
     }
   ],
   "byTBrn": [
@@ -5996,7 +5996,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "연결 선택"
     }
   ],
   "g076bL": [
@@ -6140,7 +6140,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "로드 중..."
     }
   ],
   "h+W3VW": [
@@ -6399,7 +6399,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "필수 사항으로, 피가수 2에 추가할 숫자입니다."
     }
   ],
   "iq+tiv": [
@@ -6421,7 +6421,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "올바른 테이블을 입력하세요."
     }
   ],
   "iy8rNf": [
@@ -6630,7 +6630,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "일치하는 항목이 없습니다."
             }
           ]
         },
@@ -6641,7 +6641,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": "개의 항목이 일치합니다."
             }
           ]
         }
@@ -6888,7 +6888,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "필수 항목으로, 평가할 XPath 식입니다."
     }
   ],
   "mZRMD9": [
@@ -7006,7 +7006,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "건너뜀"
     }
   ],
   "nHseED": [
@@ -7036,7 +7036,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "새 매개 변수"
     }
   ],
   "nRpM02": [
@@ -7743,7 +7743,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "출력을 테스트할 매개 변수를 제공합니다."
     }
   ],
   "sW47JR": [
@@ -8089,7 +8089,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "성공함"
     }
   ],
   "uc/PoD": [
@@ -8209,7 +8209,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "필수 항목으로, 첫 번째 Count 개체를 가져올 컬렉션입니다."
     }
   ],
   "vQcQkU": [
@@ -8477,7 +8477,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "중단됨"
     }
   ],
   "x8kTAX": [
@@ -8665,7 +8665,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "트리거의 다중 부분 출력에서 한 부분의 본문을 반환합니다."
     }
   ],
   "yqRrQ/": [
@@ -8701,7 +8701,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "자세한 정보"
     }
   ],
   "z/UY4k": [
@@ -8813,7 +8813,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "필수 사항으로, 피가수 1에 추가할 숫자입니다."
     }
   ],
   "zxe9hh": [

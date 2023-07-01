@@ -3,7 +3,7 @@ import * as ClientOperationsData from '../base/operations';
 import type { BaseSearchServiceOptions, ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
 import type { QueryParameters } from '../httpClient';
 import * as OperationsData from './operations';
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import type { Connector, DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
@@ -88,8 +88,13 @@ export class ConsumptionSearchService extends BaseSearchService {
     if (this.options.openApiConnectionMode) {
       return operations.map((operation) => {
         if (!operation.properties.operationType) {
+          const { isNotification, isWebhook } = operation.properties as SomeKindOfAzureOperationDiscovery;
           // eslint-disable-next-line no-param-reassign
-          operation.properties.operationType = 'OpenApiConnection';
+          operation.properties.operationType = isWebhook
+            ? 'OpenApiConnectionWebhook'
+            : isNotification
+            ? 'OpenApiConnectionNotification'
+            : 'OpenApiConnection';
         }
 
         return operation;

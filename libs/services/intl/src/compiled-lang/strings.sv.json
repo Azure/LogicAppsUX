@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Skapa anslutningsreferens"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Fel"
     }
   ],
   "+Uvo/p": [
@@ -58,13 +58,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Inga utdata"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Tidsgräns uppnådd"
     }
   ],
   "/EU/oJ": [
@@ -82,7 +82,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Inga värden matchar din sökning."
     }
   ],
   "/NtebP": [
@@ -172,7 +172,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "När den här åtgärden är aktiverad körs den med användaren från inställningen Kör som, i Dataverse-utlösaren."
     }
   ],
   "/yYyOq": [
@@ -266,7 +266,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Säkra indata eller utdata har aktiverats."
     }
   ],
   "0FzNJV": [
@@ -846,13 +846,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Måste anges. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Väntar"
     }
   ],
   "43xObP": [
@@ -980,7 +980,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Öppna panel"
     }
   ],
   "595Baw": [
@@ -1096,7 +1096,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Fel vid inläsning av indata"
     }
   ],
   "6OSgRP": [
@@ -1114,7 +1114,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Välj anslutningsreferens"
     }
   ],
   "6fDYzG": [
@@ -1176,7 +1176,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Måste anges. Det värde som indexet ska hittas för."
     }
   ],
   "6ueRYm": [
@@ -1188,7 +1188,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Datatyp"
     }
   ],
   "73iM9+": [
@@ -1200,7 +1200,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Ange användarnamn"
     }
   ],
   "7EZ2oY": [
@@ -1304,7 +1304,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Autentiseringstypen "
     },
     {
       "type": 1,
@@ -1312,7 +1312,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": " stöds inte."
     }
   ],
   "7zzPsK": [
@@ -1796,7 +1796,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Lyckades med återförsök"
     }
   ],
   "BHe7qY": [
@@ -1820,7 +1820,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Inte angivet"
     }
   ],
   "BQCPY7": [
@@ -1862,7 +1862,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matris"
     }
   ],
   "Bl4Iv0": [
@@ -1898,7 +1898,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska aktiveras."
     }
   ],
   "BtL7UI": [
@@ -1940,7 +1940,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Skapa anslutning"
     }
   ],
   "CaajcD": [
@@ -1952,7 +1952,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Egenskaperna "
     },
     {
       "type": 1,
@@ -1960,7 +1960,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " är ogiltiga för autentiseringstypen "
     },
     {
       "type": 1,
@@ -1968,7 +1968,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "."
     }
   ],
   "Cb6IEq": [
@@ -1998,7 +1998,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Parameternamnet måste anges."
     }
   ],
   "ClZW2r": [
@@ -2104,7 +2104,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Datum"
     }
   ],
   "DQV7aK": [
@@ -2230,7 +2230,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Konfigurera körningens spårnings-ID. Delning för det här spårnings-ID:t för att initiera begäran."
     }
   ],
   "ERAWZA": [
@@ -2390,7 +2390,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fel"
     }
   ],
   "FT3jt6": [
@@ -2482,7 +2482,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Returnerar en sträng med varje objekt i en matris som har kopplats med en avgränsare"
     }
   ],
   "G/CC5/": [
@@ -2680,7 +2680,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Avsluta helskärmsläge"
     }
   ],
   "HOchry": [
@@ -2784,7 +2784,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Har hoppats över"
     }
   ],
   "I41vZ/": [
@@ -2946,7 +2946,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Misslyckades"
     }
   ],
   "J9wWry": [
@@ -3140,7 +3140,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Ignorerat"
     }
   ],
   "KwGA+K": [
@@ -3218,7 +3218,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Måste anges. Den samling som det första objektet ska hämtas från."
     }
   ],
   "LV/BTE": [
@@ -3284,7 +3284,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Returnerar starten för dagen för den inskickade strängtidsstämpeln."
     }
   ],
   "Lub7NN": [
@@ -3362,7 +3362,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Programmeringsspråket stöds inte."
     }
   ],
   "MKTdNk": [
@@ -3464,7 +3464,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Tidsgränsen överskreds"
     }
   ],
   "N0pS6Y": [
@@ -3524,7 +3524,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Returnerar värdet för den angivna variabeln."
     }
   ],
   "NnD8gF": [
@@ -3572,7 +3572,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Har misslyckats"
     }
   ],
   "O+8vRv": [
@@ -3590,7 +3590,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Inga fel hittades."
     }
   ],
   "O27gKq": [
@@ -3746,7 +3746,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "De obligatoriska egenskaperna "
     },
     {
       "type": 1,
@@ -3754,15 +3754,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [
@@ -3804,7 +3800,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Anpassat spårnings-id"
     }
   ],
   "P4rEwD": [
@@ -3874,7 +3870,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Inställningsfel"
     }
   ],
   "PfCJlN": [
@@ -3904,7 +3900,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Anslutningsfel"
     }
   ],
   "PtqSHp": [
@@ -3940,7 +3936,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Kör efter "
     },
     {
       "type": 1,
@@ -4002,7 +3998,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Den obligatoriska egenskapen "
     },
     {
       "type": 1,
@@ -4010,15 +4006,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -4048,7 +4040,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Arbetsflödesparametrar"
     }
   ],
   "Qn8qxn": [
@@ -4100,7 +4092,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Ange ett giltigt villkor."
     }
   ],
   "RFjYpH": [
@@ -4112,7 +4104,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Förhandsversion"
     }
   ],
   "RJes1w": [
@@ -4202,7 +4194,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Obligatoriskt. De uttryck som måste ha värdet sant."
     }
   ],
   "RvpHdu": [
@@ -4440,7 +4432,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Måste anges. Det värde som indexet ska hittas för."
     }
   ],
   "Tmr/9e": [
@@ -4452,7 +4444,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Fel vid arbetsflödesparameter"
     }
   ],
   "Ts5Pzr": [
@@ -4608,7 +4600,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandera"
     }
   ],
   "Umpr3z": [
@@ -4640,7 +4632,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Typen av "
     },
     {
       "type": 1,
@@ -4648,7 +4640,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": " är "
     },
     {
       "type": 1,
@@ -4656,7 +4648,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "Ur+wph": [
@@ -4698,7 +4690,7 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Intervall"
     }
   ],
   "VA7M1u": [
@@ -5162,7 +5154,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Villkor för utlösare"
     }
   ],
   "YHsAKl": [
@@ -5446,7 +5438,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Avbrutet"
     }
   ],
   "ae7W0a": [
@@ -5528,7 +5520,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Krävs. Värdet som konverteras till binärt."
     }
   ],
   "bSZ0lL": [
@@ -5552,7 +5544,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Använd anroparens anslutning"
     }
   ],
   "bXFGpe": [
@@ -5582,13 +5574,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Öppna åtgärd"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Den här åtgärden har aktiverat säkra in- och utdata."
     }
   ],
   "byTBrn": [
@@ -5762,7 +5754,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Ladda ned (Alt eller Alternativ + välj)"
     }
   ],
   "dBWIjR": [
@@ -6068,7 +6060,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Välj anslutning"
     }
   ],
   "g076bL": [
@@ -6220,7 +6212,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Läser in…"
     }
   ],
   "h+W3VW": [
@@ -6494,7 +6486,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Krävs. Talet som ska läggas till i Summand 2."
     }
   ],
   "iq+tiv": [
@@ -6516,7 +6508,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Ange en giltig tabell."
     }
   ],
   "iy8rNf": [
@@ -6642,7 +6634,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Parameterfel"
     }
   ],
   "kBOAkT": [
@@ -6714,7 +6706,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Element och mappningar som inte är anslutna till ett målelement tas bort."
     }
   ],
   "klY9UN": [
@@ -6725,7 +6717,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "inga matchade objekt."
             }
           ]
         },
@@ -6736,7 +6728,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " matchat objekt."
             }
           ]
         },
@@ -6747,7 +6739,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " matchade objekt."
             }
           ]
         }
@@ -7002,7 +6994,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
     }
   ],
   "mZRMD9": [
@@ -7120,7 +7112,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Hoppades över"
     }
   ],
   "nHseED": [
@@ -7150,7 +7142,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Ny parameter"
     }
   ],
   "nRpM02": [
@@ -7204,7 +7196,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Har nått tidsgränsen"
     }
   ],
   "no/SMg": [
@@ -7674,7 +7666,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Ogiltig egenskap "
     },
     {
       "type": 1,
@@ -7682,7 +7674,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " för autentiseringstypen "
     },
     {
       "type": 1,
@@ -7690,7 +7682,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "r/n6/9": [
@@ -7786,7 +7778,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Har lyckats"
     }
   ],
   "rsdJcV": [
@@ -7864,7 +7856,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Ange parametrar för att testa utdata."
     }
   ],
   "sW47JR": [
@@ -8210,7 +8202,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Slutfört"
     }
   ],
   "uc/PoD": [
@@ -8246,7 +8238,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Åtgärdsfel"
     }
   ],
   "ui7GCl": [
@@ -8330,7 +8322,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hämtas."
     }
   ],
   "vQcQkU": [
@@ -8590,7 +8582,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Returnerar ett objekt med den angivna egenskapen borttagen."
     }
   ],
   "x3dWOL": [
@@ -8602,7 +8594,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Avbrutet"
     }
   ],
   "x8kTAX": [
@@ -8790,7 +8782,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Returnerar brödtexten för en del i utlösarens multipart-utdata"
     }
   ],
   "yqRrQ/": [
@@ -8826,7 +8818,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Mer information"
     }
   ],
   "z/UY4k": [
@@ -8938,7 +8930,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Krävs. Talet som ska läggas till i Summand 1."
     }
   ],
   "zxe9hh": [

@@ -1,5 +1,28 @@
 # Logic Apps Designer
 
+## [2.42.0](https://github.com/Azure/LogicAppsUX/compare/v2.41.0...v2.42.0) (2023-06-30)
+
+### Bug Fixes
+
+- **Data Mapper:** Added React Query to DM lib to fix app crash ([#2880](https://github.com/Azure/LogicAppsUX/issues/2880)) ([21ed784](https://github.com/Azure/LogicAppsUX/commit/21ed784a196f94475a4f749d99d224da544e9322))
+
+## [2.41.0](https://github.com/Azure/LogicAppsUX/compare/v2.40.0...v2.41.0) (2023-06-29)
+
+### Bug Fixes
+
+- **Designer:** Fixed dropdown options state bug ([#2879](https://github.com/Azure/LogicAppsUX/issues/2879)) ([1cba92a](https://github.com/Azure/LogicAppsUX/commit/1cba92a697ba769ad48002dd50e9d426e57be3d6))
+- **desinger:** Fix portal build ([#2877](https://github.com/Azure/LogicAppsUX/issues/2877)) ([294df77](https://github.com/Azure/LogicAppsUX/commit/294df774aa12543fb744bfcb5c59ac30b0cfdcc7))
+
+## [2.40.0](https://github.com/Azure/LogicAppsUX/compare/v2.39.0...v2.40.0) (2023-06-29)
+
+## [2.39.0](https://github.com/Azure/LogicAppsUX/compare/v2.38.0...v2.39.0) (2023-06-29)
+
+### Bug Fixes
+
+- **Designer:** Fixed consumption standalone connection serialization ([#2873](https://github.com/Azure/LogicAppsUX/issues/2873)) ([384145d](https://github.com/Azure/LogicAppsUX/commit/384145d9c375696ae1af53724ef4eb06d9a16b2c))
+
+## [2.38.0](https://github.com/Azure/LogicAppsUX/compare/v2.37.0...v2.38.0) (2023-06-28)
+
 ## [2.38.0](https://github.com/Azure/LogicAppsUX/compare/v2.37.0...v2.38.0) (2023-06-28)
 
 ### Bug Fixes
