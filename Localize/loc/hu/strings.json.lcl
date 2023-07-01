@@ -21,6 +21,9 @@
       <Item ItemId=";+0cO6t" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Create connection reference]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kapcsolati hivatkozás létrehozása]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -91,7 +94,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Timed out]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Lejárt az időkorlátja]]></Val>
+            <Val><![CDATA[Időtúllépés]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -117,6 +120,9 @@
       <Item ItemId=";/KRvvg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No values match your search.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nincsenek a keresésnek megfelelő értékek.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -366,6 +372,9 @@
       <Item ItemId=";0F6jmK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure inputs or outputs enabled.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Biztonságos bemenetek vagy kimenetek engedélyezve.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1173,6 +1182,9 @@
       <Item ItemId=";3z6rhG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. This value is the next integer after the highest integer that can be returned.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1548,6 +1560,9 @@
       <Item ItemId=";6ZviI7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection reference]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kapcsolati hivatkozás kiválasztása]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1626,6 +1641,9 @@
       <Item ItemId=";6u6CS+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value for which to find the index.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kötelező megadni. Az az érték, amelyhez az indexet meg kell keresni.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1803,6 +1821,9 @@
       <Item ItemId=";7zsUT3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported authentication type ''{authType}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nem támogatott hitelesítési típus: „{authType}“.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2640,6 +2661,9 @@
       <Item ItemId=";BrvZNn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify one or more expressions that must be true for the trigger to fire.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Adjon meg egy vagy több olyan kifejezést, amelynek igaznak kell lennie a trigger aktiválásához.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2718,6 +2742,9 @@
       <Item ItemId=";CafOCn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The ''{invalidProperties}'' properties are invalid for the ''{convertedAuthType}'' authentication type.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A(z) „{invalidProperties}“ tulajdonságok a(z) „{convertedAuthType}“ hitelesítési típus esetében érvénytelenek.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2760,6 +2787,9 @@
       <Item ItemId=";Cj3/LJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Must provide the parameter name.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Meg kell adni a paraméter nevét.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3822,6 +3852,9 @@
       <Item ItemId=";I3mifR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Is skipped]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kihagyva]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4407,6 +4440,9 @@
       <Item ItemId=";LTTgWN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The collection from which to take the first object.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kötelező megadni. Az a gyűjtemény, amelyből be kell olvasni az első objektumot.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4503,6 +4539,9 @@
       <Item ItemId=";LtbkS7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the start of the day for the passed-in string timestamp.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Egy átadott sztring típusú időbélyegnek a nap kezdetét megadó összetevőjét adja vissza.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4618,7 +4657,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Unsupported programming language.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[A programozási nyelv nem támogatott.]]></Val>
+            <Val><![CDATA[Nem támogatott programozási nyelv.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4771,7 +4810,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Timed Out]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Túllépte az időkorlátot]]></Val>
+            <Val><![CDATA[Időtúllépés]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4860,6 +4899,9 @@
       <Item ItemId=";Nh91qA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the value of the specified variable.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A megadott változó értékének visszaadása.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4911,6 +4953,9 @@
       <Item ItemId=";O+3Y9f" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Has failed]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nem sikerült]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5151,6 +5196,9 @@
       <Item ItemId=";Os0h2Y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required properties ''{missingProperties}'' for authentication type ''{convertedAuthType}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hiányoznak a(z) {convertedAuthType} hitelesítési típus {missingProperties} kötelező tulajdonságai]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5490,6 +5538,9 @@
       <Item ItemId=";QKWoVr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required property ''{missingProperties}'' for authentication type ''{convertedAuthType}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hiányzik a(z) {convertedAuthType} hitelesítési típus {missingProperties} kötelező tulajdonsága]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5532,6 +5583,9 @@
       <Item ItemId=";QdhS3y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Workflow Parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Munkafolyamat-paraméterek]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6081,6 +6135,9 @@
       <Item ItemId=";Tla33B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value for which to find the index.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kötelező megadni. Az az érték, amelyhez az indexet meg kell keresni.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6096,6 +6153,9 @@
       <Item ItemId=";To3RNy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Workflow parameter errors]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Munkafolyamat-paraméter hibái]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6327,6 +6387,9 @@
       <Item ItemId=";UnytRl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The type for ''{authenticationKey}'' is ''{propertyType}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A(z) „'{authenticationKey}“ típusa „{propertyType}“.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7575,6 +7638,9 @@
       <Item ItemId=";bwlAWn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Open operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Megnyitási művelet]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7842,6 +7908,9 @@
       <Item ItemId=";d4Ddhp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Download (Alt or Option + select)]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Letöltés (Alt vagy Option + kiválasztás)]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8280,6 +8349,9 @@
       <Item ItemId=";g/7QyT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kapcsolat kiválasztása]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9090,6 +9162,9 @@
       <Item ItemId=";k8cbQ1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Parameter errors]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Paraméterhibák]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9177,6 +9252,9 @@
       <Item ItemId=";kcOhfh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Elements and mappings that aren't connected to a target element are removed.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A célelemhez nem kapcsolódó elemek és leképezések el lettek távolítva.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9852,6 +9930,9 @@
       <Item ItemId=";nmFupX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Has timed out]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Időtúllépés]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10518,6 +10599,9 @@
       <Item ItemId=";qs9D+A" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid property ''{invalidProperties}'' for authentication type ''{convertedAuthType}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Érvénytelen tulajdonság ({invalidProperties}) a(z) „{convertedAuthType}“ hitelesítési típushoz.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10659,6 +10743,9 @@
       <Item ItemId=";rh5g4p" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Is successful]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sikeres]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11304,6 +11391,9 @@
       <Item ItemId=";ui3KuP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Operation errors]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Műveleti hibák]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11805,6 +11895,9 @@
       <Item ItemId=";x2JTW5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an object with the specified property removed.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Egy objektumot ad vissza, amelyből el van távolítva a megadott tulajdonság.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
