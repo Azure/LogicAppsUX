@@ -110,6 +110,10 @@ const batch = 'batch';
 const sendtobatch = 'sendtobatch';
 const xslttransform = 'xslttransform';
 const datamapper = 'datamapper';
+const x12encode = 'x12encode';
+const x12decode = 'x12decode';
+const edifactencode = 'edifactencode';
+const edifactdecode = 'edifactdecode';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
@@ -125,6 +129,8 @@ const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
 export const flatFileConnectorId = 'connectionProviders/flatFileOperations';
 const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
+const x12connectorId = 'connectionProviders/x12';
+const edifactConnectorId = 'connectionProviders/edifact';
 
 const azurefunction = 'azurefunction';
 const appservice = 'appservice';
@@ -182,6 +188,10 @@ export const supportedBaseManifestTypes = [
   until,
   wait,
   xslttransform,
+  x12encode,
+  x12decode,
+  edifactencode,
+  edifactdecode,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -269,6 +279,10 @@ export function isBuiltInOperation(definition: any): boolean {
     case until:
     case wait:
     case xslttransform:
+    case x12decode:
+    case x12encode:
+    case edifactdecode:
+    case edifactencode:
       return true;
 
     case appservice:
@@ -587,6 +601,22 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [xslttransform]: {
     connectorId: 'connectionProviders/dataMapperOperations',
     operationId: 'xsltTransform',
+  },
+  [x12decode]: {
+    connectorId: x12connectorId,
+    operationId: x12decode,
+  },
+  [x12encode]: {
+    connectorId: x12connectorId,
+    operationId: x12encode,
+  },
+  [edifactdecode]: {
+    connectorId: edifactConnectorId,
+    operationId: edifactdecode,
+  },
+  [edifactencode]: {
+    connectorId: edifactConnectorId,
+    operationId: edifactencode,
   },
 };
 

@@ -12,6 +12,7 @@ import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { IntlProvider } from '@microsoft/intl-logic-apps';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 
 interface ExtendedTheme extends Theme {
@@ -70,18 +71,20 @@ export const DataMapperDesignerProvider = ({
               {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
               {/* @ts-ignore */}
               <PortalCompatProvider>
-                <IntlProvider
-                  locale={locale}
-                  defaultLocale={locale}
-                  onError={(err) => {
-                    if (err.code === 'MISSING_TRANSLATION') {
-                      return;
-                    }
-                    throw err;
-                  }}
-                >
-                  {children}
-                </IntlProvider>
+                <QueryClientProvider client={new QueryClient()}>
+                  <IntlProvider
+                    locale={locale}
+                    defaultLocale={locale}
+                    onError={(err) => {
+                      if (err.code === 'MISSING_TRANSLATION') {
+                        return;
+                      }
+                      throw err;
+                    }}
+                  >
+                    {children}
+                  </IntlProvider>
+                </QueryClientProvider>
               </PortalCompatProvider>
             </FluentProvider>
           </ThemeProvider>
