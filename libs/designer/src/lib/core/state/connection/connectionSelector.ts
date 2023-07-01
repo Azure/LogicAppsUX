@@ -4,7 +4,7 @@ import type { RootState } from '../../store';
 import { getConnectionId, getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import type { ConnectionMapping } from './connectionSlice';
-import { ConnectionService, GatewayService, isServiceProviderOperation } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionService, GatewayService, OperationManifestService, isServiceProviderOperation } from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -45,7 +45,10 @@ export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   // TODO: Revisit trying to conditionally ask for the connector from the service
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
   const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
-  const connectorFromService = useConnector(storeConnectorId)?.data;
+  const operationInfo = useOperationInfo(nodeId);
+
+  const useManifest = OperationManifestService().isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+  const connectorFromService = useConnector(storeConnectorId, !useManifest)?.data;
   return connectorFromService ?? connectorFromManifest;
 };
 
