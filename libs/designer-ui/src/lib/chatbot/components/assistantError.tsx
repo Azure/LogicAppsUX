@@ -1,7 +1,7 @@
 import { ChatBubble } from './chatBubble';
 import type { AssistantErrorItem } from './conversationItem';
 import { FeedbackMessage } from './feedbackMessage';
-import { TechnicalErrorMessage } from './message';
+import { TechnicalErrorMessage } from './technicalErrorMessage';
 import type { IButtonProps } from '@fluentui/react';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
