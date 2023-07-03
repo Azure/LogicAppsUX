@@ -42,7 +42,7 @@ body:
       required: true
 
   - type: dropdown
-    id: deisgnerType
+    id: designerType
     attributes:
       label: Are you using Preview Designer or GA Designer
       options:
@@ -50,6 +50,20 @@ body:
         - Generally Available
     validations:
       required: true
+    conditions:
+      sku: 'Consumption (Portal)'
+
+  - type: dropdown
+    id: designerType2
+    attributes:
+      label: Are you using GA Designer or Fallback Designer
+      options:
+        - GA Designer
+        - Fallback Designer
+    validations:
+      required: true
+    conditions:
+      sku: 'Standard (VSCode)'
 
   - type: dropdown
     id: tsgchecked
