@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Kapcsolati hivatkozás létrehozása"
     }
   ],
   "+0yxlR": [
@@ -64,7 +64,7 @@
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Lejárt az időkorlátja"
+      "value": "Időtúllépés"
     }
   ],
   "/EU/oJ": [
@@ -82,7 +82,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Nincsenek a keresésnek megfelelő értékek."
     }
   ],
   "/NtebP": [
@@ -266,7 +266,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Biztonságos bemenetek vagy kimenetek engedélyezve."
     }
   ],
   "0FzNJV": [
@@ -854,7 +854,7 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám."
     }
   ],
   "41eMpW": [
@@ -1126,7 +1126,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Kapcsolati hivatkozás kiválasztása"
     }
   ],
   "6fDYzG": [
@@ -1180,7 +1180,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Kötelező megadni. Az az érték, amelyhez az indexet meg kell keresni."
     }
   ],
   "6ueRYm": [
@@ -1308,7 +1308,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Nem támogatott hitelesítési típus: „"
     },
     {
       "type": 1,
@@ -1316,7 +1316,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "“."
     }
   ],
   "7zzPsK": [
@@ -1906,7 +1906,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Adjon meg egy vagy több olyan kifejezést, amelynek igaznak kell lennie a trigger aktiválásához."
     }
   ],
   "BtL7UI": [
@@ -1960,7 +1960,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -1968,7 +1968,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "“ tulajdonságok a(z) „"
     },
     {
       "type": 1,
@@ -1976,7 +1976,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "“ hitelesítési típus esetében érvénytelenek."
     }
   ],
   "Cb6IEq": [
@@ -2006,7 +2006,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Meg kell adni a paraméter nevét."
     }
   ],
   "ClZW2r": [
@@ -2796,7 +2796,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Kihagyva"
     }
   ],
   "I41vZ/": [
@@ -3230,7 +3230,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Kötelező megadni. Az a gyűjtemény, amelyből be kell olvasni az első objektumot."
     }
   ],
   "LV/BTE": [
@@ -3296,7 +3296,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Egy átadott sztring típusú időbélyegnek a nap kezdetét megadó összetevőjét adja vissza."
     }
   ],
   "Lub7NN": [
@@ -3374,7 +3374,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "A programozási nyelv nem támogatott."
+      "value": "Nem támogatott programozási nyelv."
     }
   ],
   "MKTdNk": [
@@ -3476,7 +3476,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Túllépte az időkorlátot"
+      "value": "Időtúllépés"
     }
   ],
   "N0pS6Y": [
@@ -3536,7 +3536,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "A megadott változó értékének visszaadása."
     }
   ],
   "NnD8gF": [
@@ -3584,7 +3584,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Nem sikerült"
     }
   ],
   "O+8vRv": [
@@ -3758,15 +3758,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "Hiányoznak a(z) "
     },
     {
       "type": 1,
@@ -3774,7 +3766,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " hitelesítési típus "
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": " kötelező tulajdonságai"
     }
   ],
   "P+7G62": [
@@ -4018,15 +4018,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "Hiányzik a(z) "
     },
     {
       "type": 1,
@@ -4034,7 +4026,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " hitelesítési típus "
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": " kötelező tulajdonsága"
     }
   ],
   "QZBPUx": [
@@ -4064,7 +4064,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Munkafolyamat-paraméterek"
     }
   ],
   "Qn8qxn": [
@@ -4460,7 +4460,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Kötelező megadni. Az az érték, amelyhez az indexet meg kell keresni."
     }
   ],
   "Tmr/9e": [
@@ -4472,7 +4472,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Munkafolyamat-paraméter hibái"
     }
   ],
   "Ts5Pzr": [
@@ -4656,23 +4656,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
-    },
-    {
-      "type": 1,
-      "value": "authenticationKey"
-    },
-    {
-      "type": 0,
-      "value": "' is '"
-    },
-    {
-      "type": 1,
-      "value": "propertyType"
-    },
-    {
-      "type": 0,
-      "value": "'."
+      "value": "A(z) „{authenticationKey}“ típusa „{propertyType}“."
     }
   ],
   "Ur+wph": [
@@ -5598,7 +5582,7 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Megnyitási művelet"
     }
   ],
   "byRkj+": [
@@ -5778,7 +5762,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Letöltés (Alt vagy Option + kiválasztás)"
     }
   ],
   "dBWIjR": [
@@ -6088,7 +6072,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Kapcsolat kiválasztása"
     }
   ],
   "g076bL": [
@@ -6662,7 +6646,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Paraméterhibák"
     }
   ],
   "kBOAkT": [
@@ -6734,7 +6718,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "A célelemhez nem kapcsolódó elemek és leképezések el lettek távolítva."
     }
   ],
   "klY9UN": [
@@ -7228,7 +7212,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Időtúllépés"
     }
   ],
   "no/SMg": [
@@ -7702,7 +7686,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Érvénytelen tulajdonság ("
     },
     {
       "type": 1,
@@ -7710,7 +7694,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": ") a(z) „"
     },
     {
       "type": 1,
@@ -7718,7 +7702,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "“ hitelesítési típushoz."
     }
   ],
   "r/n6/9": [
@@ -7814,7 +7798,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Sikeres"
     }
   ],
   "rsdJcV": [
@@ -8274,7 +8258,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Műveleti hibák"
     }
   ],
   "ui7GCl": [
@@ -8618,7 +8602,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Egy objektumot ad vissza, amelyből el van távolítva a megadott tulajdonság."
     }
   ],
   "x3dWOL": [

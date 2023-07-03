@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "연결 참조 만들기"
     }
   ],
   "+0yxlR": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "검색과 일치하는 값이 없습니다."
     }
   ],
   "/NtebP": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "보안 입력 또는 출력을 사용하도록 설정했습니다."
     }
   ],
   "0FzNJV": [
@@ -834,7 +834,7 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "필수. 이 값은 반환할 수 있는 가장 높은 정수 다음 정수입니다."
     }
   ],
   "41eMpW": [
@@ -1084,7 +1084,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "입력을 로드하는 동안 오류가 발생했습니다."
     }
   ],
   "6OSgRP": [
@@ -1102,7 +1102,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "연결 참조 선택"
     }
   ],
   "6fDYzG": [
@@ -1164,7 +1164,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "필수. 인덱스 찾기에 사용할 값입니다."
     }
   ],
   "6ueRYm": [
@@ -1292,7 +1292,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "지원되지 않는 인증 유형 '"
     },
     {
       "type": 1,
@@ -1300,7 +1300,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'입니다."
     }
   ],
   "7zzPsK": [
@@ -1871,7 +1871,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "트리거가 실행되려면 true여야 하는 하나 이상의 식을 지정합니다."
     }
   ],
   "BtL7UI": [
@@ -1925,7 +1925,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1933,7 +1933,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' 속성은 '"
     },
     {
       "type": 1,
@@ -1941,7 +1941,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' 인증 유형에 유효하지 않습니다."
     }
   ],
   "Cb6IEq": [
@@ -1971,7 +1971,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "매개 변수 이름을 제공해야 합니다."
     }
   ],
   "ClZW2r": [
@@ -2734,7 +2734,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "건너뜀"
     }
   ],
   "I41vZ/": [
@@ -2896,7 +2896,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "실패함"
+      "value": "실패"
     }
   ],
   "J9wWry": [
@@ -3157,7 +3157,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "필수. 첫 번째 개체를 가져올 컬렉션입니다."
     }
   ],
   "LV/BTE": [
@@ -3223,7 +3223,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "전달된 문자열 타임스탬프에 대한 일의 시작을 반환합니다."
     }
   ],
   "Lub7NN": [
@@ -3463,7 +3463,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "지정된 변수의 값을 반환합니다."
     }
   ],
   "NnD8gF": [
@@ -3511,7 +3511,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "실패함"
     }
   ],
   "O+8vRv": [
@@ -3685,15 +3685,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "인증 유형 '"
     },
     {
       "type": 1,
@@ -3701,7 +3693,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "'에 대한 필수 속성 '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "'이(가) 없습니다."
     }
   ],
   "P+7G62": [
@@ -3941,15 +3941,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "인증 유형 '"
     },
     {
       "type": 1,
@@ -3957,7 +3949,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "'에 대한 필수 속성 '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "'이(가) 없습니다."
     }
   ],
   "QZBPUx": [
@@ -4372,7 +4372,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "필수. 인덱스 찾기에 사용할 값입니다."
     }
   ],
   "Tmr/9e": [
@@ -4384,7 +4384,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "워크플로 매개 변수 오류"
     }
   ],
   "Ts5Pzr": [
@@ -4568,7 +4568,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4576,7 +4576,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "'의 형식은 '"
     },
     {
       "type": 1,
@@ -4584,7 +4584,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'입니다."
     }
   ],
   "Ur+wph": [
@@ -4626,7 +4626,7 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "간격"
     }
   ],
   "VA7M1u": [
@@ -5510,7 +5510,7 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "작업 열기"
     }
   ],
   "byRkj+": [
@@ -5690,7 +5690,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "다운로드(Alt 또는 Option + select)"
     }
   ],
   "dBWIjR": [
@@ -6547,7 +6547,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "매개 변수 오류"
     }
   ],
   "kBOAkT": [
@@ -6619,7 +6619,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "대상 요소에 연결되지 않은 요소 및 매핑이 제거됩니다."
     }
   ],
   "klY9UN": [
@@ -7090,7 +7090,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "시간이 초과됨"
     }
   ],
   "no/SMg": [
@@ -7553,15 +7553,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "인증 유형 '"
     },
     {
       "type": 1,
@@ -7569,7 +7561,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'에 대한 속성 '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "'이(가) 잘못되었습니다."
     }
   ],
   "r/n6/9": [
@@ -7665,7 +7665,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "성공"
     }
   ],
   "rsdJcV": [
@@ -8125,7 +8125,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "작업 오류"
     }
   ],
   "ui7GCl": [
@@ -8465,7 +8465,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "지정된 속성이 제거된 개체를 반환합니다."
     }
   ],
   "x3dWOL": [
@@ -8701,7 +8701,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "자세한 정보"
+      "value": "자세히 알아보기"
     }
   ],
   "z/UY4k": [

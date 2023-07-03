@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Tworzenie odwołanie do połączenia"
     }
   ],
   "+0yxlR": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Brak wartości spełniających kryteria wyszukiwania."
     }
   ],
   "/NtebP": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Włączono bezpieczne dane wejściowe lub wyjściowe."
     }
   ],
   "0FzNJV": [
@@ -846,7 +846,7 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Wymagane. ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
     }
   ],
   "41eMpW": [
@@ -1118,7 +1118,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Wybierz odwołanie do połączenia"
     }
   ],
   "6fDYzG": [
@@ -1180,7 +1180,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Wymagane. wartość, dla której ma zostać odnaleziony indeks."
     }
   ],
   "6ueRYm": [
@@ -1308,7 +1308,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Nieobsługiwany typ uwierzytelniania „"
     },
     {
       "type": 1,
@@ -1316,7 +1316,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”."
     }
   ],
   "7zzPsK": [
@@ -1928,7 +1928,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony."
     }
   ],
   "BtL7UI": [
@@ -1982,7 +1982,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Właściwości „"
     },
     {
       "type": 1,
@@ -1990,7 +1990,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "” są nieprawidłowe dla typu uwierzytelniania „"
     },
     {
       "type": 1,
@@ -1998,7 +1998,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "”."
     }
   ],
   "Cb6IEq": [
@@ -2028,7 +2028,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Należy podać nazwę parametru."
     }
   ],
   "ClZW2r": [
@@ -2840,7 +2840,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Pominięto"
     }
   ],
   "I41vZ/": [
@@ -3218,7 +3218,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Zignorowane"
+      "value": "Zignorowano"
     }
   ],
   "KwGA+K": [
@@ -3296,7 +3296,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Wymagane: kolekcja, z której należy pobrać pierwszy obiekt."
     }
   ],
   "LV/BTE": [
@@ -3362,7 +3362,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Zwraca początek dnia dla sygnatury czasowej przekazanego ciągu."
     }
   ],
   "Lub7NN": [
@@ -3602,7 +3602,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Zwraca wartość określonej zmiennej."
     }
   ],
   "NnD8gF": [
@@ -3650,7 +3650,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Zakończyło się niepowodzeniem"
     }
   ],
   "O+8vRv": [
@@ -3824,7 +3824,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Brak wymaganych właściwości „"
     },
     {
       "type": 1,
@@ -3832,7 +3832,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "” dla typu uwierzytelniania „"
     },
     {
       "type": 1,
@@ -3840,7 +3840,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "P+7G62": [
@@ -4084,7 +4084,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Brak wymaganej właściwości „"
     },
     {
       "type": 1,
@@ -4092,7 +4092,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "” dla typu uwierzytelniania „"
     },
     {
       "type": 1,
@@ -4100,7 +4100,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "QZBPUx": [
@@ -4548,7 +4548,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Wymagane. wartość, dla której ma zostać odnaleziony indeks."
     }
   ],
   "Tmr/9e": [
@@ -4560,7 +4560,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Błędy parametrów przepływu pracy"
     }
   ],
   "Ts5Pzr": [
@@ -4748,7 +4748,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Typem dla „"
     },
     {
       "type": 1,
@@ -4756,7 +4756,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "'” jest „"
     },
     {
       "type": 1,
@@ -4764,7 +4764,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”'."
     }
   ],
   "Ur+wph": [
@@ -5554,7 +5554,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Anulowane"
+      "value": "Anulowano"
     }
   ],
   "ae7W0a": [
@@ -5690,7 +5690,7 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Otwórz operację"
     }
   ],
   "byRkj+": [
@@ -5870,7 +5870,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Pobierz (Alt lub Option + select)"
     }
   ],
   "dBWIjR": [
@@ -6176,7 +6176,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Wybierz połączenie"
     }
   ],
   "g076bL": [
@@ -6772,7 +6772,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Błędy parametrów"
     }
   ],
   "kBOAkT": [
@@ -6844,7 +6844,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Elementy i mapowania, które nie są połączone z elementem docelowym, są usuwane."
     }
   ],
   "klY9UN": [
@@ -6870,7 +6870,7 @@
             },
             {
               "type": 0,
-              "value": " elementy(-ów)."
+              "value": " elementy."
             }
           ]
         },
@@ -6885,7 +6885,7 @@
             },
             {
               "type": 0,
-              "value": " elementy(-ów)."
+              "value": " elementów."
             }
           ]
         },
@@ -6915,7 +6915,7 @@
             },
             {
               "type": 0,
-              "value": " elementy(-ów)."
+              "value": " elementu."
             }
           ]
         }
@@ -7288,7 +7288,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Pominięte"
+      "value": "Pominięto"
     }
   ],
   "nHseED": [
@@ -7372,7 +7372,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Upłynął limit czasu"
     }
   ],
   "no/SMg": [
@@ -7868,7 +7868,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Nieprawidłowa właściwość „"
     },
     {
       "type": 1,
@@ -7876,7 +7876,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "” dla 'typu uwierzytelniania „"
     },
     {
       "type": 1,
@@ -7884,7 +7884,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”."
     }
   ],
   "r/n6/9": [
@@ -7980,7 +7980,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "zakończone powodzeniem"
     }
   ],
   "rsdJcV": [
@@ -8408,7 +8408,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Zakończono pomyślnie"
+      "value": "Zakończone powodzeniem"
     }
   ],
   "uc/PoD": [
@@ -8444,7 +8444,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Błędy operacji"
     }
   ],
   "ui7GCl": [
@@ -8788,7 +8788,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Zwraca obiekt z usuniętą określoną właściwością."
     }
   ],
   "x3dWOL": [

@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Creare riferimento alla connessione"
     }
   ],
   "+0yxlR": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Nessun valore corrispondente alla ricerca."
     }
   ],
   "/NtebP": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Input o output protetti abilitati."
     }
   ],
   "0FzNJV": [
@@ -834,7 +834,7 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Obbligatorio. Valore corrispondente all'intero successivo dopo l’intero più elevato che è stato restituito."
     }
   ],
   "41eMpW": [
@@ -1102,7 +1102,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Selezionare il riferimento alla connessione"
     }
   ],
   "6fDYzG": [
@@ -1164,7 +1164,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Obbligatorio. Valore per il quale trovare l'indice."
     }
   ],
   "6ueRYm": [
@@ -1292,7 +1292,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -1300,7 +1300,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' non supportato."
     }
   ],
   "7zzPsK": [
@@ -1865,7 +1865,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matrice"
     }
   ],
   "Bl4Iv0": [
@@ -1901,7 +1901,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Specificare una o più espressioni che devono essere true per l'attivazione del trigger."
     }
   ],
   "BtL7UI": [
@@ -1943,7 +1943,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Crea connessione"
+      "value": "Creare connessione"
     }
   ],
   "CaajcD": [
@@ -1955,7 +1955,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Le proprietà '"
     },
     {
       "type": 1,
@@ -1963,7 +1963,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' non sono valide per il tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -1971,7 +1971,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "'."
     }
   ],
   "Cb6IEq": [
@@ -2001,7 +2001,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "È necessario specificare il nome del parametro."
     }
   ],
   "ClZW2r": [
@@ -2786,7 +2786,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "È stato ignorato"
     }
   ],
   "I41vZ/": [
@@ -2948,7 +2948,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Operazione non riuscita"
+      "value": "Non riuscito"
     }
   ],
   "J9wWry": [
@@ -3231,7 +3231,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Obbligatorio. Raccolta da cui recuperare il primo oggetto."
     }
   ],
   "LV/BTE": [
@@ -3297,7 +3297,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Restituisce l'inizio del giorno relativo al timestamp in formato stringa passato."
     }
   ],
   "Lub7NN": [
@@ -3477,7 +3477,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timeout"
+      "value": "Scaduto"
     }
   ],
   "N0pS6Y": [
@@ -3537,7 +3537,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Restituisce il valore della variabile specificata."
     }
   ],
   "NnD8gF": [
@@ -3585,7 +3585,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "ha avuto esito negativo"
     }
   ],
   "O+8vRv": [
@@ -3767,7 +3767,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Proprietà obbligatorie '"
     },
     {
       "type": 1,
@@ -3775,7 +3775,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' mancanti per il tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -3895,7 +3895,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Errori delle impostazioni"
+      "value": "Errori impostazioni"
     }
   ],
   "PfCJlN": [
@@ -4023,7 +4023,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Proprietà obbligatoria '"
     },
     {
       "type": 1,
@@ -4031,7 +4031,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' mancante per il tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -4476,7 +4476,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Obbligatorio. Valore per il quale trovare l'indice."
     }
   ],
   "Tmr/9e": [
@@ -4488,7 +4488,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Errori dei parametri del flusso di lavoro"
     }
   ],
   "Ts5Pzr": [
@@ -4676,7 +4676,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Il tipo per '"
     },
     {
       "type": 1,
@@ -4684,7 +4684,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "' è '"
     },
     {
       "type": 1,
@@ -4692,7 +4692,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "''."
     }
   ],
   "Ur+wph": [
@@ -5482,7 +5482,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Operazione annullata"
+      "value": "Annullato"
     }
   ],
   "ae7W0a": [
@@ -5618,7 +5618,7 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Apri operazione"
     }
   ],
   "byRkj+": [
@@ -5798,7 +5798,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Scarica (ALT o OPZIONE + selezione)"
     }
   ],
   "dBWIjR": [
@@ -6685,7 +6685,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Errori parametri"
     }
   ],
   "kBOAkT": [
@@ -6757,7 +6757,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Gli elementi e i mapping non connessi a un elemento di destinazione vengono rimossi."
     }
   ],
   "klY9UN": [
@@ -7254,7 +7254,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "È scaduto"
     }
   ],
   "no/SMg": [
@@ -7739,7 +7739,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Proprietà non valida '"
     },
     {
       "type": 1,
@@ -7747,7 +7747,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' per il tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -7851,7 +7851,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Ha avuto esito positivo"
     }
   ],
   "rsdJcV": [
@@ -8315,7 +8315,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Errori dell'operazione"
     }
   ],
   "ui7GCl": [
@@ -8659,7 +8659,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Restituisce un oggetto con la proprietà specificata rimossa."
     }
   ],
   "x3dWOL": [
@@ -8671,7 +8671,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Operazione interrotta"
+      "value": "Interrotto"
     }
   ],
   "x8kTAX": [
