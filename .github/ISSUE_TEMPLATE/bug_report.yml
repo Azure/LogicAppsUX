@@ -46,8 +46,8 @@ body:
     attributes:
       label: Are you using new designer or old designer
       options:
-        - Preview
-        - Generally Available
+        - New Designer
+        - Old Designer
     validations:
       required: true
 
