@@ -3,6 +3,7 @@ description: Create an issue specifically for the Data Mapper product
 labels: ['Data Mapper']
 assignees:
   - refortie
+  - DanielleCogs
 body:
   - type: markdown
     attributes:
