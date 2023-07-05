@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [2.43.0](https://github.com/Azure/LogicAppsUX/compare/v2.42.0...v2.43.0) (2023-07-05)
+
+
+### Features
+
+* **designer:** Add support for x12 and edifact connector ([#2893](https://github.com/Azure/LogicAppsUX/issues/2893)) ([07d7bd0](https://github.com/Azure/LogicAppsUX/commit/07d7bd0166a86bccf9f859d570468f294349f826))
+
+
+### Bug Fixes
+
+* **designer:** Consumption - Fixing dynamic content api calls for Open Api Connection ([#2895](https://github.com/Azure/LogicAppsUX/issues/2895)) ([c9f7cab](https://github.com/Azure/LogicAppsUX/commit/c9f7cab61707d518817ccfa8330843303a3f4e95))
+* **designer:** revert designer type dropdown ([#2911](https://github.com/Azure/LogicAppsUX/issues/2911)) ([7de0bfc](https://github.com/Azure/LogicAppsUX/commit/7de0bfc1388ca977456eb079eee136d8b89b8ac1))
+* **Designer:** Select Connection panel now shows recently created connections ([#2890](https://github.com/Azure/LogicAppsUX/issues/2890)) ([045b698](https://github.com/Azure/LogicAppsUX/commit/045b698cf57feba4cd8a0a9338ad8cdd404a2902))
+* **designer:** Serialization of expressions within casted parameters failing validation ([#2889](https://github.com/Azure/LogicAppsUX/issues/2889)) ([a6c975b](https://github.com/Azure/LogicAppsUX/commit/a6c975b9ccfd29b7f43958270b5f0d2a8c007af2))
+* **vscode:** Revert invalid connection message when switching blades ([#2892](https://github.com/Azure/LogicAppsUX/issues/2892)) ([fcb4e34](https://github.com/Azure/LogicAppsUX/commit/fcb4e34e4b119023a710a648f05d389d851a6769)), closes [#2783](https://github.com/Azure/LogicAppsUX/issues/2783)
+
 ## [2.42.0](https://github.com/Azure/LogicAppsUX/compare/v2.41.0...v2.42.0) (2023-06-30)
 
 
