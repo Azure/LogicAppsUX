@@ -76,7 +76,7 @@ export function getStandardAppData(
   };
 }
 
-function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
+export function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
   const workflowParameters: Record<string, WorkflowParameter> = {};
   for (const parameterKey of Object.keys(parameters)) {
     const parameter = parameters[parameterKey];
