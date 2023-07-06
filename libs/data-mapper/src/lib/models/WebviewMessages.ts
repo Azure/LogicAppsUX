@@ -1,10 +1,16 @@
 import type { MapDefinitionEntry } from './MapDefinition';
+import type { MapMetadata } from './MapMetadata';
 import type { SchemaType } from './Schema';
 
 type FetchSchemaData = { fileName: string; type: SchemaType };
 type SchemaPathData = { path: string; type: SchemaType };
 
-export type MapDefinitionData = { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string };
+export type MapDefinitionData = {
+  mapDefinition: MapDefinitionEntry;
+  sourceSchemaFileName: string;
+  targetSchemaFileName: string;
+  metadata: MapMetadata | undefined;
+};
 export type XsltData = { filename: string; fileContents: string };
 
 export type MessageToWebview =
