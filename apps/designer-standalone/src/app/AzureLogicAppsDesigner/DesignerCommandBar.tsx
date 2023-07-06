@@ -9,7 +9,11 @@ import {
   serializeBJSWorkflow,
   updateCallbackUrl,
   switchToWorkflowParameters,
+  switchToErrorsPanel,
   useIsDesignerDirty,
+  useAllSettingsValidationErrors,
+  useWorkflowParameterValidationErrors,
+  useAllConnectionErrors,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -24,7 +28,8 @@ const iconClass = mergeStyles({
 
 const classNames = mergeStyleSets({
   azureBlue: [{ color: 'rgb(0, 120, 212)' }, iconClass],
-  azureGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
+  azureGrey: [{ color: '#A19F9D' }, iconClass],
+  azureRed: [{ color: 'rgb(194, 57, 52)' }, iconClass],
 });
 
 export const DesignerCommandBar = ({
@@ -61,22 +66,19 @@ export const DesignerCommandBar = ({
       )
     );
   });
-  const allWorkflowParameterErrors = useSelector((state: RootState) => {
-    let validationErrorToShow = null;
-    for (const parameter of Object.entries(state.workflowParameters.validationErrors) ?? []) {
-      if (parameter?.[1]?.value) {
-        validationErrorToShow = {
-          name: state.workflowParameters.definitions[parameter[0]]?.name,
-          msg: parameter[1].value,
-        };
-      }
-    }
-    return validationErrorToShow;
-  });
+  const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
+  const haveWorkflowParameterErrors = Object.keys(allWorkflowParameterErrors ?? {}).length > 0;
+  const allSettingsErrors = useAllSettingsValidationErrors();
+  const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
+  const allConnectionErrors = useAllConnectionErrors();
+  const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
 
-  const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
+  const haveErrors = useMemo(
+    () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
+    [allInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
+  );
 
-  const saveIsDisabled = isSaving || haveErrors || !designerIsDirty;
+  const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
@@ -109,7 +111,7 @@ export const DesignerCommandBar = ({
         return (
           <>
             {item.text}
-            {allWorkflowParameterErrors ? (
+            {haveWorkflowParameterErrors ? (
               <div style={{ display: 'inline-block', marginLeft: 8 }}>
                 <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
               </div>
@@ -119,6 +121,16 @@ export const DesignerCommandBar = ({
       },
       iconProps: { iconName: 'Parameter' },
       onClick: () => !!dispatch(switchToWorkflowParameters()),
+    },
+    {
+      key: 'errors',
+      text: 'Errors',
+      disabled: !haveErrors,
+      iconProps: {
+        iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
+        style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
+      },
+      onClick: () => !!dispatch(switchToErrorsPanel()),
     },
     {
       key: 'fileABug',

@@ -5,7 +5,7 @@ import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 interface SerializationOptions {
   valueType: string;
@@ -49,7 +49,7 @@ export const DropdownEditor = ({
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
     multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined
   );
-  const [dropdownOptions] = useState<IDropdownOption[]>(getOptions(options));
+  const dropdownOptions = useMemo<IDropdownOption[]>(() => getOptions(options), [options]);
 
   const dropdownStyles: Partial<IDropdownStyles> = {
     root: {

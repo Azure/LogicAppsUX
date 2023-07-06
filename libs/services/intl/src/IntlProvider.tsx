@@ -2,19 +2,7 @@ import { IntlGlobalProvider } from './intl';
 import type { OnErrorFn } from '@formatjs/intl';
 import type { MessageFormatElement } from 'react-intl';
 import { IntlProvider as ReactIntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchInterval: false,
-      refetchIntervalInBackground: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-    },
-  },
-});
+import { useQuery } from 'react-query';
 
 export interface IntlProviderProps {
   locale: string;
@@ -84,7 +72,7 @@ const loadLocaleData = async (locale: string): Promise<Record<string, string> | 
   return { ...messages };
 };
 
-const IntlProviderInner: React.FC<IntlProviderProps> = ({ locale, defaultLocale, children, onError }) => {
+export const IntlProvider: React.FC<IntlProviderProps> = ({ locale, defaultLocale, children, onError }) => {
   const { data } = useQuery(['localizationMessages', locale], async () => {
     const messages = await loadLocaleData(locale);
     return { ...messages };
@@ -94,12 +82,5 @@ const IntlProviderInner: React.FC<IntlProviderProps> = ({ locale, defaultLocale,
     <ReactIntlProvider locale={locale} defaultLocale={defaultLocale} messages={data} onError={onError as any}>
       <IntlGlobalProvider>{children}</IntlGlobalProvider>
     </ReactIntlProvider>
-  );
-};
-export const IntlProvider: React.FC<IntlProviderProps> = (props) => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <IntlProviderInner {...props} />
-    </QueryClientProvider>
   );
 };

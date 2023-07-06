@@ -3,6 +3,7 @@ import { RowDropdownOptions, GroupType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
+import { removeQuotes } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import { Row } from './Row';
 import type { IButtonStyles, IStyle } from '@fluentui/react';
@@ -99,6 +100,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
           groupedItems={[]}
           readonly={readonly}
           clearEditorOnTokenInsertion={true}
+          isSimpleQueryBuilder={true}
         />
       ) : (
         <StringEditor
@@ -207,11 +209,4 @@ const checkIfShouldHaveQuotes = (valSegment: ValueSegment): boolean => {
     return false;
   }
   return true;
-};
-
-export const removeQuotes = (s: string): string => {
-  if ((s.startsWith("'") && s.endsWith("'")) || (s.startsWith('"') && s.endsWith('"'))) {
-    return s.slice(1, -1);
-  }
-  return s;
 };

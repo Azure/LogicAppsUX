@@ -60,7 +60,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     let count = 1;
     let nodeId = actionId;
-    while ((getState() as RootState).workflow.operations[nodeId]) {
+    while ((getState() as RootState).workflow.nodesMetadata[nodeId]) {
       nodeId = `${actionId}_${count}`;
       count++;
     }

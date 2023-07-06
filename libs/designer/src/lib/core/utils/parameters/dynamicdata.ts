@@ -93,7 +93,7 @@ export async function getDynamicValues(
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<ListDynamicValue[]> {
-  const { definition, parameter } = dependencyInfo;
+  const { definition } = dependencyInfo;
   if (isDynamicListExtension(definition)) {
     const { dynamicState, parameters } = definition.extension;
     const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
@@ -102,7 +102,6 @@ export async function getDynamicValues(
       connectionReference?.connection.id,
       operationInfo.connectorId,
       operationInfo.operationId,
-      parameter?.alias,
       operationParameters,
       dynamicState
     );
@@ -178,7 +177,6 @@ export async function getDynamicSchema(
             connectionReference?.connection.id,
             operationInfo.connectorId,
             operationInfo.operationId,
-            parameter?.alias,
             operationParameters,
             dynamicState
           );
@@ -311,7 +309,7 @@ export async function getFolderItems(
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<TreeDynamicValue[]> {
-  const { definition, filePickerInfo, parameter } = dependencyInfo;
+  const { definition, filePickerInfo } = dependencyInfo;
 
   if (isLegacyDynamicValuesTreeExtension(definition) && filePickerInfo) {
     const { open, browse } = filePickerInfo;
@@ -361,12 +359,15 @@ export async function getFolderItems(
       workflowParameters
     );
 
-    let dynamicState = definition.extension.dynamicState;
-    if (selectedValue) {
-      dynamicState = { ...dynamicState, selectionState: selectedValue.selectionState };
-    }
+    const dynamicExtension = { dynamicState: definition.extension.dynamicState, selectionState: selectedValue ? selectedValue.selectionState : undefined };
 
-    return getDynamicTreeItems(connectionId, connectorId, operationId, parameter?.alias, operationParameters, dynamicState);
+    return getDynamicTreeItems(
+      connectionId,
+      connectorId,
+      operationId,
+      operationParameters,
+      dynamicExtension,
+    );
   }
 
   throw new UnsupportedException(`Dynamic extension '${definition.type}' is not implemented yet or not supported`);
@@ -590,7 +591,7 @@ function loadUnknownManifestBasedParameters(
       } as ResolvedParameter;
       knownKeys.add(keyPrefix);
     }
-  } else if (!result[keyPrefix]) {
+  } else if (!result[keyPrefix] && !knownKeys.has(keyPrefix)) {
     // If it is an object, recurse down and find the other unknown values.
     Object.keys(input).forEach((key) => {
       // encode the key to match the paths of the known parameters.

@@ -279,66 +279,65 @@ export function getStatusString(status: string, hasRetries: boolean): string {
       return intl.formatMessage({
         defaultMessage: 'Aborted',
 
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.CANCELLED:
       return intl.formatMessage({
         defaultMessage: 'Cancelled',
 
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.FAILED:
       return intl.formatMessage({
         defaultMessage: 'Failed',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.FAULTED:
       return intl.formatMessage({
         defaultMessage: 'Faulted',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.IGNORED:
       return intl.formatMessage({
         defaultMessage: 'Ignored',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.SKIPPED:
       return intl.formatMessage({
         defaultMessage: 'Skipped',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.SUCCEEDED:
       return hasRetries
         ? intl.formatMessage({
             defaultMessage: 'Succeeded with retries',
-            description:
-              'This is a status message to be shown in a monitoring view. This refers to the succeeded status of a previous action.',
+            description: 'The status message to show in monitoring view.. This refers to the succeeded status of a previous action.',
           })
         : intl.formatMessage({
             defaultMessage: 'Succeeded',
-            description: 'This is a status message to be shown in a monitoring view',
+            description: 'The status message to show in monitoring view.',
           });
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
         defaultMessage: 'Timed Out',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.WAITING:
       return intl.formatMessage({
         defaultMessage: 'Waiting',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.NOT_SPECIFIED:
     default:
       return intl.formatMessage({
         defaultMessage: 'Not specified',
-        description: 'This is a status message to be shown in a monitoring view',
+        description: 'The status message to show in monitoring view.',
       });
   }
 }
@@ -373,6 +372,9 @@ export const convertUIElementNameToAutomationId = (uiElementName: string): strin
 
 export const getPreviewTag = (status: string | undefined): string | undefined => {
   return equals(status, 'preview')
-    ? getIntl().formatMessage({ defaultMessage: 'Preview', description: 'Preview tag for preview connector' })
+    ? getIntl().formatMessage({
+        defaultMessage: 'Preview',
+        description: 'The preview tag for a preview connector.',
+      })
     : undefined;
 };

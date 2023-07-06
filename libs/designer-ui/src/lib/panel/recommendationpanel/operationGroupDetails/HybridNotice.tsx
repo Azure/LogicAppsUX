@@ -17,7 +17,7 @@ const HybridNotice = () => {
 
   const learnMoreText = intl.formatMessage({
     defaultMessage: 'Learn more',
-    description: 'Text for learn more link',
+    description: "The text for the 'Learn more' link.",
   });
 
   return (

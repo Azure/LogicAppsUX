@@ -282,8 +282,11 @@ const getOperationInfo = async (
       }
       const connectorId = reference.api.id;
       const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
-      const operationInputInfo = getOperationInputInfoFromDefinition(parsedSwagger, operation, type);
+      if (!parsedSwagger) {
+        throw new Error(`Could not fetch swagger for connector - ${connectorId}`);
+      }
 
+      const operationInputInfo = getOperationInputInfoFromDefinition(parsedSwagger, operation, type);
       if (!operationInputInfo) {
         throw new Error('Could not fetch operation input info from swagger and definition');
       }

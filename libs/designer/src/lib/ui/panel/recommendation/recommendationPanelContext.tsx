@@ -14,8 +14,8 @@ import { BrowseView } from './browseView';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
-import { Link, Icon } from '@fluentui/react';
-import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
+import { Link, Icon, IconButton, Text } from '@fluentui/react';
+import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { equals, guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
@@ -36,7 +36,7 @@ export type RecommendationPanelContextProps = {
 } & CommonPanelProps;
 
 export const RecommendationPanelContext = (props: RecommendationPanelContextProps) => {
-  const { displayRuntimeInfo } = props;
+  const { displayRuntimeInfo, toggleCollapse } = props;
   const dispatch = useDispatch<AppDispatch>();
   const isTrigger = useIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
@@ -129,8 +129,16 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
     description: 'Text for the Details page navigation heading',
   });
 
+  const headingText = isTrigger
+    ? intl.formatMessage({ defaultMessage: 'Add a trigger', description: 'Text for the "Add Trigger" page header' })
+    : intl.formatMessage({ defaultMessage: 'Add an action', description: 'Text for the "Add Action" page header' });
+
   return (
-    <RecommendationPanel placeholder={''} isTrigger={isTrigger} {...props}>
+    <>
+      <div className="msla-app-action-header">
+        <Text variant="xLarge">{headingText}</Text>
+        <IconButton onClick={toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
+      </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -182,6 +190,6 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
           ),
         }[selectionState ?? '']
       }
-    </RecommendationPanel>
+    </>
   );
 };

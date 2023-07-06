@@ -42,12 +42,12 @@ body:
       required: true
 
   - type: dropdown
-    id: deisgnerType
+    id: designerType
     attributes:
-      label: Are you using Preview Designer or GA Designer
+      label: Are you using new designer or old designer
       options:
-        - Preview
-        - Generally Available
+        - New Designer
+        - Old Designer
     validations:
       required: true
 

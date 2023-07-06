@@ -37,7 +37,14 @@ import type {
   IOAuthService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  WorkflowService,
+  LoggerService,
+  LogEntryLevel,
+  OperationManifestService,
+  FunctionService,
+  ApiManagementService,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { SchemaProperty, InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
@@ -52,8 +59,16 @@ import {
   ManifestParser,
   PropertyName,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
-import { clone, equals, ConnectionReferenceKeyFormat, unmap, getObjectPropertyValue } from '@microsoft/utils-logic-apps';
+import type { CustomSwaggerServiceDetails, OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
+import {
+  CustomSwaggerServiceNames,
+  UnsupportedException,
+  clone,
+  equals,
+  ConnectionReferenceKeyFormat,
+  unmap,
+  getObjectPropertyValue,
+} from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -64,7 +79,7 @@ export interface ServiceOptions {
   workflowService: IWorkflowService;
 }
 
-export const parseWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
+export const updateWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
   dispatch(
     initializeParameters(
       Object.keys(parameters).reduce(
@@ -345,6 +360,8 @@ export const getInputDependencies = (
           filePickerInfo: {
             open: dynamicValues.extension.open,
             browse: dynamicValues.extension.browse,
+            fullTitlePath: 'fullyQualifiedDisplayName',
+            valuePath: 'value'
           },
           parameter: inputParameter,
         };
@@ -446,12 +463,46 @@ export const getCustomSwaggerIfNeeded = async (
   manifestProperties: OperationManifestProperties,
   stepDefinition?: any
 ): Promise<SwaggerParser | undefined> => {
-  const swaggerUrlLocation = manifestProperties.customSwagger?.location;
-  if (!swaggerUrlLocation || !stepDefinition) {
+  if (!manifestProperties.customSwagger || !stepDefinition) {
     return undefined;
   }
 
-  return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
+  const { location, service } = manifestProperties.customSwagger;
+
+  if (!location && !service) {
+    return undefined;
+  }
+
+  return location
+    ? getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, location))
+    : getSwaggerFromService(
+        service as CustomSwaggerServiceDetails,
+        getObjectPropertyValue(stepDefinition, manifestProperties.inputsLocation ?? ['inputs'])
+      );
+};
+
+const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails, stepInputs: any): Promise<SwaggerParser> => {
+  const { name, operationId, parameters } = serviceDetails;
+  let service: any;
+  switch (name) {
+    case CustomSwaggerServiceNames.Function:
+      service = FunctionService();
+      break;
+    case CustomSwaggerServiceNames.ApiManagement:
+      service = ApiManagementService();
+      break;
+    default:
+      throw new UnsupportedException(`The custom swagger service name '${name}' is not supported`);
+  }
+
+  if (!service || !service[operationId]) {
+    throw new UnsupportedException(`The custom swagger service name '${name}' for operation '${operationId}' is not supported`);
+  }
+
+  const operationParameters = Object.keys(parameters).map((parameterName) =>
+    getObjectPropertyValue(stepInputs, parameters[parameterName].parameterReference.split('.'))
+  );
+  return service[operationId](...operationParameters);
 };
 
 export const updateInvokerSettings = (

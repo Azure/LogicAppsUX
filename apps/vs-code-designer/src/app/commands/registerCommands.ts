@@ -16,6 +16,7 @@ import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
+import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { createSlot } from './createSlot';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
@@ -61,6 +62,7 @@ export function registerCommands(): void {
   );
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
   registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
+  registerCommand(extensionCommand.createNewCodeProject, createNewCodeProjectFromCommand);
   registerCommand(extensionCommand.createCodeless, createCodeless);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
