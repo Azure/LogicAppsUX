@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.44.0](https://github.com/Azure/LogicAppsUX/compare/v2.43.0...v2.44.0) (2023-07-06)
+
+
+### Bug Fixes
+
+* **designer:** Added support for enums in simple array editor ([#2919](https://github.com/Azure/LogicAppsUX/issues/2919)) ([5ce5b33](https://github.com/Azure/LogicAppsUX/commit/5ce5b339b120cd084c80098fd650c4f092d045fd))
+
 ## [2.43.0](https://github.com/Azure/LogicAppsUX/compare/v2.42.0...v2.43.0) (2023-07-05)
 
 
