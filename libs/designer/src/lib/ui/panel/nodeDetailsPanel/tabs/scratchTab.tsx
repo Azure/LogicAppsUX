@@ -6,8 +6,8 @@ import {
   BaseEditor,
   testTokenSegment, // AuthenticationType,
   // Combobox, // RowDropdownOptions,
-  // GroupType, // ArrayEditor,
-  // // ArrayType, // DictionaryEditor,
+  // GroupType,
+  ArrayEditor, // // ArrayType, // DictionaryEditor,
   // // TokenType,
   // // GroupType,
   // // GroupDropdownOptions,
@@ -23,7 +23,8 @@ import {
   Scratch, // StringEditor,
   // AuthenticationEditor, // DropdownEditor,
   outputToken,
-  outputToken2, // RowDropdownOptions,
+  outputToken2,
+  ArrayType, // RowDropdownOptions,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
 
@@ -174,9 +175,9 @@ getTokenPicker={GetTokenPicker}
           type={AuthenticationType.BASIC}
           authenticationValue={{}}
         /> */}
-        {/* <ArrayEditor
+        <ArrayEditor
           labelId=""
-          type={ArrayType.SIMPLE}
+          arrayType={ArrayType.SIMPLE}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialValue={[
             { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
@@ -187,10 +188,15 @@ getTokenPicker={GetTokenPicker}
             testTokenSegment,
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n , "Some Text"]' },
           ]}
           getTokenPicker={GetTokenPicker}
+          itemSchema={{ type: 'string', key: '', enum: ['This is Text', 'Some Text', 'More Text'] }}
+          castParameter={function (): string {
+            return '';
+          }}
         />
+        {/*
 
         <ArrayEditor
           labelId=""

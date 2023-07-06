@@ -25,6 +25,7 @@ export interface ArrayItemSchema {
   required?: string[];
   description?: string;
   format?: string;
+  enum?: string[];
 }
 
 export interface ComplexArrayItem {
@@ -164,6 +165,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           {...baseEditorProps}
           placeholder={placeholder}
           valueType={itemSchema.type}
+          itemEnum={itemSchema.enum}
           items={items as SimpleArrayItem[]}
           labelProps={labelProps}
           canDeleteLastItem={canDeleteLastItem}
