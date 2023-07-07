@@ -198,7 +198,8 @@ export const getDynamicTreeItems = async (
       operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
     ],
-    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
+    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState),
+    { cacheTime: 0, staleTime: 0 }
   );
 
   return values;
