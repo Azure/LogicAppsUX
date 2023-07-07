@@ -1,7 +1,7 @@
-import { guid } from '@microsoft/utils-logic-apps';
 import { ChatBubble } from './chatBubble';
 import type { AssistantErrorItem } from './conversationItem';
 import { FeedbackMessage } from './feedbackMessage';
+import { TechnicalErrorMessage } from './technicalErrorMessage';
 import type { IButtonProps } from '@fluentui/react';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -40,8 +40,9 @@ export const AssistantError: React.FC<AssistantErrorProps> = ({ item }) => {
   };
   const onReportBugClick = useCallback(() => {
     const githubIssuesLink = 'https://github.com/Azure/LogicAppsUX/issues/new?assignees=&labels=&projects=&template=bug_report.yml';
-    window.open(githubIssuesLink,'_blank');
+    window.open(githubIssuesLink, '_blank');
   }, []);
+
   const footerActions: IButtonProps[] | undefined = [];
   footerActions.push({
     text: intlText.reportABugText,
@@ -62,21 +63,9 @@ export const AssistantError: React.FC<AssistantErrorProps> = ({ item }) => {
         disabled={false} // TODO: add state isGeneratingAnswer}
         footerActions={footerActions}
       >
-        <TechnicalErrorMessage message={intlText.technicalErrorDefaultMessage} chatSessionId={guid()} />
+        <TechnicalErrorMessage message={intlText.technicalErrorDefaultMessage} chatSessionId={item.chatSessionId} />
       </ChatBubble>
       <FeedbackMessage item={item} />
     </div>
   );
 };
-
-const TechnicalErrorMessage = ({ message, chatSessionId }: { message: string; chatSessionId: string }) => (
-  <>
-    {message}
-    <pre className={'msla-assistant-error-container'}>
-      <div className={'msla-assistant-error-session-id-container'}>
-        <span className={'msla-assistant-error-session-id'}>{'chat-session-id:'}</span>
-        {chatSessionId}
-      </div>
-    </pre>
-  </>
-);
