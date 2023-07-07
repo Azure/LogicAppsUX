@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Buat referensi koneksi"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Bermasalah"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Tidak ada output"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Waktu habis"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Tidak ada nilai yang cocok dengan pencarian Anda."
     }
   ],
   "/NtebP": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Ketika diaktifkan, tindakan ini akan dijalankan dengan pengguna dari pengaturan \"Jalankan sebagai\" di pemicu Dataverse."
     }
   ],
   "/yYyOq": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Input atau output aman diaktifkan."
     }
   ],
   "0FzNJV": [
@@ -834,13 +834,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Diperlukan. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Menunggu"
     }
   ],
   "43xObP": [
@@ -968,7 +968,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Buka panel"
     }
   ],
   "595Baw": [
@@ -1084,7 +1084,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Kesalahan saat memuat input"
     }
   ],
   "6OSgRP": [
@@ -1102,7 +1102,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Pilih referensi koneksi"
     }
   ],
   "6fDYzG": [
@@ -1164,7 +1164,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Diperlukan. Nilai untuk menemukan indeks."
     }
   ],
   "6ueRYm": [
@@ -1176,7 +1176,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Tipe data"
     }
   ],
   "73iM9+": [
@@ -1188,7 +1188,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Masukkan nama pengguna"
     }
   ],
   "7EZ2oY": [
@@ -1292,7 +1292,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Tipe autentikasi '"
     },
     {
       "type": 1,
@@ -1300,7 +1300,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' tidak didukung."
     }
   ],
   "7zzPsK": [
@@ -1777,7 +1777,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Berhasil dengan percobaan ulang"
     }
   ],
   "BHe7qY": [
@@ -1801,7 +1801,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Tidak ditentukan"
     }
   ],
   "BQCPY7": [
@@ -1879,7 +1879,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Tentukan satu atau beberapa ekspresi yang harus benar untuk diaktifkan oleh pemicu."
     }
   ],
   "BtL7UI": [
@@ -1921,7 +1921,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Buat koneksi"
     }
   ],
   "CaajcD": [
@@ -1933,7 +1933,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -1941,7 +1941,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' tidak valid untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -1949,7 +1949,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "'."
     }
   ],
   "Cb6IEq": [
@@ -1979,7 +1979,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Harus memberikan nama parameter."
     }
   ],
   "ClZW2r": [
@@ -2085,7 +2085,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Tanggal"
     }
   ],
   "DQV7aK": [
@@ -2215,7 +2215,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Atur id pelacakan untuk dijalankan. Untuk pemisahan, id pelacakan ini untuk memulai permintaan."
     }
   ],
   "ERAWZA": [
@@ -2375,7 +2375,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Kesalahan"
     }
   ],
   "FT3jt6": [
@@ -2456,7 +2456,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Menampilkan string dengan setiap item dari array yang bergabung dengan pemisah"
     }
   ],
   "G/CC5/": [
@@ -2646,7 +2646,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Keluar dari mode layar penuh"
     }
   ],
   "HOchry": [
@@ -2750,7 +2750,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Dilewati"
     }
   ],
   "I41vZ/": [
@@ -2912,7 +2912,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Gagal"
     }
   ],
   "J9wWry": [
@@ -3095,7 +3095,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Diabaikan"
     }
   ],
   "KwGA+K": [
@@ -3173,7 +3173,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Diperlukan. Koleksi untuk mengambil objek pertama."
     }
   ],
   "LV/BTE": [
@@ -3239,7 +3239,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Menampilkan permulaan hari untuk stempel waktu string yang diberikan."
     }
   ],
   "Lub7NN": [
@@ -3317,7 +3317,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Bahasa pemrogram yang tidak didukung."
     }
   ],
   "MKTdNk": [
@@ -3419,7 +3419,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Waktu Habis"
     }
   ],
   "N0pS6Y": [
@@ -3479,7 +3479,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Menampilkan nilai dari variabel yang ditentukan."
     }
   ],
   "NnD8gF": [
@@ -3527,7 +3527,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Gagal"
     }
   ],
   "O+8vRv": [
@@ -3545,7 +3545,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Tidak menemukan kesalahan."
     }
   ],
   "O27gKq": [
@@ -3701,7 +3701,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -3709,7 +3709,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' yang diperlukan untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -3717,7 +3717,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' tidak ada"
     }
   ],
   "P+7G62": [
@@ -3759,7 +3759,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "ID Pelacakan Kustom"
     }
   ],
   "P4rEwD": [
@@ -3829,7 +3829,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Kesalahan pengaturan"
     }
   ],
   "PfCJlN": [
@@ -3859,7 +3859,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Kesalahan koneksi"
     }
   ],
   "PtqSHp": [
@@ -3895,7 +3895,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Jalankan setelah "
     },
     {
       "type": 1,
@@ -3957,7 +3957,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -3965,7 +3965,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' yang diperlukan untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -3973,7 +3973,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' tidak ada"
     }
   ],
   "QZBPUx": [
@@ -4003,7 +4003,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Parameter Alur Kerja"
     }
   ],
   "Qn8qxn": [
@@ -4055,7 +4055,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Masukkan kondisi yang valid."
     }
   ],
   "RFjYpH": [
@@ -4067,7 +4067,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Pratinjau"
     }
   ],
   "RJes1w": [
@@ -4150,7 +4150,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Diperlukan. Ekspresi yang harus true."
     }
   ],
   "RvpHdu": [
@@ -4388,7 +4388,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Diperlukan. Nilai untuk menemukan indeks."
     }
   ],
   "Tmr/9e": [
@@ -4400,7 +4400,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Kesalahan parameter alur kerja"
     }
   ],
   "Ts5Pzr": [
@@ -4556,7 +4556,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Luaskan"
     }
   ],
   "Umpr3z": [
@@ -4588,7 +4588,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Tipe untuk '"
     },
     {
       "type": 1,
@@ -4596,7 +4596,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "' adalah '"
     },
     {
       "type": 1,
@@ -5110,7 +5110,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Kondisi pemicu"
     }
   ],
   "YHsAKl": [
@@ -5394,7 +5394,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Dibatalkan"
     }
   ],
   "ae7W0a": [
@@ -5476,7 +5476,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Wajib. Nilai yang dikonversi menjadi biner."
     }
   ],
   "bSZ0lL": [
@@ -5500,7 +5500,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Gunakan Koneksi Pemanggil"
     }
   ],
   "bXFGpe": [
@@ -5530,13 +5530,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Buka operasi"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Operasi ini memiliki input atau output aman yang diaktifkan."
     }
   ],
   "byTBrn": [
@@ -5710,7 +5710,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Unduh (Alt atau Option + pilih)"
     }
   ],
   "dBWIjR": [
@@ -6020,7 +6020,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Pilih koneksi"
     }
   ],
   "g076bL": [
@@ -6164,7 +6164,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Memuat..."
     }
   ],
   "h+W3VW": [
@@ -6427,7 +6427,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Wajib. Nomor yang akan ditambahkan ke Summand 2."
     }
   ],
   "iq+tiv": [
@@ -6449,7 +6449,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Masukkan tabel yang valid."
     }
   ],
   "iy8rNf": [
@@ -6575,7 +6575,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Kesalahan parameter"
     }
   ],
   "kBOAkT": [
@@ -6647,7 +6647,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Elemen dan pemetaan yang tidak tersambung ke elemen target telah dihapus."
     }
   ],
   "klY9UN": [
@@ -6658,7 +6658,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "tidak ada item cocok."
             }
           ]
         },
@@ -6669,7 +6669,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " item cocok."
             }
           ]
         }
@@ -6924,7 +6924,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Harus diisi. Ekspresi Xpath untuk dievaluasi."
     }
   ],
   "mZRMD9": [
@@ -7042,7 +7042,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Dilewati"
     }
   ],
   "nHseED": [
@@ -7072,7 +7072,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Parameter baru"
     }
   ],
   "nRpM02": [
@@ -7126,7 +7126,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Waktu habis"
     }
   ],
   "no/SMg": [
@@ -7589,7 +7589,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -7597,7 +7597,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -7605,7 +7605,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' tidak valid."
     }
   ],
   "r/n6/9": [
@@ -7701,7 +7701,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Berhasil"
     }
   ],
   "rsdJcV": [
@@ -7779,7 +7779,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Berikan parameter untuk menguji output."
     }
   ],
   "sW47JR": [
@@ -8129,7 +8129,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Berhasil"
     }
   ],
   "uc/PoD": [
@@ -8165,7 +8165,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Kesalahan operasi"
     }
   ],
   "ui7GCl": [
@@ -8249,7 +8249,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Harus diisi. Koleksi untuk mengambil objek hitungan pertama."
     }
   ],
   "vQcQkU": [
@@ -8509,7 +8509,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Menampilkan objek yang memiliki properti yang ditentukan yang telah dihapus."
     }
   ],
   "x3dWOL": [
@@ -8521,7 +8521,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Dibatalkan"
     }
   ],
   "x8kTAX": [
@@ -8709,7 +8709,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Menampilkan isi dari sebagian output beberapa bagian terkait pemicu"
     }
   ],
   "yqRrQ/": [
@@ -8745,7 +8745,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Pelajari selengkapnya"
     }
   ],
   "z/UY4k": [
@@ -8857,7 +8857,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Wajib. Nomor yang akan ditambahkan ke Summand 1."
     }
   ],
   "zxe9hh": [

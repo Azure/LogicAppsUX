@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Vytvořit informace o připojení"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "S chybou"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Žádné výstupy"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Vypršel časový limit"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Vašemu hledání neodpovídají žádné hodnoty."
     }
   ],
   "/NtebP": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Pokud je tato akce povolena, bude spuštěna s uživatelem z nastavení „Spustit jako“ v aktivační události Dataverse."
     }
   ],
   "/yYyOq": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Zabezpečené vstupy nebo výstupy jsou povolené."
     }
   ],
   "0FzNJV": [
@@ -846,13 +846,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Požadované. Tato hodnota je další celé číslo za nejvyšším celým číslem, které lze vrátit."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Čekající"
     }
   ],
   "43xObP": [
@@ -984,7 +984,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Otevřít panel"
     }
   ],
   "595Baw": [
@@ -1100,7 +1100,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Při načítání vstupů došlo k chybě"
     }
   ],
   "6OSgRP": [
@@ -1118,7 +1118,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Vybrat informace o připojení"
     }
   ],
   "6fDYzG": [
@@ -1180,7 +1180,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Požadované. Hodnota, pro kterou má být nalezen index."
     }
   ],
   "6ueRYm": [
@@ -1192,7 +1192,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Datový typ"
     }
   ],
   "73iM9+": [
@@ -1204,7 +1204,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Zadejte uživatelské jméno"
     }
   ],
   "7EZ2oY": [
@@ -1308,7 +1308,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Nepodporovaný typ ověřování "
     },
     {
       "type": 1,
@@ -1316,7 +1316,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "7zzPsK": [
@@ -1826,7 +1826,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Proběhlo úspěšně s opakováním pokusů"
     }
   ],
   "BHe7qY": [
@@ -1850,7 +1850,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Neuvedeno"
     }
   ],
   "BQCPY7": [
@@ -1892,7 +1892,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Pole"
     }
   ],
   "Bl4Iv0": [
@@ -1928,7 +1928,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Zadejte jeden nebo více výrazů, které musí být pravdivé, aby se trigger aktivoval."
     }
   ],
   "BtL7UI": [
@@ -1970,7 +1970,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Vytvořte připojení"
     }
   ],
   "CaajcD": [
@@ -1982,7 +1982,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Vlastnosti "
     },
     {
       "type": 1,
@@ -1990,7 +1990,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " nejsou pro typ ověřování "
     },
     {
       "type": 1,
@@ -1998,7 +1998,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": " platné."
     }
   ],
   "Cb6IEq": [
@@ -2028,7 +2028,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Je třeba zadat název parametru."
     }
   ],
   "ClZW2r": [
@@ -2134,7 +2134,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Datum"
     }
   ],
   "DQV7aK": [
@@ -2264,7 +2264,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku."
     }
   ],
   "ERAWZA": [
@@ -2424,7 +2424,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Chyby"
     }
   ],
   "FT3jt6": [
@@ -2538,7 +2538,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Vrátí řetězec s jednotlivými položkami pole spojenými oddělovači."
     }
   ],
   "G/CC5/": [
@@ -2736,7 +2736,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Ukončit zobrazení na celou obrazovku"
     }
   ],
   "HOchry": [
@@ -2840,7 +2840,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Přeskočeno"
     }
   ],
   "I41vZ/": [
@@ -2998,7 +2998,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Selhání"
     }
   ],
   "J9wWry": [
@@ -3214,7 +3214,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Ignorováno"
     }
   ],
   "KwGA+K": [
@@ -3292,7 +3292,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Požadované. Kolekce, ze které se má převzít první objekt."
     }
   ],
   "LV/BTE": [
@@ -3358,7 +3358,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Vrátí začátek dne pro předané časové razítko řetězce."
     }
   ],
   "Lub7NN": [
@@ -3436,7 +3436,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Nepodporovaný programovací jazyk."
     }
   ],
   "MKTdNk": [
@@ -3538,7 +3538,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Vypršel časový limit."
     }
   ],
   "N0pS6Y": [
@@ -3598,7 +3598,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Vrátí hodnotu zadané proměnné."
     }
   ],
   "NnD8gF": [
@@ -3650,7 +3650,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Neúspěšné"
     }
   ],
   "O+8vRv": [
@@ -3668,7 +3668,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Nenašly se žádné chyby."
     }
   ],
   "O27gKq": [
@@ -3824,7 +3824,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Chybí požadované vlastnosti "
     },
     {
       "type": 1,
@@ -3832,15 +3832,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " pro typ ověřování "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [
@@ -3882,7 +3878,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Vlastní ID sledování"
     }
   ],
   "P4rEwD": [
@@ -3952,7 +3948,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Chyby nastavení"
     }
   ],
   "PfCJlN": [
@@ -3982,7 +3978,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Chyby připojení"
     }
   ],
   "PtqSHp": [
@@ -4018,7 +4014,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Spustit po "
     },
     {
       "type": 1,
@@ -4080,7 +4076,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Chybí požadovaná vlastnost "
     },
     {
       "type": 1,
@@ -4088,15 +4084,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " pro typ ověřování "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -4126,7 +4118,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Parametry pracovního postupu"
     }
   ],
   "Qn8qxn": [
@@ -4178,7 +4170,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Zadejte platnou podmínku."
     }
   ],
   "RFjYpH": [
@@ -4302,7 +4294,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Požadované. Výrazy, které musí být pravdivé."
     }
   ],
   "RvpHdu": [
@@ -4540,7 +4532,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Požadované. Hodnota, pro kterou má být nalezen index."
     }
   ],
   "Tmr/9e": [
@@ -4552,7 +4544,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Chyby parametrů pracovního postupu"
     }
   ],
   "Ts5Pzr": [
@@ -4708,7 +4700,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Rozbalit"
     }
   ],
   "Umpr3z": [
@@ -4740,7 +4732,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Typ pro "
     },
     {
       "type": 1,
@@ -4748,7 +4740,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": " je "
     },
     {
       "type": 1,
@@ -4756,7 +4748,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "Ur+wph": [
@@ -5262,7 +5254,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Podmínky aktivační události"
     }
   ],
   "YHsAKl": [
@@ -5546,7 +5538,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Zrušeno"
     }
   ],
   "ae7W0a": [
@@ -5628,7 +5620,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Povinný parametr. Hodnota, která se převádí do binárního formátu."
     }
   ],
   "bSZ0lL": [
@@ -5652,7 +5644,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Použít připojení volajícího"
     }
   ],
   "bXFGpe": [
@@ -5682,13 +5674,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Otevřít operaci"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Tato operace má povolené zabezpečené vstupy nebo výstupy."
     }
   ],
   "byTBrn": [
@@ -5862,7 +5854,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Stáhnout (Alt nebo Option + select)"
     }
   ],
   "dBWIjR": [
@@ -6168,7 +6160,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Vyberte připojení"
     }
   ],
   "g076bL": [
@@ -6320,7 +6312,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Načítání…"
     }
   ],
   "h+W3VW": [
@@ -6620,7 +6612,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 2."
     }
   ],
   "iq+tiv": [
@@ -6642,7 +6634,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Zadejte platnou tabulku."
     }
   ],
   "iy8rNf": [
@@ -6768,7 +6760,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Chyby parametrů"
     }
   ],
   "kBOAkT": [
@@ -6840,7 +6832,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Prvky a mapování, které nejsou připojeny k cílovému elementu, se odeberou."
     }
   ],
   "klY9UN": [
@@ -6851,7 +6843,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "žádné odpovídající položky."
             }
           ]
         },
@@ -6862,7 +6854,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " odpovídající položky."
             }
           ]
         },
@@ -6873,7 +6865,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " odpovídajících položek."
             }
           ]
         },
@@ -6884,7 +6876,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " odpovídající položka."
             }
           ]
         },
@@ -6895,7 +6887,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " odpovídajících položek."
             }
           ]
         }
@@ -7150,7 +7142,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Vyžadováno. Výraz jazyka XPath, který se má vyhodnotit."
     }
   ],
   "mZRMD9": [
@@ -7268,7 +7260,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Vynecháno"
     }
   ],
   "nHseED": [
@@ -7298,7 +7290,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Nový parametr"
     }
   ],
   "nRpM02": [
@@ -7352,7 +7344,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Vypršelo"
     }
   ],
   "no/SMg": [
@@ -7848,7 +7840,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Neplatná vlastnost "
     },
     {
       "type": 1,
@@ -7856,7 +7848,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " pro typ ověřování "
     },
     {
       "type": 1,
@@ -7864,7 +7856,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "r/n6/9": [
@@ -7960,7 +7952,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Úspěšné"
     }
   ],
   "rsdJcV": [
@@ -8038,7 +8030,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Zadejte parametry pro otestování výstupu."
     }
   ],
   "sW47JR": [
@@ -8380,7 +8372,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Podařilo se"
     }
   ],
   "uc/PoD": [
@@ -8416,7 +8408,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Chyby operací"
     }
   ],
   "ui7GCl": [
@@ -8500,7 +8492,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Vyžadováno. Kolekce, ze které se mají získat první objekty Count."
     }
   ],
   "vQcQkU": [
@@ -8760,7 +8752,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Vrátí objekt s odebranými zadanými vlastnostmi."
     }
   ],
   "x3dWOL": [
@@ -8772,7 +8764,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Přerušeno"
     }
   ],
   "x8kTAX": [
@@ -8960,7 +8952,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Vrátí text pro určitou část ve výstupu triggeru s několika částmi."
     }
   ],
   "yqRrQ/": [
@@ -8996,7 +8988,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Další informace"
     }
   ],
   "z/UY4k": [
@@ -9108,7 +9100,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 1."
     }
   ],
   "zxe9hh": [

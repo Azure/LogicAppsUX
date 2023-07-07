@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Crear referencia de conexión"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Con errores"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Sin salidas"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Tiempo de espera agotado"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Ningún valor coincide con la búsqueda."
     }
   ],
   "/NtebP": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Cuando se habilita, esta acción se ejecutará con el usuario desde la configuración \"Ejecutar como\" en el desencadenador Dataverse."
     }
   ],
   "/yYyOq": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Entradas o salidas seguras habilitadas."
     }
   ],
   "0FzNJV": [
@@ -842,13 +842,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Obligatorio. Este valor es el entero siguiente al entero más alto que se puede devolver."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Esperando"
     }
   ],
   "43xObP": [
@@ -980,7 +980,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Abrir panel"
     }
   ],
   "595Baw": [
@@ -1096,7 +1096,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Error al cargar las entradas"
     }
   ],
   "6OSgRP": [
@@ -1114,7 +1114,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Seleccionar referencia de conexión"
     }
   ],
   "6fDYzG": [
@@ -1176,7 +1176,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Obligatorio. Valor para el que se va a buscar el índice."
     }
   ],
   "6ueRYm": [
@@ -1188,7 +1188,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Tipo de datos"
     }
   ],
   "73iM9+": [
@@ -1200,7 +1200,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Escribir el nombre de usuario"
     }
   ],
   "7EZ2oY": [
@@ -1304,7 +1304,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Tipo de autenticación no admitido \""
     },
     {
       "type": 1,
@@ -1312,7 +1312,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "7zzPsK": [
@@ -1811,7 +1811,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Correcto con reintentos"
     }
   ],
   "BHe7qY": [
@@ -1835,7 +1835,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Sin especificar"
     }
   ],
   "BQCPY7": [
@@ -1877,7 +1877,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matriz"
     }
   ],
   "Bl4Iv0": [
@@ -1913,7 +1913,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Especifique una o varias expresiones que deben ser \"true\" para que se active el desencadenador."
     }
   ],
   "BtL7UI": [
@@ -1955,7 +1955,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Crear conexión"
     }
   ],
   "CaajcD": [
@@ -1967,7 +1967,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Las propiedades \""
     },
     {
       "type": 1,
@@ -1975,7 +1975,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "\" no son válidas para el tipo de autenticación \""
     },
     {
       "type": 1,
@@ -1983,7 +1983,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "\"."
     }
   ],
   "Cb6IEq": [
@@ -2013,7 +2013,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Debe proporcionar el nombre del parámetro."
     }
   ],
   "ClZW2r": [
@@ -2119,7 +2119,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Fecha"
     }
   ],
   "DQV7aK": [
@@ -2249,7 +2249,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Defina el id. de seguimiento de la ejecución. En caso de división, este id. de seguimiento se aplica a la solicitud inicial."
     }
   ],
   "ERAWZA": [
@@ -2409,7 +2409,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Errores"
     }
   ],
   "FT3jt6": [
@@ -2512,7 +2512,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Devuelve una cadena con cada elemento de una matriz unida por un delimitador."
     }
   ],
   "G/CC5/": [
@@ -2702,7 +2702,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Salir de pantalla completa"
     }
   ],
   "HOchry": [
@@ -2806,7 +2806,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Se ha omitido"
     }
   ],
   "I41vZ/": [
@@ -2968,7 +2968,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Con errores"
     }
   ],
   "J9wWry": [
@@ -3173,7 +3173,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Ignorado"
     }
   ],
   "KwGA+K": [
@@ -3251,7 +3251,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Obligatorio. Colección de la que se va a tomar el primer objeto."
     }
   ],
   "LV/BTE": [
@@ -3317,7 +3317,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Devuelve el inicio del día para la marca de tiempo de cadena pasada."
     }
   ],
   "Lub7NN": [
@@ -3395,7 +3395,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Lenguaje de programación no admitido."
     }
   ],
   "MKTdNk": [
@@ -3497,7 +3497,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Tiempo de espera agotado"
     }
   ],
   "N0pS6Y": [
@@ -3557,7 +3557,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Devuelve el valor de la variable especificada."
     }
   ],
   "NnD8gF": [
@@ -3605,7 +3605,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Error"
     }
   ],
   "O+8vRv": [
@@ -3623,7 +3623,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "No se encontraron errores."
     }
   ],
   "O27gKq": [
@@ -3779,7 +3779,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Faltan las propiedades necesarias \""
     },
     {
       "type": 1,
@@ -3787,7 +3787,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "\" para el tipo de autenticación \""
     },
     {
       "type": 1,
@@ -3795,7 +3795,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "P+7G62": [
@@ -3837,7 +3837,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Id. de seguimiento personalizado"
     }
   ],
   "P4rEwD": [
@@ -3907,7 +3907,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Errores de configuración"
     }
   ],
   "PfCJlN": [
@@ -3937,7 +3937,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Errores de conexión"
     }
   ],
   "PtqSHp": [
@@ -3973,7 +3973,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Ejecutar después de "
     },
     {
       "type": 1,
@@ -4035,7 +4035,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Falta la propiedad necesaria \""
     },
     {
       "type": 1,
@@ -4043,7 +4043,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "\" para el tipo de autenticación \""
     },
     {
       "type": 1,
@@ -4051,7 +4051,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "QZBPUx": [
@@ -4081,7 +4081,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Parámetros de flujo de trabajo"
     }
   ],
   "Qn8qxn": [
@@ -4133,7 +4133,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Escribir una condición válida."
     }
   ],
   "RFjYpH": [
@@ -4145,7 +4145,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Versión preliminar"
     }
   ],
   "RJes1w": [
@@ -4250,7 +4250,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Obligatorio. Las expresiones que deben ser ciertas."
     }
   ],
   "RvpHdu": [
@@ -4488,7 +4488,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Obligatorio. Valor para el que se va a buscar el índice."
     }
   ],
   "Tmr/9e": [
@@ -4500,7 +4500,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Errores de parámetros de flujo de trabajo"
     }
   ],
   "Ts5Pzr": [
@@ -4656,7 +4656,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "Umpr3z": [
@@ -4688,7 +4688,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "El tipo de \""
     },
     {
       "type": 1,
@@ -4696,7 +4696,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "\" es \""
     },
     {
       "type": 1,
@@ -4704,7 +4704,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "Ur+wph": [
@@ -4746,7 +4746,7 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Intervalo"
     }
   ],
   "VA7M1u": [
@@ -5210,7 +5210,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Condiciones del desencadenador"
     }
   ],
   "YHsAKl": [
@@ -5494,7 +5494,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Cancelado"
     }
   ],
   "ae7W0a": [
@@ -5576,7 +5576,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Obligatorio. El valor que se convierte a binario."
     }
   ],
   "bSZ0lL": [
@@ -5600,7 +5600,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Usar conexión del invocador"
     }
   ],
   "bXFGpe": [
@@ -5630,13 +5630,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Abrir operación"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Esta operación tiene entradas o salidas seguras habilitadas."
     }
   ],
   "byTBrn": [
@@ -5810,7 +5810,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Descargar (Alt u Opción + seleccionar)"
     }
   ],
   "dBWIjR": [
@@ -6120,7 +6120,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Seleccionar conexión"
     }
   ],
   "g076bL": [
@@ -6272,7 +6272,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Cargando..."
     }
   ],
   "h+W3VW": [
@@ -6557,7 +6557,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Obligatorio. El número que se agregará al sumando 2."
     }
   ],
   "iq+tiv": [
@@ -6579,7 +6579,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Escriba una tabla válida."
     }
   ],
   "iy8rNf": [
@@ -6705,7 +6705,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Errores de parámetros"
     }
   ],
   "kBOAkT": [
@@ -6777,7 +6777,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Se quitan los elementos y las asignaciones que no están no conectados a un elemento de destino."
     }
   ],
   "klY9UN": [
@@ -6788,7 +6788,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "no hay elementos coincidentes."
             }
           ]
         },
@@ -6799,7 +6799,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementos coincidentes."
             }
           ]
         },
@@ -6810,7 +6810,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " elemento coincidente."
             }
           ]
         },
@@ -6821,7 +6821,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementos coincidentes."
             }
           ]
         }
@@ -7068,7 +7068,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Obligatorio. La expresión XPath que se evaluará."
     }
   ],
   "mZRMD9": [
@@ -7186,7 +7186,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Omitido"
     }
   ],
   "nHseED": [
@@ -7216,7 +7216,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Parámetro nuevo"
     }
   ],
   "nRpM02": [
@@ -7270,7 +7270,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Ha agotado el tiempo de espera"
     }
   ],
   "no/SMg": [
@@ -7755,7 +7755,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Propiedad \""
     },
     {
       "type": 1,
@@ -7763,7 +7763,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "\" no válida para el tipo de autenticación \""
     },
     {
       "type": 1,
@@ -7771,7 +7771,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "r/n6/9": [
@@ -7867,7 +7867,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Correcto"
     }
   ],
   "rsdJcV": [
@@ -7945,7 +7945,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Proporcione parámetros para probar la salida."
     }
   ],
   "sW47JR": [
@@ -8295,7 +8295,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Correcto"
     }
   ],
   "uc/PoD": [
@@ -8331,7 +8331,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Errores de operación"
     }
   ],
   "ui7GCl": [
@@ -8415,7 +8415,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Obligatorio. La colección de la que se tomarán los primeros objetos de recuento."
     }
   ],
   "vQcQkU": [
@@ -8675,7 +8675,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Devuelve un objeto con la propiedad especificada quitada."
     }
   ],
   "x3dWOL": [
@@ -8687,7 +8687,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Anulado"
     }
   ],
   "x8kTAX": [
@@ -8867,7 +8867,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Devuelve el cuerpo de una parte en una salida de varias partes del desencadenador."
     }
   ],
   "yqRrQ/": [
@@ -8903,7 +8903,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Más información"
     }
   ],
   "z/UY4k": [
@@ -9015,7 +9015,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Obligatorio. El número que se agregará al sumando 1."
     }
   ],
   "zxe9hh": [

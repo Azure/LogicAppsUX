@@ -1,5 +1,48 @@
 # Logic Apps Designer
 
+## [2.44.0](https://github.com/Azure/LogicAppsUX/compare/v2.43.0...v2.44.0) (2023-07-06)
+
+### Bug Fixes
+
+- **designer:** Added support for enums in simple array editor ([#2919](https://github.com/Azure/LogicAppsUX/issues/2919)) ([5ce5b33](https://github.com/Azure/LogicAppsUX/commit/5ce5b339b120cd084c80098fd650c4f092d045fd))
+
+## [2.43.0](https://github.com/Azure/LogicAppsUX/compare/v2.42.0...v2.43.0) (2023-07-05)
+
+### Features
+
+- **designer:** Add support for x12 and edifact connector ([#2893](https://github.com/Azure/LogicAppsUX/issues/2893)) ([07d7bd0](https://github.com/Azure/LogicAppsUX/commit/07d7bd0166a86bccf9f859d570468f294349f826))
+
+### Bug Fixes
+
+- **designer:** Consumption - Fixing dynamic content api calls for Open Api Connection ([#2895](https://github.com/Azure/LogicAppsUX/issues/2895)) ([c9f7cab](https://github.com/Azure/LogicAppsUX/commit/c9f7cab61707d518817ccfa8330843303a3f4e95))
+- **designer:** revert designer type dropdown ([#2911](https://github.com/Azure/LogicAppsUX/issues/2911)) ([7de0bfc](https://github.com/Azure/LogicAppsUX/commit/7de0bfc1388ca977456eb079eee136d8b89b8ac1))
+- **Designer:** Select Connection panel now shows recently created connections ([#2890](https://github.com/Azure/LogicAppsUX/issues/2890)) ([045b698](https://github.com/Azure/LogicAppsUX/commit/045b698cf57feba4cd8a0a9338ad8cdd404a2902))
+- **designer:** Serialization of expressions within casted parameters failing validation ([#2889](https://github.com/Azure/LogicAppsUX/issues/2889)) ([a6c975b](https://github.com/Azure/LogicAppsUX/commit/a6c975b9ccfd29b7f43958270b5f0d2a8c007af2))
+- **vscode:** Revert invalid connection message when switching blades ([#2892](https://github.com/Azure/LogicAppsUX/issues/2892)) ([fcb4e34](https://github.com/Azure/LogicAppsUX/commit/fcb4e34e4b119023a710a648f05d389d851a6769)), closes [#2783](https://github.com/Azure/LogicAppsUX/issues/2783)
+
+## [2.42.0](https://github.com/Azure/LogicAppsUX/compare/v2.41.0...v2.42.0) (2023-06-30)
+
+### Bug Fixes
+
+- **Data Mapper:** Added React Query to DM lib to fix app crash ([#2880](https://github.com/Azure/LogicAppsUX/issues/2880)) ([21ed784](https://github.com/Azure/LogicAppsUX/commit/21ed784a196f94475a4f749d99d224da544e9322))
+
+## [2.41.0](https://github.com/Azure/LogicAppsUX/compare/v2.40.0...v2.41.0) (2023-06-29)
+
+### Bug Fixes
+
+- **Designer:** Fixed dropdown options state bug ([#2879](https://github.com/Azure/LogicAppsUX/issues/2879)) ([1cba92a](https://github.com/Azure/LogicAppsUX/commit/1cba92a697ba769ad48002dd50e9d426e57be3d6))
+- **desinger:** Fix portal build ([#2877](https://github.com/Azure/LogicAppsUX/issues/2877)) ([294df77](https://github.com/Azure/LogicAppsUX/commit/294df774aa12543fb744bfcb5c59ac30b0cfdcc7))
+
+## [2.40.0](https://github.com/Azure/LogicAppsUX/compare/v2.39.0...v2.40.0) (2023-06-29)
+
+## [2.39.0](https://github.com/Azure/LogicAppsUX/compare/v2.38.0...v2.39.0) (2023-06-29)
+
+### Bug Fixes
+
+- **Designer:** Fixed consumption standalone connection serialization ([#2873](https://github.com/Azure/LogicAppsUX/issues/2873)) ([384145d](https://github.com/Azure/LogicAppsUX/commit/384145d9c375696ae1af53724ef4eb06d9a16b2c))
+
+## [2.38.0](https://github.com/Azure/LogicAppsUX/compare/v2.37.0...v2.38.0) (2023-06-28)
+
 ## [2.38.0](https://github.com/Azure/LogicAppsUX/compare/v2.37.0...v2.38.0) (2023-06-28)
 
 ### Bug Fixes

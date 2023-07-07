@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "接続参照の作成"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "エラーが発生しました"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "出力なし"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "タイムアウト"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "検索に一致する値がありません。"
     }
   ],
   "/NtebP": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "有効にすると、このアクションは Dataverse トリガーの [実行するアカウント名] 設定のユーザーによって実行されます。"
     }
   ],
   "/yYyOq": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "セキュリティで保護された入力または出力が有効になっています。"
     }
   ],
   "0FzNJV": [
@@ -834,13 +834,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "必須。この値は、返すことができる最も大きい整数より後の次の整数です。"
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "待機中"
     }
   ],
   "43xObP": [
@@ -968,7 +968,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "パネルを開きます"
     }
   ],
   "595Baw": [
@@ -1084,7 +1084,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "入力の読み込みでエラーが発生しました"
     }
   ],
   "6OSgRP": [
@@ -1102,7 +1102,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "接続参照の選択"
     }
   ],
   "6fDYzG": [
@@ -1164,7 +1164,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "必須。インデックスを検索する対象の値。"
     }
   ],
   "6ueRYm": [
@@ -1176,7 +1176,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "データ型"
     }
   ],
   "73iM9+": [
@@ -1188,7 +1188,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "ユーザー名を入力してください"
     }
   ],
   "7EZ2oY": [
@@ -1292,7 +1292,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "サポートされていない認証の種類 '"
     },
     {
       "type": 1,
@@ -1300,7 +1300,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' です。"
     }
   ],
   "7zzPsK": [
@@ -1777,7 +1777,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "再試行により成功しました"
     }
   ],
   "BHe7qY": [
@@ -1801,7 +1801,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "指定されていません"
     }
   ],
   "BQCPY7": [
@@ -1843,7 +1843,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "配列"
     }
   ],
   "Bl4Iv0": [
@@ -1879,7 +1879,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "トリガーを起動するために true になる必要のある 1 つまたは複数の式を指定します。"
     }
   ],
   "BtL7UI": [
@@ -1921,7 +1921,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "接続の作成"
     }
   ],
   "CaajcD": [
@@ -1933,7 +1933,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1941,7 +1941,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' プロパティは、'"
     },
     {
       "type": 1,
@@ -1949,7 +1949,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' 認証の種類に対しては無効です。"
     }
   ],
   "Cb6IEq": [
@@ -1979,7 +1979,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "パラメーター名を指定する必要があります。"
     }
   ],
   "ClZW2r": [
@@ -2085,7 +2085,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "日付"
     }
   ],
   "DQV7aK": [
@@ -2215,7 +2215,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "実行の追跡 ID を設定します。分割の場合、この追跡 ID は開始要求用です。"
     }
   ],
   "ERAWZA": [
@@ -2371,7 +2371,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "エラー"
     }
   ],
   "FT3jt6": [
@@ -2452,7 +2452,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "アレイの各項目が区切り記号で結合されている文字列を返します"
     }
   ],
   "G/CC5/": [
@@ -2642,7 +2642,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "全画面表示の終了"
     }
   ],
   "HOchry": [
@@ -2742,7 +2742,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "スキップされます"
     }
   ],
   "I41vZ/": [
@@ -2904,7 +2904,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "失敗しました"
     }
   ],
   "J9wWry": [
@@ -3087,7 +3087,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "無視されました"
     }
   ],
   "KwGA+K": [
@@ -3165,7 +3165,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "必須。最初のオブジェクトの取得元となるコレクション。"
     }
   ],
   "LV/BTE": [
@@ -3231,7 +3231,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "渡された文字列タイムスタンプについてその日の開始を返します。"
     }
   ],
   "Lub7NN": [
@@ -3309,7 +3309,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "サポートされていないプログラミング言語です。"
     }
   ],
   "MKTdNk": [
@@ -3411,7 +3411,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "タイムアウトになりました"
     }
   ],
   "N0pS6Y": [
@@ -3471,7 +3471,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "指定された変数の値を返します。"
     }
   ],
   "NnD8gF": [
@@ -3519,7 +3519,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "失敗しました"
     }
   ],
   "O+8vRv": [
@@ -3537,7 +3537,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "エラーは見つかりませんでした。"
     }
   ],
   "O27gKq": [
@@ -3693,15 +3693,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -3709,7 +3701,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' に必要なプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' がありません"
     }
   ],
   "P+7G62": [
@@ -3751,7 +3751,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "カスタムの追跡 ID"
     }
   ],
   "P4rEwD": [
@@ -3821,7 +3821,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "設定エラー"
     }
   ],
   "PfCJlN": [
@@ -3851,7 +3851,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "接続エラー"
     }
   ],
   "PtqSHp": [
@@ -3886,12 +3886,12 @@
   ],
   "PytMJ0": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " の後に実行"
     }
   ],
   "Q+ZZHI": [
@@ -3949,15 +3949,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -3965,7 +3957,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' に必要なプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' がありません"
     }
   ],
   "QZBPUx": [
@@ -3995,7 +3995,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "ワークフロー パラメーター"
     }
   ],
   "Qn8qxn": [
@@ -4047,7 +4047,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "有効な条件を入力してください。"
     }
   ],
   "RFjYpH": [
@@ -4059,7 +4059,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "プレビュー"
     }
   ],
   "RJes1w": [
@@ -4142,7 +4142,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "必須。true となる必要がある式です。"
     }
   ],
   "RvpHdu": [
@@ -4376,7 +4376,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "必須。インデックスを検索する対象の値。"
     }
   ],
   "Tmr/9e": [
@@ -4388,7 +4388,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "ワークフロー パラメーター エラー"
     }
   ],
   "Ts5Pzr": [
@@ -4544,7 +4544,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開する"
     }
   ],
   "Umpr3z": [
@@ -4572,7 +4572,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4580,7 +4580,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "' の種類が '"
     },
     {
       "type": 1,
@@ -4588,7 +4588,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' です。"
     }
   ],
   "Ur+wph": [
@@ -4630,7 +4630,7 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "間隔"
     }
   ],
   "VA7M1u": [
@@ -5094,7 +5094,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "トリガーの条件"
     }
   ],
   "YHsAKl": [
@@ -5378,7 +5378,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "取り消されました"
     }
   ],
   "ae7W0a": [
@@ -5460,7 +5460,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "必須。バイナリに変換される値。"
     }
   ],
   "bSZ0lL": [
@@ -5484,7 +5484,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "呼び出し元の接続を使用する"
     }
   ],
   "bXFGpe": [
@@ -5514,13 +5514,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "操作を開きます"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "この操作では、セキュリティで保護された入力または出力が有効になっています。"
     }
   ],
   "byTBrn": [
@@ -5694,7 +5694,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "ダウンロード (Alt または Option + 選択)"
     }
   ],
   "dBWIjR": [
@@ -6000,7 +6000,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "接続の選択"
     }
   ],
   "g076bL": [
@@ -6144,7 +6144,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "読み込んでいます..."
     }
   ],
   "h+W3VW": [
@@ -6403,7 +6403,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "必須。Summand 2 に加算する数値。"
     }
   ],
   "iq+tiv": [
@@ -6425,7 +6425,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "有効なテーブルを入力してください。"
     }
   ],
   "iy8rNf": [
@@ -6551,7 +6551,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "パラメーター エラー"
     }
   ],
   "kBOAkT": [
@@ -6623,7 +6623,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "ターゲット要素に接続されていない要素とマッピングは削除されます。"
     }
   ],
   "klY9UN": [
@@ -6634,7 +6634,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "一致する項目はありません。"
             }
           ]
         },
@@ -6645,7 +6645,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " 個の項目が一致しました。"
             }
           ]
         }
@@ -6892,7 +6892,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "必須。評価する XPath 式。"
     }
   ],
   "mZRMD9": [
@@ -7010,7 +7010,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "スキップされました"
     }
   ],
   "nHseED": [
@@ -7040,7 +7040,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "新しいパラメーター"
     }
   ],
   "nRpM02": [
@@ -7094,7 +7094,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "タイムアウトになりました"
     }
   ],
   "no/SMg": [
@@ -7557,15 +7557,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -7573,7 +7565,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' のプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' が無効です。"
     }
   ],
   "r/n6/9": [
@@ -7669,7 +7669,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "成功しました"
     }
   ],
   "rsdJcV": [
@@ -7747,7 +7747,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "出力をテストするためのパラメーターを指定します。"
     }
   ],
   "sW47JR": [
@@ -8093,7 +8093,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "成功しました"
     }
   ],
   "uc/PoD": [
@@ -8129,7 +8129,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "操作エラー"
     }
   ],
   "ui7GCl": [
@@ -8213,7 +8213,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "必須。最初の Count 個のオブジェクトを取得するコレクション。"
     }
   ],
   "vQcQkU": [
@@ -8469,7 +8469,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "指定されたプロパティが削除されたオブジェクトを返します。"
     }
   ],
   "x3dWOL": [
@@ -8481,7 +8481,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "中止されました"
     }
   ],
   "x8kTAX": [
@@ -8669,7 +8669,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "トリガーのマルチパート出力のパートの本文を返します"
     }
   ],
   "yqRrQ/": [
@@ -8705,7 +8705,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "詳細情報"
     }
   ],
   "z/UY4k": [
@@ -8817,7 +8817,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "必須。Summand 1 に加算する数値。"
     }
   ],
   "zxe9hh": [

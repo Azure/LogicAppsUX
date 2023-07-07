@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Verbindingsverwijzing maken"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Mislukt"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Geen uitvoer"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Er is een time-out opgetreden"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Er zijn geen waarden die overeenkomen met uw zoekopdracht"
     }
   ],
   "/NtebP": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Wanneer dit is ingeschakeld, wordt deze actie uitgevoerd met de gebruiker vanuit de instelling 'Uitvoeren als' in de Dataverse-trigger."
     }
   ],
   "/yYyOq": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Beveiligde invoer of uitvoer ingeschakeld."
     }
   ],
   "0FzNJV": [
@@ -842,13 +842,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Wachten"
     }
   ],
   "43xObP": [
@@ -980,7 +980,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Deelvenster openen"
     }
   ],
   "595Baw": [
@@ -1096,7 +1096,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Fout bij het laden van invoer"
     }
   ],
   "6OSgRP": [
@@ -1114,7 +1114,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Verbindingsverwijzing selecteren"
     }
   ],
   "6fDYzG": [
@@ -1176,7 +1176,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Vereist. De waarde waarvoor de index moet worden gevonden."
     }
   ],
   "6ueRYm": [
@@ -1188,7 +1188,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Gegevenstype"
     }
   ],
   "73iM9+": [
@@ -1200,7 +1200,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Gebruikersnaam opgeven"
     }
   ],
   "7EZ2oY": [
@@ -1304,7 +1304,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Niet-ondersteund verificatietype "
     },
     {
       "type": 1,
@@ -1312,7 +1312,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "7zzPsK": [
@@ -1796,7 +1796,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Voltooid met nieuwe pogingen"
     }
   ],
   "BHe7qY": [
@@ -1820,7 +1820,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Niet opgegeven"
     }
   ],
   "BQCPY7": [
@@ -1862,7 +1862,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matrix"
     }
   ],
   "Bl4Iv0": [
@@ -1898,7 +1898,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren."
     }
   ],
   "BtL7UI": [
@@ -1940,7 +1940,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Verbinding maken"
     }
   ],
   "CaajcD": [
@@ -1952,7 +1952,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "De eigenschappen "
     },
     {
       "type": 1,
@@ -1960,7 +1960,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " zijn ongeldig voor het verificatietype "
     },
     {
       "type": 1,
@@ -1968,7 +1968,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "."
     }
   ],
   "Cb6IEq": [
@@ -1998,7 +1998,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "U moet de parameternaam opgeven."
     }
   ],
   "ClZW2r": [
@@ -2104,7 +2104,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Datum"
     }
   ],
   "DQV7aK": [
@@ -2234,7 +2234,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag."
     }
   ],
   "ERAWZA": [
@@ -2394,7 +2394,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fouten"
     }
   ],
   "FT3jt6": [
@@ -2486,7 +2486,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Er wordt een tekenreeks voor elk item van een matrix geretourneerd, gekoppeld door een scheidingsteken"
     }
   ],
   "G/CC5/": [
@@ -2684,7 +2684,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Volledig scherm afsluiten"
     }
   ],
   "HOchry": [
@@ -2788,7 +2788,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Is overgeslagen"
     }
   ],
   "I41vZ/": [
@@ -2950,7 +2950,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Mislukt"
     }
   ],
   "J9wWry": [
@@ -3144,7 +3144,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Genegeerd"
     }
   ],
   "KwGA+K": [
@@ -3222,7 +3222,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Vereist. De verzameling waaruit het eerste object moet worden gehaald."
     }
   ],
   "LV/BTE": [
@@ -3288,7 +3288,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Retourneert het begin van de dag voor de ingevoerde tijdstempel voor de tekenreeks."
     }
   ],
   "Lub7NN": [
@@ -3366,7 +3366,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Niet-ondersteunde computertaal."
     }
   ],
   "MKTdNk": [
@@ -3468,7 +3468,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Time-out opgetreden"
     }
   ],
   "N0pS6Y": [
@@ -3528,7 +3528,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Retourneert de waarde van de opgegeven variabele."
     }
   ],
   "NnD8gF": [
@@ -3576,7 +3576,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Is mislukt"
     }
   ],
   "O+8vRv": [
@@ -3594,7 +3594,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Er zijn geen fouten gevonden."
     }
   ],
   "O27gKq": [
@@ -3750,7 +3750,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Vereiste eigenschappen "
     },
     {
       "type": 1,
@@ -3758,15 +3758,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " ontbreekt voor verificatietype "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [
@@ -3808,7 +3804,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Aangepaste tracerings-id"
     }
   ],
   "P4rEwD": [
@@ -3882,7 +3878,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Fouten met instellingen"
     }
   ],
   "PfCJlN": [
@@ -3912,7 +3908,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Verbindingsfouten"
     }
   ],
   "PtqSHp": [
@@ -3948,7 +3944,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Uitvoeren na "
     },
     {
       "type": 1,
@@ -4010,7 +4006,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Vereiste eigenschap "
     },
     {
       "type": 1,
@@ -4018,15 +4014,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " ontbreekt voor verificatietype "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -4056,7 +4048,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Werkstroomparameters"
     }
   ],
   "Qn8qxn": [
@@ -4108,7 +4100,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Voer een geldige voorwaarde in."
     }
   ],
   "RFjYpH": [
@@ -4210,7 +4202,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Vereist. De expressies die waar moeten zijn."
     }
   ],
   "RvpHdu": [
@@ -4448,7 +4440,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Vereist. De waarde waarvoor de index moet worden gevonden."
     }
   ],
   "Tmr/9e": [
@@ -4460,7 +4452,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Fouten met werkstroomparameter"
     }
   ],
   "Ts5Pzr": [
@@ -4620,7 +4612,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Uitvouwen"
     }
   ],
   "Umpr3z": [
@@ -4652,7 +4644,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Het type voor "
     },
     {
       "type": 1,
@@ -4660,7 +4652,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "' is "
     },
     {
       "type": 1,
@@ -4668,7 +4660,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "Ur+wph": [
@@ -5174,7 +5166,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Triggervoorwaarden"
     }
   ],
   "YHsAKl": [
@@ -5458,7 +5450,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Geannuleerd"
     }
   ],
   "ae7W0a": [
@@ -5540,7 +5532,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een binaire waarde."
     }
   ],
   "bSZ0lL": [
@@ -5564,7 +5556,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "De verbinding van de aanroeper gebruiken"
     }
   ],
   "bXFGpe": [
@@ -5594,13 +5586,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Bewerking openen"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Voor deze bewerking zijn beveiligde invoer- of uitvoerwaarden ingeschakeld."
     }
   ],
   "byTBrn": [
@@ -5774,7 +5766,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Downloaden (Alt of Option + select)"
     }
   ],
   "dBWIjR": [
@@ -6080,7 +6072,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Verbinding selecteren"
     }
   ],
   "g076bL": [
@@ -6232,7 +6224,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Laden..."
     }
   ],
   "h+W3VW": [
@@ -6506,7 +6498,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 2."
     }
   ],
   "iq+tiv": [
@@ -6528,7 +6520,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Voer een geldige tabel in."
     }
   ],
   "iy8rNf": [
@@ -6654,7 +6646,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Parameterfouten"
     }
   ],
   "kBOAkT": [
@@ -6726,7 +6718,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Elementen en toewijzingen worden verwijderd wanneer deze niet zijn verbonden met een doelelement."
     }
   ],
   "klY9UN": [
@@ -6737,7 +6729,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "Er komen geen items overeen."
             }
           ]
         },
@@ -6748,7 +6740,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " item komt overeen."
             }
           ]
         },
@@ -6759,7 +6751,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " items komen overeen."
             }
           ]
         }
@@ -7014,7 +7006,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Vereist. De XPath-expressie die moet worden geëvalueerd."
     }
   ],
   "mZRMD9": [
@@ -7132,7 +7124,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Overgeslagen"
     }
   ],
   "nHseED": [
@@ -7162,7 +7154,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Nieuwe parameter"
     }
   ],
   "nRpM02": [
@@ -7216,7 +7208,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Er is een time-out opgetreden"
     }
   ],
   "no/SMg": [
@@ -7686,7 +7678,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Ongeldige eigenschap "
     },
     {
       "type": 1,
@@ -7694,7 +7686,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " voor verificatietype "
     },
     {
       "type": 1,
@@ -7702,7 +7694,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "r/n6/9": [
@@ -7798,7 +7790,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "is voltooid"
     }
   ],
   "rsdJcV": [
@@ -7876,7 +7868,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Geef parameters op om de uitvoer te testen."
     }
   ],
   "sW47JR": [
@@ -8218,7 +8210,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Voltooid"
     }
   ],
   "uc/PoD": [
@@ -8254,7 +8246,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Bewerkingsfouten"
     }
   ],
   "ui7GCl": [
@@ -8338,7 +8330,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Vereist. De verzameling waaruit de objecten van de eerste telling moeten worden gehaald."
     }
   ],
   "vQcQkU": [
@@ -8598,7 +8590,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Retourneert een object waarbij de opgegeven eigenschap is verwijderd."
     }
   ],
   "x3dWOL": [
@@ -8610,7 +8602,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Afgebroken"
     }
   ],
   "x8kTAX": [
@@ -8798,7 +8790,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "De hoofdtekst wordt gedeeltelijk geretourneerd in een uitvoer van meerdere delen van de trigger"
     }
   ],
   "yqRrQ/": [
@@ -8834,7 +8826,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Meer informatie"
     }
   ],
   "z/UY4k": [
@@ -8946,7 +8938,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 1."
     }
   ],
   "zxe9hh": [

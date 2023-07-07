@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "创建连接引用"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,7 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "已出错"
     }
   ],
   "+Uvo/p": [
@@ -54,13 +54,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "无输出"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "已超时"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +78,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "没有与搜索匹配的值。"
     }
   ],
   "/NtebP": [
@@ -168,7 +168,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "启用后，此操作将使用 Dataverse 触发器中“运行身份”设置中的用户身份运行。"
     }
   ],
   "/yYyOq": [
@@ -262,7 +262,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "已启用安全输入或输出。"
     }
   ],
   "0FzNJV": [
@@ -846,13 +846,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "必需。此值为可返回的最大整数之后的下一个整数。"
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "正在等待"
     }
   ],
   "43xObP": [
@@ -980,7 +980,7 @@
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "打开面板"
     }
   ],
   "595Baw": [
@@ -1096,7 +1096,7 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "加载输入时出错"
     }
   ],
   "6OSgRP": [
@@ -1114,7 +1114,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "选择连接引用"
     }
   ],
   "6fDYzG": [
@@ -1176,7 +1176,7 @@
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "必填。要为其查找索引的值。"
     }
   ],
   "6ueRYm": [
@@ -1188,7 +1188,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "数据类型"
     }
   ],
   "73iM9+": [
@@ -1200,7 +1200,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "输入用户名"
     }
   ],
   "7EZ2oY": [
@@ -1304,7 +1304,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "不支持的身份验证类型“"
     },
     {
       "type": 1,
@@ -1312,7 +1312,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”。"
     }
   ],
   "7zzPsK": [
@@ -1789,7 +1789,7 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "重试成功"
     }
   ],
   "BHe7qY": [
@@ -1813,7 +1813,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "未指定"
     }
   ],
   "BQCPY7": [
@@ -1855,7 +1855,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "数组"
     }
   ],
   "Bl4Iv0": [
@@ -1891,7 +1891,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "指定使得触发器触发的必须为 true 的一个或多个表达式。"
     }
   ],
   "BtL7UI": [
@@ -1933,7 +1933,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "创建连接"
     }
   ],
   "CaajcD": [
@@ -1945,7 +1945,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "“"
     },
     {
       "type": 1,
@@ -1953,7 +1953,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "”属性对于“"
     },
     {
       "type": 1,
@@ -1961,7 +1961,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "”身份验证类型无效。"
     }
   ],
   "Cb6IEq": [
@@ -1991,7 +1991,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "必须提供参数名称。"
     }
   ],
   "ClZW2r": [
@@ -2101,7 +2101,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "日期"
     }
   ],
   "DQV7aK": [
@@ -2231,7 +2231,7 @@
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "设置运行的跟踪 ID。对于拆分，此跟踪 ID 是正在启动的请求。"
     }
   ],
   "ERAWZA": [
@@ -2391,7 +2391,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "错误"
     }
   ],
   "FT3jt6": [
@@ -2472,7 +2472,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "返回数组的每一项都由分隔符联接的字符串"
     }
   ],
   "G/CC5/": [
@@ -2662,7 +2662,7 @@
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "退出全屏"
     }
   ],
   "HOchry": [
@@ -2766,7 +2766,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "已跳过"
     }
   ],
   "I41vZ/": [
@@ -2928,7 +2928,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "失败"
     }
   ],
   "J9wWry": [
@@ -3111,7 +3111,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "已忽略"
     }
   ],
   "KwGA+K": [
@@ -3189,7 +3189,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "必填。要从中获取第一个对象的集合。"
     }
   ],
   "LV/BTE": [
@@ -3255,7 +3255,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "返回传入的字符串时间戳的当天开始时间。"
     }
   ],
   "Lub7NN": [
@@ -3333,7 +3333,7 @@
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "不支持的编程语言。"
     }
   ],
   "MKTdNk": [
@@ -3435,7 +3435,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "已超时"
     }
   ],
   "N0pS6Y": [
@@ -3495,7 +3495,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "返回指定变量的值。"
     }
   ],
   "NnD8gF": [
@@ -3543,7 +3543,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "已失败"
     }
   ],
   "O+8vRv": [
@@ -3561,7 +3561,7 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "未发现错误。"
     }
   ],
   "O27gKq": [
@@ -3717,15 +3717,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "缺少身份验证类型“"
     },
     {
       "type": 1,
@@ -3733,7 +3725,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”所需的属性“"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "”"
     }
   ],
   "P+7G62": [
@@ -3775,7 +3775,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "自定义跟踪 ID"
     }
   ],
   "P4rEwD": [
@@ -3845,7 +3845,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "设置错误"
     }
   ],
   "PfCJlN": [
@@ -3875,7 +3875,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "连接错误"
     }
   ],
   "PtqSHp": [
@@ -3911,11 +3911,15 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "在 "
     },
     {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 之后运行"
     }
   ],
   "Q+ZZHI": [
@@ -3973,15 +3977,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "缺少身份验证类型“"
     },
     {
       "type": 1,
@@ -3989,7 +3985,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”的必需属性“"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "”"
     }
   ],
   "QZBPUx": [
@@ -4019,7 +4023,7 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "工作流参数"
     }
   ],
   "Qn8qxn": [
@@ -4071,7 +4075,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "输入有效的条件。"
     }
   ],
   "RFjYpH": [
@@ -4083,7 +4087,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "预览"
     }
   ],
   "RJes1w": [
@@ -4166,7 +4170,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "必填。必须为 true 的表达式。"
     }
   ],
   "RvpHdu": [
@@ -4404,7 +4408,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "必填。要为其查找索引的值。"
     }
   ],
   "Tmr/9e": [
@@ -4416,7 +4420,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "工作流参数错误"
     }
   ],
   "Ts5Pzr": [
@@ -4572,7 +4576,7 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展开"
     }
   ],
   "Umpr3z": [
@@ -4604,7 +4608,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "“"
     },
     {
       "type": 1,
@@ -4612,7 +4616,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "”的类型为“"
     },
     {
       "type": 1,
@@ -4620,7 +4624,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”。"
     }
   ],
   "Ur+wph": [
@@ -4662,7 +4666,7 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "间隔"
     }
   ],
   "VA7M1u": [
@@ -5138,7 +5142,7 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "触发器条件"
     }
   ],
   "YHsAKl": [
@@ -5422,7 +5426,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "已取消"
     }
   ],
   "ae7W0a": [
@@ -5504,7 +5508,7 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "必需。要转换为二进制的值。"
     }
   ],
   "bSZ0lL": [
@@ -5528,7 +5532,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "使用调用方的连接"
     }
   ],
   "bXFGpe": [
@@ -5558,13 +5562,13 @@
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "打开操作"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "此操作已启用安全输入或输出。"
     }
   ],
   "byTBrn": [
@@ -5738,7 +5742,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "下载(Alt 或 Option + select)"
     }
   ],
   "dBWIjR": [
@@ -6048,7 +6052,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "选择连接"
     }
   ],
   "g076bL": [
@@ -6200,7 +6204,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "正在加载..."
     }
   ],
   "h+W3VW": [
@@ -6463,7 +6467,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "必需。要与被加数 2 相加的数字。"
     }
   ],
   "iq+tiv": [
@@ -6485,7 +6489,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "输入有效的表。"
     }
   ],
   "iy8rNf": [
@@ -6611,7 +6615,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "参数错误"
     }
   ],
   "kBOAkT": [
@@ -6683,7 +6687,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "删除了未连接到目标元素的元素和映射。"
     }
   ],
   "klY9UN": [
@@ -6694,18 +6698,22 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "没有任何项匹配。"
             }
           ]
         },
         "other": {
           "value": [
             {
+              "type": 0,
+              "value": "有 "
+            },
+            {
               "type": 7
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " 项匹配。"
             }
           ]
         }
@@ -6960,7 +6968,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "必需。要计算的 XPath 表达式。"
     }
   ],
   "mZRMD9": [
@@ -7078,7 +7086,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "已跳过"
     }
   ],
   "nHseED": [
@@ -7108,7 +7116,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "新建参数"
     }
   ],
   "nRpM02": [
@@ -7162,7 +7170,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "已超时"
     }
   ],
   "no/SMg": [
@@ -7633,15 +7641,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "身份验证类型“"
     },
     {
       "type": 1,
@@ -7649,7 +7649,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
     }
   ],
   "r/n6/9": [
@@ -7745,7 +7753,7 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "成功"
     }
   ],
   "rsdJcV": [
@@ -7823,7 +7831,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "提供参数以测试输出。"
     }
   ],
   "sW47JR": [
@@ -8169,7 +8177,7 @@
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "成功"
     }
   ],
   "uc/PoD": [
@@ -8205,7 +8213,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "操作错误"
     }
   ],
   "ui7GCl": [
@@ -8289,7 +8297,7 @@
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "必需。要从中获取第一批计数对象的集合。"
     }
   ],
   "vQcQkU": [
@@ -8549,7 +8557,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "返回已删除指定属性的对象。"
     }
   ],
   "x3dWOL": [
@@ -8561,7 +8569,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "已中止"
     }
   ],
   "x8kTAX": [
@@ -8749,7 +8757,7 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "返回触发器的多部分输出中的一个部分的正文"
     }
   ],
   "yqRrQ/": [
@@ -8785,7 +8793,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "了解详细信息"
     }
   ],
   "z/UY4k": [
@@ -8901,7 +8909,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "必需。要与被加数 1 相加的数字。"
     }
   ],
   "zxe9hh": [

@@ -78,7 +78,7 @@ export const DesignerCommandBar = ({
     [allInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
   );
 
-  const saveIsDisabled = isSaving || haveErrors || !designerIsDirty;
+  const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',

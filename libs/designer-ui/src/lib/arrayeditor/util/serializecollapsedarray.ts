@@ -53,8 +53,8 @@ export const parseSimpleItems = (
   items.forEach((item, index) => {
     const { value } = item;
     if (value?.length === 0) {
-      castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' });
-      uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' });
+      castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '""' });
+      uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '""' });
     } else {
       insertQutationForStringType(castedArraySegments, type);
       insertQutationForStringType(uncastedArraySegments, type);
