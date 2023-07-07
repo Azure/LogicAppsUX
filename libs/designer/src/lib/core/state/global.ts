@@ -5,6 +5,7 @@ import { useIsWorkflowParametersDirty } from './workflowparameters/workflowparam
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const resetWorkflowState = createAction('resetWorkflowState');
+export const resetNodesLoadStatus = createAction('resetNodesLoadStatus');
 
 export const useIsDesignerDirty = () => {
   const isWorkflowDirty = useIsWorkflowDirty();

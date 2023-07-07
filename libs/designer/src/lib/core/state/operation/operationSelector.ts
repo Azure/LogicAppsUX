@@ -102,6 +102,10 @@ export const useNodesInitialized = () => {
   return useSelector((rootState: RootState) => rootState.operations.loadStatus.nodesInitialized);
 };
 
+export const useNodesAndDynamicDataInitialized = () => {
+  return useSelector((rootState: RootState) => rootState.operations.loadStatus.nodesAndDynamicDataInitialized);
+};
+
 const getTopErrorInOperation = (errors: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
   if (!errors) {
     return undefined;
