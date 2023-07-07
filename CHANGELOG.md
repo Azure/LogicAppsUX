@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.38.2](https://github.com/Azure/LogicAppsUX/compare/v2.38.1...v2.38.2) (2023-07-07)
+
+
+### Bug Fixes
+
+* **powerautomate:** Fix results of getTreeDynamicValues call being cached unexpectedly in hotfix/v2.38 branch ([#2931](https://github.com/Azure/LogicAppsUX/issues/2931)) ([7436642](https://github.com/Azure/LogicAppsUX/commit/7436642ce3c531c6607358fec4880dfbafd512a4))
+
 ### [2.38.1](https://github.com/Azure/LogicAppsUX/compare/v2.38.0...v2.38.1) (2023-06-30)
 
 
