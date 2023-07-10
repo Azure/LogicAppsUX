@@ -954,7 +954,7 @@ export function getResourceName(obj: any): string {
  * @returns {Record<string, T>} - The filtered record.
  */
 
-export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: any) => boolean): Record<string, T> => {
+export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: T) => boolean): Record<string, T> => {
   return Object.entries(data)
     .filter(([key, value]) => filter(key, value))
     .reduce((res: any, [key, value]: any) => ({ ...res, [key]: value }), {});
