@@ -8,6 +8,7 @@ export interface DataMapLoadingState {
   loadingMethod: 'file' | 'arm';
   mapDefinition?: MapDefinitionEntry;
   dataMapMetadata?: MapMetadata;
+
   sourceSchemaFilename?: string;
   sourceSchema?: Schema;
   targetSchemaFilename?: string;
@@ -83,6 +84,7 @@ export const {
   changeXsltContent,
   changeMapDefinition,
   changeDataMapMetadata,
+
   changeSourceSchemaFilename,
   changeSourceSchema,
   changeTargetSchemaFilename,

@@ -1,6 +1,6 @@
 import type { MapDefDropdownOption } from '../components/DevToolbox';
 import type { RootState } from './Store';
-import type { FunctionData, MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import type { FunctionData, MapDefinitionEntry, MapMetadata } from '@microsoft/logic-apps-data-mapper';
 import { functionMock, loadMapDefinition } from '@microsoft/logic-apps-data-mapper';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -17,6 +17,7 @@ export interface DataMapLoadingState {
   rawDefinition?: MapDefDropdownOption;
   loadingMethod: LoadingMethod;
   mapDefinition: MapDefinitionEntry;
+  mapMetadata?: MapMetadata;
   xsltFilename: string;
   xsltContent: string;
   fetchedFunctions?: FunctionData[];
@@ -40,6 +41,7 @@ export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunk
   } else {
     try {
       const mapDefinition = loadMapDefinition(currentState.dataMapDataLoader.rawDefinition?.data?.mapDefinitionString ?? '');
+      // danielle load metadata
       return mapDefinition;
     } catch {
       return null;
@@ -59,6 +61,7 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeRawDefinition: (state, action: PayloadAction<MapDefDropdownOption>) => {
       state.rawDefinition = action.payload;
+      state.mapMetadata = JSON.parse(action.payload.data?.mapMetadataString || '');
     },
     changeLoadingMethod: (state, action: PayloadAction<LoadingMethod>) => {
       state.loadingMethod = action.payload;

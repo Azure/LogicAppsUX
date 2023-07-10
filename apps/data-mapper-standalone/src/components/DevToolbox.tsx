@@ -3,6 +3,7 @@ import {
   fullTranscriptMapDefinitionString,
   transcriptJsonMapDefinitionString,
 } from '../../../../__mocks__/mapDefinitions';
+import { testMetadata } from '../../../../__mocks__/mapMetadata';
 import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -23,6 +24,7 @@ const themeDropdownOptions = [
 
 interface MapDefDropdownData {
   mapDefinitionString: string;
+  mapMetadataString?: string;
   associatedSchemaIdx: number;
 }
 export type MapDefDropdownOption = IDropdownOption<MapDefDropdownData>;
@@ -30,7 +32,11 @@ const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
   {
     key: 'fullDemoScriptMapDefinition',
     text: 'Transcript',
-    data: { mapDefinitionString: fullTranscriptMapDefinitionString, associatedSchemaIdx: 1 },
+    data: {
+      mapDefinitionString: fullTranscriptMapDefinitionString,
+      mapMetadataString: JSON.stringify(testMetadata),
+      associatedSchemaIdx: 1,
+    },
   },
   {
     key: 'comprehensiveMapDefinition',
@@ -108,6 +114,8 @@ export const DevToolbox = () => {
       dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(item));
       const srcSchemaRscPath = sourceSchemaFileOptions[item.data.associatedSchemaIdx].filename;
       const tgtSchemaRscPath = targetSchemaFileOptions[item.data.associatedSchemaIdx].filename;
+
+      // danielle add
 
       dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(srcSchemaRscPath));
       dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(tgtSchemaRscPath));

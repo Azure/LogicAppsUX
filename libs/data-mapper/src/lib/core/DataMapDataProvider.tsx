@@ -71,7 +71,6 @@ const DataProviderInner = ({
           metadata: dataMapMetadata,
         })
       );
-      // danielle dispatch set metadata
     }
   }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, dataMapMetadata]);
 
