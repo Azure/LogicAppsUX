@@ -217,7 +217,8 @@ export interface ParameterSerializationOptions {
 
 export interface DependentParameterInfo {
   name: string;
-  values: any[];
+  values?: any[];
+  excludeValues?: any[];
 }
 export interface InputDependencies {
   type: string;

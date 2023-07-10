@@ -43,7 +43,7 @@ export default {
               title: 'Code',
               'x-ms-input-dependencies': {
                 type: 'visibility',
-                parameters: [{ name: 'runStatus', values: ['Failed'] }],
+                parameters: [{ name: 'runStatus', excludeValues: ['Succeeded', 'Cancelled'] }],
               },
             },
             message: {
@@ -53,7 +53,7 @@ export default {
               title: 'Message',
               'x-ms-input-dependencies': {
                 type: 'visibility',
-                parameters: [{ name: 'runStatus', values: ['Failed'] }],
+                parameters: [{ name: 'runStatus', excludeValues: ['Succeeded', 'Cancelled'] }],
               },
             },
           },
