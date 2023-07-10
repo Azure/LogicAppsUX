@@ -31,6 +31,7 @@ import { uninstallDotNetSDK } from './dotNetSDK/uninstallDotNetSDK';
 import { initProjectForVSCode } from './initProjectForVSCode/initProjectForVSCode';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
+import { installNodeJs } from './nodeJs/installNodeJs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
 import { pickFuncProcess } from './pickFuncProcess';
@@ -127,4 +128,5 @@ export function registerCommands(): void {
 
   registerCommandWithTreeNodeUnwrapping(extensionCommand.installDotNetSDK, installDotNetSDK);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.uninstallDotNetSDK, uninstallDotNetSDK);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.installNodeJs, async (context: IActionContext) => await installNodeJs(context));
 }

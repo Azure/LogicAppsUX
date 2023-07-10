@@ -305,6 +305,11 @@
         "command": "azureLogicAppsStandard.uninstallDotNetSDK",
         "title": "Uninstall .NET SDK 6",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.installNodeJs",
+        "title": "Install NodeJs",
+        "category": "Azure Logic Apps"
       }
     ],
     "menus": {
