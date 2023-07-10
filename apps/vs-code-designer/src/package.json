@@ -310,7 +310,10 @@
     "submenus": [
       {
         "id": "azureLogicAppsStandard.submenus.workspaceActions",
-        "icon": "assets/logicapp.png",
+        "icon": {
+          "light": "assets/logicapp.png",
+          "dark": "assets/logicapp.png"
+        },
         "label": "Azure Logic Apps"
       }
     ],
