@@ -1,3 +1,4 @@
+import { isEnterKey, isSpaceKey } from '../utils';
 import { Text, Icon } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -14,6 +15,13 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
     onClick?.();
+  };
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLElement> = (e) => {
+    if (isEnterKey(e) || isSpaceKey(e)) {
+      e.stopPropagation();
+      onClick?.();
+    }
   };
 
   const title = intl.formatMessage({
@@ -41,7 +49,7 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
   );
 
   return (
-    <div key="workflowParametersErrorCard" className="msla-error-card" onClick={handleClick} tabIndex={0}>
+    <div key="workflowParametersErrorCard" className="msla-error-card" onClick={handleClick} tabIndex={0} onKeyDown={handleKeyDown}>
       <div className="msla-error-card-header">
         <div className="msla-error-card-icon">
           <Icon iconName="Parameter" />
