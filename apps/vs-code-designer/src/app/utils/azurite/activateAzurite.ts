@@ -5,10 +5,12 @@
 import { azuriteExtensionPrefix, azuriteLocationSetting, extensionCommand } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
-import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { getWorkspaceSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
+import { getWorkspaceFolder } from '../workspace';
+import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as os from 'os';
 import * as path from 'path';
+import type { MessageItem } from 'vscode';
 
 /**
  * Prompts user to set azurite.location and Start Azurite.
@@ -17,26 +19,61 @@ import * as path from 'path';
  * User can specify location.
  */
 export async function activateAzurite(context: IActionContext): Promise<void> {
-  const userAzuriteDir: string = getGlobalSetting(azuriteLocationSetting, azuriteExtensionPrefix);
-  context.telemetry.properties.azuriteLocation = userAzuriteDir;
-  // User has not configured azurite.location.
-  if (!userAzuriteDir) {
-    const defaultAzuriteDir = path.join(os.homedir(), '.azurite');
-    const azuriteDir = await context.ui.showInputBox({
-      placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
-      prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
-      value: defaultAzuriteDir,
-    });
+  const workspaceFolder = await getWorkspaceFolder(context);
+  const workspacePath = workspaceFolder.uri.fsPath;
 
-    if (azuriteDir) {
-      await updateGlobalSetting(azuriteLocationSetting, azuriteDir, azuriteExtensionPrefix);
-      context.telemetry.properties.azuriteLocation = azuriteDir;
-    } else {
-      await updateGlobalSetting(azuriteLocationSetting, defaultAzuriteDir, azuriteExtensionPrefix);
-      context.telemetry.properties.azuriteLocation = defaultAzuriteDir;
+  const globalAzuriteLocationSetting: string = getWorkspaceSetting<string>(azuriteLocationSetting, workspacePath, azuriteExtensionPrefix);
+  context.telemetry.properties.globalAzuriteLocation = globalAzuriteLocationSetting;
+
+  const azuriteLoationSettingKey = 'azuriteLocationSetting';
+  const azuriteLocationExtSetting: string = getWorkspaceSetting<string>(azuriteLoationSettingKey);
+
+  const showAutoStartAzuriteWarningKey = 'showAutoStartAzuriteWarning';
+  const showAutoStartAzuriteWarning = !!getWorkspaceSetting<boolean>(showAutoStartAzuriteWarningKey);
+
+  const autoStartAzuriteKey = 'autoStartAzurite';
+  const autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteKey);
+  context.telemetry.properties.autoStartAzurite = `${autoStartAzurite}`;
+
+  if (showAutoStartAzuriteWarning) {
+    const enableMessage: MessageItem = { title: localize('enableAutoStart', 'Enable AutoStart') };
+
+    const result = await context.ui.showWarningMessage(
+      localize('autoStartAzuriteTitle', 'Configure Azurite to autostart on project launch?'),
+      enableMessage,
+      DialogResponses.no,
+      DialogResponses.dontWarnAgain
+    );
+
+    if (result == DialogResponses.dontWarnAgain) {
+      await updateGlobalSetting(showAutoStartAzuriteWarningKey, false);
+    } else if (result == enableMessage) {
+      await updateGlobalSetting(showAutoStartAzuriteWarningKey, false);
+      await updateGlobalSetting(autoStartAzuriteKey, true);
+
+      // User has not configured workspace azurite.location.
+      if (!azuriteLocationExtSetting) {
+        const defaultAzuriteDir = path.join(os.homedir(), '.logicapps', 'azurite');
+        const azuriteDir = await context.ui.showInputBox({
+          placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
+          prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
+          value: defaultAzuriteDir,
+        });
+
+        if (azuriteDir) {
+          await updateGlobalSetting(azuriteLoationSettingKey, azuriteDir);
+        } else {
+          await updateGlobalSetting(azuriteLoationSettingKey, defaultAzuriteDir);
+        }
+      }
     }
   }
 
-  await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
-  context.telemetry.properties.azuriteStart = 'true';
+  if (getWorkspaceSetting<boolean>(autoStartAzuriteKey)) {
+    const azuriteWorkspaceSetting = getWorkspaceSetting<string>(azuriteLoationSettingKey);
+    await updateWorkspaceSetting(azuriteLocationSetting, azuriteWorkspaceSetting, workspacePath, azuriteExtensionPrefix);
+    await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
+    context.telemetry.properties.azuriteStart = 'true';
+    context.telemetry.properties.azuriteLocation = azuriteWorkspaceSetting;
+  }
 }

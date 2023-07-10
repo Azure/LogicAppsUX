@@ -770,10 +770,19 @@
             ],
             "description": "Package Manager across Operating System Platforms"
           },
-          "azureLogicAppsStandard.showMissingPackageManagerWarning": {
+          "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
-            "description": "Show a warning when an expected Package Manager is missing.",
+            "description": "Show a warning asking if user's would like to configure Azurite auto start.",
             "default": true
+          },
+          "azureLogicAppsStandard.autoStartAzurite": {
+            "type": "boolean",
+            "description": "Start Azurite when project starts.",
+            "default": false
+          },
+          "azureLogicAppsStandard.azuriteLocationSetting": {
+            "type": "string",
+            "description": "Default location for Azurite repository for Logic Apps Standard Workspaces"
           }
         }
       }
