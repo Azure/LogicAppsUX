@@ -203,7 +203,8 @@ export const getDynamicTreeItems = async (
       getParametersKey(parameters).toLowerCase(),
       `selectionState:${dynamicExtension.selectionState ? JSON.stringify(dynamicExtension.selectionState) : ''}`,
     ],
-    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameters, dynamicExtension)
+    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameters, dynamicExtension),
+    { cacheTime: 0, staleTime: 0 }
   );
 
   return values;

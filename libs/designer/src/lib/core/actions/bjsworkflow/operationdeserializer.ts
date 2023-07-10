@@ -14,7 +14,13 @@ import type {
   NodeOperation,
   NodeOutputs,
 } from '../../state/operation/operationMetadataSlice';
-import { ErrorLevel, updateErrorDetails, initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
+import {
+  ErrorLevel,
+  updateErrorDetails,
+  initializeOperationInfo,
+  initializeNodes,
+  updateDynamicDataLoadStatus,
+} from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
@@ -536,6 +542,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
       );
     }
   }
+  dispatch(updateDynamicDataLoadStatus(true));
 };
 
 const updateDynamicDataForValidConnection = async (
