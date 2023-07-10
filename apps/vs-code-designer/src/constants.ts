@@ -140,6 +140,7 @@ export enum extensionCommand {
   uninstallDotNetSDK = 'azureLogicAppsStandard.uninstallDotNetSDK',
   installNodeJs = 'azureLogicAppsStandard.installNodeJs',
   azureAzuriteStart = 'azurite.start',
+}
 
 // Context
 export const contextValuePrefix = 'azLogicApps';
