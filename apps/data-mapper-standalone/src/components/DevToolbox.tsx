@@ -115,8 +115,6 @@ export const DevToolbox = () => {
       const srcSchemaRscPath = sourceSchemaFileOptions[item.data.associatedSchemaIdx].filename;
       const tgtSchemaRscPath = targetSchemaFileOptions[item.data.associatedSchemaIdx].filename;
 
-      // danielle add
-
       dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(srcSchemaRscPath));
       dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(tgtSchemaRscPath));
       dispatch(loadSourceSchema());

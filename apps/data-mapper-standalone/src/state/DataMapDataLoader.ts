@@ -41,7 +41,6 @@ export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunk
   } else {
     try {
       const mapDefinition = loadMapDefinition(currentState.dataMapDataLoader.rawDefinition?.data?.mapDefinitionString ?? '');
-      // danielle load metadata
       return mapDefinition;
     } catch {
       return null;
