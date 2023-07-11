@@ -256,6 +256,8 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
       },
       type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
+      draggable: true,
+      dragHandle: '.custom-drag-handle',
       position: {
         x: layoutNode.x,
         y: layoutNode.y,

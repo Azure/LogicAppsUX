@@ -79,10 +79,15 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     return <Handle key={input.name} id={input.name} type="target" position={Position.Left} style={{ top: '20px', visibility: 'hidden' }} />;
   });
 
+  const onDrag = () => {
+    console.log('drag');
+  };
+
   const header = (
     <Button
       appearance="transparent"
       onClick={handleHeaderOnClick}
+      // danielle on click and hold?
       style={{
         padding: '5px',
         minHeight: '20px',
@@ -91,6 +96,9 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         justifyContent: 'flex-start',
       }}
     >
+      <div onClick={onDrag} className="custom-drag-handle" style={{ width: '20px' }}>
+        handle
+      </div>
       {isExpanded ? null : handlesForCollapsedHeader}
       <FunctionIcon
         functionKey={functionData.key}
