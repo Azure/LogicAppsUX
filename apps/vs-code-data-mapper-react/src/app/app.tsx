@@ -37,6 +37,7 @@ export const App = () => {
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
+  const mapMetadata = useSelector((state: RootState) => state.dataMapDataLoader.dataMapMetadata);
   const sourceSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchemaFilename);
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
   const targetSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.targetSchemaFilename);
@@ -74,10 +75,14 @@ export const App = () => {
     });
   }, [sendMsgToVsix]);
 
-  const saveMapDefinitionCall = (dataMapDefinition: string, _mapMetadata: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
+    });
+    sendMsgToVsix({
+      command: 'saveDataMapMetadata',
+      data: mapMetadata,
     });
   };
 
@@ -202,6 +207,7 @@ export const App = () => {
       options={{}}
     >
       <DataMapDataProvider
+        dataMapMetadata={mapMetadata}
         xsltFilename={xsltFilename}
         xsltContent={xsltContent}
         mapDefinition={mapDefinition}

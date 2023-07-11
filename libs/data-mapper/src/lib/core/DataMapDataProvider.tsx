@@ -1,4 +1,5 @@
 import { MapDefinitionDeserializer } from '../mapDefinitions';
+import type { MapMetadata } from '../models';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { Schema } from '../models/Schema';
@@ -18,6 +19,7 @@ export interface DataMapDataProviderProps {
   xsltFilename?: string;
   xsltContent: string;
   mapDefinition?: MapDefinitionEntry;
+  dataMapMetadata?: MapMetadata;
   sourceSchema?: Schema;
   targetSchema?: Schema;
   availableSchemas?: string[];
@@ -30,6 +32,7 @@ const DataProviderInner = ({
   xsltFilename,
   xsltContent,
   mapDefinition,
+  dataMapMetadata,
   sourceSchema,
   targetSchema,
   availableSchemas,
@@ -61,10 +64,15 @@ const DataProviderInner = ({
       );
       const connections = mapDefinitionDeserializer.convertFromMapDefinition();
       dispatch(
-        setInitialDataMap({ sourceSchema: extendedSourceSchema, targetSchema: extendedTargetSchema, dataMapConnections: connections })
+        setInitialDataMap({
+          sourceSchema: extendedSourceSchema,
+          targetSchema: extendedTargetSchema,
+          dataMapConnections: connections,
+          metadata: dataMapMetadata,
+        })
       );
     }
-  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions]);
+  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, dataMapMetadata]);
 
   useEffect(() => {
     if (extendedSourceSchema) {

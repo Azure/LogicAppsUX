@@ -1,4 +1,5 @@
 import {
+  changeDataMapMetadata,
   changeMapDefinition,
   changeRuntimePort,
   changeSchemaList,
@@ -47,6 +48,7 @@ export const WebViewMsgHandler = ({ children }: WebViewMsgHandlerProps) => {
         dispatch(changeSourceSchemaFilename(msg.data.sourceSchemaFileName));
         dispatch(changeTargetSchemaFilename(msg.data.targetSchemaFileName));
         dispatch(changeMapDefinition(msg.data.mapDefinition));
+        dispatch(changeDataMapMetadata(msg.data.metadata));
         break;
       case 'showAvailableSchemas':
         dispatch(changeSchemaList(msg.data));

@@ -37,6 +37,7 @@ export const DataMapperStandaloneDesigner = () => {
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
+  const mapMetadata = useSelector((state: RootState) => state.dataMapDataLoader.mapMetadata);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
   const sourceSchema = useSelector((state: RootState) => state.schemaDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
@@ -96,6 +97,7 @@ export const DataMapperStandaloneDesigner = () => {
             xsltFilename={xsltFilename}
             xsltContent={xsltContent}
             mapDefinition={mapDefinition}
+            dataMapMetadata={mapMetadata}
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
             availableSchemas={workflowSchemaFilenames}
