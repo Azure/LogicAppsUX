@@ -1,4 +1,10 @@
-import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
+import type {
+  IConnectorService,
+  ListDynamicValue,
+  ManagedIdentityRequestProperties,
+  TreeDynamicExtension,
+  TreeDynamicValue,
+} from '../connector';
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';

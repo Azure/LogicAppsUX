@@ -106,7 +106,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         location: isInput ? 'input' : 'output',
         dynamicInvocationDefinition: dynamicState.extension,
         parameters,
-        contextParameterAlias
+        contextParameterAlias,
       },
     });
     return this._getResponseFromDynamicApi(response, uri);
@@ -131,11 +131,15 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         ...optional('properties', this._getPropertiesIfNeeded(isManagedIdentityConnection)),
         dynamicInvocationDefinition: dynamicState,
         parameters,
-        selectionState
+        selectionState,
       },
     });
     const values = this._getResponseFromDynamicApi(response, uri)?.value;
-    return (values || []).map((item: any) => ({ value: item, displayName: item.displayName, isParent: item.isParent ?? equals(item.nodeType, 'parent') }))
+    return (values || []).map((item: any) => ({
+      value: item,
+      displayName: item.displayName,
+      isParent: item.isParent ?? equals(item.nodeType, 'parent'),
+    }));
   }
 
   private _getPropertiesIfNeeded(isManagedIdentityConnection?: boolean):

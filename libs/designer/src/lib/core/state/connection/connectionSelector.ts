@@ -4,7 +4,12 @@ import type { RootState } from '../../store';
 import { getConnectionId, getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import type { ConnectionMapping } from './connectionSlice';
-import { ConnectionService, GatewayService, OperationManifestService, isServiceProviderOperation } from '@microsoft/designer-client-services-logic-apps';
+import {
+  ConnectionService,
+  GatewayService,
+  OperationManifestService,
+  isServiceProviderOperation,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';

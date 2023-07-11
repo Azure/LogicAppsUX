@@ -90,7 +90,11 @@ export class ConsumptionSearchService extends BaseSearchService {
         if (!operation.properties.operationType) {
           const { isNotification, isWebhook } = operation.properties as SomeKindOfAzureOperationDiscovery;
           // eslint-disable-next-line no-param-reassign
-          operation.properties.operationType = isWebhook ? 'OpenApiConnectionWebhook' : isNotification ? 'OpenApiConnectionNotification' : 'OpenApiConnection';
+          operation.properties.operationType = isWebhook
+            ? 'OpenApiConnectionWebhook'
+            : isNotification
+            ? 'OpenApiConnectionNotification'
+            : 'OpenApiConnection';
         }
 
         return operation;

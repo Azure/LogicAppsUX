@@ -359,15 +359,12 @@ export async function getFolderItems(
       workflowParameters
     );
 
-    const dynamicExtension = { dynamicState: definition.extension.dynamicState, selectionState: selectedValue ? selectedValue.selectionState : undefined };
+    const dynamicExtension = {
+      dynamicState: definition.extension.dynamicState,
+      selectionState: selectedValue ? selectedValue.selectionState : undefined,
+    };
 
-    return getDynamicTreeItems(
-      connectionId,
-      connectorId,
-      operationId,
-      operationParameters,
-      dynamicExtension,
-    );
+    return getDynamicTreeItems(connectionId, connectorId, operationId, operationParameters, dynamicExtension);
   }
 
   throw new UnsupportedException(`Dynamic extension '${definition.type}' is not implemented yet or not supported`);
