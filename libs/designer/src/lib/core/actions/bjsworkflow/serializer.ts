@@ -54,6 +54,7 @@ import {
   WORKFLOW_NODE_TYPES,
   replaceTemplatePlaceholders,
   unmap,
+  filterRecord,
 } from '@microsoft/utils-logic-apps';
 import merge from 'lodash.merge';
 
@@ -137,6 +138,8 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     };
   }, {});
 
+  const parameters = getWorkflowParameters(filterRecord(rootState.workflowParameters.definitions, (key, _) => key !== '')) ?? {};
+
   const serializedWorkflow: Workflow = {
     definition: {
       ...rootState.workflow.originalDefinition,
@@ -147,7 +150,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
-    parameters: getWorkflowParameters(rootState.workflowParameters.definitions),
+    parameters,
   };
   return serializedWorkflow;
 };

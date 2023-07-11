@@ -5,6 +5,9 @@ on:
     types: [opened, edited, deleted, closed, reopened, labeled, unlabeled, assigned]
   issue_comment:
     types: [created, edited, deleted]
+concurrency:
+  group: issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
 
 jobs:
   bugs:
