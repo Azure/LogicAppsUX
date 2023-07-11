@@ -8,7 +8,7 @@ on:
 concurrency:
   group: issue-${{ github.event.issue.number }}
   cancel-in-progress: false
-  
+
 jobs:
   bugs:
     runs-on: ubuntu-latest

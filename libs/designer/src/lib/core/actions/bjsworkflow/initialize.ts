@@ -361,7 +361,7 @@ export const getInputDependencies = (
             open: dynamicValues.extension.open,
             browse: dynamicValues.extension.browse,
             fullTitlePath: 'fullyQualifiedDisplayName',
-            valuePath: 'value'
+            valuePath: 'value',
           },
           parameter: inputParameter,
         };
