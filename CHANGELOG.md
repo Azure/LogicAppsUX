@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [2.45.0](https://github.com/Azure/LogicAppsUX/compare/v2.44.0...v2.45.0) (2023-07-11)
+
+
+### Features
+
+* **Data Mapper:** Allow save and load of metadata file ([#2809](https://github.com/Azure/LogicAppsUX/issues/2809)) ([8beb9e0](https://github.com/Azure/LogicAppsUX/commit/8beb9e0f5ca37f4588b418f188580f390a0af955))
+
+
+### Bug Fixes
+
+* **Designer:** Added state variable for dynamic data load completeness ([#2928](https://github.com/Azure/LogicAppsUX/issues/2928)) ([f1681c5](https://github.com/Azure/LogicAppsUX/commit/f1681c59ebeb95da98f07afb05fc52e7d7943aad))
+* **designer:** Fix unexpected caching for getTreeDynamicValues ([#2933](https://github.com/Azure/LogicAppsUX/issues/2933)) ([3becdc9](https://github.com/Azure/LogicAppsUX/commit/3becdc96dbede96c4dc1a67fc2a93a8ef56a4668))
+* **Designer:** Terminate now shows `Code` and `Message` inputs on custom statuses ([#2940](https://github.com/Azure/LogicAppsUX/issues/2940)) ([8b288e8](https://github.com/Azure/LogicAppsUX/commit/8b288e8528de20779a4d689ff512a43003d6a5b4))
+* **Designer:** Workflow Parameter empty error fixes ([#2926](https://github.com/Azure/LogicAppsUX/issues/2926)) ([254f0db](https://github.com/Azure/LogicAppsUX/commit/254f0db9d1bb3811e5f84cb5848cdeefc9ad7529))
+* **vscode:** Add logic app icon path for light theme ([#2942](https://github.com/Azure/LogicAppsUX/issues/2942)) ([2d65a16](https://github.com/Azure/LogicAppsUX/commit/2d65a1696dea9eef2b6cf0eeff49904b568a6c75))
+
 ## [2.44.0](https://github.com/Azure/LogicAppsUX/compare/v2.43.0...v2.44.0) (2023-07-06)
 
 
