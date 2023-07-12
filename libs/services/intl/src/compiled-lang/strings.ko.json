@@ -919,6 +919,12 @@
       "value": "필수 사항으로, 값을 원하는 매개 변수의 이름입니다."
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Your flow has been updated."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -965,6 +971,12 @@
       "value": "(UTC+08:45) 유클라"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Explain action"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
@@ -975,6 +987,18 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 오사카, 삿포로, 도쿄"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "Add a condition"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Tell Microsoft what you liked about this feature"
     }
   ],
   "5OvGgn": [
@@ -1125,6 +1149,12 @@
       "value": "'에 할당된 입력이 너무 많습니다."
     }
   ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Updated this action"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -1155,10 +1185,22 @@
       "value": "이전"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "To get this workflow ready, finish setting up these actions:"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "필수 사항으로, 피승수 2를 곱할 숫자입니다."
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Create flow"
     }
   ],
   "6u6CS+": [
@@ -1259,10 +1301,22 @@
       "value": "선택 사항. 형식을 지정할 때 사용할 로캘(기본값 'en-us')입니다."
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "상태 코드"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "7lnElz": [
@@ -1383,6 +1437,18 @@
     {
       "type": 0,
       "value": "논리 앱의 관리 ID를 사용하도록 설정하세요."
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
     }
   ],
   "8SxNQC": [
@@ -1543,6 +1609,12 @@
       "value": "(UTC-03:00) 브라질리아"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Revert your flow"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1589,6 +1661,12 @@
     {
       "type": 0,
       "value": "두 매개 변수가 모두 true인 경우 true를 반환합니다."
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Send feedback"
     }
   ],
   "9x8hg8": [
@@ -1663,6 +1741,12 @@
     {
       "type": 0,
       "value": "빈도를 선택합니다."
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Not connected to"
     }
   ],
   "AnX5yC": [
@@ -1778,6 +1862,12 @@
       "value": "필수 사항으로, URI로 인코딩된 문자열입니다."
     }
   ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Learn more about undo operations"
+    }
+  ],
   "BJNUxN": [
     {
       "type": 0,
@@ -1806,6 +1896,12 @@
     {
       "type": 0,
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
     }
   ],
   "BSgavq": [
@@ -1892,6 +1988,12 @@
       "value": "필수 항목으로, 비교하는 개체보다 큰지 확인할 개체입니다."
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Ask a question"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1902,6 +2004,12 @@
     {
       "type": 0,
       "value": "연속 토큰에 따라 지정된 임계값을 충족하는 항목을 검색합니다. 커넥터의 페이지 크기로 인해 반환되는 수가 임계값을 초과할 수 있습니다."
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "Add an action that sends an email"
     }
   ],
   "CG772M": [
@@ -2204,6 +2312,12 @@
       "value": "매개 변수를 10진수로 변환"
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
@@ -2294,6 +2408,12 @@
       "value": "이 작업에 대한 요청 기록 보기"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Set up these connections to use them in your flow."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2352,6 +2472,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) 치와와, 라파스, 마사틀란"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Your flow has been updated."
     }
   ],
   "FN5zHQ": [
@@ -2501,6 +2627,12 @@
       "value": "필수 항목으로, Within 컬렉션 내에서 찾을 개체입니다."
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Explain flow"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2523,6 +2655,12 @@
     {
       "type": 0,
       "value": "기타 명령"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Get started"
     }
   ],
   "Gi72X5": [
@@ -2671,6 +2809,12 @@
     {
       "type": 0,
       "value": "배열 항목에 대한 상세 정보 입력으로 전환"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Edit Flow"
     }
   ],
   "HfrUId": [
@@ -2855,6 +2999,12 @@
       "value": "속성 없음"
     }
   ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -2931,6 +3081,12 @@
     {
       "type": 0,
       "value": "삭제"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Action undone"
     }
   ],
   "JNQHws": [
@@ -3023,10 +3179,30 @@
       "value": "연결 참조 변경"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "유효한 이중 번호를 입력하세요."
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "When a new item..."
     }
   ],
   "KX1poC": [
@@ -3178,6 +3354,12 @@
       "value": "병렬 분기 추가"
     }
   ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Removed this action"
+    }
+  ],
   "LdITnG": [
     {
       "type": 0,
@@ -3262,6 +3444,12 @@
       "value": "코드 보기"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3296,6 +3484,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 평가할 컬렉션입니다. 개체는 결과에 표시되기 위해 전달된 모든 컬렉션에 있어야 합니다."
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "MIX4f9": [
@@ -3598,6 +3792,12 @@
       "value": "모든 커넥터를 로드하는 중..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3614,6 +3814,12 @@
     {
       "type": 0,
       "value": "지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Save this workflow"
     }
   ],
   "OdNhwc": [
@@ -4167,6 +4373,12 @@
       "value": "제목 2"
     }
   ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "AI-generated content may be incorrect"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4271,6 +4483,12 @@
     {
       "type": 0,
       "value": "피드백 제공"
+    }
+  ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "Explain what an action does"
     }
   ],
   "TNEttQ": [
@@ -4507,6 +4725,12 @@
       "value": "필수 항목으로, 마지막 개체를 가져올 원본 컬렉션입니다."
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4635,6 +4859,20 @@
       "value": "앱 내"
     }
   ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Explain what the \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" action does in this flow"
+    }
+  ],
   "VHm1Sr": [
     {
       "type": 0,
@@ -4749,6 +4987,12 @@
       "value": "작업"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Added this action"
+    }
+  ],
   "W070M2": [
     {
       "type": 1,
@@ -4763,6 +5007,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 새 속성의 이름입니다."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
   "WGwH45": [
@@ -4927,6 +5177,12 @@
       "value": "(UTC+03:00) 바그다드"
     }
   ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Like"
+    }
+  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -5057,6 +5313,12 @@
       "value": "암호"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5081,6 +5343,12 @@
       "value": "본문 항목"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "All required parameters are set"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5091,6 +5359,12 @@
     {
       "type": 0,
       "value": "트리거 조건"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
     }
   ],
   "YHsAKl": [
@@ -5285,6 +5559,12 @@
     {
       "type": 0,
       "value": "trigger().outputs.body의 축약형"
+    }
+  ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "Here’s your flow."
     }
   ],
   "ZaIeDG": [
@@ -5499,6 +5779,12 @@
     {
       "type": 0,
       "value": "숫자의 입력 배열에서 최대값을 반환합니다."
+    }
+  ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Set up these connections to use them in your flow."
     }
   ],
   "bldzuj": [
@@ -5723,6 +6009,18 @@
       "value": "관리 ID"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Replace action"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5745,6 +6043,12 @@
     {
       "type": 0,
       "value": "HTTP를 통해 콘텐츠를 전송하기 위한 동작 및 기능을 지정합니다. 큰 메시지는 큰 메시지 업로드를 허용하기 위해 커넥터에 대한 작은 요청으로 분할될 수 있습니다. 자세한 내용은 http://aka.ms/logicapps-chunk#upload-content-in-chunks에서 확인할 수 있습니다."
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Skip"
     }
   ],
   "dWFyfN": [
@@ -5835,6 +6139,12 @@
       "value": "XSLT를 생성하지 못했습니다."
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Revert"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5893,6 +6203,12 @@
     {
       "type": 0,
       "value": "공유"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "When a new item"
     }
   ],
   "f/lWTW": [
@@ -6194,6 +6510,12 @@
       "value": "두 숫자를 뺀 결과를 반환합니다."
     }
   ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "hZqQdt": [
     {
       "type": 0,
@@ -6466,6 +6788,12 @@
       "value": "새로 만들기"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Tell Microsoft how this feature could be improved"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6518,6 +6846,12 @@
     {
       "type": 0,
       "value": "스키마를 생성할 수 없음"
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
   "juR40n": [
@@ -6584,6 +6918,18 @@
     {
       "type": 0,
       "value": "초"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Check these actions to see if any parameters need to be set."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Every week on Monday..."
     }
   ],
   "kM+Mr0": [
@@ -6667,6 +7013,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) 빈트후크"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Replace action with"
     }
   ],
   "l36V56": [
@@ -7433,6 +7785,12 @@
       "value": "'"
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Connecting to apps and services"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7668,6 +8026,12 @@
       "value": "성공"
     }
   ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7708,6 +8072,12 @@
     {
       "type": 0,
       "value": "삭제"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "To save this workflow, finish setting up these actions:"
     }
   ],
   "sDkAVZ": [
@@ -7798,6 +8168,12 @@
     {
       "type": 0,
       "value": "매개 변수 중 하나가 true인 경우 true를 반환합니다."
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "srpZD2": [
@@ -7920,6 +8296,12 @@
     {
       "type": 0,
       "value": "종류"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Test this workflow"
     }
   ],
   "tUCptx": [
@@ -8086,6 +8468,12 @@
       "value": "이 작업에 대한 재시도와 비동기 응답 사이의 최대 기간을 제한합니다. 참고: 단일 요청의 요청 시간 제한은 변경되지 않습니다."
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
@@ -8170,6 +8558,12 @@
       "value": "매개 변수"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Ask question related to your workflow or Logic Apps."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8204,6 +8598,12 @@
     {
       "type": 0,
       "value": "문자열 내에서 값의 마지막 인덱스를 반환합니다(대/소문자 구분 안 함, 고정 문화권)."
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Explain what this flow does"
     }
   ],
   "vLereV": [
@@ -8264,6 +8664,12 @@
     {
       "type": 0,
       "value": "취소"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "To get this workflow ready, finish setting up this action:"
     }
   ],
   "vr70Gn": [
@@ -8576,6 +8982,12 @@
       "value": "매개 변수는 논리 앱의 워크플로 간에 공유됩니다."
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Connected to"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8656,6 +9068,12 @@
       "value": "'입니다."
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Dislike"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8672,6 +9090,12 @@
     {
       "type": 0,
       "value": "날짜 및 시간 함수"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Send me an email when..."
     }
   ],
   "ysoumb": [
@@ -8774,10 +9198,22 @@
       "value": "(UTC+12:00) 페트로파블로프스크-캄차스키 - 사용하지 않음"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "To save this workflow, finish setting up this action:"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "선택적으로 로캘과 형식을 사용하여 문자열을 날짜로 변환합니다."
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Stop"
     }
   ],
   "ziXw25": [
