@@ -169,7 +169,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     connectionId: string,
     connectorId: string,
     dynamicInvokeUrl: string,
-    dynamicInvokeApiVersion: string,
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
   ): Promise<any> {
@@ -178,6 +177,9 @@ export abstract class BaseConnectorService implements IConnectorService {
     const method = parameters['method'];
     const isManagedIdentityTypeConnection = !!managedIdentityProperties;
 
+    const apiVersion = isArmResourceId(connectorId)
+      ? apiHubServiceDetails?.apiVersion ?? apiHubServiceDetails?.apiVersion ?? _apiVersion
+      : _apiVersion;
     const uri = isManagedIdentityTypeConnection
       ? `${dynamicInvokeUrl}/dynamicInvoke`
       : isArmResourceId(connectorId) && apiHubServiceDetails?.baseUrl
@@ -196,7 +198,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       try {
         const response = await httpClient.post({
           uri,
-          queryParameters: { 'api-version': dynamicInvokeApiVersion },
+          queryParameters: { 'api-version': apiVersion },
           content: { request, properties: managedIdentityProperties },
         });
 
@@ -224,9 +226,6 @@ export abstract class BaseConnectorService implements IConnectorService {
       }
     } else {
       try {
-        const apiVersion = isArmResourceId(connectorId)
-          ? apiHubServiceDetails?.apiVersion ?? apiHubServiceDetails?.apiVersion ?? _apiVersion
-          : _apiVersion;
         const options = {
           uri,
           queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },

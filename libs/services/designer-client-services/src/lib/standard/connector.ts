@@ -34,9 +34,9 @@ export class StandardConnectorService extends BaseConnectorService {
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, apiVersion, apiHubServiceDetails } = this.options;
+    const { baseUrl, apiHubServiceDetails } = this.options;
     const dynamicInvokeUrl = isArmResourceId(connectorId) ? apiHubServiceDetails?.baseUrl ?? baseUrl : baseUrl;
-    return this._executeAzureDynamicApi(connectionId, connectorId, dynamicInvokeUrl, apiVersion, parameters, managedIdentityProperties);
+    return this._executeAzureDynamicApi(connectionId, connectorId, dynamicInvokeUrl, parameters, managedIdentityProperties);
   }
 
   async getListDynamicValues(
