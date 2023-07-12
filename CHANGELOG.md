@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.46.0](https://github.com/Azure/LogicAppsUX/compare/v2.45.0...v2.46.0) (2023-07-12)
+
+
+### Features
+
+* **chatbot:** Chatbot UI components ([#2869](https://github.com/Azure/LogicAppsUX/issues/2869)) ([1b78fde](https://github.com/Azure/LogicAppsUX/commit/1b78fde2629cc9e01de7e8970b30483d06f26c28))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed dynamic data regression ([#2954](https://github.com/Azure/LogicAppsUX/issues/2954)) ([8f1c185](https://github.com/Azure/LogicAppsUX/commit/8f1c185f2e26e3652554ca2923a71addee1c5f95))
+* **vscode:** Update services API  version  ([#2957](https://github.com/Azure/LogicAppsUX/issues/2957)) ([90cd9c0](https://github.com/Azure/LogicAppsUX/commit/90cd9c00044be5dc9dd9f44ec70fcd7c5063c8bc))
 
 ## [2.45.0](https://github.com/Azure/LogicAppsUX/compare/v2.44.0...v2.45.0) (2023-07-11)
 
