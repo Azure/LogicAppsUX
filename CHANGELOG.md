@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.45.1](https://github.com/Azure/LogicAppsUX/compare/v2.45.0...v2.45.1) (2023-07-12)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed dynamic data regression ([#2954](https://github.com/Azure/LogicAppsUX/issues/2954)) ([e570677](https://github.com/Azure/LogicAppsUX/commit/e570677ae394c5b105e4f2a2c53492a2df30927a))
+
 ## [2.45.0](https://github.com/Azure/LogicAppsUX/compare/v2.44.0...v2.45.0) (2023-07-11)
 
 
