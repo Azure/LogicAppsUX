@@ -9,6 +9,7 @@ import {
   ConnectorServiceErrorCode,
   ConnectorServiceException,
   equals,
+  isArmResourceId,
 } from '@microsoft/utils-logic-apps';
 import type { IntlShape } from 'react-intl';
 
@@ -22,6 +23,10 @@ export interface BaseConnectorServiceOptions {
   clientSupportedOperations: OperationInfo[];
   schemaClient?: Record<string, GetSchemaFunction>;
   valuesClient?: Record<string, GetValuesFunction>;
+  apiHubServiceDetails?: {
+    apiVersion: string;
+    baseUrl: string;
+  };
 }
 
 export abstract class BaseConnectorService implements IConnectorService {
@@ -159,18 +164,24 @@ export abstract class BaseConnectorService implements IConnectorService {
 
   protected async _executeAzureDynamicApi(
     connectionId: string,
+    connectorId: string,
     dynamicInvokeUrl: string,
-    dynamicInvokeApiVersion: string,
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
   ): Promise<any> {
-    const { baseUrl, apiVersion, httpClient } = this.options;
+    const { baseUrl, apiVersion: _apiVersion, httpClient, apiHubServiceDetails } = this.options;
     const intl = getIntl();
     const method = parameters['method'];
     const isManagedIdentityTypeConnection = !!managedIdentityProperties;
+
+    const apiVersion = isArmResourceId(connectorId)
+      ? apiHubServiceDetails?.apiVersion ?? apiHubServiceDetails?.apiVersion ?? _apiVersion
+      : _apiVersion;
     const uri = isManagedIdentityTypeConnection
       ? `${dynamicInvokeUrl}/dynamicInvoke`
-      : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']);
+      : isArmResourceId(connectorId) && apiHubServiceDetails?.baseUrl
+      ? pathCombine(`${apiHubServiceDetails?.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
+      : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
 
     if (isManagedIdentityTypeConnection) {
       const request = {
@@ -184,7 +195,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       try {
         const response = await httpClient.post({
           uri,
-          queryParameters: { 'api-version': dynamicInvokeApiVersion },
+          queryParameters: { 'api-version': apiVersion },
           content: { request, properties: managedIdentityProperties },
         });
 
