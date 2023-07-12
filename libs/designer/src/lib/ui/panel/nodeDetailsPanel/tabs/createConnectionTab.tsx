@@ -119,11 +119,11 @@ const CreateConnectionTab = () => {
 
       if (selectedParameterSet) {
         const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
-          ([, parameter]) => parameter?.uiDefinition.constraints?.required === 'true'
+          ([, parameter]) => parameter?.uiDefinition?.constraints?.required === 'true'
         );
         requiredParameters?.forEach(([key, parameter]) => {
           if (!outputParameterValues?.[key]) {
-            outputParameterValues[key] = parameter?.uiDefinition.constraints?.default;
+            outputParameterValues[key] = parameter?.uiDefinition?.constraints?.default;
           }
         });
       }
