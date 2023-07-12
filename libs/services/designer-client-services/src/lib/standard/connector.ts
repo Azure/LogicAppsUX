@@ -2,18 +2,12 @@ import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { ArgumentException, UnsupportedException } from '@microsoft/utils-logic-apps';
+import { ArgumentException, UnsupportedException, isArmResourceId } from '@microsoft/utils-logic-apps';
 
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
 interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
-  baseUrl: string;
-  apiVersion: string;
   getConfiguration: GetConfigurationFunction;
-  apiHubServiceDetails?: {
-    apiVersion: string;
-    baseUrl: string;
-  };
 }
 
 export class StandardConnectorService extends BaseConnectorService {
@@ -36,12 +30,13 @@ export class StandardConnectorService extends BaseConnectorService {
 
   async getLegacyDynamicContent(
     connectionId: string,
-    _connectorId: string,
+    connectorId: string,
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, apiVersion } = this.options;
-    return this._executeAzureDynamicApi(connectionId, baseUrl, apiVersion, parameters, managedIdentityProperties);
+    const { baseUrl, apiHubServiceDetails } = this.options;
+    const dynamicInvokeUrl = isArmResourceId(connectorId) ? apiHubServiceDetails?.baseUrl ?? baseUrl : baseUrl;
+    return this._executeAzureDynamicApi(connectionId, connectorId, dynamicInvokeUrl, parameters, managedIdentityProperties);
   }
 
   async getListDynamicValues(
