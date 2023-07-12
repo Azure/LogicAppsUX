@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [2.41.1](https://github.com/Azure/LogicAppsUX/compare/v2.41.0...v2.41.1) (2023-07-12)
+
+
+### Bug Fixes
+
+* **designer:** Consumption - Fixing dynamic content api calls for Open Api Connection ([#2895](https://github.com/Azure/LogicAppsUX/issues/2895)) ([78a244b](https://github.com/Azure/LogicAppsUX/commit/78a244b23bf144f4e20431291b2299fbb2eb45d7))
+* **Designer:** Fixed dynamic data regression ([#2954](https://github.com/Azure/LogicAppsUX/issues/2954)) ([2f92dbf](https://github.com/Azure/LogicAppsUX/commit/2f92dbfcfb54fca932611d9980f11718a484a226))
+* **Designer:** Select Connection panel now shows recently created connections ([#2890](https://github.com/Azure/LogicAppsUX/issues/2890)) ([0c88f11](https://github.com/Azure/LogicAppsUX/commit/0c88f119fa974a952f4db389b576171abebd29d2))
+
 ## [2.41.0](https://github.com/Azure/LogicAppsUX/compare/v2.40.0...v2.41.0) (2023-06-29)
 
 
