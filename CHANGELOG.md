@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.45.2](https://github.com/Azure/LogicAppsUX/compare/v2.45.1...v2.45.2) (2023-07-12)
+
+
+### Bug Fixes
+
+* **vscode:** Update services API  version  ([#2957](https://github.com/Azure/LogicAppsUX/issues/2957)) ([#2959](https://github.com/Azure/LogicAppsUX/issues/2959)) ([9bad314](https://github.com/Azure/LogicAppsUX/commit/9bad314869c841040cde77fe4a0b9db1d808873a))
+
 ### [2.45.1](https://github.com/Azure/LogicAppsUX/compare/v2.45.0...v2.45.1) (2023-07-12)
 
 
