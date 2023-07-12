@@ -919,6 +919,12 @@
       "value": "必須。値を求める対象のパラメーターの名前。"
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Your flow has been updated."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -965,6 +971,12 @@
       "value": "(UTC+08:45) ユークラ"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Explain action"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
@@ -975,6 +987,18 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 大阪、札幌、東京"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "Add a condition"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Tell Microsoft what you liked about this feature"
     }
   ],
   "5OvGgn": [
@@ -1125,6 +1149,12 @@
       "value": "' に割り当てられている入力が多すぎます"
     }
   ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Updated this action"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -1155,10 +1185,22 @@
       "value": "前へ"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "To get this workflow ready, finish setting up these actions:"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "必須。Multiplicand 2 と乗算する数値。"
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Create flow"
     }
   ],
   "6u6CS+": [
@@ -1259,10 +1301,22 @@
       "value": "省略可能。書式設定時に使用されるロケール (既定値は 'en-us')。"
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "状態コード"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "7lnElz": [
@@ -1383,6 +1437,18 @@
     {
       "type": 0,
       "value": "ロジック アプリのマネージド ID を有効にしてください。"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
     }
   ],
   "8SxNQC": [
@@ -1543,6 +1609,12 @@
       "value": "(UTC-03:00) ブラジリア"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Revert your flow"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1597,6 +1669,12 @@
     {
       "type": 0,
       "value": "両方のパラメーターが true の場合は true を返します"
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Send feedback"
     }
   ],
   "9x8hg8": [
@@ -1671,6 +1749,12 @@
     {
       "type": 0,
       "value": "頻度を選択します。"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Not connected to"
     }
   ],
   "AnX5yC": [
@@ -1786,6 +1870,12 @@
       "value": "必須。URI でエンコードされた文字列。"
     }
   ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Learn more about undo operations"
+    }
+  ],
   "BJNUxN": [
     {
       "type": 0,
@@ -1814,6 +1904,12 @@
     {
       "type": 0,
       "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
     }
   ],
   "BSgavq": [
@@ -1900,6 +1996,12 @@
       "value": "必須。比較するオブジェクトより大きいかどうかを調べるオブジェクト。"
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Ask a question"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1910,6 +2012,12 @@
     {
       "type": 0,
       "value": "継続トークンに従い、指定されたしきい値を満たすように項目を取得します。コネクタのページ サイズにより、返される数がしきい値を超える場合があります。"
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "Add an action that sends an email"
     }
   ],
   "CG772M": [
@@ -2212,6 +2320,12 @@
       "value": "パラメーターを 10 進数に変換します"
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
@@ -2302,6 +2416,12 @@
       "value": "この操作の要求履歴を表示します"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Set up these connections to use them in your flow."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2360,6 +2480,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) チワワ、ラパス、マサトラン"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Your flow has been updated."
     }
   ],
   "FN5zHQ": [
@@ -2509,6 +2635,12 @@
       "value": "必須。Within collection 内で検索するオブジェクト。"
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Explain flow"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2531,6 +2663,12 @@
     {
       "type": 0,
       "value": "その他のコマンド"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Get started"
     }
   ],
   "Gi72X5": [
@@ -2679,6 +2817,12 @@
     {
       "type": 0,
       "value": "アレイ項目の詳細の入力に切り替える"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Edit Flow"
     }
   ],
   "HfrUId": [
@@ -2863,6 +3007,12 @@
       "value": "プロパティなし"
     }
   ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -2939,6 +3089,12 @@
     {
       "type": 0,
       "value": "削除"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Action undone"
     }
   ],
   "JNQHws": [
@@ -3031,10 +3187,30 @@
       "value": "接続参照の変更"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "有効な倍精度浮動小数点数を入力してください。"
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "When a new item..."
     }
   ],
   "KX1poC": [
@@ -3186,6 +3362,12 @@
       "value": "並列分岐の追加"
     }
   ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Removed this action"
+    }
+  ],
   "LdITnG": [
     {
       "type": 0,
@@ -3270,6 +3452,12 @@
       "value": "コード ビュー"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3304,6 +3492,12 @@
     {
       "type": 0,
       "value": "必須。評価するコレクション。結果にオブジェクトが含まれるようにするには、渡されるすべてのコレクションにそのオブジェクトが存在する必要があります。"
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "MIX4f9": [
@@ -3606,6 +3800,12 @@
       "value": "すべてのコネクタを読み込んでいます..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3622,6 +3822,12 @@
     {
       "type": 0,
       "value": "指定されたスコープ アクション内のトップレベルのアクション (For_each、Until、Scope のアクションなど) の結果を返します。"
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Save this workflow"
     }
   ],
   "OdNhwc": [
@@ -4175,6 +4381,12 @@
       "value": "見出し 2"
     }
   ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "AI-generated content may be incorrect"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4279,6 +4491,12 @@
     {
       "type": 0,
       "value": "フィードバックの送信"
+    }
+  ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "Explain what an action does"
     }
   ],
   "TNEttQ": [
@@ -4511,6 +4729,12 @@
       "value": "必須。最後のオブジェクトの取得元となるコレクション。"
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4639,6 +4863,20 @@
       "value": "アプリ内"
     }
   ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Explain what the \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" action does in this flow"
+    }
+  ],
   "VHm1Sr": [
     {
       "type": 0,
@@ -4753,6 +4991,12 @@
       "value": "アクション"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Added this action"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4767,6 +5011,12 @@
     {
       "type": 0,
       "value": "必須。新しいプロパティの名前。"
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
   "WGwH45": [
@@ -4931,6 +5181,12 @@
       "value": "(UTC+03:00) バグダッド"
     }
   ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Like"
+    }
+  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -5061,6 +5317,12 @@
       "value": "パスワード"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5085,6 +5347,12 @@
       "value": "本文項目"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "All required parameters are set"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5095,6 +5363,12 @@
     {
       "type": 0,
       "value": "トリガーの条件"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
     }
   ],
   "YHsAKl": [
@@ -5289,6 +5563,12 @@
     {
       "type": 0,
       "value": "trigger().outputs.body の短縮形"
+    }
+  ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "Here’s your flow."
     }
   ],
   "ZaIeDG": [
@@ -5503,6 +5783,12 @@
     {
       "type": 0,
       "value": "入力された数値アレイ内の最大値を返します"
+    }
+  ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Set up these connections to use them in your flow."
     }
   ],
   "bldzuj": [
@@ -5727,6 +6013,18 @@
       "value": "マネージド ID"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Replace action"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5749,6 +6047,12 @@
     {
       "type": 0,
       "value": "HTTP 経由でコンテンツを転送するための動作と機能を指定します。大きなメッセージは、大きなメッセージのアップロードを許可するために、コネクタに対する小さな要求に分割される可能性があります。詳細については、http://aka.ms/logicapps-chunk#upload-content-in-chunks を参照してください"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Skip"
     }
   ],
   "dWFyfN": [
@@ -5839,6 +6143,12 @@
       "value": "XSLT を生成できませんでした。"
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Revert"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5897,6 +6207,12 @@
     {
       "type": 0,
       "value": "共有済み"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "When a new item"
     }
   ],
   "f/lWTW": [
@@ -6198,6 +6514,12 @@
       "value": "2 つの数値を減算した結果を返します"
     }
   ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "hZqQdt": [
     {
       "type": 0,
@@ -6470,6 +6792,12 @@
       "value": "新規作成"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Tell Microsoft how this feature could be improved"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6522,6 +6850,12 @@
     {
       "type": 0,
       "value": "スキーマを生成できません"
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
   "juR40n": [
@@ -6588,6 +6922,18 @@
     {
       "type": 0,
       "value": " 秒"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Check these actions to see if any parameters need to be set."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Every week on Monday..."
     }
   ],
   "kM+Mr0": [
@@ -6671,6 +7017,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) ウィントフック"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Replace action with"
     }
   ],
   "l36V56": [
@@ -7437,6 +7789,12 @@
       "value": "'"
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Connecting to apps and services"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7672,6 +8030,12 @@
       "value": "成功しました"
     }
   ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7712,6 +8076,12 @@
     {
       "type": 0,
       "value": "削除"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "To save this workflow, finish setting up these actions:"
     }
   ],
   "sDkAVZ": [
@@ -7802,6 +8172,12 @@
     {
       "type": 0,
       "value": "いずれかのパラメーターが true の場合は true を返します"
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "srpZD2": [
@@ -7924,6 +8300,12 @@
     {
       "type": 0,
       "value": "タイプ"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Test this workflow"
     }
   ],
   "tUCptx": [
@@ -8090,6 +8472,12 @@
       "value": "このアクションの再試行と非同期応答の間の最長期間を制限します。注: 単一の要求の要求タイムアウトは変更されません。"
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
@@ -8174,6 +8562,12 @@
       "value": "パラメーター"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Ask question related to your workflow or Logic Apps."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8208,6 +8602,12 @@
     {
       "type": 0,
       "value": "文字列内の値の最後のインデックスを返します (大文字と小文字は区別されません、インバリアント カルチャ)"
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Explain what this flow does"
     }
   ],
   "vLereV": [
@@ -8268,6 +8668,12 @@
     {
       "type": 0,
       "value": "破棄"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "To get this workflow ready, finish setting up this action:"
     }
   ],
   "vr70Gn": [
@@ -8580,6 +8986,12 @@
       "value": "ロジック アプリ内で、パラメーターはワークフロー間で共有されています。"
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Connected to"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8660,6 +9072,12 @@
       "value": "' が無効です。"
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Dislike"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8676,6 +9094,12 @@
     {
       "type": 0,
       "value": "日付と時刻関数"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Send me an email when..."
     }
   ],
   "ysoumb": [
@@ -8778,10 +9202,22 @@
       "value": "(UTC+12:00) ペトロパブロフスク-カムチャツキー - 廃止"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "To save this workflow, finish setting up this action:"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "文字列を日付に変換します。オプションで、ロケールと形式を指定できます"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Stop"
     }
   ],
   "ziXw25": [

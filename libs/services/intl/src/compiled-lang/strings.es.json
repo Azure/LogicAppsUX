@@ -927,6 +927,12 @@
       "value": "Obligatorio. El nombre del parámetro cuyos valores quiere."
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Your flow has been updated."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -977,6 +983,12 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Explain action"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
@@ -987,6 +999,18 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokio"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "Add a condition"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Tell Microsoft what you liked about this feature"
     }
   ],
   "5OvGgn": [
@@ -1137,6 +1161,12 @@
       "value": "\" tiene demasiadas entradas asignadas"
     }
   ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Updated this action"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -1167,10 +1197,22 @@
       "value": "Anterior"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "To get this workflow ready, finish setting up these actions:"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "Obligatorio. El número con el que se multiplicará el multiplicando 2."
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Create flow"
     }
   ],
   "6u6CS+": [
@@ -1271,10 +1313,22 @@
       "value": "Opcional. Configuración regional que se usará para el formato (el valor predeterminado es \"en-us\")."
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Código de estado"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "7lnElz": [
@@ -1395,6 +1449,18 @@
     {
       "type": 0,
       "value": "Habilite la identidad administrada para la aplicación lógica."
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
     }
   ],
   "8SxNQC": [
@@ -1555,6 +1621,12 @@
       "value": "(UTC-03:00) Brasilia"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Revert your flow"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1609,6 +1681,12 @@
     {
       "type": 0,
       "value": "Devuelve true si ambos parámetros son verdaderos."
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Send feedback"
     }
   ],
   "9x8hg8": [
@@ -1683,6 +1761,12 @@
     {
       "type": 0,
       "value": "Seleccionar una frecuencia."
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Not connected to"
     }
   ],
   "AnX5yC": [
@@ -1820,6 +1904,12 @@
       "value": "Obligatorio. La cadena codificada de URI."
     }
   ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Learn more about undo operations"
+    }
+  ],
   "BJNUxN": [
     {
       "type": 0,
@@ -1848,6 +1938,12 @@
     {
       "type": 0,
       "value": "Escribir la contraseña como texto sin formato o usar un parámetro seguro"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
     }
   ],
   "BSgavq": [
@@ -1934,6 +2030,12 @@
       "value": "Obligatorio. El objeto que se comprobará si es mayor que el objeto con el que se está comparando."
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Ask a question"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1944,6 +2046,12 @@
     {
       "type": 0,
       "value": "Para recuperar los elementos que cumplen el umbral especificado, siga el token de continuación. Debido al tamaño de página del conector, el número devuelto puede superar el umbral."
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "Add an action that sends an email"
     }
   ],
   "CG772M": [
@@ -2246,6 +2354,12 @@
       "value": "Convierte el parámetro en un número decimal."
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
@@ -2340,6 +2454,12 @@
       "value": "Ver el historial de solicitudes de esta operación"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Set up these connections to use them in your flow."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2398,6 +2518,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlán"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Your flow has been updated."
     }
   ],
   "FN5zHQ": [
@@ -2569,6 +2695,12 @@
       "value": "Obligatorio. El objeto que se buscará dentro de la colección."
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Explain flow"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2591,6 +2723,12 @@
     {
       "type": 0,
       "value": "Más comandos"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Get started"
     }
   ],
   "Gi72X5": [
@@ -2739,6 +2877,12 @@
     {
       "type": 0,
       "value": "Permite cambiar a las entradas con detalles para el elemento de matriz."
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Edit Flow"
     }
   ],
   "HfrUId": [
@@ -2927,6 +3071,12 @@
       "value": "No hay propiedades"
     }
   ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3003,6 +3153,12 @@
     {
       "type": 0,
       "value": "Eliminar"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Action undone"
     }
   ],
   "JNQHws": [
@@ -3095,10 +3251,30 @@
       "value": "Cambiar referencia de conexión"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "Escribir un número doble válido."
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "When a new item..."
     }
   ],
   "KX1poC": [
@@ -3272,6 +3448,12 @@
       "value": "Agregar una rama paralela"
     }
   ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Removed this action"
+    }
+  ],
   "LdITnG": [
     {
       "type": 0,
@@ -3356,6 +3538,12 @@
       "value": "Vista de código"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3390,6 +3578,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Las colecciones que se evaluarán. Un objeto debe pasarse a todas las colecciones para aparecer en el resultado."
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "MIX4f9": [
@@ -3692,6 +3886,12 @@
       "value": "Cargando todos los conectores..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3708,6 +3908,12 @@
     {
       "type": 0,
       "value": "Devuelve los resultados de las acciones de nivel superior en la acción con ámbito especificada, como una acción For_each, Until o Scope."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Save this workflow"
     }
   ],
   "OdNhwc": [
@@ -4283,6 +4489,12 @@
       "value": "Título 2"
     }
   ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "AI-generated content may be incorrect"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4387,6 +4599,12 @@
     {
       "type": 0,
       "value": "Enviar comentarios"
+    }
+  ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "Explain what an action does"
     }
   ],
   "TNEttQ": [
@@ -4623,6 +4841,12 @@
       "value": "Obligatorio. La colección de la que se tomará el último objeto."
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4755,6 +4979,20 @@
       "value": "Desde la aplicación"
     }
   ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Explain what the \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" action does in this flow"
+    }
+  ],
   "VHm1Sr": [
     {
       "type": 0,
@@ -4869,6 +5107,12 @@
       "value": "Acciones"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Added this action"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4883,6 +5127,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Nombre de la propiedad nueva."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
   "WGwH45": [
@@ -5047,6 +5297,12 @@
       "value": "(UTC+03:00) Bagdad"
     }
   ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Like"
+    }
+  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -5177,6 +5433,12 @@
       "value": "Contraseña"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5201,6 +5463,12 @@
       "value": "Elemento de cuerpo"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "All required parameters are set"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5211,6 +5479,12 @@
     {
       "type": 0,
       "value": "Condiciones del desencadenador"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
     }
   ],
   "YHsAKl": [
@@ -5405,6 +5679,12 @@
     {
       "type": 0,
       "value": "Forma abreviada de trigger().outputs.body"
+    }
+  ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "Here’s your flow."
     }
   ],
   "ZaIeDG": [
@@ -5619,6 +5899,12 @@
     {
       "type": 0,
       "value": "Devuelve el valor máximo de la matriz de entrada de números."
+    }
+  ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Set up these connections to use them in your flow."
     }
   ],
   "bldzuj": [
@@ -5843,6 +6129,18 @@
       "value": "Identidad administrada"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Replace action"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5865,6 +6163,12 @@
     {
       "type": 0,
       "value": "Especifique el comportamiento y las funcionalidades de transferencia de contenido a través de HTTP. Los mensajes grandes pueden dividirse en solicitudes más pequeñas para el conector a fin de permitir la carga de mensajes grandes. Los detalles están disponibles en http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Skip"
     }
   ],
   "dWFyfN": [
@@ -5959,6 +6263,12 @@
       "value": "No se pudo generar el XSLT."
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Revert"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -6017,6 +6327,12 @@
     {
       "type": 0,
       "value": "Compartido"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "When a new item"
     }
   ],
   "f/lWTW": [
@@ -6348,6 +6664,12 @@
       "value": "Devuelve el resultado de restar dos números."
     }
   ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "hZqQdt": [
     {
       "type": 0,
@@ -6624,6 +6946,12 @@
       "value": "Crear nueva"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Tell Microsoft how this feature could be improved"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6676,6 +7004,12 @@
     {
       "type": 0,
       "value": "No se puede generar el esquema"
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
   "juR40n": [
@@ -6742,6 +7076,18 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Check these actions to see if any parameters need to be set."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Every week on Monday..."
     }
   ],
   "kM+Mr0": [
@@ -6847,6 +7193,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Windhoek"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Replace action with"
     }
   ],
   "l36V56": [
@@ -7613,6 +7965,12 @@
       "value": "\""
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Connecting to apps and services"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7870,6 +8228,12 @@
       "value": "Correcto"
     }
   ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7910,6 +8274,12 @@
     {
       "type": 0,
       "value": "Eliminar"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "To save this workflow, finish setting up these actions:"
     }
   ],
   "sDkAVZ": [
@@ -8000,6 +8370,12 @@
     {
       "type": 0,
       "value": "Devuelve true si alguno de los parámetros es verdadero."
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "srpZD2": [
@@ -8122,6 +8498,12 @@
     {
       "type": 0,
       "value": "Tipo"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Test this workflow"
     }
   ],
   "tUCptx": [
@@ -8292,6 +8674,12 @@
       "value": "Limite la duración máxima entre los reintentos y las respuestas asincrónicas para esta acción. Nota: esto no modifica el tiempo de espera de una sola solicitud."
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
@@ -8376,6 +8764,12 @@
       "value": "Parámetros"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Ask question related to your workflow or Logic Apps."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8410,6 +8804,12 @@
     {
       "type": 0,
       "value": "Devuelve el último índice de un valor de una cadena (no distingue entre mayúsculas y minúsculas; referencia cultural invariable)."
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Explain what this flow does"
     }
   ],
   "vLereV": [
@@ -8470,6 +8870,12 @@
     {
       "type": 0,
       "value": "Descartar"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "To get this workflow ready, finish setting up this action:"
     }
   ],
   "vr70Gn": [
@@ -8786,6 +9192,12 @@
       "value": "Los parámetros se comparten entre los flujos de trabajo de una Logic App."
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Connected to"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8858,6 +9270,12 @@
       "value": "Tipo de expresión {type} no válido."
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Dislike"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8874,6 +9292,12 @@
     {
       "type": 0,
       "value": "Funciones de fecha y hora"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Send me an email when..."
     }
   ],
   "ysoumb": [
@@ -8976,10 +9400,22 @@
       "value": "(UTC+12:00) Petropávlovsk-Kamchatski - Antiguo"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "To save this workflow, finish setting up this action:"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Convierte una cadena, con una configuración regional y un formato a una fecha de manera opcional"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Stop"
     }
   ],
   "ziXw25": [
