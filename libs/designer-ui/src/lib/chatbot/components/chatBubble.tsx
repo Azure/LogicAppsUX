@@ -1,9 +1,9 @@
 import { animations } from './animations';
-import type { ChatResources } from './chatResources';
 import { ThumbsReactionButton } from './thumbsReactionButton';
 import { ActionButton, css, getTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 export enum ChatEntryReaction {
   thumbsUp = 'thumbsUp',
@@ -22,7 +22,6 @@ type ChatBubbleProps = {
   selectedReaction?: string; // TODO: store as something else potentially?
   onThumbsReactionClicked?: (reaction: string) => void;
   disabled?: boolean;
-  resources?: ChatResources;
 };
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
@@ -34,9 +33,15 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   selectedReaction,
   onThumbsReactionClicked,
   disabled,
-  resources,
   isEmphasized,
 }) => {
+  const intl = useIntl();
+  const intlText = {
+    aIGeneratedDisclaimer: intl.formatMessage({
+      defaultMessage: 'AI-generated content may be incorrect',
+      description: 'Chatbot disclaimer message on AI-generated content potentially being incorrect',
+    }),
+  };
   return (
     <div
       className={css(
@@ -59,20 +64,17 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
               ))}
             </div>
           )}
-
-          <div className={'msla-bubble-footer'}>
-            <div className={'msla-bubble-disclaimer'}>{resources?.AIGeneratedDisclaimer}</div>
+          <div className={'msla-chat-bubble-footer'}>
+            <div className={'msla-bubble-footer-disclaimer'}>{intlText.aIGeneratedDisclaimer}</div>
             {onThumbsReactionClicked && (
               <div className={'msla-bubble-reactions'}>
                 <ThumbsReactionButton
-                  resources={resources?.ThumbReaction}
                   onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
                   isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
                   isDownvote={false}
                   disabled={disabled}
                 />
                 <ThumbsReactionButton
-                  resources={resources?.ThumbReaction}
                   onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
                   isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
                   isDownvote={true}

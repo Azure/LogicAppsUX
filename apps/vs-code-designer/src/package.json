@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.44.0",
+  "version": "2.45.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -310,7 +310,10 @@
     "submenus": [
       {
         "id": "azureLogicAppsStandard.submenus.workspaceActions",
-        "icon": "assets/logicapp.png",
+        "icon": {
+          "light": "assets/logicapp.png",
+          "dark": "assets/logicapp.png"
+        },
         "label": "Azure Logic Apps"
       }
     ],
