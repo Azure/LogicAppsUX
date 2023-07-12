@@ -186,6 +186,11 @@ export const dataMapSlice = createSlice({
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
+      // metadata?.functionNodes.forEach(node => {
+
+      //   const connection = dataMapConnections[node.reactFlowGuid].self.node as FunctionData;
+      //   connection.locations = node.locations;
+      // })
 
       const newState: DataMapOperationState = {
         ...currentState,

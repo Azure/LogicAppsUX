@@ -12,8 +12,10 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
       functionKey: functionValue.functionData.key,
       locations: functionValue.functionLocations.map<FunctionLocationMetadata>((location) => ({
         targetKey: location.key,
-        xPos: 0,
-        yPos: 0,
+        position: {
+          x: 0,
+          y: 0,
+        },
       })),
       connections: generateFunctionConnectionMetadata(functionKey, connections),
     });

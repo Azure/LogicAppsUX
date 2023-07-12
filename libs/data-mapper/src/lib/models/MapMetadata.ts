@@ -1,7 +1,8 @@
+import type { XYPosition } from 'reactflow';
+
 export interface FunctionLocationMetadata {
   targetKey: string;
-  xPos: number;
-  yPos: number;
+  position: XYPosition;
 }
 
 export interface FunctionMetadata {

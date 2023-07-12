@@ -149,7 +149,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
               const values = collectConditionalValues(connections[input.reactFlowKey], connections);
               value = values[1];
             } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
-              const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
+              const functionValues = getInputValues(connections[input.reactFlowKey], connections, false); // danielle look here
               value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
               value = collectFunctionValue(
