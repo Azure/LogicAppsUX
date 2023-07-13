@@ -130,6 +130,11 @@ const hostService = { fetchAndDisplayContent: (title: string, url: string, type:
 export const LocalDesigner = () => {
   const { workflowDefinition, isReadOnly, isMonitoringView, isDarkMode, isConsumption, connections, runInstance, showChatBot, language } =
     useSelector((state: RootState) => state.workflowLoader);
+
+  const nodeSelectCallbackOverride = (nodeId: string) => {
+    alert('Node selected: ' + nodeId);
+  };
+
   const designerProviderProps = {
     services: {
       connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
@@ -147,6 +152,7 @@ export const LocalDesigner = () => {
     isMonitoringView,
     isDarkMode,
     useLegacyWorkflowParameters: isConsumption,
+    nodeSelectCallbackOverride,
   };
 
   return (

@@ -20,3 +20,7 @@ export const useIsXrmConnectionReferenceMode = () => {
 export const useIsDarkMode = () => {
   return useSelector((state: RootState) => state.designerOptions.isDarkMode);
 };
+
+export const useNodeSelectCallbackOverride = () => {
+  return useSelector((state: RootState) => state.designerOptions.nodeSelectCallbackOverride);
+};
