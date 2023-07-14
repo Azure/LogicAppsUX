@@ -26,6 +26,7 @@ export interface ArrayItemSchema {
   description?: string;
   format?: string;
   enum?: string[];
+  readOnly?: boolean;
 }
 
 export interface ComplexArrayItem {
@@ -79,6 +80,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 
   const dimensionalSchema: ItemSchemaItemProps[] = useMemo(() => {
     if (!isComplex) return [];
+    console.log(itemSchema);
     return getOneDimensionalSchema(itemSchema);
   }, [isComplex, itemSchema]);
 

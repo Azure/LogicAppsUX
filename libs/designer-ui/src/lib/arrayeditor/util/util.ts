@@ -14,33 +14,43 @@ export interface ItemSchemaItemProps {
   description: string;
   format?: string;
   items?: ItemSchemaItemProps[];
+  readOnly?: boolean;
 }
+
+export const hideComplexArray = (dimensionalSchema: ItemSchemaItemProps[]) => {
+  if (dimensionalSchema.length === 0) {
+    return true;
+  }
+  return dimensionalSchema.every((item) => item.readOnly === true);
+};
 
 export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?: any): ItemSchemaItemProps[] => {
   const flattenedSchema: ItemSchemaItemProps[] = [];
   if (!itemSchema) {
     return flattenedSchema;
   }
-  if (itemSchema.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties) {
-    const required = itemSchema.required ?? [];
-    Object.entries(itemSchema.properties).forEach(([key, value]) => {
+  const { type, format, key, title, description, readOnly, properties, required, items } = itemSchema;
+  if (type === constants.SWAGGER.TYPE.OBJECT && properties) {
+    const requiredElements = required ?? [];
+    Object.entries(properties).forEach(([key, value]) => {
       if (value && key !== 'key') {
-        getOneDimensionalSchema(value, required.includes(key)).forEach((item) => {
+        getOneDimensionalSchema(value, requiredElements.includes(key)).forEach((item) => {
           const currItem = item;
           flattenedSchema.push(currItem);
         });
       }
     });
   } else {
-    const isArray = itemSchema.type === constants.SWAGGER.TYPE.ARRAY && itemSchema.items?.properties;
+    const isArray = type === constants.SWAGGER.TYPE.ARRAY && items;
     flattenedSchema.push({
-      key: itemSchema.key,
-      title: itemSchema.title ?? (itemSchema.key.split('.').at(-1) as string),
-      type: itemSchema.type,
+      key,
+      title: handleTitle(key, title),
+      type,
       isRequired: !isArray && isRequired,
-      description: itemSchema.description ?? '',
-      format: itemSchema.format,
-      items: isArray && itemSchema.items ? getOneDimensionalSchema(itemSchema.items, isRequired) : undefined,
+      description: description ?? '',
+      format,
+      items: isArray && items ? getOneDimensionalSchema(items, isRequired) : undefined,
+      readOnly,
     });
   }
   return flattenedSchema;
@@ -75,13 +85,20 @@ export const convertComplexItemsToArray = (
             returnItem[keyName] = arrayVal;
           }
         } else {
-          returnItem[keyName] = convertComplexItemsToArray(value, items, nodeMap, suppressCasting, castParameter);
+          const convertedItem = convertComplexItemsToArray(value, items, nodeMap, suppressCasting, castParameter);
+          if (
+            (typeof convertedItem === 'string' && convertedItem.length > 0) ||
+            (typeof convertedItem === 'object' && Object.keys(convertedItem).length > 0)
+          ) {
+            returnItem[keyName] = convertedItem;
+          }
         }
       }
     });
     // add all required schema properties to the return item
     itemSchema.required?.forEach((requiredKey) => {
       if (!returnItem[requiredKey] && itemSchema.properties) {
+        // TODO: support null instead of empty string
         returnItem[requiredKey] = '';
       }
     });
@@ -217,7 +234,7 @@ const convertObjectToComplexArrayItemArray = (
       });
       items.push({
         key: itemSchemaProperty.key,
-        title: itemSchemaProperty.title ?? (itemSchema.key.split('.').at(-1) as string),
+        title: handleTitle(itemSchema.key, itemSchemaProperty.title),
         description: itemSchemaProperty.description ?? '',
         value: [],
         arrayItems,
@@ -227,11 +244,34 @@ const convertObjectToComplexArrayItemArray = (
     } else {
       items.push({
         key: itemSchemaProperty.key,
-        title: itemSchemaProperty.title ?? (itemSchema.key.split('.').at(-1) as string),
+        title: handleTitle(itemSchema.key, itemSchemaProperty.title),
         description: itemSchemaProperty.description ?? '',
         value: convertStringToSegments(value, true, nodeMap),
       });
     }
   });
   return items;
+};
+
+const handleTitle = (key: string, title?: string): string => {
+  const keyArray = key.split('.').filter((k) => k !== 'properties');
+  if (title) {
+    keyArray.pop();
+    keyArray.push(title);
+  }
+  const resultArray = capitalizeElements(keyArray);
+  return resultArray.join(' ');
+};
+
+const capitalizeElements = (stringArray: string[]): string[] => {
+  return stringArray.map((element) => {
+    const words = element.split(' ');
+    const capitalizedWords = words.map((word) => {
+      if (word === word.toUpperCase()) {
+        return word;
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+    return capitalizedWords.join(' ');
+  });
 };

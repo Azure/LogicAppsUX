@@ -478,15 +478,20 @@ export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; ite
 };
 
 // Create Array Editor View Model Schema
-export const parseArrayItemSchema = (itemSchema: any, itemPath = ''): any => {
+const parseArrayItemSchema = (itemSchema: any, itemPath = itemSchema?.title?.toLowerCase() ?? ''): any => {
+  // convert array schema to object schema
   if (Array.isArray(itemSchema)) {
     return itemSchema.map((item) => parseArrayItemSchema(item, itemPath));
-  } else if (itemSchema !== null && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
+  }
+  // parse the initial item schema
+  else if (!isNullOrUndefined(itemSchema) && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
+    // updated item schema
     const result: { [key: string]: any } = { key: itemPath };
     Object.keys(itemSchema).forEach((key) => {
       const value = itemSchema[key];
+      // some parameters don't have a title, so we use the key instead
       const newKey = key === 'x-ms-summary' ? 'title' : key;
-      const newPath = key !== 'properties' && key !== 'items' ? (itemPath ? `${itemPath}.${key}` : key) : itemPath;
+      const newPath = itemPath ? `${itemPath}.${key}` : key;
       result[newKey] = parseArrayItemSchema(value, newPath);
     });
     return result;
