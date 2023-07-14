@@ -1,5 +1,10 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type {
+  ListDynamicValue,
+  ManagedIdentityRequestProperties,
+  TreeDynamicExtension,
+  TreeDynamicValue,
+} from '@microsoft/designer-client-services-logic-apps';
 import { ConnectorService } from '@microsoft/designer-client-services-logic-apps';
 import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
 import { Types } from '@microsoft/parsers-logic-apps';
@@ -196,9 +201,10 @@ export const getDynamicTreeItems = async (
       connectorId.toLowerCase(),
       operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
-      `selectionState:${dynamicExtension.selectionState ? JSON.stringify(dynamicExtension.selectionState) : ''}`
+      `selectionState:${dynamicExtension.selectionState ? JSON.stringify(dynamicExtension.selectionState) : ''}`,
     ],
-    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameters, dynamicExtension)
+    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameters, dynamicExtension),
+    { cacheTime: 0, staleTime: 0 }
   );
 
   return values;

@@ -850,9 +850,12 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
     }, []);
 
     return dependentParameters.every((dependentParameter) => {
-      const { actualValue, values } = dependentParameter;
+      const { actualValue, values, excludeValues } = dependentParameter;
       const isArray = Array.isArray(actualValue);
-      return values.some((value) => (isArray ? actualValue.includes(value) : actualValue === value));
+      const includesValue = (value: any) => (isArray ? actualValue.includes(value) : actualValue === value);
+      if (values) return values.some(includesValue);
+      if (excludeValues) return !excludeValues.some(includesValue);
+      return false; // Should always have one or the other
     });
   }
 

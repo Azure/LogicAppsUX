@@ -1,3 +1,4 @@
+import { isEnterKey, isSpaceKey } from '../utils';
 import { Text, Icon } from '@fluentui/react';
 import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
@@ -19,13 +20,20 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri
     onClick?.();
   };
 
+  const handleKeyDown: React.KeyboardEventHandler<HTMLElement> = (e) => {
+    if (isEnterKey(e) || isSpaceKey(e)) {
+      e.stopPropagation();
+      onClick?.();
+    }
+  };
+
   const buttonHint = intl.formatMessage({
     defaultMessage: 'Open operation',
     description: 'Hint for the button on the error card',
   });
 
   return (
-    <div key={id} className="msla-error-card" onClick={handleClick} tabIndex={0}>
+    <div key={id} className="msla-error-card" onClick={handleClick} tabIndex={0} onKeyDown={handleKeyDown}>
       <div className="msla-error-card-header">
         <img className="panel-card-icon" src={fallbackConnectorIconUrl(iconUri)} alt="" />
         <span className="msla-error-card-title">{title}</span>

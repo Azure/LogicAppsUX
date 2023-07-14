@@ -1,4 +1,4 @@
-import Sparkle from './images/sparkle.svg';
+import Sparkle from '../images/sparkle.svg';
 import { FontSizes, getTheme, IconButton, mergeStyles, mergeStyleSets, TextField } from '@fluentui/react';
 import type { IButtonProps, IStyle, ITextField, ITextFieldStyles } from '@fluentui/react';
 import React from 'react';
