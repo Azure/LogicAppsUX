@@ -1305,6 +1305,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";4hi3ks" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Your flow has been updated.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akışınız güncelleştirildi.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";4j2MEv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Toggle Minimap]]></Val>
@@ -1368,6 +1377,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";50W8FI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eylemi açıklayın]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";53MgCQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Open panel]]></Val>
@@ -1382,6 +1400,24 @@
           <Val><![CDATA[(UTC+09:00) Osaka, Sapporo, Tokyo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+09:00) Osaka, Sapporo, Tokyo]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";5H+8Sb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add a condition]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Koşul ekleyin]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";5J9jne" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tell Microsoft what you liked about this feature]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Microsoft'a bu özellik hakkında beğendiklerinizi bildirin]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1584,6 +1620,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6gblzt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Updated this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu eylem güncelleştirildi]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6jiO7t" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show run]]></Val>
@@ -1629,11 +1674,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6pISgk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To get this workflow ready, finish setting up these actions:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışını hazır hale getirmek için bu eylemleri ayarlamayı bitirin:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6qkBwz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The number to multiply Multiplicand 2 with.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gerekli. Çarpan 2'nin çarpılacağı sayı.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";6sGj3J" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akış oluştur]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1773,11 +1836,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7gUE8h" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu, iş akışınızı Copilot'ın düzenlemesinden önceki durumuna geri döndürür. Copilot'tan sonra iş akışında ek düzenlemeler yaptıysanız bunları kaybedersiniz. Bu eylem geri alınamaz. Devam etmek istiyor musunuz?]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7k9jXx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status code]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Durum kodu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";7ku9t+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Report a bug]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hata bildirin]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1940,6 +2021,24 @@
           <Val><![CDATA[Please enable managed identity for the logic app.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Lütfen mantıksal uygulama için yönetilen kimliği etkinleştirin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8NUqpR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akışınızın nasıl değiştirileceğini açıklayın. Kullanılacak bağlayıcı ve içerik eklenip eklenmeyeceği dahil olmak üzere mümkün olduğunda ayrıntıları ekleyin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8Q7ns/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Edit this flow to]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu akışı şunun için düzenleyin:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2169,6 +2268,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";9QNZSj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Revert your flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akışınızı geri alın]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";9SuA/E" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[12]]></Val>
@@ -2237,6 +2345,15 @@
           <Val><![CDATA[Returns true if both parameters are true]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[İki parametre de true ise true döndürür]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";9wX3u9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Send feedback]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geri bildirim gönder]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2336,6 +2453,15 @@
           <Val><![CDATA[Select frequency.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Sıklık seçin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Ak2Lka" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Not connected to]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Şuna bağlantısı yok:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2523,6 +2649,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";BIzX3S" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn more about undo operations]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geri alma işlemleri hakkında daha fazla bilgi edinin]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";BJNUxN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Path Parameters]]></Val>
@@ -2564,6 +2699,15 @@
           <Val><![CDATA[Enter password as plain text or use a secure parameter]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Parolayı düz metin olarak girin veya güvenli bir parametre kullanın]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BS3gy8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, something went wrong. Please try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ne yazık ki bir sorun oluştu. Lütfen yeniden deneyin.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2694,6 +2838,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";BynK4X" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ask a question]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Soru sorun]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";C1cy54" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Body]]></Val>
@@ -2708,6 +2861,15 @@
           <Val><![CDATA[Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Devamlılık belirtecini izleyerek, belirtilen eşikleri karşılayacak şekilde öğeleri alın. Bağlayıcının sayfa boyutu nedeniyle, döndürülen sayı eşiği aşabilir.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CFOUe3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add an action that sends an email]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[E-posta gönderen bir eylem ekleyin]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3090,6 +3252,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";EKjaix" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Herhangi bir parametrenin ayarlanması gerekip gerekmediğini görmek için akışın eylemlerini denetleyin. İşiniz bittiğinde kaydetmeyi unutmayın!]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EKtYQF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
@@ -3207,6 +3378,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";EqX3Mi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set up these connections to use them in your flow.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu bağlantıları akışınızda kullanmak üzere ayarlayın.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EurkzL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select yes or no]]></Val>
@@ -3293,6 +3473,15 @@
           <Val><![CDATA[(UTC-07:00) Chihuahua, La Paz, Mazatlan]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-07:00) Chihuahua, La Paz, Mazatlan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FMA0Q0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Your flow has been updated.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akışınız güncelleştirildi.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3534,6 +3723,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";GQnN3U" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akışı açıklayın]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";GXXLuT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid boolean.]]></Val>
@@ -3566,6 +3764,15 @@
           <Val><![CDATA[More commands]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Diğer komutlar]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Ggkf4s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Get started]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kullanmaya başlayın]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3782,6 +3989,15 @@
           <Val><![CDATA[Switch to detail inputs for array item]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Dizi öğesi için ayrıntılı girişlere geçiş yapın]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HfmDk9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Edit Flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akışı Düzenle]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4011,6 +4227,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";IuHdCO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Here’s your flow. If you want me to change it, just say what you want. For example:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[İşte akışınız. Akışınızı değiştirmemi istiyorsanız, ne istediğinizi söylemeniz yeterlidir. Örneğin:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IxWip7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+03:00) Moscow, St. Petersburg, Volgograd]]></Val>
@@ -4088,6 +4313,15 @@
           <Val><![CDATA[Delete]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Sil]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";JJyT88" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Action undone]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eylem geri alındı]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4227,11 +4461,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";KNDVnN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Replace "{selectedOperation}" with]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA["{selectedOperation}" öğesini şununla değiştir:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";KP0Rr2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Double number.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Geçerli bir Çift sayı girin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";KV4uky" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[When a new item...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Yeni bir öğe şu durumda olduğunda...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4473,6 +4725,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LaFlFh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Removed this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu eylem kaldırıldı]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";LdITnG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-03:00) Cayenne, Fortaleza]]></Val>
@@ -4599,6 +4860,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";M3kJsI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Every week on Monday]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Her hafta Pazartesi günü]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";M4H0gh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove]]></Val>
@@ -4649,6 +4919,15 @@
           <Val><![CDATA[Required. The collections to evaluate. An object must be in all collections passed in to appear in the result.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gerekli. Değerlendirilecek koleksiyonlar. Bir nesne, sonuçta görüntülenmek üzere geçirilen tüm koleksiyonlarda olmalıdır.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MGZRu4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add an action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eylem ekleyin]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5085,6 +5364,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";OQud51" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tell me more about]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Şunun hakkında daha fazla bilgi edinmek istiyorum:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";OSHNZ2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Comment]]></Val>
@@ -5108,6 +5396,15 @@
           <Val><![CDATA[Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OYWZE4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Save this workflow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışını kaydet]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5853,6 +6150,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SHXdzU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[AI-generated content may be incorrect]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Yapay zeka tarafından oluşturulan içerik yanlış olabilir]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SJFVxf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[issues]]></Val>
@@ -6002,6 +6308,15 @@
           <Val><![CDATA[Give feedback]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Geri bildirim gönder]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TLMkrg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain what an action does]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eylemin ne yaptığını açıklayın]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6321,6 +6636,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";UW+fkB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Send me an email when]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Şu durumda bana bir e-posta gönder:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";UYRIS/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{fileName} (file name)]]></Val>
@@ -6461,6 +6785,15 @@
           <Val><![CDATA[In App]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Uygulama İçi]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";VEbE93" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain what the "{selectedOperation}" action does in this flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu akışta "{selectedOperation}" eyleminin ne yaptığını açıklayın]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6618,6 +6951,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Vx6fwP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Added this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu eylem eklendi]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";W070M2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[of {max}]]></Val>
@@ -6632,6 +6974,15 @@
           <Val><![CDATA[Required. The name of the new property.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gerekli. Yeni özelliğin adı.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WCASt1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akışınızda değiştirilmesi gereken bir öğenin yanı sıra yerine nelerin geçmesi gerektiğini açıklayın. Kullanılacak bağlayıcı ve içerik eklenip eklenmeyeceği dahil olmak üzere mümkün olduğunda ayrıntıları ekleyin.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6843,6 +7194,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";XR4Sd/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Like]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Beğen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";XRK+gt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has an non-terminating connection chain]]></Val>
@@ -6996,6 +7356,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Y04+GH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add an action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eylem ekleyin]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Y0H9aX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More Info]]></Val>
@@ -7032,6 +7401,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";YCDF7A" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[All required parameters are set]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Gereken tüm parametreler ayarlandı]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";YCFhzp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add children]]></Val>
@@ -7046,6 +7424,15 @@
           <Val><![CDATA[Trigger conditions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tetikleyici koşulları]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";YF1yZk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[chat-session-id:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[chat-session-id:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7307,6 +7694,15 @@
           <Val><![CDATA[Shorthand for trigger().outputs.body]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[trigger().outputs.body için kısayol]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ZXoHXd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Here’s your flow.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[İşte akışınız.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7622,6 +8018,15 @@
           <Val><![CDATA[Returns the maximum value in the input array of numbers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Sayılardan oluşan giriş dizisinin en büyük değerini döndürür]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";blRFVt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set up these connections to use them in your flow.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu bağlantıları akışınızda kullanmak üzere ayarlayın.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7959,6 +8364,24 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";dMAC4C" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Replace action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eylemi değiştir]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dNpnmn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Welcome back! If you want me to change your flow, just say what you want. For example:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tekrar hoş geldiniz! Akışınızı değiştirmemi istiyorsanız, ne istediğinizi söylemeniz yeterlidir. Örneğin:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";dOpdsP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Update]]></Val>
@@ -7991,6 +8414,15 @@
           <Val><![CDATA[Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[HTTP üzerinden içerik aktarma davranışını ve özelliklerini belirtin. Büyük boyutlu iletilerin karşıya yüklenmesine olanak sağlamak için bu iletiler küçük isteklere bölünerek bağlayıcıya gönderilebilir. Ayrıntıları şu sayfada bulabilirsiniz: http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dUbKuK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Skip]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Atla]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8121,6 +8553,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";eESljX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Revert]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geri döndür]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";eFet4K" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Action Tracking ID]]></Val>
@@ -8207,6 +8648,15 @@
           <Val><![CDATA[Shared]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Paylaşılan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";eqAUdj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[When a new item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Yeni bir öğe şu durumda olduğunda:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8664,6 +9114,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";hRVVdR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Undo]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geri Al]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";hZqQdt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
@@ -9042,6 +9501,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";jN0YES" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tell Microsoft how this feature could be improved]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Microsoft'a bu özelliğin nasıl geliştirilebileceğini bildirin]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";jQ0Aqj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value that is converted to a string.]]></Val>
@@ -9123,6 +9591,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";jlcMGg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akışınızın neleri yapması gerektiğini açıklayın. Kullanılacak bağlayıcı ve içerik eklenip eklenmeyeceği dahil olmak üzere mümkün olduğunda ayrıntıları ekleyin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";juR40n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>
@@ -9200,6 +9677,24 @@
           <Val><![CDATA[{minutes}m {seconds}s]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{minutes} dk {seconds} sn]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";kHs5R4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Check these actions to see if any parameters need to be set.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Herhangi bir parametrenin ayarlanması gerekip gerekmediğini görmek için bu eylemleri denetleyin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";kKJMeM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Every week on Monday...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Her hafta Pazartesi günü...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9338,6 +9833,15 @@
           <Val><![CDATA[(UTC+01:00) Windhoek]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+01:00) Windhoek]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";l2YXln" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Replace action with]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eylemi şununla değiştir:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10422,6 +10926,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";qBNM3e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Connecting to apps and services]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Uygulamalara ve hizmetlere bağlanılıyor]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";qBkxGU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: ⌘U]]></Val>
@@ -10749,6 +11262,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";rn5IsW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, I couldn’t understand your request. Please rephrase it and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ne yazık ki isteğinizi anlayamadım. Lütfen yeniden ifade edin ve tekrar deneyin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";rsdJcV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select source schema elements to build your map]]></Val>
@@ -10808,6 +11330,15 @@
           <Val><![CDATA[Delete]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Sil]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";sBBLuh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To save this workflow, finish setting up these actions:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışını kaydetmek için bu eylemleri ayarlamayı bitirin:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10943,6 +11474,15 @@
           <Val><![CDATA[Returns true if either parameter is true]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Herhangi bir parametre true ise true döndürür]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";srMbm9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[İptal]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11096,6 +11636,15 @@
           <Val><![CDATA[Type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tür]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";tTIsTX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test this workflow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışını test et]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11334,6 +11883,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";uZpzqY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ne yazık ki Copilot tam kapasitede ve geçici olarak kullanılamıyor. Lütfen kısa bir süre sonra yeniden deneyin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";uanMWm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Succeeded]]></Val>
@@ -11460,6 +12018,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";uxQ143" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ask question related to your workflow or Logic Apps.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[İş akışınız veya Logic Apps ile ilgili soru sorun.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";uzsleE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Creates an array from the parameters]]></Val>
@@ -11510,6 +12077,15 @@
           <Val><![CDATA[Returns the last index of a value within a string (case-insensitive, invariant culture)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Bir dize içindeki bir değerin son dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vF+gWH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain what this flow does]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu akışın ne yaptığını açıklayın]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11600,6 +12176,15 @@
           <Val><![CDATA[Discard]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[At]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vmlhVB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To get this workflow ready, finish setting up this action:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışını hazır hale getirmek için bu eylemi ayarlamayı bitirin:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12063,6 +12648,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";xvav7+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Connected to]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Şu öğeye bağlı:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";xwD1VZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading inputs]]></Val>
@@ -12171,6 +12765,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";yk7L+4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Dislike]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Beğenme]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";yoCi15" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an existing connection or create a new one.]]></Val>
@@ -12194,6 +12797,15 @@
           <Val><![CDATA[Date and time functions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tarih ve saat işlevleri]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";yrYEmk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Send me an email when...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Şu durumda bana bir e-posta gönder...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12342,11 +12954,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";zb3lE6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To save this workflow, finish setting up this action:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışını kaydetmek için bu eylemi ayarlamayı bitirin:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";zcZpHT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Converts a string, with optionally a locale and a format to a date]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Bir dizeyi dönüştürür, isteğe bağlı olarak bir yerel ayar ve bir tarih biçimi içerir]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";zec5Ay" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Stop]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Durdur]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

@@ -1305,6 +1305,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";4hi3ks" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Your flow has been updated.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Il flusso è stato aggiornato.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";4j2MEv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Toggle Minimap]]></Val>
@@ -1368,6 +1377,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";50W8FI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Spiega l'azione]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";53MgCQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Open panel]]></Val>
@@ -1382,6 +1400,24 @@
           <Val><![CDATA[(UTC+09:00) Osaka, Sapporo, Tokyo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC + 9.00 h) Osaka, Sapporo, Tokyo]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";5H+8Sb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add a condition]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiungi una condizione]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";5J9jne" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tell Microsoft what you liked about this feature]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Indicare a Microsoft cosa si è apprezzato di questa funzionalità]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1584,6 +1620,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6gblzt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Updated this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Questa azione è stata aggiornata]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6jiO7t" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show run]]></Val>
@@ -1629,11 +1674,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6pISgk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To get this workflow ready, finish setting up these actions:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Per preparare il flusso di lavoro, completare la configurazione di queste azioni:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6qkBwz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The number to multiply Multiplicand 2 with.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 2.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";6sGj3J" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Crea flusso]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1773,11 +1836,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7gUE8h" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Il flusso di lavoro verrà ripristinato allo stato in cui si trovava prima della modifica di Copilot. Se sono state apportate modifiche aggiuntive al flusso di lavoro dopo il copilot, queste saranno perdute. Questa azione non può essere annullata. Continuare?]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7k9jXx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status code]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Codice stato]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";7ku9t+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Report a bug]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Segnala un bug]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1940,6 +2021,24 @@
           <Val><![CDATA[Please enable managed identity for the logic app.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Abilitare l'identità gestita per l'app per la logica.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8NUqpR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Descrivere come deve essere modificato il flusso. Aggiungere i dettagli laddove possibile, come il connettore da usare e se deve essere incluso un eventuale contenuto.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8Q7ns/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Edit this flow to]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Modifica questo flusso in]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2169,6 +2268,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";9QNZSj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Revert your flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ripristina il flusso]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";9SuA/E" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[12]]></Val>
@@ -2237,6 +2345,15 @@
           <Val><![CDATA[Returns true if both parameters are true]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Restituisce true se entrambi i parametri sono true]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";9wX3u9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Send feedback]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Invia feedback]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2336,6 +2453,15 @@
           <Val><![CDATA[Select frequency.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Seleziona la frequenza.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Ak2Lka" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Not connected to]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Non connesso a]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2526,6 +2652,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";BIzX3S" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn more about undo operations]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Altre informazioni sulle operazioni di annullamento]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";BJNUxN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Path Parameters]]></Val>
@@ -2567,6 +2702,15 @@
           <Val><![CDATA[Enter password as plain text or use a secure parameter]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Immettere la password come testo normale o usare un parametro protetto]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BS3gy8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, something went wrong. Please try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Si è verificato un errore. Riprovare.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2697,6 +2841,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";BynK4X" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ask a question]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Invia una domanda]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";C1cy54" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Body]]></Val>
@@ -2711,6 +2864,15 @@
           <Val><![CDATA[Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Recuperare gli elementi per raggiungere la soglia specificata seguendo il token di continuazione. A causa delle dimensioni della pagina del connettore, il numero restituito potrebbe superare la soglia.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CFOUe3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add an action that sends an email]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiungere un'azione che invia un messaggio di posta elettronica]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3093,6 +3255,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";EKjaix" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Controllare le azioni del flusso per verificare se è necessario impostare parametri. Non dimenticare di salvare al termine.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EKtYQF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
@@ -3210,6 +3381,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";EqX3Mi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set up these connections to use them in your flow.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Configurare queste connessioni per usarle nel flusso.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";EurkzL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select yes or no]]></Val>
@@ -3296,6 +3476,15 @@
           <Val><![CDATA[(UTC-07:00) Chihuahua, La Paz, Mazatlan]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC - 7.00 h) Chihuahua, La Paz, Mazatlan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FMA0Q0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Your flow has been updated.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Il flusso è stato aggiornato.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3540,6 +3729,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";GQnN3U" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Spiega il flusso]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";GXXLuT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid boolean.]]></Val>
@@ -3572,6 +3770,15 @@
           <Val><![CDATA[More commands]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Altri comandi]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Ggkf4s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Get started]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Attività iniziali]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3788,6 +3995,15 @@
           <Val><![CDATA[Switch to detail inputs for array item]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Passa a input dettagli per l'elemento matrice]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HfmDk9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Edit Flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Modifica flusso]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4017,6 +4233,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";IuHdCO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Here’s your flow. If you want me to change it, just say what you want. For example:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ecco il flusso. Se si desidera modificarlo, pronunciare una frase a piacere. Per esempio:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IxWip7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+03:00) Moscow, St. Petersburg, Volgograd]]></Val>
@@ -4094,6 +4319,15 @@
           <Val><![CDATA[Delete]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Elimina]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";JJyT88" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Action undone]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Azione annullata]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4233,11 +4467,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";KNDVnN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Replace "{selectedOperation}" with]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sostituisci "{selectedOperation}" con]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";KP0Rr2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Double number.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Immetti un numero double valido.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";KV4uky" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[When a new item...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Quando un nuovo elemento...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4482,6 +4734,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LaFlFh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Removed this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Questa azione è stata rimossa]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";LdITnG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-03:00) Cayenne, Fortaleza]]></Val>
@@ -4608,6 +4869,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";M3kJsI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Every week on Monday]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ogni settimana di lunedì]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";M4H0gh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove]]></Val>
@@ -4658,6 +4928,15 @@
           <Val><![CDATA[Required. The collections to evaluate. An object must be in all collections passed in to appear in the result.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obbligatorio. Raccolte da valutare. Un oggetto deve essere presente in tutte le raccolte passate per essere visualizzato nei risultati.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MGZRu4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add an action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiungi un'azione]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5094,6 +5373,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";OQud51" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tell me more about]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Altre informazioni su]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";OSHNZ2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Comment]]></Val>
@@ -5117,6 +5405,15 @@
           <Val><![CDATA[Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Restituisce i risultati delle azioni di primo livello nell'azione con ambito specificata, ad esempio un'azione For_each, Until o Scope.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OYWZE4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Save this workflow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Salva questo flusso di lavoro]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5865,6 +6162,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SHXdzU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[AI-generated content may be incorrect]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Il contenuto generato dall'intelligenza artificiale potrebbe non essere corretto]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SJFVxf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[issues]]></Val>
@@ -6014,6 +6320,15 @@
           <Val><![CDATA[Give feedback]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Invia feedback]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TLMkrg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain what an action does]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Spiega cosa fa un'azione]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6333,6 +6648,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";UW+fkB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Send me an email when]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Inviami un messaggio di posta elettronica quando]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";UYRIS/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{fileName} (file name)]]></Val>
@@ -6473,6 +6797,15 @@
           <Val><![CDATA[In App]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[In-app]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";VEbE93" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain what the "{selectedOperation}" action does in this flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Spiega cosa fa l'azione "{selectedOperation}" in questo flusso]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6630,6 +6963,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Vx6fwP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Added this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiunta di questa azione]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";W070M2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[of {max}]]></Val>
@@ -6644,6 +6986,15 @@
           <Val><![CDATA[Required. The name of the new property.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obbligatorio. Nome della nuova proprietà.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WCASt1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Descrivere un elemento nel flusso che deve essere sostituito e con cosa. Aggiungere i dettagli laddove possibile, come il connettore da usare e se deve essere incluso un eventuale contenuto.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6855,6 +7206,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";XR4Sd/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Like]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mi piace]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";XRK+gt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Function ''{functionName}'' has an non-terminating connection chain]]></Val>
@@ -7008,6 +7368,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Y04+GH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add an action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiungi un'azione]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Y0H9aX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More Info]]></Val>
@@ -7044,6 +7413,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";YCDF7A" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[All required parameters are set]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tutti i parametri obbligatori sono impostati]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";YCFhzp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add children]]></Val>
@@ -7058,6 +7436,15 @@
           <Val><![CDATA[Trigger conditions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Condizioni del trigger]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";YF1yZk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[chat-session-id:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[chat-session-id:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7319,6 +7706,15 @@
           <Val><![CDATA[Shorthand for trigger().outputs.body]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Abbreviazione per trigger().outputs.body]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ZXoHXd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Here’s your flow.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ecco il flusso.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7634,6 +8030,15 @@
           <Val><![CDATA[Returns the maximum value in the input array of numbers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Restituisce il valore massimo nella matrice di input di numeri]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";blRFVt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set up these connections to use them in your flow.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Configurare queste connessioni per usarle nel flusso.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7971,6 +8376,24 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";dMAC4C" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Replace action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sostituisci azione]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dNpnmn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Welcome back! If you want me to change your flow, just say what you want. For example:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bentornato! Se si desidera cambiare il flusso, pronunciare una frase a piacere. Per esempio:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";dOpdsP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Update]]></Val>
@@ -8003,6 +8426,15 @@
           <Val><![CDATA[Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Specificare il comportamento e le funzionalità per il trasferimento del contenuto su HTTP. I messaggi di grandi dimensioni possono essere suddivisi in richieste più piccole al connettore per consentire il caricamento di messaggi di grandi dimensioni. Per i dettagli, vedere http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dUbKuK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Skip]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ignora]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8133,6 +8565,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";eESljX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Revert]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ripristina]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";eFet4K" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Action Tracking ID]]></Val>
@@ -8219,6 +8660,15 @@
           <Val><![CDATA[Shared]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Condivisa]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";eqAUdj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[When a new item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Quando un nuovo elemento]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8679,6 +9129,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";hRVVdR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Undo]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Annulla]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";hZqQdt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
@@ -9057,6 +9516,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";jN0YES" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tell Microsoft how this feature could be improved]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Indicare a Microsoft come è possibile migliorare questa funzionalità]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";jQ0Aqj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value that is converted to a string.]]></Val>
@@ -9138,6 +9606,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";jlcMGg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Descrivere le operazioni che il flusso deve eseguire. Aggiungere i dettagli laddove possibile, come il connettore da usare e se deve essere incluso un eventuale contenuto.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";juR40n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>
@@ -9215,6 +9692,24 @@
           <Val><![CDATA[{minutes}m {seconds}s]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{minutes}m {seconds}s]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";kHs5R4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Check these actions to see if any parameters need to be set.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Controllare queste azioni per verificare se è necessario impostare parametri.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";kKJMeM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Every week on Monday...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ogni settimana di lunedì...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9356,6 +9851,15 @@
           <Val><![CDATA[(UTC+01:00) Windhoek]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+01:00) Windhoek]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";l2YXln" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Replace action with]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sostituisci azione con]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10440,6 +10944,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";qBNM3e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Connecting to apps and services]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Connessione ad app e servizi]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";qBkxGU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Format text as underline. Shortcut: ⌘U]]></Val>
@@ -10770,6 +11283,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";rn5IsW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, I couldn’t understand your request. Please rephrase it and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Non sono riuscito a comprendere la richiesta. Riformularla e riprovare.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";rsdJcV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select source schema elements to build your map]]></Val>
@@ -10829,6 +11351,15 @@
           <Val><![CDATA[Delete]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Elimina]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";sBBLuh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To save this workflow, finish setting up these actions:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Per salvare questo flusso di lavoro, completare la configurazione di queste azioni:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10964,6 +11495,15 @@
           <Val><![CDATA[Returns true if either parameter is true]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Restituisce true se uno dei parametri è true]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";srMbm9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Annulla]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11117,6 +11657,15 @@
           <Val><![CDATA[Type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tipo]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";tTIsTX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test this workflow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Testa questo flusso di lavoro]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11355,6 +11904,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";uZpzqY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Copilot ha raggiunto la massima capacità e temporaneamente non è disponibile. Riprovare tra qualche minuto.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";uanMWm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Succeeded]]></Val>
@@ -11481,6 +12039,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";uxQ143" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ask question related to your workflow or Logic Apps.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Porre una domanda relativa al flusso di lavoro o alle app per la logica.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";uzsleE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Creates an array from the parameters]]></Val>
@@ -11531,6 +12098,15 @@
           <Val><![CDATA[Returns the last index of a value within a string (case-insensitive, invariant culture)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Restituisce l'ultimo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vF+gWH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Explain what this flow does]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Spiega le operazioni eseguite da questo flusso]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11621,6 +12197,15 @@
           <Val><![CDATA[Discard]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Rimuovi]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vmlhVB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To get this workflow ready, finish setting up this action:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Per preparare il flusso di lavoro, completare la configurazione di questa azione:]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12084,6 +12669,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";xvav7+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Connected to]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Connesso a]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";xwD1VZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading inputs]]></Val>
@@ -12192,6 +12786,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";yk7L+4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Dislike]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Non mi piace]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";yoCi15" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an existing connection or create a new one.]]></Val>
@@ -12215,6 +12818,15 @@
           <Val><![CDATA[Date and time functions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Funzioni di data e ora]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";yrYEmk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Send me an email when...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Inviami un messaggio di posta elettronica quando...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12363,11 +12975,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";zb3lE6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To save this workflow, finish setting up this action:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Per salvare il flusso di lavoro, completare la configurazione di questa azione:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";zcZpHT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Converts a string, with optionally a locale and a format to a date]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Converte una stringa, facoltativamente con impostazioni locali e un formato in una data]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";zec5Ay" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Stop]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Arresta]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
