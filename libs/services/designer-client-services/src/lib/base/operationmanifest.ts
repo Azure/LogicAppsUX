@@ -129,8 +129,8 @@ const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
 export const flatFileConnectorId = 'connectionProviders/flatFileOperations';
 const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
-const x12connectorId = 'connectionProviders/x12';
-const edifactConnectorId = 'connectionProviders/edifact';
+const x12connectorId = 'connectionProviders/x12Operations';
+const edifactConnectorId = 'connectionProviders/edifactOperations';
 
 const azurefunction = 'azurefunction';
 const appservice = 'appservice';
