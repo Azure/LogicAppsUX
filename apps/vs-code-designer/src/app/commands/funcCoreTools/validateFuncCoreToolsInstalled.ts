@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import type { PackageManager } from '../../../constants';
 import { validateFuncCoreToolsSetting, funcVersionSetting } from '../../../constants';
-import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -80,7 +79,8 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
  */
 export async function isFuncToolsInstalled(): Promise<boolean> {
   try {
-    await executeCommand(undefined, undefined, ext.funcCliPath, '--version');
+    const funcBinariesLocation = getWorkspaceSetting<string>('funcCoreToolsPath');
+    await executeCommand(undefined, undefined, funcBinariesLocation, '--version');
     return true;
   } catch (error) {
     return false;
