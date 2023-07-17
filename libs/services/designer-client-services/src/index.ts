@@ -7,6 +7,7 @@ export * from './lib/oAuth';
 export * from './lib/workflow';
 export * from './lib/httpClient';
 export * from './lib/common/exceptions';
+export * from './lib/common/azure';
 export * from './lib/logger';
 export * from './lib/logging/devLogger';
 export * from './lib/logging/logEntry';

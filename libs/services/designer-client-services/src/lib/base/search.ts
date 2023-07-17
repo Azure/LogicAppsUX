@@ -1,5 +1,6 @@
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
+import type { ContinuationTokenResponse } from '../common/azure';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
 import { Status } from '../logging/logEntry';
@@ -16,11 +17,6 @@ import type {
   SomeKindOfAzureOperationDiscovery,
 } from '@microsoft/utils-logic-apps';
 import { equals, ArgumentException } from '@microsoft/utils-logic-apps';
-
-export interface ContinuationTokenResponse<T> {
-  value: T;
-  nextLink: string;
-}
 
 export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
 export type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
