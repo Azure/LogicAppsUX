@@ -110,7 +110,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 
   // serialize complex expanded array
   const updateComplexItems = (newItems: ComplexArrayItems[]) => {
-    console.log(newItems);
     setItems(newItems);
     // we want to supress casting for when switching between expanded and collapsed array, but cast when serializing
     const objectValue = parseComplexItems(newItems, itemSchema, castParameter);

@@ -31,6 +31,8 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
 };
 
 export const convertStringToSegments = (value: string, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): ValueSegment[] => {
+  if (!value) return [];
+  if (typeof value !== 'string') return [{ id: guid(), type: ValueSegmentType.LITERAL, value: JSON.stringify(value) }];
   let currIndex = 0;
   let prevIndex = 0;
   const returnSegments: ValueSegment[] = [];

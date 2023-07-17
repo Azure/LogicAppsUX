@@ -99,7 +99,7 @@ export const ExpandedComplexArray = ({
             {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
               const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
               return (
-                <div key={complexItem?.arrayItems?.length ?? ' ' + i}>
+                <div key={schemaItem.key + i}>
                   {schemaItem.type === constants.SWAGGER.TYPE.ARRAY && schemaItem.items && !hideComplexArray(schemaItem.items) ? (
                     <div>
                       <Label> {schemaItem.title} </Label>

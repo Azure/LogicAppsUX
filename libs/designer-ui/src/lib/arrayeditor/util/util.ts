@@ -99,15 +99,13 @@ export const convertComplexItemsToArray = (
     // add all required schema properties to the return item
     itemSchema.required?.forEach((requiredKey) => {
       if (!returnItem[requiredKey] && itemSchema.properties) {
-        // TODO: support null instead of empty string
-        returnItem[requiredKey] = '';
+        returnItem[requiredKey] = null;
       }
     });
   } else {
     const complexItem = items.find((item) => {
       return item.key === itemSchema.key;
     });
-    // console.log(complexItem);
     if (complexItem) {
       if (complexItem.arrayItems && itemSchema.type === constants.SWAGGER.TYPE.ARRAY) {
         const arrayVal: any = [];
