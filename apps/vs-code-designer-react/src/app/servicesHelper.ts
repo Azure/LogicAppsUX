@@ -80,7 +80,12 @@ export const getDesignerServices = (
   };
 
   const httpClient = new HttpClient({ accessToken: authToken, baseUrl, apiHubBaseUrl: apiHubDetails.baseUrl, hostVersion });
-  const apiHubServiceDetails = { ...apiHubDetails, httpClient, baseUrl, apiVersion };
+  const apiHubServiceDetails = {
+    ...apiHubDetails,
+    httpClient,
+    apiVersion: apiHubDetails.apiVersion ?? apiVersion,
+    baseUrl: apiHubDetails.baseUrl ?? baseUrl,
+  };
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
