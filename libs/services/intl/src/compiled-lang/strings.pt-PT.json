@@ -45,6 +45,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapura"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -667,6 +673,12 @@
       "value": "Guardar"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -747,10 +759,22 @@
       "value": "Não existe conteúdo dinâmico disponível"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Substituir um esquema existente por um esquema incompatível pode criar erros no seu mapa."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Returns the collection in reverse order"
     }
   ],
   "3X4FHS": [
@@ -2845,6 +2869,12 @@
       "value": "Mês"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Required. The collection to sort."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -4891,6 +4921,12 @@
       "value": "Expandir"
     }
   ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Required. The length of each chunk."
+    }
+  ],
   "Umpr3z": [
     {
       "type": 0,
@@ -5867,6 +5903,12 @@
       "value": "Obrigatório. O valor que é convertido num binário."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Optional. A key to use for sorting objects in the collection."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -6581,6 +6623,12 @@
       "value": "Introduza a audiência."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6984,6 +7032,12 @@
       "value": "Esquema de destino"
     }
   ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Required. The string or array to split."
+    }
+  ],
   "jVpanH": [
     {
       "type": 0,
@@ -7273,6 +7327,12 @@
     {
       "type": 0,
       "value": "Adicionar Grupo"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Required. The collection to reverse."
     }
   ],
   "lexzgJ": [
@@ -9262,6 +9322,12 @@
       "value": "Devolve um subconjunto de carateres a partir de uma cadeia."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Returns an array sorted in ascending order"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -9272,6 +9338,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Split a string or array into chunks of equal length"
     }
   ],
   "ydqOly": [
@@ -9410,6 +9482,12 @@
     {
       "type": 0,
       "value": "Selecionar Ações"
+    }
+  ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is an integer"
     }
   ],
   "zUgja+": [
