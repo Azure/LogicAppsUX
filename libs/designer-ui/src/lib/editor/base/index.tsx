@@ -172,55 +172,57 @@ export const BaseEditor = ({
 
   const id = useId('deiosnoin');
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <div
-        className={className ?? 'msla-editor-container'}
-        id={editorId}
-        ref={containerRef}
-        data-automation-id={dataAutomationId}
-        title={placeholder}
-      >
-        {toolbar ? <Toolbar readonly={readonly} /> : null}
-        <RichTextPlugin
-          contentEditable={
-            <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
-          }
-          placeholder={
-            <span className="editor-placeholder" ref={placeholderRef}>
-              {placeholder}
-            </span>
-          }
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-        <span id={id} hidden={true}>
-          {describedByMessage}
-        </span>
-        {treeView ? <TreeView /> : null}
-        {autoFocus ? <AutoFocus /> : null}
-        {history ? <History /> : null}
-        {autoLink ? <AutoLink /> : null}
-        {clearEditor ? <ClearEditor showButton={false} /> : null}
-        {singleValueSegment ? <SingleValueSegment /> : null}
-        {tokens ? <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} isEditorFocused={isEditorFocused} /> : null}
-        <OnBlur command={handleBlur} />
-        <OnFocus command={handleFocus} />
-        <ReadOnly readonly={readonly} />
-        {tabbable ? null : <IgnoreTab />}
-        {tokens ? <InsertTokenNode /> : null}
-        {tokens ? <DeleteTokenNode /> : null}
-        {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
-        {toolbar && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
-        {children}
-        {tokens && getInTokenPicker()
-          ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, closeTokenPicker, tokenPickerClicked)
-          : null}
-      </div>
+    <div style={{ width: '100%' }}>
+      <LexicalComposer initialConfig={initialConfig}>
+        <div
+          className={className ?? 'msla-editor-container'}
+          id={editorId}
+          ref={containerRef}
+          data-automation-id={dataAutomationId}
+          title={placeholder}
+        >
+          {toolbar ? <Toolbar readonly={readonly} /> : null}
+          <RichTextPlugin
+            contentEditable={
+              <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
+            }
+            placeholder={
+              <span className="editor-placeholder" ref={placeholderRef}>
+                {placeholder}
+              </span>
+            }
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+          <span id={id} hidden={true}>
+            {describedByMessage}
+          </span>
+          {treeView ? <TreeView /> : null}
+          {autoFocus ? <AutoFocus /> : null}
+          {history ? <History /> : null}
+          {autoLink ? <AutoLink /> : null}
+          {clearEditor ? <ClearEditor showButton={false} /> : null}
+          {singleValueSegment ? <SingleValueSegment /> : null}
+          {tokens ? <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} isEditorFocused={isEditorFocused} /> : null}
+          <OnBlur command={handleBlur} />
+          <OnFocus command={handleFocus} />
+          <ReadOnly readonly={readonly} />
+          {tabbable ? null : <IgnoreTab />}
+          {tokens ? <InsertTokenNode /> : null}
+          {tokens ? <DeleteTokenNode /> : null}
+          {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
+          {toolbar && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
+          {children}
+          {tokens && getInTokenPicker()
+            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, closeTokenPicker, tokenPickerClicked)
+            : null}
+        </div>
 
-      {tokens && isEditorFocused && !getInTokenPicker() ? (
-        createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
-      ) : (
-        <div />
-      )}
-    </LexicalComposer>
+        {tokens && isEditorFocused && !getInTokenPicker() ? (
+          createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
+        ) : (
+          <div />
+        )}
+      </LexicalComposer>
+    </div>
   );
 };
