@@ -45,6 +45,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapur"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -663,6 +669,12 @@
       "value": "Kaydet"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -735,10 +747,22 @@
       "value": "Kullanılabilir içerik yok"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Mevcut şemanın uyumlu olamayan bir şemayla değiştirilmesi eşlemenizde hatalar oluşturabilir."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Returns the collection in reverse order"
     }
   ],
   "3X4FHS": [
@@ -922,7 +946,7 @@
   "4hi3ks": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Akışınız güncelleştirildi."
     }
   ],
   "4j2MEv": [
@@ -974,7 +998,7 @@
   "50W8FI": [
     {
       "type": 0,
-      "value": "Explain action"
+      "value": "Eylemi açıklayın"
     }
   ],
   "53MgCQ": [
@@ -992,13 +1016,13 @@
   "5H+8Sb": [
     {
       "type": 0,
-      "value": "Add a condition"
+      "value": "Koşul ekleyin"
     }
   ],
   "5J9jne": [
     {
       "type": 0,
-      "value": "Tell Microsoft what you liked about this feature"
+      "value": "Microsoft'a bu özellik hakkında beğendiklerinizi bildirin"
     }
   ],
   "5OvGgn": [
@@ -1152,7 +1176,7 @@
   "6gblzt": [
     {
       "type": 0,
-      "value": "Updated this action"
+      "value": "Bu eylem güncelleştirildi"
     }
   ],
   "6jiO7t": [
@@ -1188,7 +1212,7 @@
   "6pISgk": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up these actions:"
+      "value": "Bu iş akışını hazır hale getirmek için bu eylemleri ayarlamayı bitirin:"
     }
   ],
   "6qkBwz": [
@@ -1200,7 +1224,7 @@
   "6sGj3J": [
     {
       "type": 0,
-      "value": "Create flow"
+      "value": "Akış oluştur"
     }
   ],
   "6u6CS+": [
@@ -1304,7 +1328,7 @@
   "7gUE8h": [
     {
       "type": 0,
-      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+      "value": "Bu, iş akışınızı Copilot'ın düzenlemesinden önceki durumuna geri döndürür. Copilot'tan sonra iş akışında ek düzenlemeler yaptıysanız bunları kaybedersiniz. Bu eylem geri alınamaz. Devam etmek istiyor musunuz?"
     }
   ],
   "7k9jXx": [
@@ -1316,7 +1340,7 @@
   "7ku9t+": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Hata bildirin"
     }
   ],
   "7lnElz": [
@@ -1442,13 +1466,13 @@
   "8NUqpR": [
     {
       "type": 0,
-      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Akışınızın nasıl değiştirileceğini açıklayın. Kullanılacak bağlayıcı ve içerik eklenip eklenmeyeceği dahil olmak üzere mümkün olduğunda ayrıntıları ekleyin."
     }
   ],
   "8Q7ns/": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Bu akışı şunun için düzenleyin:"
     }
   ],
   "8SxNQC": [
@@ -1612,7 +1636,7 @@
   "9QNZSj": [
     {
       "type": 0,
-      "value": "Revert your flow"
+      "value": "Akışınızı geri alın"
     }
   ],
   "9SuA/E": [
@@ -1674,7 +1698,7 @@
   "9wX3u9": [
     {
       "type": 0,
-      "value": "Send feedback"
+      "value": "Geri bildirim gönder"
     }
   ],
   "9x8hg8": [
@@ -1754,7 +1778,7 @@
   "Ak2Lka": [
     {
       "type": 0,
-      "value": "Not connected to"
+      "value": "Şuna bağlantısı yok:"
     }
   ],
   "AnX5yC": [
@@ -1884,7 +1908,7 @@
   "BIzX3S": [
     {
       "type": 0,
-      "value": "Learn more about undo operations"
+      "value": "Geri alma işlemleri hakkında daha fazla bilgi edinin"
     }
   ],
   "BJNUxN": [
@@ -1920,7 +1944,7 @@
   "BS3gy8": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Ne yazık ki bir sorun oluştu. Lütfen yeniden deneyin."
     }
   ],
   "BSgavq": [
@@ -2010,7 +2034,7 @@
   "BynK4X": [
     {
       "type": 0,
-      "value": "Ask a question"
+      "value": "Soru sorun"
     }
   ],
   "C1cy54": [
@@ -2028,7 +2052,7 @@
   "CFOUe3": [
     {
       "type": 0,
-      "value": "Add an action that sends an email"
+      "value": "E-posta gönderen bir eylem ekleyin"
     }
   ],
   "CG772M": [
@@ -2334,7 +2358,7 @@
   "EKjaix": [
     {
       "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+      "value": "Herhangi bir parametrenin ayarlanması gerekip gerekmediğini görmek için akışın eylemlerini denetleyin. İşiniz bittiğinde kaydetmeyi unutmayın!"
     }
   ],
   "EKtYQF": [
@@ -2430,7 +2454,7 @@
   "EqX3Mi": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Bu bağlantıları akışınızda kullanmak üzere ayarlayın."
     }
   ],
   "EurkzL": [
@@ -2496,7 +2520,7 @@
   "FMA0Q0": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Akışınız güncelleştirildi."
     }
   ],
   "FN5zHQ": [
@@ -2660,7 +2684,7 @@
   "GQnN3U": [
     {
       "type": 0,
-      "value": "Explain flow"
+      "value": "Akışı açıklayın"
     }
   ],
   "GXXLuT": [
@@ -2690,7 +2714,7 @@
   "Ggkf4s": [
     {
       "type": 0,
-      "value": "Get started"
+      "value": "Kullanmaya başlayın"
     }
   ],
   "Gi72X5": [
@@ -2799,6 +2823,12 @@
       "value": "Ay"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Required. The collection to sort."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -2844,7 +2874,7 @@
   "HfmDk9": [
     {
       "type": 0,
-      "value": "Edit Flow"
+      "value": "Akışı Düzenle"
     }
   ],
   "HfrUId": [
@@ -3032,7 +3062,7 @@
   "IuHdCO": [
     {
       "type": 0,
-      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+      "value": "İşte akışınız. Akışınızı değiştirmemi istiyorsanız, ne istediğinizi söylemeniz yeterlidir. Örneğin:"
     }
   ],
   "IxWip7": [
@@ -3116,7 +3146,7 @@
   "JJyT88": [
     {
       "type": 0,
-      "value": "Action undone"
+      "value": "Eylem geri alındı"
     }
   ],
   "JNQHws": [
@@ -3212,7 +3242,7 @@
   "KNDVnN": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "\""
     },
     {
       "type": 1,
@@ -3220,7 +3250,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\" öğesini şununla değiştir:"
     }
   ],
   "KP0Rr2": [
@@ -3232,7 +3262,7 @@
   "KV4uky": [
     {
       "type": 0,
-      "value": "When a new item..."
+      "value": "Yeni bir öğe şu durumda olduğunda..."
     }
   ],
   "KX1poC": [
@@ -3398,7 +3428,7 @@
   "LaFlFh": [
     {
       "type": 0,
-      "value": "Removed this action"
+      "value": "Bu eylem kaldırıldı"
     }
   ],
   "LdITnG": [
@@ -3488,7 +3518,7 @@
   "M3kJsI": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Her hafta Pazartesi günü"
     }
   ],
   "M4H0gh": [
@@ -3530,7 +3560,7 @@
   "MGZRu4": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Eylem ekleyin"
     }
   ],
   "MIX4f9": [
@@ -3836,7 +3866,7 @@
   "OQud51": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Şunun hakkında daha fazla bilgi edinmek istiyorum:"
     }
   ],
   "OSHNZ2": [
@@ -3860,7 +3890,7 @@
   "OYWZE4": [
     {
       "type": 0,
-      "value": "Save this workflow"
+      "value": "Bu iş akışını kaydet"
     }
   ],
   "OdNhwc": [
@@ -4428,7 +4458,7 @@
   "SHXdzU": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Yapay zeka tarafından oluşturulan içerik yanlış olabilir"
     }
   ],
   "SJFVxf": [
@@ -4540,7 +4570,7 @@
   "TLMkrg": [
     {
       "type": 0,
-      "value": "Explain what an action does"
+      "value": "Eylemin ne yaptığını açıklayın"
     }
   ],
   "TNEttQ": [
@@ -4776,7 +4806,7 @@
   "UW+fkB": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Şu durumda bana bir e-posta gönder:"
     }
   ],
   "UYRIS/": [
@@ -4813,6 +4843,12 @@
     {
       "type": 0,
       "value": "Genişlet"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Required. The length of each chunk."
     }
   ],
   "Umpr3z": [
@@ -4914,7 +4950,7 @@
   "VEbE93": [
     {
       "type": 0,
-      "value": "Explain what the \""
+      "value": "Bu akışta \""
     },
     {
       "type": 1,
@@ -4922,7 +4958,7 @@
     },
     {
       "type": 0,
-      "value": "\" action does in this flow"
+      "value": "\" eyleminin ne yaptığını açıklayın"
     }
   ],
   "VHm1Sr": [
@@ -5042,7 +5078,7 @@
   "Vx6fwP": [
     {
       "type": 0,
-      "value": "Added this action"
+      "value": "Bu eylem eklendi"
     }
   ],
   "W070M2": [
@@ -5064,7 +5100,7 @@
   "WCASt1": [
     {
       "type": 0,
-      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Akışınızda değiştirilmesi gereken bir öğenin yanı sıra yerine nelerin geçmesi gerektiğini açıklayın. Kullanılacak bağlayıcı ve içerik eklenip eklenmeyeceği dahil olmak üzere mümkün olduğunda ayrıntıları ekleyin."
     }
   ],
   "WGwH45": [
@@ -5232,7 +5268,7 @@
   "XR4Sd/": [
     {
       "type": 0,
-      "value": "Like"
+      "value": "Beğen"
     }
   ],
   "XRK+gt": [
@@ -5368,7 +5404,7 @@
   "Y04+GH": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Eylem ekleyin"
     }
   ],
   "Y0H9aX": [
@@ -5398,7 +5434,7 @@
   "YCDF7A": [
     {
       "type": 0,
-      "value": "All required parameters are set"
+      "value": "Gereken tüm parametreler ayarlandı"
     }
   ],
   "YCFhzp": [
@@ -5616,7 +5652,7 @@
   "ZXoHXd": [
     {
       "type": 0,
-      "value": "Here’s your flow."
+      "value": "İşte akışınız."
     }
   ],
   "ZaIeDG": [
@@ -5791,6 +5827,12 @@
       "value": "Gerekli. İkiliye dönüştürülen değer."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Optional. A key to use for sorting objects in the collection."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5836,7 +5878,7 @@
   "blRFVt": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Bu bağlantıları akışınızda kullanmak üzere ayarlayın."
     }
   ],
   "bldzuj": [
@@ -6064,13 +6106,13 @@
   "dMAC4C": [
     {
       "type": 0,
-      "value": "Replace action"
+      "value": "Eylemi değiştir"
     }
   ],
   "dNpnmn": [
     {
       "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+      "value": "Tekrar hoş geldiniz! Akışınızı değiştirmemi istiyorsanız, ne istediğinizi söylemeniz yeterlidir. Örneğin:"
     }
   ],
   "dOpdsP": [
@@ -6100,7 +6142,7 @@
   "dUbKuK": [
     {
       "type": 0,
-      "value": "Skip"
+      "value": "Atla"
     }
   ],
   "dWFyfN": [
@@ -6194,7 +6236,7 @@
   "eESljX": [
     {
       "type": 0,
-      "value": "Revert"
+      "value": "Geri döndür"
     }
   ],
   "eFet4K": [
@@ -6260,7 +6302,7 @@
   "eqAUdj": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Yeni bir öğe şu durumda olduğunda:"
     }
   ],
   "f/lWTW": [
@@ -6493,6 +6535,12 @@
       "value": "Hedef kitleyi girin."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6576,7 +6624,7 @@
   "hRVVdR": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Geri Al"
     }
   ],
   "hZqQdt": [
@@ -6854,7 +6902,7 @@
   "jN0YES": [
     {
       "type": 0,
-      "value": "Tell Microsoft how this feature could be improved"
+      "value": "Microsoft'a bu özelliğin nasıl geliştirilebileceğini bildirin"
     }
   ],
   "jQ0Aqj": [
@@ -6879,6 +6927,12 @@
     {
       "type": 0,
       "value": "Hedef şema"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Required. The string or array to split."
     }
   ],
   "jVpanH": [
@@ -6914,7 +6968,7 @@
   "jlcMGg": [
     {
       "type": 0,
-      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Akışınızın neleri yapması gerektiğini açıklayın. Kullanılacak bağlayıcı ve içerik eklenip eklenmeyeceği dahil olmak üzere mümkün olduğunda ayrıntıları ekleyin."
     }
   ],
   "juR40n": [
@@ -6986,13 +7040,13 @@
   "kHs5R4": [
     {
       "type": 0,
-      "value": "Check these actions to see if any parameters need to be set."
+      "value": "Herhangi bir parametrenin ayarlanması gerekip gerekmediğini görmek için bu eylemleri denetleyin."
     }
   ],
   "kKJMeM": [
     {
       "type": 0,
-      "value": "Every week on Monday..."
+      "value": "Her hafta Pazartesi günü..."
     }
   ],
   "kM+Mr0": [
@@ -7092,7 +7146,7 @@
   "l2YXln": [
     {
       "type": 0,
-      "value": "Replace action with"
+      "value": "Eylemi şununla değiştir:"
     }
   ],
   "l36V56": [
@@ -7159,6 +7213,12 @@
     {
       "type": 0,
       "value": "Grup Ekle"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Required. The collection to reverse."
     }
   ],
   "lexzgJ": [
@@ -7870,7 +7930,7 @@
   "qBNM3e": [
     {
       "type": 0,
-      "value": "Connecting to apps and services"
+      "value": "Uygulamalara ve hizmetlere bağlanılıyor"
     }
   ],
   "qBkxGU": [
@@ -8122,7 +8182,7 @@
   "rn5IsW": [
     {
       "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+      "value": "Ne yazık ki isteğinizi anlayamadım. Lütfen yeniden ifade edin ve tekrar deneyin."
     }
   ],
   "rsdJcV": [
@@ -8170,7 +8230,7 @@
   "sBBLuh": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up these actions:"
+      "value": "Bu iş akışını kaydetmek için bu eylemleri ayarlamayı bitirin:"
     }
   ],
   "sDkAVZ": [
@@ -8266,7 +8326,7 @@
   "srMbm9": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "İptal"
     }
   ],
   "srpZD2": [
@@ -8394,7 +8454,7 @@
   "tTIsTX": [
     {
       "type": 0,
-      "value": "Test this workflow"
+      "value": "Bu iş akışını test et"
     }
   ],
   "tUCptx": [
@@ -8568,7 +8628,7 @@
   "uZpzqY": [
     {
       "type": 0,
-      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+      "value": "Ne yazık ki Copilot tam kapasitede ve geçici olarak kullanılamıyor. Lütfen kısa bir süre sonra yeniden deneyin."
     }
   ],
   "uanMWm": [
@@ -8658,7 +8718,7 @@
   "uxQ143": [
     {
       "type": 0,
-      "value": "Ask question related to your workflow or Logic Apps."
+      "value": "İş akışınız veya Logic Apps ile ilgili soru sorun."
     }
   ],
   "uzsleE": [
@@ -8700,7 +8760,7 @@
   "vF+gWH": [
     {
       "type": 0,
-      "value": "Explain what this flow does"
+      "value": "Bu akışın ne yaptığını açıklayın"
     }
   ],
   "vLereV": [
@@ -8766,7 +8826,7 @@
   "vmlhVB": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up this action:"
+      "value": "Bu iş akışını hazır hale getirmek için bu eylemi ayarlamayı bitirin:"
     }
   ],
   "vr70Gn": [
@@ -9082,7 +9142,7 @@
   "xvav7+": [
     {
       "type": 0,
-      "value": "Connected to"
+      "value": "Şu öğeye bağlı:"
     }
   ],
   "xwD1VZ": [
@@ -9133,6 +9193,12 @@
       "value": "Bir dizedeki karakterlerin bir alt kümesini döndürür."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Returns an array sorted in ascending order"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -9143,6 +9209,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Split a string or array into chunks of equal length"
     }
   ],
   "ydqOly": [
@@ -9168,7 +9240,7 @@
   "yk7L+4": [
     {
       "type": 0,
-      "value": "Dislike"
+      "value": "Beğenme"
     }
   ],
   "yoCi15": [
@@ -9192,7 +9264,7 @@
   "yrYEmk": [
     {
       "type": 0,
-      "value": "Send me an email when..."
+      "value": "Şu durumda bana bir e-posta gönder..."
     }
   ],
   "ysoumb": [
@@ -9283,6 +9355,12 @@
       "value": "Eylemleri Seç"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is an integer"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -9298,7 +9376,7 @@
   "zb3lE6": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up this action:"
+      "value": "Bu iş akışını kaydetmek için bu eylemi ayarlamayı bitirin:"
     }
   ],
   "zcZpHT": [
@@ -9310,7 +9388,7 @@
   "zec5Ay": [
     {
       "type": 0,
-      "value": "Stop"
+      "value": "Durdur"
     }
   ],
   "ziXw25": [

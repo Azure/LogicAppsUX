@@ -45,6 +45,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapur"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -667,6 +673,12 @@
       "value": "Zapisz"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -747,10 +759,22 @@
       "value": "Brak dostępnej zawartości"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Zastąpienie istniejącego schematu przy użyciu niezgodnego schematu może spowodować wystąpienie błędów na mapie."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Returns the collection in reverse order"
     }
   ],
   "3X4FHS": [
@@ -934,7 +958,7 @@
   "4hi3ks": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Przepływ został zaktualizowany."
     }
   ],
   "4j2MEv": [
@@ -990,7 +1014,7 @@
   "50W8FI": [
     {
       "type": 0,
-      "value": "Explain action"
+      "value": "Wyjaśnij akcję"
     }
   ],
   "53MgCQ": [
@@ -1008,13 +1032,13 @@
   "5H+8Sb": [
     {
       "type": 0,
-      "value": "Add a condition"
+      "value": "Dodaj warunek"
     }
   ],
   "5J9jne": [
     {
       "type": 0,
-      "value": "Tell Microsoft what you liked about this feature"
+      "value": "Powiedz firmie Microsoft, co Ci się podobało w tej funkcji"
     }
   ],
   "5OvGgn": [
@@ -1168,7 +1192,7 @@
   "6gblzt": [
     {
       "type": 0,
-      "value": "Updated this action"
+      "value": "Zaktualizowano tę akcję"
     }
   ],
   "6jiO7t": [
@@ -1204,7 +1228,7 @@
   "6pISgk": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up these actions:"
+      "value": "Aby przygotować ten przepływ pracy, zakończ konfigurowanie następujących akcji:"
     }
   ],
   "6qkBwz": [
@@ -1216,7 +1240,7 @@
   "6sGj3J": [
     {
       "type": 0,
-      "value": "Create flow"
+      "value": "Utwórz przepływ"
     }
   ],
   "6u6CS+": [
@@ -1320,7 +1344,7 @@
   "7gUE8h": [
     {
       "type": 0,
-      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+      "value": "Spowoduje to przywrócenie przepływu pracy do stanu sprzed edycji przez funkcję Copilot. Jeśli wprowadzono dodatkowe zmiany w przepływie pracy po edycji przez funkcję Copilot, utracisz je. Tej akcji nie można cofnąć. Czy chcesz kontynuować?"
     }
   ],
   "7k9jXx": [
@@ -1332,7 +1356,7 @@
   "7ku9t+": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Zgłoś usterkę"
     }
   ],
   "7lnElz": [
@@ -1458,13 +1482,13 @@
   "8NUqpR": [
     {
       "type": 0,
-      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Opisz sposób zmiany przepływu. Dodaj szczegóły tam, gdzie to możliwe, w tym łącznik do użycia i ewentualną zawartość."
     }
   ],
   "8Q7ns/": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Edytuj ten przepływ, aby"
     }
   ],
   "8SxNQC": [
@@ -1628,7 +1652,7 @@
   "9QNZSj": [
     {
       "type": 0,
-      "value": "Revert your flow"
+      "value": "Przywróć przepływ"
     }
   ],
   "9SuA/E": [
@@ -1690,7 +1714,7 @@
   "9wX3u9": [
     {
       "type": 0,
-      "value": "Send feedback"
+      "value": "Prześlij opinię"
     }
   ],
   "9x8hg8": [
@@ -1770,7 +1794,7 @@
   "Ak2Lka": [
     {
       "type": 0,
-      "value": "Not connected to"
+      "value": "Nie połączono z"
     }
   ],
   "AnX5yC": [
@@ -1922,7 +1946,7 @@
   "BIzX3S": [
     {
       "type": 0,
-      "value": "Learn more about undo operations"
+      "value": "Dowiedz się więcej o operacjach cofania"
     }
   ],
   "BJNUxN": [
@@ -1958,7 +1982,7 @@
   "BS3gy8": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Niestety, coś poszło źle. Spróbuj ponownie."
     }
   ],
   "BSgavq": [
@@ -2048,7 +2072,7 @@
   "BynK4X": [
     {
       "type": 0,
-      "value": "Ask a question"
+      "value": "Zadaj pytanie"
     }
   ],
   "C1cy54": [
@@ -2066,7 +2090,7 @@
   "CFOUe3": [
     {
       "type": 0,
-      "value": "Add an action that sends an email"
+      "value": "Dodawanie akcji, która wysyła wiadomość e-mail"
     }
   ],
   "CG772M": [
@@ -2372,7 +2396,7 @@
   "EKjaix": [
     {
       "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+      "value": "Sprawdź akcje przepływu, aby sprawdzić, czy należy ustawić jakiekolwiek parametry. Pamiętaj o zapisaniu po zakończeniu!"
     }
   ],
   "EKtYQF": [
@@ -2472,7 +2496,7 @@
   "EqX3Mi": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Skonfiguruj te połączenia, aby używać ich w przepływie."
     }
   ],
   "EurkzL": [
@@ -2538,7 +2562,7 @@
   "FMA0Q0": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Przepływ został zaktualizowany."
     }
   ],
   "FN5zHQ": [
@@ -2732,7 +2756,7 @@
   "GQnN3U": [
     {
       "type": 0,
-      "value": "Explain flow"
+      "value": "Objaśnij przepływ"
     }
   ],
   "GXXLuT": [
@@ -2762,7 +2786,7 @@
   "Ggkf4s": [
     {
       "type": 0,
-      "value": "Get started"
+      "value": "Rozpocznij"
     }
   ],
   "Gi72X5": [
@@ -2871,6 +2895,12 @@
       "value": "Miesiąc"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Required. The collection to sort."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -2916,7 +2946,7 @@
   "HfmDk9": [
     {
       "type": 0,
-      "value": "Edit Flow"
+      "value": "Edytuj przepływ"
     }
   ],
   "HfrUId": [
@@ -3108,7 +3138,7 @@
   "IuHdCO": [
     {
       "type": 0,
-      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+      "value": "Oto Twój przepływ. Jeśli chcesz, abym to zmienił, po prostu to powiedz. Na przykład:"
     }
   ],
   "IxWip7": [
@@ -3192,7 +3222,7 @@
   "JJyT88": [
     {
       "type": 0,
-      "value": "Action undone"
+      "value": "Akcja cofnięta"
     }
   ],
   "JNQHws": [
@@ -3288,7 +3318,7 @@
   "KNDVnN": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "Zastąp element „"
     },
     {
       "type": 1,
@@ -3296,7 +3326,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "” za pomocą"
     }
   ],
   "KP0Rr2": [
@@ -3308,7 +3338,7 @@
   "KV4uky": [
     {
       "type": 0,
-      "value": "When a new item..."
+      "value": "Gdy nowy element..."
     }
   ],
   "KX1poC": [
@@ -3496,7 +3526,7 @@
   "LaFlFh": [
     {
       "type": 0,
-      "value": "Removed this action"
+      "value": "Usunięto tę akcję"
     }
   ],
   "LdITnG": [
@@ -3586,7 +3616,7 @@
   "M3kJsI": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Co tydzień w poniedziałek"
     }
   ],
   "M4H0gh": [
@@ -3628,7 +3658,7 @@
   "MGZRu4": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Dodaj akcję"
     }
   ],
   "MIX4f9": [
@@ -3934,7 +3964,7 @@
   "OQud51": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Więcej informacji o"
     }
   ],
   "OSHNZ2": [
@@ -3958,7 +3988,7 @@
   "OYWZE4": [
     {
       "type": 0,
-      "value": "Save this workflow"
+      "value": "Zapisz ten przepływ pracy"
     }
   ],
   "OdNhwc": [
@@ -4552,7 +4582,7 @@
   "SHXdzU": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Zawartość wygenerowana przez sztuczną inteligencję może być niepoprawna."
     }
   ],
   "SJFVxf": [
@@ -4664,7 +4694,7 @@
   "TLMkrg": [
     {
       "type": 0,
-      "value": "Explain what an action does"
+      "value": "Wyjaśnij, co robi akcja"
     }
   ],
   "TNEttQ": [
@@ -4904,7 +4934,7 @@
   "UW+fkB": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Wyślij mi wiadomość e-mail, gdy"
     }
   ],
   "UYRIS/": [
@@ -4941,6 +4971,12 @@
     {
       "type": 0,
       "value": "Rozwiń"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Required. The length of each chunk."
     }
   ],
   "Umpr3z": [
@@ -5042,7 +5078,7 @@
   "VEbE93": [
     {
       "type": 0,
-      "value": "Explain what the \""
+      "value": "Wyjaśnij działanie akcji „"
     },
     {
       "type": 1,
@@ -5050,7 +5086,7 @@
     },
     {
       "type": 0,
-      "value": "\" action does in this flow"
+      "value": "” tym przepływie"
     }
   ],
   "VHm1Sr": [
@@ -5170,7 +5206,7 @@
   "Vx6fwP": [
     {
       "type": 0,
-      "value": "Added this action"
+      "value": "Dodano tę akcję"
     }
   ],
   "W070M2": [
@@ -5192,7 +5228,7 @@
   "WCASt1": [
     {
       "type": 0,
-      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Opisz w przepływie coś, co powinno zostać zamienione, a także czym powinno to być zastąpione. Dodaj szczegóły tam, gdzie to możliwe, w tym łącznik do użycia i ewentualną zawartość."
     }
   ],
   "WGwH45": [
@@ -5360,7 +5396,7 @@
   "XR4Sd/": [
     {
       "type": 0,
-      "value": "Like"
+      "value": "Lubię to"
     }
   ],
   "XRK+gt": [
@@ -5496,7 +5532,7 @@
   "Y04+GH": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Dodaj akcję"
     }
   ],
   "Y0H9aX": [
@@ -5526,7 +5562,7 @@
   "YCDF7A": [
     {
       "type": 0,
-      "value": "All required parameters are set"
+      "value": "Wszystkie wymagane parametry są ustawione"
     }
   ],
   "YCFhzp": [
@@ -5744,7 +5780,7 @@
   "ZXoHXd": [
     {
       "type": 0,
-      "value": "Here’s your flow."
+      "value": "Oto Twój przepływ."
     }
   ],
   "ZaIeDG": [
@@ -5919,6 +5955,12 @@
       "value": "Wymagane. Wartość konwertowana na wartość binarną."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Optional. A key to use for sorting objects in the collection."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5964,7 +6006,7 @@
   "blRFVt": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Skonfiguruj te połączenia, aby używać ich w przepływie."
     }
   ],
   "bldzuj": [
@@ -6192,13 +6234,13 @@
   "dMAC4C": [
     {
       "type": 0,
-      "value": "Replace action"
+      "value": "Zamień akcję"
     }
   ],
   "dNpnmn": [
     {
       "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+      "value": "Witamy ponownie! Jeśli chcesz, abym zmienił przepływ, po prostu to powiedz. Na przykład:"
     }
   ],
   "dOpdsP": [
@@ -6228,7 +6270,7 @@
   "dUbKuK": [
     {
       "type": 0,
-      "value": "Skip"
+      "value": "Pomiń"
     }
   ],
   "dWFyfN": [
@@ -6326,7 +6368,7 @@
   "eESljX": [
     {
       "type": 0,
-      "value": "Revert"
+      "value": "Przywróć"
     }
   ],
   "eFet4K": [
@@ -6392,7 +6434,7 @@
   "eqAUdj": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Gdy nowy element"
     }
   ],
   "f/lWTW": [
@@ -6629,6 +6671,12 @@
       "value": "Wprowadź odbiorców."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6734,7 +6782,7 @@
   "hRVVdR": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Cofnij"
     }
   ],
   "hZqQdt": [
@@ -7016,7 +7064,7 @@
   "jN0YES": [
     {
       "type": 0,
-      "value": "Tell Microsoft how this feature could be improved"
+      "value": "Poinformuj firmę Microsoft, jak można ulepszyć tę funkcję"
     }
   ],
   "jQ0Aqj": [
@@ -7041,6 +7089,12 @@
     {
       "type": 0,
       "value": "Schemat docelowy"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Required. The string or array to split."
     }
   ],
   "jVpanH": [
@@ -7076,7 +7130,7 @@
   "jlcMGg": [
     {
       "type": 0,
-      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Opisz, co powinien zrobić przepływ. Dodaj szczegóły tam, gdzie to możliwe, w tym łącznik do użycia i ewentualną zawartość."
     }
   ],
   "juR40n": [
@@ -7148,13 +7202,13 @@
   "kHs5R4": [
     {
       "type": 0,
-      "value": "Check these actions to see if any parameters need to be set."
+      "value": "Sprawdź te akcje, aby zobaczyć, czy należy ustawić jakiekolwiek parametry."
     }
   ],
   "kKJMeM": [
     {
       "type": 0,
-      "value": "Every week on Monday..."
+      "value": "Co tydzień w poniedziałek..."
     }
   ],
   "kM+Mr0": [
@@ -7292,7 +7346,7 @@
   "l2YXln": [
     {
       "type": 0,
-      "value": "Replace action with"
+      "value": "Zamień akcję na"
     }
   ],
   "l36V56": [
@@ -7359,6 +7413,12 @@
     {
       "type": 0,
       "value": "Dodaj grupę"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Required. The collection to reverse."
     }
   ],
   "lexzgJ": [
@@ -8070,7 +8130,7 @@
   "qBNM3e": [
     {
       "type": 0,
-      "value": "Connecting to apps and services"
+      "value": "Łączenie z aplikacjami i usługami"
     }
   ],
   "qBkxGU": [
@@ -8344,7 +8404,7 @@
   "rn5IsW": [
     {
       "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+      "value": "Niestety, nie udało mi się zrozumieć Twojego żądania. Sformułuj je jeszcze raz i spróbuj ponownie."
     }
   ],
   "rsdJcV": [
@@ -8392,7 +8452,7 @@
   "sBBLuh": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up these actions:"
+      "value": "Aby zapisać ten przepływ pracy, zakończ konfigurowanie następujących akcji:"
     }
   ],
   "sDkAVZ": [
@@ -8488,7 +8548,7 @@
   "srMbm9": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Anuluj"
     }
   ],
   "srpZD2": [
@@ -8616,7 +8676,7 @@
   "tTIsTX": [
     {
       "type": 0,
-      "value": "Test this workflow"
+      "value": "Przetestuj ten przepływ pracy"
     }
   ],
   "tUCptx": [
@@ -8790,7 +8850,7 @@
   "uZpzqY": [
     {
       "type": 0,
-      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+      "value": "Niestety, funkcja Copilot osiągnęła maksymalną pojemność i jest tymczasowo niedostępna — spróbuj ponownie za chwilę."
     }
   ],
   "uanMWm": [
@@ -8880,7 +8940,7 @@
   "uxQ143": [
     {
       "type": 0,
-      "value": "Ask question related to your workflow or Logic Apps."
+      "value": "Zadaj pytanie związane z przepływem pracy lub usługą Logic Apps."
     }
   ],
   "uzsleE": [
@@ -8922,7 +8982,7 @@
   "vF+gWH": [
     {
       "type": 0,
-      "value": "Explain what this flow does"
+      "value": "Wyjaśnij, co robi ten przepływ"
     }
   ],
   "vLereV": [
@@ -8988,7 +9048,7 @@
   "vmlhVB": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up this action:"
+      "value": "Aby przygotować ten przepływ pracy, zakończ konfigurowanie tej akcji:"
     }
   ],
   "vr70Gn": [
@@ -9308,7 +9368,7 @@
   "xvav7+": [
     {
       "type": 0,
-      "value": "Connected to"
+      "value": "Połączono z"
     }
   ],
   "xwD1VZ": [
@@ -9359,6 +9419,12 @@
       "value": "Zwraca podciąg znaków z ciągu."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Returns an array sorted in ascending order"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -9369,6 +9435,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Split a string or array into chunks of equal length"
     }
   ],
   "ydqOly": [
@@ -9394,7 +9466,7 @@
   "yk7L+4": [
     {
       "type": 0,
-      "value": "Dislike"
+      "value": "Nie lubię"
     }
   ],
   "yoCi15": [
@@ -9418,7 +9490,7 @@
   "yrYEmk": [
     {
       "type": 0,
-      "value": "Send me an email when..."
+      "value": "Wyślij mi wiadomość e-mail, gdy..."
     }
   ],
   "ysoumb": [
@@ -9509,6 +9581,12 @@
       "value": "Wybierz akcje"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is an integer"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -9524,7 +9602,7 @@
   "zb3lE6": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up this action:"
+      "value": "Aby zapisać ten przepływ pracy, zakończ konfigurowanie tej akcji:"
     }
   ],
   "zcZpHT": [
@@ -9536,7 +9614,7 @@
   "zec5Ay": [
     {
       "type": 0,
-      "value": "Stop"
+      "value": "Zatrzymaj"
     }
   ],
   "ziXw25": [

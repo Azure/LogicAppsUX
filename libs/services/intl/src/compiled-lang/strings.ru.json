@@ -45,6 +45,12 @@
       "value": "(UTC+08:00) Куала-Лумпур, Сингапур"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -663,6 +669,12 @@
       "value": "Сохранить"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -743,10 +755,22 @@
       "value": "Нет доступного содержимого"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Замена существующей схемы несовместимой схемой может привести к ошибкам в карте."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Returns the collection in reverse order"
     }
   ],
   "3X4FHS": [
@@ -2867,6 +2891,12 @@
       "value": "Месяц"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Required. The collection to sort."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -4935,6 +4965,12 @@
       "value": "Развернуть"
     }
   ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Required. The length of each chunk."
+    }
+  ],
   "Umpr3z": [
     {
       "type": 0,
@@ -5911,6 +5947,12 @@
       "value": "Требуется. Значение, которое преобразуется в двоичный файл."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Optional. A key to use for sorting objects in the collection."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -6621,6 +6663,12 @@
       "value": "Введите аудиторию."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -7035,6 +7083,12 @@
       "value": "Целевая схема"
     }
   ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Required. The string or array to split."
+    }
+  ],
   "jVpanH": [
     {
       "type": 0,
@@ -7339,6 +7393,12 @@
     {
       "type": 0,
       "value": "Добавить группу"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Required. The collection to reverse."
     }
   ],
   "lexzgJ": [
@@ -9339,6 +9399,12 @@
       "value": "Возвращает подмножество символов из строки."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Returns an array sorted in ascending order"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -9349,6 +9415,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Split a string or array into chunks of equal length"
     }
   ],
   "ydqOly": [
@@ -9487,6 +9559,12 @@
     {
       "type": 0,
       "value": "Выбрать действия"
+    }
+  ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is an integer"
     }
   ],
   "zUgja+": [
