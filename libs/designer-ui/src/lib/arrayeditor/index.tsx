@@ -80,7 +80,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 
   const dimensionalSchema: ItemSchemaItemProps[] = useMemo(() => {
     if (!isComplex) return [];
-    console.log(itemSchema);
     return getOneDimensionalSchema(itemSchema);
   }, [isComplex, itemSchema]);
 
@@ -95,6 +94,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     setCollapsed(!collapsed);
   };
 
+  // serialize simple expanded array
   const updateSimpleItems = (newItems: SimpleArrayItem[]) => {
     setItems(newItems);
     const objectValue = parseSimpleItems(newItems, itemSchema, castParameter);
@@ -108,7 +108,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     }
   };
 
+  // serialize complex expanded array
   const updateComplexItems = (newItems: ComplexArrayItems[]) => {
+    console.log(newItems);
     setItems(newItems);
     // we want to supress casting for when switching between expanded and collapsed array, but cast when serializing
     const objectValue = parseComplexItems(newItems, itemSchema, castParameter);
@@ -122,6 +124,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     }
   };
 
+  // serialize collapsed array
   const handleBlur = (): void => {
     onChange?.({
       value: collapsedValue,

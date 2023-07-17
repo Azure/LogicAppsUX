@@ -15,6 +15,7 @@ export interface ItemSchemaItemProps {
   format?: string;
   items?: ItemSchemaItemProps[];
   readOnly?: boolean;
+  enum?: string[];
 }
 
 export const hideComplexArray = (dimensionalSchema: ItemSchemaItemProps[]) => {
@@ -49,6 +50,7 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?
       isRequired: !isArray && isRequired,
       description: description ?? '',
       format,
+      enum: itemSchema.enum,
       items: isArray && items ? getOneDimensionalSchema(items, isRequired) : undefined,
       readOnly,
     });
@@ -56,7 +58,7 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?
   return flattenedSchema;
 };
 
-// Converts Complex Array Items values to be a string from valuesegment
+// Converts Complex Array Items values from ValueSegments Arrays to Strings
 export const convertComplexItemsToArray = (
   itemSchema: ArrayItemSchema,
   items: ComplexArrayItem[],
@@ -65,7 +67,6 @@ export const convertComplexItemsToArray = (
   castParameter?: CastHandler
 ) => {
   const returnItem: any = {};
-
   if (itemSchema.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties) {
     Object.entries(itemSchema.properties).forEach(([key, value]) => {
       if (key !== 'key' && items) {
@@ -106,13 +107,24 @@ export const convertComplexItemsToArray = (
     const complexItem = items.find((item) => {
       return item.key === itemSchema.key;
     });
+    // console.log(complexItem);
     if (complexItem) {
-      const segments = complexItem.value;
+      if (complexItem.arrayItems && itemSchema.type === constants.SWAGGER.TYPE.ARRAY) {
+        const arrayVal: any = [];
+        complexItem.arrayItems.forEach((arrayItem) => {
+          if (itemSchema.items) {
+            arrayVal.push(convertComplexItemsToArray(itemSchema.items, arrayItem.items, nodeMap, suppressCasting, castParameter));
+          }
+        });
+        return arrayVal;
+      } else {
+        const segments = complexItem.value;
 
-      // we need to convert to string to extract tokens to repopulate later
-      const stringValue = convertSegmentsToString(segments, nodeMap);
-      const castedValue = castParameter?.(segments, itemSchema.type, itemSchema.format, suppressCasting);
-      return suppressCasting ? stringValue : castedValue;
+        // we need to convert to string to extract tokens to repopulate later
+        const stringValue = convertSegmentsToString(segments, nodeMap);
+        const castedValue = castParameter?.(segments, itemSchema.type, itemSchema.format, suppressCasting);
+        return suppressCasting ? stringValue : castedValue;
+      }
     }
   }
   return returnItem;
@@ -215,6 +227,17 @@ const convertObjectToComplexArrayItemArray = (
   nodeMap: Map<string, ValueSegment>
 ): ComplexArrayItem[] => {
   const items: ComplexArrayItem[] = [];
+
+  if (typeof obj === 'string') {
+    return [
+      {
+        key: itemSchema.key,
+        title: handleTitle(itemSchema.key, itemSchema.title),
+        description: itemSchema.description ?? '',
+        value: convertStringToSegments(obj, true, nodeMap),
+      },
+    ];
+  }
 
   Object.keys(obj).forEach((key: string) => {
     const value = obj[key];

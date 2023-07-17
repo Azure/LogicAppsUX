@@ -95,6 +95,7 @@ export const ExpandedSimpleArray = ({
                   })
                 )}
                 initialValue={item.value ?? []}
+                placeholder={placeholder}
                 onChange={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
               />
             ) : (

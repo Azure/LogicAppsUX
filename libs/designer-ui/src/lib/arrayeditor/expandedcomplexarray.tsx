@@ -1,5 +1,5 @@
-import type { ComplexArrayItems, TokenPickerButtonEditorProps } from '..';
-import { StringEditor } from '..';
+import type { ComboboxItem, ComplexArrayItems, TokenPickerButtonEditorProps } from '..';
+import { Combobox, StringEditor } from '..';
 import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { ItemMenuButton } from './expandedsimplearray';
@@ -64,24 +64,22 @@ export const ExpandedComplexArray = ({
     setItems(newItems);
   };
 
-  const handleNestedArraySaved = (
-    newComplexItems: ComplexArrayItems[],
-    index: number,
-    innerIndex: number,
-    schemaItem: ItemSchemaItemProps
-  ) => {
+  const handleNestedArraySaved = (newComplexItems: ComplexArrayItems[], index: number, schemaItem: ItemSchemaItemProps) => {
+    const key = schemaItem.key;
+    const itemIndex = allItems[index].items.findIndex((item) => item.key === key);
     const newItems = [...allItems];
-    console.log(allItems);
-    if (allItems[index]?.items[innerIndex]?.key !== schemaItem.key) {
-      const slicedArray = allItems[index].items;
-      newItems[index].items = [
-        ...slicedArray.slice(0, innerIndex),
-        { key: schemaItem.key, title: schemaItem.title, description: schemaItem.description, value: [] },
-        ...slicedArray.slice(innerIndex),
-      ];
+    if (itemIndex === -1) {
+      newItems[index].items.push({
+        key: schemaItem.key,
+        title: schemaItem.title,
+        description: schemaItem.description,
+        value: [],
+        arrayItems: newComplexItems,
+      });
+    } else {
+      newItems[index].items[itemIndex].arrayItems = newComplexItems;
     }
-    newItems[index].items[innerIndex].arrayItems = newComplexItems;
-    setItems(JSON.parse(JSON.stringify(newItems)));
+    setItems(newItems);
   };
 
   const renderLabel = (index: number, schemaItem: ItemSchemaItemProps, isRequired?: boolean): JSX.Element => {
@@ -111,7 +109,7 @@ export const ExpandedComplexArray = ({
                         allItems={complexItem?.arrayItems ?? ([] as ComplexArrayItems[])}
                         canDeleteLastItem={canDeleteLastItem}
                         setItems={(newItems) => {
-                          handleNestedArraySaved(newItems, index, i, schemaItem);
+                          handleNestedArraySaved(newItems, index, schemaItem);
                         }}
                         isNested={true}
                         itemKey={guid()}
@@ -136,15 +134,31 @@ export const ExpandedComplexArray = ({
                                 </div>
                               ) : null}
                             </div>
-                            <StringEditor
-                              {...props}
-                              readonly={schemaItem?.readOnly}
-                              valueType={schemaItem?.type}
-                              className="msla-array-editor-container-expanded"
-                              initialValue={complexItem?.value ?? []}
-                              editorBlur={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
-                              placeholder={schemaItem?.description}
-                            />
+                            {schemaItem.enum && schemaItem.enum.length > 0 ? (
+                              <Combobox
+                                {...props}
+                                options={schemaItem.enum.map(
+                                  (val: string): ComboboxItem => ({
+                                    displayName: val,
+                                    key: val,
+                                    value: val,
+                                  })
+                                )}
+                                placeholder={schemaItem.description}
+                                initialValue={complexItem?.value ?? []}
+                                onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
+                              />
+                            ) : (
+                              <StringEditor
+                                {...props}
+                                readonly={schemaItem?.readOnly}
+                                valueType={schemaItem?.type}
+                                className="msla-array-editor-container-expanded"
+                                initialValue={complexItem?.value ?? []}
+                                editorBlur={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
+                                placeholder={schemaItem?.description}
+                              />
+                            )}
                           </>
                         )
                       }
