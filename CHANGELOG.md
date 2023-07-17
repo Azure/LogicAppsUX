@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.45.3](https://github.com/Azure/LogicAppsUX/compare/v2.45.2...v2.45.3) (2023-07-17)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed rare connection creation parameter null-safety issue ([#2960](https://github.com/Azure/LogicAppsUX/issues/2960)) ([bf245c5](https://github.com/Azure/LogicAppsUX/commit/bf245c53d21a93cb801efe415ec29c9afab7393d))
+* **vscode:** Api version in api hub service ([#2974](https://github.com/Azure/LogicAppsUX/issues/2974)) ([#2977](https://github.com/Azure/LogicAppsUX/issues/2977)) ([1bbe7c9](https://github.com/Azure/LogicAppsUX/commit/1bbe7c99e14eba6bf796ce89780b39716ad82d37))
+
 ### [2.45.2](https://github.com/Azure/LogicAppsUX/compare/v2.45.1...v2.45.2) (2023-07-12)
 
 
