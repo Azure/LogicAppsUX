@@ -130,6 +130,7 @@ const hostService = { fetchAndDisplayContent: (title: string, url: string, type:
 export const LocalDesigner = () => {
   const { workflowDefinition, isReadOnly, isMonitoringView, isDarkMode, isConsumption, connections, runInstance, showChatBot, language } =
     useSelector((state: RootState) => state.workflowLoader);
+
   const designerProviderProps = {
     services: {
       connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
