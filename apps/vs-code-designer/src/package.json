@@ -94,6 +94,11 @@
         "enablement": "!virtualWorkspace"
       },
       {
+        "command": "azureLogicAppsStandard.generateDeploymentScripts",
+        "title": "Generate Deployment Scripts...",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.deploySlot",
         "title": "Deploy to Slot...",
         "category": "Azure Logic Apps"
@@ -337,6 +342,10 @@
           "group": "2_deploy@1"
         },
         {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
+          "group": "3_export@1"
+        },
+        {
           "command": "azureLogicAppsStandard.exportLogicApp",
           "group": "3_export@1"
         }
@@ -386,6 +395,11 @@
         },
         {
           "command": "azureLogicAppsStandard.deploySlot",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot/",
+          "group": "3@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot/",
           "group": "3@2"
         },
@@ -568,6 +582,11 @@
       "explorer/context": [
         {
           "command": "azureLogicAppsStandard.deploy",
+          "when": "explorerResourceIsFolder == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "explorerResourceIsFolder == true",
           "group": "zzz_LogicApptools@1"
         },
@@ -788,6 +807,7 @@
     "onCommand:azureLogicAppsStandard.createNewCodeProject",
     "onCommand:azureLogicAppsStandard.createCodeless",
     "onCommand:azureLogicAppsStandard.deploy",
+    "onCommand: azureLogicAppsStandard.generateDeploymentScripts",
     "onCommand:azureLogicAppsStandard.deploySlot",
     "onCommand:azureLogicAppsStandard.createLogicApp",
     "onCommand:azureLogicAppsStandard.createLogicAppAdvanced",
