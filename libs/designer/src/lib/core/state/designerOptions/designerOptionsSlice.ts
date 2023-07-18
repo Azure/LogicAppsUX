@@ -88,7 +88,7 @@ export const designerOptionsSlice = createSlice({
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
-      state.addedNodeSelectCallback = action.payload.addedNodeSelectCallback;
+      state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
     },
   },
   extraReducers: (builder) => {

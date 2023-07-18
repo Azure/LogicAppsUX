@@ -5,7 +5,7 @@ import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import {
   useMonitoringView,
-  useAddedNodeSelectCallback,
+  useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
@@ -80,7 +80,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
-  const nodeSelectCallbackOverride = useAddedNodeSelectCallback();
+  const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
 
   const getRunRepetition = () => {
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);

@@ -22,7 +22,7 @@ export interface DesignerOptionsState {
   useLegacyWorkflowParameters?: boolean;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
-  addedNodeSelectCallback?: (nodeId: string) => any;
+  nodeSelectAdditionalCallback?: (nodeId: string) => any;
 }
 
 export interface ServiceOptions {
