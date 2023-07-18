@@ -20,8 +20,7 @@ import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
 import { TokenPickerButton } from './plugins/tokenpickerbutton';
 import { defaultInitialConfig, defaultNodes, htmlNodes } from './utils/initialConfig';
 import { parseSegments, parseHtmlSegments } from './utils/parsesegments';
-import type { ICalloutProps } from '@fluentui/react';
-import { DirectionalHint, css, TooltipHost } from '@fluentui/react';
+import { css } from '@fluentui/react';
 import type { InitialConfigType } from '@lexical/react/LexicalComposer';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -109,7 +108,6 @@ export const BaseEditor = ({
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
-  const [isOverflowed, setIsOverflowed] = useState(false);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
@@ -124,9 +122,6 @@ export const BaseEditor = ({
   useEffect(() => {
     if (containerRef.current && placeholderRef.current) {
       onRef(containerRef.current);
-      const containerWidth = containerRef.current.clientWidth;
-      const placeholderWidth = placeholderRef.current.clientWidth;
-      setIsOverflowed(placeholderWidth > containerWidth);
     }
   }, []);
 
@@ -175,17 +170,17 @@ export const BaseEditor = ({
     setInTokenPicker(b);
   };
 
-  const calloutProps: Partial<ICalloutProps> = {
-    gapSpace: 1,
-    isBeakVisible: false,
-    hidden: isEditorFocused || !isOverflowed,
-    directionalHint: DirectionalHint.bottomRightEdge,
-  };
   const id = useId('deiosnoin');
   return (
-    <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
+    <div style={{ width: '100%' }}>
       <LexicalComposer initialConfig={initialConfig}>
-        <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
+        <div
+          className={className ?? 'msla-editor-container'}
+          id={editorId}
+          ref={containerRef}
+          data-automation-id={dataAutomationId}
+          title={placeholder}
+        >
           {toolbar ? <Toolbar readonly={readonly} /> : null}
           <RichTextPlugin
             contentEditable={
@@ -228,6 +223,6 @@ export const BaseEditor = ({
           <div />
         )}
       </LexicalComposer>
-    </TooltipHost>
+    </div>
   );
 };

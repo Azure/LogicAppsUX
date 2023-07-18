@@ -1,5 +1,45 @@
 # Logic Apps Designer
 
+## [2.49.0](https://github.com/Azure/LogicAppsUX/compare/v2.48.0...v2.49.0) (2023-07-18)
+
+### Features
+
+- **Designer:** Added node selection functionality options ([#2988](https://github.com/Azure/LogicAppsUX/issues/2988)) ([e673d09](https://github.com/Azure/LogicAppsUX/commit/e673d09352dde8b1655c995e602beba439584910))
+
+### Bug Fixes
+
+- **designer:** Update operations connector id for x12 and edifact ([#2982](https://github.com/Azure/LogicAppsUX/issues/2982)) ([99c168e](https://github.com/Azure/LogicAppsUX/commit/99c168edea7a64f9c2255ebd30b62677307efb67))
+
+## [2.48.0](https://github.com/Azure/LogicAppsUX/compare/v2.47.0...v2.48.0) (2023-07-17)
+
+### Features
+
+- **vscode:** Add microsoft csharp extension as dependency ([#2978](https://github.com/Azure/LogicAppsUX/issues/2978)) ([69fe613](https://github.com/Azure/LogicAppsUX/commit/69fe613f0374347136a46d615eccdb748a6fc105))
+
+### Bug Fixes
+
+- **designer:** Add missing template functions ([#2969](https://github.com/Azure/LogicAppsUX/issues/2969)) ([cadcffe](https://github.com/Azure/LogicAppsUX/commit/cadcffe1c12a16083daba984fd8a75b1d58ccc78))
+- **designer:** Complex Array Editor - Support for nested items ([#2979](https://github.com/Azure/LogicAppsUX/issues/2979)) ([0eebf88](https://github.com/Azure/LogicAppsUX/commit/0eebf88bda57ecc45577ee85ee8fdabc37e94a91))
+- **Designer:** Fixed bug with subscription fetch request `nextlink`s ([#2980](https://github.com/Azure/LogicAppsUX/issues/2980)) ([6dd8400](https://github.com/Azure/LogicAppsUX/commit/6dd840088789d2da83941eb2eb91e547dd049814))
+- **vscode:** Api version in api hub service ([#2974](https://github.com/Azure/LogicAppsUX/issues/2974)) ([f6eb8a2](https://github.com/Azure/LogicAppsUX/commit/f6eb8a258d043f13e2f849ce62a595416a98d499))
+
+## [2.47.0](https://github.com/Azure/LogicAppsUX/compare/v2.46.0...v2.47.0) (2023-07-13)
+
+### Bug Fixes
+
+- **Designer:** Fixed rare connection creation parameter null-safety issue ([#2960](https://github.com/Azure/LogicAppsUX/issues/2960)) ([f104bbb](https://github.com/Azure/LogicAppsUX/commit/f104bbb97b2edb6ae93a9d02ae74170f40e18492))
+
+## [2.46.0](https://github.com/Azure/LogicAppsUX/compare/v2.45.0...v2.46.0) (2023-07-12)
+
+### Features
+
+- **chatbot:** Chatbot UI components ([#2869](https://github.com/Azure/LogicAppsUX/issues/2869)) ([1b78fde](https://github.com/Azure/LogicAppsUX/commit/1b78fde2629cc9e01de7e8970b30483d06f26c28))
+
+### Bug Fixes
+
+- **Designer:** Fixed dynamic data regression ([#2954](https://github.com/Azure/LogicAppsUX/issues/2954)) ([8f1c185](https://github.com/Azure/LogicAppsUX/commit/8f1c185f2e26e3652554ca2923a71addee1c5f95))
+- **vscode:** Update services API version ([#2957](https://github.com/Azure/LogicAppsUX/issues/2957)) ([90cd9c0](https://github.com/Azure/LogicAppsUX/commit/90cd9c00044be5dc9dd9f44ec70fcd7c5063c8bc))
+
 ## [2.45.0](https://github.com/Azure/LogicAppsUX/compare/v2.44.0...v2.45.0) (2023-07-11)
 
 ### Features

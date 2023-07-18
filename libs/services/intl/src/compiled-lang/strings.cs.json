@@ -45,6 +45,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapur"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -667,6 +673,12 @@
       "value": "Uložit"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -747,10 +759,22 @@
       "value": "Není k dispozici žádný obsah."
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Nahrazení existujícího schématu nekompatibilním schématem může způsobit chyby v mapě."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Returns the collection in reverse order"
     }
   ],
   "3X4FHS": [
@@ -931,6 +955,12 @@
       "value": "Povinný parametr. Název parametru, jehož hodnoty požadujete."
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Your flow has been updated."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -981,6 +1011,12 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Explain action"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
@@ -991,6 +1027,18 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Ósaka, Sapporo, Tokio"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "Add a condition"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Tell Microsoft what you liked about this feature"
     }
   ],
   "5OvGgn": [
@@ -1141,6 +1189,12 @@
       "value": " je přiřazeno příliš mnoho vstupů"
     }
   ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Updated this action"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -1171,10 +1225,22 @@
       "value": "Předchozí"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "To get this workflow ready, finish setting up these actions:"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, kterým se má vynásobit násobenec 2."
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Create flow"
     }
   ],
   "6u6CS+": [
@@ -1275,10 +1341,22 @@
       "value": "Nepovinné. Národní prostředí, které se má použít při formátování (výchozí možnost je en-us)"
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Stavový kód"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "7lnElz": [
@@ -1399,6 +1477,18 @@
     {
       "type": 0,
       "value": "Povolte prosím pro aplikaci logiky spravovanou identitu."
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
     }
   ],
   "8SxNQC": [
@@ -1559,6 +1649,12 @@
       "value": "(UTC-03:00) Brazílie"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Revert your flow"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1613,6 +1709,12 @@
     {
       "type": 0,
       "value": "Vrátí true, pokud jsou oba parametry true."
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Send feedback"
     }
   ],
   "9x8hg8": [
@@ -1687,6 +1789,12 @@
     {
       "type": 0,
       "value": "Vyberte frekvenci."
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Not connected to"
     }
   ],
   "AnX5yC": [
@@ -1835,6 +1943,12 @@
       "value": "Povinný parametr. Řetězec kódovaný jako identifikátor URI."
     }
   ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Learn more about undo operations"
+    }
+  ],
   "BJNUxN": [
     {
       "type": 0,
@@ -1863,6 +1977,12 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
     }
   ],
   "BSgavq": [
@@ -1949,6 +2069,12 @@
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší než porovnávaný objekt."
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Ask a question"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1959,6 +2085,12 @@
     {
       "type": 0,
       "value": "Načtěte položky, aby se splnila zadaná prahová hodnota tak, že se bude následovat token pro pokračování. Kvůli velikosti stránky konektoru může počet vrácených položek překročit prahovou hodnotu."
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "Add an action that sends an email"
     }
   ],
   "CG772M": [
@@ -2261,6 +2393,12 @@
       "value": "Převede parametr na desetinné číslo."
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
@@ -2355,6 +2493,12 @@
       "value": "Zobrazit historii žádostí pro tuto operaci"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Set up these connections to use them in your flow."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2413,6 +2557,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Your flow has been updated."
     }
   ],
   "FN5zHQ": [
@@ -2603,6 +2753,12 @@
       "value": "Vyžadováno. Objekt, který se má najít v kolekci Within."
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Explain flow"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2625,6 +2781,12 @@
     {
       "type": 0,
       "value": "Další příkazy"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Get started"
     }
   ],
   "Gi72X5": [
@@ -2733,6 +2895,12 @@
       "value": "Měsíc"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Required. The collection to sort."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -2773,6 +2941,12 @@
     {
       "type": 0,
       "value": "Přepne na vstupy podrobností pro položku pole."
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Edit Flow"
     }
   ],
   "HfrUId": [
@@ -2961,6 +3135,12 @@
       "value": "Žádné vlastnosti"
     }
   ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3033,6 +3213,12 @@
     {
       "type": 0,
       "value": "Odstranit"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Action undone"
     }
   ],
   "JNQHws": [
@@ -3125,10 +3311,30 @@
       "value": "Změnit informace o připojení"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "Zadejte platné dvojčíslo."
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "When a new item..."
     }
   ],
   "KX1poC": [
@@ -3313,6 +3519,12 @@
       "value": "Přidat paralelní větev"
     }
   ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Removed this action"
+    }
+  ],
   "LdITnG": [
     {
       "type": 0,
@@ -3397,6 +3609,12 @@
       "value": "Zobrazení kódu"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3431,6 +3649,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce k vyhodnocení. Objekt musí být ve všech kolekcích, které se předávají do výsledku."
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "MIX4f9": [
@@ -3737,6 +3961,12 @@
       "value": "Načítají se všechny konektory..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3753,6 +3983,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledky z akcí na nejvyšší úrovni s určeným rozsahem, například z akcí For_each, Until nebo Scope."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Save this workflow"
     }
   ],
   "OdNhwc": [
@@ -4327,6 +4563,12 @@
       "value": "Záhlaví 2"
     }
   ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "AI-generated content may be incorrect"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4431,6 +4673,12 @@
     {
       "type": 0,
       "value": "Poslat zpětnou vazbu"
+    }
+  ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "Explain what an action does"
     }
   ],
   "TNEttQ": [
@@ -4667,6 +4915,12 @@
       "value": "Vyžadováno. Kolekce, ze které se má získat poslední objekt."
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4701,6 +4955,12 @@
     {
       "type": 0,
       "value": "Rozbalit"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Required. The length of each chunk."
     }
   ],
   "Umpr3z": [
@@ -4797,6 +5057,20 @@
     {
       "type": 0,
       "value": "V aplikaci"
+    }
+  ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Explain what the \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" action does in this flow"
     }
   ],
   "VHm1Sr": [
@@ -4913,6 +5187,12 @@
       "value": "Akce"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Added this action"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4927,6 +5207,12 @@
     {
       "type": 0,
       "value": "Povinné. Název nové vlastnosti"
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
   "WGwH45": [
@@ -5091,6 +5377,12 @@
       "value": "(UTC+03:00) Bagdád"
     }
   ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Like"
+    }
+  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -5221,6 +5513,12 @@
       "value": "Heslo"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5245,6 +5543,12 @@
       "value": "Položka textu"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "All required parameters are set"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5255,6 +5559,12 @@
     {
       "type": 0,
       "value": "Podmínky aktivační události"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
     }
   ],
   "YHsAKl": [
@@ -5451,6 +5761,12 @@
       "value": "Zkratka pro trigger().outputs.body"
     }
   ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "Here’s your flow."
+    }
+  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5623,6 +5939,12 @@
       "value": "Povinný parametr. Hodnota, která se převádí do binárního formátu."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Optional. A key to use for sorting objects in the collection."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5663,6 +5985,12 @@
     {
       "type": 0,
       "value": "Vrátí maximální hodnotu vstupního pole čísel."
+    }
+  ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Set up these connections to use them in your flow."
     }
   ],
   "bldzuj": [
@@ -5887,6 +6215,18 @@
       "value": "Spravovaná identita"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Replace action"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5909,6 +6249,12 @@
     {
       "type": 0,
       "value": "Zadejte chování a možnosti pro přenos obsahu přes protokol HTTP. Velké zprávy mohou být rozděleny na menší žádosti směřované na konektor, aby je bylo možné nahrát. Podrobnosti najdete na http://aka.ms/logicapps-chunk#upload-content-in-chunks."
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Skip"
     }
   ],
   "dWFyfN": [
@@ -6003,6 +6349,12 @@
       "value": "Nepovedlo se vygenerovat XSLT."
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Revert"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -6061,6 +6413,12 @@
     {
       "type": 0,
       "value": "Sdíleno"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "When a new item"
     }
   ],
   "f/lWTW": [
@@ -6297,6 +6655,12 @@
       "value": "Zadejte cílovou skupinu."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6397,6 +6761,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledek rozdílu daných dvou čísel."
+    }
+  ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Undo"
     }
   ],
   "hZqQdt": [
@@ -6679,6 +7049,12 @@
       "value": "Vytvořit nové"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Tell Microsoft how this feature could be improved"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6701,6 +7077,12 @@
     {
       "type": 0,
       "value": "Cílové schéma"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Required. The string or array to split."
     }
   ],
   "jVpanH": [
@@ -6731,6 +7113,12 @@
     {
       "type": 0,
       "value": "Nepovedlo se vygenerovat schéma."
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
   "juR40n": [
@@ -6797,6 +7185,18 @@
     {
       "type": 0,
       "value": " s"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Check these actions to see if any parameters need to be set."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Every week on Monday..."
     }
   ],
   "kM+Mr0": [
@@ -6915,6 +7315,12 @@
       "value": "(UTC+01:00) Windhoek"
     }
   ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Replace action with"
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -6979,6 +7385,12 @@
     {
       "type": 0,
       "value": "Přidat skupinu"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Required. The collection to reverse."
     }
   ],
   "lexzgJ": [
@@ -7687,6 +8099,12 @@
       "value": "'"
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Connecting to apps and services"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7955,6 +8373,12 @@
       "value": "Úspěšné"
     }
   ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7995,6 +8419,12 @@
     {
       "type": 0,
       "value": "Odstranit"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "To save this workflow, finish setting up these actions:"
     }
   ],
   "sDkAVZ": [
@@ -8085,6 +8515,12 @@
     {
       "type": 0,
       "value": "Vrátí true, pokud je kterýkoli z parametrů true."
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "srpZD2": [
@@ -8203,6 +8639,12 @@
     {
       "type": 0,
       "value": "Typ"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Test this workflow"
     }
   ],
   "tUCptx": [
@@ -8369,6 +8811,12 @@
       "value": "Omezte maximální dobu trvání mezi opakovanými pokusy a asynchronními odpověďmi na tuto akci. Poznámka: Časový limit požadavku jedné žádosti se nezmění."
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
@@ -8453,6 +8901,12 @@
       "value": "Parametry"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Ask question related to your workflow or Logic Apps."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8487,6 +8941,12 @@
     {
       "type": 0,
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Explain what this flow does"
     }
   ],
   "vLereV": [
@@ -8547,6 +9007,12 @@
     {
       "type": 0,
       "value": "Zahodit"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "To get this workflow ready, finish setting up this action:"
     }
   ],
   "vr70Gn": [
@@ -8863,6 +9329,12 @@
       "value": "Parametry se sdílejí mezi pracovními postupy v aplikaci logiky."
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Connected to"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8911,6 +9383,12 @@
       "value": "Vrátí podmnožinu znaků z řetězce."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Returns an array sorted in ascending order"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -8921,6 +9399,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Split a string or array into chunks of equal length"
     }
   ],
   "ydqOly": [
@@ -8943,6 +9427,12 @@
       "value": "'"
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Dislike"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8959,6 +9449,12 @@
     {
       "type": 0,
       "value": "Funkce data a času"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Send me an email when..."
     }
   ],
   "ysoumb": [
@@ -9049,6 +9545,12 @@
       "value": "Vybrat akce"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is an integer"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -9061,10 +9563,22 @@
       "value": "(UTC+12:00) Petropavlovsk-Kamčatskij – starý čas"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "To save this workflow, finish setting up this action:"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Převede řetězec, nepovinně i s národním prostředím a formátem data."
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Stop"
     }
   ],
   "ziXw25": [

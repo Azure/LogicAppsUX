@@ -225,6 +225,26 @@ const Resources = {
     defaultMessage: 'Required. The collection for which to get the length.',
     description: 'Required collection parameter to apply length Function',
   }),
+  TOKEN_FUNCTION_COLLECTION_SORT: intl.formatMessage({
+    defaultMessage: 'Returns an array sorted in ascending order',
+    description: 'Label for description of custom sort Function',
+  }),
+  TOKEN_PARAMETER_SORT_COLLECTION: intl.formatMessage({
+    defaultMessage: 'Required. The collection to sort.',
+    description: 'Required collection parameter to apply sort function on',
+  }),
+  TOKEN_PARAMETER_SORT_SORTBY: intl.formatMessage({
+    defaultMessage: 'Optional. A key to use for sorting objects in the collection.',
+    description: 'Optional key parameter to apply sort function with',
+  }),
+  TOKEN_FUNCTION_COLLECTION_REVERSE: intl.formatMessage({
+    defaultMessage: 'Returns the collection in reverse order',
+    description: 'Label for description of custom reverse Function',
+  }),
+  TOKEN_PARAMETER_REVERSE_COLLECTION: intl.formatMessage({
+    defaultMessage: 'Required. The collection to reverse.',
+    description: 'Required collection parameter to apply reverse function on',
+  }),
   TOKEN_FUNCTION_COLLECTION_EMPTY: intl.formatMessage({
     defaultMessage: 'Returns true if an object, array, or string is empty',
     description: 'Label for description of custom empty Function',
@@ -310,6 +330,18 @@ const Resources = {
   TOKEN_PARAMETER_JOIN_DELIMITER: intl.formatMessage({
     defaultMessage: 'Required. The string to delimit items with.',
     description: 'Required string parameter to separate objects and join function on',
+  }),
+  TOKEN_FUNCTION_COLLECTION_CHUNK: intl.formatMessage({
+    defaultMessage: 'Split a string or array into chunks of equal length',
+    description: 'Label for description of custom chunk Function',
+  }),
+  TOKEN_PARAMETER_CHUNK_COLLECTION: intl.formatMessage({
+    defaultMessage: 'Required. The string or array to split.',
+    description: 'Required collection parameter to apply chunk function on',
+  }),
+  TOKEN_PARAMETER_CHUNK_LENGTH: intl.formatMessage({
+    defaultMessage: 'Required. The length of each chunk.',
+    description: 'Required number parameter to get length of each chunk for chunk function',
   }),
   TOKEN_FUNCTION_SECTION_LOGICAL: intl.formatMessage({
     defaultMessage: 'Logical functions',
@@ -410,6 +442,27 @@ const Resources = {
   TOKEN_PARAMETER_GREATEROREQUALS_COMPARETO: intl.formatMessage({
     defaultMessage: 'Required. The object to check if it is less than or equal to value being compared to.',
     description: 'Required object parameter to compare to in greaterOrEqual function',
+  }),
+  TOKEN_FUNCTION_LOGICAL_ISINT: intl.formatMessage({
+    defaultMessage: 'Returns a boolean that indicates whether a string is an integer',
+    description: 'Label for description of custom isInt Function',
+  }),
+  TOKEN_PARAMETER_ISINT_VALUE: intl.formatMessage({
+    defaultMessage: 'Required. The string to examine.',
+    description: 'Required string parameter to check if is integer using isInt function',
+  }),
+  TOKEN_FUNCTION_LOGICAL_ISFLOAT: intl.formatMessage({
+    defaultMessage: 'Returns a boolean that indicates whether a string is a floating-point number',
+    description: 'Label for description of custom isFloat Function',
+  }),
+  TOKEN_PARAMETER_ISFLOAT_VALUE: intl.formatMessage({
+    defaultMessage: 'Required. The string to examine.',
+    description: 'Required string parameter to check if is float using isFloat function',
+  }),
+  TOKEN_PARAMETER_ISFLOAT_LOCALE: intl.formatMessage({
+    defaultMessage:
+      "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale.",
+    description: 'Optional locale parameter to check locale code in isFloat function',
   }),
   TOKEN_FUNCTION_SECTION_CONVERSION: intl.formatMessage({
     defaultMessage: 'Conversion functions',
@@ -1527,6 +1580,54 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         isAdvanced: false,
       },
       {
+        name: 'sort',
+        defaultSignature: 'sort(collection)',
+        description: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
+        signatures: [
+          {
+            definition: `sort(collection: array)`,
+            documentation: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
+            parameters: [
+              {
+                name: 'collection',
+                documentation: Resources.TOKEN_PARAMETER_SORT_COLLECTION,
+              },
+            ],
+          },
+          {
+            definition: `sort(colection: array, sortBy: string)`,
+            documentation: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
+            parameters: [
+              {
+                name: 'collection',
+                documentation: Resources.TOKEN_PARAMETER_SORT_COLLECTION,
+              },
+              {
+                name: 'sortBy',
+                documentation: Resources.TOKEN_PARAMETER_SORT_SORTBY,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        name: 'reverse',
+        defaultSignature: 'reverse(collection)',
+        description: Resources.TOKEN_FUNCTION_COLLECTION_REVERSE,
+        signatures: [
+          {
+            definition: `reverse(collection: array)`,
+            documentation: Resources.TOKEN_FUNCTION_COLLECTION_REVERSE,
+            parameters: [
+              {
+                name: 'collection',
+                documentation: Resources.TOKEN_PARAMETER_REVERSE_COLLECTION,
+              },
+            ],
+          },
+        ],
+      },
+      {
         name: 'empty',
         defaultSignature: 'empty(collection)',
         description: Resources.TOKEN_FUNCTION_COLLECTION_EMPTY,
@@ -1724,6 +1825,28 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
               {
                 name: 'delimiter',
                 documentation: Resources.TOKEN_PARAMETER_JOIN_DELIMITER,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
+      },
+      {
+        name: 'chunk',
+        defaultSignature: 'chunk(collection, length)',
+        description: Resources.TOKEN_FUNCTION_COLLECTION_CHUNK,
+        signatures: [
+          {
+            definition: `chunk(collection: array|string, length: int)`,
+            documentation: Resources.TOKEN_FUNCTION_COLLECTION_CHUNK,
+            parameters: [
+              {
+                name: 'collection',
+                documentation: Resources.TOKEN_PARAMETER_CHUNK_COLLECTION,
+              },
+              {
+                name: 'length',
+                documentation: Resources.TOKEN_PARAMETER_CHUNK_LENGTH,
               },
             ],
           },
@@ -1928,6 +2051,46 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
               {
                 name: 'compareTo',
                 documentation: Resources.TOKEN_PARAMETER_GREATEROREQUALS_COMPARETO,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
+      },
+      {
+        name: 'isInt',
+        defaultSignature: 'isInt(value)',
+        description: Resources.TOKEN_FUNCTION_LOGICAL_ISINT,
+        signatures: [
+          {
+            definition: `isInt(value: string)`,
+            documentation: Resources.TOKEN_FUNCTION_LOGICAL_ISINT,
+            parameters: [
+              {
+                name: 'value',
+                documentation: Resources.TOKEN_PARAMETER_ISINT_VALUE,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
+      },
+      {
+        name: 'isFloat',
+        defaultSignature: 'isFloat(value, locale?)',
+        description: Resources.TOKEN_FUNCTION_LOGICAL_ISFLOAT,
+        signatures: [
+          {
+            definition: `isFloat(value: string, locale?: string)`,
+            documentation: Resources.TOKEN_FUNCTION_LOGICAL_ISFLOAT,
+            parameters: [
+              {
+                name: 'value',
+                documentation: Resources.TOKEN_PARAMETER_ISFLOAT_VALUE,
+              },
+              {
+                name: 'locale',
+                documentation: Resources.TOKEN_PARAMETER_ISFLOAT_LOCALE,
               },
             ],
           },
