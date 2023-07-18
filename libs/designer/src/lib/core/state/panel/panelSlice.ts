@@ -44,6 +44,9 @@ export const panelSlice = createSlice({
         state.panelLocation = action.payload;
       }
     },
+    setSelectedNodeId: (state, action: PayloadAction<string>) => {
+      state.selectedNode = action.payload;
+    },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
       if (state.collapsed) state.collapsed = false;
@@ -184,6 +187,7 @@ export const {
   collapsePanel,
   clearPanel,
   updatePanelLocation,
+  setSelectedNodeId,
   changePanelNode,
   expandDiscoveryPanel,
   selectOperationGroupId,

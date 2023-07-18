@@ -22,15 +22,7 @@ const OptionsStateSet = ({ options, children }: any) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (!options) return;
-    dispatch(
-      initDesignerOptions({
-        readOnly: options.readOnly,
-        isMonitoringView: options.isMonitoringView,
-        isDarkMode: options.isDarkMode,
-        useLegacyWorkflowParameters: options.useLegacyWorkflowParameters,
-        isXrmConnectionReferenceMode: options.isXrmConnectionReferenceMode,
-      })
-    );
+    dispatch(initDesignerOptions(options));
   }, [dispatch, options]);
   return <>{children}</>;
 };

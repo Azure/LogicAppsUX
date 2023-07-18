@@ -14,7 +14,14 @@ export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
 export { serializeWorkflow } from './actions/bjsworkflow/serializer';
-export { changePanelNode, clearPanel, switchToWorkflowParameters, switchToErrorsPanel, collapsePanel } from './state/panel/panelSlice';
+export {
+  setSelectedNodeId,
+  changePanelNode,
+  clearPanel,
+  switchToWorkflowParameters,
+  switchToErrorsPanel,
+  collapsePanel,
+} from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
 export { useSelectedNodeId } from './state/panel/panelSelectors';
