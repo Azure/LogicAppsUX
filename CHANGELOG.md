@@ -1,4 +1,26 @@
 # Logic Apps Designer
+## [2.48.0](https://github.com/Azure/LogicAppsUX/compare/v2.47.0...v2.48.0) (2023-07-17)
+
+
+### Features
+
+* **vscode:** Add microsoft csharp extension as dependency ([#2978](https://github.com/Azure/LogicAppsUX/issues/2978)) ([69fe613](https://github.com/Azure/LogicAppsUX/commit/69fe613f0374347136a46d615eccdb748a6fc105))
+
+
+### Bug Fixes
+
+* **designer:** Add missing template functions ([#2969](https://github.com/Azure/LogicAppsUX/issues/2969)) ([cadcffe](https://github.com/Azure/LogicAppsUX/commit/cadcffe1c12a16083daba984fd8a75b1d58ccc78))
+* **designer:** Complex Array Editor - Support for nested items ([#2979](https://github.com/Azure/LogicAppsUX/issues/2979)) ([0eebf88](https://github.com/Azure/LogicAppsUX/commit/0eebf88bda57ecc45577ee85ee8fdabc37e94a91))
+* **Designer:** Fixed bug with subscription fetch request `nextlink`s ([#2980](https://github.com/Azure/LogicAppsUX/issues/2980)) ([6dd8400](https://github.com/Azure/LogicAppsUX/commit/6dd840088789d2da83941eb2eb91e547dd049814))
+* **vscode:** Api version in api hub service ([#2974](https://github.com/Azure/LogicAppsUX/issues/2974)) ([f6eb8a2](https://github.com/Azure/LogicAppsUX/commit/f6eb8a258d043f13e2f849ce62a595416a98d499))
+
+## [2.47.0](https://github.com/Azure/LogicAppsUX/compare/v2.46.0...v2.47.0) (2023-07-13)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed rare connection creation parameter null-safety issue ([#2960](https://github.com/Azure/LogicAppsUX/issues/2960)) ([f104bbb](https://github.com/Azure/LogicAppsUX/commit/f104bbb97b2edb6ae93a9d02ae74170f40e18492))
+
 ## [2.46.0](https://github.com/Azure/LogicAppsUX/compare/v2.45.0...v2.46.0) (2023-07-12)
 
 
