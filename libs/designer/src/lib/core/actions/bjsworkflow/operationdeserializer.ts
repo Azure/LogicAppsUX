@@ -227,7 +227,7 @@ export const initializeOperationDetailsForManifest = async (
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
-      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, false , manifest, undefined /* swagger */, operation);
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, undefined /* swagger */, operation);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 

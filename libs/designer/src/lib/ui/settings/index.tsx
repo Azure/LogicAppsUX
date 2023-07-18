@@ -304,7 +304,6 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     paging,
     downloadChunkSize,
     operations,
-    isStateful,
   } = useSelector((state: RootState) => {
     const { operations, workflow } = state;
     const operationSettings = operations.settings?.[nodeId];

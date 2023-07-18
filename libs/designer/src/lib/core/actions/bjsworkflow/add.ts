@@ -126,14 +126,7 @@ const initializeOperationDetails = async (
     parsedManifest = new ManifestParser(manifest);
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-    const settings = getOperationSettings(
-      isTrigger,
-      operationInfo,
-      nodeOutputs,
-      state.workflow.isStateful,
-      manifest,
-      /* swagger */ undefined
-    );
+    const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
 
     // We should update the outputs when splitOn is enabled.
     if (isTrigger && settings.splitOn?.value?.value) {
@@ -171,14 +164,7 @@ const initializeOperationDetails = async (
       nodeInputs
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-    const settings = getOperationSettings(
-      isTrigger,
-      operationInfo,
-      nodeOutputs,
-      state.workflow.isStateful,
-      /* manifest */ undefined,
-      parsedSwagger
-    );
+    const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger);
 
     initData = {
       id: nodeId,
