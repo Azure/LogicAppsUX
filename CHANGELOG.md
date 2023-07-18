@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.49.0](https://github.com/Azure/LogicAppsUX/compare/v2.48.0...v2.49.0) (2023-07-18)
+
+
+### Features
+
+* **Designer:** Added node selection functionality options ([#2988](https://github.com/Azure/LogicAppsUX/issues/2988)) ([e673d09](https://github.com/Azure/LogicAppsUX/commit/e673d09352dde8b1655c995e602beba439584910))
+
+
+### Bug Fixes
+
+* **designer:** Update operations connector id for x12 and edifact ([#2982](https://github.com/Azure/LogicAppsUX/issues/2982)) ([99c168e](https://github.com/Azure/LogicAppsUX/commit/99c168edea7a64f9c2255ebd30b62677307efb67))
+
 ## [2.48.0](https://github.com/Azure/LogicAppsUX/compare/v2.47.0...v2.48.0) (2023-07-17)
 
 
