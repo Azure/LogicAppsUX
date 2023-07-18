@@ -21,6 +21,10 @@ export const useIsDarkMode = () => {
   return useSelector((state: RootState) => state.designerOptions.isDarkMode);
 };
 
-export const useNodeSelectCallbackOverride = () => {
-  return useSelector((state: RootState) => state.designerOptions.nodeSelectCallbackOverride);
+export const useSuppressDefaultNodeSelectFunctionality = () => {
+  return useSelector((state: RootState) => state.designerOptions.suppressDefaultNodeSelectFunctionality);
+};
+
+export const useAddedNodeSelectCallback = () => {
+  return useSelector((state: RootState) => state.designerOptions.addedNodeSelectCallback);
 };

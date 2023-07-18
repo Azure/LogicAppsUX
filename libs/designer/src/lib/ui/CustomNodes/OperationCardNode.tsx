@@ -3,7 +3,12 @@ import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
-import { useMonitoringView, useNodeSelectCallbackOverride, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import {
+  useMonitoringView,
+  useAddedNodeSelectCallback,
+  useReadOnly,
+  useSuppressDefaultNodeSelectFunctionality,
+} from '../../core/state/designerOptions/designerOptionsSelectors';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
@@ -74,7 +79,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
-  const nodeSelectCallbackOverride = useNodeSelectCallbackOverride();
+  const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
+  const nodeSelectCallbackOverride = useAddedNodeSelectCallback();
 
   const getRunRepetition = () => {
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
@@ -149,14 +155,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeClick = useCallback(() => {
     dispatch(setSelectedNodeId(id));
 
-    // TODO: EiPaaS - Add click override
     if (nodeSelectCallbackOverride) {
       nodeSelectCallbackOverride(id);
-    } else {
-      dispatch(changePanelNode(id));
-      dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
     }
-  }, [dispatch, hasSchema, id, isMonitoringView, nodeSelectCallbackOverride, runHistory]);
+
+    if (suppressDefaultNodeSelect) return;
+    dispatch(changePanelNode(id));
+    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
+  }, [dispatch, hasSchema, id, isMonitoringView, nodeSelectCallbackOverride, runHistory, suppressDefaultNodeSelect]);
 
   const brandColor = useBrandColor(id);
   const iconUri = useIconUri(id);
