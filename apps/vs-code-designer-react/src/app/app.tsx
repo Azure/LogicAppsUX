@@ -164,6 +164,7 @@ export const App = () => {
         definition: standardApp.definition,
         connectionReferences,
         parameters: panelMetaData?.parametersData,
+        kind: standardApp.kind,
       }}
       runInstance={runInstance}
     >

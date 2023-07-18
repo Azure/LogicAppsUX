@@ -40,6 +40,7 @@ export const initialWorkflowState: WorkflowState = {
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
+  isStateful: false,
   originalDefinition: {
     $schema: constants.SCHEMA.GA_20160601.URL,
     contentVersion: '1.0.0.0',
@@ -52,6 +53,9 @@ export const workflowSlice = createSlice({
   reducers: {
     initWorkflowSpec: (state: WorkflowState, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
+    },
+    initIsStateful: (state: WorkflowState, action: PayloadAction<boolean>) => {
+      state.isStateful = action.payload;
     },
     initRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
       state.runInstance = action.payload;
@@ -375,6 +379,7 @@ export const workflowSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   initWorkflowSpec,
+  initIsStateful,
   initRunInstance,
   addNode,
   moveNode,

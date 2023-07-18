@@ -115,9 +115,10 @@ export const getOperationSettings = (
   isTrigger: boolean,
   operationInfo: NodeOperation,
   nodeOutputs: NodeOutputs,
+  isStateful: boolean,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
-  operation?: LogicAppsV2.OperationDefinition
+  operation?: LogicAppsV2.OperationDefinition,
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -169,7 +170,7 @@ export const getOperationSettings = (
     },
     paging: { isSupported: isPagingSupported(isTrigger, nodeType, manifest, swagger, operationId), value: getPaging(operation) },
     uploadChunk: {
-      isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest, swagger, operationId),
+      isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest, swagger, operationId) && isStateful,
       value: getUploadChunk(isTrigger, nodeType, manifest, swagger, operationId, operation),
     },
     downloadChunkSize: {
