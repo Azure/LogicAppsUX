@@ -23,6 +23,12 @@
       "value": "Faulted"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1451,6 +1457,12 @@
       "value": "Please enable managed identity for the logic app."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1663,6 +1675,12 @@
     {
       "type": 0,
       "value": "Text"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "9atGYe": [
@@ -2035,6 +2053,12 @@
     {
       "type": 0,
       "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2689,6 +2713,20 @@
     {
       "type": 0,
       "value": "Referencing functions"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
     }
   ],
   "GcG0qf": [
@@ -3367,6 +3405,12 @@
       "value": "Loading Function Apps..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3791,6 +3835,12 @@
     {
       "type": 0,
       "value": "Loading Files..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4261,6 +4311,12 @@
     {
       "type": 0,
       "value": "Returns a string in date format"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
     }
   ],
   "QpRRt3": [
@@ -4899,6 +4955,12 @@
       "value": "Enter a name for the connection"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4969,6 +5031,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5067,6 +5135,12 @@
     {
       "type": 0,
       "value": "Added this action"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5679,6 +5753,12 @@
       "value": "Learn more about dynamic content."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5689,6 +5769,12 @@
     {
       "type": 0,
       "value": "Required. The number of the occurrence of the substring to find."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -6613,6 +6699,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6799,6 +6891,12 @@
     {
       "type": 0,
       "value": "Example: 0, 10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
     }
   ],
   "idQjOP": [
@@ -8053,6 +8151,12 @@
     {
       "type": 0,
       "value": "'."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
