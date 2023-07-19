@@ -33,8 +33,10 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { EditorService, toEditorAndOptions } from '@microsoft/designer-client-services-logic-apps';
 import { DynamicCallStatus, PanelLocation, TokenPicker, TokenPickerButtonLocation, TokenType } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
+import type { OperationInfo } from '@microsoft/utils-logic-apps';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -351,7 +353,7 @@ const ParameterSection = ({
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
-      const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
+      const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
       const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
 
@@ -413,11 +415,26 @@ const ParameterSection = ({
   );
 };
 
-const getEditorAndOptions = (
+export const getEditorAndOptions = (
+  operationInfo: OperationInfo,
   parameter: ParameterInfo,
   upstreamNodeIds: string[],
   variables: Record<string, VariableDeclaration[]>
 ): { editor?: string; editorOptions?: any } => {
+  const customEditor = EditorService()?.getEditor({
+    connectorId: operationInfo.connectorId,
+    operationId: operationInfo.operationId,
+    parameterKey: parameter.parameterKey,
+    parameterName: parameter.parameterName,
+    required: parameter.required,
+    schema: parameter.schema,
+    editor: parameter.editor,
+    editorOptions: parameter.editorOptions,
+  });
+  if (customEditor) {
+    return toEditorAndOptions(customEditor);
+  }
+
   const { editor, editorOptions } = parameter;
   const supportedTypes: string[] = editorOptions?.supportedTypes ?? [];
   if (equals(editor, 'variablename')) {

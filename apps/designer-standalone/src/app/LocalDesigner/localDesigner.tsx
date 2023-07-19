@@ -1,4 +1,5 @@
 import type { RootState } from '../../state/store';
+import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
 import { Chatbot } from '@microsoft/chatbot';
@@ -127,6 +128,8 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
+const editorService = new CustomEditorService();
+
 export const LocalDesigner = () => {
   const {
     workflowDefinition,
@@ -139,6 +142,7 @@ export const LocalDesigner = () => {
     showChatBot,
     workflowKind,
     language,
+    areCustomEditorsEnabled,
   } = useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: {
@@ -152,6 +156,7 @@ export const LocalDesigner = () => {
       workflowService,
       hostService,
       runService,
+      editorService: areCustomEditorsEnabled ? editorService : undefined,
     },
     readOnly: isReadOnly,
     isMonitoringView,
