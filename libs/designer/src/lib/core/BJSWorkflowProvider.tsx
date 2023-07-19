@@ -3,7 +3,8 @@ import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import type { DesignerOptionsState } from './state/designerOptions/designerOptionsInterfaces';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
-import { initIsStateful, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
+import { WorkflowKind } from './state/workflow/workflowInterfaces';
+import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from './store';
 import { equals, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
@@ -20,7 +21,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
-    dispatch(initIsStateful(equals(workflow?.kind, 'stateful')));
+    dispatch(initWorkflowKind(equals(workflow?.kind, 'stateful') ? WorkflowKind.STATEFUL : WorkflowKind.STATELESS));
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
   }, [dispatch, workflow, runInstance]);

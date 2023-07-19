@@ -17,6 +17,10 @@ export interface NodesMetadata {
 }
 export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
 
+export enum WorkflowKind {
+  STATEFUL = 'stateful',
+  STATELESS = 'stateless',
+}
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph: WorkflowNode | null;
@@ -29,6 +33,6 @@ export interface WorkflowState {
   newlyAddedOperations: Record<string, string>;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   isDirty: boolean;
-  isStateful:boolean;
+  workflowKind: WorkflowKind;
   originalDefinition: LogicAppsV2.WorkflowDefinition;
 }
