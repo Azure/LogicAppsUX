@@ -118,8 +118,8 @@ const Resources = {
     description: 'Required text parameter to apply indexOf function on',
   }),
   TOKEN_PARAMETER_INDEXOF_SEARCHTEXT: intl.formatMessage({
-    defaultMessage: 'Required. The value to search the index of.',
-    description: 'Required text parameter to search indexOf function with',
+    defaultMessage: 'Required. The value for which to find the index.',
+    description: "Required. The text parameter for which to find the index with the 'indexOf' function.",
   }),
   TOKEN_FUNCTION_FUNCTION_NTHINDEXOF: intl.formatMessage({
     defaultMessage: "Returns the index for a value's n-th occurrence in a string (case-insensitive, invariant culture).",
@@ -130,7 +130,7 @@ const Resources = {
     description: 'Required text parameter to apply nthIndexOf function on',
   }),
   TOKEN_PARAMETER_NTHINDEXOF_SEARCHTEXT: intl.formatMessage({
-    defaultMessage: 'Required. The value to search the index of.',
+    defaultMessage: 'Required. The value for which to find the index.',
     description: 'Required text parameter to search nthIndexOf function with',
   }),
   TOKEN_PARAMETER_NTHINDEXOF_OCCURRENCE: intl.formatMessage({
@@ -225,6 +225,26 @@ const Resources = {
     defaultMessage: 'Required. The collection for which to get the length.',
     description: 'Required collection parameter to apply length Function',
   }),
+  TOKEN_FUNCTION_COLLECTION_SORT: intl.formatMessage({
+    defaultMessage: 'Returns an array sorted in ascending order',
+    description: 'Label for description of custom sort Function',
+  }),
+  TOKEN_PARAMETER_SORT_COLLECTION: intl.formatMessage({
+    defaultMessage: 'Required. The collection to sort.',
+    description: 'Required collection parameter to apply sort function on',
+  }),
+  TOKEN_PARAMETER_SORT_SORTBY: intl.formatMessage({
+    defaultMessage: 'Optional. A key to use for sorting objects in the collection.',
+    description: 'Optional key parameter to apply sort function with',
+  }),
+  TOKEN_FUNCTION_COLLECTION_REVERSE: intl.formatMessage({
+    defaultMessage: 'Returns the collection in reverse order',
+    description: 'Label for description of custom reverse Function',
+  }),
+  TOKEN_PARAMETER_REVERSE_COLLECTION: intl.formatMessage({
+    defaultMessage: 'Required. The collection to reverse.',
+    description: 'Required collection parameter to apply reverse function on',
+  }),
   TOKEN_FUNCTION_COLLECTION_EMPTY: intl.formatMessage({
     defaultMessage: 'Returns true if an object, array, or string is empty',
     description: 'Label for description of custom empty Function',
@@ -264,8 +284,8 @@ const Resources = {
     description: 'Label for description of custom first Function',
   }),
   TOKEN_PARAMETER_FIRST_COLLECTION: intl.formatMessage({
-    defaultMessage: 'Required. The collection to take the first object from.',
-    description: 'Required collection parameter to apply first function on',
+    defaultMessage: 'Required. The collection from which to take the first object.',
+    description: "Required. The collection parameter on which to apply the 'first' function.",
   }),
   TOKEN_FUNCTION_COLLECTION_LAST: intl.formatMessage({
     defaultMessage: 'Returns the last element in the array or string passed in',
@@ -281,7 +301,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_TAKE_COLLECTION: intl.formatMessage({
     defaultMessage: 'Required. The collection from where to take the first Count objects.',
-    description: 'Required collection parameter to apply take function on',
+    description: "Required. The collection parameter on which to apply the 'take' function.",
   }),
   TOKEN_PARAMETER_TAKE_COUNT: intl.formatMessage({
     defaultMessage: 'Required. The number of objects to take from the Collection. Must be a positive integer.',
@@ -301,7 +321,7 @@ const Resources = {
   }),
   TOKEN_FUNCTION_COLLECTION_JOIN: intl.formatMessage({
     defaultMessage: 'Returns a string with each item of an array joined by a delimiter',
-    description: 'Label for description of custom join Function',
+    description: "Label for description of the custom 'join' function",
   }),
   TOKEN_PARAMETER_JOIN_COLLECTION: intl.formatMessage({
     defaultMessage: 'Required. The collection to join items from.',
@@ -310,6 +330,18 @@ const Resources = {
   TOKEN_PARAMETER_JOIN_DELIMITER: intl.formatMessage({
     defaultMessage: 'Required. The string to delimit items with.',
     description: 'Required string parameter to separate objects and join function on',
+  }),
+  TOKEN_FUNCTION_COLLECTION_CHUNK: intl.formatMessage({
+    defaultMessage: 'Split a string or array into chunks of equal length',
+    description: 'Label for description of custom chunk Function',
+  }),
+  TOKEN_PARAMETER_CHUNK_COLLECTION: intl.formatMessage({
+    defaultMessage: 'Required. The string or array to split.',
+    description: 'Required collection parameter to apply chunk function on',
+  }),
+  TOKEN_PARAMETER_CHUNK_LENGTH: intl.formatMessage({
+    defaultMessage: 'Required. The length of each chunk.',
+    description: 'Required number parameter to get length of each chunk for chunk function',
   }),
   TOKEN_FUNCTION_SECTION_LOGICAL: intl.formatMessage({
     defaultMessage: 'Logical functions',
@@ -345,7 +377,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_AND_EXPRESSION: intl.formatMessage({
     defaultMessage: 'Required. The expressions that must be true.',
-    description: 'Required expression parameters to apply and function',
+    description: "Required. The expression parameters on which to apply the 'and' function.",
   }),
   TOKEN_FUNCTION_LOGICAL_OR: intl.formatMessage({
     defaultMessage: 'Returns true if either parameter is true',
@@ -410,6 +442,27 @@ const Resources = {
   TOKEN_PARAMETER_GREATEROREQUALS_COMPARETO: intl.formatMessage({
     defaultMessage: 'Required. The object to check if it is less than or equal to value being compared to.',
     description: 'Required object parameter to compare to in greaterOrEqual function',
+  }),
+  TOKEN_FUNCTION_LOGICAL_ISINT: intl.formatMessage({
+    defaultMessage: 'Returns a boolean that indicates whether a string is an integer',
+    description: 'Label for description of custom isInt Function',
+  }),
+  TOKEN_PARAMETER_ISINT_VALUE: intl.formatMessage({
+    defaultMessage: 'Required. The string to examine.',
+    description: 'Required string parameter to check if is integer using isInt function',
+  }),
+  TOKEN_FUNCTION_LOGICAL_ISFLOAT: intl.formatMessage({
+    defaultMessage: 'Returns a boolean that indicates whether a string is a floating-point number',
+    description: 'Label for description of custom isFloat Function',
+  }),
+  TOKEN_PARAMETER_ISFLOAT_VALUE: intl.formatMessage({
+    defaultMessage: 'Required. The string to examine.',
+    description: 'Required string parameter to check if is float using isFloat function',
+  }),
+  TOKEN_PARAMETER_ISFLOAT_LOCALE: intl.formatMessage({
+    defaultMessage:
+      "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale.",
+    description: 'Optional locale parameter to check locale code in isFloat function',
   }),
   TOKEN_FUNCTION_SECTION_CONVERSION: intl.formatMessage({
     defaultMessage: 'Conversion functions',
@@ -493,7 +546,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_BINARY_VALUE: intl.formatMessage({
     defaultMessage: 'Required. The value that is converted to binary.',
-    description: 'Required string parameter to be converted using binary function',
+    description: "Required. The string parameter to convert with the 'binary' function.",
   }),
   TOKEN_FUNCTION_CONVERSION_DATAURITOBINARY: intl.formatMessage({
     defaultMessage: 'Returns a binary representation of a data URI',
@@ -609,7 +662,7 @@ const Resources = {
   }),
   TOKEN_FUNCTION_CONVERSION_TRIGGERMULTIPARTBODY: intl.formatMessage({
     defaultMessage: 'Returns the body for a part in a multipart output of the trigger',
-    description: 'Label for description of custom triggerMultipartBody Function',
+    description: "Label for the description of the custom 'triggerMultipartBody' function",
   }),
   TOKEN_PARAMETER_TRIGGERMULTIPARTBODY_INDEX: intl.formatMessage({
     defaultMessage: 'Required. The index of the part to retrieve.',
@@ -688,8 +741,8 @@ const Resources = {
     description: 'Required integer parameter to be used as lower bound for rand function',
   }),
   TOKEN_PARAMETER_RAND_MAXVALUE: intl.formatMessage({
-    defaultMessage: 'Required. This value is the next integer after the highest integer that could be returned.',
-    description: 'Required integer parameter to be used as upper bound for rand function',
+    defaultMessage: 'Required. This value is the next integer after the highest integer that can be returned.',
+    description: "Required. The integer parameter to use as the upper bound for the 'rand' function.",
   }),
   TOKEN_FUNCTION_MATH_ADD: intl.formatMessage({
     defaultMessage: 'Returns the result from adding the two numbers',
@@ -697,11 +750,11 @@ const Resources = {
   }),
   TOKEN_PARAMETER_ADD_SUMMAND1: intl.formatMessage({
     defaultMessage: 'Required. The number to add to Summand 2.',
-    description: 'Required number parameter to be summed in add function',
+    description: "Required. The number parameter to sum in the 'add' function.",
   }),
   TOKEN_PARAMETER_ADD_SUMMAND2: intl.formatMessage({
     defaultMessage: 'Required. The number to add to Summand 1.',
-    description: 'Required number parameter to be summed in add function',
+    description: "Required. The number parameter to sum in the 'add' function.",
   }),
   TOKEN_FUNCTION_MATH_SUB: intl.formatMessage({
     defaultMessage: 'Returns the result from subtracting two numbers',
@@ -911,7 +964,7 @@ const Resources = {
     description: 'Label for description of custom startOfHour Function',
   }),
   TOKEN_FUNCTION_DATETIME_STARTOFDAY: intl.formatMessage({
-    defaultMessage: 'Returns the start of the day to a string timestamp passed in',
+    defaultMessage: 'Returns the start of the day for the passed-in string timestamp.',
     description: "Label for the description of a custom 'startOfDay' function",
   }),
   TOKEN_FUNCTION_DATETIME_STARTOFMONTH: intl.formatMessage({
@@ -1005,8 +1058,8 @@ const Resources = {
     description: 'Label for description of custom iterationIndexes Function',
   }),
   TOKEN_FUNCTION_REFERENCE_VARIABLES: intl.formatMessage({
-    defaultMessage: 'Returns the value of the variable specified.',
-    description: 'Label for description of custom variables Function',
+    defaultMessage: 'Returns the value of the specified variable.',
+    description: "Label for the description of the custom 'variables' function",
   }),
   TOKEN_PARAMETER_VARIABLES_VARIABLENAME: intl.formatMessage({
     defaultMessage: 'Required. The name of the variable whose value you want.',
@@ -1098,8 +1151,8 @@ const Resources = {
     description: 'Required parameter for new/existing property value in setProperty function',
   }),
   TOKEN_FUNCTION_MANIPULATION_REMOVEPROPERTY: intl.formatMessage({
-    defaultMessage: 'Returns an object with a property removed',
-    description: 'Label for description of custom removeProperty Function',
+    defaultMessage: 'Returns an object with the specified property removed.',
+    description: "Label for description of the custom 'removeProperty' function",
   }),
   TOKEN_PARAMETER_REMOVEPROPERTY_OBJECT: intl.formatMessage({
     defaultMessage: 'Required. The object to remove the property from.',
@@ -1119,7 +1172,7 @@ const Resources = {
   }),
   TOKEN_PARAMETER_XPATH_XPATH: intl.formatMessage({
     defaultMessage: 'Required. The XPath expression to evaluate.',
-    description: 'Required xpath parameter to identify which xPath to evaluate',
+    description: 'Required. The xpath parameter to identify the xPath to evaluate.',
   }),
 };
 
@@ -1527,6 +1580,54 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         isAdvanced: false,
       },
       {
+        name: 'sort',
+        defaultSignature: 'sort(collection)',
+        description: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
+        signatures: [
+          {
+            definition: `sort(collection: array)`,
+            documentation: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
+            parameters: [
+              {
+                name: 'collection',
+                documentation: Resources.TOKEN_PARAMETER_SORT_COLLECTION,
+              },
+            ],
+          },
+          {
+            definition: `sort(colection: array, sortBy: string)`,
+            documentation: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
+            parameters: [
+              {
+                name: 'collection',
+                documentation: Resources.TOKEN_PARAMETER_SORT_COLLECTION,
+              },
+              {
+                name: 'sortBy',
+                documentation: Resources.TOKEN_PARAMETER_SORT_SORTBY,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        name: 'reverse',
+        defaultSignature: 'reverse(collection)',
+        description: Resources.TOKEN_FUNCTION_COLLECTION_REVERSE,
+        signatures: [
+          {
+            definition: `reverse(collection: array)`,
+            documentation: Resources.TOKEN_FUNCTION_COLLECTION_REVERSE,
+            parameters: [
+              {
+                name: 'collection',
+                documentation: Resources.TOKEN_PARAMETER_REVERSE_COLLECTION,
+              },
+            ],
+          },
+        ],
+      },
+      {
         name: 'empty',
         defaultSignature: 'empty(collection)',
         description: Resources.TOKEN_FUNCTION_COLLECTION_EMPTY,
@@ -1724,6 +1825,28 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
               {
                 name: 'delimiter',
                 documentation: Resources.TOKEN_PARAMETER_JOIN_DELIMITER,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
+      },
+      {
+        name: 'chunk',
+        defaultSignature: 'chunk(collection, length)',
+        description: Resources.TOKEN_FUNCTION_COLLECTION_CHUNK,
+        signatures: [
+          {
+            definition: `chunk(collection: array|string, length: int)`,
+            documentation: Resources.TOKEN_FUNCTION_COLLECTION_CHUNK,
+            parameters: [
+              {
+                name: 'collection',
+                documentation: Resources.TOKEN_PARAMETER_CHUNK_COLLECTION,
+              },
+              {
+                name: 'length',
+                documentation: Resources.TOKEN_PARAMETER_CHUNK_LENGTH,
               },
             ],
           },
@@ -1928,6 +2051,46 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
               {
                 name: 'compareTo',
                 documentation: Resources.TOKEN_PARAMETER_GREATEROREQUALS_COMPARETO,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
+      },
+      {
+        name: 'isInt',
+        defaultSignature: 'isInt(value)',
+        description: Resources.TOKEN_FUNCTION_LOGICAL_ISINT,
+        signatures: [
+          {
+            definition: `isInt(value: string)`,
+            documentation: Resources.TOKEN_FUNCTION_LOGICAL_ISINT,
+            parameters: [
+              {
+                name: 'value',
+                documentation: Resources.TOKEN_PARAMETER_ISINT_VALUE,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
+      },
+      {
+        name: 'isFloat',
+        defaultSignature: 'isFloat(value, locale?)',
+        description: Resources.TOKEN_FUNCTION_LOGICAL_ISFLOAT,
+        signatures: [
+          {
+            definition: `isFloat(value: string, locale?: string)`,
+            documentation: Resources.TOKEN_FUNCTION_LOGICAL_ISFLOAT,
+            parameters: [
+              {
+                name: 'value',
+                documentation: Resources.TOKEN_PARAMETER_ISFLOAT_VALUE,
+              },
+              {
+                name: 'locale',
+                documentation: Resources.TOKEN_PARAMETER_ISFLOAT_LOCALE,
               },
             ],
           },

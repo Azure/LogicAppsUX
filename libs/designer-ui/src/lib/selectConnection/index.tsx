@@ -1,4 +1,4 @@
-import type { IColumn } from '@fluentui/react';
+import type { IColumn, IDetailsRowProps, IRenderFunction } from '@fluentui/react';
 import {
   MessageBar,
   MessageBarType,
@@ -49,6 +49,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     return {
       ...connection,
       ...connection.properties,
+      // 'invalid' being truthy is being used to determine whether the details list row is disabled
       invalid:
         errors.length > 0 ? (
           <div className="msla-connection-error-icon-container">
@@ -201,6 +202,13 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     description: 'Aria label description for cancel button',
   });
 
+  const onRenderRow: IRenderFunction<IDetailsRowProps> = (props, defaultRender) => {
+    if (props?.item.invalid) {
+      return defaultRender?.({ ...props, disabled: true }) || null;
+    }
+    return defaultRender?.(props) || null;
+  };
+
   return (
     <div className="msla-select-connections-container">
       {showIdentityErrorBanner ? <MessageBar messageBarType={MessageBarType.error}>{identityErrorText}</MessageBar> : null}
@@ -220,6 +228,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
           selectionPreservedOnEmptyClick={true}
           enterModalSelectionOnTouch={true}
           checkButtonAriaLabel={checkButtonAriaLabel}
+          onRenderRow={onRenderRow}
         />
       </MarqueeSelection>
 

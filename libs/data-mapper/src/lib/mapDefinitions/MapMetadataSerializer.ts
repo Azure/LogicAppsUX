@@ -1,23 +1,7 @@
 import type { FunctionDictionary } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
+import type { FunctionLocationMetadata, FunctionMetadata, MapMetadata } from '../models/MapMetadata';
 import { isFunctionData } from '../utils/Function.Utils';
-
-interface FunctionLocationMetadata {
-  targetKey: string;
-  xPos: number;
-  yPos: number;
-}
-
-interface FunctionMetadata {
-  reactFlowGuid: string;
-  functionKey: string;
-  locations: FunctionLocationMetadata[];
-  connections: string[];
-}
-
-export interface MapMetadata {
-  functionNodes: FunctionMetadata[];
-}
 
 export const generateMapMetadata = (functionDictionary: FunctionDictionary, connections: ConnectionDictionary): MapMetadata => {
   const functionMetadata: FunctionMetadata[] = [];

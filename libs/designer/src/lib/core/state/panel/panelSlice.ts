@@ -1,6 +1,7 @@
 import constants from '../../../common/constants';
 import type { RelationshipIds, PanelState } from './panelInterfaces';
 import type { PanelTab } from '@microsoft/designer-ui';
+import { PanelLocation } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -10,6 +11,7 @@ const initialState: PanelState = {
   relationshipIds: {
     graphId: 'root',
   },
+  panelLocation: PanelLocation.Right,
   isParallelBranch: false,
   registeredTabs: {},
   selectedTabName: undefined,
@@ -36,6 +38,14 @@ export const panelSlice = createSlice({
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
       state.addingTrigger = false;
+    },
+    updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
+      if (action.payload && action.payload !== state.panelLocation) {
+        state.panelLocation = action.payload;
+      }
+    },
+    setSelectedNodeId: (state, action: PayloadAction<string>) => {
+      state.selectedNode = action.payload;
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
@@ -85,6 +95,14 @@ export const panelSlice = createSlice({
       state.selectedOperationId = '';
       state.addingTrigger = false;
     },
+    switchToErrorsPanel: (state) => {
+      state.collapsed = false;
+      state.currentState = 'Error';
+      state.selectedNode = '';
+      state.selectedOperationGroupId = '';
+      state.selectedOperationId = '';
+      state.addingTrigger = false;
+    },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
         state.registeredTabs[tab.name.toLowerCase()] = tab;
@@ -97,7 +115,7 @@ export const panelSlice = createSlice({
         state.registeredTabs[tabName] = {
           ...state.registeredTabs[tabName],
           tabErrors: {
-            ...state.registeredTabs[tabName].tabErrors,
+            ...state.registeredTabs?.[tabName]?.tabErrors,
             [nodeId]: hasErrors,
           },
         };
@@ -168,6 +186,8 @@ export const {
   expandPanel,
   collapsePanel,
   clearPanel,
+  updatePanelLocation,
+  setSelectedNodeId,
   changePanelNode,
   expandDiscoveryPanel,
   selectOperationGroupId,
@@ -180,8 +200,9 @@ export const {
   isolateTab,
   selectPanelTab,
   setTabError,
-  switchToNodeSearchPanel,
   switchToWorkflowParameters,
+  switchToNodeSearchPanel,
+  switchToErrorsPanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

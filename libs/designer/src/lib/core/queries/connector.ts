@@ -1,5 +1,10 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type {
+  ListDynamicValue,
+  ManagedIdentityRequestProperties,
+  TreeDynamicExtension,
+  TreeDynamicValue,
+} from '@microsoft/designer-client-services-logic-apps';
 import { ConnectorService } from '@microsoft/designer-client-services-logic-apps';
 import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
 import { Types } from '@microsoft/parsers-logic-apps';
@@ -63,7 +68,6 @@ export const getListDynamicValues = async (
   connectionId: string | undefined,
   connectorId: string,
   operationId: string,
-  parameterAlias: string | undefined,
   parameters: Record<string, any>,
   dynamicState: any
 ): Promise<ListDynamicValue[]> => {
@@ -76,9 +80,10 @@ export const getListDynamicValues = async (
       (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
+      dynamicState.operationId?.toLowerCase(),
       getParametersKey({ ...dynamicState.parameters, ...parameters }),
     ],
-    () => service.getListDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
+    () => service.getListDynamicValues(connectionId, connectorId, operationId, parameters, dynamicState)
   );
 };
 
@@ -120,7 +125,6 @@ export const getDynamicSchemaProperties = async (
   connectionId: string | undefined,
   connectorId: string,
   operationId: string,
-  parameterAlias: string | undefined,
   parameters: Record<string, any>,
   dynamicState: any
 ): Promise<OpenAPIV2.SchemaObject> => {
@@ -133,10 +137,11 @@ export const getDynamicSchemaProperties = async (
       (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
+      dynamicState.extension.operationId?.toLowerCase(),
       getParametersKey({ ...dynamicState.parameters, ...parameters }),
       `isInput:${!!dynamicState?.isInput}`,
     ],
-    () => service.getDynamicSchema(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
+    () => service.getDynamicSchema(connectionId, connectorId, operationId, parameters, dynamicState)
   );
 };
 
@@ -183,9 +188,8 @@ export const getDynamicTreeItems = async (
   connectionId: string,
   connectorId: string,
   operationId: string,
-  parameterAlias: string | undefined,
   parameters: Record<string, any>,
-  dynamicState: any
+  dynamicExtension: TreeDynamicExtension
 ): Promise<TreeDynamicValue[]> => {
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
@@ -197,8 +201,10 @@ export const getDynamicTreeItems = async (
       connectorId.toLowerCase(),
       operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
+      `selectionState:${dynamicExtension.selectionState ? JSON.stringify(dynamicExtension.selectionState) : ''}`,
     ],
-    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
+    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameters, dynamicExtension),
+    { cacheTime: 0, staleTime: 0 }
   );
 
   return values;

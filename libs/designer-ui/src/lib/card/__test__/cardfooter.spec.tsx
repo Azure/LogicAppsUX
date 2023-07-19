@@ -33,6 +33,11 @@ describe('lib/card/cardfooter', () => {
     expect(tree).toMatchSnapshot();
   });
 
+  it('should render with a lock icon', () => {
+    const tree = renderer.create(<CardFooter {...minimal} isSecureInputsOutputs={true} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
   it('should render with a connection icon', () => {
     const tree = renderer
       .create(<CardFooter {...minimal} connectionDisplayName="joechung@microsoft.com" connectionRequired={true} />)

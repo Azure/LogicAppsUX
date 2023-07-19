@@ -1,10 +1,9 @@
 import type { ArrayItemSchema, ComplexArrayItems, SimpleArrayItem } from '..';
-import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
-import { getChildrenNodes } from '../../editor/base/utils/helper';
+import { getChildrenNodes, insertQutationForStringType } from '../../editor/base/utils/helper';
 import { convertComplexItemsToArray, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
@@ -54,29 +53,20 @@ export const parseSimpleItems = (
   items.forEach((item, index) => {
     const { value } = item;
     if (value?.length === 0) {
-      castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' });
-      uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' });
+      castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '""' });
+      uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '""' });
     } else {
-      if (type === constants.SWAGGER.TYPE.STRING) {
-        addStringLiteralSegment(castedArraySegments);
-        addStringLiteralSegment(uncastedArraySegments);
-      }
+      insertQutationForStringType(castedArraySegments, type);
+      insertQutationForStringType(uncastedArraySegments, type);
       castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: castParameter(value, type, format) });
       uncastedArraySegments.push(...value);
-
-      if (type === constants.SWAGGER.TYPE.STRING) {
-        addStringLiteralSegment(castedArraySegments);
-        addStringLiteralSegment(uncastedArraySegments);
-      }
+      insertQutationForStringType(castedArraySegments, type);
+      insertQutationForStringType(uncastedArraySegments, type);
     }
     castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? ',\n  ' : '\n]' });
     uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? ',\n  ' : '\n]' });
   });
   return { uncastedValue: uncastedArraySegments, castedValue: castedArraySegments };
-};
-
-const addStringLiteralSegment = (segments: ValueSegment[]): void => {
-  segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: `"` });
 };
 
 export const parseComplexItems = (

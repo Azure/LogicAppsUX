@@ -4,7 +4,10 @@ import type { IIconProps } from '@fluentui/react';
 import { css, Icon, TooltipHost } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-export type CardFooterProps = Pick<CardProps, 'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled'>;
+export type CardFooterProps = Pick<
+  CardProps,
+  'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled' | 'isSecureInputsOutputs'
+>;
 
 interface CardBadgeBarProps {
   badges: CardBadgeProps[];
@@ -31,7 +34,17 @@ const staticResultIconProps: IIconProps = {
   iconName: 'TestBeaker',
 };
 
-export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDisplayName, connectionRequired, staticResultsEnabled }) => {
+const lockIconProps: IIconProps = {
+  iconName: 'Lock',
+};
+
+export const CardFooter: React.FC<CardFooterProps> = ({
+  commentBox,
+  connectionDisplayName,
+  connectionRequired,
+  staticResultsEnabled,
+  isSecureInputsOutputs,
+}) => {
   const intl = useIntl();
 
   const CONNECTION_NAME_DISPLAY = intl.formatMessage({
@@ -53,6 +66,14 @@ export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDi
   const COMMENT = intl.formatMessage({
     defaultMessage: 'Comment',
     description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
+  });
+  const SECURE_INPUTS_OUTPUTS_TITLE = intl.formatMessage({
+    defaultMessage: 'Secure inputs or outputs enabled.',
+    description: 'Secure inputs or outputs enabled.',
+  });
+  const SECURE_INPUTS_OUTPUTS_TOOLTIP = intl.formatMessage({
+    defaultMessage: 'This operation has secure inputs or outputs enabled.',
+    description: 'This operation has secure inputs or outputs enabled.',
   });
 
   const connectionTitle = connectionDisplayName ? CONNECTION_NAME_DISPLAY : CONNECTION_CONTAINER_CONNECTION_REQUIRED;
@@ -85,6 +106,9 @@ export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDi
             title: connectionTitle,
           },
         ]
+      : []),
+    ...(isSecureInputsOutputs
+      ? [{ active: true, content: SECURE_INPUTS_OUTPUTS_TOOLTIP, iconProps: lockIconProps, title: SECURE_INPUTS_OUTPUTS_TITLE }]
       : []),
   ];
 
