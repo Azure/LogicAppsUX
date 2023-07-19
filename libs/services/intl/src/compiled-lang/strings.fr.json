@@ -48,7 +48,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obligatoire. Chaîne à examiner."
     }
   ],
   "+powfX": [
@@ -672,7 +672,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Facultatif. Code de paramètres régionaux RFC 4646 à utiliser. S’il n’est pas spécifié, les paramètres régionaux par défaut sont utilisés. Si la valeur des paramètres régionaux n’est pas valide, une erreur est générée indiquant que les paramètres régionaux fournis ne sont pas valides ou n’ont pas de paramètres régionaux associés."
     }
   ],
   "3+TQMa": [
@@ -758,7 +758,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obligatoire. Chaîne à examiner."
     }
   ],
   "3QXY3z": [
@@ -770,7 +770,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Renvoie la collection dans l’ordre inverse"
     }
   ],
   "3X4FHS": [
@@ -2860,7 +2860,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Obligatoire. Collection à trier."
     }
   ],
   "HMiE+4": [
@@ -4912,7 +4912,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Obligatoire. Longueur de chaque bloc."
     }
   ],
   "Umpr3z": [
@@ -5894,7 +5894,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Facultatif. Clé à utiliser pour trier les objets dans la collection."
     }
   ],
   "bSZ0lL": [
@@ -6614,7 +6614,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Renvoie une valeur booléenne qui indique si une chaîne est un nombre à virgule flottante"
     }
   ],
   "gu9o9z": [
@@ -7023,7 +7023,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Obligatoire. Chaîne ou tableau à fractionner."
     }
   ],
   "jVpanH": [
@@ -7320,7 +7320,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Obligatoire. Collection à inverser."
     }
   ],
   "lexzgJ": [
@@ -9313,7 +9313,7 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Renvoie un tableau trié dans ordre croissant"
     }
   ],
   "yVFIAQ": [
@@ -9331,7 +9331,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Fractionner une chaîne ou un tableau en blocs de longueur égale"
     }
   ],
   "ydqOly": [
@@ -9475,7 +9475,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Renvoie une valeur booléenne qui indique si une chaîne est un entier"
     }
   ],
   "zUgja+": [

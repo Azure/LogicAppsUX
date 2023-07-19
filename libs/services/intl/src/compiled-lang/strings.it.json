@@ -48,7 +48,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obbligatorio. Stringa da esaminare."
     }
   ],
   "+powfX": [
@@ -672,7 +672,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Facoltativo. Codice delle impostazioni locali RFC 4646 da utilizzare. Se non è specificato, vengono utilizzate le impostazioni locali predefinite. Se le impostazioni locali non sono un valore valido, viene generato un errore che indica che le impostazioni locali specificate non sono valide o non hanno impostazioni locali associate."
     }
   ],
   "3+TQMa": [
@@ -750,7 +750,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obbligatorio. Stringa da esaminare."
     }
   ],
   "3QXY3z": [
@@ -762,7 +762,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Restituisce la raccolta in ordine inverso"
     }
   ],
   "3X4FHS": [
@@ -2844,7 +2844,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Obbligatorio. Raccolta da ordinare."
     }
   ],
   "HMiE+4": [
@@ -4904,7 +4904,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Obbligatorio. Lunghezza di ogni blocco."
     }
   ],
   "Umpr3z": [
@@ -5886,7 +5886,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Facoltativo. Chiave da utilizzare per ordinare gli oggetti nella raccolta."
     }
   ],
   "bSZ0lL": [
@@ -6598,7 +6598,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Restituisce un valore booleano che indica se una stringa è un numero a virgola mobile"
     }
   ],
   "gu9o9z": [
@@ -7007,7 +7007,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Obbligatorio. Stringa o matrice da dividere."
     }
   ],
   "jVpanH": [
@@ -7304,7 +7304,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Obbligatorio. Raccolta da invertire."
     }
   ],
   "lexzgJ": [
@@ -9293,7 +9293,7 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Restituisce una matrice in ordine crescente"
     }
   ],
   "yVFIAQ": [
@@ -9311,7 +9311,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Dividere una stringa o una matrice in blocchi di uguale lunghezza"
     }
   ],
   "ydqOly": [
@@ -9455,7 +9455,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Restituisce un valore booleano che indica se una stringa è un numero intero"
     }
   ],
   "zUgja+": [
