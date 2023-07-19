@@ -305,7 +305,8 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     downloadChunkSize,
     operations,
   } = useSelector((state: RootState) => {
-    const { operations } = state;
+    const { operations, workflow } = state;
+    const { workflowKind } = workflow;
     const operationSettings = operations.settings?.[nodeId];
     const {
       asynchronous,
@@ -329,6 +330,7 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
       paging,
       downloadChunkSize,
       operations,
+      workflowKind,
     };
   });
 
@@ -410,7 +412,7 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
   const onContentTransferToggle = (checked: boolean): void => {
     updateSettings({
       uploadChunk: {
-        isSupported: !uploadChunk?.isSupported,
+        isSupported: !!uploadChunk?.isSupported,
         value: {
           ...uploadChunk?.value,
           transferMode: checked ? constants.SETTINGS.TRANSFER_MODE.CHUNKED : undefined,

@@ -4,6 +4,7 @@ export interface Workflow {
   definition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
   parameters?: Record<string, WorkflowParameter>;
+  kind?: string;
 }
 
 export interface ConnectionReference {

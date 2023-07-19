@@ -24,7 +24,7 @@ import {
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
+import type { NodesMetadata, Operations, WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
@@ -89,6 +89,7 @@ export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
   workflowParameters: Record<string, WorkflowParameter>,
+  workflowKind: WorkflowKind,
   dispatch: Dispatch
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
@@ -227,7 +228,14 @@ export const initializeOperationDetailsForManifest = async (
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
-      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, undefined /* swagger */, operation);
+      const settings = getOperationSettings(
+        isTrigger,
+        nodeOperationInfo,
+        nodeOutputs,
+        manifest,
+        /* swagger */ undefined,
+        /* operation */ undefined
+      );
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
