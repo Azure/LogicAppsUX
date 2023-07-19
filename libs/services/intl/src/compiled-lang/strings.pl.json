@@ -48,7 +48,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Wymagane. Ciąg do zbadania."
     }
   ],
   "+powfX": [
@@ -676,7 +676,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Opcjonalne. Kod ustawień regionalnych RFC 4646 do użycia. Jeśli nie zostanie określona, używane są domyślne ustawienia regionalne. Jeśli ustawienia regionalne nie są prawidłową wartością, generowany jest błąd informujący, że podane ustawienia regionalne są nieprawidłowe lub nie mają skojarzonych ustawień regionalnych."
     }
   ],
   "3+TQMa": [
@@ -762,7 +762,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Wymagane. Ciąg do zbadania."
     }
   ],
   "3QXY3z": [
@@ -774,7 +774,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Zwraca kolekcję w odwrotnej kolejności"
     }
   ],
   "3X4FHS": [
@@ -2898,7 +2898,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Wymagane. Kolekcja do sortowania."
     }
   ],
   "HMiE+4": [
@@ -4976,7 +4976,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Wymagane. Długość każdego fragmentu."
     }
   ],
   "Umpr3z": [
@@ -5958,7 +5958,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Opcjonalne. Klucz używany do sortowania obiektów w kolekcji."
     }
   ],
   "bSZ0lL": [
@@ -6674,7 +6674,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Zwraca wartość logiczną wskazującą, czy ciąg jest liczbą zmiennoprzecinkową"
     }
   ],
   "gu9o9z": [
@@ -7094,7 +7094,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Wymagane. Ciąg lub tablica do podzielenia."
     }
   ],
   "jVpanH": [
@@ -7418,7 +7418,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Wymagane. Kolekcja do odtworzenia."
     }
   ],
   "lexzgJ": [
@@ -9422,7 +9422,7 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Zwraca tablicę posortowane w kolejności rosnącej"
     }
   ],
   "yVFIAQ": [
@@ -9440,7 +9440,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Dzielenie ciągu lub tablicy na fragmenty o równej długości"
     }
   ],
   "ydqOly": [
@@ -9584,7 +9584,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Zwraca wartość logiczną wskazującą, czy ciąg jest liczbą całkowitą"
     }
   ],
   "zUgja+": [
