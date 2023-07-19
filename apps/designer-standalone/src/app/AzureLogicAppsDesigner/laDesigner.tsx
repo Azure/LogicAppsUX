@@ -200,7 +200,7 @@ const DesignerEditor = () => {
       <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
-            workflow={{ definition: workflow?.definition, connectionReferences, parameters }}
+            workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
             runInstance={runInstanceData}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>
