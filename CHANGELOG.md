@@ -1,4 +1,10 @@
 # Logic Apps Designer
+## [2.50.0](https://github.com/Azure/LogicAppsUX/compare/v2.49.0...v2.50.0) (2023-07-20)
+
+
+### Bug Fixes
+
+* **designer:** Default to off on content transfer chunking in stateless workflows ([#2997](https://github.com/Azure/LogicAppsUX/issues/2997)) ([117c725](https://github.com/Azure/LogicAppsUX/commit/117c7257202162a32319dff196348be0df144e4c))
 
 ## [2.49.0](https://github.com/Azure/LogicAppsUX/compare/v2.48.0...v2.49.0) (2023-07-18)
 
