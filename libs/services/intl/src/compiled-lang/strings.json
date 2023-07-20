@@ -1147,6 +1147,12 @@
       "value": "Error loading inputs"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1785,6 +1791,12 @@
     {
       "type": 0,
       "value": "Select frequency."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5255,6 +5267,12 @@
       "value": "Retry"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5733,12 +5751,6 @@
       "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Add new parameters"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5909,6 +5921,12 @@
     {
       "type": 0,
       "value": "Retry History"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6953,6 +6971,24 @@
     {
       "type": 0,
       "value": "Add a source schema"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9233,6 +9269,12 @@
     {
       "type": 0,
       "value": "Returns an array sorted in ascending order"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [
