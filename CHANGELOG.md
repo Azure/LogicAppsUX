@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.52.0](https://github.com/Azure/LogicAppsUX/compare/v2.51.0...v2.52.0) (2023-07-20)
+
+
+### Bug Fixes
+
+* **desinger:** Fix type issue breaking portal build ([#3004](https://github.com/Azure/LogicAppsUX/issues/3004)) ([ae469f7](https://github.com/Azure/LogicAppsUX/commit/ae469f7ad63e39c5fc0cb42ce9e9a8b8c5d215a7))
+
 ## [2.51.0](https://github.com/Azure/LogicAppsUX/compare/v2.50.1...v2.51.0) (2023-07-20)
 
 ### [2.50.1](https://github.com/Azure/LogicAppsUX/compare/v2.50.0...v2.50.1) (2023-07-20)
