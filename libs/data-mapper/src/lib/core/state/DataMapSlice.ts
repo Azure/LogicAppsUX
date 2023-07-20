@@ -184,6 +184,14 @@ export const dataMapSlice = createSlice({
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
+      const functionNodes: FunctionDictionary = {};
+      for (const key in dataMapConnections) {
+        const func = dataMapConnections[key].self.node as FunctionData;
+        if (func.functionName !== undefined) {
+          const idk = getConnectedTargetSchemaNodes([dataMapConnections[key]], dataMapConnections);
+          functionNodes[key] = { functionData: func, functionLocations: idk };
+        }
+      }
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -192,6 +200,7 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
+        functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],
