@@ -4,6 +4,7 @@ import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/vali
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { activateAzurite } from './app/utils/azurite/activateAzurite';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
@@ -52,6 +53,8 @@ export async function activate(context: vscode.ExtensionContext) {
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
     });
+
+    await activateAzurite(activateContext);
 
     registerEvent(
       extensionCommand.validateLogicAppProjects,

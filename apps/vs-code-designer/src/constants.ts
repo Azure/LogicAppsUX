@@ -20,6 +20,11 @@ export const funcIgnoreFileName = '.funcignore';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
+// Azurite
+export const azuriteExtensionId = 'Azurite.azurite';
+export const azuriteExtensionPrefix = 'azurite';
+export const azuriteLocationSetting = 'location';
+
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
@@ -117,6 +122,7 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
+  azureAzuriteStart = 'azurite.start',
 }
 
 // Context
