@@ -1159,6 +1159,12 @@
       "value": "Hiba történt a bemenetek betöltésekor"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1789,6 +1795,12 @@
     {
       "type": 0,
       "value": "Válasszon gyakoriságot."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5251,6 +5263,12 @@
       "value": "Újrapróbálkozás"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5729,12 +5747,6 @@
       "value": "Kötelező megadni. A gyűjtemény elejéről eltávolítandó objektumok száma. Pozitív egész számnak kell lennie."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Új paraméterek hozzáadása"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5905,6 +5917,12 @@
     {
       "type": 0,
       "value": "Újrapróbálkozási előzmények"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6957,6 +6975,24 @@
     {
       "type": 0,
       "value": "Forrásséma hozzáadása"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9237,6 +9273,12 @@
     {
       "type": 0,
       "value": "Visszaad egy tömböt növekvő sorrendbe rendezve"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

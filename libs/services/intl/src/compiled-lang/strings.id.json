@@ -1135,6 +1135,12 @@
       "value": "Kesalahan saat memuat input"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1773,6 +1779,12 @@
     {
       "type": 0,
       "value": "Pilih frekuensi."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5199,6 +5211,12 @@
       "value": "Coba lagi"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5677,12 +5695,6 @@
       "value": "Harus diisi. Jumlah objek untuk dihapus dari bagian depan Koleksi. Harus bilangan bulat positif."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Tambahkan parameter baru"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5853,6 +5865,12 @@
     {
       "type": 0,
       "value": "Coba Ulang Riwayat"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6886,6 +6904,24 @@
     {
       "type": 0,
       "value": "Tambahkan skema sumber"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9144,6 +9180,12 @@
     {
       "type": 0,
       "value": "Menghasilkan array yang diurutkan dalam urutan naik"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

@@ -1143,6 +1143,12 @@
       "value": "Nous n’avons pas pu charger les entrées"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1781,6 +1787,12 @@
     {
       "type": 0,
       "value": "Sélectionner une fréquence."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5295,6 +5307,12 @@
       "value": "Réessayer"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5773,12 +5791,6 @@
       "value": "Obligatoire. Nombre d'objets à supprimer de l'avant de la collection. Doit être un entier positif."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Ajouter de nouveaux paramètres"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5949,6 +5961,12 @@
     {
       "type": 0,
       "value": "Historique des nouvelles tentatives"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -7012,6 +7030,24 @@
     {
       "type": 0,
       "value": "Ajouter un schéma source"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9314,6 +9350,12 @@
     {
       "type": 0,
       "value": "Renvoie un tableau trié dans ordre croissant"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

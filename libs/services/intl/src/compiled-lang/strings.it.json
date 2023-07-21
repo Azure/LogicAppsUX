@@ -1135,6 +1135,12 @@
       "value": "Errore durante il caricamento degli input"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1773,6 +1779,12 @@
     {
       "type": 0,
       "value": "Seleziona la frequenza."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5287,6 +5299,12 @@
       "value": "Riprova"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5765,12 +5783,6 @@
       "value": "Obbligatorio. Numero di oggetti da rimuovere dalla parte iniziale della raccolta. Deve essere un intero positivo."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Aggiungi nuovi parametri"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5941,6 +5953,12 @@
     {
       "type": 0,
       "value": "Cronologia tentativi"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6996,6 +7014,24 @@
     {
       "type": 0,
       "value": "Aggiungi uno schema di origine"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9294,6 +9330,12 @@
     {
       "type": 0,
       "value": "Restituisce una matrice in ordine crescente"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

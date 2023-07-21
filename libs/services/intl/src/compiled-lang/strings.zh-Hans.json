@@ -1147,6 +1147,12 @@
       "value": "加载输入时出错"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1785,6 +1791,12 @@
     {
       "type": 0,
       "value": "选择频率。"
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5231,6 +5243,12 @@
       "value": "重试"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5709,12 +5727,6 @@
       "value": "必需。要从集合前面删除的对象数。必须是一个正整数。"
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "添加新参数"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5885,6 +5897,12 @@
     {
       "type": 0,
       "value": "重试历史记录"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6926,6 +6944,24 @@
     {
       "type": 0,
       "value": "添加源架构"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9192,6 +9228,12 @@
     {
       "type": 0,
       "value": "返回按升序排序的数组"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [
