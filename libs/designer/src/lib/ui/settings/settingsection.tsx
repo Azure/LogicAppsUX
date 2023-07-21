@@ -24,7 +24,7 @@ import {
   SettingDictionary,
   SettingTokenField,
   SettingDropdown,
-  SearchableDropdown,
+  SearchableDropdownWithAddAll,
 } from '@microsoft/designer-ui';
 import type {
   MultiSelectSettingProps,
@@ -223,109 +223,145 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
     setHideErrorMessage([...hideErrorMessage.slice(0, index), b, ...hideErrorMessage.slice(index + 1)]);
   };
 
+  const allConditionalSettings = useMemo(
+    () => settings.filter((setting) => (setting.settingProp as any).conditionalVisibility !== undefined),
+    [settings]
+  );
+
   const conditionallyInvisibleSettings = useMemo(
     () => settings.filter((setting) => (setting.settingProp as any).conditionalVisibility === false),
     [settings]
   );
 
-  const addNewParamText = intl.formatMessage({
-    defaultMessage: 'Add new parameters',
-    description: 'Text for add new parameter button',
+  const addNewParamText = intl.formatMessage(
+    {
+      defaultMessage: 'Showing {countShowing} of {countTotal}',
+      description: 'Placeholder text for the number of advanced parameters showing',
+    },
+    {
+      countShowing: allConditionalSettings.length - conditionallyInvisibleSettings.length,
+      countTotal: allConditionalSettings.length,
+    }
+  );
+
+  const addAllButtonText = intl.formatMessage({
+    defaultMessage: 'Show all',
+    description: 'Button text to add all advanced parameters',
   });
+  const removeAllButtonText = intl.formatMessage({
+    defaultMessage: 'Clear all',
+    description: 'Button text to clear all advanced parameters',
+  });
+  const addAllButtonTooltip = intl.formatMessage({
+    defaultMessage: 'Show all advanced parameters',
+    description: 'Button tooltip to add all advanced parameters',
+  });
+  const removeAllButtonTooltip = intl.formatMessage({
+    defaultMessage: 'Remove and clear all advanced parameters and their values',
+    description: 'Button tooltip to remove all advanced parameters',
+  });
+  const advancedParametersLabel = intl.formatMessage({
+    defaultMessage: 'Advanced parameters',
+    description: 'The label for advanced parameters',
+  });
+
+  const renderSetting = (setting: Settings, i: number) => {
+    const { settingType, settingProp, visible = true } = setting;
+    const { id: parameterId, conditionalVisibility, readOnly, validationErrors } = settingProp as any;
+    if (!readOnly) settingProp.readOnly = isReadOnly;
+    const errorMessage = validationErrors?.reduce((acc: string, message: any) => acc + message + ' ', '');
+
+    const getClassName = (): string =>
+      settingType === 'RunAfter'
+        ? 'msla-setting-section-run-after-setting'
+        : settingType === 'MultiAddExpressionEditor'
+        ? 'msla-setting-section-expression-field'
+        : 'msla-setting-section-setting';
+    const renderSetting = (): JSX.Element | null => {
+      switch (settingType) {
+        case 'MultiSelectSetting':
+          return <MultiSelectSetting {...settingProp} />;
+        case 'MultiAddExpressionEditor':
+          return <MultiAddExpressionEditor {...settingProp} />;
+        case 'ExpressionsEditor':
+          return <ExpressionsEditor {...settingProp} />;
+        case 'Expressions':
+          return <Expressions {...settingProp} />;
+        case 'Expression':
+          return <Expression {...settingProp} />;
+        case 'ReactiveToggle':
+          return <ReactiveToggle {...settingProp} />;
+        case 'CustomValueSlider':
+          return <CustomValueSlider {...settingProp} />;
+        case 'SettingTextField':
+          return <SettingTextField {...settingProp} />;
+        case 'SettingToggle':
+          return <SettingToggle {...settingProp} />;
+        case 'SettingDictionary':
+          return <SettingDictionary {...settingProp} />;
+        case 'SettingTokenField':
+          return (
+            <SettingTokenField
+              {...{
+                hideValidationErrors: (newState: ChangeState) => {
+                  updateHideErrorMessage(i, newState.viewModel.hideErrorMessage);
+                },
+                ...settingProp,
+              }}
+            />
+          );
+        case 'RunAfter':
+          return <RunAfter {...settingProp} />;
+        case 'SettingDropdown':
+          return <SettingDropdown {...settingProp} />;
+        default:
+          return null;
+      }
+    };
+
+    const removeParamCallback = () => {
+      dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: false }));
+    };
+
+    const removeParamTooltip = intl.formatMessage(
+      {
+        defaultMessage: 'Remove parameter "{parameterName}" and its value',
+        description: 'Tooltip for remove parameter button',
+      },
+      { parameterName: (settingProp as any).label }
+    );
+
+    const RemoveConditionalParameter = () => {
+      const readOnly = useReadOnly();
+      return conditionalVisibility === true ? (
+        <div style={{ marginTop: '32px' }}>
+          <TooltipHost content={removeParamTooltip}>
+            <IconButton iconProps={{ iconName: 'Cancel' }} onClick={removeParamCallback} disabled={readOnly} />
+          </TooltipHost>
+        </div>
+      ) : null;
+    };
+
+    return visible && conditionalVisibility !== false ? (
+      <div key={i} style={{ display: 'flex', gap: '4px' }}>
+        <div className={getClassName()} style={{ flex: '1 1 auto' }}>
+          {renderSetting()}
+          {errorMessage && !hideErrorMessage[i] && <div className="msla-input-parameter-error">{errorMessage}</div>}
+        </div>
+        <RemoveConditionalParameter />
+      </div>
+    ) : null;
+  };
 
   return (
     <div className="msla-setting-section-settings">
-      {settings?.map((setting, i) => {
-        const { settingType, settingProp, visible = true } = setting;
-        const { id: parameterId, conditionalVisibility, readOnly, validationErrors } = settingProp as any;
-        if (!readOnly) settingProp.readOnly = isReadOnly;
-        const errorMessage = validationErrors?.reduce((acc: string, message: any) => acc + message + ' ', '');
-
-        const getClassName = (): string =>
-          settingType === 'RunAfter'
-            ? 'msla-setting-section-run-after-setting'
-            : settingType === 'MultiAddExpressionEditor'
-            ? 'msla-setting-section-expression-field'
-            : 'msla-setting-section-setting';
-        const renderSetting = (): JSX.Element | null => {
-          switch (settingType) {
-            case 'MultiSelectSetting':
-              return <MultiSelectSetting {...settingProp} />;
-            case 'MultiAddExpressionEditor':
-              return <MultiAddExpressionEditor {...settingProp} />;
-            case 'ExpressionsEditor':
-              return <ExpressionsEditor {...settingProp} />;
-            case 'Expressions':
-              return <Expressions {...settingProp} />;
-            case 'Expression':
-              return <Expression {...settingProp} />;
-            case 'ReactiveToggle':
-              return <ReactiveToggle {...settingProp} />;
-            case 'CustomValueSlider':
-              return <CustomValueSlider {...settingProp} />;
-            case 'SettingTextField':
-              return <SettingTextField {...settingProp} />;
-            case 'SettingToggle':
-              return <SettingToggle {...settingProp} />;
-            case 'SettingDictionary':
-              return <SettingDictionary {...settingProp} />;
-            case 'SettingTokenField':
-              return (
-                <SettingTokenField
-                  {...{
-                    hideValidationErrors: (newState: ChangeState) => {
-                      updateHideErrorMessage(i, newState.viewModel.hideErrorMessage);
-                    },
-                    ...settingProp,
-                  }}
-                />
-              );
-            case 'RunAfter':
-              return <RunAfter {...settingProp} />;
-            case 'SettingDropdown':
-              return <SettingDropdown {...settingProp} />;
-            default:
-              return null;
-          }
-        };
-
-        const removeParamCallback = () => {
-          dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: false }));
-        };
-
-        const removeParamTooltip = intl.formatMessage(
-          {
-            defaultMessage: 'Remove parameter "{parameterName}" and its value',
-            description: 'Tooltip for remove parameter button',
-          },
-          { parameterName: (settingProp as any).label }
-        );
-
-        const RemoveConditionalParameter = () => {
-          const readOnly = useReadOnly();
-          return conditionalVisibility === true ? (
-            <div style={{ marginTop: '30px' }}>
-              <TooltipHost content={removeParamTooltip}>
-                <IconButton iconProps={{ iconName: 'Cancel' }} onClick={removeParamCallback} disabled={readOnly} />
-              </TooltipHost>
-            </div>
-          ) : null;
-        };
-
-        return visible && conditionalVisibility !== false ? (
-          <div key={i} style={{ display: 'flex', gap: '4px' }}>
-            <div className={getClassName()} style={{ flex: '1 1 auto' }}>
-              {renderSetting()}
-              {errorMessage && !hideErrorMessage[i] && <div className="msla-input-parameter-error">{errorMessage}</div>}
-            </div>
-            <RemoveConditionalParameter />
-          </div>
-        ) : null;
-      })}
-
-      {conditionallyInvisibleSettings.length > 0 && !readOnly ? (
-        <div style={{ paddingTop: '5px' }}>
-          <SearchableDropdown
+      {/* Would first need to render the important parameters */}
+      {settings?.filter((setting) => (setting.settingProp as any).conditionalVisibility === undefined).map(renderSetting)}
+      {/* Now rendering the dropdown list of advanced parameters */}
+      {allConditionalSettings.length > 0 && !readOnly ? (
+        <div style={{ paddingTop: '32px' }}>
+          <hr />
+          <SearchableDropdownWithAddAll
             dropdownProps={{
               multiSelect: true,
               options: conditionallyInvisibleSettings.map(
@@ -339,9 +375,44 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
             onItemSelectionChanged={(parameterId, value) => {
               dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value }));
             }}
+            onShowAllClick={() =>
+              conditionallyInvisibleSettings.forEach((setting) =>
+                dispatch(
+                  updateParameterConditionalVisibility({
+                    nodeId,
+                    groupId: id ?? '',
+                    parameterId: (setting.settingProp as any).id,
+                    value: true,
+                  })
+                )
+              )
+            }
+            onHideAllClick={() =>
+              allConditionalSettings.forEach(
+                (setting) =>
+                  (setting.settingProp as any).conditionalVisibility &&
+                  dispatch(
+                    updateParameterConditionalVisibility({
+                      nodeId,
+                      groupId: id ?? '',
+                      parameterId: (setting.settingProp as any).id,
+                      value: false,
+                    })
+                  )
+              )
+            }
+            addAllButtonText={addAllButtonText}
+            addAllButtonTooltip={addAllButtonTooltip}
+            addAllButtonEnabled={conditionallyInvisibleSettings.length > 0}
+            removeAllButtonText={removeAllButtonText}
+            removeAllButtonTooltip={removeAllButtonTooltip}
+            removeAllButtonEnabled={conditionallyInvisibleSettings.length !== allConditionalSettings.length}
+            label={advancedParametersLabel}
           />
         </div>
       ) : null}
+      {/* Now let's render all advanced parameters that are conditionally visible */}
+      {settings?.filter((setting) => (setting.settingProp as any).conditionalVisibility === true).map(renderSetting)}
     </div>
   );
 };
