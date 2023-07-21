@@ -1147,6 +1147,12 @@
       "value": "Fel vid inläsning av indata"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1781,6 +1787,12 @@
     {
       "type": 0,
       "value": "Välj frekvens."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5243,6 +5255,12 @@
       "value": "Försök igen"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5721,12 +5739,6 @@
       "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Lägg till nya parametrar"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5897,6 +5909,12 @@
     {
       "type": 0,
       "value": "Återförsökshistorik"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6945,6 +6963,24 @@
     {
       "type": 0,
       "value": "Lägg till ett källschema"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9217,6 +9253,12 @@
     {
       "type": 0,
       "value": "Returnerar en matris sorterad i stigande ordning"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

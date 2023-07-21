@@ -9,6 +9,7 @@ export interface SearchableDropdownProps {
   onItemSelectionChanged: (id: string, isSelected: boolean) => void;
   searchPlaceholderText?: string;
   showSearchItemThreshold?: number;
+  className?: string;
 }
 
 export const SearchableDropdown: FC<SearchableDropdownProps> = ({
@@ -16,6 +17,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   onItemSelectionChanged,
   searchPlaceholderText,
   showSearchItemThreshold: showFilterItemThreshold,
+  className,
 }): JSX.Element => {
   const showFilterInputItemThreshold = showFilterItemThreshold ?? 4;
   const headerKey = 'FilterHeader';
@@ -44,7 +46,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   return (
     <Dropdown
       {...dropdownProps}
-      className="msla-searchable-dropdown"
+      className={className ?? 'msla-searchable-dropdown'}
       options={options}
       selectedKeys={conditionalVisibilityTempArray}
       onChange={(_e: any, item: any) => {

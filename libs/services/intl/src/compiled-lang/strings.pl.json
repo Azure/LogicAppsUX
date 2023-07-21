@@ -1151,6 +1151,12 @@
       "value": "Błąd podczas ładowania danych wejściowych"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1789,6 +1795,12 @@
     {
       "type": 0,
       "value": "Wybierz częstotliwość."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5359,6 +5371,12 @@
       "value": "Ponów próbę"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5837,12 +5855,6 @@
       "value": "Parametr wymagany. Liczba obiektów do usunięcia z początku kolekcji. Musi być dodatnią liczbą całkowitą."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Dodaj nowe parametry"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -6013,6 +6025,12 @@
     {
       "type": 0,
       "value": "Historia ponownych prób"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -7083,6 +7101,24 @@
     {
       "type": 0,
       "value": "Dodawanie schematu źródłowego"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9423,6 +9459,12 @@
     {
       "type": 0,
       "value": "Zwraca tablicę posortowane w kolejności rosnącej"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [
