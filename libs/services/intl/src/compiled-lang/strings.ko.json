@@ -1135,6 +1135,12 @@
       "value": "입력을 로드하는 동안 오류가 발생했습니다."
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1765,6 +1771,12 @@
     {
       "type": 0,
       "value": "빈도를 선택합니다."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5179,6 +5191,12 @@
       "value": "다시 시도"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5657,12 +5675,6 @@
       "value": "필수 항목으로, 컬렉션 맨 앞부터 제거할 개체의 수입니다. 양의 정수여야 합니다."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "새 매개 변수 추가"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5833,6 +5845,12 @@
     {
       "type": 0,
       "value": "다시 시도 기록"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6858,6 +6876,24 @@
     {
       "type": 0,
       "value": "원본 스키마 추가"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9100,6 +9136,12 @@
     {
       "type": 0,
       "value": "오름차순으로 정렬된 배열을 반환합니다."
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

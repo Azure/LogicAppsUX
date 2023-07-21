@@ -1151,6 +1151,12 @@
       "value": "Při načítání vstupů došlo k chybě"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1789,6 +1795,12 @@
     {
       "type": 0,
       "value": "Vyberte frekvenci."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5343,6 +5355,12 @@
       "value": "Zkusit znovu"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5821,12 +5839,6 @@
       "value": "Vyžadováno. Počet objektů, které se mají odebrat ze začátku kolekce. Musí to být kladné celé číslo."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Přidat nové parametry"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5997,6 +6009,12 @@
     {
       "type": 0,
       "value": "Historie opakování pokusů"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -7071,6 +7089,24 @@
     {
       "type": 0,
       "value": "Přidat zdrojové schéma"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9387,6 +9423,12 @@
     {
       "type": 0,
       "value": "Vrátí pole seřazené vzestupně"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

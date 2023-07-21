@@ -1143,6 +1143,12 @@
       "value": "載入輸入時發生錯誤"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1781,6 +1787,12 @@
     {
       "type": 0,
       "value": "選取頻率。"
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5191,6 +5203,12 @@
       "value": "重試"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5669,12 +5687,6 @@
       "value": "必要。要從集合開頭開始移除的物件數。必須為正整數。"
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "新增新的參數"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5845,6 +5857,12 @@
     {
       "type": 0,
       "value": "重試歷程記錄"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6878,6 +6896,24 @@
     {
       "type": 0,
       "value": "新增來源結構描述"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9128,6 +9164,12 @@
     {
       "type": 0,
       "value": "傳回以遞增排序的陣列"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

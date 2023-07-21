@@ -1135,6 +1135,12 @@
       "value": "Girişler yüklenirken hata oluştu"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1773,6 +1779,12 @@
     {
       "type": 0,
       "value": "Sıklık seçin."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5231,6 +5243,12 @@
       "value": "Yeniden dene"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5709,12 +5727,6 @@
       "value": "Gerekli. Koleksiyonun önünden kaldırılacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Yeni parametreler ekle"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5885,6 +5897,12 @@
     {
       "type": 0,
       "value": "Yeniden Deneme Geçmişi"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6921,6 +6939,24 @@
     {
       "type": 0,
       "value": "Kaynak şema ekleyin"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9197,6 +9233,12 @@
     {
       "type": 0,
       "value": "Artan düzende sıralanan bir dizi döndürür"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

@@ -1123,6 +1123,12 @@
       "value": "Erro ao carregar entradas"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1757,6 +1763,12 @@
     {
       "type": 0,
       "value": "Selecionar a frequência."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -5267,6 +5279,12 @@
       "value": "Tentar novamente"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5745,12 +5763,6 @@
       "value": "Necessário. O número de objetos a serem removidos da frente da Coleção. Deve ser um inteiro positivo."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Adicionar novos parâmetros"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5921,6 +5933,12 @@
     {
       "type": 0,
       "value": "Histórico de Novas Tentativas"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
     }
   ],
   "bwlAWn": [
@@ -6984,6 +7002,24 @@
     {
       "type": 0,
       "value": "Adicionar um esquema de origem"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -9286,6 +9322,12 @@
     {
       "type": 0,
       "value": "Retorna uma matriz classificada em ordem ascendente"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [
