@@ -38,7 +38,7 @@ export function ExpressionEditor({
   const [heightOnMouseDown, setHeightOnMouseDown] = useState(0);
   useEffect(() => {
     if (isDragging && dragDistance) {
-      setCurrentHeight(clamp(heightOnMouseDown + dragDistance - mouseDownLocation, 100, 200));
+      setCurrentHeight(clamp(heightOnMouseDown + dragDistance - mouseDownLocation, 50, 200));
     }
   }, [isDragging, dragDistance, mouseDownLocation, currentHeight, setCurrentHeight, heightOnMouseDown]);
 

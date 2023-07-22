@@ -67,7 +67,7 @@ export const TokenPickerSection = ({
       style={{
         maxHeight: fullScreen
           ? windowDimensions.height - (expressionEditorCurrentHeight + 287)
-          : Math.min(windowDimensions.height - 100, 550),
+          : Math.min(windowDimensions.height - (expressionEditorCurrentHeight + 197), 540),
       }}
     >
       {searchQuery && noItems ? <TokenPickerNoMatches /> : null}
