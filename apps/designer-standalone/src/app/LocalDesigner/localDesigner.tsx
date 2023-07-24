@@ -144,6 +144,7 @@ export const LocalDesigner = () => {
     language,
     areCustomEditorsEnabled,
   } = useSelector((state: RootState) => state.workflowLoader);
+  editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const designerProviderProps = {
     services: {
       connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
@@ -156,7 +157,7 @@ export const LocalDesigner = () => {
       workflowService,
       hostService,
       runService,
-      editorService: areCustomEditorsEnabled ? editorService : undefined,
+      editorService,
     },
     readOnly: isReadOnly,
     isMonitoringView,

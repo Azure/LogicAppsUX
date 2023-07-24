@@ -2,10 +2,16 @@ import type { IEditorParameterInfo, IEditorProps, IEditorService } from '@micros
 import { createLiteralValueSegment } from '@microsoft/logic-apps-designer';
 
 export class CustomEditorService implements IEditorService {
+  public areCustomEditorsEnabled = false;
+
   public getEditor = ({
     operationInfo: { connectorId, operationId },
     parameter: { parameterName, editor, editorOptions },
   }: IEditorParameterInfo) => {
+    if (!this.areCustomEditorsEnabled) {
+      return undefined;
+    }
+
     if (connectorId === 'connectionProviders/variable' && operationId === 'incrementvariable' && parameterName === 'value') {
       return {
         EditorComponent: IncrementVariableEditor,
