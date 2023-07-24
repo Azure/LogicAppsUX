@@ -22,6 +22,7 @@ export { default as UIConstants } from './constants';
 export * from './html';
 // export * from './conditioncontrol';
 // export * from './configItem';
+export * from './copilotGetStarted/index';
 export * from './copyinputcontrol';
 export * from './createConnection';
 // export * from './datetimeeditor';

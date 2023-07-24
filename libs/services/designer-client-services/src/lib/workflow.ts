@@ -54,7 +54,10 @@ export interface IWorkflowService {
   /**
    * Updates the serialized workflow with dynamic inputs from references.
    */
-  getDefinitionWithDynamicInputs?(serializedWorkflow: LogicAppsV2.WorkflowDefinition, outputParameters: Record<string, NodeOutputs>): LogicAppsV2.WorkflowDefinition;
+  getDefinitionWithDynamicInputs?(
+    serializedWorkflow: LogicAppsV2.WorkflowDefinition,
+    outputParameters: Record<string, NodeOutputs>
+  ): LogicAppsV2.WorkflowDefinition;
 }
 
 let service: IWorkflowService;
