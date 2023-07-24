@@ -48,7 +48,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "必填。要检查的字符串。"
     }
   ],
   "+powfX": [
@@ -676,7 +676,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "可选。要使用的 RFC 4646 区域设置代码。如果未指定，则使用默认区域设置。如果区域设置不是有效值，则会生成错误，指出提供的区域设置无效或没有关联的区域设置。"
     }
   ],
   "3+TQMa": [
@@ -762,7 +762,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "必填。要检查的字符串。"
     }
   ],
   "3QXY3z": [
@@ -774,7 +774,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "按反向顺序返回集合"
     }
   ],
   "3X4FHS": [
@@ -958,7 +958,7 @@
   "4hi3ks": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "你的流已更新。"
     }
   ],
   "4j2MEv": [
@@ -1010,7 +1010,7 @@
   "50W8FI": [
     {
       "type": 0,
-      "value": "Explain action"
+      "value": "解释操作"
     }
   ],
   "53MgCQ": [
@@ -1028,13 +1028,13 @@
   "5H+8Sb": [
     {
       "type": 0,
-      "value": "Add a condition"
+      "value": "添加条件"
     }
   ],
   "5J9jne": [
     {
       "type": 0,
-      "value": "Tell Microsoft what you liked about this feature"
+      "value": "告诉 Microsoft 你喜欢此功能的哪些方面"
     }
   ],
   "5OvGgn": [
@@ -1147,6 +1147,12 @@
       "value": "加载输入时出错"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "显示所有高级参数"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1188,7 +1194,7 @@
   "6gblzt": [
     {
       "type": 0,
-      "value": "Updated this action"
+      "value": "已更新此操作"
     }
   ],
   "6jiO7t": [
@@ -1224,7 +1230,7 @@
   "6pISgk": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up these actions:"
+      "value": "若要准备好此工作流，请设置完以下操作:"
     }
   ],
   "6qkBwz": [
@@ -1236,7 +1242,7 @@
   "6sGj3J": [
     {
       "type": 0,
-      "value": "Create flow"
+      "value": "创建流"
     }
   ],
   "6u6CS+": [
@@ -1340,7 +1346,7 @@
   "7gUE8h": [
     {
       "type": 0,
-      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+      "value": "这会将工作流还原到在 Copilot 编辑之前所处的状态。如果在 Copilot 编辑之后对工作流进行了其他编辑，则将丢失这些编辑。此操作无法撤消。是否要继续?"
     }
   ],
   "7k9jXx": [
@@ -1352,7 +1358,7 @@
   "7ku9t+": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "报告 bug"
     }
   ],
   "7lnElz": [
@@ -1478,13 +1484,13 @@
   "8NUqpR": [
     {
       "type": 0,
-      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+      "value": "描述应如何更改流。请添加尽可能详细的信息，包括要使用的连接器以及是否应包含任何内容。"
     }
   ],
   "8Q7ns/": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "将此流编辑到"
     }
   ],
   "8SxNQC": [
@@ -1648,7 +1654,7 @@
   "9QNZSj": [
     {
       "type": 0,
-      "value": "Revert your flow"
+      "value": "还原流"
     }
   ],
   "9SuA/E": [
@@ -1710,7 +1716,7 @@
   "9wX3u9": [
     {
       "type": 0,
-      "value": "Send feedback"
+      "value": "发送反馈"
     }
   ],
   "9x8hg8": [
@@ -1787,10 +1793,16 @@
       "value": "选择频率。"
     }
   ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "删除和清除所有高级参数及其值"
+    }
+  ],
   "Ak2Lka": [
     {
       "type": 0,
-      "value": "Not connected to"
+      "value": "未连接到"
     }
   ],
   "AnX5yC": [
@@ -1909,7 +1921,7 @@
   "BIzX3S": [
     {
       "type": 0,
-      "value": "Learn more about undo operations"
+      "value": "了解有关撤消操作的详细信息"
     }
   ],
   "BJNUxN": [
@@ -1945,7 +1957,7 @@
   "BS3gy8": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "对不起，出现错误。请重试。"
     }
   ],
   "BSgavq": [
@@ -2035,7 +2047,7 @@
   "BynK4X": [
     {
       "type": 0,
-      "value": "Ask a question"
+      "value": "提问"
     }
   ],
   "C1cy54": [
@@ -2053,7 +2065,7 @@
   "CFOUe3": [
     {
       "type": 0,
-      "value": "Add an action that sends an email"
+      "value": "添加发送电子邮件的操作"
     }
   ],
   "CG772M": [
@@ -2363,7 +2375,7 @@
   "EKjaix": [
     {
       "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+      "value": "检查流的操作，看看是否需要设置任何参数。完成后，别忘了保存!"
     }
   ],
   "EKtYQF": [
@@ -2463,7 +2475,7 @@
   "EqX3Mi": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "设置这些连接以在流中使用它们。"
     }
   ],
   "EurkzL": [
@@ -2529,7 +2541,7 @@
   "FMA0Q0": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "你的流已更新。"
     }
   ],
   "FN5zHQ": [
@@ -2682,7 +2694,7 @@
   "GQnN3U": [
     {
       "type": 0,
-      "value": "Explain flow"
+      "value": "解释流"
     }
   ],
   "GXXLuT": [
@@ -2712,7 +2724,7 @@
   "Ggkf4s": [
     {
       "type": 0,
-      "value": "Get started"
+      "value": "开始"
     }
   ],
   "Gi72X5": [
@@ -2824,7 +2836,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "必填。要排序的集合。"
     }
   ],
   "HMiE+4": [
@@ -2872,7 +2884,7 @@
   "HfmDk9": [
     {
       "type": 0,
-      "value": "Edit Flow"
+      "value": "编辑流"
     }
   ],
   "HfrUId": [
@@ -3064,7 +3076,7 @@
   "IuHdCO": [
     {
       "type": 0,
-      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+      "value": "这是你的流。如果希望我更改它，只需说出你的要求。例如:"
     }
   ],
   "IxWip7": [
@@ -3148,7 +3160,7 @@
   "JJyT88": [
     {
       "type": 0,
-      "value": "Action undone"
+      "value": "操作已撤消"
     }
   ],
   "JNQHws": [
@@ -3244,7 +3256,7 @@
   "KNDVnN": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "将 \""
     },
     {
       "type": 1,
@@ -3252,7 +3264,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\" 替换为"
     }
   ],
   "KP0Rr2": [
@@ -3264,7 +3276,7 @@
   "KV4uky": [
     {
       "type": 0,
-      "value": "When a new item..."
+      "value": "当有新项时..."
     }
   ],
   "KX1poC": [
@@ -3419,7 +3431,7 @@
   "LaFlFh": [
     {
       "type": 0,
-      "value": "Removed this action"
+      "value": "已删除此操作"
     }
   ],
   "LdITnG": [
@@ -3509,7 +3521,7 @@
   "M3kJsI": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "每周的星期一"
     }
   ],
   "M4H0gh": [
@@ -3551,7 +3563,7 @@
   "MGZRu4": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "添加操作"
     }
   ],
   "MIX4f9": [
@@ -3857,7 +3869,7 @@
   "OQud51": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "向我详细介绍"
     }
   ],
   "OSHNZ2": [
@@ -3881,7 +3893,7 @@
   "OYWZE4": [
     {
       "type": 0,
-      "value": "Save this workflow"
+      "value": "保存此工作流"
     }
   ],
   "OdNhwc": [
@@ -4442,7 +4454,7 @@
   "SHXdzU": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "AI 生成的内容可能不正确"
     }
   ],
   "SJFVxf": [
@@ -4554,7 +4566,7 @@
   "TLMkrg": [
     {
       "type": 0,
-      "value": "Explain what an action does"
+      "value": "解释操作的作用"
     }
   ],
   "TNEttQ": [
@@ -4794,7 +4806,7 @@
   "UW+fkB": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "在以下情况向我发送一封电子邮件"
     }
   ],
   "UYRIS/": [
@@ -4836,7 +4848,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "必填。每个区块的长度。"
     }
   ],
   "Umpr3z": [
@@ -4938,7 +4950,7 @@
   "VEbE93": [
     {
       "type": 0,
-      "value": "Explain what the \""
+      "value": "解释 \""
     },
     {
       "type": 1,
@@ -4946,7 +4958,7 @@
     },
     {
       "type": 0,
-      "value": "\" action does in this flow"
+      "value": "\" 操作在此流中的作用"
     }
   ],
   "VHm1Sr": [
@@ -5070,7 +5082,7 @@
   "Vx6fwP": [
     {
       "type": 0,
-      "value": "Added this action"
+      "value": "已添加此操作"
     }
   ],
   "W070M2": [
@@ -5096,7 +5108,7 @@
   "WCASt1": [
     {
       "type": 0,
-      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
+      "value": "描述流中的被替换项和替换项。添加尽可能详细的信息，包括要使用的连接器以及是否应包含任何内容。"
     }
   ],
   "WGwH45": [
@@ -5231,6 +5243,12 @@
       "value": "重试"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "高级参数"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5268,7 +5286,7 @@
   "XR4Sd/": [
     {
       "type": 0,
-      "value": "Like"
+      "value": "赞"
     }
   ],
   "XRK+gt": [
@@ -5404,7 +5422,7 @@
   "Y04+GH": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "添加操作"
     }
   ],
   "Y0H9aX": [
@@ -5434,7 +5452,7 @@
   "YCDF7A": [
     {
       "type": 0,
-      "value": "All required parameters are set"
+      "value": "所有必需参数已设置"
     }
   ],
   "YCFhzp": [
@@ -5652,7 +5670,7 @@
   "ZXoHXd": [
     {
       "type": 0,
-      "value": "Here’s your flow."
+      "value": "这是你的流。"
     }
   ],
   "ZaIeDG": [
@@ -5707,12 +5725,6 @@
     {
       "type": 0,
       "value": "必需。要从集合前面删除的对象数。必须是一个正整数。"
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "添加新参数"
     }
   ],
   "aK4iLW": [
@@ -5830,7 +5842,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "可选。用于对集合中的对象进行排序的键。"
     }
   ],
   "bSZ0lL": [
@@ -5878,13 +5890,19 @@
   "blRFVt": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "设置这些连接以在流中使用它们。"
     }
   ],
   "bldzuj": [
     {
       "type": 0,
       "value": "重试历史记录"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "全部清除"
     }
   ],
   "bwlAWn": [
@@ -6106,13 +6124,13 @@
   "dMAC4C": [
     {
       "type": 0,
-      "value": "Replace action"
+      "value": "替换操作"
     }
   ],
   "dNpnmn": [
     {
       "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+      "value": "欢迎回来! 如果希望我更改你的流，只需说出你的要求。例如:"
     }
   ],
   "dOpdsP": [
@@ -6142,7 +6160,7 @@
   "dUbKuK": [
     {
       "type": 0,
-      "value": "Skip"
+      "value": "跳过"
     }
   ],
   "dWFyfN": [
@@ -6240,7 +6258,7 @@
   "eESljX": [
     {
       "type": 0,
-      "value": "Revert"
+      "value": "还原"
     }
   ],
   "eFet4K": [
@@ -6306,7 +6324,7 @@
   "eqAUdj": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "当有新项时"
     }
   ],
   "f/lWTW": [
@@ -6550,7 +6568,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "返回一个布尔值，指示字符串是否为浮点数"
     }
   ],
   "gu9o9z": [
@@ -6625,7 +6643,7 @@
   "hRVVdR": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "撤消"
     }
   ],
   "hZqQdt": [
@@ -6907,7 +6925,7 @@
   "jN0YES": [
     {
       "type": 0,
-      "value": "Tell Microsoft how this feature could be improved"
+      "value": "告诉 Microsoft 如何改进此功能"
     }
   ],
   "jQ0Aqj": [
@@ -6928,6 +6946,28 @@
       "value": "添加源架构"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "显示 "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " 个，共 "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " 个"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -6937,7 +6977,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "必填。要拆分的字符串或数组。"
     }
   ],
   "jVpanH": [
@@ -6973,7 +7013,7 @@
   "jlcMGg": [
     {
       "type": 0,
-      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
+      "value": "描述你的流应执行的操作。请添加尽可能详细的信息，包括要使用的连接器以及是否应包含任何内容。"
     }
   ],
   "juR40n": [
@@ -7045,13 +7085,13 @@
   "kHs5R4": [
     {
       "type": 0,
-      "value": "Check these actions to see if any parameters need to be set."
+      "value": "检查这些操作，看看是否需要设置任何参数。"
     }
   ],
   "kKJMeM": [
     {
       "type": 0,
-      "value": "Every week on Monday..."
+      "value": "每周的星期一..."
     }
   ],
   "kM+Mr0": [
@@ -7144,7 +7184,7 @@
   "l2YXln": [
     {
       "type": 0,
-      "value": "Replace action with"
+      "value": "将操作替换为"
     }
   ],
   "l36V56": [
@@ -7216,7 +7256,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "必填。要反向的集合。"
     }
   ],
   "lexzgJ": [
@@ -7936,7 +7976,7 @@
   "qBNM3e": [
     {
       "type": 0,
-      "value": "Connecting to apps and services"
+      "value": "正在连接到应用和服务"
     }
   ],
   "qBkxGU": [
@@ -8177,7 +8217,7 @@
   "rn5IsW": [
     {
       "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+      "value": "抱歉，我无法理解你的请求。请重新描述，然后重试。"
     }
   ],
   "rsdJcV": [
@@ -8225,7 +8265,7 @@
   "sBBLuh": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up these actions:"
+      "value": "若要保存此工作流，请设置完这些操作:"
     }
   ],
   "sDkAVZ": [
@@ -8321,7 +8361,7 @@
   "srMbm9": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "srpZD2": [
@@ -8449,7 +8489,7 @@
   "tTIsTX": [
     {
       "type": 0,
-      "value": "Test this workflow"
+      "value": "测试此工作流"
     }
   ],
   "tUCptx": [
@@ -8619,7 +8659,7 @@
   "uZpzqY": [
     {
       "type": 0,
-      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+      "value": "很抱歉，Copilot 已满载，暂时不可用 - 请稍后重试。"
     }
   ],
   "uanMWm": [
@@ -8709,7 +8749,7 @@
   "uxQ143": [
     {
       "type": 0,
-      "value": "Ask question related to your workflow or Logic Apps."
+      "value": "提出与工作流或逻辑应用相关的问题。"
     }
   ],
   "uzsleE": [
@@ -8751,7 +8791,7 @@
   "vF+gWH": [
     {
       "type": 0,
-      "value": "Explain what this flow does"
+      "value": "解释此流的作用"
     }
   ],
   "vLereV": [
@@ -8817,7 +8857,7 @@
   "vmlhVB": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up this action:"
+      "value": "若要准备好此工作流，请设置完以下操作:"
     }
   ],
   "vr70Gn": [
@@ -9137,7 +9177,7 @@
   "xvav7+": [
     {
       "type": 0,
-      "value": "Connected to"
+      "value": "已连接到"
     }
   ],
   "xwD1VZ": [
@@ -9191,7 +9231,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "返回按升序排序的数组"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "全部显示"
     }
   ],
   "yVFIAQ": [
@@ -9209,7 +9255,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "将字符串或数组拆分为长度相等的区块"
     }
   ],
   "ydqOly": [
@@ -9235,7 +9281,7 @@
   "yk7L+4": [
     {
       "type": 0,
-      "value": "Dislike"
+      "value": "踩"
     }
   ],
   "yoCi15": [
@@ -9259,7 +9305,7 @@
   "yrYEmk": [
     {
       "type": 0,
-      "value": "Send me an email when..."
+      "value": "在以下情况向我发送一封电子邮件..."
     }
   ],
   "ysoumb": [
@@ -9357,7 +9403,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "返回一个布尔值，指示字符串是否为整数"
     }
   ],
   "zUgja+": [
@@ -9375,7 +9421,7 @@
   "zb3lE6": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up this action:"
+      "value": "若要保存此工作流，请设置以下此操作:"
     }
   ],
   "zcZpHT": [
@@ -9387,7 +9433,7 @@
   "zec5Ay": [
     {
       "type": 0,
-      "value": "Stop"
+      "value": "停止"
     }
   ],
   "ziXw25": [

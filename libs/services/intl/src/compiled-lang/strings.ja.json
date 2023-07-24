@@ -48,7 +48,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "必須。調べる文字列です。"
     }
   ],
   "+powfX": [
@@ -672,7 +672,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "オプション。使用する RFC 4646 ロケール コードです。指定しない場合、既定のロケールが使用されます。ロケールが有効な値でない場合、指定されたロケールが無効であるか、ロケールが関連付けられていないというエラーが生成されます。"
     }
   ],
   "3+TQMa": [
@@ -750,7 +750,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "必須。調べる文字列です。"
     }
   ],
   "3QXY3z": [
@@ -762,7 +762,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "コレクションを逆の順序で返します"
     }
   ],
   "3X4FHS": [
@@ -1133,6 +1133,12 @@
     {
       "type": 0,
       "value": "入力の読み込みでエラーが発生しました"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
     }
   ],
   "6OSgRP": [
@@ -1773,6 +1779,12 @@
     {
       "type": 0,
       "value": "頻度を選択します。"
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -2804,7 +2816,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "必須。並べ替えるコレクションです。"
     }
   ],
   "HMiE+4": [
@@ -4804,7 +4816,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "必須。各チャンクの長さです。"
     }
   ],
   "Umpr3z": [
@@ -5181,6 +5193,12 @@
     {
       "type": 0,
       "value": "再試行"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "高度なパラメーター"
     }
   ],
   "XH94im": [
@@ -5661,12 +5679,6 @@
       "value": "必須。Collection の先頭から除去するオブジェクトの数。正の整数にする必要があります。"
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "新しいパラメーターの追加"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5782,7 +5794,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "オプション。コレクション内のオブジェクトの並べ替えに使用するキーです。"
     }
   ],
   "bSZ0lL": [
@@ -5837,6 +5849,12 @@
     {
       "type": 0,
       "value": "再試行の履歴"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "すべてクリア"
     }
   ],
   "bwlAWn": [
@@ -6490,7 +6508,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "文字列が浮動小数点数であるかどうかを示すブール値を返します"
     }
   ],
   "gu9o9z": [
@@ -6864,6 +6882,24 @@
       "value": "ソース スキーマの追加"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -6873,7 +6909,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "必須。分割する文字列または配列です。"
     }
   ],
   "jVpanH": [
@@ -7148,7 +7184,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "必須。反転するコレクションです。"
     }
   ],
   "lexzgJ": [
@@ -9103,7 +9139,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "昇順に並べ替えられた配列を返します"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "すべてを表示"
     }
   ],
   "yVFIAQ": [
@@ -9121,7 +9163,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "文字列または配列を同じ長さのチャンクに分割します"
     }
   ],
   "ydqOly": [
@@ -9265,7 +9307,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "文字列が整数であるかどうかを示すブール値を返します"
     }
   ],
   "zUgja+": [

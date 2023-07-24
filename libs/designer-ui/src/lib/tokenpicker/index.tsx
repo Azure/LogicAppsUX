@@ -65,6 +65,7 @@ export function TokenPicker({
   closeTokenPicker,
 }: TokenPickerProps): JSX.Element {
   const intl = useIntl();
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
   const [expressionToBeUpdated, setExpressionToBeUpdated] = useState<NodeKey | null>(null);
@@ -72,11 +73,10 @@ export function TokenPicker({
   const [fullScreen, setFullScreen] = useState(false);
   const [isDraggingExpressionEditor, setIsDraggingExpressionEditor] = useState(false);
   const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
-  const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(100);
+  const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);
   const [expressionEditorError, setExpressionEditorError] = useState<string>('');
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const searchBoxRef = useRef<ISearchBox | null>(null);
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   useEffect(() => {
     function handleResize() {
@@ -191,8 +191,14 @@ export function TokenPicker({
           className="msla-token-picker-container-v3"
           style={
             fullScreen
-              ? { height: windowDimensions.height - 100, width: windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40) }
-              : { maxHeight: Math.min(windowDimensions.height - 100, 550), width: '400px' }
+              ? {
+                  height: Math.max(windowDimensions.height - 100, Math.min(windowDimensions.height, 550)),
+                  width: Math.max(
+                    windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40),
+                    Math.min(windowDimensions.width - 16, 400)
+                  ),
+                }
+              : { maxHeight: Math.min(windowDimensions.height, 550), width: Math.min(windowDimensions.width - 16, 400) }
           }
         >
           <div className="msla-token-picker">

@@ -48,7 +48,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Gerekli. İncelenecek dize."
     }
   ],
   "+powfX": [
@@ -672,7 +672,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "İsteğe bağlı. Kullanılacak RFC 4646 yerel ayar kodu. Belirtilmezse, varsayılan yerel ayar kullanılır. Yerel ayar geçerli bir değer değilse, belirtilen yerel ayarın geçerli olmadığını veya ilişkili yere ayarı içermediğini gösteren bir hata oluşur."
     }
   ],
   "3+TQMa": [
@@ -750,7 +750,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Gerekli. İncelenecek dize."
     }
   ],
   "3QXY3z": [
@@ -762,7 +762,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Koleksiyonu ter sırada döndürür"
     }
   ],
   "3X4FHS": [
@@ -1133,6 +1133,12 @@
     {
       "type": 0,
       "value": "Girişler yüklenirken hata oluştu"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Tüm gelişmiş parametreleri göster"
     }
   ],
   "6OSgRP": [
@@ -1773,6 +1779,12 @@
     {
       "type": 0,
       "value": "Sıklık seçin."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Tüm gelişmiş parametreleri ve bunların değerlerini kaldırın ve temizleyin"
     }
   ],
   "Ak2Lka": [
@@ -2826,7 +2838,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Gerekli. Sıralanacak koleksiyon."
     }
   ],
   "HMiE+4": [
@@ -4848,7 +4860,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Gerekli. Her bir öbeğin uzunluğu."
     }
   ],
   "Umpr3z": [
@@ -5229,6 +5241,12 @@
     {
       "type": 0,
       "value": "Yeniden dene"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Gelişmiş parametreler"
     }
   ],
   "XH94im": [
@@ -5709,12 +5727,6 @@
       "value": "Gerekli. Koleksiyonun önünden kaldırılacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Yeni parametreler ekle"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5830,7 +5842,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "İsteğe bağlı. Koleksiyondaki nesneleri sıralamak için kullanılan anahtar."
     }
   ],
   "bSZ0lL": [
@@ -5885,6 +5897,12 @@
     {
       "type": 0,
       "value": "Yeniden Deneme Geçmişi"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Tümünü temizle"
     }
   ],
   "bwlAWn": [
@@ -6538,7 +6556,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Bir dizenin kayan noktalı sayı olup olmadığını gösteren bir Boole değeri döndürür"
     }
   ],
   "gu9o9z": [
@@ -6923,6 +6941,24 @@
       "value": "Kaynak şema ekleyin"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " gösteriliyor"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -6932,7 +6968,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Gerekli. Bölünecek dize veya dizi."
     }
   ],
   "jVpanH": [
@@ -7218,7 +7254,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Gerekli. Tersine çevrilecek koleksiyon."
     }
   ],
   "lexzgJ": [
@@ -9196,7 +9232,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Artan düzende sıralanan bir dizi döndürür"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Tümünü göster"
     }
   ],
   "yVFIAQ": [
@@ -9214,7 +9256,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Dizeyi veya diziyi eşit uzunlukta öbeklere böl"
     }
   ],
   "ydqOly": [
@@ -9358,7 +9400,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Bir dizenin tamsayı olup olmadığını gösteren bir Boole değeri döndürür"
     }
   ],
   "zUgja+": [

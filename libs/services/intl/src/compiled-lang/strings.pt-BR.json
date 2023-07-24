@@ -48,7 +48,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obrigatório. A cadeia de caracteres a ser examinada."
     }
   ],
   "+powfX": [
@@ -656,7 +656,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Opcional. O código de localidade RFC 4646 a ser usado. Se não for especificado, a localidade padrão será usada. Se a localidade não for um valor válido, será gerado um erro de que a localidade fornecida não é válida ou não tem uma localidade associada."
     }
   ],
   "3+TQMa": [
@@ -742,7 +742,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obrigatório. A cadeia de caracteres a ser examinada."
     }
   ],
   "3QXY3z": [
@@ -754,7 +754,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Retorna a coleção em ordem inversa"
     }
   ],
   "3X4FHS": [
@@ -1121,6 +1121,12 @@
     {
       "type": 0,
       "value": "Erro ao carregar entradas"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Mostrar todos os parâmetros avançados"
     }
   ],
   "6OSgRP": [
@@ -1757,6 +1763,12 @@
     {
       "type": 0,
       "value": "Selecionar a frequência."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remover e limpar todos os parâmetros avançados e seus valores"
     }
   ],
   "Ak2Lka": [
@@ -2836,7 +2848,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Obrigatório. A coleção a ser classificada."
     }
   ],
   "HMiE+4": [
@@ -4884,7 +4896,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Obrigatório. O comprimento de cada parte."
     }
   ],
   "Umpr3z": [
@@ -5265,6 +5277,12 @@
     {
       "type": 0,
       "value": "Tentar novamente"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Parâmetros avançados"
     }
   ],
   "XH94im": [
@@ -5745,12 +5763,6 @@
       "value": "Necessário. O número de objetos a serem removidos da frente da Coleção. Deve ser um inteiro positivo."
     }
   ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Adicionar novos parâmetros"
-    }
-  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -5866,7 +5878,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Opcional. Uma chave a ser usada para classificar objetos na coleção."
     }
   ],
   "bSZ0lL": [
@@ -5921,6 +5933,12 @@
     {
       "type": 0,
       "value": "Histórico de Novas Tentativas"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Desmarcar tudo"
     }
   ],
   "bwlAWn": [
@@ -6586,7 +6604,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Retorna um booliano que indica se uma cadeia de caracteres é um número de ponto flutuante"
     }
   ],
   "gu9o9z": [
@@ -6986,6 +7004,24 @@
       "value": "Adicionar um esquema de origem"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Mostrando "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -6995,7 +7031,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Obrigatório. A cadeia de caracteres ou matriz a ser dividida."
     }
   ],
   "jVpanH": [
@@ -7292,7 +7328,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Obrigatório. A coleção a ser revertida."
     }
   ],
   "lexzgJ": [
@@ -9285,7 +9321,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Retorna uma matriz classificada em ordem ascendente"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Mostrar todos"
     }
   ],
   "yVFIAQ": [
@@ -9303,7 +9345,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Dividir uma cadeia de caracteres ou matriz em partes de comprimento igual"
     }
   ],
   "ydqOly": [
@@ -9447,7 +9489,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Retorna um booliano que indica se uma cadeia de caracteres é um inteiro"
     }
   ],
   "zUgja+": [
