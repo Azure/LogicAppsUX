@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.48.3](https://github.com/Azure/LogicAppsUX/compare/v2.48.2...v2.48.3) (2023-07-24)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed regression with dynamic invoke requests ([#3024](https://github.com/Azure/LogicAppsUX/issues/3024)) ([5c32ac6](https://github.com/Azure/LogicAppsUX/commit/5c32ac6e75f0adc1865f20443a46cee3c7aaf0cd))
+
 ### [2.48.2](https://github.com/Azure/LogicAppsUX/compare/v2.48.1...v2.48.2) (2023-07-24)
 
 
