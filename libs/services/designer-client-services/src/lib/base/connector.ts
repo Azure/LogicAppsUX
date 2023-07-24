@@ -183,8 +183,43 @@ export abstract class BaseConnectorService implements IConnectorService {
       ? pathCombine(`${apiHubServiceDetails?.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
       : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
 
-    const createException = (ex: any) => {
-      return new ConnectorServiceException(
+    try {
+      if (isManagedIdentityTypeConnection) {
+        const request = {
+          method,
+          path: parameters['path'],
+          body: parameters['body'],
+          queries: parameters['queries'],
+          headers: parameters['headers'],
+        };
+        const response = await httpClient.post({
+          uri,
+          queryParameters: { 'api-version': _apiVersion },
+          content: { request, properties: managedIdentityProperties },
+        });
+        return this._getResponseFromDynamicApi(response, uri);
+      } else {
+        const apiVersion = isArmResourceId(connectorId) ? apiHubServiceDetails?.apiVersion ?? _apiVersion : _apiVersion;
+        const options = {
+          uri,
+          queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },
+          headers: parameters['headers'],
+        };
+        const bodyContent = parameters['body'];
+
+        switch (method.toLowerCase()) {
+          case 'get':
+            return httpClient.get(options);
+          case 'post':
+            return httpClient.post(bodyContent ? { ...options, content: bodyContent } : options);
+          case 'put':
+            return httpClient.put(bodyContent ? { ...options, content: bodyContent } : options);
+          default:
+            throw new UnsupportedException(`Unsupported dynamic call connector method - '${method}'`);
+        }
+      }
+    } catch (ex: any) {
+      throw new ConnectorServiceException(
         ConnectorServiceErrorCode.API_EXECUTION_FAILED,
         ex.message ??
           intl.formatMessage(
@@ -202,50 +237,6 @@ export abstract class BaseConnectorService implements IConnectorService {
         },
         ex
       );
-    };
-
-    if (isManagedIdentityTypeConnection) {
-      const request = {
-        method,
-        path: parameters['path'],
-        body: parameters['body'],
-        queries: parameters['queries'],
-        headers: parameters['headers'],
-      };
-
-      try {
-        const response = await httpClient.post({
-          uri,
-          queryParameters: { 'api-version': _apiVersion },
-          content: { request, properties: managedIdentityProperties },
-        });
-        return this._getResponseFromDynamicApi(response, uri);
-      } catch (ex: any) {
-        throw createException(ex);
-      }
-    } else {
-      const apiVersion = isArmResourceId(connectorId) ? apiHubServiceDetails?.apiVersion ?? _apiVersion : _apiVersion;
-      const options = {
-        uri,
-        queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },
-        headers: parameters['headers'],
-      };
-      const bodyContent = parameters['body'];
-
-      try {
-        switch (method.toLowerCase()) {
-          case 'get':
-            return httpClient.get(options);
-          case 'post':
-            return httpClient.post(bodyContent ? { ...options, content: bodyContent } : options);
-          case 'put':
-            return httpClient.put(bodyContent ? { ...options, content: bodyContent } : options);
-          default:
-            throw new UnsupportedException(`Unsupported dynamic call connector method - '${method}'`);
-        }
-      } catch (ex: any) {
-        throw createException(ex);
-      }
     }
   }
 }
