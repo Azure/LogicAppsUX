@@ -1614,6 +1614,9 @@
       <Item ItemId=";63fQWE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show all advanced parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pokaż wszystkie parametry zaawansowane]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2502,6 +2505,9 @@
       <Item ItemId=";AhvQ7r" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove and clear all advanced parameters and their values]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Usuń i wyczyść wszystkie parametry zaawansowane i ich wartości]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9663,6 +9669,9 @@
       <Item ItemId=";jTHUFb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Showing {countShowing} of {countTotal}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pokazywanie {countShowing} z {countTotal}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -12901,7 +12910,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Show all]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Pokaż wszystko]]></Val>
+            <Val><![CDATA[Pokaż wszystkie]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
