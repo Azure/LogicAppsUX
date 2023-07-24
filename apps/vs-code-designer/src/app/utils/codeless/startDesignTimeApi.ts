@@ -16,8 +16,11 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
+import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
+import { getWorkspaceFolder } from '../workspace';
 import { delay } from '@azure/ms-rest-js';
-import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, openUrl, type IActionContext, type IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import { WorkerRuntime } from '@microsoft/vscode-extension';
 import * as cp from 'child_process';
 import * as fs from 'fs';
@@ -25,6 +28,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as requestP from 'request-promise';
+import * as vscode from 'vscode';
 import { Uri, window, workspace } from 'vscode';
 import type { MessageItem } from 'vscode';
 
@@ -177,4 +181,37 @@ export function stopDesignTimeApi(): void {
     ext.workflowDesignChildProcess.kill();
   }
   ext.workflowDesignChildProcess = undefined;
+}
+
+export async function promptStartDesignTimeOption(context: IActionContext) {
+  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+    const workspace = await getWorkspaceFolder(context);
+    const projectPath = await tryGetFunctionProjectRoot(context, workspace);
+    const autoStartDesignTimeKey = 'autoStartDesignTime';
+    const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeKey);
+    const showStartDesignTimeWarningKey = 'showStartDesignTimeWarning';
+    const showStartDesignTimeWarning = !!getWorkspaceSetting<boolean>(showStartDesignTimeWarningKey);
+    if (projectPath) {
+      if (autoStartDesignTime) {
+        startDesignTimeApi(projectPath);
+        context.telemetry.properties.startDesignTimeApi = 'true';
+      } else if (showStartDesignTimeWarning) {
+        const message = localize('startDesignTimeApi', 'Always start design time on launch?');
+        const confirm = { title: 'Yes (Recommended)' };
+        let result: MessageItem;
+        do {
+          result = await context.ui.showWarningMessage(message, confirm, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
+          if (result === confirm) {
+            await updateGlobalSetting(autoStartDesignTimeKey, true);
+            startDesignTimeApi(projectPath);
+            context.telemetry.properties.startDesignTimeApi = 'true';
+          } else if (result === DialogResponses.learnMore) {
+            await openUrl('https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local');
+          } else if (result === DialogResponses.dontWarnAgain) {
+            await updateGlobalSetting(showStartDesignTimeWarningKey, false);
+          }
+        } while (result === DialogResponses.learnMore);
+      }
+    }
+  }
 }

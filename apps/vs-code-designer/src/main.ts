@@ -4,17 +4,13 @@ import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/vali
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { startDesignTimeApi, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
+import { promptStartDesignTimeOption, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
-import { tryGetFunctionProjectRoot } from './app/utils/verifyIsProject';
-import { getWorkspaceSetting, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
-import { getWorkspaceFolder } from './app/utils/workspace';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
-import { localize } from './localize';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
   callWithTelemetryAndErrorHandling,
@@ -23,12 +19,9 @@ import {
   registerReportIssueCommand,
   registerUIExtensionVariables,
   getAzExtResourceType,
-  DialogResponses,
-  openUrl,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import type { MessageItem } from 'vscode';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -47,44 +40,9 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.isActivationEvent = 'true';
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
-    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-      const workspace = await getWorkspaceFolder(activateContext);
-      const projectPath = await tryGetFunctionProjectRoot(activateContext, workspace);
-      const autoStartDesignTimeKey = 'autoStartDesignTime';
-      const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeKey);
-      const showStartDesignTimeWarningKey = 'showStartDesignTimeWarning';
-      const showStartDesignTimeWarning = !!getWorkspaceSetting<boolean>(showStartDesignTimeWarningKey);
-      if (projectPath) {
-        if (autoStartDesignTime) {
-          startDesignTimeApi(projectPath);
-          activateContext.telemetry.properties.startDesignTimeApi = 'true';
-        } else if (showStartDesignTimeWarning) {
-          const message = localize('startDesignTimeApi', 'Always start design time on launch?');
-          const confirm = { title: 'Yes (Recommended)' };
-          let result: MessageItem;
-          do {
-            result = await activateContext.ui.showWarningMessage(
-              message,
-              confirm,
-              DialogResponses.learnMore,
-              DialogResponses.dontWarnAgain
-            );
-            if (result === confirm) {
-              await updateGlobalSetting(autoStartDesignTimeKey, true);
-              startDesignTimeApi(projectPath);
-              activateContext.telemetry.properties.startDesignTimeApi = 'true';
-            } else if (result === DialogResponses.learnMore) {
-              await openUrl('https://google.com');
-            } else if (result === DialogResponses.dontWarnAgain) {
-              await updateGlobalSetting(showStartDesignTimeWarningKey, false);
-            }
-          } while (result === DialogResponses.learnMore);
-        }
-      }
-    }
-
     runPostWorkflowCreateStepsFromCache();
     validateFuncCoreToolsIsLatest();
+    promptStartDesignTimeOption(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
