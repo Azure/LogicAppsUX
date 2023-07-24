@@ -1150,7 +1150,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Alle geavanceerde parameters weergeven"
     }
   ],
   "6OSgRP": [
@@ -1792,7 +1792,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Alle geavanceerde parameters en de bijbehorende waarden verwijderen en wissen"
     }
   ],
   "Ak2Lka": [
@@ -5266,7 +5266,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Geavanceerde parameters"
     }
   ],
   "XH94im": [
@@ -5922,7 +5922,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Alles wissen"
     }
   ],
   "bwlAWn": [
@@ -6975,20 +6975,20 @@
   ],
   "jTHUFb": [
     {
-      "type": 0,
-      "value": "Showing "
-    },
-    {
       "type": 1,
       "value": "countShowing"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " van "
     },
     {
       "type": 1,
       "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " wordt weergegeven"
     }
   ],
   "jUDhbs": [
@@ -9262,7 +9262,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Alles weergeven"
     }
   ],
   "yVFIAQ": [
