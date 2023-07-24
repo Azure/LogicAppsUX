@@ -119,14 +119,8 @@ describe('getEditorAndOptions', () => {
     const result = getEditorAndOptions(operationInfo, parameter, /*upstreamNodeIds: */ [], /*variables: */ {});
 
     expect(editorService.getEditor).toHaveBeenCalledWith({
-      connectorId: operationInfo.connectorId,
-      operationId: operationInfo.operationId,
-      parameterKey: parameter.parameterKey,
-      parameterName: parameter.parameterName,
-      required: parameter.required,
-      schema: parameter.schema,
-      editor: parameter.editor,
-      editorOptions: parameter.editorOptions,
+      operationInfo,
+      parameter,
     });
     expect(result).toEqual({
       editor: 'internal-custom-editor',
@@ -146,14 +140,8 @@ describe('getEditorAndOptions', () => {
     const result = getEditorAndOptions(operationInfo, parameter, /*upstreamNodeIds: */ [], /*variables: */ {});
 
     expect(editorService.getEditor).toHaveBeenCalledWith({
-      connectorId: operationInfo.connectorId,
-      operationId: operationInfo.operationId,
-      parameterKey: parameter.parameterKey,
-      parameterName: parameter.parameterName,
-      required: parameter.required,
-      schema: parameter.schema,
-      editor: parameter.editor,
-      editorOptions: parameter.editorOptions,
+      operationInfo,
+      parameter,
     });
     expect(result).toEqual({
       editor: 'internal-custom-editor',
