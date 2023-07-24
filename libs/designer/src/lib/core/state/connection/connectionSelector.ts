@@ -47,18 +47,17 @@ export const useGateways = (subscriptionId: string, connectorName: string) => {
 export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
-  // TODO: Revisit trying to conditionally ask for the connector from the service
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
   const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
   const operationInfo = useOperationInfo(nodeId);
 
-  // Connectors we get inside of operation manifests are missing some data currently.
-  // The below logic is to get the connector from the service unless it is a manifest-based + non-service provider operation
-  // The operations we are preventing the service call for are expected to fail
+  // Connector data inside of operation manifests is missing some connection data currently (7/24/2023).
+  // The below logic is to only use the manifest connector data when we expect a service call to fail. (i.e. our built-in local operations)
   const isManifestSupported = OperationManifestService().isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
   const isServiceProvider = isServiceProviderOperation(operationInfo?.type);
   const useManifestConnector = isManifestSupported && !isServiceProvider;
-  const connectorFromService = useConnector(storeConnectorId, !useManifestConnector)?.data;
+  const enableConnectorFromService = !connectorFromManifest || !useManifestConnector;
+  const connectorFromService = useConnector(storeConnectorId, enableConnectorFromService)?.data;
   return connectorFromService ?? connectorFromManifest;
 };
 
