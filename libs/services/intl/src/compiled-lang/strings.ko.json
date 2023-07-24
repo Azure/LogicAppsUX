@@ -1138,7 +1138,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "고급 매개 변수 모두 표시"
     }
   ],
   "6OSgRP": [
@@ -1776,7 +1776,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "모든 고급 매개 변수 및 해당 값을 제거하고 지우기"
     }
   ],
   "Ak2Lka": [
@@ -5194,7 +5194,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "고급 매개 변수"
     }
   ],
   "XH94im": [
@@ -5850,7 +5850,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "모두 지우기"
     }
   ],
   "bwlAWn": [
@@ -6880,8 +6880,12 @@
   ],
   "jTHUFb": [
     {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
       "type": 0,
-      "value": "Showing "
+      "value": "개 중 "
     },
     {
       "type": 1,
@@ -6889,11 +6893,7 @@
     },
     {
       "type": 0,
-      "value": " of "
-    },
-    {
-      "type": 1,
-      "value": "countTotal"
+      "value": "개 표시"
     }
   ],
   "jUDhbs": [
@@ -9141,7 +9141,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "모두 표시"
     }
   ],
   "yVFIAQ": [

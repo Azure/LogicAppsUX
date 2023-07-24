@@ -1150,7 +1150,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Показать все расширенные параметры"
     }
   ],
   "6OSgRP": [
@@ -1796,7 +1796,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Удалить и очистить все расширенные параметры и их значения"
     }
   ],
   "Ak2Lka": [
@@ -5366,7 +5366,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Расширенные параметры"
     }
   ],
   "XH94im": [
@@ -6022,7 +6022,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Очистить все"
     }
   ],
   "bwlAWn": [
@@ -7098,7 +7098,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Отображается "
     },
     {
       "type": 1,
@@ -7106,7 +7106,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " из "
     },
     {
       "type": 1,
@@ -9444,7 +9444,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Показать все"
     }
   ],
   "yVFIAQ": [

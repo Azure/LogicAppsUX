@@ -1150,7 +1150,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "显示所有高级参数"
     }
   ],
   "6OSgRP": [
@@ -1796,7 +1796,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "删除和清除所有高级参数及其值"
     }
   ],
   "Ak2Lka": [
@@ -5246,7 +5246,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "高级参数"
     }
   ],
   "XH94im": [
@@ -5902,7 +5902,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "全部清除"
     }
   ],
   "bwlAWn": [
@@ -6949,7 +6949,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "显示 "
     },
     {
       "type": 1,
@@ -6957,11 +6957,15 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " 个，共 "
     },
     {
       "type": 1,
       "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " 个"
     }
   ],
   "jUDhbs": [
@@ -9233,7 +9237,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "全部显示"
     }
   ],
   "yVFIAQ": [

@@ -1162,7 +1162,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Az összes speciális paraméter megjelenítése"
     }
   ],
   "6OSgRP": [
@@ -1800,7 +1800,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Az összes speciális paraméter és az értékük eltávolítása és törlése"
     }
   ],
   "Ak2Lka": [
@@ -5266,7 +5266,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Speciális paraméterek"
     }
   ],
   "XH94im": [
@@ -5922,7 +5922,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Az összes törlése"
     }
   ],
   "bwlAWn": [
@@ -6979,20 +6979,20 @@
   ],
   "jTHUFb": [
     {
-      "type": 0,
-      "value": "Showing "
-    },
-    {
       "type": 1,
       "value": "countShowing"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " paraméter látható összesen "
     },
     {
       "type": 1,
       "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " közül"
     }
   ],
   "jUDhbs": [
@@ -9278,7 +9278,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Az összes megjelenítése"
     }
   ],
   "yVFIAQ": [
