@@ -1,4 +1,5 @@
-import { SearchableDropdown, type SearchableDropdownProps } from '../searchabledropdown';
+import { SearchableDropdown } from '../searchabledropdown';
+import type { SearchableDropdownProps } from '../searchabledropdown';
 import { TooltipHost, Link, Stack, Label } from '@fluentui/react';
 import type { FC } from 'react';
 
