@@ -177,14 +177,32 @@ export abstract class BaseConnectorService implements IConnectorService {
     const method = parameters['method'];
     const isManagedIdentityTypeConnection = !!managedIdentityProperties;
 
-    const apiVersion = isArmResourceId(connectorId)
-      ? apiHubServiceDetails?.apiVersion ?? apiHubServiceDetails?.apiVersion ?? _apiVersion
-      : _apiVersion;
     const uri = isManagedIdentityTypeConnection
       ? `${dynamicInvokeUrl}/dynamicInvoke`
       : isArmResourceId(connectorId) && apiHubServiceDetails?.baseUrl
       ? pathCombine(`${apiHubServiceDetails?.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
       : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
+
+    const createException = (ex: any) => {
+      return new ConnectorServiceException(
+        ConnectorServiceErrorCode.API_EXECUTION_FAILED,
+        ex.message ??
+          intl.formatMessage(
+            {
+              defaultMessage: "Error occurred while executing the following API parameters: ''{parameters}''",
+              description:
+                'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
+            },
+            { parameters: parameters['path'] }
+          ),
+        {
+          requestMethod: method,
+          uri,
+          inputPath: parameters['path'],
+        },
+        ex
+      );
+    };
 
     if (isManagedIdentityTypeConnection) {
       const request = {
@@ -198,40 +216,23 @@ export abstract class BaseConnectorService implements IConnectorService {
       try {
         const response = await httpClient.post({
           uri,
-          queryParameters: { 'api-version': apiVersion },
+          queryParameters: { 'api-version': _apiVersion },
           content: { request, properties: managedIdentityProperties },
         });
-
         return this._getResponseFromDynamicApi(response, uri);
       } catch (ex: any) {
-        throw new ConnectorServiceException(
-          ConnectorServiceErrorCode.API_EXECUTION_FAILED,
-          ex && ex.message
-            ? ex.message
-            : intl.formatMessage(
-                {
-                  defaultMessage: "Error occurred while executing the following API parameters: ''{parameters}''",
-                  description:
-                    'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
-                },
-                { parameters: parameters['path'] }
-              ),
-          {
-            requestMethod: method,
-            uri,
-            inputPath: parameters['path'],
-          },
-          ex
-        );
+        throw createException(ex);
       }
     } else {
+      const apiVersion = isArmResourceId(connectorId) ? apiHubServiceDetails?.apiVersion ?? _apiVersion : _apiVersion;
+      const options = {
+        uri,
+        queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },
+        headers: parameters['headers'],
+      };
+      const bodyContent = parameters['body'];
+
       try {
-        const options = {
-          uri,
-          queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },
-          headers: parameters['headers'],
-        };
-        const bodyContent = parameters['body'];
         switch (method.toLowerCase()) {
           case 'get':
             return httpClient.get(options);
@@ -243,25 +244,7 @@ export abstract class BaseConnectorService implements IConnectorService {
             throw new UnsupportedException(`Unsupported dynamic call connector method - '${method}'`);
         }
       } catch (ex: any) {
-        throw new ConnectorServiceException(
-          ConnectorServiceErrorCode.API_EXECUTION_FAILED,
-          ex && ex.message
-            ? ex.message
-            : intl.formatMessage(
-                {
-                  defaultMessage: "Error executing the api ''{parameters}''.",
-                  description:
-                    'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
-                },
-                { parameters: parameters['path'] }
-              ),
-          {
-            requestMethod: method,
-            uri,
-            inputPath: parameters['path'],
-          },
-          ex
-        );
+        throw createException(ex);
       }
     }
   }
