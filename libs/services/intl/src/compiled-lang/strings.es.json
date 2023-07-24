@@ -1150,7 +1150,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Mostrar todos los parámetros avanzados"
     }
   ],
   "6OSgRP": [
@@ -1796,7 +1796,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Quitar y borrar todos los parámetros avanzados y sus valores"
     }
   ],
   "Ak2Lka": [
@@ -5314,7 +5314,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Parámetros avanzados"
     }
   ],
   "XH94im": [
@@ -5970,7 +5970,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Borrar todo"
     }
   ],
   "bwlAWn": [
@@ -7039,7 +7039,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Mostrando "
     },
     {
       "type": 1,
@@ -7047,7 +7047,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " de "
     },
     {
       "type": 1,
@@ -9351,7 +9351,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Mostrar todo"
     }
   ],
   "yVFIAQ": [
