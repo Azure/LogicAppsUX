@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.48.2](https://github.com/Azure/LogicAppsUX/compare/v2.48.1...v2.48.2) (2023-07-24)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with some MI ServiceProvider connections failing   ([#3020](https://github.com/Azure/LogicAppsUX/issues/3020)) ([f05fe7d](https://github.com/Azure/LogicAppsUX/commit/f05fe7dde76cd5f62ba54f7a33d6c4fc5d192fd1))
+
 ### [2.48.1](https://github.com/Azure/LogicAppsUX/compare/v2.48.0...v2.48.1) (2023-07-17)
 
 
