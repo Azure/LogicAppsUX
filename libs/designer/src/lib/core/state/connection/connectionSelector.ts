@@ -52,8 +52,13 @@ export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
   const operationInfo = useOperationInfo(nodeId);
 
-  const useManifest = OperationManifestService().isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
-  const connectorFromService = useConnector(storeConnectorId, !useManifest)?.data;
+  // Connectors we get inside of operation manifests are missing some data currently.
+  // The below logic is to get the connector from the service unless it is a manifest-based + non-service provider operation
+  // The operations we are preventing the service call for are expected to fail
+  const isManifestSupported = OperationManifestService().isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+  const isServiceProvider = isServiceProviderOperation(operationInfo?.type);
+  const useManifestConnector = isManifestSupported && !isServiceProvider;
+  const connectorFromService = useConnector(storeConnectorId, !useManifestConnector)?.data;
   return connectorFromService ?? connectorFromManifest;
 };
 
