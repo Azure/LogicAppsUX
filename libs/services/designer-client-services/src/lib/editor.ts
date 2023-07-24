@@ -1,33 +1,58 @@
-import { equals } from '@microsoft/utils-logic-apps';
+import type { OperationInfo } from '@microsoft/utils-logic-apps';
 
 /**
  * Compatible with `ValueSegment` from @microsoft/designer-ui but without circular dependencies.
  */
-interface ValueSegment {
+export interface ValueSegment {
   id: string;
   type: 'literal' | 'token';
   value: string;
   token?: any;
 }
 
-export interface IEditorParameterInfo {
-  connectorId: string;
-  operationId: string;
-  parameterKey: string;
-  parameterName: string;
-  required: boolean;
-  schema?: any;
+/**
+ * Compatible with `ChangeHandler` from @microsoft/designer-ui but without circular dependencies.
+ */
+export type ChangeHandler = (change: { value: ValueSegment[]; viewModel?: any }) => void;
+
+/**
+ * Compatible with `ParameterInfo` from @microsoft/designer-ui but without circular dependencies.
+ */
+export interface ParameterInfo {
+  alternativeKey?: string;
+  conditionalVisibility?: boolean;
+  dynamicData?: {
+    error?: any;
+    status: any;
+  };
   editor?: string;
   editorOptions?: Record<string, any>;
+  editorViewModel?: any;
+  info: any;
+  hideInUI?: boolean;
+  id: string;
+  label: string;
+  parameterKey: string;
+  parameterName: string;
+  pattern?: string;
+  placeholder?: string;
+  preservedValue?: any;
+  required: boolean;
+  schema?: any;
+  showErrors?: boolean;
+  showTokens?: boolean;
+  suppressCasting?: boolean;
+  type: string;
+  validationErrors?: string[];
+  value: ValueSegment[];
+  visibility?: string;
 }
 
-export type IEditorValueSegmentChangeEvent = { value: ValueSegment[] };
-export type IEditorValueSegmentChangeHandler = (change: IEditorValueSegmentChangeEvent) => void;
 export type IRenderDefaultEditorParams = {
   editor?: string;
   editorOptions?: Record<string, any>;
   value: ValueSegment[];
-  onValueChange?: IEditorValueSegmentChangeHandler;
+  onValueChange?: ChangeHandler;
 };
 
 export interface IEditorProps {
@@ -38,7 +63,7 @@ export interface IEditorProps {
   /**
    * Callback when the value changes.
    */
-  onValueChange?: IEditorValueSegmentChangeHandler;
+  onValueChange?: ChangeHandler;
   /**
    * The original editor value.
    */
@@ -51,6 +76,11 @@ export interface IEditorProps {
    * Render the base (non-custom) editor corresponding to the provided options.
    */
   renderDefaultEditor: (params: IRenderDefaultEditorParams) => JSX.Element;
+}
+
+export interface IEditorParameterInfo {
+  operationInfo: OperationInfo;
+  parameter: ParameterInfo;
 }
 
 export interface ICustomEditorOptions {
@@ -85,23 +115,3 @@ export const InitEditorService = (editorService: IEditorService | undefined) => 
 export const EditorService = (): IEditorService | undefined => {
   return service;
 };
-
-// Overridden custom editors are identified by this name internally.
-const customEditorName = 'internal-custom-editor';
-
-export type ICustomEditorAndOptions = { editor: typeof customEditorName; editorOptions: ICustomEditorOptions };
-
-export const isCustomEditor = (props: { editor?: string | undefined; editorOptions?: unknown }): props is ICustomEditorAndOptions => {
-  const { editor, editorOptions } = props;
-  return (
-    equals(editor, customEditorName) &&
-    typeof editorOptions == 'object' &&
-    !!editorOptions &&
-    typeof (editorOptions as { EditorComponent: unknown }).EditorComponent === 'function'
-  );
-};
-
-export const toEditorAndOptions = (options: ICustomEditorOptions) => ({
-  editor: customEditorName,
-  editorOptions: options,
-});

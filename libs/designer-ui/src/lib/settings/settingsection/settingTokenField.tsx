@@ -23,17 +23,9 @@ import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
 import { convertUIElementNameToAutomationId } from '../../utils';
+import { CustomTokenField, isCustomEditor } from './customTokenField';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
-import type {
-  ICustomEditorAndOptions,
-  ICustomEditorOptions,
-  IEditorProps,
-  IEditorValueSegmentChangeHandler,
-  IRenderDefaultEditorParams,
-} from '@microsoft/designer-client-services-logic-apps';
-import { isCustomEditor } from '@microsoft/designer-client-services-logic-apps';
-import { useCallback } from 'react';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -328,37 +320,3 @@ export const TokenField = ({
       );
   }
 };
-
-export type CustomTokenFieldProps = Omit<TokenFieldProps, 'editor' | 'editorOptions'> & ICustomEditorAndOptions;
-
-export const CustomTokenField = (props: CustomTokenFieldProps) => {
-  const { EditorComponent, editor, editorOptions = {} }: ICustomEditorOptions = props.editorOptions;
-
-  const renderDefaultEditor = useRenderDefaultEditor(props);
-
-  const customEditorProps: IEditorProps = {
-    editor,
-    editorOptions,
-    value: props.value,
-    onValueChange: props.onValueChange as IEditorValueSegmentChangeHandler,
-    renderDefaultEditor,
-  };
-  return <EditorComponent {...customEditorProps} />;
-};
-
-function useRenderDefaultEditor(tokenFieldProps: Omit<TokenFieldProps, 'editor' | 'editor' | 'value' | 'onValueChange'>) {
-  return useCallback(
-    (props: IRenderDefaultEditorParams) => {
-      return (
-        <TokenField
-          {...tokenFieldProps}
-          editor={props.editor}
-          editorOptions={props.editorOptions}
-          value={props.value as ValueSegment[]}
-          onValueChange={props.onValueChange as ChangeHandler}
-        />
-      );
-    },
-    [tokenFieldProps]
-  );
-}
