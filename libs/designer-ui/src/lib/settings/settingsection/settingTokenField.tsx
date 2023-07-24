@@ -26,6 +26,7 @@ import { convertUIElementNameToAutomationId } from '../../utils';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
+import { equals } from '@microsoft/utils-logic-apps';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -56,12 +57,12 @@ export interface SettingTokenFieldProps extends SettingProps {
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const labelId = useId('msla-editor-label');
-  const editor = props.editor?.toLowerCase();
-  const renderLabel = isCustomEditor(props) && props.editorOptions?.hideLabel === true ? false : editor !== 'floatingactionmenu';
+  const hideLabel =
+    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
 
   return (
     <>
-      {renderLabel && (
+      {!hideLabel && (
         <div className="msla-input-parameter-label">
           <Label id={labelId} className="msla-label" required={props.required}>
             {props.label}
