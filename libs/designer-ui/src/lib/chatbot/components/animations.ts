@@ -1,7 +1,7 @@
 import { keyframes, mergeStyleSets } from '@fluentui/react';
 import type { IStyle } from '@fluentui/react';
 
-function getBorderGlintStyle(options: {
+export function getBorderGlintStyle(options: {
   glintA: string;
   glintB: string;
   glintC: string;

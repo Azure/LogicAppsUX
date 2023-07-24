@@ -1,27 +1,25 @@
 # Logic Apps Designer
-## [2.52.0](https://github.com/Azure/LogicAppsUX/compare/v2.51.0...v2.52.0) (2023-07-20)
 
+## [2.52.0](https://github.com/Azure/LogicAppsUX/compare/v2.51.0...v2.52.0) (2023-07-20)
 
 ### Bug Fixes
 
-* **desinger:** Fix type issue breaking portal build ([#3004](https://github.com/Azure/LogicAppsUX/issues/3004)) ([ae469f7](https://github.com/Azure/LogicAppsUX/commit/ae469f7ad63e39c5fc0cb42ce9e9a8b8c5d215a7))
+- **desinger:** Fix type issue breaking portal build ([#3004](https://github.com/Azure/LogicAppsUX/issues/3004)) ([ae469f7](https://github.com/Azure/LogicAppsUX/commit/ae469f7ad63e39c5fc0cb42ce9e9a8b8c5d215a7))
 
 ## [2.51.0](https://github.com/Azure/LogicAppsUX/compare/v2.50.1...v2.51.0) (2023-07-20)
 
 ### [2.50.1](https://github.com/Azure/LogicAppsUX/compare/v2.50.0...v2.50.1) (2023-07-20)
 
-
 ### Bug Fixes
 
-* **designer:** Update upstream nodes when updating run after ([#3002](https://github.com/Azure/LogicAppsUX/issues/3002)) ([3792db3](https://github.com/Azure/LogicAppsUX/commit/3792db39f4cdb957f3babb0c4fc4d5a38b1da0ce))
-* **desinger:** Fix type issue breaking portal build ([#3003](https://github.com/Azure/LogicAppsUX/issues/3003)) ([2068d70](https://github.com/Azure/LogicAppsUX/commit/2068d70d16af3ea186b4ae6a698e4e16ac49d716))
+- **designer:** Update upstream nodes when updating run after ([#3002](https://github.com/Azure/LogicAppsUX/issues/3002)) ([3792db3](https://github.com/Azure/LogicAppsUX/commit/3792db39f4cdb957f3babb0c4fc4d5a38b1da0ce))
+- **desinger:** Fix type issue breaking portal build ([#3003](https://github.com/Azure/LogicAppsUX/issues/3003)) ([2068d70](https://github.com/Azure/LogicAppsUX/commit/2068d70d16af3ea186b4ae6a698e4e16ac49d716))
 
 ## [2.50.0](https://github.com/Azure/LogicAppsUX/compare/v2.49.0...v2.50.0) (2023-07-20)
 
-
 ### Bug Fixes
 
-* **designer:** Default to off on content transfer chunking in stateless workflows ([#2997](https://github.com/Azure/LogicAppsUX/issues/2997)) ([117c725](https://github.com/Azure/LogicAppsUX/commit/117c7257202162a32319dff196348be0df144e4c))
+- **designer:** Default to off on content transfer chunking in stateless workflows ([#2997](https://github.com/Azure/LogicAppsUX/issues/2997)) ([117c725](https://github.com/Azure/LogicAppsUX/commit/117c7257202162a32319dff196348be0df144e4c))
 
 ## [2.49.0](https://github.com/Azure/LogicAppsUX/compare/v2.48.0...v2.49.0) (2023-07-18)
 
