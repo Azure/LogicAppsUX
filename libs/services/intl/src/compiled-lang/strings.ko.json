@@ -23,6 +23,12 @@
       "value": "오류"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1469,6 +1475,12 @@
       "value": "논리 앱의 관리 ID를 사용하도록 설정하세요."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1673,6 +1685,12 @@
     {
       "type": 0,
       "value": "텍스트"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "9atGYe": [
@@ -2040,6 +2058,12 @@
     {
       "type": 0,
       "value": "연속 토큰에 따라 지정된 임계값을 충족하는 항목을 검색합니다. 커넥터의 페이지 크기로 인해 반환되는 수가 임계값을 초과할 수 있습니다."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2681,6 +2705,20 @@
       "value": "참조 함수"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3015,20 +3053,6 @@
       "value": "(UTC+09:00) 야쿠츠크"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'을(를) 실행하는 동안 오류가 발생했습니다."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3346,6 +3370,12 @@
     {
       "type": 0,
       "value": "함수 앱을 로드하는 중..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3772,6 +3802,12 @@
     {
       "type": 0,
       "value": "파일을 로드하는 중..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4244,6 +4280,12 @@
       "value": "날짜 형식에서 문자열을 반환합니다."
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4537,6 +4579,12 @@
     {
       "type": 0,
       "value": "금요일"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4871,6 +4919,12 @@
       "value": "연결 이름 입력"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4941,6 +4995,12 @@
     {
       "type": 0,
       "value": "에 대해 찾은 결과가 없음"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5039,6 +5099,12 @@
     {
       "type": 0,
       "value": "이 작업을 추가했습니다."
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5657,6 +5723,12 @@
       "value": "동적 콘텐츠에 대해 자세히 알아보세요."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5667,6 +5739,12 @@
     {
       "type": 0,
       "value": "필수 항목. 찾으려는 substring의 발생 횟수입니다."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -6588,6 +6666,12 @@
       "value": "(UTC+02:00) 가자, 헤브론"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6770,6 +6854,12 @@
     {
       "type": 0,
       "value": "예: 0, 10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
     }
   ],
   "idQjOP": [
@@ -8024,6 +8114,12 @@
     {
       "type": 0,
       "value": "'이(가) 잘못되었습니다."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
