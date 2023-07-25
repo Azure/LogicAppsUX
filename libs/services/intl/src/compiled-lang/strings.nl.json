@@ -23,6 +23,12 @@
       "value": "Mislukt"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1481,6 +1487,12 @@
       "value": "Schakel de beheerde identiteit voor de logische app in."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1693,6 +1705,12 @@
     {
       "type": 0,
       "value": "Tekst"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "9atGYe": [
@@ -2067,6 +2085,12 @@
     {
       "type": 0,
       "value": "Items die voldoen aan de opgegeven drempelwaarde, ophalen door het vervolgtoken te volgen. Vanwege de paginagrootte van de connector kan het aantal geretourneerde items de drempelwaarde overschrijden."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2731,6 +2755,20 @@
       "value": "Verwijzingsfuncties"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3069,20 +3107,6 @@
       "value": "(UTC+09:00) Jakoetsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fout bij het uitvoeren van de "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " van de API."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3407,6 +3431,12 @@
     {
       "type": 0,
       "value": "Functie-apps laden..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3833,6 +3863,12 @@
     {
       "type": 0,
       "value": "Bestanden laden..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4301,6 +4337,12 @@
       "value": "Er wordt een tekenreeks in datumindeling geretourneerd"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4601,6 +4643,12 @@
     {
       "type": 0,
       "value": "Vrijdag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4943,6 +4991,12 @@
       "value": "Voer een naam in voor de verbinding"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5013,6 +5067,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5111,6 +5171,12 @@
     {
       "type": 0,
       "value": "Deze actie is toegevoegd"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5729,6 +5795,12 @@
       "value": "Meer informatie over dynamische inhoud"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5739,6 +5811,12 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal exemplaren van de subtekenreeks dat moet worden gevonden."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -6679,6 +6757,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6865,6 +6949,12 @@
     {
       "type": 0,
       "value": "Voorbeeld: 0, 10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
     }
   ],
   "idQjOP": [
@@ -8145,6 +8235,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [

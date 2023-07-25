@@ -23,6 +23,12 @@
       "value": "已故障"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1477,6 +1483,12 @@
       "value": "請為邏輯應用程式啟用受控識別。"
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1689,6 +1701,12 @@
     {
       "type": 0,
       "value": "文字"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "9atGYe": [
@@ -2056,6 +2074,12 @@
     {
       "type": 0,
       "value": "依據接續權杖，擷取符合指定閾值的項目數。因為連接器頁面大小之故，傳回的數量可能會超過閾值。"
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2689,6 +2713,20 @@
       "value": "參考函數"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3027,12 +3065,6 @@
       "value": "(UTC+09:00) 雅庫茨克"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "執行 API {parameters} 時發生錯誤。"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3350,6 +3382,12 @@
     {
       "type": 0,
       "value": "正在載入函數應用程式..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3776,6 +3814,12 @@
     {
       "type": 0,
       "value": "正在載入檔案..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4240,6 +4284,12 @@
       "value": "以日期格式傳回字串"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4533,6 +4583,12 @@
     {
       "type": 0,
       "value": "星期五"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4875,6 +4931,12 @@
       "value": "請輸入連線的名稱"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4949,6 +5011,12 @@
     {
       "type": 0,
       "value": " 的結果"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5047,6 +5115,12 @@
     {
       "type": 0,
       "value": "已新增此動作"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5669,6 +5743,12 @@
       "value": "深入了解動態內容。"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5679,6 +5759,12 @@
     {
       "type": 0,
       "value": "必要項目。要尋找的子字串出現次數。"
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -6604,6 +6690,12 @@
       "value": "(UTC+02:00) 加薩，希伯侖"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6790,6 +6882,12 @@
     {
       "type": 0,
       "value": "範例: 0、10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
     }
   ],
   "idQjOP": [
@@ -8044,6 +8142,12 @@
     {
       "type": 0,
       "value": "' 無效。"
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [

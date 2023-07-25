@@ -23,6 +23,12 @@
       "value": "エラーが発生しました"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1138,7 +1144,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "すべての詳細パラメーターを表示します"
     }
   ],
   "6OSgRP": [
@@ -1469,6 +1475,12 @@
       "value": "ロジック アプリのマネージド ID を有効にしてください。"
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1683,6 +1695,12 @@
       "value": "テキスト"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1784,7 +1802,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "すべての詳細パラメーターとその値を削除してクリアします"
     }
   ],
   "Ak2Lka": [
@@ -2048,6 +2066,12 @@
     {
       "type": 0,
       "value": "継続トークンに従い、指定されたしきい値を満たすように項目を取得します。コネクタのページ サイズにより、返される数がしきい値を超える場合があります。"
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2689,6 +2713,20 @@
       "value": "参照関数"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3023,20 +3061,6 @@
       "value": "(UTC+09:00) ヤクーツク"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' の実行でエラーが発生しました。"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3354,6 +3378,12 @@
     {
       "type": 0,
       "value": "関数アプリを読み込んでいます..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3780,6 +3810,12 @@
     {
       "type": 0,
       "value": "ファイルを読み込んでいます..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4252,6 +4288,12 @@
       "value": "文字列を日付形式で返します"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4545,6 +4587,12 @@
     {
       "type": 0,
       "value": "金曜日"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4875,6 +4923,12 @@
       "value": "接続の名前を入力してください"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4945,6 +4999,12 @@
     {
       "type": 0,
       "value": " の結果が見つかりませんでした"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5043,6 +5103,12 @@
     {
       "type": 0,
       "value": "このアクションを追加しました"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5198,7 +5264,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "高度なパラメーター"
+      "value": "詳細パラメーター"
     }
   ],
   "XH94im": [
@@ -5661,6 +5727,12 @@
       "value": "動的コンテンツの詳細情報。"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5671,6 +5743,12 @@
     {
       "type": 0,
       "value": "必須。検索する部分文字列の出現回数です。"
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -6592,6 +6670,12 @@
       "value": "(UTC+02:00) ガザ、ヘブロン"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6776,6 +6860,12 @@
       "value": "例: 0、10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6884,8 +6974,12 @@
   ],
   "jTHUFb": [
     {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
       "type": 0,
-      "value": "Showing "
+      "value": " 件中 "
     },
     {
       "type": 1,
@@ -6893,11 +6987,7 @@
     },
     {
       "type": 0,
-      "value": " of "
-    },
-    {
-      "type": 1,
-      "value": "countTotal"
+      "value": " 件を表示しています"
     }
   ],
   "jUDhbs": [
@@ -8028,6 +8118,12 @@
     {
       "type": 0,
       "value": "' が無効です。"
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [

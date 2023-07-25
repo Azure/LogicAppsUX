@@ -23,6 +23,12 @@
       "value": "Błędne"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1485,6 +1491,12 @@
       "value": "Włącz tożsamość zarządzaną dla aplikacji logiki."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1697,6 +1709,12 @@
     {
       "type": 0,
       "value": "Tekst"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "9atGYe": [
@@ -2097,6 +2115,12 @@
     {
       "type": 0,
       "value": "Pobierz elementy, aby osiągnąć określony próg, zgodnie z tokenem kontynuacji. Ze względu na rozmiar strony łącznika zwrócona liczba elementów może przekraczać próg."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2783,6 +2807,20 @@
       "value": "Funkcje odwołań"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3119,20 +3157,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakuck"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Błąd podczas wykonywania interfejsu API „"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "”."
     }
   ],
   "IooQu1": [
@@ -3485,6 +3509,12 @@
     {
       "type": 0,
       "value": "Trwa ładowanie aplikacji funkcji..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3911,6 +3941,12 @@
     {
       "type": 0,
       "value": "Trwa ładowanie plików..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4387,6 +4423,12 @@
       "value": "Zwraca ciąg w formacie daty"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4713,6 +4755,12 @@
     {
       "type": 0,
       "value": "Piątek"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -5051,6 +5099,12 @@
       "value": "Wprowadź nazwę połączenia"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5121,6 +5175,12 @@
     {
       "type": 1,
       "value": "searchText"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5219,6 +5279,12 @@
     {
       "type": 0,
       "value": "Dodano tę akcję"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5837,6 +5903,12 @@
       "value": "Dowiedz się więcej o zawartości dynamicznej."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5847,6 +5919,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba wystąpień podciągu do znalezienia."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -6809,6 +6887,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6995,6 +7079,12 @@
     {
       "type": 0,
       "value": "Przykład: 0, 10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
     }
   ],
   "idQjOP": [
@@ -8339,6 +8429,12 @@
     {
       "type": 0,
       "value": "”."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
