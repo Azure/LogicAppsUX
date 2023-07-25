@@ -16,6 +16,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@mic
 import type { IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { Progress } from 'vscode';
 
+// Define the interface for the Azure Script Wizard
 export interface IAzureScriptWizard extends IActionContext {
   credentials: any;
   subscriptionId: any;
@@ -26,6 +27,12 @@ export interface IAzureScriptWizard extends IActionContext {
   sourceControlPath: any;
 }
 
+/**
+ * Creates an instance of the Azure Wizard for the Azure Script Wizard.
+ * @param wizardContext - The wizard context.
+ * @param projectPath - The path of the project.
+ * @returns An instance of the Azure Wizard.
+ */
 export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath: string): AzureWizard<IAzureScriptWizard> {
   return new AzureWizard(wizardContext, {
     promptSteps: [new GetSubscriptionDetailsStep()],
@@ -33,6 +40,7 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath
   });
 }
 
+// Define the GetSubscriptionDetailsStep class
 class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureScriptWizard> {
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.enabled = true; // Set the enabled flag to true to skip the connector prompt
@@ -56,6 +64,7 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureScriptWizar
   }
 }
 
+// Define the SaveAzureContext class
 class SaveAzureContext extends AzureWizardExecuteStep<IAzureScriptWizard> {
   public priority = 100;
   private _projectPath: string;

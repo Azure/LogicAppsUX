@@ -2,39 +2,74 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, workflowSubscriptionIdKey } from '../../../../src/constants';
-import { localize } from '../../../localize';
-import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
-import { getLocalSettingsFile } from '../appSettings/getLocalSettingsFile';
-import type { IAzureScriptWizard } from './azureScriptWizard';
-import { createAzureWizard } from './azureScriptWizard';
+import { createAzureWizard, type IAzureScriptWizard } from './azureScriptWizard';
+import {
+  convertToWorkspace,
+  createFileStructure,
+  promptForSubscriptionId,
+  promptForResourceGroup,
+  promptForSourceControlPath,
+  isFolderInWorkspace,
+} from './iacGestureHelperFunctions';
 import type { IActionContext, AzureWizard } from '@microsoft/vscode-azext-utils';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
-import * as path from 'path';
-import * as vscode from 'vscode';
+import * as fs from 'fs';
+import type * as vscode from 'vscode';
 
-export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
-  const message: string = localize('selectLocalSettings', 'Select your local settings file.');
-  const localSettingsFile: string = await getLocalSettingsFile(context, message);
-  const projectPath: string = path.dirname(localSettingsFile);
-  const localSettingsFilePath: string = path.join(projectPath, localSettingsFileName);
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsFilePath);
-  const connectorsContext: IAzureScriptWizard = context as IAzureScriptWizard;
-  const subscriptionId: string = localSettings.Values[workflowSubscriptionIdKey];
+/**
+ * Generates deployment scripts for the specified folder.
+ * @param {IActionContext} context - The action context.
+ * @param {vscode.Uri} folder - The folder to generate deployment scripts for.
+ * @returns {Promise<void>} - A promise that resolves when the deployment scripts are generated.
+ */
+export async function generateDeploymentScripts(context: IActionContext, folder: vscode.Uri): Promise<void> {
+  if (!isFolderInWorkspace(folder)) {
+    await convertToWorkspace(folder);
+  }
 
-  if (subscriptionId === undefined || subscriptionId === '') {
-    const wizard: AzureWizard<IAzureScriptWizard> = createAzureWizard(connectorsContext, projectPath);
+  const scriptContext: IAzureScriptWizard = context as IAzureScriptWizard;
+
+  let subscriptionId = await promptForSubscriptionId(scriptContext, folder);
+  let resourceGroup = await promptForResourceGroup(scriptContext, folder);
+
+  if (!subscriptionId || !resourceGroup) {
+    const wizard: AzureWizard<IAzureScriptWizard> = createAzureWizard(scriptContext, folder.fsPath);
+
     await wizard.prompt();
     await wizard.execute();
-    vscode.window.showInformationMessage(
-      localize(
-        'logicapp.azureConnectorsEnabledForProject',
-        'Azure connectors are enabled for the project. Reload the designer panel to start using the connectors.'
-      )
-    );
-  } else {
-    await vscode.window.showInformationMessage(
-      localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.')
-    );
+
+    subscriptionId = scriptContext.subscriptionId;
+    resourceGroup = scriptContext.resourceGroup;
   }
+
+  const sourceControlPath = await promptForSourceControlPath();
+
+  const zipFolder = await callApi(subscriptionId, resourceGroup, sourceControlPath);
+
+  await unzipFiles(zipFolder, folder.fsPath);
+
+  createFileStructure(folder.fsPath);
+}
+
+/**
+ * Calls the API with the provided details and returns a .zip folder containing the files for the templates.
+ * @param {string} _subscriptionId - The subscription ID.
+ * @param {string} _resourceGroup - The resource group.
+ * @param {string} _sourceControlPath - The source control path.
+ * @returns {Promise<string>} - A promise that resolves with the path to the .zip folder.
+ */
+async function callApi(_subscriptionId: string, _resourceGroup: string, _sourceControlPath: string): Promise<string> {
+  // TODO: Call the API with the details provided by the user
+  // The API will return a .zip folder containing the files for the templates
+  return '';
+}
+
+/**
+ * Unzips the files from the .zip folder and stores them in the specified destination folder.
+ * @param {string} zipFolder - The path to the .zip folder.
+ * @param {string} destination - The destination folder.
+ */
+async function unzipFiles(zipFolder: string, _destination: string) {
+  // Unzip the files from the .zip folder and store them in the selected folder
+  fs.createReadStream(zipFolder);
+  //  .pipe(unzipper.Extract({ path: destination }));
 }

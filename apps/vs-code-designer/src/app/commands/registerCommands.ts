@@ -69,7 +69,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
   registerSiteCommand(extensionCommand.deploySlot, unwrapTreeNodeCommandCallback(deploySlot));
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.generateDeploymentScripts, generateDeploymentScripts);
+  registerCommand(extensionCommand.generateDeploymentScripts, generateDeploymentScripts);
   registerSiteCommand(extensionCommand.redeploy, unwrapTreeNodeCommandCallback(redeployDeployment));
   registerCommandWithTreeNodeUnwrapping(extensionCommand.showOutputChannel, () => {
     ext.outputChannel.show();
