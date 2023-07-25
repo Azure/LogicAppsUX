@@ -22,6 +22,7 @@ export interface WorkflowLoadingState {
   showChatBot?: boolean;
   workflowKind?: string;
   language: string;
+  areCustomEditorsEnabled?: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -38,6 +39,7 @@ const initialState: WorkflowLoadingState = {
   showChatBot: false,
   workflowKind: 'stateful',
   language: 'en',
+  areCustomEditorsEnabled: false,
 };
 
 type WorkflowPayload = {
@@ -142,6 +144,9 @@ export const workflowLoadingSlice = createSlice({
       state.runInstance = null;
       state.connections = {};
     },
+    setAreCustomEditorsEnabled: (state, action: PayloadAction<boolean>) => {
+      state.areCustomEditorsEnabled = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -176,6 +181,7 @@ export const {
   changeRunId,
   setLanguage,
   loadLastWorkflow,
+  setAreCustomEditorsEnabled,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

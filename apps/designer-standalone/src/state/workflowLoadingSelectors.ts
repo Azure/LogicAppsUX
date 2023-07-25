@@ -40,3 +40,7 @@ export const useRunId = () => {
 export const useShowChatBot = () => {
   return useSelector((state: RootState) => state.workflowLoader.showChatBot);
 };
+
+export const useAreCustomEditorsEnabled = () => {
+  return useSelector((state: RootState) => state.workflowLoader.areCustomEditorsEnabled);
+};
