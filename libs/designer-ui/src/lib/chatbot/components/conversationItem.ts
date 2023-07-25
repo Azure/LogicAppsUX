@@ -1,4 +1,4 @@
-import type { OperationInfo } from "./flowDiffPreview";
+import type { OperationInfo } from './flowDiffPreview';
 
 export enum FlowOrigin {
   FromNL2Flow = 'fromNL2Flow',

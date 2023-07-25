@@ -64,7 +64,7 @@ export interface SchemaNodeExtended extends SchemaNode {
   pathToRoot: PathItem[];
   parentKey: string | undefined;
   // Used only in ArrayItem arrays, not regular arrays
-  arrayItemIndex: number | undefined;
+  arrayItemIndex?: number | undefined;
 }
 
 export interface PathItem {

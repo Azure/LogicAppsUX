@@ -21,6 +21,35 @@ export const addFunction: FunctionData = {
   description: 'Returns the result from adding two or more numbers.',
 };
 
+export const minFunction: FunctionData = {
+  key: 'Minimum',
+  maxNumberOfInputs: 2,
+  functionName: 'min',
+  outputValueType: NormalizedDataType.Number,
+  inputs: [
+    {
+      name: 'Value',
+      allowedTypes: [NormalizedDataType.Decimal],
+      isOptional: false,
+      allowCustomInput: false,
+      tooltip: 'The value to use',
+      placeHolder: 'The value',
+    },
+    {
+      name: 'Scope',
+      allowedTypes: [NormalizedDataType.Any],
+      isOptional: true,
+      allowCustomInput: false,
+      tooltip: 'The scope to use',
+      placeHolder: 'The scope',
+    },
+  ],
+  displayName: 'Min',
+  category: FunctionCategory.Math,
+  description: 'The min between 2 numbers',
+  tooltip: 'The min',
+};
+
 export const concatFunction: FunctionData = {
   key: 'Concat',
   maxNumberOfInputs: -1,

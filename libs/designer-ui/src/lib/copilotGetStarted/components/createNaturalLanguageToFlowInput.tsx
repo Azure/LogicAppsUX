@@ -1,17 +1,12 @@
+import { ChatInput } from '../../chatbot/components/chatInputBox';
 import { useBoolean, useId } from '@fluentui/react-hooks';
 import { DirectionalHint } from '@fluentui/react/lib/Callout';
-import type {
-  IContextualMenuItem
-} from '@fluentui/react/lib/ContextualMenu';
-import {
-  ContextualMenu,
-  ContextualMenuItemType
-} from '@fluentui/react/lib/ContextualMenu';
+import type { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
+import { ContextualMenu, ContextualMenuItemType } from '@fluentui/react/lib/ContextualMenu';
 import { FontSizes } from '@fluentui/react/lib/Styling';
 import type { ITextField } from '@fluentui/react/lib/TextField';
 import { KeyCodes } from '@fluentui/react/lib/Utilities';
 import React from 'react';
-import { ChatInput } from '../../chatbot/components/chatInputBox';
 
 interface CreateNaturalLanguageToFlowInputProps<Suggestion extends string> {
   searchString: string;
@@ -48,8 +43,7 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
   autoFocus,
   dataAutomationId,
 }: CreateNaturalLanguageToFlowInputProps<Suggestion>) {
-  const [shouldMenuFocusOnMount, { setTrue: focusMenuOnMount, setFalse: doNotFocusMenuOnMount }] =
-    useBoolean(false);
+  const [shouldMenuFocusOnMount, { setTrue: focusMenuOnMount, setFalse: doNotFocusMenuOnMount }] = useBoolean(false);
   const [isMenuOpen, { setTrue: openMenu, setFalse: closeMenu }] = useBoolean(false);
 
   const textFieldRef = React.useRef<ITextField>(null);
@@ -151,12 +145,12 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
     const historyItems: IContextualMenuItem[] =
       getHistoryEntries && onHistoryEntryClick
         ? getHistoryEntries(searchString).map((entry, i) => ({
-          key: `history-${i}`,
-          text: entry,
-          onClick: () => onHistorySearch(entry, i),
-          iconProps: { iconName: 'Clock', style: { color: 'unset' } },
-          itemProps: { styles: itemStyles },
-        }))
+            key: `history-${i}`,
+            text: entry,
+            onClick: () => onHistorySearch(entry, i),
+            iconProps: { iconName: 'Clock', style: { color: 'unset' } },
+            itemProps: { styles: itemStyles },
+          }))
         : [];
 
     const suggestionItems: IContextualMenuItem[] = (suggestions ?? []).map((suggestion, i) => ({
@@ -178,15 +172,7 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
     });
 
     return items;
-  }, [
-    getHistoryEntries,
-    onHistoryEntryClick,
-    onHistorySearch,
-    onSuggestionSearch,
-    searchString,
-    suggestions,
-    suggestionsHeaderLabel,
-  ]);
+  }, [getHistoryEntries, onHistoryEntryClick, onHistorySearch, onSuggestionSearch, searchString, suggestions, suggestionsHeaderLabel]);
 
   const onInputBlur = (ev: React.FocusEvent<HTMLInputElement>): void => {
     if (menuRef.current?.contains(ev.relatedTarget as Node) && !shouldMenuFocusOnMount) {
@@ -199,7 +185,8 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
     const value = newValue ?? '';
     value ? tryOpenMenu() : onMenuDismissed();
     setSearchString(value);
-    if (onChange !== undefined) { // TODO: change param to required later
+    if (onChange !== undefined) {
+      // TODO: change param to required later
       onChange(value);
     }
   };
