@@ -1,4 +1,25 @@
 # Logic Apps Designer
+## [2.53.0](https://github.com/Azure/LogicAppsUX/compare/v2.52.0...v2.53.0) (2023-07-25)
+
+
+### Features
+
+* **copilot:** Copilot Get Started input and suggested flow components ([#2992](https://github.com/Azure/LogicAppsUX/issues/2992)) ([0af6397](https://github.com/Azure/LogicAppsUX/commit/0af639728040b8560ce7450f7464dd7b0722064c))
+* **designer:** Add EditorService to allow custom components ([#2996](https://github.com/Azure/LogicAppsUX/issues/2996)) ([7915771](https://github.com/Azure/LogicAppsUX/commit/7915771102a50490977b6a6048e16d27c94b2a3a))
+* **designer:** Adding buttons to fill all / remove all advanced parameters ([#3007](https://github.com/Azure/LogicAppsUX/issues/3007)) ([c273aa5](https://github.com/Azure/LogicAppsUX/commit/c273aa5eebffc898e445ae2912740e41e31450cf))
+* **designer:** Better surface workflow search as a button ([#3025](https://github.com/Azure/LogicAppsUX/issues/3025)) ([6d7ed51](https://github.com/Azure/LogicAppsUX/commit/6d7ed5151b64c231a46c07b173334fa8eb96d51e))
+* **vscode:** Azurite Start & Default Location ([#3006](https://github.com/Azure/LogicAppsUX/issues/3006)) ([4c06ab9](https://github.com/Azure/LogicAppsUX/commit/4c06ab909f46fe9c355c3d23ce3f70bebe11d39d)), closes [#2958](https://github.com/Azure/LogicAppsUX/issues/2958)
+
+
+### Bug Fixes
+
+* **data mapper:** functions missing on load schema ([#3030](https://github.com/Azure/LogicAppsUX/issues/3030)) ([f359e29](https://github.com/Azure/LogicAppsUX/commit/f359e298476c31a7efd1a1d570c119c864cd9da2))
+* **designer:** Add dynamic inputs for serialized workflow ([#3000](https://github.com/Azure/LogicAppsUX/issues/3000)) ([fa5670b](https://github.com/Azure/LogicAppsUX/commit/fa5670b778d945399c7a4b7a94a7964a626f9b9a))
+* **Designer:** Fixed issue with some MI ServiceProvider connections failing   ([#3020](https://github.com/Azure/LogicAppsUX/issues/3020)) ([b2730df](https://github.com/Azure/LogicAppsUX/commit/b2730df7a80a003b0b5376c75ce6e21602d8095d))
+* **Designer:** Fixed regression with dynamic invoke requests ([#3024](https://github.com/Azure/LogicAppsUX/issues/3024)) ([6bd4461](https://github.com/Azure/LogicAppsUX/commit/6bd4461e9191740f822ffc0c6a08ff38524f511d))
+* **Designer:** Fixed small type import build issue ([#3021](https://github.com/Azure/LogicAppsUX/issues/3021)) ([dfb72ff](https://github.com/Azure/LogicAppsUX/commit/dfb72fffa013f6dc11923c7fdb2e815ccf1a98a9))
+* **designer:** html editor dropdown item active being darker than it should ([#3014](https://github.com/Azure/LogicAppsUX/issues/3014)) ([b47bacc](https://github.com/Azure/LogicAppsUX/commit/b47bacce80d6fecc8d913fa7168e26b4ca90059d))
+* **designer:** token picker support for small screens  ([#3013](https://github.com/Azure/LogicAppsUX/issues/3013)) ([eb4852c](https://github.com/Azure/LogicAppsUX/commit/eb4852caab70a40fa30589731fb1ba88cee61791))
 
 ## [2.52.0](https://github.com/Azure/LogicAppsUX/compare/v2.51.0...v2.52.0) (2023-07-20)
 
