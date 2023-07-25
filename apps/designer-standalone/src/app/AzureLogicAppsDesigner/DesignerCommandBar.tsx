@@ -15,6 +15,7 @@ import {
   useWorkflowParameterValidationErrors,
   useAllConnectionErrors,
   serializeWorkflow,
+  validateParameter,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -53,9 +54,21 @@ export const DesignerCommandBar = ({
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
-    await saveWorkflow(serializedWorkflow);
 
-    updateCallbackUrl(designerState, DesignerStore.dispatch);
+    const hasEmptyInputs = (Object.entries(designerState.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
+      Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
+        parameterGroup.parameters.some((parameter) => {
+          const test = validateParameter(parameter, parameter.value);
+          console.log(_id, test);
+          return true;
+        })
+      )
+    );
+
+    if (!hasEmptyInputs) {
+      await saveWorkflow(serializedWorkflow);
+      updateCallbackUrl(designerState, DesignerStore.dispatch);
+    }
   });
 
   const designerIsDirty = useIsDesignerDirty();
