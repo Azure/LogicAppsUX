@@ -45,6 +45,13 @@ export const panelSlice = createSlice({
       state.currentState = undefined;
       state.selectedOperationGroupId = '';
       state.addingTrigger = false;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Panel Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     expandDiscoveryPanel: (
       state,
@@ -66,6 +73,13 @@ export const panelSlice = createSlice({
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.selectedOperationGroupId = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Panel Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     selectOperationId: (state, action: PayloadAction<string>) => {
       state.selectedOperationId = action.payload;
@@ -164,9 +178,23 @@ export const panelSlice = createSlice({
         state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: tab.name === action.payload };
       });
       state.selectedTabName = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Panel Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabName = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Panel Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
   },
 });

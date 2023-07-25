@@ -59,13 +59,6 @@ export const workflowSlice = createSlice({
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
       const { nodeId, description } = action.payload;
       state.operations[nodeId].description = description;
-
-      LoggerService().log({
-        level: LogEntryLevel.Verbose,
-        area: 'Designer:Workflow Slice',
-        message: action.type,
-        args: [action.payload.nodeId],
-      });
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       if (!state.graph) {
@@ -190,13 +183,6 @@ export const workflowSlice = createSlice({
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;
-
-      LoggerService().log({
-        level: LogEntryLevel.Verbose,
-        area: 'Designer:Workflow Slice',
-        message: action.type,
-        args: [action.payload],
-      });
     },
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
