@@ -10,7 +10,7 @@ export interface IChatInputProps {
   autoFocus?: boolean;
   disabled?: boolean;
   isMultiline?: boolean;
-  maxQueryLength: number;
+  maxQueryLength?: number;
   submitButtonProps: IButtonProps & { onClick: () => void };
   showCharCount?: boolean;
   footerActionsProps?: IButtonProps[];
