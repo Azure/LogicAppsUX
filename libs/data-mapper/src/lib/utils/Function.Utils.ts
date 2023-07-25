@@ -145,12 +145,14 @@ export const getFunctionLocationsForAllFunctions = (
     const func = dataMapConnections[connectionKey].self.node as FunctionData;
     if (func.functionName !== undefined) {
       const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
+
       const parentNodes: SchemaNodeExtended[] = [];
       targetNodesConnectedToFunction.forEach((childNode) => {
         if (childNode.parentKey) {
           parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
         }
       });
+
       const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
       functionNodes[connectionKey] = { functionData: func, functionLocations: combinedTargetNodes };
     }
