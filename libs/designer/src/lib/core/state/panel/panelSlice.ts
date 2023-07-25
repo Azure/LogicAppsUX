@@ -1,5 +1,6 @@
 import constants from '../../../common/constants';
 import type { RelationshipIds, PanelState } from './panelInterfaces';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -55,6 +56,13 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload.nodeId;
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
       state.addingTrigger = !!action.payload?.addingTrigger;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Panel Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.selectedOperationGroupId = action.payload;

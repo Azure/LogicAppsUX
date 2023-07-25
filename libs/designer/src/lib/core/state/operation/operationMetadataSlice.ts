@@ -4,6 +4,7 @@ import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults'
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { resetWorkflowState } from '../global';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
@@ -299,6 +300,13 @@ export const operationMetadataSlice = createSlice({
       }
 
       state.settings[id] = { ...state.settings[id], ...settings };
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Operation Metadata Slice',
+        message: action.type,
+        args: [action.payload.id],
+      });
     },
     updateStaticResults: (state, action: PayloadAction<AddStaticResultsPayload>) => {
       const { id, staticResults } = action.payload;
@@ -307,6 +315,13 @@ export const operationMetadataSlice = createSlice({
       }
 
       state.staticResults[id] = { ...state.staticResults[id], ...staticResults };
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Operation Metadata Slice',
+        message: action.type,
+        args: [action.payload.id],
+      });
     },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
@@ -331,6 +346,13 @@ export const operationMetadataSlice = createSlice({
       if (dependencies?.outputs) {
         state.dependencies[nodeId].outputs = { ...state.dependencies[nodeId].outputs, ...dependencies.outputs };
       }
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Operation Metadata Slice',
+        message: action.type,
+        args: [action.payload.nodeId],
+      });
     },
     updateParameterConditionalVisibility: (
       state,
@@ -347,6 +369,13 @@ export const operationMetadataSlice = createSlice({
           state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].preservedValue = undefined;
         }
       }
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Operation Metadata Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     updateParameterValidation: (
       state,
