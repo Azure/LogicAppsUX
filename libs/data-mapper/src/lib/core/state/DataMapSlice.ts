@@ -31,7 +31,7 @@ import {
   addParentConnectionForRepeatingElementsNested,
   getParentId,
 } from '../../utils/DataMap.Utils';
-import { functionsForLocation, isFunctionData } from '../../utils/Function.Utils';
+import { functionsForLocation, getFunctionLocationsForAllFunctions, isFunctionData } from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
 import {
@@ -186,21 +186,7 @@ export const dataMapSlice = createSlice({
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
-      const functionNodes: FunctionDictionary = {};
-      for (const connectionKey in dataMapConnections) {
-        const func = dataMapConnections[connectionKey].self.node as FunctionData;
-        if (func.functionName !== undefined) {
-          const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
-          const parentNodes: SchemaNodeExtended[] = [];
-          targetNodesConnectedToFunction.forEach((childNode) => {
-            if (childNode.parentKey) {
-              parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
-            }
-          });
-          const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
-          functionNodes[connectionKey] = { functionData: func, functionLocations: combinedTargetNodes };
-        }
-      }
+      const functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
 
       const newState: DataMapOperationState = {
         ...currentState,
