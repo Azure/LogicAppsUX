@@ -28,7 +28,7 @@ export const CustomTokenField = (props: CustomTokenFieldProps) => {
   return <EditorComponent {...customEditorProps} />;
 };
 
-function useRenderDefaultEditor(tokenFieldProps: Omit<TokenFieldProps, 'editor' | 'editor' | 'value' | 'onValueChange'>) {
+function useRenderDefaultEditor(tokenFieldProps: Omit<TokenFieldProps, 'editor' | 'editorOptions' | 'value' | 'onValueChange'>) {
   return useCallback(
     (props: IRenderDefaultEditorParams) => {
       return (
