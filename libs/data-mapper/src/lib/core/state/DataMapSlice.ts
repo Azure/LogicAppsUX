@@ -187,11 +187,18 @@ export const dataMapSlice = createSlice({
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
       const functionNodes: FunctionDictionary = {};
-      for (const key in dataMapConnections) {
-        const func = dataMapConnections[key].self.node as FunctionData;
+      for (const connectionKey in dataMapConnections) {
+        const func = dataMapConnections[connectionKey].self.node as FunctionData;
         if (func.functionName !== undefined) {
-          const idk = getConnectedTargetSchemaNodes([dataMapConnections[key]], dataMapConnections);
-          functionNodes[key] = { functionData: func, functionLocations: idk };
+          const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
+          const parentNodes: SchemaNodeExtended[] = [];
+          targetNodesConnectedToFunction.forEach((childNode) => {
+            if (childNode.parentKey) {
+              parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
+            }
+          });
+          const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
+          functionNodes[connectionKey] = { functionData: func, functionLocations: combinedTargetNodes };
         }
       }
 
