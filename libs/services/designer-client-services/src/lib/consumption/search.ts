@@ -1,6 +1,7 @@
 import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
 import * as ClientOperationsData from '../base/operations';
-import type { BaseSearchServiceOptions, ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
+import type { BaseSearchServiceOptions, DiscoveryOpArray } from '../base/search';
+import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
 import * as OperationsData from './operations';
 import type { Connector, DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
@@ -90,7 +91,11 @@ export class ConsumptionSearchService extends BaseSearchService {
         if (!operation.properties.operationType) {
           const { isNotification, isWebhook } = operation.properties as SomeKindOfAzureOperationDiscovery;
           // eslint-disable-next-line no-param-reassign
-          operation.properties.operationType = isWebhook ? 'OpenApiConnectionWebhook' : isNotification ? 'OpenApiConnectionNotification' : 'OpenApiConnection';
+          operation.properties.operationType = isWebhook
+            ? 'OpenApiConnectionWebhook'
+            : isNotification
+            ? 'OpenApiConnectionNotification'
+            : 'OpenApiConnection';
         }
 
         return operation;

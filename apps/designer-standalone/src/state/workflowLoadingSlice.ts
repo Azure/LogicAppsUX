@@ -20,6 +20,7 @@ export interface WorkflowLoadingState {
   isConsumption: boolean;
   isLocal: boolean;
   showChatBot?: boolean;
+  workflowKind?: string;
   language: string;
 }
 
@@ -35,6 +36,7 @@ const initialState: WorkflowLoadingState = {
   isConsumption: false,
   isLocal: false,
   showChatBot: false,
+  workflowKind: 'stateful',
   language: 'en',
 };
 

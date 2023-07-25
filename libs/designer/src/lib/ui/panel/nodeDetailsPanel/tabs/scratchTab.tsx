@@ -1,96 +1,130 @@
 import constants from '../../../../common/constants';
-import type { TokenGroup } from '../../../../core/utils/tokens';
-import { getExpressionTokenSections } from '../../../../core/utils/tokens';
-import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
+//import type { TokenGroup } from '../../../../core/utils/tokens';
+//import { getExpressionTokenSections } from '../../../../core/utils/tokens';
+import type {
+  /*OutputToken,*/
+  PanelTab,
+  /*TokenPickerMode, ValueSegment*/
+} from '@microsoft/designer-ui';
 import {
-  BaseEditor,
-  testTokenSegment, // AuthenticationType,
+  // BaseEditor,
+  //testTokenSegment, // AuthenticationType,
   // Combobox, // RowDropdownOptions,
-  // GroupType, // ArrayEditor,
-  // // ArrayType, // DictionaryEditor,
+  // GroupType,
+  // ArrayEditor, // // ArrayType, // DictionaryEditor,
   // // TokenType,
   // // GroupType,
   // // GroupDropdownOptions,
   // // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
   // SimpleQueryBuilder,
-  ValueSegmentType, // CodeEditor,
+  // ValueSegmentType, // CodeEditor,
   // EditorLanguage,
-  HTMLEditor,
-  TokenPicker, // TokenType,
+  //HTMLEditor,
+  // TokenPicker, // TokenType,
   // DictionaryEditor,
   // testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
   Scratch, // StringEditor,
   // AuthenticationEditor, // DropdownEditor,
-  outputToken,
-  outputToken2, // RowDropdownOptions,
+  // outputToken,
+  // outputToken2,
+  //ArrayType,
+  CreateNaturalLanguageToFlowInput,
+  SuggestedFlowsSection, // RowDropdownOptions,
 } from '@microsoft/designer-ui';
-import { guid } from '@microsoft/utils-logic-apps';
+import { useCallback, useState } from 'react';
 
-const testTokenGroup: TokenGroup[] = [
-  { id: guid(), label: 'Checks if Blob exists in Azure Storage', tokens: [outputToken, outputToken2] },
-  { id: guid(), label: 'Insert a row into a string array', tokens: [outputToken2, outputToken] },
-];
+//import { guid } from '@microsoft/utils-logic-apps';
+
+// const testTokenGroup: TokenGroup[] = [
+//   { id: guid(), label: 'Checks if Blob exists in Azure Storage', tokens: [outputToken, outputToken2] },
+//   { id: guid(), label: 'Insert a row into a string array', tokens: [outputToken2, outputToken] },
+// ];
 
 export const ScratchTab = () => {
-  const expressionGroup = getExpressionTokenSections();
+  // const expressionGroup = getExpressionTokenSections();
 
-  const getValueSegmentFromToken = async (token: OutputToken): Promise<ValueSegment> => {
-    const { key, brandColor, icon, title, description, name, type, value, outputInfo } = token;
-    const { actionName, type: tokenType, required, format, source, isSecure, arrayDetails } = outputInfo;
-    const segment = {
-      id: guid(),
-      type: ValueSegmentType.TOKEN,
-      value: value ?? '',
-      token: {
-        actionName,
-        tokenType,
-        brandColor,
-        icon,
-        description,
-        key,
-        name,
-        type,
-        value,
-        format,
-        required,
-        title,
-        source,
-        isSecure,
-        arrayDetails: arrayDetails ? { parentArrayName: arrayDetails.parentArray, itemSchema: arrayDetails.itemSchema } : undefined,
-      },
-    };
+  // const getValueSegmentFromToken = async (token: OutputToken): Promise<ValueSegment> => {
+  //   const { key, brandColor, icon, title, description, name, type, value, outputInfo } = token;
+  //   const { actionName, type: tokenType, required, format, source, isSecure, arrayDetails } = outputInfo;
+  //   const segment = {
+  //     id: guid(),
+  //     type: ValueSegmentType.TOKEN,
+  //     value: value ?? '',
+  //     token: {
+  //       actionName,
+  //       tokenType,
+  //       brandColor,
+  //       icon,
+  //       description,
+  //       key,
+  //       name,
+  //       type,
+  //       value,
+  //       format,
+  //       required,
+  //       title,
+  //       source,
+  //       isSecure,
+  //       arrayDetails: arrayDetails ? { parentArrayName: arrayDetails.parentArray, itemSchema: arrayDetails.itemSchema } : undefined,
+  //     },
+  //   };
 
-    return segment;
-  };
+  //   return segment;
+  // };
 
-  const GetTokenPicker = (
-    editorId: string,
-    labelId: string,
-    tokenPickerMode?: TokenPickerMode,
-    _valueType?: string,
-    closeTokenPicker?: () => void,
-    onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
-  ): JSX.Element => {
-    return (
-      <TokenPicker
-        editorId={editorId}
-        labelId={labelId}
-        tokenGroup={testTokenGroup}
-        expressionGroup={expressionGroup}
-        initialMode={tokenPickerMode}
-        closeTokenPicker={closeTokenPicker}
-        tokenPickerFocused={onClick}
-        getValueSegmentFromToken={getValueSegmentFromToken}
-        tokenClickedCallback={tokenClicked}
-      />
-    );
-  };
+  // const GetTokenPicker = (
+  //   editorId: string,
+  //   labelId: string,
+  //   tokenPickerMode?: TokenPickerMode,
+  //   _valueType?: string,
+  //   closeTokenPicker?: () => void,
+  //   onClick?: (b: boolean) => void,
+  //   tokenClicked?: (token: ValueSegment) => void
+  // ): JSX.Element => {
+  //   return (
+  //     <TokenPicker
+  //       editorId={editorId}
+  //       labelId={labelId}
+  //       tokenGroup={testTokenGroup}
+  //       expressionGroup={expressionGroup}
+  //       initialMode={tokenPickerMode}
+  //       closeTokenPicker={closeTokenPicker}
+  //       tokenPickerFocused={onClick}
+  //       getValueSegmentFromToken={getValueSegmentFromToken}
+  //       tokenClickedCallback={tokenClicked}
+  //     />
+  //   );
+  // };
+
+  const [naturalLanguageQueryInput, setNaturalLanguageQueryInput] = useState('');
+  const onNaturalLanguageQueryChanged = useCallback((newValue: string) => {
+    setNaturalLanguageQueryInput(newValue);
+  }, []);
+
+  const onSuggestionClicked = useCallback((example: string) => {
+    setNaturalLanguageQueryInput(example);
+  }, []);
 
   const children = (): React.ReactNode => {
     return (
       <>
+        {
+          <CreateNaturalLanguageToFlowInput
+            searchString={naturalLanguageQueryInput}
+            setSearchString={onNaturalLanguageQueryChanged}
+            suggestionsHeaderLabel={'Suggested flow descriptions'}
+            placeholder={'Describe in detail how you want your automation to work'}
+            onSearch={onNaturalLanguageQueryChanged} // TODO: change
+            suggestions={['Suggestion 1', 'Suggestion 2', 'Suggestion 3']}
+            onSuggestionClick={onSuggestionClicked}
+            minimumSearchLength={5}
+            isDisabled={false}
+            isSearchDisabled={false}
+            autoFocus={true}
+          />
+        }
+        {<SuggestedFlowsSection />}
         {/* <QueryBuilderEditor
 getTokenPicker={GetTokenPicker}
           readonly={false}
@@ -176,7 +210,7 @@ getTokenPicker={GetTokenPicker}
         /> */}
         {/* <ArrayEditor
           labelId=""
-          type={ArrayType.SIMPLE}
+          arrayType={ArrayType.SIMPLE}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialValue={[
             { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
@@ -187,10 +221,15 @@ getTokenPicker={GetTokenPicker}
             testTokenSegment,
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n , "Some Text"]' },
           ]}
           getTokenPicker={GetTokenPicker}
-        />
+          itemSchema={{ type: 'string', key: '', enum: ['This is Text', 'Some Text', 'More Text'] }}
+          castParameter={function (): string {
+            return '';
+          }}
+        /> */}
+        {/*
 
         <ArrayEditor
           labelId=""
@@ -378,14 +417,14 @@ getTokenPicker={GetTokenPicker}
           ]}
           getTokenPicker={GetTokenPicker}
         /> */}
-        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" getTokenPicker={GetTokenPicker} />
+        {/* {<HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" getTokenPicker={GetTokenPicker} />} */}
         {/* {
           <SimpleQueryBuilder
             getTokenPicker={GetTokenPicker}
             items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
           />
         } */}
-        <BaseEditor initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} BasePlugins={{ treeView: true, tokens: true }} />
+        {/* <BaseEditor initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} BasePlugins={{ treeView: true, tokens: true }} /> */}
       </>
     );
   };

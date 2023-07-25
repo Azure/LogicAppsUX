@@ -5,7 +5,7 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
-import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
+import type { MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
@@ -75,6 +75,7 @@ export interface DataMapOperationState {
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
+  loadedMapMetadata?: MapMetadata;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -110,6 +111,7 @@ export interface InitialDataMapAction {
   sourceSchema: SchemaExtended;
   targetSchema: SchemaExtended;
   dataMapConnections: ConnectionDictionary;
+  metadata: MapMetadata | undefined;
 }
 
 export interface ConnectionAction {
@@ -177,7 +179,7 @@ export const dataMapSlice = createSlice({
     },
 
     setInitialDataMap: (state, action: PayloadAction<InitialDataMapAction>) => {
-      const { sourceSchema, targetSchema, dataMapConnections } = action.payload;
+      const { sourceSchema, targetSchema, dataMapConnections, metadata } = action.payload;
       const currentState = state.curDataMapOperation;
 
       const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
@@ -205,6 +207,7 @@ export const dataMapSlice = createSlice({
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],
         currentTargetSchemaNode: targetSchema.schemaTreeRoot,
+        loadedMapMetadata: metadata,
       };
 
       state.curDataMapOperation = newState;

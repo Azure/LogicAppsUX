@@ -1,5 +1,5 @@
-import type { SimpleArrayItem, TokenPickerButtonEditorProps, ValueSegment } from '..';
-import { StringEditor } from '..';
+import type { ComboboxItem, SimpleArrayItem, TokenPickerButtonEditorProps, ValueSegment } from '..';
+import { Combobox, StringEditor } from '..';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
 import { Label } from '../label';
@@ -31,6 +31,7 @@ export interface ExpandedSimpleArrayProps {
   canDeleteLastItem: boolean;
   placeholder?: string;
   valueType?: string;
+  itemEnum?: string[];
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
@@ -43,6 +44,7 @@ export const ExpandedSimpleArray = ({
   canDeleteLastItem,
   placeholder,
   valueType,
+  itemEnum,
   setItems,
   readonly,
   ...props
@@ -82,14 +84,30 @@ export const ExpandedSimpleArray = ({
                 />
               </div>
             </div>
-            <StringEditor
-              {...props}
-              className="msla-array-editor-container-expanded"
-              valueType={valueType}
-              initialValue={item.value ?? []}
-              editorBlur={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
-              placeholder={placeholder}
-            />
+            {itemEnum && itemEnum.length > 0 ? (
+              <Combobox
+                {...props}
+                options={itemEnum.map(
+                  (val: string): ComboboxItem => ({
+                    displayName: val,
+                    key: val,
+                    value: val,
+                  })
+                )}
+                initialValue={item.value ?? []}
+                placeholder={placeholder}
+                onChange={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
+              />
+            ) : (
+              <StringEditor
+                {...props}
+                className="msla-array-editor-container-expanded"
+                valueType={valueType}
+                initialValue={item.value ?? []}
+                editorBlur={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
+                placeholder={placeholder}
+              />
+            )}
           </div>
         );
       })}
@@ -106,7 +124,7 @@ export const ExpandedSimpleArray = ({
   );
 };
 
-export const renderLabel = (index: number, labelName?: string, isRequired?: boolean): JSX.Element => {
+const renderLabel = (index: number, labelName?: string, isRequired?: boolean): JSX.Element => {
   return (
     <div className="msla-array-editor-label">
       <Label text={labelName + ' - ' + (index + 1)} isRequiredField={isRequired ?? false} />

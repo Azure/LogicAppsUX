@@ -7,13 +7,7 @@ import { ArgumentException, UnsupportedException } from '@microsoft/utils-logic-
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
 interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
-  baseUrl: string;
-  apiVersion: string;
   getConfiguration: GetConfigurationFunction;
-  apiHubServiceDetails?: {
-    apiVersion: string;
-    baseUrl: string;
-  };
 }
 
 export class StandardConnectorService extends BaseConnectorService {
@@ -36,12 +30,12 @@ export class StandardConnectorService extends BaseConnectorService {
 
   async getLegacyDynamicContent(
     connectionId: string,
-    _connectorId: string,
+    connectorId: string,
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, apiVersion } = this.options;
-    return this._executeAzureDynamicApi(connectionId, baseUrl, apiVersion, parameters, managedIdentityProperties);
+    const { baseUrl } = this.options;
+    return this._executeAzureDynamicApi(connectionId, connectorId, baseUrl, parameters, managedIdentityProperties);
   }
 
   async getListDynamicValues(
