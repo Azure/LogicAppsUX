@@ -15,6 +15,7 @@ import {
   InitFunctionService,
   InitAppServiceService,
   InitRunService,
+  InitEditorService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -44,6 +45,7 @@ export const initializeServices = createAsyncThunk(
     hostService,
     apimService,
     runService,
+    editorService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -73,6 +75,8 @@ export const initializeServices = createAsyncThunk(
       InitRunService(runService);
     }
 
+    InitEditorService(editorService);
+
     return true;
   }
 );
@@ -87,6 +91,8 @@ export const designerOptionsSlice = createSlice({
       state.isDarkMode = action.payload.isDarkMode;
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
+      state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
+      state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
     },
   },
   extraReducers: (builder) => {

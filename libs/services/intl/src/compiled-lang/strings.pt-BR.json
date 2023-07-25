@@ -23,6 +23,12 @@
       "value": "Com falha"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -43,6 +49,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Kuala Lumpur, Singapura"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia de caracteres a ser examinada."
     }
   ],
   "+powfX": [
@@ -647,6 +659,12 @@
       "value": "Salvar"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Opcional. O código de localidade RFC 4646 a ser usado. Se não for especificado, a localidade padrão será usada. Se a localidade não for um valor válido, será gerado um erro de que a localidade fornecida não é válida ou não tem uma localidade associada."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -727,10 +745,22 @@
       "value": "Não há conteúdo disponível"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia de caracteres a ser examinada."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Substituir um esquema existente por um esquema incompatível pode criar erros em seu mapa."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Retorna a coleção em ordem inversa"
     }
   ],
   "3X4FHS": [
@@ -911,6 +941,12 @@
       "value": "Necessário. O nome do parâmetro cujos valores você deseja."
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Seu fluxo foi atualizado."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -961,6 +997,12 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Explicar ação"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
@@ -971,6 +1013,18 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tóquio"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "Adicionar uma condição"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Conte à Microsoft o que você gostou neste recurso"
     }
   ],
   "5OvGgn": [
@@ -1075,6 +1129,12 @@
       "value": "Erro ao carregar entradas"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Mostrar todos os parâmetros avançados"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1113,6 +1173,12 @@
       "value": "' tem muitas entradas atribuídas a ela"
     }
   ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Atualizou esta ação"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -1143,10 +1209,22 @@
       "value": "Anterior"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "Para preparar esse fluxo de trabalho, conclua a configuração destas ações:"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "Necessário. O número pelo qual multiplicar o Multiplicando 2."
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Criar fluxo"
     }
   ],
   "6u6CS+": [
@@ -1247,10 +1325,22 @@
       "value": "Opcional. A localidade a ser usada ao formatar (o padrão é 'en-us')."
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "Isso reverterá o fluxo de trabalho para o estado em que estava antes da edição do Copilot. Se você fez edições adicionais no fluxo de trabalho após as do Copilot, elas serão perdidas. Esta ação não pode ser desfeita. Deseja continuar?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Código de status"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "Relatar um bug"
     }
   ],
   "7lnElz": [
@@ -1367,6 +1457,24 @@
     {
       "type": 0,
       "value": "Habilite a identidade gerenciada para o aplicativo lógico."
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Descreva como seu fluxo deve ser alterado. Adicione detalhes sempre que possível, incluindo o conector a ser usado e se algum conteúdo deve ser incluído."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Editar este fluxo para"
     }
   ],
   "8SxNQC": [
@@ -1527,6 +1635,12 @@
       "value": "(UTC-03:00) Brasília"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Reverter seu fluxo"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1565,6 +1679,12 @@
       "value": "Texto"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1581,6 +1701,12 @@
     {
       "type": 0,
       "value": "Retornará true se ambos os parâmetros forem true"
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Enviar comentário"
     }
   ],
   "9x8hg8": [
@@ -1655,6 +1781,18 @@
     {
       "type": 0,
       "value": "Selecionar a frequência."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remover e limpar todos os parâmetros avançados e seus valores"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Não conectado a"
     }
   ],
   "AnX5yC": [
@@ -1792,6 +1930,12 @@
       "value": "Necessário. A cadeia de caracteres codificada no URI."
     }
   ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Saiba mais sobre operações de desfazer"
+    }
+  ],
   "BJNUxN": [
     {
       "type": 0,
@@ -1820,6 +1964,12 @@
     {
       "type": 0,
       "value": "Insira a senha como texto sem formatação ou use um parâmetro seguro"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Desculpe, algo deu errado. Tente novamente."
     }
   ],
   "BSgavq": [
@@ -1906,6 +2056,12 @@
       "value": "Necessário. O objeto para verificar se é maior que o objeto de comparação."
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Faça uma pergunta"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1916,6 +2072,18 @@
     {
       "type": 0,
       "value": "Recupere itens para atingir o limite especificado seguindo o token de continuação. Devido ao tamanho da página do conector, o número retornado pode exceder o limite."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação que envia um email"
     }
   ],
   "CG772M": [
@@ -2218,6 +2386,12 @@
       "value": "Converte o parâmetro em um número decimal"
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "Verifique as ações do fluxo para ver se algum parâmetro precisa ser definido. Não se esqueça de salvar quando terminar."
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
@@ -2312,6 +2486,12 @@
       "value": "Exibir o histórico de solicitações para essa operação"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Configure essas conexões para usá-las em seu fluxo."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2370,6 +2550,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlán"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Seu fluxo foi atualizado."
     }
   ],
   "FN5zHQ": [
@@ -2541,6 +2727,12 @@
       "value": "Necessário. O objeto a ser localizado na coleção Within."
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Explicar fluxo"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2553,6 +2745,20 @@
       "value": "Funções de referência"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2563,6 +2769,12 @@
     {
       "type": 0,
       "value": "Mais comandos"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Introdução"
     }
   ],
   "Gi72X5": [
@@ -2671,6 +2883,12 @@
       "value": "Mês"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A coleção a ser classificada."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -2711,6 +2929,12 @@
     {
       "type": 0,
       "value": "Mudar para entradas detalhadas do item da matriz"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Editar Fluxo"
     }
   ],
   "HfrUId": [
@@ -2873,20 +3097,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Erro ao executar os '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' da API."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2897,6 +3107,12 @@
     {
       "type": 0,
       "value": "Nenhuma propriedade"
+    }
+  ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "Aqui está seu fluxo. Se você quiser que eu o altere, basta dizer o que deseja. Por exemplo:"
     }
   ],
   "IxWip7": [
@@ -2975,6 +3191,12 @@
     {
       "type": 0,
       "value": "Excluir"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Ação desfeita"
     }
   ],
   "JNQHws": [
@@ -3067,10 +3289,30 @@
       "value": "Alterar referência de conexão"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Substituir \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" por"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "Insira um número Duplo válido."
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "Quando um novo item..."
     }
   ],
   "KX1poC": [
@@ -3196,6 +3438,12 @@
       "value": "Carregando Aplicativos de Funções..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3242,6 +3490,12 @@
     {
       "type": 0,
       "value": "Adicionar uma ramificação paralela"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Esta ação foi removida"
     }
   ],
   "LdITnG": [
@@ -3328,6 +3582,12 @@
       "value": "Exibição de código"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Toda semana na segunda-feira"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3362,6 +3622,12 @@
     {
       "type": 0,
       "value": "Necessário. As coleções a serem avaliadas. Um objeto deve estar em todas as coleções passadas para aparecer no resultado."
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
     }
   ],
   "MIX4f9": [
@@ -3604,6 +3870,12 @@
       "value": "Carregando arquivos ..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3664,6 +3936,12 @@
       "value": "Carregando todos os conectores..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Conte-me mais sobre"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3680,6 +3958,12 @@
     {
       "type": 0,
       "value": "Retorna os resultados das ações de nível superior na ação com escopo especificada, como uma ação For_each, Until ou Scope."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Salvar este fluxo de trabalho"
     }
   ],
   "OdNhwc": [
@@ -4058,6 +4342,12 @@
       "value": "Retorna uma cadeia de caracteres no formato de data"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4251,6 +4541,12 @@
       "value": "Cabeçalho 2"
     }
   ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "O conteúdo gerado pela IA pode estar incorreto."
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4357,10 +4653,22 @@
       "value": "Enviar comentários"
     }
   ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "Explicar o que uma ação faz"
+    }
+  ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Sexta-feira"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4591,6 +4899,12 @@
       "value": "Necessário. A coleção da qual tirar o último objeto."
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Enviar-me um email quando"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4625,6 +4939,12 @@
     {
       "type": 0,
       "value": "Expandir"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O comprimento de cada parte."
     }
   ],
   "Umpr3z": [
@@ -4687,6 +5007,12 @@
       "value": "Insira um nome para a conexão"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4723,6 +5049,20 @@
       "value": "No aplicativo"
     }
   ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Explicar o que a ação \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" faz neste fluxo"
+    }
+  ],
   "VHm1Sr": [
     {
       "type": 0,
@@ -4743,6 +5083,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -4837,6 +5183,18 @@
       "value": "Ações"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Adicionou esta ação"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4851,6 +5209,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da nova propriedade."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Descreva algo em seu fluxo que deve ser substituído, bem como o que deve substituí-lo. Adicione detalhes sempre que possível, incluindo o conector a ser usado e se algum conteúdo deve ser incluído."
     }
   ],
   "WGwH45": [
@@ -4981,6 +5345,12 @@
       "value": "Tentar novamente"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Parâmetros avançados"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5013,6 +5383,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Bagdá"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Curtir"
     }
   ],
   "XRK+gt": [
@@ -5145,6 +5521,12 @@
       "value": "Senha"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5169,6 +5551,12 @@
       "value": "Item do Corpo"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "Todos os parâmetros necessários estão definidos"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5179,6 +5567,12 @@
     {
       "type": 0,
       "value": "Condições do gatilho"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "id-sessão-chat:"
     }
   ],
   "YHsAKl": [
@@ -5375,6 +5769,12 @@
       "value": "Abreviação de trigger().outputs.body"
     }
   ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "Aqui está seu fluxo."
+    }
+  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5411,6 +5811,12 @@
       "value": "Saiba mais sobre limites dinâmicos."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5423,16 +5829,16 @@
       "value": "Obrigatório. O número da ocorrência da substring a ser localizada."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Necessário. O número de objetos a serem removidos da frente da Coleção. Deve ser um inteiro positivo."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Adicionar novos parâmetros"
     }
   ],
   "aK4iLW": [
@@ -5547,6 +5953,12 @@
       "value": "Necessário. O valor que é convertido em binário."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Opcional. Uma chave a ser usada para classificar objetos na coleção."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5589,10 +6001,22 @@
       "value": "Retorna o valor máximo na matriz de entrada de números"
     }
   ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Configure essas conexões para usá-las em seu fluxo."
+    }
+  ],
   "bldzuj": [
     {
       "type": 0,
       "value": "Histórico de Novas Tentativas"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Desmarcar tudo"
     }
   ],
   "bwlAWn": [
@@ -5811,6 +6235,18 @@
       "value": "Identidade gerenciada"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Substituir ação"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "Bem-vindo de volta! Se você quiser que eu altere seu fluxo, basta dizer o que deseja. Por exemplo:"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5833,6 +6269,12 @@
     {
       "type": 0,
       "value": "Especifique o comportamento e os recursos para transferir conteúdo por HTTP. Mensagens grandes podem ser divididas em solicitações menores para o conector para permitir o carregamento de mensagens grandes. Os detalhes podem ser encontrados em http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Ignorar"
     }
   ],
   "dWFyfN": [
@@ -5927,6 +6369,12 @@
       "value": "Falha ao gerar XSLT."
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Reverter"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5985,6 +6433,12 @@
     {
       "type": 0,
       "value": "Compartilhado"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "Quando um novo item"
     }
   ],
   "f/lWTW": [
@@ -6225,6 +6679,12 @@
       "value": "Insira o público-alvo."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Retorna um booliano que indica se uma cadeia de caracteres é um número de ponto flutuante"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6316,10 +6776,22 @@
       "value": "Retorna o resultado da subtração de dois números"
     }
   ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Desfazer"
+    }
+  ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6510,6 +6982,12 @@
       "value": "Exemplo: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6592,6 +7070,12 @@
       "value": "Criar"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Informe à Microsoft como esse recurso pode ser aprimorado"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6610,10 +7094,34 @@
       "value": "Adicionar um esquema de origem"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Mostrando "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "Esquema de destino"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia de caracteres ou matriz a ser dividida."
     }
   ],
   "jVpanH": [
@@ -6644,6 +7152,12 @@
     {
       "type": 0,
       "value": "Não é possível gerar o esquema"
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Descreva algo que seu fluxo deve fazer. Adicione detalhes sempre que possível, incluindo o conector a ser usado e se algum conteúdo deve ser incluído."
     }
   ],
   "juR40n": [
@@ -6710,6 +7224,18 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Verifique estas ações para ver se algum parâmetro precisa ser definido."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Toda semana na segunda-feira..."
     }
   ],
   "kM+Mr0": [
@@ -6817,6 +7343,12 @@
       "value": "(UTC+01:00) Windhoek"
     }
   ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Substituir ação por"
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -6881,6 +7413,12 @@
     {
       "type": 0,
       "value": "Adicionar Grupo"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A coleção a ser revertida."
     }
   ],
   "lexzgJ": [
@@ -7589,6 +8127,12 @@
       "value": "\""
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Conectando-se a aplicativos e serviços"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7750,6 +8294,12 @@
       "value": "'."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -7846,6 +8396,12 @@
       "value": "É bem-sucedido"
     }
   ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "Desculpe, não entendi sua solicitação. Reformule e tente novamente."
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7886,6 +8442,12 @@
     {
       "type": 0,
       "value": "Excluir"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "Para salvar este fluxo de trabalho, conclua a configuração destas ações:"
     }
   ],
   "sDkAVZ": [
@@ -7976,6 +8538,12 @@
     {
       "type": 0,
       "value": "Retornará true se um dos parâmetros for true"
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "srpZD2": [
@@ -8098,6 +8666,12 @@
     {
       "type": 0,
       "value": "Tipo"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Testar este fluxo de trabalho"
     }
   ],
   "tUCptx": [
@@ -8268,6 +8842,12 @@
       "value": "Limite a duração máxima entre as repetições e as respostas assíncronas para esta ação. Observação: isso não altera o tempo limite da solicitação de uma única solicitação."
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Desculpe, o Copilot está com a capacidade esgotada e temporariamente indisponível - tente novamente em breve."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
@@ -8352,6 +8932,12 @@
       "value": "Parâmetros"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Faça uma pergunta relacionada ao fluxo de trabalho ou aos Aplicativos Lógicos."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8386,6 +8972,12 @@
     {
       "type": 0,
       "value": "Retorna o último índice de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)"
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Explicar o que este fluxo faz"
     }
   ],
   "vLereV": [
@@ -8446,6 +9038,12 @@
     {
       "type": 0,
       "value": "Descartar"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "Para preparar esse fluxo de trabalho, conclua a configuração desta ação:"
     }
   ],
   "vr70Gn": [
@@ -8762,6 +9360,12 @@
       "value": "Os parâmetros são compartilhados entre fluxos de trabalho em um Aplicativo Lógico."
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Conectado a"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8810,6 +9414,18 @@
       "value": "Retorna um subconjunto de caracteres de uma cadeia de caracteres."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Retorna uma matriz classificada em ordem ascendente"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Mostrar todos"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -8820,6 +9436,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Dividir uma cadeia de caracteres ou matriz em partes de comprimento igual"
     }
   ],
   "ydqOly": [
@@ -8842,6 +9464,12 @@
       "value": "\" inválido."
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Descurtir"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8858,6 +9486,12 @@
     {
       "type": 0,
       "value": "Funções de data e hora"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Enviar-me um email quando..."
     }
   ],
   "ysoumb": [
@@ -8948,6 +9582,12 @@
       "value": "Selecionar Ações"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Retorna um booliano que indica se uma cadeia de caracteres é um inteiro"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -8960,10 +9600,22 @@
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antiga"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "Para salvar este fluxo de trabalho, conclua a configuração desta ação:"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Converte uma cadeia de caracteres, opcionalmente com uma localidade e um formato para uma data"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Parar"
     }
   ],
   "ziXw25": [

@@ -200,7 +200,7 @@ const DesignerEditor = () => {
       <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
-            workflow={{ definition: workflow?.definition, connectionReferences, parameters }}
+            workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
             runInstance={runInstanceData}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>
@@ -241,11 +241,10 @@ const getDesignerServices = (
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
+  const armServiceParams = { ...defaultServiceParams, baseUrl: armUrl, siteResourceId };
 
   const connectionService = new StandardConnectionService({
-    baseUrl,
-    apiVersion,
-    httpClient,
+    ...defaultServiceParams,
     apiHubServiceDetails: {
       apiVersion: '2018-07-01-preview',
       baseUrl: armUrl,
@@ -278,10 +277,8 @@ const getDesignerServices = (
   });
   const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl: armUrl, siteResourceId, httpClient, workflowName });
   const artifactService = new ArtifactService({
-    apiVersion,
-    baseUrl: armUrl,
+    ...armServiceParams,
     siteResourceId,
-    httpClient,
     integrationAccountCallbackUrl: undefined,
   });
   const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
