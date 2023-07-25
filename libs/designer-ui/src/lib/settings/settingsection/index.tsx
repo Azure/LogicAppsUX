@@ -23,3 +23,4 @@ export { SettingTokenField } from './settingTokenField';
 export type { SettingTokenFieldProps as SettingTokenTextFieldProps } from './settingTokenField';
 export { SettingDropdown } from './settingdropdown';
 export type { SettingDropdownProps, DropdownSelectionChangeHandler } from './settingdropdown';
+export { toCustomEditorAndOptions, isCustomEditor } from './customTokenField';
