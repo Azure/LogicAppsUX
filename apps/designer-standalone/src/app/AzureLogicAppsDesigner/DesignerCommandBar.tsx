@@ -16,8 +16,9 @@ import {
   useAllConnectionErrors,
   serializeWorkflow,
   validateParameter,
+  updateParameterValidation,
 } from '@microsoft/logic-apps-designer';
-import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
+import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -55,15 +56,20 @@ export const DesignerCommandBar = ({
       ignoreNonCriticalErrors: true,
     });
 
-    const hasEmptyInputs = (Object.entries(designerState.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
-      Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
-        parameterGroup.parameters.some((parameter) => {
-          const test = validateParameter(parameter, parameter.value);
-          console.log(_id, test);
-          return true;
-        })
-      )
-    );
+    const emptyValidation = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
+      const hasValidationErrors = Object.values(nodeInputs.parameterGroups).every((parameterGroup) => {
+        return parameterGroup.parameters.every((parameter) => {
+          const validationErrors = validateParameter(parameter, parameter.value);
+          if (validationErrors.length > 0) {
+            dispatch(updateParameterValidation({ nodeId: id, groupId: parameterGroup.id, parameterId: parameter.id, validationErrors }));
+          }
+          return validationErrors.length;
+        });
+      });
+      return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
+    }, {});
+
+    const hasEmptyInputs = !isNullOrEmpty(emptyValidation);
 
     if (!hasEmptyInputs) {
       await saveWorkflow(serializedWorkflow);
