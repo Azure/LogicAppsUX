@@ -1614,6 +1614,9 @@
       <Item ItemId=";63fQWE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show all advanced parameters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[すべての詳細パラメーターを表示します]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2502,6 +2505,9 @@
       <Item ItemId=";AhvQ7r" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove and clear all advanced parameters and their values]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[すべての詳細パラメーターとその値を削除してクリアします]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7207,7 +7213,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Advanced parameters]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[高度なパラメーター]]></Val>
+            <Val><![CDATA[詳細パラメーター]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9618,6 +9624,9 @@
       <Item ItemId=";jTHUFb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Showing {countShowing} of {countTotal}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{countTotal} 件中 {countShowing} 件を表示しています]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
