@@ -23,6 +23,12 @@
       "value": "已出错"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1481,6 +1487,12 @@
       "value": "请为逻辑应用启用托管标识。"
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1693,6 +1705,12 @@
     {
       "type": 0,
       "value": "文本"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "9atGYe": [
@@ -2060,6 +2078,12 @@
     {
       "type": 0,
       "value": "按下述继续标记检索要满足指定阈值的项目。由于连接器的页面大小，返回的数量可能超出阈值。"
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2709,6 +2733,20 @@
       "value": "引用函数"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3047,20 +3085,6 @@
       "value": "(UTC+09:00)雅库茨克"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "执行 API \""
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "\" 时出错。"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3378,6 +3402,12 @@
     {
       "type": 0,
       "value": "正在加载函数应用..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3804,6 +3834,12 @@
     {
       "type": 0,
       "value": "正在加载文件..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4280,6 +4316,12 @@
       "value": "以日期格式返回字符串"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4573,6 +4615,12 @@
     {
       "type": 0,
       "value": "星期五"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4911,6 +4959,12 @@
       "value": "输入连接的名称"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4985,6 +5039,12 @@
     {
       "type": 0,
       "value": " 的结果"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5083,6 +5143,12 @@
     {
       "type": 0,
       "value": "已添加此操作"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5709,6 +5775,12 @@
       "value": "详细了解动态内容。"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5719,6 +5791,12 @@
     {
       "type": 0,
       "value": "必填。要查找的子字符串的出现次数。"
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -6652,6 +6730,12 @@
       "value": "(UTC+02:00)加沙，希伯伦"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6838,6 +6922,12 @@
     {
       "type": 0,
       "value": "示例: 0、10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
     }
   ],
   "idQjOP": [
@@ -8116,6 +8206,12 @@
     {
       "type": 0,
       "value": "”无效。"
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [

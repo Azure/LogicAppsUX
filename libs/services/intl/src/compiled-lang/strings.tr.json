@@ -23,6 +23,12 @@
       "value": "Hatalı"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1469,6 +1475,12 @@
       "value": "Lütfen mantıksal uygulama için yönetilen kimliği etkinleştirin."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1681,6 +1693,12 @@
     {
       "type": 0,
       "value": "Metin"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "9atGYe": [
@@ -2059,6 +2077,12 @@
     {
       "type": 0,
       "value": "Devamlılık belirtecini izleyerek, belirtilen eşikleri karşılayacak şekilde öğeleri alın. Bağlayıcının sayfa boyutu nedeniyle, döndürülen sayı eşiği aşabilir."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2711,6 +2735,20 @@
       "value": "Başvuru işlevleri"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3045,20 +3083,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' API'si yürütülürken hata oluştu."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3387,6 +3411,12 @@
     {
       "type": 0,
       "value": "İşlev Uygulamaları Yükleniyor..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3813,6 +3843,12 @@
     {
       "type": 0,
       "value": "Dosyalar Yükleniyor..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4285,6 +4321,12 @@
       "value": "Tarih biçiminde bir dize döndürür"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4589,6 +4631,12 @@
     {
       "type": 0,
       "value": "Cuma"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4923,6 +4971,12 @@
       "value": "Bağlantı için bir ad girin"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4993,6 +5047,12 @@
     {
       "type": 0,
       "value": " için sonuç bulunamadı"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5091,6 +5151,12 @@
     {
       "type": 0,
       "value": "Bu eylem eklendi"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5709,6 +5775,12 @@
       "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5719,6 +5791,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bulunacak alt dizenin tekrar sayısı."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -6651,6 +6729,12 @@
       "value": "(UTC+02:00) Gazze, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6833,6 +6917,12 @@
     {
       "type": 0,
       "value": "Örnek: 0, 10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
     }
   ],
   "idQjOP": [
@@ -8117,6 +8207,12 @@
     {
       "type": 0,
       "value": "' özelliği."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
