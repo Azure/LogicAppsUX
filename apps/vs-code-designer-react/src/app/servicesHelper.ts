@@ -80,7 +80,12 @@ export const getDesignerServices = (
   };
 
   const httpClient = new HttpClient({ accessToken: authToken, baseUrl, apiHubBaseUrl: apiHubDetails.baseUrl, hostVersion });
-  const apiHubServiceDetails = { ...apiHubDetails, httpClient };
+  const apiHubServiceDetails = {
+    ...apiHubDetails,
+    httpClient,
+    apiVersion: apiHubDetails.apiVersion ?? apiVersion,
+    baseUrl: apiHubDetails.baseUrl ?? baseUrl,
+  };
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
@@ -172,7 +177,6 @@ export const getDesignerServices = (
       },
     },
     apiHubServiceDetails,
-    workflowReferenceId: '',
   });
 
   const operationManifestService = new StandardOperationManifestService({

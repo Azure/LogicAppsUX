@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
+import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
 import { TokenType } from '@microsoft/designer-ui';
@@ -117,7 +118,8 @@ export const getOperationSettings = (
   nodeOutputs: NodeOutputs,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
-  operation?: LogicAppsV2.OperationDefinition
+  operation?: LogicAppsV2.OperationDefinition,
+  workflowKind?: WorkflowKind
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -170,7 +172,7 @@ export const getOperationSettings = (
     paging: { isSupported: isPagingSupported(isTrigger, nodeType, manifest, swagger, operationId), value: getPaging(operation) },
     uploadChunk: {
       isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest, swagger, operationId),
-      value: getUploadChunk(isTrigger, nodeType, manifest, swagger, operationId, operation),
+      value: getUploadChunk(isTrigger, nodeType, manifest, swagger, operationId, operation, workflowKind),
     },
     downloadChunkSize: {
       isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest, swagger, operationId),
@@ -664,7 +666,8 @@ const getUploadChunk = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operationId?: string,
-  definition?: LogicAppsV2.OperationDefinition
+  definition?: LogicAppsV2.OperationDefinition,
+  workflowKind?: WorkflowKind
 ): UploadChunk | undefined => {
   if (definition) {
     const runtimeConfiguration = getRuntimeConfiguration(definition);
@@ -679,7 +682,7 @@ const getUploadChunk = (
       ]),
     };
   } else {
-    if (isTrigger) {
+    if (isTrigger || workflowKind === WorkflowKind.STATELESS) {
       return undefined;
     }
 

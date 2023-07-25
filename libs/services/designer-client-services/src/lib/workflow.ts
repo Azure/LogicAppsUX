@@ -1,9 +1,33 @@
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, ManagedIdentity, OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface CallbackInfo {
   method?: string;
   value: string;
+}
+
+export interface NodeOutputs {
+  outputs: Record<string, OutputInfo>;
+  originalOutputs?: Record<string, OutputInfo>;
+}
+
+export interface OutputInfo {
+  description?: string;
+  type: string;
+  format?: string;
+  isAdvanced: boolean;
+  isDynamic?: boolean;
+  isInsideArray?: boolean;
+  itemSchema?: OpenAPIV2.SchemaObject;
+  key: string;
+  name: string;
+  parentArray?: string;
+  required?: boolean;
+  schema?: OpenAPIV2.SchemaObject;
+  source?: string;
+  title: string;
+  value?: string;
+  alias?: string;
 }
 
 export interface IWorkflowService {
@@ -21,6 +45,19 @@ export interface IWorkflowService {
    * Checks if explicit authentication is needed for managed identity connections.
    */
   isExplicitAuthRequiredForManagedIdentity?(): boolean;
+
+  /**
+   * Gets definition schema version from current operation types.
+   */
+  getDefinitionSchema?(operationInfos: { type: string; kind?: string }[]): string;
+
+  /**
+   * Updates the serialized workflow with dynamic inputs from references.
+   */
+  getDefinitionWithDynamicInputs?(
+    serializedWorkflow: LogicAppsV2.WorkflowDefinition,
+    outputParameters: Record<string, NodeOutputs>
+  ): LogicAppsV2.WorkflowDefinition;
 }
 
 let service: IWorkflowService;

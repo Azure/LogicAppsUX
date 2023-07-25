@@ -1,21 +1,39 @@
 import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
 import * as ClientOperationsData from '../base/operations';
-import type { ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
+import type { BaseSearchServiceOptions, DiscoveryOpArray } from '../base/search';
+import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
 import * as OperationsData from './operations';
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import type { Connector, DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
-export class ConsumptionSearchService extends BaseSearchService {
-  // Operations
+interface ConsumptionSearchServiceOptions extends BaseSearchServiceOptions {
+  openApiConnectionMode?: boolean;
+}
 
+export class ConsumptionSearchService extends BaseSearchService {
+  constructor(public override readonly options: ConsumptionSearchServiceOptions) {
+    super(options);
+  }
+
+  //#region Operations
   public async getAllOperations(): Promise<DiscoveryOpArray> {
     if (this._isDev) return Promise.resolve(this.getBuiltInOperations());
 
     return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getBuiltInOperations()]).then((values) =>
       values.flat()
     );
+  }
+
+  public override async getAllAzureOperations(): Promise<DiscoveryOpArray> {
+    const azureOperations = await super.getAllAzureOperations();
+    return this._updateOperationsIfNeeded(azureOperations);
+  }
+
+  public override async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
+    const azureOperations = await super.getAzureOperationsByPage(page);
+    return this._updateOperationsIfNeeded(azureOperations);
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
@@ -41,7 +59,7 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
 
   public getBuiltInOperations(): Promise<DiscoveryOpArray> {
-    const clientBuiltInOperations = getClientBuiltInOperations(true);
+    const clientBuiltInOperations = getClientBuiltInOperations();
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.slidingWindowOperation,
       ClientOperationsData.composeOperation,
@@ -67,8 +85,29 @@ export class ConsumptionSearchService extends BaseSearchService {
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
 
-  // Connectors
+  private _updateOperationsIfNeeded(operations: DiscoveryOpArray): DiscoveryOpArray {
+    if (this.options.openApiConnectionMode) {
+      return operations.map((operation) => {
+        if (!operation.properties.operationType) {
+          const { isNotification, isWebhook } = operation.properties as SomeKindOfAzureOperationDiscovery;
+          // eslint-disable-next-line no-param-reassign
+          operation.properties.operationType = isWebhook
+            ? 'OpenApiConnectionWebhook'
+            : isNotification
+            ? 'OpenApiConnectionNotification'
+            : 'OpenApiConnection';
+        }
 
+        return operation;
+      });
+    } else {
+      return operations;
+    }
+  }
+
+  //#endregion
+
+  //#region Connectors
   public override async getAllConnectors(): Promise<Connector[]> {
     if (this._isDev) return Promise.resolve(this.getBuiltInConnectors());
 
@@ -78,7 +117,7 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
 
   public getBuiltInConnectors(): Promise<Connector[]> {
-    const clientBuiltInConnectors = getClientBuiltInConnectors(true);
+    const clientBuiltInConnectors = getClientBuiltInConnectors();
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.dataOperationsGroup,
       OperationsData.inlineCodeGroup,
@@ -116,4 +155,5 @@ export class ConsumptionSearchService extends BaseSearchService {
       return { value: [] };
     }
   }
+  //#endregion
 }

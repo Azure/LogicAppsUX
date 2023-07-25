@@ -1,8 +1,9 @@
 import type { SectionProps } from '../';
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
+import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../core/actions/bjsworkflow/runafter';
 import { type ValidationError, ValidationWarningKeys } from '../../../core/state/setting/settingSlice';
-import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
+import { updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
@@ -90,7 +91,7 @@ export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: 
           }
 
           dispatch(
-            removeEdgeFromRunAfter({
+            removeEdgeFromRunAfterOperation({
               parentOperationId: id,
               childOperationId: nodeId,
             })
@@ -116,7 +117,7 @@ export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: 
           readOnly,
           onEdgeAddition: (parentNode: string) => {
             dispatch(
-              addEdgeFromRunAfter({
+              addEdgeFromRunAfterOperation({
                 parentOperationId: parentNode,
                 childOperationId: nodeId,
               })

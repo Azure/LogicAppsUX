@@ -4,7 +4,12 @@ import type { RootState } from '../../store';
 import { getConnectionId, getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import type { ConnectionMapping } from './connectionSlice';
-import { ConnectionService, GatewayService, isServiceProviderOperation } from '@microsoft/designer-client-services-logic-apps';
+import {
+  ConnectionService,
+  GatewayService,
+  OperationManifestService,
+  isServiceProviderOperation,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -42,10 +47,17 @@ export const useGateways = (subscriptionId: string, connectorName: string) => {
 export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
-  // TODO: Revisit trying to conditionally ask for the connector from the service
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
   const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
-  const connectorFromService = useConnector(storeConnectorId)?.data;
+  const operationInfo = useOperationInfo(nodeId);
+
+  // Connector data inside of operation manifests is missing some connection data currently (7/24/2023).
+  // The below logic is to only use the manifest connector data when we expect a service call to fail. (i.e. our built-in local operations)
+  const isManifestSupported = OperationManifestService().isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+  const isServiceProvider = isServiceProviderOperation(operationInfo?.type);
+  const useManifestConnector = isManifestSupported && !isServiceProvider;
+  const enableConnectorFromService = !connectorFromManifest || !useManifestConnector;
+  const connectorFromService = useConnector(storeConnectorId, enableConnectorFromService)?.data;
   return connectorFromService ?? connectorFromManifest;
 };
 

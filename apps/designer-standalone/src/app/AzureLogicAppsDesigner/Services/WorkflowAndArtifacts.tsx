@@ -248,14 +248,14 @@ export const saveWorkflowStandard = async (
   }
 };
 
-export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, _workflow: any): Promise<any> => {
-  const workflow = await convertDesignerWorkflowToConsumptionWorkflow(_workflow);
+export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workflow: any): Promise<any> => {
+  const workflowToSave = await convertDesignerWorkflowToConsumptionWorkflow(workflow);
 
   const outputWorkflow: Workflow = {
     ...outdatedWorkflow,
     properties: {
       ...outdatedWorkflow.properties,
-      ...workflow,
+      ...workflowToSave,
     },
   };
 

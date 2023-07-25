@@ -19,7 +19,7 @@ import {
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
-import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -53,6 +53,8 @@ import {
   isNullOrEmpty,
   WORKFLOW_NODE_TYPES,
   replaceTemplatePlaceholders,
+  unmap,
+  filterRecord,
 } from '@microsoft/utils-logic-apps';
 import merge from 'lodash.merge';
 
@@ -136,16 +138,29 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     };
   }, {});
 
+  const parameters = getWorkflowParameters(filterRecord(rootState.workflowParameters.definitions, (key, _) => key !== '')) ?? {};
+
   const serializedWorkflow: Workflow = {
     definition: {
       ...rootState.workflow.originalDefinition,
+      $schema:
+        WorkflowService().getDefinitionSchema?.(unmap(rootState.operations.operationInfo)) ?? rootState.workflow.originalDefinition.$schema,
       actions: await getActions(rootState, options),
       ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
-    parameters: getWorkflowParameters(rootState.workflowParameters.definitions),
+    parameters,
   };
+
+  const workflowService = WorkflowService();
+  if (workflowService && workflowService.getDefinitionWithDynamicInputs) {
+    serializedWorkflow.definition = workflowService.getDefinitionWithDynamicInputs(
+      serializedWorkflow.definition,
+      rootState.operations.outputParameters
+    );
+  }
+
   return serializedWorkflow;
 };
 
@@ -633,6 +648,18 @@ const serializeHost = (
         host: {
           apiId: connectorId,
           connection: referenceKey,
+          operationId,
+        },
+      };
+    case ConnectionReferenceKeyFormat.OpenApiConnection:
+      // eslint-disable-next-line no-case-declarations
+      const connectorSegments = connectorId.split('/');
+      return {
+        host: {
+          apiId: `/${connectorSegments.at(-2)}/${connectorSegments.at(-1)}`,
+          connection: {
+            referenceName: referenceKey,
+          },
           operationId,
         },
       };

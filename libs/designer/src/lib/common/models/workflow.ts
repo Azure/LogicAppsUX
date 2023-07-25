@@ -4,6 +4,7 @@ export interface Workflow {
   definition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
   parameters?: Record<string, WorkflowParameter>;
+  kind?: string;
 }
 
 export interface ConnectionReference {
@@ -11,6 +12,7 @@ export interface ConnectionReference {
   connection: { id: string };
   connectionName?: string;
   connectionProperties?: Record<string, any>;
+  connectionRuntimeUrl?: string;
   authentication?: ApiHubAuthentication;
   impersonation?: Impersonation;
 }

@@ -1,4 +1,5 @@
 import { BaseOperationManifestService } from '../base';
+import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
 import {
   getBuiltInOperationInfo,
   isBuiltInOperation,
@@ -19,9 +20,24 @@ import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { UnsupportedException } from '@microsoft/utils-logic-apps';
+import { ArgumentException, UnsupportedException, startsWith } from '@microsoft/utils-logic-apps';
+
+interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
+  subscriptionId: string;
+  location: string;
+}
 
 export class ConsumptionOperationManifestService extends BaseOperationManifestService {
+  constructor(override readonly options: ConsumptionOperationManifestServiceOptions) {
+    super(options);
+    const { subscriptionId, location } = options;
+    if (!subscriptionId) {
+      throw new ArgumentException('subscriptionId required');
+    } else if (!location) {
+      throw new ArgumentException('location required');
+    }
+  }
+
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
     if (isBuiltInOperation(definition)) {
       const normalizedOperationType = definition.type?.toLowerCase();
@@ -42,6 +58,12 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
         default:
           return getBuiltInOperationInfo(definition, isTrigger);
       }
+    } else if (startsWith(definition.type, openapiconnection)) {
+      const { subscriptionId, location } = this.options;
+      return {
+        connectorId: `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}${definition.inputs.host.apiId}`,
+        operationId: definition.inputs.host.operationId,
+      };
     }
 
     throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
@@ -58,14 +80,47 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
 
-    if (!supportedManifest) {
-      throw new UnsupportedException(`Operation manifest does not exist for connector: '${connectorId}' and operation: '${operationId}'`);
+    if (supportedManifest) {
+      return supportedManifest;
     }
 
-    return supportedManifest;
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const operationName = operationId.split('/').slice(-1)[0];
+    const queryParameters = {
+      'api-version': apiVersion,
+      $expand: 'properties/manifest',
+    };
+
+    try {
+      const response = await httpClient.get<any>({
+        uri: `${baseUrl}${connectorId}/apiOperations/${operationName}`,
+        queryParameters,
+      });
+
+      const {
+        properties: { brandColor, description, iconUri, manifest, api, operationType },
+      } = response;
+
+      const operationManifest = {
+        properties: {
+          brandColor: brandColor ?? api?.brandColor,
+          description,
+          iconUri: iconUri ?? api?.iconUri,
+          connection: startsWith(operationType, openapiconnection) ? { required: true } : undefined,
+          ...manifest,
+        },
+      };
+
+      return operationManifest;
+    } catch (error) {
+      return { properties: {} } as any;
+    }
   }
 }
 
+const openapiconnection = 'openapiconnection';
+const openapiconnectionwebhook = 'openapiconnectionwebhook';
+const openapiconnectionnotification = 'openapiconnectionnotification';
 const composenew = 'composenew';
 const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
 const liquidjsontojson = 'liquidjsontojson';
@@ -87,7 +142,13 @@ const invokeworkflow = 'invokeworkflow';
 const sendtobatch = 'sendtobatch';
 const batch = 'batch';
 
-const supportedConsumptionManifestTypes = [...supportedBaseManifestTypes, appservice];
+const supportedConsumptionManifestTypes = [
+  ...supportedBaseManifestTypes,
+  appservice,
+  openapiconnection,
+  openapiconnectionwebhook,
+  openapiconnectionnotification,
+];
 
 const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   ...supportedBaseManifestObjects,

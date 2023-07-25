@@ -40,7 +40,7 @@ import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-u
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
-import { labelCase, unmap, equals } from '@microsoft/utils-logic-apps';
+import { labelCase, unmap, equals, filterRecord } from '@microsoft/utils-logic-apps';
 
 export interface TokenGroup {
   id: string;
@@ -136,6 +136,7 @@ export const convertOutputsToTokens = (
       schema,
       value,
       alias,
+      description,
     } = outputs[outputKey];
     return {
       key: alias ? removeAliasingKeyRedundancies(key) : key,
@@ -145,6 +146,7 @@ export const convertOutputsToTokens = (
       name,
       type,
       value,
+      description,
       isAdvanced,
       outputInfo: {
         type: TokenType.OUTPUTS,
@@ -197,16 +199,16 @@ export const getOutputTokenSections = (
   workflowParametersState: WorkflowParametersState,
   replacementIds: Record<string, string>
 ): TokenGroup[] => {
-  const { definitions } = workflowParametersState;
+  const workflowParameters = filterRecord(workflowParametersState.definitions, (_, defintion) => defintion.name !== '');
   const { variables, outputTokens } = tokenState;
   const nodeTokens = outputTokens[nodeId];
   const tokenGroups: TokenGroup[] = [];
 
-  if (Object.keys(definitions).length) {
+  if (Object.keys(workflowParameters).length) {
     tokenGroups.push({
       id: 'workflowparameters',
       label: getIntl().formatMessage({ description: 'Heading section for Parameter tokens', defaultMessage: 'Parameters' }),
-      tokens: getWorkflowParameterTokens(definitions),
+      tokens: getWorkflowParameterTokens(workflowParameters),
     });
   }
 

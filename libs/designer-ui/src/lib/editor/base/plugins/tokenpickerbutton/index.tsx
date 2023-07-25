@@ -18,15 +18,25 @@ const expressionButtonProps: IIconProps = {
   iconName: 'Variable',
 };
 
+export enum TokenPickerButtonLocation {
+  Left = 'left',
+  Right = 'right',
+}
+
 export interface TokenPickerButtonEditorProps {
-  showOnLeft?: boolean;
+  location?: TokenPickerButtonLocation;
+  insideEditor?: boolean;
 }
 
 interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
   openTokenPicker: (mode: TokenPickerMode) => void;
 }
 
-export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
+export const TokenPickerButton = ({
+  location = TokenPickerButtonLocation.Left,
+  insideEditor,
+  openTokenPicker,
+}: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
@@ -66,14 +76,18 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
         } else {
           boxElem.style.top = `${top - 20}px`;
         }
-        if (showOnLeft) {
-          boxElem.style.left = `${left - 38}px`;
-        } else {
+        if (location === TokenPickerButtonLocation.Right) {
           boxElem.style.left = `${right - 20}px`;
+        } else {
+          if (insideEditor) {
+            boxElem.style.left = `${left - 33}px`;
+          } else {
+            boxElem.style.left = `${left - 38}px`;
+          }
         }
       }
     }
-  }, [anchorKey, editor, showOnLeft]);
+  }, [anchorKey, editor, insideEditor, location]);
 
   useEffect(() => {
     window.addEventListener('resize', updatePosition);

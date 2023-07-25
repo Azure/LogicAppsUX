@@ -12,6 +12,7 @@ import type {
   IFunctionService,
   IAppServiceService,
   IRunService,
+  IEditorService,
 } from '@microsoft/designer-client-services-logic-apps';
 
 export interface DesignerOptionsState {
@@ -21,6 +22,8 @@ export interface DesignerOptionsState {
   servicesInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
   isXrmConnectionReferenceMode?: boolean;
+  suppressDefaultNodeSelectFunctionality?: boolean;
+  nodeSelectAdditionalCallback?: (nodeId: string) => any;
 }
 
 export interface ServiceOptions {
@@ -37,4 +40,5 @@ export interface ServiceOptions {
   functionService?: IFunctionService;
   appServiceService?: IAppServiceService;
   runService?: IRunService;
+  editorService?: IEditorService;
 }

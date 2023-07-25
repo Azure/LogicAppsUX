@@ -8,10 +8,18 @@ import {
   schemasPath,
   supportedSchemaFileExts,
 } from './extensionConfig';
-import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType } from '@microsoft/logic-apps-data-mapper';
+import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
-import { copyFileSync, existsSync as fileExistsSync, promises as fs, unlinkSync as removeFileSync, statSync, readdirSync } from 'fs';
+import {
+  copyFileSync,
+  existsSync as fileExistsSync,
+  promises as fs,
+  unlinkSync as removeFileSync,
+  statSync,
+  readdirSync,
+  readFileSync,
+} from 'fs';
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
 import { RelativePattern, Uri, window, workspace } from 'vscode';
@@ -106,6 +114,10 @@ export default class DataMapperPanel {
         this.saveMapDefinition(msg.data);
         break;
       }
+      case 'saveDataMapMetadata': {
+        this.saveMapMetadata(msg.data);
+        break;
+      }
       case 'saveDataMapXslt': {
         this.saveMapXslt(msg.data);
         break;
@@ -143,9 +155,10 @@ export default class DataMapperPanel {
 
   public handleLoadMapDefinitionIfAny() {
     if (this.mapDefinitionData) {
+      const mapMetadata = this.readMapMetadataFile();
       this.sendMsgToWebview({
         command: 'loadDataMap',
-        data: this.mapDefinitionData,
+        data: { ...this.mapDefinitionData, metadata: mapMetadata },
       });
 
       this.checkAndSetXslt();
@@ -255,6 +268,12 @@ export default class DataMapperPanel {
     });
   }
 
+  public saveMapMetadata(mapMetadata: string) {
+    const vscodeFolderPath = this.getMapMetadataPath();
+
+    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(DataMapperExt.showError);
+  }
+
   public saveMapXslt(mapXslt: string) {
     callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveMapXslt', (_context: IActionContext) => {
       const fileName = `${this.dataMapName}${mapXsltExtension}`;
@@ -294,6 +313,27 @@ export default class DataMapperPanel {
       .catch(DataMapperExt.showError);
   }
 
+  private readMapMetadataFile(): MapMetadata | undefined {
+    const vscodeFolderPath = this.getMapMetadataPath();
+    if (fileExistsSync(vscodeFolderPath)) {
+      try {
+        const fileBuffer = readFileSync(vscodeFolderPath);
+        const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
+        return metadataJson;
+      } catch {
+        DataMapperExt.showError(
+          `Data map metadata file found at ${vscodeFolderPath} contains invalid JSON. Data map will load without metadata file.`
+        );
+        return undefined;
+      }
+    } else {
+      DataMapperExt.showWarning(
+        `Data map metadata not found at path ${vscodeFolderPath}. This file configures your function positioning and other info. Please save your map to regenerate the file.`
+      );
+      return undefined;
+    }
+  }
+
   public deleteDraftDataMapDefinition() {
     const draftMapDefinitionPath = path.join(
       DataMapperExt.getWorkspaceFolderFsPath(),
@@ -330,5 +370,11 @@ export default class DataMapperPanel {
       command: 'getConfigurationSetting',
       data: configValue,
     });
+  }
+
+  private getMapMetadataPath() {
+    const projectPath = DataMapperExt.getWorkspaceFolderFsPath();
+    const vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
+    return vscodeFolderPath;
   }
 }

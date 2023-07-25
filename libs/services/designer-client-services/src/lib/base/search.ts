@@ -1,5 +1,6 @@
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
+import type { ContinuationTokenResponse } from '../common/azure';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
 import { Status } from '../logging/logEntry';
@@ -17,24 +18,17 @@ import type {
 } from '@microsoft/utils-logic-apps';
 import { equals, ArgumentException } from '@microsoft/utils-logic-apps';
 
-export interface ContinuationTokenResponse<T> {
-  value: T;
-  nextLink: string;
-}
-
 export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
 export type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
 
 export interface BaseSearchServiceOptions {
-  apiVersion: string;
-  baseUrl: string;
   apiHubServiceDetails: {
     apiVersion: string;
     subscriptionId: string;
     location: string;
+    openApiVersion?: string;
   };
   httpClient: IHttpClient;
-  showStatefulOperations?: boolean;
   isDev?: boolean;
 }
 
@@ -44,12 +38,8 @@ export abstract class BaseSearchService implements ISearchService {
   _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
 
   constructor(public readonly options: BaseSearchServiceOptions) {
-    const { apiHubServiceDetails, apiVersion, baseUrl, isDev } = options;
-    if (!baseUrl) {
-      throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
-      throw new ArgumentException('apiVersion required');
-    } else if (!apiHubServiceDetails) {
+    const { apiHubServiceDetails, isDev } = options;
+    if (!apiHubServiceDetails) {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
     this._isDev = isDev || false;
@@ -73,13 +63,9 @@ export abstract class BaseSearchService implements ISearchService {
   ): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) return { value: [], hasMore: false };
 
-    const {
-      apiHubServiceDetails: { apiVersion },
-      httpClient,
-    } = this.options;
+    const { httpClient } = this.options;
 
     const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
       $top: pageSize.toString(),
       $skiptoken: (pageNumber * pageSize).toString(),
       ...queryParams,
@@ -136,7 +122,7 @@ export abstract class BaseSearchService implements ISearchService {
 
   async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
     const {
-      apiHubServiceDetails: { location, subscriptionId },
+      apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
     if (this._isDev) {
       if (page === 0) return Promise.resolve(azureOperationsResponse);
@@ -146,6 +132,7 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
     const queryParameters: QueryParameters = {
       $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
+      'api-version': apiVersion,
     };
 
     // const values = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
@@ -182,11 +169,11 @@ export abstract class BaseSearchService implements ISearchService {
     }
 
     const {
-      apiHubServiceDetails: { location, subscriptionId },
+      apiHubServiceDetails: { location, subscriptionId, apiVersion, openApiVersion },
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
-    const { value } = await this.getAzureResourceByPage(uri, undefined, page);
+    const { value } = await this.getAzureResourceByPage(uri, { 'api-version': openApiVersion ?? apiVersion }, page);
 
     return this.moveGeneralInformation(value);
   }
@@ -275,7 +262,9 @@ export abstract class BaseSearchService implements ISearchService {
   }
 }
 
-export function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOperation<BuiltInOperation>[] {
+export function getClientBuiltInOperations(
+  filterOperation?: (operation: DiscoveryOperation<BuiltInOperation>) => boolean
+): DiscoveryOperation<BuiltInOperation>[] {
   const allOperations: DiscoveryOperation<BuiltInOperation>[] = [
     ClientOperationsData.requestOperation,
     ClientOperationsData.responseOperation,
@@ -313,10 +302,10 @@ export function getClientBuiltInOperations(showStatefulOperations = false): Disc
     ClientOperationsData.getPastTimeOperation,
     ClientOperationsData.currentTimeOperation,
   ];
-  return allOperations.filter((operation) => filterStateful(operation, showStatefulOperations));
+  return filterOperation ? allOperations.filter(filterOperation) : allOperations;
 }
 
-export function getClientBuiltInConnectors(showStatefulOperations = false): Connector[] {
+export function getClientBuiltInConnectors(filterConnector?: (connector: Connector) => boolean): Connector[] {
   const allConnectors: any[] = [
     ClientOperationsData.requestGroup,
     ClientOperationsData.httpGroup,
@@ -325,12 +314,5 @@ export function getClientBuiltInConnectors(showStatefulOperations = false): Conn
     ClientOperationsData.scheduleGroup,
     ClientOperationsData.dateTimeGroup,
   ];
-  return allConnectors.filter((connector) => filterStateful(connector, showStatefulOperations));
-}
-
-function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connector, showStateful: boolean): boolean {
-  if (operation.properties.capabilities === undefined) return true;
-  return showStateful
-    ? operation.properties.capabilities.includes('Stateful') || !operation.properties.capabilities.includes('Stateless')
-    : operation.properties.capabilities.includes('Stateless') || !operation.properties.capabilities.includes('Stateful');
+  return filterConnector ? allConnectors.filter(filterConnector) : allConnectors;
 }
