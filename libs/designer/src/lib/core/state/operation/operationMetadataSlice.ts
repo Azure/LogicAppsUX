@@ -225,6 +225,12 @@ export const operationMetadataSlice = createSlice({
         }
       }
       state.loadStatus.nodesInitialized = true;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Operation Metadata Slice',
+        message: action.type,
+      });
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
       const { nodeId, groupId, inputs, newInputs: rawInputs, swagger } = action.payload;
