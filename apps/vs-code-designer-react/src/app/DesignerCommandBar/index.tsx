@@ -58,9 +58,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
     }, {});
 
-    const hasEmptyRequiredInputs = !isNullOrEmpty(validationErrorsList);
+    const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
-    if (!hasEmptyRequiredInputs) {
+    if (!hasParametersErrors) {
       await vscode.postMessage({
         command: ExtensionCommand.save,
         definition,

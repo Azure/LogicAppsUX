@@ -69,9 +69,9 @@ export const DesignerCommandBar = ({
       return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
     }, {});
 
-    const hasEmptyRequiredInputs = !isNullOrEmpty(validationErrorsList);
+    const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
-    if (!hasEmptyRequiredInputs) {
+    if (!hasParametersErrors) {
       await saveWorkflow(serializedWorkflow);
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
