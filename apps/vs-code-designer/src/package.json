@@ -780,6 +780,7 @@
             "type": "boolean",
             "description": "Start background design-time process at project load time.",
             "default": false
+          },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
             "description": "Show a warning asking if user's would like to configure Azurite auto start.",
