@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.48.4](https://github.com/Azure/LogicAppsUX/compare/v2.48.3...v2.48.4) (2023-07-26)
+
+
+### Bug Fixes
+
+* **designer:** Add dynamic inputs for serialized workflow ([#3000](https://github.com/Azure/LogicAppsUX/issues/3000)) ([#3032](https://github.com/Azure/LogicAppsUX/issues/3032)) ([eacf447](https://github.com/Azure/LogicAppsUX/commit/eacf447e05618fb65ecf8940f0fadbbf2f17dd2f))
+
 ### [2.48.3](https://github.com/Azure/LogicAppsUX/compare/v2.48.2...v2.48.3) (2023-07-24)
 
 
