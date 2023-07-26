@@ -11,6 +11,7 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
+import { promptForSourceControlPath } from './iacGestureHelperFunctions';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -24,7 +25,18 @@ export interface IAzureScriptWizard extends IActionContext {
   enabled: boolean;
   tenantId: any;
   environment: any;
-  sourceControlPath: any;
+  sourceControlPath?: string;
+}
+
+// Define a new Wizard Step class
+class GetSourceControlPathStep extends AzureWizardPromptStep<IAzureScriptWizard> {
+  public async prompt(context: IAzureScriptWizard): Promise<void> {
+    context.sourceControlPath = await promptForSourceControlPath();
+  }
+
+  public shouldPrompt(context: IAzureScriptWizard): boolean {
+    return context.sourceControlPath === undefined;
+  }
 }
 
 /**
@@ -35,7 +47,7 @@ export interface IAzureScriptWizard extends IActionContext {
  */
 export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath: string): AzureWizard<IAzureScriptWizard> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetSubscriptionDetailsStep()],
+    promptSteps: [new GetSubscriptionDetailsStep(), new GetSourceControlPathStep()],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
