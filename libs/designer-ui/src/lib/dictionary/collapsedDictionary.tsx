@@ -2,6 +2,7 @@ import type { DictionaryEditorItemProps } from '.';
 import type { ValueSegment } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
+import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { CollapsedDictionaryValidation } from './plugins/CollapsedDictionaryValidation';
 import { useIntl } from 'react-intl';
 
@@ -9,6 +10,9 @@ export type CollapsedDictionaryProps = {
   isValid?: boolean;
   readonly?: boolean;
   collapsedValue: ValueSegment[];
+  keyType?: string;
+  valueType?: string;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
@@ -18,13 +22,14 @@ export type CollapsedDictionaryProps = {
 
 export const CollapsedDictionary = ({
   isValid,
-  readonly,
   collapsedValue,
-  getTokenPicker,
+  keyType,
+  valueType,
   setItems,
   setIsValid,
   setCollapsedValue,
   onBlur,
+  ...props
 }: CollapsedDictionaryProps): JSX.Element => {
   const intl = useIntl();
 
@@ -37,6 +42,7 @@ export const CollapsedDictionary = ({
     <div className="msla-dictionary-container msla-dictionary-editor-collapsed">
       <div className="msla-dictionary-content">
         <BaseEditor
+          {...props}
           className="msla-collapsed-editor-container"
           BasePlugins={{
             tokens: true,
@@ -44,14 +50,14 @@ export const CollapsedDictionary = ({
           }}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
-          readonly={readonly}
           onBlur={onBlur}
-          getTokenPicker={getTokenPicker}
         >
           <CollapsedDictionaryValidation
             className={'msla-collapsed-editor-validation'}
             isValid={isValid}
             setIsValid={setIsValid}
+            keyType={keyType}
+            valueType={valueType}
             setItems={setItems}
             collapsedValue={collapsedValue}
             setCollapsedValue={setCollapsedValue}

@@ -1,4 +1,4 @@
-name: '🐞 Bug Report'
+name: '🐞 Logic Apps/Power Automate Bug Report'
 description: Create a report to help us improve Logic Apps
 body:
   - type: markdown
@@ -36,18 +36,19 @@ body:
       label: What type of Logic App Is this happening in?
       options:
         - Consumption (Portal)
+        - Power Automate
         - Standard (Portal)
         - Standard (VSCode)
     validations:
       required: true
 
   - type: dropdown
-    id: deisgnerType
+    id: designerType
     attributes:
-      label: Are you using Preview Designer or GA Designer
+      label: Are you using new designer or old designer
       options:
-        - Preview
-        - Generally Available
+        - New Designer
+        - Old Designer
     validations:
       required: true
 

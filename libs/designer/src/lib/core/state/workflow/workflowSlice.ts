@@ -14,6 +14,7 @@ import { getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/
 import { resetWorkflowState } from '../global';
 import { updateNodeParameters, updateNodeSettings, updateStaticResults } from '../operation/operationMetadataSlice';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
+import { WorkflowKind } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
@@ -31,6 +32,7 @@ export interface AddImplicitForeachPayload {
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
+  workflowKind: WorkflowKind.STATELESS,
   graph: null,
   runInstance: null,
   operations: {},
@@ -52,6 +54,9 @@ export const workflowSlice = createSlice({
   reducers: {
     initWorkflowSpec: (state: WorkflowState, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
+    },
+    initWorkflowKind: (state: WorkflowState, action: PayloadAction<WorkflowKind>) => {
+      state.workflowKind = action.payload;
     },
     initRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
       state.runInstance = action.payload;
@@ -403,6 +408,7 @@ export const workflowSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   initWorkflowSpec,
+  initWorkflowKind,
   initRunInstance,
   addNode,
   moveNode,

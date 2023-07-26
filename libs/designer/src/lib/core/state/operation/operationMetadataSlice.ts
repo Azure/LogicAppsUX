@@ -3,7 +3,7 @@ import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
-import { resetWorkflowState } from '../global';
+import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
@@ -112,6 +112,7 @@ export interface OperationMetadataState {
 
 interface OperationMetadataLoadStatus {
   nodesInitialized: boolean;
+  nodesAndDynamicDataInitialized: boolean;
 }
 
 const initialState: OperationMetadataState = {
@@ -127,6 +128,7 @@ const initialState: OperationMetadataState = {
   errors: {},
   loadStatus: {
     nodesInitialized: false,
+    nodesAndDynamicDataInitialized: false,
   },
 };
 
@@ -452,9 +454,16 @@ export const operationMetadataSlice = createSlice({
         delete state.errors[id];
       }
     },
+    updateDynamicDataLoadStatus: (state, action: PayloadAction<boolean>) => {
+      state.loadStatus.nodesAndDynamicDataInitialized = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(resetNodesLoadStatus, (state) => {
+      state.loadStatus.nodesInitialized = false;
+      state.loadStatus.nodesAndDynamicDataInitialized = false;
+    });
   },
 });
 
@@ -478,6 +487,7 @@ export const {
   updateErrorDetails,
   deinitializeOperationInfo,
   deinitializeNodes,
+  updateDynamicDataLoadStatus,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

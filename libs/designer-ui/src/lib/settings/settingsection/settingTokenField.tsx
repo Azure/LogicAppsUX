@@ -7,6 +7,7 @@ import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
@@ -22,8 +23,10 @@ import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
 import { convertUIElementNameToAutomationId } from '../../utils';
+import { CustomTokenField, isCustomEditor } from './customTokenField';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
+import { equals } from '@microsoft/utils-logic-apps';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -46,6 +49,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;
   pickerCallbacks?: PickerCallbackHandlers;
+  tokenpickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
@@ -53,22 +57,26 @@ export interface SettingTokenFieldProps extends SettingProps {
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const labelId = useId('msla-editor-label');
-  const renderLabel = props.editor?.toLowerCase() !== 'floatingactionmenu';
+  const hideLabel =
+    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
+
   return (
     <>
-      {renderLabel && (
+      {!hideLabel && (
         <div className="msla-input-parameter-label">
           <Label id={labelId} className="msla-label" required={props.required}>
             {props.label}
           </Label>
         </div>
       )}
-      <TokenField {...props} labelId={labelId} />
+      {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
     </>
   );
 };
 
-const TokenField = ({
+export type TokenFieldProps = SettingTokenFieldProps & { labelId: string };
+
+export const TokenField = ({
   editor,
   editorOptions,
   editorViewModel,
@@ -81,12 +89,13 @@ const TokenField = ({
   label,
   labelId,
   pickerCallbacks,
+  tokenpickerButtonProps,
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
   onCastParameter,
   getTokenPicker,
-}: SettingTokenFieldProps & { labelId: string }) => {
+}: TokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
   const labelForAutomationId = convertUIElementNameToAutomationId(label);
 
@@ -152,6 +161,7 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           valueType={editorOptions?.valueType}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${labelForAutomationId}`}
@@ -170,6 +180,7 @@ const TokenField = ({
           titles={editorOptions?.columns?.titles}
           keys={editorOptions?.columns?.keys}
           types={editorOptions?.columns?.types}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
@@ -185,6 +196,7 @@ const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
@@ -204,6 +216,8 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           BasePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
 
@@ -259,6 +273,7 @@ const TokenField = ({
           isLoading={isLoading}
           errorDetails={errorDetails}
           editorBlur={onValueChange}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
           dataAutomationId={`msla-setting-token-editor-filepickereditor-${labelForAutomationId}`}
@@ -271,6 +286,7 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
@@ -296,6 +312,7 @@ const TokenField = ({
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           initialValue={value}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}

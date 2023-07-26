@@ -1,11 +1,11 @@
 import type { AuthProps } from '.';
 import { AuthenticationType } from '.';
 import constants from '../constants';
-import { convertItemsToSegments } from '../dictionary/util/deserializecollapseddictionary';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../editor/base/utils/helper';
+import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
@@ -147,7 +147,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'basicUsername',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter username',
-      description: 'Username Placeholder Text',
+      description: 'Username placeholder text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
   },
@@ -350,7 +350,7 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
     ...values,
   ];
 
-  return convertItemsToSegments(currentItems);
+  return convertKeyValueItemToSegments(currentItems, constants.SWAGGER.TYPE.STRING, constants.SWAGGER.TYPE.STRING);
 }
 
 const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty, val?: ValueSegment[]) => {
@@ -413,9 +413,11 @@ export const serializeAuthentication = (
           returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
         }
         if (jsonEditor.secret) {
+          returnItems.aadOAuth.oauthType = AuthenticationOAuthType.SECRET;
           returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
         }
         if (jsonEditor.pfx && jsonEditor.password) {
+          returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
           returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
           returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
         }
@@ -431,4 +433,239 @@ export function containsToken(value: string): boolean {
   } else {
     return false;
   }
+}
+
+export const validateAuthentication = (s: string, setErrorMessage: (s: string) => void): string => {
+  const intl = getIntl();
+  const invalidJsonErrorMessage = intl.formatMessage(
+    {
+      defaultMessage: 'Invalid json format. Missing beginning {openingBracket} or ending {closingBracket}.',
+      description: 'Invalid JSON format',
+    },
+    {
+      openingBracket: '{',
+      closingBracket: '}',
+    }
+  );
+  if (!(s.startsWith('{') && s.endsWith('}'))) {
+    setErrorMessage(invalidJsonErrorMessage);
+    return invalidJsonErrorMessage;
+  }
+  const errorMessage = validateAuthenticationString(s);
+  if (errorMessage) {
+    setErrorMessage(errorMessage);
+    return errorMessage;
+  }
+  return '';
+};
+
+export const validateAuthenticationString = (s: string): string => {
+  const intl = getIntl();
+  let parsedSerializedValue = Object.create(null);
+  try {
+    parsedSerializedValue = JSON.parse(s);
+    if (parsedSerializedValue.type === undefined) {
+      return intl.formatMessage({
+        defaultMessage: "Missing authentication type property: 'type'.",
+        description: 'Invalid authentication without type property',
+      });
+    } else {
+      const authType = parsedSerializedValue.type;
+      if (!Object.values(AuthenticationType).find((val) => authType === val)) {
+        if (containsToken(authType)) {
+          return intl.formatMessage({
+            defaultMessage: "Missing authentication type property: 'type'.",
+            description: 'Invalid authentication without type property',
+          });
+        }
+        return intl.formatMessage(
+          {
+            defaultMessage: "Unsupported authentication type ''{authType}''.",
+            description: 'Invalid authentication type',
+          },
+          { authType }
+        );
+      } else {
+        let errorMessage = checkForMissingOrInvalidProperties(parsedSerializedValue, authType);
+        if (errorMessage) {
+          return errorMessage;
+        }
+        errorMessage = checkForUnknownProperties(parsedSerializedValue, authType);
+        if (errorMessage) {
+          return errorMessage;
+        }
+        errorMessage = checkForInvalidValues(parsedSerializedValue);
+        if (errorMessage) {
+          return errorMessage;
+        }
+      }
+    }
+  } catch {
+    return intl.formatMessage({
+      defaultMessage: 'Enter a valid JSON.',
+      description: 'Invalid JSON',
+    });
+  }
+
+  return '';
+};
+
+const authTypeConversion = (s: string): string => {
+  if (s === AuthenticationType.CERTIFICATE) {
+    return 'Client Certificate';
+  } else if (s === AuthenticationType.MSI) {
+    return 'Managed Service Identity';
+  } else if (s === AuthenticationType.OAUTH) {
+    return 'Active Directory OAuth';
+  }
+  return s;
+};
+
+/**
+ * Checks if any required property is missing.
+ * @arg {any} authentication -  The parsed authentication value.
+ * @arg {AuthenticationType} authType -  The authentication type.
+ * @return {string} - The error message for missing a required property.
+ */
+function checkForMissingOrInvalidProperties(authentication: any, authType: AuthenticationType): string {
+  const intl = getIntl();
+  let missingProperties: string[] = [];
+  const convertedAuthType = authTypeConversion(authType);
+  for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType]) {
+    if (key.isRequired && authentication[key.name] === undefined) {
+      missingProperties.push(key.name);
+    }
+  }
+  missingProperties = missingProperties.filter((name) => name !== AUTHENTICATION_PROPERTIES.MSI_IDENTITY.name);
+
+  if (authType === AuthenticationType.OAUTH) {
+    missingProperties = missingProperties.filter(
+      (name) =>
+        name !== AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX.name &&
+        name !== AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD.name &&
+        name !== AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET.name
+    );
+    if (missingProperties.length === 0) {
+      const authenticationKeys = Object.keys(authentication);
+      const hasPassword = authenticationKeys.includes(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD.name);
+      const hasPfx = authenticationKeys.includes(AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX.name);
+      const hasSecret = authenticationKeys.includes(AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET.name);
+      if (
+        (hasPassword && hasPfx && hasSecret) ||
+        (!hasPassword && !hasPfx && !hasSecret) ||
+        (hasSecret && hasPfx) ||
+        (hasSecret && hasPassword)
+      ) {
+        return intl.formatMessage({
+          defaultMessage: "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.",
+          description: 'OAuth Error message when missing properties',
+        });
+      }
+    }
+  }
+  if (missingProperties.length > 0) {
+    const errorMessage =
+      missingProperties.length === 1
+        ? intl.formatMessage(
+            {
+              defaultMessage: "Missing required property ''{missingProperties}'' for authentication type ''{convertedAuthType}''",
+              description: 'Error message when missing a required authentication property',
+            },
+            { missingProperties: missingProperties[0], convertedAuthType }
+          )
+        : intl.formatMessage(
+            {
+              defaultMessage: "Missing required properties ''{missingProperties}'' for authentication type ''{convertedAuthType}''",
+              description: 'Error message when missing multiple required authentication properties',
+            },
+            { missingProperties: missingProperties.join(', '), convertedAuthType }
+          );
+
+    return errorMessage;
+  } else {
+    return '';
+  }
+}
+
+/**
+ * Checks if any required property is missing.
+ * @arg {any} authentication -  The parsed authentication value.
+ * @arg {AuthenticationType} authType -  The authentication type.
+ * @return {string} - The error message for having an unknown property.
+ */
+function checkForUnknownProperties(authentication: any, authType: AuthenticationType): string {
+  const intl = getIntl();
+  const convertedAuthType = authTypeConversion(authType);
+  const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType].map((key) => key.name);
+  const authenticationKeys = Object.keys(authentication);
+  const invalidProperties: string[] = [];
+
+  for (const authenticationKey of authenticationKeys) {
+    if (containsToken(authenticationKey)) {
+      return intl.formatMessage({
+        defaultMessage: 'Dynamic content not supported as properties in authentication.',
+        description: 'Error message for when putting token in authentication property',
+      });
+    }
+    if (authenticationKey !== AUTHENTICATION_PROPERTIES.TYPE.name && validKeyNames.indexOf(authenticationKey) === -1) {
+      invalidProperties.push(authenticationKey);
+    }
+  }
+  if (invalidProperties.length > 0) {
+    const errorMessage =
+      invalidProperties.length === 1
+        ? intl.formatMessage(
+            {
+              defaultMessage: "Invalid property ''{invalidProperties}'' for authentication type ''{convertedAuthType}''.",
+              description: 'Error message when having an invalid authentication property',
+            },
+            { invalidProperties: invalidProperties[0], convertedAuthType }
+          )
+        : intl.formatMessage(
+            {
+              defaultMessage: "The ''{invalidProperties}'' properties are invalid for the ''{convertedAuthType}'' authentication type.",
+              description: 'Error message when having multiple invalid authentication properties',
+            },
+            { invalidProperties: invalidProperties.join(', '), convertedAuthType }
+          );
+
+    return errorMessage;
+  } else {
+    return '';
+  }
+}
+
+/**
+ * Checks if value contains a property with invalid value.
+ * @arg {any} authentication -  The parsed authentication value.
+ * @return {string} - The error message for having a property with invalid values.
+ */
+function checkForInvalidValues(authentication: any): string {
+  const intl = getIntl();
+  const convertedAuthType = authTypeConversion(authentication.type);
+  const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType];
+  const errorMessages: string[] = [];
+  const authenticationKeys = Object.keys(authentication);
+  for (const authenticationKey of authenticationKeys) {
+    if (
+      authenticationKey === AUTHENTICATION_PROPERTIES.TYPE.name ||
+      authenticationKey === AUTHENTICATION_PROPERTIES.MSI_IDENTITY.name ||
+      containsToken(authentication[authenticationKey].toString())
+    ) {
+      continue;
+    }
+    const currentProperty = validProperties.filter((validProperty) => validProperty.name === authenticationKey)[0];
+    if (authentication[authenticationKey] !== '' && currentProperty.type !== typeof authentication[authenticationKey]) {
+      errorMessages.push(
+        intl.formatMessage(
+          {
+            defaultMessage: "The type for ''{authenticationKey}'' is ''{propertyType}''.",
+            description: 'Error message when having invalid authentication property types',
+          },
+          { authenticationKey, propertyType: currentProperty.type }
+        )
+      );
+    }
+  }
+  return errorMessages.length > 0 ? errorMessages.join(' ') : '';
 }

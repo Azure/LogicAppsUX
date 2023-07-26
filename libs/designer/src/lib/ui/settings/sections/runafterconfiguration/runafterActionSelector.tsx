@@ -1,8 +1,8 @@
-import type { RootState } from '../../../../core';
+import type { AppDispatch, RootState } from '../../../../core';
+import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
-import { addEdgeFromRunAfter, removeEdgeFromRunAfter } from '../../../../core/state/workflow/workflowSlice';
 import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
 import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, DismissRegular } from '@fluentui/react-icons';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
@@ -73,7 +73,7 @@ export const RunAfterActionSelector = () => {
     return { actions: Object.keys((state.workflow.operations[currentNodeId] as LogicAppsV2.ActionDefinition).runAfter ?? {}) };
   });
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const searchResults = useMemo(() => {
     if (!searchText) {
@@ -99,7 +99,7 @@ export const RunAfterActionSelector = () => {
         const removedItems = selectedValues.actions.filter((x) => !data.checkedItems.includes(x));
         removedItems.forEach((item) => {
           dispatch(
-            removeEdgeFromRunAfter({
+            removeEdgeFromRunAfterOperation({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })
@@ -107,7 +107,7 @@ export const RunAfterActionSelector = () => {
         });
         newItems.forEach((item) => {
           dispatch(
-            addEdgeFromRunAfter({
+            addEdgeFromRunAfterOperation({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })

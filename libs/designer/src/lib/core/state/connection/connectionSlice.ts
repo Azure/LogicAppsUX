@@ -31,12 +31,13 @@ export const connectionSlice = createSlice({
       state.connectionsMapping = action.payload;
     },
     changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload>) => {
-      const { nodeId, connectionId, connectorId, connectionProperties, authentication } = action.payload;
+      const { nodeId, connectionId, connectorId, connectionProperties, connectionRuntimeUrl, authentication } = action.payload;
       const existingReferenceKey = Object.keys(state.connectionReferences).find((referenceKey) => {
         const reference = state.connectionReferences[referenceKey];
         return (
           equals(reference.api.id, connectorId) &&
           equals(reference.connection.id, connectionId) &&
+          equals(reference.connectionRuntimeUrl ?? '', connectionRuntimeUrl ?? '') &&
           deepCompareObjects(reference.connectionProperties, connectionProperties)
         );
       });
@@ -50,6 +51,7 @@ export const connectionSlice = createSlice({
           connection: { id: connectionId },
           connectionName: connectionId.split('/').at(-1) as string,
           connectionProperties,
+          connectionRuntimeUrl,
           authentication,
         };
         state.connectionsMapping[nodeId] = newReferenceKey;

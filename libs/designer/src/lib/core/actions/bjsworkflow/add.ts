@@ -60,7 +60,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     let count = 1;
     let nodeId = actionId;
-    while ((getState() as RootState).workflow.operations[nodeId]) {
+    while ((getState() as RootState).workflow.nodesMetadata[nodeId]) {
       nodeId = `${actionId}_${count}`;
       count++;
     }
@@ -126,7 +126,15 @@ const initializeOperationDetails = async (
     parsedManifest = new ManifestParser(manifest);
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-    const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
+    const settings = getOperationSettings(
+      isTrigger,
+      operationInfo,
+      nodeOutputs,
+      manifest,
+      /* swagger */ undefined,
+      /* operation */ undefined,
+      state.workflow.workflowKind
+    );
 
     // We should update the outputs when splitOn is enabled.
     if (isTrigger && settings.splitOn?.value?.value) {
@@ -164,7 +172,15 @@ const initializeOperationDetails = async (
       nodeInputs
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-    const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger);
+    const settings = getOperationSettings(
+      isTrigger,
+      operationInfo,
+      nodeOutputs,
+      /* manifest */ undefined,
+      parsedSwagger,
+      /* operation */ undefined,
+      state.workflow.workflowKind
+    );
 
     initData = {
       id: nodeId,

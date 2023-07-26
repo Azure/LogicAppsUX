@@ -1,4 +1,5 @@
 import type { RootState } from '../../state/store';
+import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
 import { Chatbot } from '@microsoft/chatbot';
@@ -56,6 +57,8 @@ const operationManifestServiceConsumption = new ConsumptionOperationManifestServ
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
+  subscriptionId: 'subid',
+  location: 'location',
 });
 
 const searchServiceStandard = new StandardSearchService({
@@ -72,8 +75,6 @@ const searchServiceStandard = new StandardSearchService({
 });
 
 const searchServiceConsumption = new ConsumptionSearchService({
-  baseUrl: '/url',
-  apiVersion: '2018-11-01',
   httpClient,
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
@@ -81,7 +82,6 @@ const searchServiceConsumption = new ConsumptionSearchService({
     location: '',
   },
   isDev: true,
-  showStatefulOperations: true,
 });
 
 const oAuthService = new BaseOAuthService({
@@ -128,9 +128,23 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
+const editorService = new CustomEditorService();
+
 export const LocalDesigner = () => {
-  const { workflowDefinition, isReadOnly, isMonitoringView, isDarkMode, isConsumption, connections, runInstance, showChatBot, language } =
-    useSelector((state: RootState) => state.workflowLoader);
+  const {
+    workflowDefinition,
+    isReadOnly,
+    isMonitoringView,
+    isDarkMode,
+    isConsumption,
+    connections,
+    runInstance,
+    showChatBot,
+    workflowKind,
+    language,
+    areCustomEditorsEnabled,
+  } = useSelector((state: RootState) => state.workflowLoader);
+  editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const designerProviderProps = {
     services: {
       connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
@@ -143,6 +157,7 @@ export const LocalDesigner = () => {
       workflowService,
       hostService,
       runService,
+      editorService,
     },
     readOnly: isReadOnly,
     isMonitoringView,
@@ -158,6 +173,7 @@ export const LocalDesigner = () => {
             definition: workflowDefinition,
             connectionReferences: connections,
             parameters: workflowDefinition.parameters,
+            kind: workflowKind,
           }}
           runInstance={runInstance}
         >

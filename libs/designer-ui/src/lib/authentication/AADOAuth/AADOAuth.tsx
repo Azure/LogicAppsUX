@@ -1,5 +1,6 @@
 import type { AuthProps, OAuthProps } from '..';
 import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -16,14 +17,16 @@ export enum AuthenticationOAuthType {
 
 interface ActiveDirectoryAuthenticationProps {
   OauthProps: OAuthProps;
+  readonly?: boolean;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
 export const ActiveDirectoryAuthentication = ({
   OauthProps,
-  getTokenPicker,
   setCurrentProps,
+  ...props
 }: ActiveDirectoryAuthenticationProps): JSX.Element => {
   const intl = useIntl();
   const {
@@ -100,40 +103,41 @@ export const ActiveDirectoryAuthentication = ({
   return (
     <div className="msla-authentication-editor-OAuth-container">
       <AuthenticationProperty
+        {...props}
         initialValue={oauthAuthority}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY}
-        getTokenPicker={getTokenPicker}
         onBlur={updateOAuthAuthority}
       />
       <AuthenticationProperty
+        {...props}
         initialValue={oauthTenant}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT}
-        getTokenPicker={getTokenPicker}
         onBlur={updateOAuthTenant}
       />
       <AuthenticationProperty
+        {...props}
         initialValue={oauthAudience}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE}
-        getTokenPicker={getTokenPicker}
         onBlur={updateOAuthAudience}
       />
       <AuthenticationProperty
+        {...props}
         initialValue={oauthClientId}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID}
-        getTokenPicker={getTokenPicker}
         onBlur={updateOAuthClientId}
       />
       <AuthenticationDropdown
+        readonly={props.readonly}
         dropdownLabel={oAuthTypeLabel}
         selectedKey={type as string}
         options={aadOAuthCredentialTypes}
         onChange={onAuthenticationTypeDropdownChange}
       />
       <AadOAuthCredentials
+        {...props}
         selectedCredTypeKey={type as string}
         secret={oauthTypeSecret}
         clientCertificateProps={{ clientCertificatePfx: oauthTypeCertificatePfx, clientCertificatePassword: oauthTypeCertificatePassword }}
-        getTokenPicker={getTokenPicker}
         setCurrentProps={setCurrentProps}
       />
     </div>

@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { initializeDictionaryValidation } from '../editor/base/utils/helper';
+import { isTokenValueSegment } from '../editor/base/utils/helper';
 import type { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
 import { AuthenticationDropdown } from './AuthenticationDropdown';
@@ -73,7 +73,6 @@ interface AuthenticationEditorProps extends BaseEditorProps {
   type: AuthenticationType;
   options: AuthenticationEditorOptions;
   authenticationValue: AuthProps;
-  readOnly?: boolean;
 }
 
 export const AuthenticationEditor = ({
@@ -83,14 +82,28 @@ export const AuthenticationEditor = ({
   initialValue,
   getTokenPicker,
   onChange,
+  readonly,
+  ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
+  const [codeView, { toggle: toggleCodeView }] = useBoolean(initializeCollapsedView(initialValue));
   const [option, setOption] = useState<AuthenticationType>(type);
   const [collapsedValue, setCollapsedValue] = useState(initialValue);
   const [currentProps, setCurrentProps] = useState<AuthProps>(authenticationValue);
-  const [isValid, setIsValid] = useState(initializeDictionaryValidation(initialValue));
+  const [isValid, setIsValid] = useState(false);
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
+
+  const serializeCollapsedValue = (value: ValueSegment[]): void => {
+    if (isTokenValueSegment(value)) {
+      onChange?.({
+        value: value,
+        viewModel: {
+          type: AuthenticationType.NONE,
+          authenticationValue: { basic: {}, clientCertificate: {}, raw: {}, msi: {}, aadOAuth: {} },
+        },
+      });
+    }
+  };
 
   useUpdateEffect(() => {
     const collapsedValue = parseAuthEditor(option, currentProps);
@@ -101,28 +114,56 @@ export const AuthenticationEditor = ({
   const renderAuthentication = () => {
     switch (option) {
       case AuthenticationType.BASIC:
-        return <BasicAuthentication basicProps={basic} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <BasicAuthentication
+            basicProps={basic}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            getTokenPicker={getTokenPicker}
+            readonly={readonly}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.CERTIFICATE:
         return (
           <CertificateAuthentication
             clientCertificateProps={clientCertificate}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
+            readonly={readonly}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.RAW:
-        return <RawAuthentication rawProps={raw} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <RawAuthentication
+            rawProps={raw}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            readonly={readonly}
+            getTokenPicker={getTokenPicker}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.MSI:
         return (
           <MSIAuthentication
             identity={options?.identity}
             msiProps={msi}
+            readonly={readonly}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.OAUTH:
-        return <ActiveDirectoryAuthentication OauthProps={aadOAuth} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <ActiveDirectoryAuthentication
+            OauthProps={aadOAuth}
+            readonly={readonly}
+            tokenPickerButtonProps={props.tokenPickerButtonProps}
+            getTokenPicker={getTokenPicker}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.NONE:
         return null;
       default:
@@ -166,10 +207,13 @@ export const AuthenticationEditor = ({
           setIsValid={setIsValid}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
+          serializeValue={serializeCollapsedValue}
+          readonly={readonly}
         />
       ) : (
         <div className="msla-authentication-editor-expanded-container">
           <AuthenticationDropdown
+            readonly={readonly}
             dropdownLabel={authenticationTypeLabel}
             selectedKey={option}
             options={getAuthenticationTypes(options.supportedAuthTypes)}
@@ -183,7 +227,7 @@ export const AuthenticationEditor = ({
           label={codeView ? collapsedLabel : expandedLabel}
           collapsed={codeView}
           toggleCollapsed={toggleCodeView}
-          disabled={!isValid}
+          disabled={codeView && !isValid}
         />
       </div>
     </div>
@@ -227,4 +271,7 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
         return { key: type, text: type };
     }
   });
+};
+const initializeCollapsedView = (initialValue: ValueSegment[]): boolean => {
+  return isTokenValueSegment(initialValue);
 };

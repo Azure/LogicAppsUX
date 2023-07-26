@@ -77,6 +77,8 @@ export const useConnectionsForConnector = (connectorId: string) => {
   return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId), {
     enabled: !!connectorId,
     refetchOnMount: true,
+    cacheTime: 0,
+    staleTime: 0,
   });
 };
 

@@ -42,7 +42,7 @@ export const validateParameter = (
       const { name } = data;
       if (!name) {
         return intl.formatMessage({
-          defaultMessage: 'Must provide name of parameter.',
+          defaultMessage: 'Must provide the parameter name.',
           description: 'Error message when the workflow parameter name is empty.',
         });
       }
@@ -121,8 +121,11 @@ export const workflowParametersSlice = createSlice({
     },
     addParameter: (state) => {
       const parameterId = guid();
-      state.definitions[parameterId] = { isEditable: true, type: UIConstants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, name: '' };
-      state.validationErrors[parameterId] = {};
+      state.definitions[parameterId] = {
+        isEditable: true,
+        type: UIConstants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
+        name: '',
+      };
       state.isDirty = true;
     },
     deleteParameter: (state, action: PayloadAction<string>) => {
@@ -139,7 +142,7 @@ export const workflowParametersSlice = createSlice({
       } = action.payload;
       const validationErrors = {
         name: validateParameter(id, { name }, 'name', state.definitions),
-        value: validateParameter(id, { name, type, value, defaultValue }, 'value', state.definitions, useLegacy ? false : true),
+        value: validateParameter(id, { name, type, value, defaultValue }, 'value', state.definitions, !useLegacy),
         ...(useLegacy
           ? {
               defaultValue: validateParameter(id, { name, type, value, defaultValue }, 'defaultValue', state.definitions),
@@ -154,10 +157,17 @@ export const workflowParametersSlice = createSlice({
         name: name ?? '',
         ...(useLegacy ? { defaultValue } : {}),
       };
-      state.validationErrors[id] = {
-        ...state.validationErrors[id],
+      const newErrorObj = {
+        ...(state.validationErrors?.[id] ?? {}),
         ...validationErrors,
       };
+      if (!newErrorObj.name) delete newErrorObj.name;
+      if (!newErrorObj.value) delete newErrorObj.value;
+      if (Object.keys(newErrorObj).length === 0) {
+        delete state.validationErrors[id];
+      } else {
+        state.validationErrors[id] = newErrorObj;
+      }
       state.isDirty = true;
     },
     setIsWorkflowParametersDirty: (state, action: PayloadAction<boolean>) => {
