@@ -770,12 +770,12 @@
           },
           "azureLogicAppsStandard.showStartDesignTimeWarning": {
             "type": "boolean",
-            "description": "Show a warning asking users if they would like to start design time api.",
+            "description": "Show a warning asking users if they would like to start design time api on project load.",
             "default": true
           },
           "azureLogicAppsStandard.autoStartDesignTime": {
             "type": "boolean",
-            "description": "Start design time api on launch.",
+            "description": "Start design time api on project load. ",
             "default": false
           }
         }
