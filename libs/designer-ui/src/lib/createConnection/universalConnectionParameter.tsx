@@ -4,7 +4,7 @@ import { Checkbox, Dropdown, TextField, Label, TooltipHost, Icon } from '@fluent
 import type { ConnectionParameter, ConnectionParameterAllowedValue } from '@microsoft/utils-logic-apps';
 import { ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
 
-interface ConnectionParameterProps {
+export interface ConnectionParameterProps {
   parameterKey: string;
   parameter: ConnectionParameter;
   value: any;
