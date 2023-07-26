@@ -6,7 +6,7 @@ import { getForeachItemsCount } from './helper';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
@@ -34,9 +34,10 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   const onRunRepetitionsSuccess = async (repetitionValues: { value: Array<LogicAppsV2.RunRepetition> }) => {
     const { value } = repetitionValues;
     const sortedFailedRepetitions: Array<number> = value
-      .reduce((prev: Array<number>, current: any) => {
-        const indexOfFail = current.properties.repetitionIndexes[0].itemIndex;
-        return [...prev, indexOfFail];
+      .reduce((acc: Array<number>, current: LogicAppsV2.RunRepetition) => {
+        const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === scopeId);
+        const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
+        return [...acc, indexOfFail ?? []];
       }, [])
       .sort();
 
@@ -47,7 +48,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     setFailedRepetitions([]);
   };
 
-  const { isError, refetch, isLoading, isRefetching } = useQuery<any>(
+  const { isError, refetch, isLoading } = useQuery<any>(
     ['runRepetitions', { nodeId: scopeId, runId: runInstance?.id }],
     getFailedRunScopeRepetitions,
     {
@@ -64,7 +65,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     if (normalizedType === constants.NODE.TYPE.FOREACH) {
       refetch();
     }
-  }, [runInstance?.id, refetch, scopeId, normalizedType]);
+  }, [runInstance?.id, refetch, scopeId, normalizedType, metadata?.runData]);
 
   if (!forEachItemsCount || isError || collapsed) {
     return null;
@@ -111,7 +112,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
         }
       : undefined;
 
-  return isLoading || isRefetching ? null : (
+  return isLoading ? null : (
     <Pager
       current={currentPage}
       onChange={onPagerChange}
