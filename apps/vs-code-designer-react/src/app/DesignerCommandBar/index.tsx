@@ -7,9 +7,11 @@ import {
   store as DesignerStore,
   switchToWorkflowParameters,
   useIsDesignerDirty,
+  validateParameter,
+  updateParameterValidation,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
-import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
+import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { createSelector } from '@reduxjs/toolkit';
 import { useContext, useMemo } from 'react';
@@ -42,12 +44,30 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
-    await vscode.postMessage({
-      command: ExtensionCommand.save,
-      definition,
-      parameters,
-      connectionReferences,
-    });
+
+    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
+      const hasValidationErrors = Object.values(nodeInputs.parameterGroups).every((parameterGroup) => {
+        return parameterGroup.parameters.every((parameter) => {
+          const validationErrors = validateParameter(parameter, parameter.value);
+          if (validationErrors.length > 0) {
+            dispatch(updateParameterValidation({ nodeId: id, groupId: parameterGroup.id, parameterId: parameter.id, validationErrors }));
+          }
+          return validationErrors.length;
+        });
+      });
+      return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
+    }, {});
+
+    const hasEmptyRequiredInputs = !isNullOrEmpty(validationErrorsList);
+
+    if (!hasEmptyRequiredInputs) {
+      await vscode.postMessage({
+        command: ExtensionCommand.save,
+        definition,
+        parameters,
+        connectionReferences,
+      });
+    }
   });
 
   const onResubmit = async () => {
