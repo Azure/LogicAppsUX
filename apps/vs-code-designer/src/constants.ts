@@ -153,6 +153,8 @@ export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
+export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
+export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
