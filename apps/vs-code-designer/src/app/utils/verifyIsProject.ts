@@ -23,7 +23,7 @@ export async function isFunctionProject(folderPath: string): Promise<boolean> {
 
 /**
  * Checks root folder and subFolders one level down
- * If a single logic app project is found, returns that path.
+ * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
  */
 export async function tryGetFunctionProjectRoot(

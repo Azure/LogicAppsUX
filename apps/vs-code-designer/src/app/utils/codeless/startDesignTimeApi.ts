@@ -4,12 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   ProjectDirectoryPath,
+  autoStartDesignTimeSetting,
   defaultVersionRange,
   designerStartApi,
   extensionBundleId,
   hostFileName,
   localSettingsFileName,
   logicAppKind,
+  showStartDesignTimeMessageSetting,
   workflowDesignerLoadTimeout,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -77,7 +79,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
     try {
       window.showInformationMessage(
-        localize('azureFunctions.designTimeApi', 'Starting workflow design time api. It might take a few seconds.'),
+        localize('azureFunctions.designTimeApi', 'Starting the background design-time process, which might take a few seconds.'),
         'OK'
       );
 
@@ -94,11 +96,11 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         await waitForDesingTimeStartUp(url, new Date().getTime());
         actionContext.telemetry.properties.startDesignTimeApi = 'true';
       } else {
-        throw new Error(localize('DesignTimeDirectoryError', 'Design time directory could not be created.'));
+        throw new Error(localize('DesignTimeDirectoryError', "Can't create the directory for the background design-time process."));
       }
     } catch (ex) {
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
-      const message: string = localize('DesignTimeError', 'Workflow design time could not be started.');
+      const message: string = localize('DesignTimeError', "Can't start the background design-time process.");
       await window.showErrorMessage(message, viewOutput).then(async (result) => {
         if (result === viewOutput) {
           ext.outputChannel.show();
@@ -199,26 +201,27 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     const workspace = await getWorkspaceFolder(context);
     const projectPath = await tryGetFunctionProjectRoot(context, workspace);
-    const autoStartDesignTimeKey = 'autoStartDesignTime';
-    const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeKey);
-    const showStartDesignTimeWarningKey = 'showStartDesignTimeWarning';
-    const showStartDesignTimeWarning = !!getWorkspaceSetting<boolean>(showStartDesignTimeWarningKey);
+    const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
+    const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
     if (projectPath) {
       if (autoStartDesignTime) {
         startDesignTimeApi(projectPath);
-      } else if (showStartDesignTimeWarning) {
-        const message = localize('startDesignTimeApi', 'Always start design time on launch?');
+      } else if (showStartDesignTimeMessage) {
+        const message = localize(
+          'startDesignTimeApi',
+          'Always start the background design-time process at launch? The workflow designer will open faster.'
+        );
         const confirm = { title: 'Yes (Recommended)' };
         let result: MessageItem;
         do {
           result = await context.ui.showWarningMessage(message, confirm, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
           if (result === confirm) {
-            await updateGlobalSetting(autoStartDesignTimeKey, true);
+            await updateGlobalSetting(autoStartDesignTimeSetting, true);
             startDesignTimeApi(projectPath);
           } else if (result === DialogResponses.learnMore) {
             await openUrl('https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local');
           } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showStartDesignTimeWarningKey, false);
+            await updateGlobalSetting(showStartDesignTimeMessageSetting, false);
           }
         } while (result === DialogResponses.learnMore);
       }
