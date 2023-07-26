@@ -56,7 +56,7 @@ export const DesignerCommandBar = ({
       ignoreNonCriticalErrors: true,
     });
 
-    const emptyValidation = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
+    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).every((parameterGroup) => {
         return parameterGroup.parameters.every((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
@@ -69,9 +69,9 @@ export const DesignerCommandBar = ({
       return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
     }, {});
 
-    const hasEmptyInputs = !isNullOrEmpty(emptyValidation);
+    const hasEmptyRequiredInputs = !isNullOrEmpty(validationErrorsList);
 
-    if (!hasEmptyInputs) {
+    if (!hasEmptyRequiredInputs) {
       await saveWorkflow(serializedWorkflow);
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
