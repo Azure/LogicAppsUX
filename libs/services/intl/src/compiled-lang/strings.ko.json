@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "연결 참조 만들기"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,13 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "오류"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -45,6 +51,12 @@
       "value": "(UTC+08:00) 콸라룸푸르, 싱가포르"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "필수. 검사할 문자열입니다."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -54,13 +66,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "출력 없음"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "시간 초과됨"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +90,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "검색과 일치하는 값이 없습니다."
     }
   ],
   "/NtebP": [
@@ -168,7 +180,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "활성화하면 이 동작은 Dataverse 트리거의 \"실행\" 설정에서 사용자와 함께 실행됩니다."
     }
   ],
   "/yYyOq": [
@@ -262,7 +274,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "보안 입력 또는 출력을 사용하도록 설정했습니다."
     }
   ],
   "0FzNJV": [
@@ -663,6 +675,12 @@
       "value": "저장"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "선택적입니다. 사용할 RFC 4646 로캘 코드입니다. 지정하지 않으면 기본 로캘이 사용됩니다. 로캘이 유효한 값이 아니면 제공된 로캘이 유효하지 않거나 연결된 로캘이 없다는 오류가 생성됩니다."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -735,10 +753,22 @@
       "value": "사용할 수 있는 콘텐츠가 없음"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "필수. 검사할 문자열입니다."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "기존 스키마를 호환되지 않는 스키마로 바꾸면 맵에 오류가 발생할 수 있습니다."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "컬렉션을 역순으로 반환합니다."
     }
   ],
   "3X4FHS": [
@@ -834,13 +864,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "필수. 이 값은 반환할 수 있는 가장 높은 정수 다음 정수입니다."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "대기 중"
     }
   ],
   "43xObP": [
@@ -919,6 +949,12 @@
       "value": "필수 사항으로, 값을 원하는 매개 변수의 이름입니다."
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "흐름이 업데이트되었습니다."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -965,16 +1001,34 @@
       "value": "(UTC+08:45) 유클라"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "작업 설명"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "패널 열기"
     }
   ],
   "595Baw": [
     {
       "type": 0,
       "value": "(UTC+09:00) 오사카, 삿포로, 도쿄"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "조건 추가"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "이 기능에 대해 좋아하는 것을 Microsoft에 알리기"
     }
   ],
   "5OvGgn": [
@@ -1084,7 +1138,13 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "입력을 로드하는 동안 오류가 발생했습니다."
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "고급 매개 변수 모두 표시"
     }
   ],
   "6OSgRP": [
@@ -1102,7 +1162,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "연결 참조 선택"
     }
   ],
   "6fDYzG": [
@@ -1123,6 +1183,12 @@
     {
       "type": 0,
       "value": "'에 할당된 입력이 너무 많습니다."
+    }
+  ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "이 작업을 업데이트했습니다."
     }
   ],
   "6jiO7t": [
@@ -1155,16 +1221,28 @@
       "value": "이전"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "이 워크플로를 준비하려면 다음 작업 설정을 완료합니다."
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "필수 사항으로, 피승수 2를 곱할 숫자입니다."
     }
   ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "흐름 만들기"
+    }
+  ],
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "필수. 인덱스 찾기에 사용할 값입니다."
     }
   ],
   "6ueRYm": [
@@ -1176,7 +1254,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "데이터 형식"
     }
   ],
   "73iM9+": [
@@ -1188,7 +1266,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "사용자 이름 입력"
     }
   ],
   "7EZ2oY": [
@@ -1259,10 +1337,22 @@
       "value": "선택 사항. 형식을 지정할 때 사용할 로캘(기본값 'en-us')입니다."
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "이 작업을 수행하면 워크플로가 Copilot가 편집되기 전의 상태로 되돌아갑니다. Copilot 이후에 워크플로를 추가로 편집한 경우 손실됩니다. 이 작업은 실행 취소할 수 없습니다. 계속하시겠습니까?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "상태 코드"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "버그 보고"
     }
   ],
   "7lnElz": [
@@ -1292,7 +1382,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "지원되지 않는 인증 유형 '"
     },
     {
       "type": 1,
@@ -1300,7 +1390,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'입니다."
     }
   ],
   "7zzPsK": [
@@ -1383,6 +1473,24 @@
     {
       "type": 0,
       "value": "논리 앱의 관리 ID를 사용하도록 설정하세요."
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "흐름을 변경하는 방법을 설명합니다. 사용할 커넥터 및 콘텐츠를 포함해야 하는 경우를 포함하여 가능한 경우 세부 정보를 추가합니다."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "다음으로 이 흐름 편집"
     }
   ],
   "8SxNQC": [
@@ -1543,6 +1651,12 @@
       "value": "(UTC-03:00) 브라질리아"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "흐름 되돌리기"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1573,6 +1687,12 @@
       "value": "텍스트"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1589,6 +1709,12 @@
     {
       "type": 0,
       "value": "두 매개 변수가 모두 true인 경우 true를 반환합니다."
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "의견 보내기"
     }
   ],
   "9x8hg8": [
@@ -1663,6 +1789,18 @@
     {
       "type": 0,
       "value": "빈도를 선택합니다."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "모든 고급 매개 변수 및 해당 값을 제거하고 지우기"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "다음에 연결되지 않음"
     }
   ],
   "AnX5yC": [
@@ -1769,13 +1907,19 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "성공했지만 다시 시도해야 함"
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
       "value": "필수 사항으로, URI로 인코딩된 문자열입니다."
+    }
+  ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "실행 취소 작업에 대한 자세한 정보"
     }
   ],
   "BJNUxN": [
@@ -1793,7 +1937,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "지정되지 않음"
     }
   ],
   "BQCPY7": [
@@ -1806,6 +1950,12 @@
     {
       "type": 0,
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "죄송합니다. 문제가 발생했습니다. 다시 시도하십시오."
     }
   ],
   "BSgavq": [
@@ -1835,7 +1985,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "배열"
     }
   ],
   "Bl4Iv0": [
@@ -1871,7 +2021,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "트리거가 실행되려면 true여야 하는 하나 이상의 식을 지정합니다."
     }
   ],
   "BtL7UI": [
@@ -1892,6 +2042,12 @@
       "value": "필수 항목으로, 비교하는 개체보다 큰지 확인할 개체입니다."
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "질문하기"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1904,6 +2060,18 @@
       "value": "연속 토큰에 따라 지정된 임계값을 충족하는 항목을 검색합니다. 커넥터의 페이지 크기로 인해 반환되는 수가 임계값을 초과할 수 있습니다."
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "전자 메일을 보내는 작업 추가"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -1913,7 +2081,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "연결 만들기"
     }
   ],
   "CaajcD": [
@@ -1925,7 +2093,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1933,7 +2101,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' 속성은 '"
     },
     {
       "type": 1,
@@ -1941,7 +2109,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' 인증 유형에 유효하지 않습니다."
     }
   ],
   "Cb6IEq": [
@@ -1971,7 +2139,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "매개 변수 이름을 제공해야 합니다."
     }
   ],
   "ClZW2r": [
@@ -2077,7 +2245,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "날짜"
     }
   ],
   "DQV7aK": [
@@ -2204,10 +2372,16 @@
       "value": "매개 변수를 10진수로 변환"
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "흐름의 작업을 확인하여 매개 변수를 설정해야 하는지 확인합니다. 완료되면 저장하는 것을 잊지 마세요!"
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "실행에 대한 추적 ID를 설정합니다. 분할을 위해 이 추적 ID는 시작 요청에 해당합니다."
     }
   ],
   "ERAWZA": [
@@ -2294,6 +2468,12 @@
       "value": "이 작업에 대한 요청 기록 보기"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "흐름에서 사용하도록 이러한 연결을 설정합니다."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2354,6 +2534,12 @@
       "value": "(UTC-07:00) 치와와, 라파스, 마사틀란"
     }
   ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "흐름이 업데이트되었습니다."
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
@@ -2363,7 +2549,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "오류"
     }
   ],
   "FT3jt6": [
@@ -2444,7 +2630,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "구분 기호로 결합된 배열의 각 항목이 포함된 문자열을 반환합니다."
     }
   ],
   "G/CC5/": [
@@ -2501,6 +2687,12 @@
       "value": "필수 항목으로, Within 컬렉션 내에서 찾을 개체입니다."
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "흐름 설명"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2513,6 +2705,20 @@
       "value": "참조 함수"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2523,6 +2729,12 @@
     {
       "type": 0,
       "value": "기타 명령"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "시작"
     }
   ],
   "Gi72X5": [
@@ -2631,10 +2843,16 @@
       "value": "월"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "필수. 정렬할 컬렉션입니다."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "전체 화면 종료"
     }
   ],
   "HOchry": [
@@ -2671,6 +2889,12 @@
     {
       "type": 0,
       "value": "배열 항목에 대한 상세 정보 입력으로 전환"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "흐름 편집"
     }
   ],
   "HfrUId": [
@@ -2734,7 +2958,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "건너뜀"
     }
   ],
   "I41vZ/": [
@@ -2829,20 +3053,6 @@
       "value": "(UTC+09:00) 야쿠츠크"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'을(를) 실행하는 동안 오류가 발생했습니다."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2853,6 +3063,12 @@
     {
       "type": 0,
       "value": "속성 없음"
+    }
+  ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "흐름은 다음과 같습니다. 변경하려는 경우 원하는 내용을 말하세요. 예를 들어:"
     }
   ],
   "IxWip7": [
@@ -2896,7 +3112,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "실패"
     }
   ],
   "J9wWry": [
@@ -2931,6 +3147,12 @@
     {
       "type": 0,
       "value": "삭제"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "작업 실행 취소"
     }
   ],
   "JNQHws": [
@@ -3023,10 +3245,30 @@
       "value": "연결 참조 변경"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\"을(를) (으)로 바꾸기"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "유효한 이중 번호를 입력하세요."
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "새 항목인 경우..."
     }
   ],
   "KX1poC": [
@@ -3079,7 +3321,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "무시됨"
     }
   ],
   "KwGA+K": [
@@ -3130,6 +3372,12 @@
       "value": "함수 앱을 로드하는 중..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3157,7 +3405,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "필수. 첫 번째 개체를 가져올 컬렉션입니다."
     }
   ],
   "LV/BTE": [
@@ -3176,6 +3424,12 @@
     {
       "type": 0,
       "value": "병렬 분기 추가"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "이 작업을 제거했습니다."
     }
   ],
   "LdITnG": [
@@ -3223,7 +3477,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "전달된 문자열 타임스탬프에 대한 일의 시작을 반환합니다."
     }
   ],
   "Lub7NN": [
@@ -3262,6 +3516,12 @@
       "value": "코드 보기"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "매주 월요일"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3298,10 +3558,16 @@
       "value": "필수 항목으로, 평가할 컬렉션입니다. 개체는 결과에 표시되기 위해 전달된 모든 컬렉션에 있어야 합니다."
     }
   ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "동작 추가"
+    }
+  ],
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "지원되지 않는 프로그래밍 언어입니다."
     }
   ],
   "MKTdNk": [
@@ -3403,7 +3669,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "시간 초과"
     }
   ],
   "N0pS6Y": [
@@ -3463,7 +3729,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "지정된 변수의 값을 반환합니다."
     }
   ],
   "NnD8gF": [
@@ -3511,7 +3777,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "실패함"
     }
   ],
   "O+8vRv": [
@@ -3529,13 +3795,19 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "오류가 없습니다."
     }
   ],
   "O27gKq": [
     {
       "type": 0,
       "value": "파일을 로드하는 중..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -3598,6 +3870,12 @@
       "value": "모든 커넥터를 로드하는 중..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "자세한 정보"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3614,6 +3892,12 @@
     {
       "type": 0,
       "value": "지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "이 워크플로 저장"
     }
   ],
   "OdNhwc": [
@@ -3685,15 +3969,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "인증 유형 '"
     },
     {
       "type": 1,
@@ -3701,7 +3977,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "'에 대한 필수 속성 '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "'이(가) 없습니다."
     }
   ],
   "P+7G62": [
@@ -3743,7 +4027,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "사용자 지정 추적 ID"
     }
   ],
   "P4rEwD": [
@@ -3813,7 +4097,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "설정 오류"
     }
   ],
   "PfCJlN": [
@@ -3843,7 +4127,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "연결 오류"
     }
   ],
   "PtqSHp": [
@@ -3878,12 +4162,12 @@
   ],
   "PytMJ0": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 다음에 실행"
     }
   ],
   "Q+ZZHI": [
@@ -3941,15 +4225,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "인증 유형 '"
     },
     {
       "type": 1,
@@ -3957,7 +4233,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "'에 대한 필수 속성 '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "'이(가) 없습니다."
     }
   ],
   "QZBPUx": [
@@ -3987,13 +4271,19 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "워크플로 매개 변수"
     }
   ],
   "Qn8qxn": [
     {
       "type": 0,
       "value": "날짜 형식에서 문자열을 반환합니다."
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
     }
   ],
   "QpRRt3": [
@@ -4039,7 +4329,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "유효한 조건을 입력하세요."
     }
   ],
   "RFjYpH": [
@@ -4051,7 +4341,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "미리 보기"
     }
   ],
   "RJes1w": [
@@ -4134,7 +4424,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "필수. true여야 하는 식입니다."
     }
   ],
   "RvpHdu": [
@@ -4165,6 +4455,12 @@
     {
       "type": 0,
       "value": "제목 2"
+    }
+  ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "AI 생성 콘텐츠는 부정확할 수 있습니다."
     }
   ],
   "SJFVxf": [
@@ -4273,10 +4569,22 @@
       "value": "피드백 제공"
     }
   ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "작업이 수행하는 작업 설명"
+    }
+  ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "금요일"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4372,7 +4680,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "필수. 인덱스 찾기에 사용할 값입니다."
     }
   ],
   "Tmr/9e": [
@@ -4384,7 +4692,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "워크플로 매개 변수 오류"
     }
   ],
   "Ts5Pzr": [
@@ -4507,6 +4815,12 @@
       "value": "필수 항목으로, 마지막 개체를 가져올 원본 컬렉션입니다."
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "전자 메일을 보낼 때"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4540,7 +4854,13 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "확장"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "필수. 각 청크의 길이입니다."
     }
   ],
   "Umpr3z": [
@@ -4568,7 +4888,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4576,7 +4896,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "'의 형식은 '"
     },
     {
       "type": 1,
@@ -4584,7 +4904,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'입니다."
     }
   ],
   "Ur+wph": [
@@ -4597,6 +4917,12 @@
     {
       "type": 0,
       "value": "연결 이름 입력"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
     }
   ],
   "V+/c21": [
@@ -4626,13 +4952,27 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "간격"
     }
   ],
   "VA7M1u": [
     {
       "type": 0,
       "value": "앱 내"
+    }
+  ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "이 흐름에서 \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" 작업이 수행하는 작업을 설명합니다."
     }
   ],
   "VHm1Sr": [
@@ -4655,6 +4995,12 @@
     {
       "type": 0,
       "value": "에 대해 찾은 결과가 없음"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -4749,6 +5095,18 @@
       "value": "작업"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "이 작업을 추가했습니다."
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
   "W070M2": [
     {
       "type": 1,
@@ -4763,6 +5121,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 새 속성의 이름입니다."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "교체해야 하는 흐름의 항목과 대체해야 하는 항목을 설명합니다. 사용할 커넥터 및 콘텐츠를 포함해야 하는 경우를 포함하여 가능한 경우 세부 정보를 추가합니다."
     }
   ],
   "WGwH45": [
@@ -4893,6 +5257,12 @@
       "value": "다시 시도"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "고급 매개 변수"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -4925,6 +5295,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) 바그다드"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "좋아요"
     }
   ],
   "XRK+gt": [
@@ -5057,6 +5433,12 @@
       "value": "암호"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "동작 추가"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5081,6 +5463,12 @@
       "value": "본문 항목"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "모든 필수 매개 변수가 설정됨"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5090,7 +5478,13 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "트리거 조건"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
     }
   ],
   "YHsAKl": [
@@ -5287,6 +5681,12 @@
       "value": "trigger().outputs.body의 축약형"
     }
   ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "흐름은 다음과 같습니다."
+    }
+  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5323,6 +5723,12 @@
       "value": "동적 콘텐츠에 대해 자세히 알아보세요."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5335,16 +5741,16 @@
       "value": "필수 항목. 찾으려는 substring의 발생 횟수입니다."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "필수 항목으로, 컬렉션 맨 앞부터 제거할 개체의 수입니다. 양의 정수여야 합니다."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "새 매개 변수 추가"
     }
   ],
   "aK4iLW": [
@@ -5374,7 +5780,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "취소됨"
     }
   ],
   "ae7W0a": [
@@ -5456,7 +5862,13 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "필수 사항으로, 이진으로 변환되는 값입니다."
+    }
+  ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "선택적. 컬렉션에서 개체를 정렬하는 데 사용할 키입니다."
     }
   ],
   "bSZ0lL": [
@@ -5480,7 +5892,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "호출자의 연결 사용"
     }
   ],
   "bXFGpe": [
@@ -5501,22 +5913,34 @@
       "value": "숫자의 입력 배열에서 최대값을 반환합니다."
     }
   ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "흐름에서 사용하도록 이러한 연결을 설정합니다."
+    }
+  ],
   "bldzuj": [
     {
       "type": 0,
       "value": "다시 시도 기록"
     }
   ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "모두 지우기"
+    }
+  ],
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "작업 열기"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "이 작업에는 입력 및 출력 보호가 활성화되어 있습니다."
     }
   ],
   "byTBrn": [
@@ -5690,7 +6114,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "다운로드(Alt 또는 Option + select)"
     }
   ],
   "dBWIjR": [
@@ -5723,6 +6147,18 @@
       "value": "관리 ID"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "작업 바꾸기"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "다시 오시 것을 환영합니다! 흐름을 변경하려면 원하는 대로 말하세요. 예를 들어:"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5745,6 +6181,12 @@
     {
       "type": 0,
       "value": "HTTP를 통해 콘텐츠를 전송하기 위한 동작 및 기능을 지정합니다. 큰 메시지는 큰 메시지 업로드를 허용하기 위해 커넥터에 대한 작은 요청으로 분할될 수 있습니다. 자세한 내용은 http://aka.ms/logicapps-chunk#upload-content-in-chunks에서 확인할 수 있습니다."
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "건너뛰기"
     }
   ],
   "dWFyfN": [
@@ -5835,6 +6277,12 @@
       "value": "XSLT를 생성하지 못했습니다."
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "되돌리기"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5893,6 +6341,12 @@
     {
       "type": 0,
       "value": "공유"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "새 항목이 있는 경우"
     }
   ],
   "f/lWTW": [
@@ -5996,7 +6450,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "연결 선택"
     }
   ],
   "g076bL": [
@@ -6125,6 +6579,12 @@
       "value": "대상 그룹을 입력합니다."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "문자열이 부동 소수점 숫자인지 여부를 나타내는 부울 값을 반환합니다."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6140,7 +6600,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "로드 중..."
     }
   ],
   "h+W3VW": [
@@ -6194,10 +6654,22 @@
       "value": "두 숫자를 뺀 결과를 반환합니다."
     }
   ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "실행 취소"
+    }
+  ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) 가자, 헤브론"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6384,6 +6856,12 @@
       "value": "예: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6399,7 +6877,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "필수 사항으로, 피가수 2에 추가할 숫자입니다."
     }
   ],
   "iq+tiv": [
@@ -6421,7 +6899,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "올바른 테이블을 입력하세요."
     }
   ],
   "iy8rNf": [
@@ -6466,6 +6944,12 @@
       "value": "새로 만들기"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "이 기능을 개선할 수 있는 방법을 Microsoft에 알려주세요."
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6484,10 +6968,34 @@
       "value": "원본 스키마 추가"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": "개 중 "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": "개 표시"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "대상 스키마"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "필수. 분할할 문자열 또는 배열입니다."
     }
   ],
   "jVpanH": [
@@ -6520,6 +7028,12 @@
       "value": "스키마를 생성할 수 없음"
     }
   ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "흐름에서 수행해야 하는 작업을 설명합니다. 사용할 커넥터 및 콘텐츠를 포함해야 하는 경우를 포함하여 가능한 경우 세부 정보를 추가합니다."
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -6547,7 +7061,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "매개 변수 오류"
     }
   ],
   "kBOAkT": [
@@ -6586,6 +7100,18 @@
       "value": "초"
     }
   ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "이러한 작업을 확인하여 매개 변수를 설정해야 하는지 확인합니다."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "매주 월요일..."
+    }
+  ],
   "kM+Mr0": [
     {
       "type": 0,
@@ -6619,7 +7145,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "대상 요소에 연결되지 않은 요소 및 매핑이 제거됩니다."
     }
   ],
   "klY9UN": [
@@ -6630,7 +7156,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "일치하는 항목이 없습니다."
             }
           ]
         },
@@ -6641,7 +7167,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": "개의 항목이 일치합니다."
             }
           ]
         }
@@ -6667,6 +7193,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) 빈트후크"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "작업을 다음으로 바꾸기"
     }
   ],
   "l36V56": [
@@ -6733,6 +7265,12 @@
     {
       "type": 0,
       "value": "그룹 추가"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "필수. 역방향으로 사용할 컬렉션입니다."
     }
   ],
   "lexzgJ": [
@@ -6888,7 +7426,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "필수 항목으로, 평가할 XPath 식입니다."
     }
   ],
   "mZRMD9": [
@@ -7006,7 +7544,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "건너뜀"
     }
   ],
   "nHseED": [
@@ -7036,7 +7574,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "새 매개 변수"
     }
   ],
   "nRpM02": [
@@ -7090,7 +7628,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "시간이 초과됨"
     }
   ],
   "no/SMg": [
@@ -7433,6 +7971,12 @@
       "value": "'"
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "앱 및 서비스에 연결"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7553,15 +8097,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "인증 유형 '"
     },
     {
       "type": 1,
@@ -7569,7 +8105,21 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'에 대한 속성 '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "'이(가) 잘못되었습니다."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
@@ -7665,7 +8215,13 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "성공"
+    }
+  ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "죄송합니다. 요청을 이해할 수 없습니다. 이름을 바꾸고 다시 시도하세요."
     }
   ],
   "rsdJcV": [
@@ -7710,6 +8266,12 @@
       "value": "삭제"
     }
   ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "이 워크플로를 저장하려면 다음 작업 설정을 완료합니다."
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
@@ -7743,7 +8305,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "출력을 테스트할 매개 변수를 제공합니다."
     }
   ],
   "sW47JR": [
@@ -7798,6 +8360,12 @@
     {
       "type": 0,
       "value": "매개 변수 중 하나가 true인 경우 true를 반환합니다."
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "취소"
     }
   ],
   "srpZD2": [
@@ -7920,6 +8488,12 @@
     {
       "type": 0,
       "value": "종류"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "이 워크플로 테스트"
     }
   ],
   "tUCptx": [
@@ -8086,10 +8660,16 @@
       "value": "이 작업에 대한 재시도와 비동기 응답 사이의 최대 기간을 제한합니다. 참고: 단일 요청의 요청 시간 제한은 변경되지 않습니다."
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "죄송합니다. Copilot가 용량에 있으며 일시적으로 사용할 수 없습니다. 잠시 후에 다시 시도하세요."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "성공함"
     }
   ],
   "uc/PoD": [
@@ -8125,7 +8705,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "작업 오류"
     }
   ],
   "ui7GCl": [
@@ -8170,6 +8750,12 @@
       "value": "매개 변수"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "워크플로 또는 Logic Apps 관련된 질문을 합니다."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8206,10 +8792,16 @@
       "value": "문자열 내에서 값의 마지막 인덱스를 반환합니다(대/소문자 구분 안 함, 고정 문화권)."
     }
   ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "이 흐름의 기능 설명"
+    }
+  ],
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "필수 항목으로, 첫 번째 Count 개체를 가져올 컬렉션입니다."
     }
   ],
   "vQcQkU": [
@@ -8264,6 +8856,12 @@
     {
       "type": 0,
       "value": "취소"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "이 워크플로를 준비하려면 다음 작업 설정을 완료하세요."
     }
   ],
   "vr70Gn": [
@@ -8465,7 +9063,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "지정된 속성이 제거된 개체를 반환합니다."
     }
   ],
   "x3dWOL": [
@@ -8477,7 +9075,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "중단됨"
     }
   ],
   "x8kTAX": [
@@ -8576,6 +9174,12 @@
       "value": "매개 변수는 논리 앱의 워크플로 간에 공유됩니다."
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "연결 대상"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8624,6 +9228,18 @@
       "value": "문자열에서 문자의 하위 집합을 반환합니다."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "오름차순으로 정렬된 배열을 반환합니다."
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "모두 표시"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -8634,6 +9250,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "문자열 또는 배열을 같은 길이의 청크로 분할"
     }
   ],
   "ydqOly": [
@@ -8656,6 +9278,12 @@
       "value": "'입니다."
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "싫어요"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8665,13 +9293,19 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "트리거의 다중 부분 출력에서 한 부분의 본문을 반환합니다."
     }
   ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "날짜 및 시간 함수"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "전자 메일을 보내는 중..."
     }
   ],
   "ysoumb": [
@@ -8701,7 +9335,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "자세히 알아보기"
     }
   ],
   "z/UY4k": [
@@ -8762,6 +9396,12 @@
       "value": "작업 선택"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "문자열이 정수인지 여부를 나타내는 부울 값을 반환합니다."
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -8774,10 +9414,22 @@
       "value": "(UTC+12:00) 페트로파블로프스크-캄차스키 - 사용하지 않음"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "이 워크플로를 저장하려면 다음 작업 설정을 완료합니다."
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "선택적으로 로캘과 형식을 사용하여 문자열을 날짜로 변환합니다."
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "중지"
     }
   ],
   "ziXw25": [
@@ -8813,7 +9465,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "필수 사항으로, 피가수 1에 추가할 숫자입니다."
     }
   ],
   "zxe9hh": [

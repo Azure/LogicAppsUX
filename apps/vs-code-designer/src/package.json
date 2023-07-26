@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.37.0",
+  "version": "2.52.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -310,7 +310,10 @@
     "submenus": [
       {
         "id": "azureLogicAppsStandard.submenus.workspaceActions",
-        "icon": "assets/logicapp.png",
+        "icon": {
+          "light": "assets/logicapp.png",
+          "dark": "assets/logicapp.png"
+        },
         "label": "Azure Logic Apps"
       }
     ],
@@ -777,6 +780,19 @@
             "type": "boolean",
             "description": "Start background design-time process at project load time.",
             "default": false
+          "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
+            "type": "boolean",
+            "description": "Show a warning asking if user's would like to configure Azurite auto start.",
+            "default": true
+          },
+          "azureLogicAppsStandard.autoStartAzurite": {
+            "type": "boolean",
+            "description": "Start Azurite when project starts.",
+            "default": false
+          },
+          "azureLogicAppsStandard.azuriteLocationSetting": {
+            "type": "string",
+            "description": "Default location for Azurite repository for Logic Apps Standard Workspaces"
           }
         }
       }
@@ -786,7 +802,8 @@
     "ms-vscode.azure-account",
     "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
-    "ms-azuretools.vscode-azureresourcegroups"
+    "ms-azuretools.vscode-azureresourcegroups",
+    "ms-dotnettools.csharp"
   ],
   "activationEvents": [
     "onCommand:azureLogicAppsStandard.openDesigner",

@@ -427,7 +427,6 @@ function isValidJSONObjectFormat(value: string): boolean {
 }
 
 function isValidArrayFormat(value: string): boolean {
-  console.log(value);
   const trimmedValue = (value || '').trim();
   return startsWith(trimmedValue, '[') && endsWith(trimmedValue, ']');
 }

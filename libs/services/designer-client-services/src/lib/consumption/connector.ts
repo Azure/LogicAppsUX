@@ -1,8 +1,8 @@
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '../connector';
+import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { ArgumentException, UnsupportedException, getResourceName, optional } from '@microsoft/utils-logic-apps';
+import { ArgumentException, UnsupportedException, equals, getResourceName, optional } from '@microsoft/utils-logic-apps';
 
 interface ConsumptionConnectorServiceOptions extends BaseConnectorServiceOptions {
   workflowReferenceId: string;
@@ -19,15 +19,15 @@ export class ConsumptionConnectorService extends BaseConnectorService {
 
   async getLegacyDynamicContent(
     connectionId: string,
-    _connectorId: string,
+    connectorId: string,
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, apiVersion, workflowReferenceId } = this.options;
+    const { baseUrl, workflowReferenceId } = this.options;
     return this._executeAzureDynamicApi(
       connectionId,
+      connectorId,
       `${baseUrl}${connectionId}`,
-      apiVersion,
       parameters,
       managedIdentityProperties ? { workflowReference: { id: workflowReferenceId } } : undefined
     );
@@ -37,7 +37,6 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
     isManagedIdentityConnection?: boolean
@@ -64,7 +63,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       content: {
         ...optional('properties', this._getPropertiesIfNeeded(isManagedIdentityConnection)),
         dynamicInvocationDefinition: dynamicState,
-        parameters: invokeParameters,
+        parameters,
       },
     });
     return this._getResponseFromDynamicApi(response, uri)?.value;
@@ -74,7 +73,6 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
     isManagedIdentityConnection?: boolean
@@ -83,6 +81,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     const {
       extension: { operationId: dynamicOperation },
       isInput,
+      contextParameterAlias,
     } = dynamicState;
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
@@ -98,15 +97,16 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       });
     }
 
-    const uri = `${connectionId}/dynamicSchema`;
+    const uri = `${connectionId}/dynamicProperties`;
     const response = await httpClient.post({
       uri,
       queryParameters: { 'api-version': apiVersion },
       content: {
         ...optional('properties', this._getPropertiesIfNeeded(isManagedIdentityConnection)),
-        location: isInput ? 'Input' : undefined,
+        location: isInput ? 'input' : 'output',
         dynamicInvocationDefinition: dynamicState.extension,
-        parameters: invokeParameters,
+        parameters,
+        contextParameterAlias,
       },
     });
     return this._getResponseFromDynamicApi(response, uri);
@@ -116,13 +116,12 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any,
+    dynamicExtension: TreeDynamicExtension,
     isManagedIdentityConnection?: boolean
   ): Promise<TreeDynamicValue[]> {
     const { apiVersion, httpClient } = this.options;
-    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
+    const { dynamicState, selectionState } = dynamicExtension;
 
     const uri = `${connectionId}/dynamicTree`;
     const response = await httpClient.post({
@@ -131,10 +130,16 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       content: {
         ...optional('properties', this._getPropertiesIfNeeded(isManagedIdentityConnection)),
         dynamicInvocationDefinition: dynamicState,
-        parameters: invokeParameters,
+        parameters,
+        selectionState,
       },
     });
-    return this._getResponseFromDynamicApi(response, uri)?.value;
+    const values = this._getResponseFromDynamicApi(response, uri)?.value;
+    return (values || []).map((item: any) => ({
+      value: item,
+      displayName: item.displayName,
+      isParent: item.isParent ?? equals(item.nodeType, 'parent'),
+    }));
   }
 
   private _getPropertiesIfNeeded(isManagedIdentityConnection?: boolean):

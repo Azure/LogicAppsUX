@@ -14,6 +14,7 @@ import {
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
   useAllConnectionErrors,
+  serializeWorkflow,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -78,7 +79,7 @@ export const DesignerCommandBar = ({
     [allInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
   );
 
-  const saveIsDisabled = isSaving || haveErrors || !designerIsDirty;
+  const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
@@ -121,6 +122,15 @@ export const DesignerCommandBar = ({
       },
       iconProps: { iconName: 'Parameter' },
       onClick: () => !!dispatch(switchToWorkflowParameters()),
+    },
+    {
+      key: 'codeview',
+      text: 'View Code',
+      iconProps: { iconName: 'Code' },
+      onClick: async () => {
+        console.log(await serializeWorkflow(DesignerStore.getState()));
+        alert('Check console for workflow serialization');
+      },
     },
     {
       key: 'errors',

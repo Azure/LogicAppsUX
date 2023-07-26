@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Verbindingsverwijzing maken"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,13 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Mislukt"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -45,6 +51,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapore"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Vereist. De tekenreeks die moet worden onderzocht."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -54,13 +66,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Geen uitvoer"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Er is een time-out opgetreden"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +90,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Er zijn geen waarden die overeenkomen met uw zoekopdracht"
     }
   ],
   "/NtebP": [
@@ -168,7 +180,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Wanneer dit is ingeschakeld, wordt deze actie uitgevoerd met de gebruiker vanuit de instelling 'Uitvoeren als' in de Dataverse-trigger."
     }
   ],
   "/yYyOq": [
@@ -262,7 +274,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Beveiligde invoer of uitvoer ingeschakeld."
     }
   ],
   "0FzNJV": [
@@ -663,6 +675,12 @@
       "value": "Opslaan"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Optioneel. De RFC 4646-landinstellingscode die moet worden gebruikt. Als dit niet is opgegeven, wordt de standaardinstelling gebruikt. Als landinstelling geen geldige waarde is, wordt er een fout gegenereerd dat de opgegeven landinstelling niet geldig is of geen bijbehorende landinstelling heeft."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -743,10 +761,22 @@
       "value": "Er is geen inhoud beschikbaar"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Vereist. De tekenreeks die moet worden onderzocht."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Als u een bestaand schema vervangt door een incompatibel schema, kunnen er fouten in uw kaart worden veroorzaakt."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Hiermee wordt de verzameling in omgekeerde volgorde geretourneerd"
     }
   ],
   "3X4FHS": [
@@ -842,13 +872,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Wachten"
     }
   ],
   "43xObP": [
@@ -931,6 +961,12 @@
       "value": "Vereist. De naam van de parameter met de gewenste waarden."
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Uw stroom is bijgewerkt."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -977,16 +1013,34 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Actie uitleggen"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Deelvenster openen"
     }
   ],
   "595Baw": [
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokio"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "Een voorwaarde toevoegen"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Laat Microsoft weten wat u goed vindt aan deze functie"
     }
   ],
   "5OvGgn": [
@@ -1096,7 +1150,13 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Fout bij het laden van invoer"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Alle geavanceerde parameters weergeven"
     }
   ],
   "6OSgRP": [
@@ -1114,7 +1174,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Verbindingsverwijzing selecteren"
     }
   ],
   "6fDYzG": [
@@ -1135,6 +1195,12 @@
     {
       "type": 0,
       "value": " zijn te veel invoerwaarden toegewezen"
+    }
+  ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Deze actie is bijgewerkt"
     }
   ],
   "6jiO7t": [
@@ -1167,16 +1233,28 @@
       "value": "Vorige"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "Voltooi het instellen van deze acties om deze werkstroom voor te bereiden:"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "Vereist. Het getal waarmee vermenigvuldigtal 2 moet worden vermenigvuldigd."
     }
   ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Stroom maken"
+    }
+  ],
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Vereist. De waarde waarvoor de index moet worden gevonden."
     }
   ],
   "6ueRYm": [
@@ -1188,7 +1266,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Gegevenstype"
     }
   ],
   "73iM9+": [
@@ -1200,7 +1278,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Gebruikersnaam opgeven"
     }
   ],
   "7EZ2oY": [
@@ -1271,10 +1349,22 @@
       "value": "Optioneel. De landsinstellingen die moeten worden gebruikt wanneer u iets opmaakt (standaard ingesteld op en-us)."
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "Hiermee wordt uw werkstroom hersteld naar de status van vóór de bewerking van Copilot. Als u aanvullende bewerkingen in de werkstroom hebt aangebracht na die van Copilot, gaan deze verloren. Deze actie kan niet ongedaan worden gemaakt. Wilt u doorgaan?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuscode"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "Een fout melden"
     }
   ],
   "7lnElz": [
@@ -1304,7 +1394,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Niet-ondersteund verificatietype "
     },
     {
       "type": 1,
@@ -1312,7 +1402,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "7zzPsK": [
@@ -1395,6 +1485,24 @@
     {
       "type": 0,
       "value": "Schakel de beheerde identiteit voor de logische app in."
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Beschrijf hoe uw stroom moet worden gewijzigd. Voeg waar mogelijk details toe, inclusief de connector die moet worden gebruikt en of er inhoud moet worden opgenomen."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Deze stroom bewerken om"
     }
   ],
   "8SxNQC": [
@@ -1555,6 +1663,12 @@
       "value": "(UTC-03:00) Brasilia"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Uw stroom omkeren"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1593,6 +1707,12 @@
       "value": "Tekst"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1609,6 +1729,12 @@
     {
       "type": 0,
       "value": "Indien beide parameters waar zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Feedback verzenden"
     }
   ],
   "9x8hg8": [
@@ -1679,6 +1805,18 @@
     {
       "type": 0,
       "value": "Selecteer de frequentie."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Alle geavanceerde parameters en de bijbehorende waarden verwijderen en wissen"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Niet verbonden met"
     }
   ],
   "AnX5yC": [
@@ -1796,13 +1934,19 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Voltooid met nieuwe pogingen"
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
       "value": "Vereist. De tekenreeks met URI-codering."
+    }
+  ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Meer informatie over ongedaan maken"
     }
   ],
   "BJNUxN": [
@@ -1820,7 +1964,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Niet opgegeven"
     }
   ],
   "BQCPY7": [
@@ -1833,6 +1977,12 @@
     {
       "type": 0,
       "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Er is iets verkeerd gegaan. Probeer het opnieuw."
     }
   ],
   "BSgavq": [
@@ -1862,7 +2012,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matrix"
     }
   ],
   "Bl4Iv0": [
@@ -1898,7 +2048,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren."
     }
   ],
   "BtL7UI": [
@@ -1919,6 +2069,12 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter is dan de waarde van het vergelijkingsobject."
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Een vraag stellen"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1931,6 +2087,18 @@
       "value": "Items die voldoen aan de opgegeven drempelwaarde, ophalen door het vervolgtoken te volgen. Vanwege de paginagrootte van de connector kan het aantal geretourneerde items de drempelwaarde overschrijden."
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "Een actie toevoegen waarmee een e-mail wordt verzonden"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -1940,7 +2108,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Verbinding maken"
     }
   ],
   "CaajcD": [
@@ -1952,7 +2120,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "De eigenschappen "
     },
     {
       "type": 1,
@@ -1960,7 +2128,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " zijn ongeldig voor het verificatietype "
     },
     {
       "type": 1,
@@ -1968,7 +2136,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "."
     }
   ],
   "Cb6IEq": [
@@ -1998,7 +2166,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "U moet de parameternaam opgeven."
     }
   ],
   "ClZW2r": [
@@ -2104,7 +2272,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Datum"
     }
   ],
   "DQV7aK": [
@@ -2231,10 +2399,16 @@
       "value": "Converteert de parameter naar een decimaal getal"
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "Controleer de acties van de stroom om te bekijken of er parameters moeten worden ingesteld. Vergeet niet op te slaan wanneer u klaar bent."
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag."
     }
   ],
   "ERAWZA": [
@@ -2325,6 +2499,12 @@
       "value": "De aanvraaggeschiedenis voor deze bewerking weergeven"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Stel deze verbindingen in om ze in uw stroom te gebruiken."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2385,6 +2565,12 @@
       "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Uw stroom is bijgewerkt."
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
@@ -2394,7 +2580,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fouten"
     }
   ],
   "FT3jt6": [
@@ -2486,7 +2672,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Er wordt een tekenreeks voor elk item van een matrix geretourneerd, gekoppeld door een scheidingsteken"
     }
   ],
   "G/CC5/": [
@@ -2551,6 +2737,12 @@
       "value": "Vereist. Het object dat in de verzameling Binnen moet worden gevonden."
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Stroom uitleggen"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2563,6 +2755,20 @@
       "value": "Verwijzingsfuncties"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2573,6 +2779,12 @@
     {
       "type": 0,
       "value": "Meer opdrachten"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Aan de slag"
     }
   ],
   "Gi72X5": [
@@ -2681,10 +2893,16 @@
       "value": "Maand"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Vereist. De verzameling die moet worden gesorteerd."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Volledig scherm afsluiten"
     }
   ],
   "HOchry": [
@@ -2721,6 +2939,12 @@
     {
       "type": 0,
       "value": "Overschakelen naar detailinvoer voor het matrixobject"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Stroom bewerken"
     }
   ],
   "HfrUId": [
@@ -2788,7 +3012,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Is overgeslagen"
     }
   ],
   "I41vZ/": [
@@ -2883,20 +3107,6 @@
       "value": "(UTC+09:00) Jakoetsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fout bij het uitvoeren van de "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " van de API."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2907,6 +3117,12 @@
     {
       "type": 0,
       "value": "Geen eigenschappen"
+    }
+  ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "Dit is uw stroom! Vertel me wat u wilt als u wilt dat ik uw stroom wijzig. Bijvoorbeeld:"
     }
   ],
   "IxWip7": [
@@ -2950,7 +3166,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Mislukt"
     }
   ],
   "J9wWry": [
@@ -2985,6 +3201,12 @@
     {
       "type": 0,
       "value": "Verwijderen"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Actie ongedaan gemaakt"
     }
   ],
   "JNQHws": [
@@ -3077,10 +3299,26 @@
       "value": "Verbindingsverwijzing wijzigen"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " vervangen door"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "Voer een geldig dubbel getal in."
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "Wanneer een nieuw item..."
     }
   ],
   "KX1poC": [
@@ -3144,7 +3382,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Genegeerd"
     }
   ],
   "KwGA+K": [
@@ -3195,6 +3433,12 @@
       "value": "Functie-apps laden..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3222,7 +3466,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Vereist. De verzameling waaruit het eerste object moet worden gehaald."
     }
   ],
   "LV/BTE": [
@@ -3241,6 +3485,12 @@
     {
       "type": 0,
       "value": "Een parallelle vertakking toevoegen"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Deze actie is verwijderd"
     }
   ],
   "LdITnG": [
@@ -3288,7 +3538,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Retourneert het begin van de dag voor de ingevoerde tijdstempel voor de tekenreeks."
     }
   ],
   "Lub7NN": [
@@ -3327,6 +3577,12 @@
       "value": "Codeweergave"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Elke week op maandag"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3363,10 +3619,16 @@
       "value": "Vereist. De verzamelingen die moeten worden geëvalueerd. Een object moet zich in alle ingevoerde verzamelingen bevinden om in het resultaat te worden weergegeven."
     }
   ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Een actie toevoegen"
+    }
+  ],
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Niet-ondersteunde computertaal."
     }
   ],
   "MKTdNk": [
@@ -3468,7 +3730,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Time-out opgetreden"
     }
   ],
   "N0pS6Y": [
@@ -3528,7 +3790,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Retourneert de waarde van de opgegeven variabele."
     }
   ],
   "NnD8gF": [
@@ -3576,7 +3838,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Is mislukt"
     }
   ],
   "O+8vRv": [
@@ -3594,13 +3856,19 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Er zijn geen fouten gevonden."
     }
   ],
   "O27gKq": [
     {
       "type": 0,
       "value": "Bestanden laden..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -3663,6 +3931,12 @@
       "value": "Alle connectors laden..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Vertel me er meer over"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3679,6 +3953,12 @@
     {
       "type": 0,
       "value": "Hiermee worden de resultaten geretourneerd van de acties op het hoogste niveau in de opgegeven actie met bereik, zoals een For_each-, Until- of Scope-actie."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Deze werkstroom opslaan"
     }
   ],
   "OdNhwc": [
@@ -3750,7 +4030,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Vereiste eigenschappen "
     },
     {
       "type": 1,
@@ -3758,15 +4038,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " ontbreekt voor verificatietype "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [
@@ -3808,7 +4084,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Aangepaste tracerings-id"
     }
   ],
   "P4rEwD": [
@@ -3882,7 +4158,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Fouten met instellingen"
     }
   ],
   "PfCJlN": [
@@ -3912,7 +4188,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Verbindingsfouten"
     }
   ],
   "PtqSHp": [
@@ -3948,7 +4224,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Uitvoeren na "
     },
     {
       "type": 1,
@@ -4010,7 +4286,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Vereiste eigenschap "
     },
     {
       "type": 1,
@@ -4018,15 +4294,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " ontbreekt voor verificatietype "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -4056,13 +4328,19 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Werkstroomparameters"
     }
   ],
   "Qn8qxn": [
     {
       "type": 0,
       "value": "Er wordt een tekenreeks in datumindeling geretourneerd"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
     }
   ],
   "QpRRt3": [
@@ -4108,7 +4386,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Voer een geldige voorwaarde in."
     }
   ],
   "RFjYpH": [
@@ -4210,7 +4488,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Vereist. De expressies die waar moeten zijn."
     }
   ],
   "RvpHdu": [
@@ -4241,6 +4519,12 @@
     {
       "type": 0,
       "value": "Kop 2"
+    }
+  ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "Door AI gegenereerde inhoud is mogelijk onjuist"
     }
   ],
   "SJFVxf": [
@@ -4349,10 +4633,22 @@
       "value": "Feedback geven"
     }
   ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "Leg uit wat een actie doet"
+    }
+  ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Vrijdag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4448,7 +4744,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Vereist. De waarde waarvoor de index moet worden gevonden."
     }
   ],
   "Tmr/9e": [
@@ -4460,7 +4756,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Fouten met werkstroomparameter"
     }
   ],
   "Ts5Pzr": [
@@ -4587,6 +4883,12 @@
       "value": "Vereist. De verzameling waaruit het laatste object moet worden gehaald."
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Stuur me een e-mail wanneer"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4620,7 +4922,13 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Uitvouwen"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Vereist. De lengte van elk segment."
     }
   ],
   "Umpr3z": [
@@ -4652,7 +4960,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Het type voor "
     },
     {
       "type": 1,
@@ -4660,7 +4968,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": "' is "
     },
     {
       "type": 1,
@@ -4668,7 +4976,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "Ur+wph": [
@@ -4681,6 +4989,12 @@
     {
       "type": 0,
       "value": "Voer een naam in voor de verbinding"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
     }
   ],
   "V+/c21": [
@@ -4719,6 +5033,20 @@
       "value": "In-app"
     }
   ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Leg uit wat de actie "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " doet in deze stroom"
+    }
+  ],
   "VHm1Sr": [
     {
       "type": 0,
@@ -4739,6 +5067,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -4833,6 +5167,18 @@
       "value": "Acties"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Deze actie is toegevoegd"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4847,6 +5193,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de nieuwe eigenschap."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Beschrijf iets in uw stroom dat moet worden vervangen en waarmee het moet worden vervangen. Voeg waar mogelijk details toe, inclusief de connector die moet worden gebruikt en of er inhoud moet worden opgenomen."
     }
   ],
   "WGwH45": [
@@ -4977,6 +5329,12 @@
       "value": "Opnieuw proberen"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Geavanceerde parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5009,6 +5367,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Bagdad"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Vind-ik-leuk"
     }
   ],
   "XRK+gt": [
@@ -5141,6 +5505,12 @@
       "value": "Wachtwoord"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Een actie toevoegen"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5165,6 +5535,12 @@
       "value": "Hoofdtekstitem"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "Alle vereiste parameters zijn ingesteld"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5174,7 +5550,13 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Triggervoorwaarden"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chatsessie-id:"
     }
   ],
   "YHsAKl": [
@@ -5371,6 +5753,12 @@
       "value": "Verkorte versie van trigger().outputs.body"
     }
   ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "Dit is uw stroom."
+    }
+  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5407,6 +5795,12 @@
       "value": "Meer informatie over dynamische inhoud"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5419,16 +5813,16 @@
       "value": "Vereist. Het aantal exemplaren van de subtekenreeks dat moet worden gevonden."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Vereist. Het aantal objecten dat moet worden verwijderd uit het voorste deel van de verzameling. Dit aantal moet een geheel getal zijn."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Nieuwe parameters toevoegen"
     }
   ],
   "aK4iLW": [
@@ -5458,7 +5852,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Geannuleerd"
     }
   ],
   "ae7W0a": [
@@ -5540,7 +5934,13 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een binaire waarde."
+    }
+  ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Optioneel. Een sleutel die moet worden gebruikt voor het sorteren van objecten in de verzameling."
     }
   ],
   "bSZ0lL": [
@@ -5564,7 +5964,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "De verbinding van de aanroeper gebruiken"
     }
   ],
   "bXFGpe": [
@@ -5585,22 +5985,34 @@
       "value": "De maximumwaarde in de invoermatrix van getallen wordt geretourneerd"
     }
   ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Stel deze verbindingen in om ze in uw stroom te gebruiken."
+    }
+  ],
   "bldzuj": [
     {
       "type": 0,
       "value": "Geschiedenis voor opnieuw proberen"
     }
   ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Alles wissen"
+    }
+  ],
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Bewerking openen"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Voor deze bewerking zijn beveiligde invoer- of uitvoerwaarden ingeschakeld."
     }
   ],
   "byTBrn": [
@@ -5774,7 +6186,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Downloaden (Alt of Option + select)"
     }
   ],
   "dBWIjR": [
@@ -5807,6 +6219,18 @@
       "value": "Beheerde identiteit"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Actie vervangen"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "Welkom terug! Vertel me wat u wilt als u wilt dat ik uw stroom wijzig. Bijvoorbeeld:"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5829,6 +6253,12 @@
     {
       "type": 0,
       "value": "Geef het gedrag en de mogelijkheden op voor het overbrengen van inhoud via HTTP. Grote berichten worden mogelijk opgesplitst in kleinere aanvragen aan de connector, om het uploaden van grote berichten toe te staan. Meer informatie vindt u op http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Overslaan"
     }
   ],
   "dWFyfN": [
@@ -5923,6 +6353,12 @@
       "value": "XSLT is niet gegenereerd."
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Herstellen"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5981,6 +6417,12 @@
     {
       "type": 0,
       "value": "Gedeeld"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "Wanneer een nieuw item"
     }
   ],
   "f/lWTW": [
@@ -6080,7 +6522,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Verbinding selecteren"
     }
   ],
   "g076bL": [
@@ -6217,6 +6659,12 @@
       "value": "Voer de doelgroep in."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Retourneert een booleaanse waarde die aangeeft of een tekenreeks een getal met drijvende komma is"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6232,7 +6680,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Laden..."
     }
   ],
   "h+W3VW": [
@@ -6297,10 +6745,22 @@
       "value": "Het resultaat na aftrek van het ene van het andere getal wordt geretourneerd"
     }
   ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Ongedaan maken"
+    }
+  ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6491,6 +6951,12 @@
       "value": "Voorbeeld: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6506,7 +6972,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 2."
     }
   ],
   "iq+tiv": [
@@ -6528,7 +6994,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Voer een geldige tabel in."
     }
   ],
   "iy8rNf": [
@@ -6573,6 +7039,12 @@
       "value": "Nieuw item maken"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Microsoft laten weten hoe deze functie kan worden verbeterd"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6591,10 +7063,34 @@
       "value": "Een bronschema toevoegen"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " van "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " wordt weergegeven"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "Doelschema"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Vereist. De tekenreeks of matrix die moet worden gesplitst."
     }
   ],
   "jVpanH": [
@@ -6627,6 +7123,12 @@
       "value": "Kan schema niet genereren"
     }
   ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Beschrijf iets wat uw stroom moet doen. Voeg waar mogelijk details toe, inclusief de connector die moet worden gebruikt en of er inhoud moet worden opgenomen."
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -6654,7 +7156,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Parameterfouten"
     }
   ],
   "kBOAkT": [
@@ -6693,6 +7195,18 @@
       "value": "s"
     }
   ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Controleer deze acties om te zien of er parameters moeten worden ingesteld."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Elke week op maandag..."
+    }
+  ],
   "kM+Mr0": [
     {
       "type": 0,
@@ -6726,7 +7240,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Elementen en toewijzingen worden verwijderd wanneer deze niet zijn verbonden met een doelelement."
     }
   ],
   "klY9UN": [
@@ -6737,7 +7251,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "Er komen geen items overeen."
             }
           ]
         },
@@ -6748,7 +7262,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " item komt overeen."
             }
           ]
         },
@@ -6759,7 +7273,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " items komen overeen."
             }
           ]
         }
@@ -6785,6 +7299,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Windhoek"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Actie vervangen door"
     }
   ],
   "l36V56": [
@@ -6851,6 +7371,12 @@
     {
       "type": 0,
       "value": "Groep toevoegen"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Vereist. De verzameling die moet worden omgekeerd."
     }
   ],
   "lexzgJ": [
@@ -7014,7 +7540,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Vereist. De XPath-expressie die moet worden geëvalueerd."
     }
   ],
   "mZRMD9": [
@@ -7132,7 +7658,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Overgeslagen"
     }
   ],
   "nHseED": [
@@ -7162,7 +7688,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Nieuwe parameter"
     }
   ],
   "nRpM02": [
@@ -7216,7 +7742,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Er is een time-out opgetreden"
     }
   ],
   "no/SMg": [
@@ -7555,6 +8081,12 @@
       "value": "referenceKeyFormat"
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Verbinding maken met apps en services"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7686,7 +8218,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Ongeldige eigenschap "
     },
     {
       "type": 1,
@@ -7694,7 +8226,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " voor verificatietype "
     },
     {
       "type": 1,
@@ -7702,7 +8234,13 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
@@ -7798,7 +8336,13 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "is voltooid"
+    }
+  ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "Sorry, ik begrijp uw aanvraag niet. Formuleer het op een andere manier en probeer het opnieuw."
     }
   ],
   "rsdJcV": [
@@ -7843,6 +8387,12 @@
       "value": "Verwijderen"
     }
   ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "Als u deze werkstroom wilt opslaan, voltooit u het instellen van deze acties:"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
@@ -7876,7 +8426,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Geef parameters op om de uitvoer te testen."
     }
   ],
   "sW47JR": [
@@ -7931,6 +8481,12 @@
     {
       "type": 0,
       "value": "Indien een van beide parameters waar is, wordt Waar geretourneerd"
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Annuleren"
     }
   ],
   "srpZD2": [
@@ -8049,6 +8605,12 @@
     {
       "type": 0,
       "value": "Type"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Deze werkstroom testen"
     }
   ],
   "tUCptx": [
@@ -8215,10 +8777,16 @@
       "value": "Beperk de maximale duur tussen herhaalde pogingen en asynchrone antwoorden voor deze actie. Opmerking: hiermee wordt de time-out van de aanvraag van één aanvraag niet gewijzigd."
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Copilot heeft de capaciteit bereikt en is tijdelijk niet beschikbaar. Probeer het later opnieuw."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Voltooid"
     }
   ],
   "uc/PoD": [
@@ -8254,7 +8822,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Bewerkingsfouten"
     }
   ],
   "ui7GCl": [
@@ -8299,6 +8867,12 @@
       "value": "Parameters"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Stel een vraag met betrekking tot uw werkstroom of Logic Apps."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8335,10 +8909,16 @@
       "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
     }
   ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Leg uit wat deze stroom doet"
+    }
+  ],
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Vereist. De verzameling waaruit de objecten van de eerste telling moeten worden gehaald."
     }
   ],
   "vQcQkU": [
@@ -8393,6 +8973,12 @@
     {
       "type": 0,
       "value": "Verwijderen"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "Voltooi het instellen van deze actie om deze werkstroom voor te bereiden:"
     }
   ],
   "vr70Gn": [
@@ -8598,7 +9184,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Retourneert een object waarbij de opgegeven eigenschap is verwijderd."
     }
   ],
   "x3dWOL": [
@@ -8610,7 +9196,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Afgebroken"
     }
   ],
   "x8kTAX": [
@@ -8709,6 +9295,12 @@
       "value": "Parameters worden gedeeld in workflows in een logische app."
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Verbinden met"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8757,6 +9349,18 @@
       "value": "Retourneert een subset van tekens uit een tekenreeks."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Hiermee wordt een matrix geretourneerd die in oplopende volgorde is gesorteerd"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Alles weergeven"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -8767,6 +9371,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Een tekenreeks of matrix splitsen in segmenten van gelijke lengte"
     }
   ],
   "ydqOly": [
@@ -8789,6 +9399,12 @@
       "value": "."
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Vind-ik-niet-leuk"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8798,13 +9414,19 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "De hoofdtekst wordt gedeeltelijk geretourneerd in een uitvoer van meerdere delen van de trigger"
     }
   ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Datum- en tijdfuncties"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Stuur me een e-mail wanneer..."
     }
   ],
   "ysoumb": [
@@ -8834,7 +9456,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Meer informatie"
     }
   ],
   "z/UY4k": [
@@ -8895,6 +9517,12 @@
       "value": "Acties selecteren"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Retourneert een booleaanse waarde die aangeeft of een tekenreeks een geheel getal is"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -8907,10 +9535,22 @@
       "value": "(UTC+12:00) Petropavlovsk-Kamtsjatski - verouderd"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "Voltooi het instellen van deze acties om deze werkstroom op te slaan:"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Converteert een tekenreeks, met optioneel een landinstelling en een notatie naar een datum"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Stoppen"
     }
   ],
   "ziXw25": [
@@ -8946,7 +9586,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 1."
     }
   ],
   "zxe9hh": [

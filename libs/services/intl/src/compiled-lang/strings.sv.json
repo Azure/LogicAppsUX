@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Skapa anslutningsreferens"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,13 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Fel"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -49,6 +55,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapore"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Strängen som ska undersökas."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -58,13 +70,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Inga utdata"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Tidsgräns uppnådd"
     }
   ],
   "/EU/oJ": [
@@ -82,7 +94,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Inga värden matchar din sökning."
     }
   ],
   "/NtebP": [
@@ -172,7 +184,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "När den här åtgärden är aktiverad körs den med användaren från inställningen Kör som, i Dataverse-utlösaren."
     }
   ],
   "/yYyOq": [
@@ -266,7 +278,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Säkra indata eller utdata har aktiverats."
     }
   ],
   "0FzNJV": [
@@ -667,6 +679,12 @@
       "value": "Spara"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Valfri. RfC 4646-språkkoden som ska användas. Om inget anges används standardspråk. Om språkvarianten inte är ett giltigt värde genereras ett fel som anger att de nationella inställningarna är ogiltiga eller inte har en associerad språkvariant."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -747,10 +765,22 @@
       "value": "Det finns inte något tillgängligt innehåll"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Strängen som ska undersökas."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Om du ersätter ett befintligt schema med ett inkompatibelt schema kan det skapa fel i kartan."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Returnerar samlingen i omvänd ordning"
     }
   ],
   "3X4FHS": [
@@ -846,13 +876,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Måste anges. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Väntar"
     }
   ],
   "43xObP": [
@@ -931,6 +961,12 @@
       "value": "Krävs. Namnet på parametern vars värden du vill ha."
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Ditt flöde har uppdaterats."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -977,16 +1013,34 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Förklara åtgärd"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Öppna panel"
     }
   ],
   "595Baw": [
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "Lägg till ett villkor"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Berätta för Microsoft vad du uppskattade med den här funktionen"
     }
   ],
   "5OvGgn": [
@@ -1096,7 +1150,13 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Fel vid inläsning av indata"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Visa alla avancerade parametrar"
     }
   ],
   "6OSgRP": [
@@ -1114,7 +1174,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Välj anslutningsreferens"
     }
   ],
   "6fDYzG": [
@@ -1135,6 +1195,12 @@
     {
       "type": 0,
       "value": " har tilldelats för många indata"
+    }
+  ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Uppdaterade den här åtgärden"
     }
   ],
   "6jiO7t": [
@@ -1167,16 +1233,28 @@
       "value": "Föregående"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "Slutför konfigurationen av följande åtgärder om du vill göra det här arbetsflödet redo:"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "Krävs. Talet att multiplicera Multiplikand 2 med."
     }
   ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Skapa flöde"
+    }
+  ],
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Måste anges. Det värde som indexet ska hittas för."
     }
   ],
   "6ueRYm": [
@@ -1188,7 +1266,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Datatyp"
     }
   ],
   "73iM9+": [
@@ -1200,7 +1278,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Ange användarnamn"
     }
   ],
   "7EZ2oY": [
@@ -1271,10 +1349,22 @@
       "value": "Valfritt. De nationella inställningar som ska användas vid formatering (standardinställningen är en-us)."
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "Detta återställer arbetsflödet till det tillstånd det innan Copilot redigerade det. Om du har gjort ytterligare ändringar i arbetsflödet efter Copilots ändringar kommer du att förlora dem. Det går inte att ångra den här åtgärden. Vill du fortsätta?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuskod"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "Rapportera en bugg"
     }
   ],
   "7lnElz": [
@@ -1304,7 +1394,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Autentiseringstypen "
     },
     {
       "type": 1,
@@ -1312,7 +1402,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": " stöds inte."
     }
   ],
   "7zzPsK": [
@@ -1395,6 +1485,24 @@
     {
       "type": 0,
       "value": "Aktivera hanterad identitet för logikappen."
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Beskriv hur ditt flöde ska ändras. Lägg till information där det är möjligt, även information om vilken anslutningsapp som ska användas och om något innehåll ska tas med."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Redigera det här flödet till"
     }
   ],
   "8SxNQC": [
@@ -1555,6 +1663,12 @@
       "value": "(UTC-03:00) Brasilia"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Återställ ditt flöde"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1593,6 +1707,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1609,6 +1729,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är sanna"
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Skicka feedback"
     }
   ],
   "9x8hg8": [
@@ -1679,6 +1805,18 @@
     {
       "type": 0,
       "value": "Välj frekvens."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Ta bort och rensa alla avancerade parametrar och deras värden"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Ej ansluten till"
     }
   ],
   "AnX5yC": [
@@ -1796,13 +1934,19 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Lyckades med återförsök"
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
       "value": "Krävs. Den URI-kodade strängen."
+    }
+  ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Läs mer om ångra-åtgärder"
     }
   ],
   "BJNUxN": [
@@ -1820,7 +1964,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Inte angivet"
     }
   ],
   "BQCPY7": [
@@ -1833,6 +1977,12 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Någonting gick fel. Försök igen."
     }
   ],
   "BSgavq": [
@@ -1862,7 +2012,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matris"
     }
   ],
   "Bl4Iv0": [
@@ -1898,7 +2048,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska aktiveras."
     }
   ],
   "BtL7UI": [
@@ -1919,6 +2069,12 @@
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än det objekt det jämförs med."
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Ställ en fråga"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1931,6 +2087,18 @@
       "value": "Hämta objekt som uppfyller det angivna tröskelvärdet genom att följa fortsättningstoken. På grund av anslutningsappens sidstorlek, kan antalet som returneras överstiga tröskelvärdet."
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "Lägg till en åtgärd som skickar ett e-postmeddelande"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -1940,7 +2108,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Skapa anslutning"
     }
   ],
   "CaajcD": [
@@ -1952,7 +2120,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Egenskaperna "
     },
     {
       "type": 1,
@@ -1960,7 +2128,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " är ogiltiga för autentiseringstypen "
     },
     {
       "type": 1,
@@ -1968,7 +2136,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "."
     }
   ],
   "Cb6IEq": [
@@ -1998,7 +2166,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Parameternamnet måste anges."
     }
   ],
   "ClZW2r": [
@@ -2104,7 +2272,7 @@
   "DMuwuJ": [
     {
       "type": 0,
-      "value": "Date"
+      "value": "Datum"
     }
   ],
   "DQV7aK": [
@@ -2227,10 +2395,16 @@
       "value": "Omvandlar parametern till ett decimaltal"
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "Kontrollera flödets åtgärder för att se om några parametrar behöver konfigureras. Glöm inte att spara när du är klar!"
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Konfigurera körningens spårnings-ID. Delning för det här spårnings-ID:t för att initiera begäran."
     }
   ],
   "ERAWZA": [
@@ -2321,6 +2495,12 @@
       "value": "Visa den här åtgärdens begäranshistorik"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Konfigurera de här anslutningarna så att de kan användas i ditt flöde."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2381,6 +2561,12 @@
       "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Ditt flöde har uppdaterats."
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
@@ -2390,7 +2576,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fel"
     }
   ],
   "FT3jt6": [
@@ -2482,7 +2668,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Returnerar en sträng med varje objekt i en matris som har kopplats med en avgränsare"
     }
   ],
   "G/CC5/": [
@@ -2547,6 +2733,12 @@
       "value": "Obligatoriskt. Det objekt det ska sökas efter i Within-samlingen."
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Förklara flödet"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2559,6 +2751,20 @@
       "value": "Referensfunktioner"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2569,6 +2775,12 @@
     {
       "type": 0,
       "value": "Fler kommandon"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Kom igång"
     }
   ],
   "Gi72X5": [
@@ -2677,10 +2889,16 @@
       "value": "Månad"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Krävs. Den samling som ska sorteras."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Avsluta helskärmsläge"
     }
   ],
   "HOchry": [
@@ -2717,6 +2935,12 @@
     {
       "type": 0,
       "value": "Växla till matrisobjektets detaljindata"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Redigera flöde"
     }
   ],
   "HfrUId": [
@@ -2784,7 +3008,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Har hoppats över"
     }
   ],
   "I41vZ/": [
@@ -2879,20 +3103,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fel vid körning av API:t "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2903,6 +3113,12 @@
     {
       "type": 0,
       "value": "Inga egenskaper"
+    }
+  ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "Här är ditt flöde. Om du vill att jag ska ändra det, så säg bara vad du vill. Exempel:"
     }
   ],
   "IxWip7": [
@@ -2946,7 +3162,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Misslyckades"
     }
   ],
   "J9wWry": [
@@ -2981,6 +3197,12 @@
     {
       "type": 0,
       "value": "Ta bort"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Åtgärden har ångrats"
     }
   ],
   "JNQHws": [
@@ -3073,10 +3295,30 @@
       "value": "Ändra anslutningsreferens"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Ersätt "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " med"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "Ange ett giltigt dubbelnummer."
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "När ett nytt objekt..."
     }
   ],
   "KX1poC": [
@@ -3140,7 +3382,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Ignorerat"
     }
   ],
   "KwGA+K": [
@@ -3191,6 +3433,12 @@
       "value": "Läser in funktionsappar..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3218,7 +3466,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Måste anges. Den samling som det första objektet ska hämtas från."
     }
   ],
   "LV/BTE": [
@@ -3237,6 +3485,12 @@
     {
       "type": 0,
       "value": "Lägg till en parallell gren"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Tog bort den här åtgärden"
     }
   ],
   "LdITnG": [
@@ -3284,7 +3538,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Returnerar starten för dagen för den inskickade strängtidsstämpeln."
     }
   ],
   "Lub7NN": [
@@ -3323,6 +3577,12 @@
       "value": "Kodvy"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Varje vecka på måndag"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3359,10 +3619,16 @@
       "value": "Obligatoriskt. De samlingar som ska utvärderas. Det måste finnas ett objekt i alla samlingar som skickas och visas i resultatet."
     }
   ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Lägga till en åtgärd"
+    }
+  ],
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Programmeringsspråket stöds inte."
     }
   ],
   "MKTdNk": [
@@ -3464,7 +3730,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Tidsgränsen överskreds"
     }
   ],
   "N0pS6Y": [
@@ -3524,7 +3790,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Returnerar värdet för den angivna variabeln."
     }
   ],
   "NnD8gF": [
@@ -3572,7 +3838,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "Har misslyckats"
     }
   ],
   "O+8vRv": [
@@ -3590,13 +3856,19 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Inga fel hittades."
     }
   ],
   "O27gKq": [
     {
       "type": 0,
       "value": "Läser in filer..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -3659,6 +3931,12 @@
       "value": "Läser in alla kopplingar..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Berätta mer om"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3675,6 +3953,12 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Spara det här arbetsflödet"
     }
   ],
   "OdNhwc": [
@@ -3746,7 +4030,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "De obligatoriska egenskaperna "
     },
     {
       "type": 1,
@@ -3754,15 +4038,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [
@@ -3804,7 +4084,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Anpassat spårnings-id"
     }
   ],
   "P4rEwD": [
@@ -3874,7 +4154,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Inställningsfel"
     }
   ],
   "PfCJlN": [
@@ -3904,7 +4184,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Anslutningsfel"
     }
   ],
   "PtqSHp": [
@@ -3940,7 +4220,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Kör efter "
     },
     {
       "type": 1,
@@ -4002,7 +4282,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Den obligatoriska egenskapen "
     },
     {
       "type": 1,
@@ -4010,15 +4290,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -4048,13 +4324,19 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Arbetsflödesparametrar"
     }
   ],
   "Qn8qxn": [
     {
       "type": 0,
       "value": "Returnerar en sträng i datumformat"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
     }
   ],
   "QpRRt3": [
@@ -4100,7 +4382,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Ange ett giltigt villkor."
     }
   ],
   "RFjYpH": [
@@ -4112,7 +4394,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Förhandsversion"
     }
   ],
   "RJes1w": [
@@ -4202,7 +4484,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Obligatoriskt. De uttryck som måste ha värdet sant."
     }
   ],
   "RvpHdu": [
@@ -4233,6 +4515,12 @@
     {
       "type": 0,
       "value": "Rubrik 2"
+    }
+  ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "AI-genererat innehåll kan vara felaktigt"
     }
   ],
   "SJFVxf": [
@@ -4341,10 +4629,22 @@
       "value": "Ge feedback"
     }
   ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "Förklara vad en åtgärd gör"
+    }
+  ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Fredag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4440,7 +4740,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Måste anges. Det värde som indexet ska hittas för."
     }
   ],
   "Tmr/9e": [
@@ -4452,7 +4752,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Fel vid arbetsflödesparameter"
     }
   ],
   "Ts5Pzr": [
@@ -4575,6 +4875,12 @@
       "value": "Obligatoriskt. Den samling som det sista objektet ska hämtas från."
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Skicka mig ett e-postmeddelande när"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4608,7 +4914,13 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandera"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Krävs. Längden på varje segment."
     }
   ],
   "Umpr3z": [
@@ -4640,7 +4952,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Typen av "
     },
     {
       "type": 1,
@@ -4648,7 +4960,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": " är "
     },
     {
       "type": 1,
@@ -4656,7 +4968,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "Ur+wph": [
@@ -4669,6 +4981,12 @@
     {
       "type": 0,
       "value": "Ange ett namn för anslutningen."
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
     }
   ],
   "V+/c21": [
@@ -4698,13 +5016,27 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Intervall"
     }
   ],
   "VA7M1u": [
     {
       "type": 0,
       "value": "I appen"
+    }
+  ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Förklara vad åtgärden "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " gör i det här flödet"
     }
   ],
   "VHm1Sr": [
@@ -4727,6 +5059,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -4821,6 +5159,18 @@
       "value": "Åtgärder"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "La till den här åtgärden"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4835,6 +5185,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den nya egenskapens namn."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Beskriv något i ditt flöde som ska ersättas, och vad som ska ersätta det. Lägg till information där det är möjligt, även information om vilken anslutningsapp som ska användas och om något innehåll ska tas med."
     }
   ],
   "WGwH45": [
@@ -4965,6 +5321,12 @@
       "value": "Försök igen"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Avancerade parametrar"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -4997,6 +5359,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Bagdad"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Gillar"
     }
   ],
   "XRK+gt": [
@@ -5129,6 +5497,12 @@
       "value": "Lösenord"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Lägga till en åtgärd"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5153,6 +5527,12 @@
       "value": "Brödtextobjekt"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "Alla obligatoriska parametrar har konfigurerats"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5162,7 +5542,13 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Villkor för utlösare"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chattsessions-id:"
     }
   ],
   "YHsAKl": [
@@ -5359,6 +5745,12 @@
       "value": "Snabbformat för trigger().outputs.body"
     }
   ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "Här är ditt flöde."
+    }
+  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5395,6 +5787,12 @@
       "value": "Läs mer om dynamiskt innehåll."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5407,16 +5805,16 @@
       "value": "Obligatoriskt. Antalet förekomster av delsträngen som ska hittas."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Lägg till nya parametrar"
     }
   ],
   "aK4iLW": [
@@ -5446,7 +5844,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Avbrutet"
     }
   ],
   "ae7W0a": [
@@ -5528,7 +5926,13 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Krävs. Värdet som konverteras till binärt."
+    }
+  ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Valfri. En nyckel som ska användas för att sortera objekt i samlingen."
     }
   ],
   "bSZ0lL": [
@@ -5552,7 +5956,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Använd anroparens anslutning"
     }
   ],
   "bXFGpe": [
@@ -5573,22 +5977,34 @@
       "value": "Returnerar maxvärdet i indatamatrisen med tal"
     }
   ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Konfigurera de här anslutningarna så att de kan användas i ditt flöde."
+    }
+  ],
   "bldzuj": [
     {
       "type": 0,
       "value": "Återförsökshistorik"
     }
   ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Rensa alla"
+    }
+  ],
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Öppna åtgärd"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Den här åtgärden har aktiverat säkra in- och utdata."
     }
   ],
   "byTBrn": [
@@ -5762,7 +6178,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Ladda ned (Alt eller Alternativ + välj)"
     }
   ],
   "dBWIjR": [
@@ -5795,6 +6211,18 @@
       "value": "Hanterad identitet"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Ersätt åtgärd"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "Välkommen tillbaka! Om du vill att jag ska ändra ditt flöde, så säg bara vad du vill. Exempel:"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5817,6 +6245,12 @@
     {
       "type": 0,
       "value": "Ange beteende och funktioner för överföring av innehåll via HTTP. Stora meddelanden kan delas upp i mindre begäranden till anslutningen för att tillåta uppladdning av stora meddelanden. Information finns på http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Hoppa över"
     }
   ],
   "dWFyfN": [
@@ -5911,6 +6345,12 @@
       "value": "Det gick inte att generera XSLT."
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Återställ"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5969,6 +6409,12 @@
     {
       "type": 0,
       "value": "Delat"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "När ett nytt objekt"
     }
   ],
   "f/lWTW": [
@@ -6068,7 +6514,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Välj anslutning"
     }
   ],
   "g076bL": [
@@ -6205,6 +6651,12 @@
       "value": "Ange målgruppen."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Returnerar ett booleskt värde som anger om en sträng är ett flyttalsnummer"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6220,7 +6672,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Läser in…"
     }
   ],
   "h+W3VW": [
@@ -6285,10 +6737,22 @@
       "value": "Returnerar resultatet av att ha subtraherat två tal"
     }
   ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Ångra"
+    }
+  ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6479,6 +6943,12 @@
       "value": "Exempel: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6494,7 +6964,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Krävs. Talet som ska läggas till i Summand 2."
     }
   ],
   "iq+tiv": [
@@ -6516,7 +6986,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Ange en giltig tabell."
     }
   ],
   "iy8rNf": [
@@ -6561,6 +7031,12 @@
       "value": "Skapa nytt"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Berätta för Microsoft hur den här funktionen kan förbättras"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6579,10 +7055,34 @@
       "value": "Lägg till ett källschema"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Visar "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " av "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "Målschema"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Krävs. Den sträng eller matris som ska delas."
     }
   ],
   "jVpanH": [
@@ -6615,6 +7115,12 @@
       "value": "Det går inte att skapa schema"
     }
   ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Beskriv något som ditt flöde ska göra. Lägg till information där det är möjligt, även information om vilken anslutningsapp som ska användas och om något innehåll ska tas med."
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -6642,7 +7148,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Parameterfel"
     }
   ],
   "kBOAkT": [
@@ -6681,6 +7187,18 @@
       "value": " s"
     }
   ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Kontrollera de här åtgärderna för att se om några parametrar behöver konfigureras."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Varje vecka på måndag..."
+    }
+  ],
   "kM+Mr0": [
     {
       "type": 0,
@@ -6714,7 +7232,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Element och mappningar som inte är anslutna till ett målelement tas bort."
     }
   ],
   "klY9UN": [
@@ -6725,7 +7243,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "inga matchade objekt."
             }
           ]
         },
@@ -6736,7 +7254,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " matchat objekt."
             }
           ]
         },
@@ -6747,7 +7265,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " matchade objekt."
             }
           ]
         }
@@ -6773,6 +7291,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Windhoek"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Ersätt åtgärden med"
     }
   ],
   "l36V56": [
@@ -6839,6 +7363,12 @@
     {
       "type": 0,
       "value": "Lägg till grupp"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Krävs. Den samling som ska omvändas."
     }
   ],
   "lexzgJ": [
@@ -7002,7 +7532,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
     }
   ],
   "mZRMD9": [
@@ -7120,7 +7650,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Hoppades över"
     }
   ],
   "nHseED": [
@@ -7150,7 +7680,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Ny parameter"
     }
   ],
   "nRpM02": [
@@ -7204,7 +7734,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "Har nått tidsgränsen"
     }
   ],
   "no/SMg": [
@@ -7543,6 +8073,12 @@
       "value": "referenceKeyFormat"
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Ansluter till appar och tjänster"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7674,7 +8210,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Ogiltig egenskap "
     },
     {
       "type": 1,
@@ -7682,7 +8218,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " för autentiseringstypen "
     },
     {
       "type": 1,
@@ -7690,7 +8226,13 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
@@ -7786,7 +8328,13 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "Har lyckats"
+    }
+  ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "Jag förstod tyvärr inte din begäran. Formulera om den och försök igen."
     }
   ],
   "rsdJcV": [
@@ -7831,6 +8379,12 @@
       "value": "Ta bort"
     }
   ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "Slutför konfigurationen av följande åtgärder om du vill spara arbetsflödet:"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
@@ -7864,7 +8418,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Ange parametrar för att testa utdata."
     }
   ],
   "sW47JR": [
@@ -7919,6 +8473,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om endera av parametrarna är sann"
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Avbryt"
     }
   ],
   "srpZD2": [
@@ -8037,6 +8597,12 @@
     {
       "type": 0,
       "value": "Typ"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Testa det här arbetsflödet"
     }
   ],
   "tUCptx": [
@@ -8207,10 +8773,16 @@
       "value": "Begränsa den maximala varaktigheten mellan återförsök och asynkrona svar för den här åtgärden. Obs! Detta ändrar inte tidsgränsen för begäran för en enskild begäran."
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Copilot har nått sin kapacitet och är inte tillgänglig för tillfället. Försök igen om en liten stund."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Slutfört"
     }
   ],
   "uc/PoD": [
@@ -8246,7 +8818,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Åtgärdsfel"
     }
   ],
   "ui7GCl": [
@@ -8291,6 +8863,12 @@
       "value": "Parametrar"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Ställ en fråga som är relaterad till arbetsflödet eller Logic Apps."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8327,10 +8905,16 @@
       "value": "Returnerar det sista indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
     }
   ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Förklara vad det här flödet gör"
+    }
+  ],
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hämtas."
     }
   ],
   "vQcQkU": [
@@ -8385,6 +8969,12 @@
     {
       "type": 0,
       "value": "Ignorera"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "Slutför konfigurationen av den här åtgärden om du vill göra det här arbetsflödet redo:"
     }
   ],
   "vr70Gn": [
@@ -8590,7 +9180,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Returnerar ett objekt med den angivna egenskapen borttagen."
     }
   ],
   "x3dWOL": [
@@ -8602,7 +9192,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Avbrutet"
     }
   ],
   "x8kTAX": [
@@ -8701,6 +9291,12 @@
       "value": "Parametrar delas mellan arbetsflöden i en Logic-app."
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Ansluten till"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8749,6 +9345,18 @@
       "value": "Returnerar en delmängd av tecken från en sträng."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Returnerar en matris sorterad i stigande ordning"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Visa alla"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -8759,6 +9367,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Dela upp en sträng eller matris i segment med samma längd"
     }
   ],
   "ydqOly": [
@@ -8781,6 +9395,12 @@
       "value": "."
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Gillar ej"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8790,13 +9410,19 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Returnerar brödtexten för en del i utlösarens multipart-utdata"
     }
   ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Datum- och tidsfunktioner"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Skicka mig ett e-postmeddelande när..."
     }
   ],
   "ysoumb": [
@@ -8826,7 +9452,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Mer information"
     }
   ],
   "z/UY4k": [
@@ -8887,6 +9513,12 @@
       "value": "Välj åtgärder"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Returnerar ett booleskt värde som anger om en sträng är ett heltal"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -8899,10 +9531,22 @@
       "value": "(UTC+12:00) Petropavlovsk-Kamtjatskij - gammal"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "Slutför konfigurationen av den här åtgärden om du vill spara arbetsflödet:"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Konverterar en sträng, med alternativ för nationella inställningar och format, till ett datum"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Stoppa"
     }
   ],
   "ziXw25": [
@@ -8938,7 +9582,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Krävs. Talet som ska läggas till i Summand 1."
     }
   ],
   "zxe9hh": [

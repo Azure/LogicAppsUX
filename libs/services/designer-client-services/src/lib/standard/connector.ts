@@ -1,19 +1,13 @@
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '../connector';
+import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { ArgumentException, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
 interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
-  baseUrl: string;
-  apiVersion: string;
   getConfiguration: GetConfigurationFunction;
-  apiHubServiceDetails?: {
-    apiVersion: string;
-    baseUrl: string;
-  };
 }
 
 export class StandardConnectorService extends BaseConnectorService {
@@ -36,19 +30,18 @@ export class StandardConnectorService extends BaseConnectorService {
 
   async getLegacyDynamicContent(
     connectionId: string,
-    _connectorId: string,
+    connectorId: string,
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, apiVersion } = this.options;
-    return this._executeAzureDynamicApi(connectionId, baseUrl, apiVersion, parameters, managedIdentityProperties);
+    const { baseUrl } = this.options;
+    return this._executeAzureDynamicApi(connectionId, connectorId, baseUrl, parameters, managedIdentityProperties);
   }
 
   async getListDynamicValues(
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any
   ): Promise<ListDynamicValue[]> {
@@ -82,7 +75,6 @@ export class StandardConnectorService extends BaseConnectorService {
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any
   ): Promise<OpenAPIV2.SchemaObject> {
@@ -120,9 +112,8 @@ export class StandardConnectorService extends BaseConnectorService {
     _connectionId: string | undefined,
     _connectorId: string,
     _operationId: string,
-    _parameterAlias: string | undefined,
     _parameters: Record<string, any>,
-    _dynamicState: any
+    _dynamicState: TreeDynamicExtension
   ): Promise<TreeDynamicValue[]> {
     throw new UnsupportedException('Unsupported dynamic call connector method - getTreeDynamicValues');
   }

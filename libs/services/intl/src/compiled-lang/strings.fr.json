@@ -8,7 +8,7 @@
   "+0cO6t": [
     {
       "type": 0,
-      "value": "Create connection reference"
+      "value": "Créer une référence de connexion"
     }
   ],
   "+0yxlR": [
@@ -20,7 +20,13 @@
   "+FcXe9": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "En échec"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -45,6 +51,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapour"
     }
   ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à examiner."
+    }
+  ],
   "+powfX": [
     {
       "type": 0,
@@ -54,13 +66,13 @@
   "+xXHdp": [
     {
       "type": 0,
-      "value": "No outputs"
+      "value": "Aucune sortie"
     }
   ],
   "/2V8bQ": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Expiré"
     }
   ],
   "/EU/oJ": [
@@ -78,7 +90,7 @@
   "/KRvvg": [
     {
       "type": 0,
-      "value": "No values match your search."
+      "value": "Aucune valeur ne correspond à votre recherche."
     }
   ],
   "/NtebP": [
@@ -168,7 +180,7 @@
   "/w/q/8": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+      "value": "Quand elle est activée, cette action est exécutée avec l’utilisateur à partir du paramètre « Exécuter en tant que » dans le déclencheur Dataverse."
     }
   ],
   "/yYyOq": [
@@ -262,7 +274,7 @@
   "0F6jmK": [
     {
       "type": 0,
-      "value": "Secure inputs or outputs enabled."
+      "value": "Entrées ou sorties sécurisées activées."
     }
   ],
   "0FzNJV": [
@@ -663,6 +675,12 @@
       "value": "Enregistrer"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Facultatif. Code de paramètres régionaux RFC 4646 à utiliser. S’il n’est pas spécifié, les paramètres régionaux par défaut sont utilisés. Si la valeur des paramètres régionaux n’est pas valide, une erreur est générée indiquant que les paramètres régionaux fournis ne sont pas valides ou n’ont pas de paramètres régionaux associés."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -743,10 +761,22 @@
       "value": "Aucun contenu n’est disponible"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à examiner."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Le remplacement d’un schéma existant par un schéma incompatible peut créer des erreurs dans votre mappage."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Renvoie la collection dans l’ordre inverse"
     }
   ],
   "3X4FHS": [
@@ -842,13 +872,13 @@
   "3z6rhG": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that can be returned."
+      "value": "Obligatoire. Cette valeur est l’entier suivant après l’entier le plus grand qui peut être retourné."
     }
   ],
   "41eMpW": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Attente"
     }
   ],
   "43xObP": [
@@ -927,6 +957,12 @@
       "value": "Obligatoire. Nom du paramètre dont vous voulez obtenir les valeurs."
     }
   ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Votre flux a été mis à jour."
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -973,16 +1009,34 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Expliquez l’action"
+    }
+  ],
   "53MgCQ": [
     {
       "type": 0,
-      "value": "Open panel"
+      "value": "Ouvrir le panneau"
     }
   ],
   "595Baw": [
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5H+8Sb": [
+    {
+      "type": 0,
+      "value": "Ajoutez une condition"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Expliquez à Microsoft ce que vous avez apprécié dans cette fonctionnalité"
     }
   ],
   "5OvGgn": [
@@ -1092,7 +1146,13 @@
   "63CC7M": [
     {
       "type": 0,
-      "value": "Error loading inputs"
+      "value": "Nous n’avons pas pu charger les entrées"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Afficher tous les paramètres avancés"
     }
   ],
   "6OSgRP": [
@@ -1110,7 +1170,7 @@
   "6ZviI7": [
     {
       "type": 0,
-      "value": "Select connection reference"
+      "value": "Sélectionner la référence de connexion"
     }
   ],
   "6fDYzG": [
@@ -1131,6 +1191,12 @@
     {
       "type": 0,
       "value": " » a trop d’entrées qui lui sont affectées"
+    }
+  ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Mise à jour de cette action"
     }
   ],
   "6jiO7t": [
@@ -1163,16 +1229,28 @@
       "value": "Précédent"
     }
   ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "Pour préparer ce flux de travail, terminez la configuration des actions suivantes :"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
       "value": "Obligatoire. Nombre avec lequel multiplier le multiplicande 2."
     }
   ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Créez un flux"
+    }
+  ],
   "6u6CS+": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Obligatoire. Valeur pour laquelle trouver l’index."
     }
   ],
   "6ueRYm": [
@@ -1184,7 +1262,7 @@
   "6xRvni": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Type de données"
     }
   ],
   "73iM9+": [
@@ -1196,7 +1274,7 @@
   "78Vggn": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Entrer le nom d’utilisateur"
     }
   ],
   "7EZ2oY": [
@@ -1267,10 +1345,22 @@
       "value": "Facultatif. Paramètres régionaux à utiliser lors de la mise en forme (par défaut : « en-us »)."
     }
   ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "Votre flux de travail va revenir à l’état qu’il avait avant la modification apportée par Copilot. Si vous avez apporté des modifications supplémentaires au flux de travail après les modifications effectuées par Copilot, vous allez les perdre. Cette action ne peut pas être annulée. Voulez-vous continuer ?"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Code d'état"
+    }
+  ],
+  "7ku9t+": [
+    {
+      "type": 0,
+      "value": "Signaler un bogue"
     }
   ],
   "7lnElz": [
@@ -1300,7 +1390,7 @@
   "7zsUT3": [
     {
       "type": 0,
-      "value": "Unsupported authentication type '"
+      "value": "Type d’authentification non pris en charge « "
     },
     {
       "type": 1,
@@ -1308,7 +1398,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": " »."
     }
   ],
   "7zzPsK": [
@@ -1391,6 +1481,24 @@
     {
       "type": 0,
       "value": "Activez l'identité managée pour l'application logique."
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Décrivez comment votre flux doit être modifié. Ajoutez des détails dans la mesure du possible, y compris le connecteur à utiliser et si du contenu doit être inclus."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Modifiez ce flux pour"
     }
   ],
   "8SxNQC": [
@@ -1551,6 +1659,12 @@
       "value": "(UTC-03:00) Brasilia"
     }
   ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Rétablir votre flux"
+    }
+  ],
   "9SuA/E": [
     {
       "type": 0,
@@ -1589,6 +1703,12 @@
       "value": "Texte"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1605,6 +1725,12 @@
     {
       "type": 0,
       "value": "Retourne true si les deux paramètres ont la valeur true"
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Envoyer des commentaires"
     }
   ],
   "9x8hg8": [
@@ -1679,6 +1805,18 @@
     {
       "type": 0,
       "value": "Sélectionner une fréquence."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Supprimer et effacer tous les paramètres avancés et leurs valeurs"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Non connecté à"
     }
   ],
   "AnX5yC": [
@@ -1807,13 +1945,19 @@
   "BFTwRN": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Réussi avec nouvelles tentatives"
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
       "value": "Obligatoire. Chaîne encodée dans un URI."
+    }
+  ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "En savoir plus sur les opérations d’annulation"
     }
   ],
   "BJNUxN": [
@@ -1831,7 +1975,7 @@
   "BPYdTX": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Non spécifié"
     }
   ],
   "BQCPY7": [
@@ -1844,6 +1988,12 @@
     {
       "type": 0,
       "value": "Entrez le mot de passe en tant que texte brut ou utilisez un paramètre sécurisé"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Une erreur s'est produite. Réessayez."
     }
   ],
   "BSgavq": [
@@ -1873,7 +2023,7 @@
   "Bewmet": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Tableau"
     }
   ],
   "Bl4Iv0": [
@@ -1909,7 +2059,7 @@
   "BrvZNn": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
+      "value": "Spécifiez une ou plusieurs expressions qui doivent être vraies pour que le déclencheur s’exécute."
     }
   ],
   "BtL7UI": [
@@ -1930,6 +2080,12 @@
       "value": "Obligatoire. Objet à vérifier pour voir s'il est supérieur à l'objet comparé."
     }
   ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Posez une question"
+    }
+  ],
   "C1cy54": [
     {
       "type": 0,
@@ -1942,6 +2098,18 @@
       "value": "Récupérez des éléments pour atteindre le seuil spécifié en suivant le jeton de continuation. En raison de la taille de page du connecteur, le nombre retourné peut dépasser le seuil."
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "CFOUe3": [
+    {
+      "type": 0,
+      "value": "Ajoutez une action qui envoie un e-mail"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -1951,7 +2119,7 @@
   "CPm+OG": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Créer une connexion"
     }
   ],
   "CaajcD": [
@@ -1963,7 +2131,7 @@
   "CafOCn": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Les propriétés « "
     },
     {
       "type": 1,
@@ -1971,7 +2139,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " » ne sont pas valides pour le type d’authentification « "
     },
     {
       "type": 1,
@@ -1979,7 +2147,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": " »."
     }
   ],
   "Cb6IEq": [
@@ -2009,7 +2177,7 @@
   "Cj3/LJ": [
     {
       "type": 0,
-      "value": "Must provide the parameter name."
+      "value": "Doit fournir le nom du paramètre."
     }
   ],
   "ClZW2r": [
@@ -2242,10 +2410,16 @@
       "value": "Convertit le paramètre en nombre décimal"
     }
   ],
+  "EKjaix": [
+    {
+      "type": 0,
+      "value": "Vérifiez les actions du flux pour voir si des paramètres doivent être définis. N’oubliez pas d’enregistrer lorsque vous avez terminé."
+    }
+  ],
   "EKtYQF": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Définissez l’ID de suivi de l’exécution. Pour le paramètre SplitOn, cet ID de suivi concerne la demande d’origine."
     }
   ],
   "ERAWZA": [
@@ -2336,6 +2510,12 @@
       "value": "Afficher l’historique des demandes pour cette opération"
     }
   ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Configurez ces connexions pour les utiliser dans votre flux."
+    }
+  ],
   "EurkzL": [
     {
       "type": 0,
@@ -2396,6 +2576,12 @@
       "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlán"
     }
   ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Votre flux a été mis à jour."
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
@@ -2405,7 +2591,7 @@
   "FOiBk/": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Erreurs"
     }
   ],
   "FT3jt6": [
@@ -2508,7 +2694,7 @@
   "G+XvKn": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Retourne une chaîne avec chaque élément d'un tableau joint par un délimiteur"
     }
   ],
   "G/CC5/": [
@@ -2565,6 +2751,12 @@
       "value": "Obligatoire. Objet à trouver dans la collection Within."
     }
   ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Expliquez le flux"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2577,6 +2769,20 @@
       "value": "Fonctions de références"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2587,6 +2793,12 @@
     {
       "type": 0,
       "value": "Autres commandes"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Démarrer"
     }
   ],
   "Gi72X5": [
@@ -2695,10 +2907,16 @@
       "value": "Mois"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection à trier."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
-      "value": "Exit full screen"
+      "value": "Quitter le plein écran"
     }
   ],
   "HOchry": [
@@ -2735,6 +2953,12 @@
     {
       "type": 0,
       "value": "Basculer vers les entrées de détail pour l'élément de tableau"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Modifiez le flux"
     }
   ],
   "HfrUId": [
@@ -2802,7 +3026,7 @@
   "I3mifR": [
     {
       "type": 0,
-      "value": "Is skipped"
+      "value": "Est ignoré"
     }
   ],
   "I41vZ/": [
@@ -2897,20 +3121,6 @@
       "value": "(UTC+09:00) Iakoutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Nous n’avons pas pu exécuter l’API « "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " »."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2921,6 +3131,12 @@
     {
       "type": 0,
       "value": "Aucune propriété"
+    }
+  ],
+  "IuHdCO": [
+    {
+      "type": 0,
+      "value": "Voici votre flux. Si vous souhaitez que je le modifie, dites simplement ce que vous voulez. Par exemple :"
     }
   ],
   "IxWip7": [
@@ -2964,7 +3180,7 @@
   "J62n9E": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Échec"
     }
   ],
   "J9wWry": [
@@ -2999,6 +3215,12 @@
     {
       "type": 0,
       "value": "Supprimer"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Action annulée"
     }
   ],
   "JNQHws": [
@@ -3091,10 +3313,30 @@
       "value": "Modifier la référence de connexion"
     }
   ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Remplacez « "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " » par"
+    }
+  ],
   "KP0Rr2": [
     {
       "type": 0,
       "value": "Entrez un numéro double valide."
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "Lorsqu’un nouvel élément..."
     }
   ],
   "KX1poC": [
@@ -3169,7 +3411,7 @@
   "KnjcUV": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Ignoré"
     }
   ],
   "KwGA+K": [
@@ -3220,6 +3462,12 @@
       "value": "Chargement des applications de fonction..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3247,7 +3495,7 @@
   "LTTgWN": [
     {
       "type": 0,
-      "value": "Required. The collection from which to take the first object."
+      "value": "Obligatoire. Collection à partir de laquelle prendre le premier objet."
     }
   ],
   "LV/BTE": [
@@ -3266,6 +3514,12 @@
     {
       "type": 0,
       "value": "Ajouter une branche parallèle"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Suppression de cette action"
     }
   ],
   "LdITnG": [
@@ -3313,7 +3567,7 @@
   "LtbkS7": [
     {
       "type": 0,
-      "value": "Returns the start of the day for the passed-in string timestamp."
+      "value": "Retourne le début de la journée pour l’horodatage de chaîne transmis."
     }
   ],
   "Lub7NN": [
@@ -3352,6 +3606,12 @@
       "value": "Mode Code"
     }
   ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Chaque semaine le lundi"
+    }
+  ],
   "M4H0gh": [
     {
       "type": 0,
@@ -3388,10 +3648,16 @@
       "value": "Obligatoire. Collections à évaluer. Un objet doit être dans toutes les collections transmises pour apparaître dans le résultat."
     }
   ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Ajoutez une action"
+    }
+  ],
   "MIX4f9": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Langage de programmation non pris en charge."
     }
   ],
   "MKTdNk": [
@@ -3493,7 +3759,7 @@
   "MsCHhQ": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Expiré"
     }
   ],
   "N0pS6Y": [
@@ -3553,7 +3819,7 @@
   "Nh91qA": [
     {
       "type": 0,
-      "value": "Returns the value of the specified variable."
+      "value": "Retourne la valeur de la variable spécifiée."
     }
   ],
   "NnD8gF": [
@@ -3601,7 +3867,7 @@
   "O+3Y9f": [
     {
       "type": 0,
-      "value": "Has failed"
+      "value": "A échoué"
     }
   ],
   "O+8vRv": [
@@ -3619,13 +3885,19 @@
   "O1tedM": [
     {
       "type": 0,
-      "value": "No errors found."
+      "value": "Aucune erreur détectée."
     }
   ],
   "O27gKq": [
     {
       "type": 0,
       "value": "Chargement des fichiers..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -3688,6 +3960,12 @@
       "value": "Chargement de tous les connecteurs..."
     }
   ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Dites-moi en plus sur"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -3704,6 +3982,12 @@
     {
       "type": 0,
       "value": "Retourne les résultats des actions de niveau supérieur dans l'action délimitée spécifiée, par exemple, une action For_each, Until ou Scope."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Enregistrer ce flux de travail"
     }
   ],
   "OdNhwc": [
@@ -3775,7 +4059,7 @@
   "Os0h2Y": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Propriétés obligatoires manquantes « "
     },
     {
       "type": 1,
@@ -3783,7 +4067,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " » pour le type d’authentification « "
     },
     {
       "type": 1,
@@ -3791,7 +4075,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " »"
     }
   ],
   "P+7G62": [
@@ -3833,7 +4117,7 @@
   "P3Zpc4": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "ID de suivi personnalisé"
     }
   ],
   "P4rEwD": [
@@ -3903,7 +4187,7 @@
   "Peg6ZT": [
     {
       "type": 0,
-      "value": "Setting errors"
+      "value": "Erreurs au niveau des paramètres"
     }
   ],
   "PfCJlN": [
@@ -3933,7 +4217,7 @@
   "PsmHyH": [
     {
       "type": 0,
-      "value": "Connection errors"
+      "value": "Erreurs de connexion"
     }
   ],
   "PtqSHp": [
@@ -3969,7 +4253,7 @@
   "PytMJ0": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Exécuter après "
     },
     {
       "type": 1,
@@ -4031,7 +4315,7 @@
   "QKWoVr": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Propriété obligatoire manquante « "
     },
     {
       "type": 1,
@@ -4039,7 +4323,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " » pour le type d’authentification « "
     },
     {
       "type": 1,
@@ -4047,7 +4331,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " »"
     }
   ],
   "QZBPUx": [
@@ -4077,13 +4361,19 @@
   "QdhS3y": [
     {
       "type": 0,
-      "value": "Workflow Parameters"
+      "value": "Paramètres de flux de travail"
     }
   ],
   "Qn8qxn": [
     {
       "type": 0,
       "value": "Retourne une chaîne au format de date"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
     }
   ],
   "QpRRt3": [
@@ -4129,7 +4419,7 @@
   "R7X0wG": [
     {
       "type": 0,
-      "value": "Enter a valid condition."
+      "value": "Entrez une condition valide."
     }
   ],
   "RFjYpH": [
@@ -4141,7 +4431,7 @@
   "RJ3DuE": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Aperçu"
     }
   ],
   "RJes1w": [
@@ -4246,7 +4536,7 @@
   "Rs7j3V": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Obligatoire. Expressions qui doivent être vraies."
     }
   ],
   "RvpHdu": [
@@ -4277,6 +4567,12 @@
     {
       "type": 0,
       "value": "Titre 2"
+    }
+  ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "Il est possible que le contenu généré par IA soit incorrect"
     }
   ],
   "SJFVxf": [
@@ -4385,10 +4681,22 @@
       "value": "Envoyer des commentaires"
     }
   ],
+  "TLMkrg": [
+    {
+      "type": 0,
+      "value": "Expliquez ce qu’une action fait"
+    }
+  ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Vendredi"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4484,7 +4792,7 @@
   "Tla33B": [
     {
       "type": 0,
-      "value": "Required. The value for which to find the index."
+      "value": "Obligatoire. Valeur pour laquelle trouver l’index."
     }
   ],
   "Tmr/9e": [
@@ -4496,7 +4804,7 @@
   "To3RNy": [
     {
       "type": 0,
-      "value": "Workflow parameter errors"
+      "value": "Erreurs de paramètre de flux de travail"
     }
   ],
   "Ts5Pzr": [
@@ -4619,6 +4927,12 @@
       "value": "Obligatoire. Collection dans laquelle prendre le dernier objet."
     }
   ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "M’envoyer un e-mail quand"
+    }
+  ],
   "UYRIS/": [
     {
       "type": 1,
@@ -4652,7 +4966,13 @@
   "Ug4sWZ": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Développer"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Longueur de chaque bloc."
     }
   ],
   "Umpr3z": [
@@ -4684,7 +5004,7 @@
   "UnytRl": [
     {
       "type": 0,
-      "value": "The type for '"
+      "value": "Le type de « "
     },
     {
       "type": 1,
@@ -4692,7 +5012,7 @@
     },
     {
       "type": 0,
-      "value": "' is '"
+      "value": " » est « "
     },
     {
       "type": 1,
@@ -4700,7 +5020,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": " »."
     }
   ],
   "Ur+wph": [
@@ -4713,6 +5033,12 @@
     {
       "type": 0,
       "value": "Entrez un nom pour la connexion"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
     }
   ],
   "V+/c21": [
@@ -4742,13 +5068,27 @@
   "V8A+1J": [
     {
       "type": 0,
-      "value": "Interval"
+      "value": "Intervalle"
     }
   ],
   "VA7M1u": [
     {
       "type": 0,
       "value": "Dans l'application"
+    }
+  ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Expliquez ce que fait l’action « "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " » dans ce flux"
     }
   ],
   "VHm1Sr": [
@@ -4771,6 +5111,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -4865,6 +5211,18 @@
       "value": "Actions"
     }
   ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Ajout de cette action"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -4879,6 +5237,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la nouvelle propriété."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Décrivez un élément de votre flux qui doit être remplacé, et par quoi le remplacer. Ajoutez des détails dans la mesure du possible, y compris le connecteur à utiliser et si du contenu doit être inclus."
     }
   ],
   "WGwH45": [
@@ -5009,6 +5373,12 @@
       "value": "Réessayer"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Paramètres avancés"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5041,6 +5411,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Bagdad"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "J’aime"
     }
   ],
   "XRK+gt": [
@@ -5173,6 +5549,12 @@
       "value": "Mot de passe"
     }
   ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Ajoutez une action"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -5197,6 +5579,12 @@
       "value": "Élément de corps"
     }
   ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "Tous les paramètres requis sont définis"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5206,7 +5594,13 @@
   "YDoc9z": [
     {
       "type": 0,
-      "value": "Trigger conditions"
+      "value": "Conditions du déclencheur"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id :"
     }
   ],
   "YHsAKl": [
@@ -5403,6 +5797,12 @@
       "value": "Raccourci pour trigger().outputs.body"
     }
   ],
+  "ZXoHXd": [
+    {
+      "type": 0,
+      "value": "Voici votre flux."
+    }
+  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5439,6 +5839,12 @@
       "value": "Découvrez plus d'informations sur le contenu dynamique."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5451,16 +5857,16 @@
       "value": "Obligatoire. Numéro de l’occurrence de la sous-chaîne à rechercher."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Obligatoire. Nombre d'objets à supprimer de l'avant de la collection. Doit être un entier positif."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Ajouter de nouveaux paramètres"
     }
   ],
   "aK4iLW": [
@@ -5490,7 +5896,7 @@
   "aYTy7X": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Annulé"
     }
   ],
   "ae7W0a": [
@@ -5572,7 +5978,13 @@
   "bJ7DWe": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Obligatoire. Valeur convertie en binaire."
+    }
+  ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Facultatif. Clé à utiliser pour trier les objets dans la collection."
     }
   ],
   "bSZ0lL": [
@@ -5596,7 +6008,7 @@
   "bWOsvo": [
     {
       "type": 0,
-      "value": "Use Invoker's Connection"
+      "value": "Utiliser la connexion de l’appelant"
     }
   ],
   "bXFGpe": [
@@ -5617,22 +6029,34 @@
       "value": "Retourne la valeur maximale dans le tableau d'entrée de nombres"
     }
   ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Configurez ces connexions pour les utiliser dans votre flux."
+    }
+  ],
   "bldzuj": [
     {
       "type": 0,
       "value": "Historique des nouvelles tentatives"
     }
   ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Effacer tout"
+    }
+  ],
   "bwlAWn": [
     {
       "type": 0,
-      "value": "Open operation"
+      "value": "Ouvrir une opération"
     }
   ],
   "byRkj+": [
     {
       "type": 0,
-      "value": "This operation has secure inputs or outputs enabled."
+      "value": "Cette opération a des entrées ou sorties sécurisées activées."
     }
   ],
   "byTBrn": [
@@ -5806,7 +6230,7 @@
   "d4Ddhp": [
     {
       "type": 0,
-      "value": "Download (Alt or Option + select)"
+      "value": "Télécharger (Alt ou Option + sélectionner)"
     }
   ],
   "dBWIjR": [
@@ -5839,6 +6263,18 @@
       "value": "Identité managée"
     }
   ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Remplacer l’action"
+    }
+  ],
+  "dNpnmn": [
+    {
+      "type": 0,
+      "value": "Bienvenue à nouveau ! Si vous voulez que je modifie votre flux, dites simplement ce que vous voulez. Par exemple :"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5861,6 +6297,12 @@
     {
       "type": 0,
       "value": "Spécifiez le comportement et les fonctionnalités de transfert de contenu via HTTP. Les messages volumineux peuvent être divisés en requêtes plus petites adressées au connecteur pour permettre le chargement de messages volumineux. Pour plus d’informations, consultez http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Ignorer"
     }
   ],
   "dWFyfN": [
@@ -5955,6 +6397,12 @@
       "value": "Nous n’avons pas pu générer le code XSLT."
     }
   ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Restaurer"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -6013,6 +6461,12 @@
     {
       "type": 0,
       "value": "Partagé"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "Lorsqu’un nouvel élément"
     }
   ],
   "f/lWTW": [
@@ -6116,7 +6570,7 @@
   "g/7QyT": [
     {
       "type": 0,
-      "value": "Select connection"
+      "value": "Sélectionner la connexion"
     }
   ],
   "g076bL": [
@@ -6253,6 +6707,12 @@
       "value": "Entrez le public."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Renvoie une valeur booléenne qui indique si une chaîne est un nombre à virgule flottante"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6268,7 +6728,7 @@
   "gwEKLM": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Chargement en cours..."
     }
   ],
   "h+W3VW": [
@@ -6344,10 +6804,22 @@
       "value": "Retourne le résultat de la soustraction de deux nombres"
     }
   ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Annuler"
+    }
+  ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hébron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6538,6 +7010,12 @@
       "value": "Exemple : 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6553,7 +7031,7 @@
   "ihCdw4": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Obligatoire. Numéro à ajouter à l'opérande 2."
     }
   ],
   "iq+tiv": [
@@ -6575,7 +7053,7 @@
   "ixutP5": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Entrez une table valide."
     }
   ],
   "iy8rNf": [
@@ -6620,6 +7098,12 @@
       "value": "Créer"
     }
   ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Expliquez à Microsoft comment nous pouvons améliorer cette fonctionnalité"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -6638,10 +7122,34 @@
       "value": "Ajouter un schéma source"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Affichage de "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " sur "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "Schéma cible"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne ou tableau à fractionner."
     }
   ],
   "jVpanH": [
@@ -6674,6 +7182,12 @@
       "value": "Impossible de générer le schéma"
     }
   ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Décrivez ce que votre flux doit faire. Ajoutez des détails dans la mesure du possible, y compris le connecteur à utiliser et si du contenu doit être inclus."
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -6701,7 +7215,7 @@
   "k8cbQ1": [
     {
       "type": 0,
-      "value": "Parameter errors"
+      "value": "Erreurs de paramètre"
     }
   ],
   "kBOAkT": [
@@ -6740,6 +7254,18 @@
       "value": " s"
     }
   ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Vérifiez ces actions pour voir si des paramètres doivent être définis."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Chaque semaine le lundi..."
+    }
+  ],
   "kM+Mr0": [
     {
       "type": 0,
@@ -6773,7 +7299,7 @@
   "kcOhfh": [
     {
       "type": 0,
-      "value": "Elements and mappings that aren't connected to a target element are removed."
+      "value": "Les éléments et mappages non connectés à un élément cible sont supprimés."
     }
   ],
   "klY9UN": [
@@ -6784,7 +7310,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "aucun élément correspondant."
             }
           ]
         },
@@ -6795,7 +7321,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " éléments correspondants."
             }
           ]
         },
@@ -6806,7 +7332,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " élément correspondant."
             }
           ]
         },
@@ -6817,7 +7343,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " éléments correspondants."
             }
           ]
         }
@@ -6843,6 +7369,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Windhoek"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Remplacer l’action par"
     }
   ],
   "l36V56": [
@@ -6909,6 +7441,12 @@
     {
       "type": 0,
       "value": "Ajouter un groupe"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection à inverser."
     }
   ],
   "lexzgJ": [
@@ -7072,7 +7610,7 @@
   "mZQYLv": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Obligatoire. Expression XPath à évaluer."
     }
   ],
   "mZRMD9": [
@@ -7190,7 +7728,7 @@
   "nHIeXp": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Ignoré"
     }
   ],
   "nHseED": [
@@ -7220,7 +7758,7 @@
   "nPgYuI": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Nouveau paramètre"
     }
   ],
   "nRpM02": [
@@ -7274,7 +7812,7 @@
   "nmFupX": [
     {
       "type": 0,
-      "value": "Has timed out"
+      "value": "A expiré"
     }
   ],
   "no/SMg": [
@@ -7617,6 +8155,12 @@
       "value": " »"
     }
   ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Connexion aux applications et services"
+    }
+  ],
   "qBkxGU": [
     {
       "type": 0,
@@ -7759,7 +8303,7 @@
   "qs9D+A": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Propriété non valide « "
     },
     {
       "type": 1,
@@ -7767,7 +8311,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " » pour le type d’authentification « "
     },
     {
       "type": 1,
@@ -7775,7 +8319,13 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": " »."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
@@ -7871,7 +8421,13 @@
   "rh5g4p": [
     {
       "type": 0,
-      "value": "Is successful"
+      "value": "A réussi"
+    }
+  ],
+  "rn5IsW": [
+    {
+      "type": 0,
+      "value": "Désolé, je n’ai pas compris votre demande. Veuillez la reformuler et réessayer."
     }
   ],
   "rsdJcV": [
@@ -7916,6 +8472,12 @@
       "value": "Supprimer"
     }
   ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "Pour enregistrer ce flux de travail, terminez la configuration des actions suivantes :"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
@@ -7949,7 +8511,7 @@
   "sVQe34": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Fournissez des paramètres pour tester la sortie."
     }
   ],
   "sW47JR": [
@@ -8004,6 +8566,12 @@
     {
       "type": 0,
       "value": "Retourne true si l'un des paramètres a la valeur true"
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Annuler"
     }
   ],
   "srpZD2": [
@@ -8126,6 +8694,12 @@
     {
       "type": 0,
       "value": "Type"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Tester ce flux de travail"
     }
   ],
   "tUCptx": [
@@ -8296,10 +8870,16 @@
       "value": "Limitez la durée maximale entre les nouvelles tentatives et les réponses asynchrones pour cette action. Remarque : cela ne modifie pas le délai d’expiration d’une demande unique."
     }
   ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Désolé... Copilot a atteint sa capacité maximale et est temporairement indisponible. Veuillez réessayer dans quelques instants."
+    }
+  ],
   "uanMWm": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Réussi"
     }
   ],
   "uc/PoD": [
@@ -8335,7 +8915,7 @@
   "ui3KuP": [
     {
       "type": 0,
-      "value": "Operation errors"
+      "value": "Erreurs d’opération"
     }
   ],
   "ui7GCl": [
@@ -8380,6 +8960,12 @@
       "value": "Paramètres"
     }
   ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Posez une question relative à votre flux de travail ou à Logic Apps."
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -8416,10 +9002,16 @@
       "value": "Retourne le dernier index d'une valeur au sein d'une chaîne (culture invariante qui ne respecte pas la casse)"
     }
   ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Expliquez ce que fait ce flux"
+    }
+  ],
   "vLereV": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Obligatoire. Collection à partir de laquelle prendre les premiers objets Count."
     }
   ],
   "vQcQkU": [
@@ -8474,6 +9066,12 @@
     {
       "type": 0,
       "value": "Abandonner"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "Pour préparer ce flux de travail, terminez la configuration de cette action :"
     }
   ],
   "vr70Gn": [
@@ -8679,7 +9277,7 @@
   "x2JTW5": [
     {
       "type": 0,
-      "value": "Returns an object with the specified property removed."
+      "value": "Retourne un objet avec la propriété spécifiée supprimée."
     }
   ],
   "x3dWOL": [
@@ -8691,7 +9289,7 @@
   "x7IYBg": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Abandonné"
     }
   ],
   "x8kTAX": [
@@ -8790,6 +9388,12 @@
       "value": "Les paramètres sont partagés entre les flux de travail d’une Application Logique."
     }
   ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Connecté à"
+    }
+  ],
   "xwD1VZ": [
     {
       "type": 0,
@@ -8838,6 +9442,18 @@
       "value": "Retourne un sous-ensemble de caractères à partir d’une chaîne."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Renvoie un tableau trié dans ordre croissant"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Afficher tout"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -8848,6 +9464,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Fractionner une chaîne ou un tableau en blocs de longueur égale"
     }
   ],
   "ydqOly": [
@@ -8870,6 +9492,12 @@
       "value": " »."
     }
   ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Je n’aime pas"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -8879,13 +9507,19 @@
   "ypZV9w": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Retourne le corps d'une partie dans une sortie en plusieurs parties du déclencheur"
     }
   ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Fonctions de date et heure"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "M’envoyer un e-mail quand..."
     }
   ],
   "ysoumb": [
@@ -8915,7 +9549,7 @@
   "yzqXMp": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "En savoir plus"
     }
   ],
   "z/UY4k": [
@@ -8976,6 +9610,12 @@
       "value": "Sélectionner des actions"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Renvoie une valeur booléenne qui indique si une chaîne est un entier"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -8988,10 +9628,22 @@
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Ancien"
     }
   ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "Pour enregistrer ce flux de travail, terminez la configuration de cette action :"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Convertit une chaîne, avec éventuellement des paramètres régionaux et un format de date"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Arrêter"
     }
   ],
   "ziXw25": [
@@ -9027,7 +9679,7 @@
   "zsPNYN": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Obligatoire. Numéro à ajouter à l'opérande 1."
     }
   ],
   "zxe9hh": [
