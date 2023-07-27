@@ -228,7 +228,9 @@ export const applyCustomLayout = async (
         if (inputNode) {
           if (inputNode.x === undefined || inputNode.y === undefined) {
             // Should recursively make sure all input chains are or get calculated
-            calculateFnNodePosition(inputNode);
+            //calculateFnNodePosition(inputNode);
+            inputNode.x = 60;
+            inputNode.y = 60;
           }
 
           // Confirm that recursive call above actually calculated the inputNode's position

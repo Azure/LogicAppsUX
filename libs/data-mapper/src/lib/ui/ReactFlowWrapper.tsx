@@ -38,15 +38,9 @@ import { useBoolean } from '@fluentui/react-hooks';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type {
-  OnConnectStartParams,
-  NodeChange,
-  Connection as ReactFlowConnection,
-  Edge as ReactFlowEdge,
-  Node as ReactFlowNode,
-} from 'reactflow';
+import type { OnConnectStartParams, Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ConnectionLineType, useKeyPress } from 'reactflow';
+import ReactFlow, { ConnectionLineType, useKeyPress, useNodesState } from 'reactflow';
 
 type CanvasExtent = [[number, number], [number, number]];
 
@@ -175,6 +169,12 @@ export const ReactFlowWrapper = ({
     useExpandedFunctionCards
   );
 
+  const [nodesState, setNodes, onNodesChange] = useNodesState(nodes);
+
+  if (nodes !== nodesState) {
+    setNodes(nodes);
+  }
+
   // Find first schema node (should be schemaTreeRoot) for source and target to use its xPos for schema name badge
   const srcSchemaTreeRootXPos = useMemo(
     () =>
@@ -213,23 +213,24 @@ export const ReactFlowWrapper = ({
     event.dataTransfer.dropEffect = 'move';
   };
 
-  const onNodeChange = (nodeChanges: NodeChange[]) => {
-    const nodeChange = nodeChanges[0];
-    if (nodeChange.type === 'position') {
-      const draggedNode = nodes.find((node) => node.id === nodeChange.id);
-      console.log(draggedNode?.id);
-      if (draggedNode && nodeChange.position) {
-        draggedNode.position = nodeChange.position;
-      }
-    }
-  };
+  // const onNodeChange = (nodeChanges: NodeChange[]) => {
+  //   const nodeChange = nodeChanges[0];
+  //   if (nodeChange.type === 'position') {
+  //     const draggedNode = nodes.find((node) => node.id === nodeChange.id);
+  //     console.log(draggedNode?.id);
+  //     if (draggedNode && nodeChange.position) {
+  //       draggedNode.position = nodeChange.position;
+  //     }
+  //     nodes = [...nodes]
+  //   } // danielle does this trigger useLayout? No.
+  // };
 
   return (
     <ReactFlow
       ref={reactFlowRef}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
-      nodes={nodes}
+      nodes={nodesState}
       edges={edges}
       onPaneClick={onPaneClick}
       nodesFocusable={false} // we handle keyboard focus from within the node
@@ -243,7 +244,7 @@ export const ReactFlowWrapper = ({
       nodesDraggable={true}
       onDragOver={onDragOver}
       onDrag={onDrag}
-      onNodesChange={onNodeChange}
+      onNodesChange={onNodesChange}
       // When using custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{
