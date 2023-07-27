@@ -1,15 +1,15 @@
-import { Label, TooltipHost, Icon } from '@fluentui/react';
+import { Icon, Label, TooltipHost } from '@fluentui/react';
 
 interface ConnectionParameterRowParameterRowSelfProps {
   parameterKey: string;
   displayName: string;
-  tooltip?: string;
+  tooltip?: string | JSX.Element;
   required?: boolean;
   disabled?: boolean;
   children: JSX.Element;
 }
 
-export type ConnectionParameterRowParameterRowProps = React.PropsWithChildren<ConnectionParameterRowParameterRowSelfProps>;
+export type ConnectionParameterRowProps = React.PropsWithChildren<ConnectionParameterRowParameterRowSelfProps>;
 
 export const ConnectionParameterRow = ({
   parameterKey,
@@ -18,7 +18,7 @@ export const ConnectionParameterRow = ({
   required,
   disabled,
   children,
-}: ConnectionParameterRowParameterRowProps) => (
+}: ConnectionParameterRowProps) => (
   <div key={parameterKey} className="param-row">
     <Label className="label" required={required} htmlFor={parameterKey} disabled={disabled}>
       {displayName ?? parameterKey}
