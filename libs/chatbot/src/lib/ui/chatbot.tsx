@@ -15,11 +15,13 @@ import {
   PromptGuideItemKey,
   PromptGuideCard,
 } from '@microsoft/designer-ui';
+import { guid, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface ChatbotProps {
   panelLocation?: PanelLocation;
+  workflowDefinition?: LogicAppsV2.WorkflowDefinition;
 }
 
 const getInputIconButtonStyles = () => {
@@ -32,7 +34,7 @@ const getInputIconButtonStyles = () => {
 
 const QUERY_MAX_LENGTH = 2000;
 
-export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) => {
+export const Chatbot = ({ panelLocation = PanelLocation.Left, workflowDefinition }: ChatbotProps) => {
   const intl = useIntl();
   const [inputQuery, setInputQuery] = useState('');
   const [collapsed, setCollapsed] = useState(false);
@@ -137,20 +139,58 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
     },
   };
 
-  const onSubmitInputQuery = useCallback(() => {
-    const query = inputQuery.trim();
-    if (query !== '') {
-      setConversation((current) => [
-        {
-          type: ConversationItemType.Query,
-          id: getId(), // using this for now to give it a unique id, but will change later
-          date: new Date(),
-          text: query,
-        },
-        ...current,
-      ]);
-    }
-  }, [inputQuery, setConversation]);
+  const onSubmitInputQuery = useCallback(
+    async (input: string) => {
+      let query = input.trim(); //Query.trim();
+      if (query !== '') {
+        setConversation((current) => [
+          {
+            type: ConversationItemType.Query,
+            id: guid(), // using this for now to give it a unique id, but will change later
+            date: new Date(),
+            text: input.trim(),
+          },
+          ...current,
+        ]);
+        if (query.includes(intlText.queryTemplates.explainFlowSentence.toLocaleLowerCase()) && workflowDefinition) {
+          query = query.concat(': ' + JSON.stringify(workflowDefinition));
+        }
+        setInputQuery(query);
+        stopAnswerGeneration(false);
+        fetch('http://localhost:3000/submit', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'text/plain',
+          },
+          body: JSON.stringify({ role: 'user', content: query }),
+        })
+          .then((response) => response.json())
+          .then((body) => {
+            setConversation((current) => [
+              {
+                type: ConversationItemType.Reply,
+                id: guid(),
+                date: new Date(),
+                text: body.content,
+                isMarkdownText: false,
+                correlationId: '',
+                __rawRequest: '',
+                __rawResponse: '',
+                reaction: undefined,
+                askFeedback: false,
+              },
+              ...current,
+            ]);
+            stopAnswerGeneration(true);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    },
+    [intlText.queryTemplates.explainFlowSentence, workflowDefinition]
+  );
 
   const onPromptGuideItemClicked = useCallback(
     (item: PromptGuideItem) => {
@@ -175,22 +215,11 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
           break;
         case PromptGuideItemKey.ExplainAction:
           if (selectedOperation) {
-            setInputAndFocus(intlText.queryTemplates.explainActionSentenceFormat);
-            onSubmitInputQuery();
+            onSubmitInputQuery(intlText.queryTemplates.explainActionSentenceFormat);
           }
           break;
         case PromptGuideItemKey.ExplainFlow:
-          setInputAndFocus(intlText.queryTemplates.explainFlowSentence);
-
-          setConversation((current) => [
-            {
-              type: ConversationItemType.Query,
-              id: getId(), // using this for now to give it a unique id, but will change later
-              date: new Date(),
-              text: intlText.queryTemplates.explainFlowSentence,
-            },
-            ...current,
-          ]);
+          onSubmitInputQuery(intlText.queryTemplates.explainFlowSentence);
           break;
         case PromptGuideItemKey.CreateFlowExample1:
           setInputAndFocus(intlText.queryTemplates.createFlow1SentenceStart);
@@ -249,8 +278,8 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
           {!answerGeneration && (
             <ProgressCardWithStopButton
               progressState={'🖊️ Working on it...'}
-              onStopButtonClick={() => stopAnswerGeneration(true)}
-              stopButtonLabel={'Stop generating'}
+              //onStopButtonClick={() => stopAnswerGeneration(true)}
+              //stopButtonLabel={'Stop generating'}
             />
           )}
           {isSaving && <ProgressCardWithStopButton progressState={'💾 Saving this flow...'} />}
@@ -289,7 +318,7 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left }: ChatbotProps) =>
                 iconName: 'Send',
                 styles: inputIconButtonStyles,
               },
-              onClick: onSubmitInputQuery,
+              onClick: () => onSubmitInputQuery(inputQuery),
             }}
             footerActionsProps={[
               {

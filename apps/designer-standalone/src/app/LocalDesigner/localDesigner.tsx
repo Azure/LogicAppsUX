@@ -179,7 +179,7 @@ export const LocalDesigner = () => {
         >
           <PseudoCommandBar />
           <Designer />
-          {showChatBot ? <Chatbot /> : null}
+          {showChatBot ? <Chatbot workflowDefinition={workflowDefinition} /> : null}
         </BJSWorkflowProvider>
       ) : null}
     </DesignerProvider>

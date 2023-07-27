@@ -66,6 +66,7 @@ const DesignerEditor = () => {
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const parameters = data?.properties.files[Artifact.ParametersFile] ?? {};
   const queryClient = getReactQueryClient();
+  const [chatbot, setChatbot] = React.useState<JSX.Element>();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (isMonitoringView) {
@@ -143,6 +144,10 @@ const DesignerEditor = () => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
   }, [data?.properties.files]);
 
+  React.useEffect(() => {
+    setChatbot(<Chatbot workflowDefinition={workflow.definition} />);
+  }, [workflow]);
+
   if (isLoading || appLoading || settingsLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
@@ -213,7 +218,7 @@ const DesignerEditor = () => {
                 isDarkMode={isDarkMode}
               />
               <Designer />
-              {showChatBot ? <Chatbot /> : null}
+              {showChatBot ? chatbot : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
