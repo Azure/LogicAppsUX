@@ -1,50 +1,91 @@
 # Logic Apps Designer
-## [2.49.0](https://github.com/Azure/LogicAppsUX/compare/v2.48.0...v2.49.0) (2023-07-18)
 
+## [2.54.0](https://github.com/Azure/LogicAppsUX/compare/v2.53.0...v2.54.0) (2023-07-27)
 
 ### Features
 
-* **Designer:** Added node selection functionality options ([#2988](https://github.com/Azure/LogicAppsUX/issues/2988)) ([e673d09](https://github.com/Azure/LogicAppsUX/commit/e673d09352dde8b1655c995e602beba439584910))
+- **designer:** Validate empty required actions inputs prior saving ([#3040](https://github.com/Azure/LogicAppsUX/issues/3040)) ([da2020d](https://github.com/Azure/LogicAppsUX/commit/da2020da3a36fff1a62344beff75306412124442))
 
+## [2.53.0](https://github.com/Azure/LogicAppsUX/compare/v2.52.0...v2.53.0) (2023-07-25)
+
+### Features
+
+- **copilot:** Copilot Get Started input and suggested flow components ([#2992](https://github.com/Azure/LogicAppsUX/issues/2992)) ([0af6397](https://github.com/Azure/LogicAppsUX/commit/0af639728040b8560ce7450f7464dd7b0722064c))
+- **designer:** Add EditorService to allow custom components ([#2996](https://github.com/Azure/LogicAppsUX/issues/2996)) ([7915771](https://github.com/Azure/LogicAppsUX/commit/7915771102a50490977b6a6048e16d27c94b2a3a))
+- **designer:** Adding buttons to fill all / remove all advanced parameters ([#3007](https://github.com/Azure/LogicAppsUX/issues/3007)) ([c273aa5](https://github.com/Azure/LogicAppsUX/commit/c273aa5eebffc898e445ae2912740e41e31450cf))
+- **designer:** Better surface workflow search as a button ([#3025](https://github.com/Azure/LogicAppsUX/issues/3025)) ([6d7ed51](https://github.com/Azure/LogicAppsUX/commit/6d7ed5151b64c231a46c07b173334fa8eb96d51e))
+- **vscode:** Azurite Start & Default Location ([#3006](https://github.com/Azure/LogicAppsUX/issues/3006)) ([4c06ab9](https://github.com/Azure/LogicAppsUX/commit/4c06ab909f46fe9c355c3d23ce3f70bebe11d39d)), closes [#2958](https://github.com/Azure/LogicAppsUX/issues/2958)
 
 ### Bug Fixes
 
-* **designer:** Update operations connector id for x12 and edifact ([#2982](https://github.com/Azure/LogicAppsUX/issues/2982)) ([99c168e](https://github.com/Azure/LogicAppsUX/commit/99c168edea7a64f9c2255ebd30b62677307efb67))
+- **data mapper:** functions missing on load schema ([#3030](https://github.com/Azure/LogicAppsUX/issues/3030)) ([f359e29](https://github.com/Azure/LogicAppsUX/commit/f359e298476c31a7efd1a1d570c119c864cd9da2))
+- **designer:** Add dynamic inputs for serialized workflow ([#3000](https://github.com/Azure/LogicAppsUX/issues/3000)) ([fa5670b](https://github.com/Azure/LogicAppsUX/commit/fa5670b778d945399c7a4b7a94a7964a626f9b9a))
+- **Designer:** Fixed issue with some MI ServiceProvider connections failing ([#3020](https://github.com/Azure/LogicAppsUX/issues/3020)) ([b2730df](https://github.com/Azure/LogicAppsUX/commit/b2730df7a80a003b0b5376c75ce6e21602d8095d))
+- **Designer:** Fixed regression with dynamic invoke requests ([#3024](https://github.com/Azure/LogicAppsUX/issues/3024)) ([6bd4461](https://github.com/Azure/LogicAppsUX/commit/6bd4461e9191740f822ffc0c6a08ff38524f511d))
+- **Designer:** Fixed small type import build issue ([#3021](https://github.com/Azure/LogicAppsUX/issues/3021)) ([dfb72ff](https://github.com/Azure/LogicAppsUX/commit/dfb72fffa013f6dc11923c7fdb2e815ccf1a98a9))
+- **designer:** html editor dropdown item active being darker than it should ([#3014](https://github.com/Azure/LogicAppsUX/issues/3014)) ([b47bacc](https://github.com/Azure/LogicAppsUX/commit/b47bacce80d6fecc8d913fa7168e26b4ca90059d))
+- **designer:** token picker support for small screens ([#3013](https://github.com/Azure/LogicAppsUX/issues/3013)) ([eb4852c](https://github.com/Azure/LogicAppsUX/commit/eb4852caab70a40fa30589731fb1ba88cee61791))
+
+## [2.52.0](https://github.com/Azure/LogicAppsUX/compare/v2.51.0...v2.52.0) (2023-07-20)
+
+### Bug Fixes
+
+- **desinger:** Fix type issue breaking portal build ([#3004](https://github.com/Azure/LogicAppsUX/issues/3004)) ([ae469f7](https://github.com/Azure/LogicAppsUX/commit/ae469f7ad63e39c5fc0cb42ce9e9a8b8c5d215a7))
+
+## [2.51.0](https://github.com/Azure/LogicAppsUX/compare/v2.50.1...v2.51.0) (2023-07-20)
+
+### [2.50.1](https://github.com/Azure/LogicAppsUX/compare/v2.50.0...v2.50.1) (2023-07-20)
+
+### Bug Fixes
+
+- **designer:** Update upstream nodes when updating run after ([#3002](https://github.com/Azure/LogicAppsUX/issues/3002)) ([3792db3](https://github.com/Azure/LogicAppsUX/commit/3792db39f4cdb957f3babb0c4fc4d5a38b1da0ce))
+- **desinger:** Fix type issue breaking portal build ([#3003](https://github.com/Azure/LogicAppsUX/issues/3003)) ([2068d70](https://github.com/Azure/LogicAppsUX/commit/2068d70d16af3ea186b4ae6a698e4e16ac49d716))
+
+## [2.50.0](https://github.com/Azure/LogicAppsUX/compare/v2.49.0...v2.50.0) (2023-07-20)
+
+### Bug Fixes
+
+- **designer:** Default to off on content transfer chunking in stateless workflows ([#2997](https://github.com/Azure/LogicAppsUX/issues/2997)) ([117c725](https://github.com/Azure/LogicAppsUX/commit/117c7257202162a32319dff196348be0df144e4c))
+
+## [2.49.0](https://github.com/Azure/LogicAppsUX/compare/v2.48.0...v2.49.0) (2023-07-18)
+
+### Features
+
+- **Designer:** Added node selection functionality options ([#2988](https://github.com/Azure/LogicAppsUX/issues/2988)) ([e673d09](https://github.com/Azure/LogicAppsUX/commit/e673d09352dde8b1655c995e602beba439584910))
+
+### Bug Fixes
+
+- **designer:** Update operations connector id for x12 and edifact ([#2982](https://github.com/Azure/LogicAppsUX/issues/2982)) ([99c168e](https://github.com/Azure/LogicAppsUX/commit/99c168edea7a64f9c2255ebd30b62677307efb67))
 
 ## [2.48.0](https://github.com/Azure/LogicAppsUX/compare/v2.47.0...v2.48.0) (2023-07-17)
 
-
 ### Features
 
-* **vscode:** Add microsoft csharp extension as dependency ([#2978](https://github.com/Azure/LogicAppsUX/issues/2978)) ([69fe613](https://github.com/Azure/LogicAppsUX/commit/69fe613f0374347136a46d615eccdb748a6fc105))
-
+- **vscode:** Add microsoft csharp extension as dependency ([#2978](https://github.com/Azure/LogicAppsUX/issues/2978)) ([69fe613](https://github.com/Azure/LogicAppsUX/commit/69fe613f0374347136a46d615eccdb748a6fc105))
 
 ### Bug Fixes
 
-* **designer:** Add missing template functions ([#2969](https://github.com/Azure/LogicAppsUX/issues/2969)) ([cadcffe](https://github.com/Azure/LogicAppsUX/commit/cadcffe1c12a16083daba984fd8a75b1d58ccc78))
-* **designer:** Complex Array Editor - Support for nested items ([#2979](https://github.com/Azure/LogicAppsUX/issues/2979)) ([0eebf88](https://github.com/Azure/LogicAppsUX/commit/0eebf88bda57ecc45577ee85ee8fdabc37e94a91))
-* **Designer:** Fixed bug with subscription fetch request `nextlink`s ([#2980](https://github.com/Azure/LogicAppsUX/issues/2980)) ([6dd8400](https://github.com/Azure/LogicAppsUX/commit/6dd840088789d2da83941eb2eb91e547dd049814))
-* **vscode:** Api version in api hub service ([#2974](https://github.com/Azure/LogicAppsUX/issues/2974)) ([f6eb8a2](https://github.com/Azure/LogicAppsUX/commit/f6eb8a258d043f13e2f849ce62a595416a98d499))
+- **designer:** Add missing template functions ([#2969](https://github.com/Azure/LogicAppsUX/issues/2969)) ([cadcffe](https://github.com/Azure/LogicAppsUX/commit/cadcffe1c12a16083daba984fd8a75b1d58ccc78))
+- **designer:** Complex Array Editor - Support for nested items ([#2979](https://github.com/Azure/LogicAppsUX/issues/2979)) ([0eebf88](https://github.com/Azure/LogicAppsUX/commit/0eebf88bda57ecc45577ee85ee8fdabc37e94a91))
+- **Designer:** Fixed bug with subscription fetch request `nextlink`s ([#2980](https://github.com/Azure/LogicAppsUX/issues/2980)) ([6dd8400](https://github.com/Azure/LogicAppsUX/commit/6dd840088789d2da83941eb2eb91e547dd049814))
+- **vscode:** Api version in api hub service ([#2974](https://github.com/Azure/LogicAppsUX/issues/2974)) ([f6eb8a2](https://github.com/Azure/LogicAppsUX/commit/f6eb8a258d043f13e2f849ce62a595416a98d499))
 
 ## [2.47.0](https://github.com/Azure/LogicAppsUX/compare/v2.46.0...v2.47.0) (2023-07-13)
 
-
 ### Bug Fixes
 
-* **Designer:** Fixed rare connection creation parameter null-safety issue ([#2960](https://github.com/Azure/LogicAppsUX/issues/2960)) ([f104bbb](https://github.com/Azure/LogicAppsUX/commit/f104bbb97b2edb6ae93a9d02ae74170f40e18492))
+- **Designer:** Fixed rare connection creation parameter null-safety issue ([#2960](https://github.com/Azure/LogicAppsUX/issues/2960)) ([f104bbb](https://github.com/Azure/LogicAppsUX/commit/f104bbb97b2edb6ae93a9d02ae74170f40e18492))
 
 ## [2.46.0](https://github.com/Azure/LogicAppsUX/compare/v2.45.0...v2.46.0) (2023-07-12)
 
-
 ### Features
 
-* **chatbot:** Chatbot UI components ([#2869](https://github.com/Azure/LogicAppsUX/issues/2869)) ([1b78fde](https://github.com/Azure/LogicAppsUX/commit/1b78fde2629cc9e01de7e8970b30483d06f26c28))
-
+- **chatbot:** Chatbot UI components ([#2869](https://github.com/Azure/LogicAppsUX/issues/2869)) ([1b78fde](https://github.com/Azure/LogicAppsUX/commit/1b78fde2629cc9e01de7e8970b30483d06f26c28))
 
 ### Bug Fixes
 
-* **Designer:** Fixed dynamic data regression ([#2954](https://github.com/Azure/LogicAppsUX/issues/2954)) ([8f1c185](https://github.com/Azure/LogicAppsUX/commit/8f1c185f2e26e3652554ca2923a71addee1c5f95))
-* **vscode:** Update services API  version  ([#2957](https://github.com/Azure/LogicAppsUX/issues/2957)) ([90cd9c0](https://github.com/Azure/LogicAppsUX/commit/90cd9c00044be5dc9dd9f44ec70fcd7c5063c8bc))
+- **Designer:** Fixed dynamic data regression ([#2954](https://github.com/Azure/LogicAppsUX/issues/2954)) ([8f1c185](https://github.com/Azure/LogicAppsUX/commit/8f1c185f2e26e3652554ca2923a71addee1c5f95))
+- **vscode:** Update services API version ([#2957](https://github.com/Azure/LogicAppsUX/issues/2957)) ([90cd9c0](https://github.com/Azure/LogicAppsUX/commit/90cd9c00044be5dc9dd9f44ec70fcd7c5063c8bc))
 
 ## [2.45.0](https://github.com/Azure/LogicAppsUX/compare/v2.44.0...v2.45.0) (2023-07-11)
 

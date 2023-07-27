@@ -1,0 +1,179 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/searchabledropdownwithaddall should create a dropdown with an add all and remove all buttons 1`] = `
+<div
+  className="ms-Stack css-109"
+>
+  <Dropdown
+    className="msla-searchable-dropdown-with-buttons"
+    multiSelect={true}
+    onChange={[Function]}
+    onDismiss={[Function]}
+    onRenderItem={[Function]}
+    options={
+      Array [
+        Object {
+          "key": "foo",
+          "text": "Foo",
+        },
+        Object {
+          "key": "bar",
+          "text": "Bar",
+        },
+        Object {
+          "key": "baz",
+          "text": "Baz",
+        },
+      ]
+    }
+    placeholder="Select an option"
+    selectedKeys={Array []}
+  />
+  <div
+    className="ms-TooltipHost root-110"
+    onBlurCapture={[Function]}
+    onFocusCapture={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    role="none"
+  >
+    <button
+      aria-disabled={false}
+      className="ms-Link msla-dropdown-control-button root-111"
+      data-automation-id="msla-add-all-button"
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    >
+      Add all
+    </button>
+    <div
+      hidden={true}
+      id="tooltip0"
+      style={
+        Object {
+          "border": 0,
+          "height": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+    >
+      Add all tooltip
+    </div>
+  </div>
+  <div
+    className="ms-TooltipHost root-110"
+    onBlurCapture={[Function]}
+    onFocusCapture={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    role="none"
+  >
+    <button
+      aria-disabled={false}
+      className="ms-Link msla-dropdown-control-button root-111"
+      data-automation-id="msla-remove-all-button"
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    >
+      Remove all
+    </button>
+    <div
+      hidden={true}
+      id="tooltip1"
+      style={
+        Object {
+          "border": 0,
+          "height": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+    >
+      Remove all tooltip
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/searchabledropdownwithaddall should create a dropdown with an add all only 1`] = `
+<div
+  className="ms-Stack css-109"
+>
+  <Dropdown
+    className="msla-searchable-dropdown-with-buttons"
+    multiSelect={true}
+    onChange={[Function]}
+    onDismiss={[Function]}
+    onRenderItem={[Function]}
+    options={
+      Array [
+        Object {
+          "key": "foo",
+          "text": "Foo",
+        },
+        Object {
+          "key": "bar",
+          "text": "Bar",
+        },
+        Object {
+          "key": "baz",
+          "text": "Baz",
+        },
+      ]
+    }
+    placeholder="Select an option"
+    selectedKeys={Array []}
+  />
+  <div
+    className="ms-TooltipHost root-110"
+    onBlurCapture={[Function]}
+    onFocusCapture={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    role="none"
+  >
+    <button
+      aria-disabled={false}
+      className="ms-Link msla-dropdown-control-button root-111"
+      data-automation-id="msla-add-all-button"
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    >
+      Add all
+    </button>
+    <div
+      hidden={true}
+      id="tooltip2"
+      style={
+        Object {
+          "border": 0,
+          "height": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+    >
+      Add all tooltip
+    </div>
+  </div>
+</div>
+`;

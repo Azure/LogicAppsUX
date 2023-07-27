@@ -23,6 +23,12 @@
       "value": "Fehlerhaft"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -52,7 +58,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Erforderlich. Die zu untersuchende Zeichenfolge."
     }
   ],
   "+powfX": [
@@ -680,7 +686,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Optional. Der zu verwendende RFC 4646-Gebietsschemacode. Wenn keine Angabe erfolgt, wird das Standardgebietsschema verwendet. Wenn das Gebietsschema kein gültiger Wert ist, wird ein Fehler generiert, dass das angegebene Gebietsschema ungültig ist oder über kein zugeordnetes Gebietsschema verfügt."
     }
   ],
   "3+TQMa": [
@@ -766,7 +772,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Erforderlich. Die zu untersuchende Zeichenfolge."
     }
   ],
   "3QXY3z": [
@@ -778,7 +784,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Gibt die Sammlung in umgekehrter Reihenfolge zurück."
     }
   ],
   "3X4FHS": [
@@ -1159,6 +1165,12 @@
       "value": "Fehler beim Laden der Eingaben"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Alle erweiterten Parameter anzeigen"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1487,6 +1499,12 @@
       "value": "Aktivieren Sie die verwaltete Identität für die Logik-App."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1705,6 +1723,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1801,6 +1825,12 @@
     {
       "type": 0,
       "value": "Wählen Sie die Häufigkeit aus."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Entfernen und Löschen aller erweiterten Parameter und ihrer Werte"
     }
   ],
   "Ak2Lka": [
@@ -2075,6 +2105,12 @@
     {
       "type": 0,
       "value": "Hiermit werden die im Schwellenwert angegebenen Elemente gemäß Fortsetzungstoken abgerufen. Aufgrund der Seitengröße des Connectors überschreitet die zurückgegebene Anzahl möglicherweise den Schwellenwert."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2743,6 +2779,20 @@
       "value": "Referenzierende Funktionen"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2874,7 +2924,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Erforderlich. Die zu sortierende Sammlung."
     }
   ],
   "HMiE+4": [
@@ -3083,20 +3133,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutsk"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fehler beim Ausführen der API „"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "“."
     }
   ],
   "IooQu1": [
@@ -3427,6 +3463,12 @@
     {
       "type": 0,
       "value": "Funktions-Apps werden geladen..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3853,6 +3895,12 @@
     {
       "type": 0,
       "value": "Dateien werden geladen..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4333,6 +4381,12 @@
       "value": "Gibt eine Zeichenfolge im Datumsformat zurück."
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4639,6 +4693,12 @@
       "value": "Freitag"
     }
   ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -4912,7 +4972,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Erforderlich. Die Länge jedes Blocks."
     }
   ],
   "Umpr3z": [
@@ -4973,6 +5033,12 @@
     {
       "type": 0,
       "value": "Geben Sie einen Namen für die Verbindung ein"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
     }
   ],
   "V+/c21": [
@@ -5049,6 +5115,12 @@
     {
       "type": 0,
       "value": "“"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5147,6 +5219,12 @@
     {
       "type": 0,
       "value": "Diese Aktion wurde hinzugefügt."
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5301,6 +5379,12 @@
     {
       "type": 0,
       "value": "Wiederholen"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Erweiterte Parameter"
     }
   ],
   "XH94im": [
@@ -5763,6 +5847,12 @@
       "value": "Erfahren Sie mehr über dynamische Inhalte."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5775,16 +5865,16 @@
       "value": "Erforderlich. Die Anzahl des Vorkommens des zu suchenden Substrings."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Erforderlich. Die Anzahl von Objekten, die vom Anfang der Sammlung entfernt werden sollen. Muss eine positive ganze Zahl sein."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Neue Parameter hinzufügen"
     }
   ],
   "aK4iLW": [
@@ -5902,7 +5992,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Optional. Ein Schlüssel, der zum Sortieren von Objekten in der Sammlung verwendet werden soll."
     }
   ],
   "bSZ0lL": [
@@ -5957,6 +6047,12 @@
     {
       "type": 0,
       "value": "Wiederholungsverlauf"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Alle löschen"
     }
   ],
   "bwlAWn": [
@@ -6622,7 +6718,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Gibt einen booleschen Wert zurück, der angibt, ob eine Zeichenfolge eine Gleitkommazahl ist."
     }
   ],
   "gu9o9z": [
@@ -6715,6 +6811,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6905,6 +7007,12 @@
       "value": "Beispiel: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7011,6 +7119,24 @@
       "value": "Quellschema hinzufügen"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " werden angezeigt"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -7020,7 +7146,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Erforderlich. Die aufzuteilende Zeichenfolge oder das aufzuteilende Array."
     }
   ],
   "jVpanH": [
@@ -7306,7 +7432,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Erforderlich. Die umzukehrende Sammlung."
     }
   ],
   "lexzgJ": [
@@ -8173,6 +8299,12 @@
     {
       "type": 0,
       "value": "\"."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
@@ -9292,7 +9424,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Gibt ein Array in aufsteigender Reihenfolge zurück."
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Alle anzeigen"
     }
   ],
   "yVFIAQ": [
@@ -9310,7 +9448,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Aufteilen einer Zeichenfolge oder eines Arrays in Blöcke gleicher Länge"
     }
   ],
   "ydqOly": [
@@ -9458,7 +9596,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Gibt einen booleschen Wert zurück, der angibt, ob eine Zeichenfolge eine ganze Zahl ist."
     }
   ],
   "zUgja+": [

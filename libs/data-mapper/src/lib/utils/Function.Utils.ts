@@ -8,13 +8,14 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
-import type { SchemaNodeExtended } from '../models';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
-import { isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
+import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
@@ -136,6 +137,29 @@ export const functionsForLocation = (functions: FunctionDictionary, targetKey: s
     Object.entries(functions).filter(([_key, value]) => value.functionLocations.some((location) => location.key === targetKey))
   );
 
+export const getFunctionLocationsForAllFunctions = (
+  dataMapConnections: ConnectionDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary
+): FunctionDictionary => {
+  const functionNodes: FunctionDictionary = {};
+  for (const connectionKey in dataMapConnections) {
+    const func = dataMapConnections[connectionKey].self.node as FunctionData;
+    if (func.functionName !== undefined) {
+      const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
+
+      const parentNodes: SchemaNodeExtended[] = [];
+      targetNodesConnectedToFunction.forEach((childNode) => {
+        if (childNode.parentKey) {
+          parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
+        }
+      });
+
+      const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
+      functionNodes[connectionKey] = { functionData: func, functionLocations: combinedTargetNodes };
+    }
+  }
+  return functionNodes;
+};
 export const functionDropDownItemText = (key: string, node: FunctionData, connections: ConnectionDictionary) => {
   let fnInputValues: string[] = [];
   const connection = connections[key];

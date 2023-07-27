@@ -23,6 +23,12 @@
       "value": "Со сбоем"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -48,7 +54,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Обязательно. Строка для изучения."
     }
   ],
   "+powfX": [
@@ -672,7 +678,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Необязательно. Используемый код языкового стандарта RFC 4646. Если не указано, используется языковой стандарт по умолчанию. Если языковой стандарт не является допустимым значением, создается ошибка о том, что указанный языковой стандарт недопустим или не имеет связанного языкового стандарта."
     }
   ],
   "3+TQMa": [
@@ -758,7 +764,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Обязательно. Строка для изучения."
     }
   ],
   "3QXY3z": [
@@ -770,7 +776,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Возвращает коллекцию в обратном порядке"
     }
   ],
   "3X4FHS": [
@@ -954,7 +960,7 @@
   "4hi3ks": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Ваш поток обновлен."
     }
   ],
   "4j2MEv": [
@@ -1010,7 +1016,7 @@
   "50W8FI": [
     {
       "type": 0,
-      "value": "Explain action"
+      "value": "Объяснить действие"
     }
   ],
   "53MgCQ": [
@@ -1028,13 +1034,13 @@
   "5H+8Sb": [
     {
       "type": 0,
-      "value": "Add a condition"
+      "value": "Добавить условие"
     }
   ],
   "5J9jne": [
     {
       "type": 0,
-      "value": "Tell Microsoft what you liked about this feature"
+      "value": "Расскажите Майкрософт, что вам понравилось в этой функции"
     }
   ],
   "5OvGgn": [
@@ -1147,6 +1153,12 @@
       "value": "Ошибка при загрузке входных данных"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Показать все расширенные параметры"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1188,7 +1200,7 @@
   "6gblzt": [
     {
       "type": 0,
-      "value": "Updated this action"
+      "value": "Это действие обновлено"
     }
   ],
   "6jiO7t": [
@@ -1224,7 +1236,7 @@
   "6pISgk": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up these actions:"
+      "value": "Чтобы подготовить этот рабочий процесс, завершите настройку следующих действий:"
     }
   ],
   "6qkBwz": [
@@ -1236,7 +1248,7 @@
   "6sGj3J": [
     {
       "type": 0,
-      "value": "Create flow"
+      "value": "Создать поток"
     }
   ],
   "6u6CS+": [
@@ -1340,7 +1352,7 @@
   "7gUE8h": [
     {
       "type": 0,
-      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+      "value": "Это отменит изменения вашего рабочего процесса и вернет его в состояние до правок Copilot. Если вы внесли дополнительные изменения в рабочий процесс после Copilot, они будут потеряны. Это действие невозможно отменить. Продолжить?"
     }
   ],
   "7k9jXx": [
@@ -1352,7 +1364,7 @@
   "7ku9t+": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Сообщить об ошибке"
     }
   ],
   "7lnElz": [
@@ -1475,16 +1487,22 @@
       "value": "Включите управляемое удостоверение для приложения логики."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
-      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Опишите, как следует изменить поток. Если возможно, добавьте сведения, в том числе используемый соединитель и нужно ли включать какой-либо контент."
     }
   ],
   "8Q7ns/": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Изменить этот поток на"
     }
   ],
   "8SxNQC": [
@@ -1648,7 +1666,7 @@
   "9QNZSj": [
     {
       "type": 0,
-      "value": "Revert your flow"
+      "value": "Отменить изменения потока"
     }
   ],
   "9SuA/E": [
@@ -1689,6 +1707,12 @@
       "value": "Текст"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1710,7 +1734,7 @@
   "9wX3u9": [
     {
       "type": 0,
-      "value": "Send feedback"
+      "value": "Отправить отзыв"
     }
   ],
   "9x8hg8": [
@@ -1787,10 +1811,16 @@
       "value": "Выберите периодичность."
     }
   ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Удалить и очистить все расширенные параметры и их значения"
+    }
+  ],
   "Ak2Lka": [
     {
       "type": 0,
-      "value": "Not connected to"
+      "value": "Не подключено к"
     }
   ],
   "AnX5yC": [
@@ -1942,7 +1972,7 @@
   "BIzX3S": [
     {
       "type": 0,
-      "value": "Learn more about undo operations"
+      "value": "Подробнее об операциях отмены"
     }
   ],
   "BJNUxN": [
@@ -1978,7 +2008,7 @@
   "BS3gy8": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Произошла ошибка. Повторите попытку."
     }
   ],
   "BSgavq": [
@@ -2068,7 +2098,7 @@
   "BynK4X": [
     {
       "type": 0,
-      "value": "Ask a question"
+      "value": "Задайте вопрос"
     }
   ],
   "C1cy54": [
@@ -2083,10 +2113,16 @@
       "value": "Получите элементы в соответствии с указанным пороговым значением, используя маркер продолжения. Из-за размера страницы соединителя возвращаемое число элементов может превышать пороговое значение."
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "CFOUe3": [
     {
       "type": 0,
-      "value": "Add an action that sends an email"
+      "value": "Добавить действие, которое отправляет сообщение электронной почты"
     }
   ],
   "CG772M": [
@@ -2392,7 +2428,7 @@
   "EKjaix": [
     {
       "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+      "value": "Проверьте действия потока, чтобы узнать, нужно ли настроить какие-либо параметры. Не забудьте сохранить после завершения."
     }
   ],
   "EKtYQF": [
@@ -2492,7 +2528,7 @@
   "EqX3Mi": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Настройте эти подключения для использования в своем потоке."
     }
   ],
   "EurkzL": [
@@ -2558,7 +2594,7 @@
   "FMA0Q0": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Ваш поток обновлен."
     }
   ],
   "FN5zHQ": [
@@ -2752,7 +2788,7 @@
   "GQnN3U": [
     {
       "type": 0,
-      "value": "Explain flow"
+      "value": "Объяснить поток"
     }
   ],
   "GXXLuT": [
@@ -2765,6 +2801,20 @@
     {
       "type": 0,
       "value": "Функции создания ссылок"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
     }
   ],
   "GcG0qf": [
@@ -2782,7 +2832,7 @@
   "Ggkf4s": [
     {
       "type": 0,
-      "value": "Get started"
+      "value": "Начать"
     }
   ],
   "Gi72X5": [
@@ -2894,7 +2944,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Обязательно. Коллекция для сортировки."
     }
   ],
   "HMiE+4": [
@@ -2942,7 +2992,7 @@
   "HfmDk9": [
     {
       "type": 0,
-      "value": "Edit Flow"
+      "value": "Изменить поток"
     }
   ],
   "HfrUId": [
@@ -3105,20 +3155,6 @@
       "value": "(UTC+09:00) Якутск"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Ошибка при выполнении API \""
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "\"."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3134,7 +3170,7 @@
   "IuHdCO": [
     {
       "type": 0,
-      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+      "value": "Вот ваш поток. Если вы хотите, чтобы я изменил его, просто скажите, что нужно сделать. Например:"
     }
   ],
   "IxWip7": [
@@ -3218,7 +3254,7 @@
   "JJyT88": [
     {
       "type": 0,
-      "value": "Action undone"
+      "value": "Действие отменено"
     }
   ],
   "JNQHws": [
@@ -3314,7 +3350,7 @@
   "KNDVnN": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "Заменить \""
     },
     {
       "type": 1,
@@ -3322,7 +3358,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\" на"
     }
   ],
   "KP0Rr2": [
@@ -3334,7 +3370,7 @@
   "KV4uky": [
     {
       "type": 0,
-      "value": "When a new item..."
+      "value": "Если новый элемент..."
     }
   ],
   "KX1poC": [
@@ -3471,6 +3507,12 @@
       "value": "Загрузка приложений-функций..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3522,7 +3564,7 @@
   "LaFlFh": [
     {
       "type": 0,
-      "value": "Removed this action"
+      "value": "Это действие удалено"
     }
   ],
   "LdITnG": [
@@ -3612,7 +3654,7 @@
   "M3kJsI": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Каждую неделю в понедельник"
     }
   ],
   "M4H0gh": [
@@ -3654,7 +3696,7 @@
   "MGZRu4": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Добавить действие"
     }
   ],
   "MIX4f9": [
@@ -3897,6 +3939,12 @@
       "value": "Выполняется загрузка файлов..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3960,7 +4008,7 @@
   "OQud51": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Расскажи подробнее о"
     }
   ],
   "OSHNZ2": [
@@ -3984,7 +4032,7 @@
   "OYWZE4": [
     {
       "type": 0,
-      "value": "Save this workflow"
+      "value": "Сохранить этот рабочий процесс"
     }
   ],
   "OdNhwc": [
@@ -4367,6 +4415,12 @@
       "value": "Возвращает строку в формате даты"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4574,7 +4628,7 @@
   "SHXdzU": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Содержимое, созданное ИИ, может быть неправильным"
     }
   ],
   "SJFVxf": [
@@ -4686,13 +4740,19 @@
   "TLMkrg": [
     {
       "type": 0,
-      "value": "Explain what an action does"
+      "value": "Объяснить, что выполняет действие"
     }
   ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Пятница"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4926,7 +4986,7 @@
   "UW+fkB": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Отправить мне письмо, когда"
     }
   ],
   "UYRIS/": [
@@ -4968,7 +5028,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Обязательно. Длина каждого блока."
     }
   ],
   "Umpr3z": [
@@ -5031,6 +5091,12 @@
       "value": "Введите имя для подключения"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5070,7 +5136,7 @@
   "VEbE93": [
     {
       "type": 0,
-      "value": "Explain what the \""
+      "value": "Объяснить, что действие \""
     },
     {
       "type": 1,
@@ -5078,7 +5144,7 @@
     },
     {
       "type": 0,
-      "value": "\" action does in this flow"
+      "value": "\" выполняет в этом потоке"
     }
   ],
   "VHm1Sr": [
@@ -5101,6 +5167,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5198,7 +5270,13 @@
   "Vx6fwP": [
     {
       "type": 0,
-      "value": "Added this action"
+      "value": "Это действие добавлено"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5220,7 +5298,7 @@
   "WCASt1": [
     {
       "type": 0,
-      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Опишите какой-либо элемент потока, который следует заменить, а также то, на что его нужно заменить. Если возможно, добавьте сведения, в том числе используемый соединитель и нужно ли включать какой-либо контент."
     }
   ],
   "WGwH45": [
@@ -5351,6 +5429,12 @@
       "value": "Повторить"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Расширенные параметры"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5388,7 +5472,7 @@
   "XR4Sd/": [
     {
       "type": 0,
-      "value": "Like"
+      "value": "Нравится"
     }
   ],
   "XRK+gt": [
@@ -5524,7 +5608,7 @@
   "Y04+GH": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Добавить действие"
     }
   ],
   "Y0H9aX": [
@@ -5554,7 +5638,7 @@
   "YCDF7A": [
     {
       "type": 0,
-      "value": "All required parameters are set"
+      "value": "Настроены все необходимые параметры"
     }
   ],
   "YCFhzp": [
@@ -5772,7 +5856,7 @@
   "ZXoHXd": [
     {
       "type": 0,
-      "value": "Here’s your flow."
+      "value": "Вот ваш поток."
     }
   ],
   "ZaIeDG": [
@@ -5811,6 +5895,12 @@
       "value": "Дополнительные сведения о динамическом содержимом."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5823,16 +5913,16 @@
       "value": "Обязательно. Число вхождений substring для поиска."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Обязательное поле. Количество объектов, которое необходимо удалить с начала коллекции. Необходимо указать положительное целое число."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Добавить новые параметры"
     }
   ],
   "aK4iLW": [
@@ -5950,7 +6040,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Необязательно. Ключ, используемый для сортировки объектов в коллекции."
     }
   ],
   "bSZ0lL": [
@@ -5998,13 +6088,19 @@
   "blRFVt": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Настройте эти подключения для использования в своем потоке."
     }
   ],
   "bldzuj": [
     {
       "type": 0,
       "value": "Журнал повторных попыток"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Очистить все"
     }
   ],
   "bwlAWn": [
@@ -6226,13 +6322,13 @@
   "dMAC4C": [
     {
       "type": 0,
-      "value": "Replace action"
+      "value": "Заменить действие"
     }
   ],
   "dNpnmn": [
     {
       "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+      "value": "С возвращением! Если вы хотите, чтобы я изменил ваш поток, просто скажите, что нужно сделать. Например:"
     }
   ],
   "dOpdsP": [
@@ -6262,7 +6358,7 @@
   "dUbKuK": [
     {
       "type": 0,
-      "value": "Skip"
+      "value": "Пропустить"
     }
   ],
   "dWFyfN": [
@@ -6360,7 +6456,7 @@
   "eESljX": [
     {
       "type": 0,
-      "value": "Revert"
+      "value": "Отменить изменения"
     }
   ],
   "eFet4K": [
@@ -6426,7 +6522,7 @@
   "eqAUdj": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Если новый элемент"
     }
   ],
   "f/lWTW": [
@@ -6666,7 +6762,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Возвращает логическое значение, указывающее, является ли строка числом с плавающей запятой"
     }
   ],
   "gu9o9z": [
@@ -6774,13 +6870,19 @@
   "hRVVdR": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Отменить"
     }
   ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) Газа, Хеврон"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6971,6 +7073,12 @@
       "value": "Пример: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7056,7 +7164,7 @@
   "jN0YES": [
     {
       "type": 0,
-      "value": "Tell Microsoft how this feature could be improved"
+      "value": "Расскажите Майкрософт, как можно улучшить эту функцию"
     }
   ],
   "jQ0Aqj": [
@@ -7077,6 +7185,24 @@
       "value": "Добавить исходную схему"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Отображается "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " из "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -7086,7 +7212,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Обязательно. Строка или массив для разделения."
     }
   ],
   "jVpanH": [
@@ -7122,7 +7248,7 @@
   "jlcMGg": [
     {
       "type": 0,
-      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Опишите, какое-либо действие, которое должен выполнять поток. Если возможно, добавьте сведения, в том числе используемый соединитель и нужно ли включать какой-либо контент."
     }
   ],
   "juR40n": [
@@ -7194,13 +7320,13 @@
   "kHs5R4": [
     {
       "type": 0,
-      "value": "Check these actions to see if any parameters need to be set."
+      "value": "Проверьте эти действия, чтобы узнать, нужно ли настроить какие-либо параметры."
     }
   ],
   "kKJMeM": [
     {
       "type": 0,
-      "value": "Every week on Monday..."
+      "value": "Каждую неделю в понедельник..."
     }
   ],
   "kM+Mr0": [
@@ -7326,7 +7452,7 @@
   "l2YXln": [
     {
       "type": 0,
-      "value": "Replace action with"
+      "value": "Заменить действие на"
     }
   ],
   "l36V56": [
@@ -7398,7 +7524,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Обязательно. Коллекция для применения обратного порядка."
     }
   ],
   "lexzgJ": [
@@ -8110,7 +8236,7 @@
   "qBNM3e": [
     {
       "type": 0,
-      "value": "Connecting to apps and services"
+      "value": "Подключение к приложениям и службам"
     }
   ],
   "qBkxGU": [
@@ -8285,6 +8411,12 @@
       "value": "'."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8384,7 +8516,7 @@
   "rn5IsW": [
     {
       "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+      "value": "К сожалению, ваш запрос мне непонятен. Перефразируйте и повторите попытку."
     }
   ],
   "rsdJcV": [
@@ -8432,7 +8564,7 @@
   "sBBLuh": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up these actions:"
+      "value": "Чтобы сохранить этот рабочий процесс, завершите настройку следующих действий:"
     }
   ],
   "sDkAVZ": [
@@ -8528,7 +8660,7 @@
   "srMbm9": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Отмена"
     }
   ],
   "srpZD2": [
@@ -8656,7 +8788,7 @@
   "tTIsTX": [
     {
       "type": 0,
-      "value": "Test this workflow"
+      "value": "Протестировать этот рабочий процесс"
     }
   ],
   "tUCptx": [
@@ -8830,7 +8962,7 @@
   "uZpzqY": [
     {
       "type": 0,
-      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+      "value": "К сожалению, Copilot перегружен и временно недоступен. Повторите попытку позже."
     }
   ],
   "uanMWm": [
@@ -8920,7 +9052,7 @@
   "uxQ143": [
     {
       "type": 0,
-      "value": "Ask question related to your workflow or Logic Apps."
+      "value": "Задайте вопрос, связанный с вашим рабочим процессом или Logic Apps."
     }
   ],
   "uzsleE": [
@@ -8962,7 +9094,7 @@
   "vF+gWH": [
     {
       "type": 0,
-      "value": "Explain what this flow does"
+      "value": "Объяснить действие этого потока"
     }
   ],
   "vLereV": [
@@ -9028,7 +9160,7 @@
   "vmlhVB": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up this action:"
+      "value": "Чтобы подготовить этот рабочий процесс, завершите настройку следующего действия:"
     }
   ],
   "vr70Gn": [
@@ -9348,7 +9480,7 @@
   "xvav7+": [
     {
       "type": 0,
-      "value": "Connected to"
+      "value": "Подключен к"
     }
   ],
   "xwD1VZ": [
@@ -9402,7 +9534,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Возвращает массив, отсортированный по возрастанию"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Показать все"
     }
   ],
   "yVFIAQ": [
@@ -9420,7 +9558,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Разделить строку или массив на блоки одинаковой длины"
     }
   ],
   "ydqOly": [
@@ -9446,7 +9584,7 @@
   "yk7L+4": [
     {
       "type": 0,
-      "value": "Dislike"
+      "value": "Не нравится"
     }
   ],
   "yoCi15": [
@@ -9470,7 +9608,7 @@
   "yrYEmk": [
     {
       "type": 0,
-      "value": "Send me an email when..."
+      "value": "Отправить мне письмо, когда..."
     }
   ],
   "ysoumb": [
@@ -9564,7 +9702,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Возвращает логическое значение, указывающее, является ли строка целым числом"
     }
   ],
   "zUgja+": [
@@ -9582,7 +9720,7 @@
   "zb3lE6": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up this action:"
+      "value": "Чтобы сохранить этот рабочий процесс, завершите настройку следующего действия:"
     }
   ],
   "zcZpHT": [
@@ -9594,7 +9732,7 @@
   "zec5Ay": [
     {
       "type": 0,
-      "value": "Stop"
+      "value": "Остановить"
     }
   ],
   "ziXw25": [

@@ -23,6 +23,12 @@
       "value": "Mislukt"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -48,7 +54,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Vereist. De tekenreeks die moet worden onderzocht."
     }
   ],
   "+powfX": [
@@ -672,7 +678,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Optioneel. De RFC 4646-landinstellingscode die moet worden gebruikt. Als dit niet is opgegeven, wordt de standaardinstelling gebruikt. Als landinstelling geen geldige waarde is, wordt er een fout gegenereerd dat de opgegeven landinstelling niet geldig is of geen bijbehorende landinstelling heeft."
     }
   ],
   "3+TQMa": [
@@ -758,7 +764,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Vereist. De tekenreeks die moet worden onderzocht."
     }
   ],
   "3QXY3z": [
@@ -770,7 +776,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Hiermee wordt de verzameling in omgekeerde volgorde geretourneerd"
     }
   ],
   "3X4FHS": [
@@ -958,7 +964,7 @@
   "4hi3ks": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Uw stroom is bijgewerkt."
     }
   ],
   "4j2MEv": [
@@ -1010,7 +1016,7 @@
   "50W8FI": [
     {
       "type": 0,
-      "value": "Explain action"
+      "value": "Actie uitleggen"
     }
   ],
   "53MgCQ": [
@@ -1028,13 +1034,13 @@
   "5H+8Sb": [
     {
       "type": 0,
-      "value": "Add a condition"
+      "value": "Een voorwaarde toevoegen"
     }
   ],
   "5J9jne": [
     {
       "type": 0,
-      "value": "Tell Microsoft what you liked about this feature"
+      "value": "Laat Microsoft weten wat u goed vindt aan deze functie"
     }
   ],
   "5OvGgn": [
@@ -1147,6 +1153,12 @@
       "value": "Fout bij het laden van invoer"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Alle geavanceerde parameters weergeven"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1188,7 +1200,7 @@
   "6gblzt": [
     {
       "type": 0,
-      "value": "Updated this action"
+      "value": "Deze actie is bijgewerkt"
     }
   ],
   "6jiO7t": [
@@ -1224,7 +1236,7 @@
   "6pISgk": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up these actions:"
+      "value": "Voltooi het instellen van deze acties om deze werkstroom voor te bereiden:"
     }
   ],
   "6qkBwz": [
@@ -1236,7 +1248,7 @@
   "6sGj3J": [
     {
       "type": 0,
-      "value": "Create flow"
+      "value": "Stroom maken"
     }
   ],
   "6u6CS+": [
@@ -1340,7 +1352,7 @@
   "7gUE8h": [
     {
       "type": 0,
-      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+      "value": "Hiermee wordt uw werkstroom hersteld naar de status van vóór de bewerking van Copilot. Als u aanvullende bewerkingen in de werkstroom hebt aangebracht na die van Copilot, gaan deze verloren. Deze actie kan niet ongedaan worden gemaakt. Wilt u doorgaan?"
     }
   ],
   "7k9jXx": [
@@ -1352,7 +1364,7 @@
   "7ku9t+": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Een fout melden"
     }
   ],
   "7lnElz": [
@@ -1475,16 +1487,22 @@
       "value": "Schakel de beheerde identiteit voor de logische app in."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
-      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Beschrijf hoe uw stroom moet worden gewijzigd. Voeg waar mogelijk details toe, inclusief de connector die moet worden gebruikt en of er inhoud moet worden opgenomen."
     }
   ],
   "8Q7ns/": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Deze stroom bewerken om"
     }
   ],
   "8SxNQC": [
@@ -1648,7 +1666,7 @@
   "9QNZSj": [
     {
       "type": 0,
-      "value": "Revert your flow"
+      "value": "Uw stroom omkeren"
     }
   ],
   "9SuA/E": [
@@ -1689,6 +1707,12 @@
       "value": "Tekst"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1710,7 +1734,7 @@
   "9wX3u9": [
     {
       "type": 0,
-      "value": "Send feedback"
+      "value": "Feedback verzenden"
     }
   ],
   "9x8hg8": [
@@ -1783,10 +1807,16 @@
       "value": "Selecteer de frequentie."
     }
   ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Alle geavanceerde parameters en de bijbehorende waarden verwijderen en wissen"
+    }
+  ],
   "Ak2Lka": [
     {
       "type": 0,
-      "value": "Not connected to"
+      "value": "Niet verbonden met"
     }
   ],
   "AnX5yC": [
@@ -1916,7 +1946,7 @@
   "BIzX3S": [
     {
       "type": 0,
-      "value": "Learn more about undo operations"
+      "value": "Meer informatie over ongedaan maken"
     }
   ],
   "BJNUxN": [
@@ -1952,7 +1982,7 @@
   "BS3gy8": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Er is iets verkeerd gegaan. Probeer het opnieuw."
     }
   ],
   "BSgavq": [
@@ -2042,7 +2072,7 @@
   "BynK4X": [
     {
       "type": 0,
-      "value": "Ask a question"
+      "value": "Een vraag stellen"
     }
   ],
   "C1cy54": [
@@ -2057,10 +2087,16 @@
       "value": "Items die voldoen aan de opgegeven drempelwaarde, ophalen door het vervolgtoken te volgen. Vanwege de paginagrootte van de connector kan het aantal geretourneerde items de drempelwaarde overschrijden."
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "CFOUe3": [
     {
       "type": 0,
-      "value": "Add an action that sends an email"
+      "value": "Een actie toevoegen waarmee een e-mail wordt verzonden"
     }
   ],
   "CG772M": [
@@ -2366,7 +2402,7 @@
   "EKjaix": [
     {
       "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+      "value": "Controleer de acties van de stroom om te bekijken of er parameters moeten worden ingesteld. Vergeet niet op te slaan wanneer u klaar bent."
     }
   ],
   "EKtYQF": [
@@ -2466,7 +2502,7 @@
   "EqX3Mi": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Stel deze verbindingen in om ze in uw stroom te gebruiken."
     }
   ],
   "EurkzL": [
@@ -2532,7 +2568,7 @@
   "FMA0Q0": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Uw stroom is bijgewerkt."
     }
   ],
   "FN5zHQ": [
@@ -2704,7 +2740,7 @@
   "GQnN3U": [
     {
       "type": 0,
-      "value": "Explain flow"
+      "value": "Stroom uitleggen"
     }
   ],
   "GXXLuT": [
@@ -2717,6 +2753,20 @@
     {
       "type": 0,
       "value": "Verwijzingsfuncties"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
     }
   ],
   "GcG0qf": [
@@ -2734,7 +2784,7 @@
   "Ggkf4s": [
     {
       "type": 0,
-      "value": "Get started"
+      "value": "Aan de slag"
     }
   ],
   "Gi72X5": [
@@ -2846,7 +2896,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Vereist. De verzameling die moet worden gesorteerd."
     }
   ],
   "HMiE+4": [
@@ -2894,7 +2944,7 @@
   "HfmDk9": [
     {
       "type": 0,
-      "value": "Edit Flow"
+      "value": "Stroom bewerken"
     }
   ],
   "HfrUId": [
@@ -3057,20 +3107,6 @@
       "value": "(UTC+09:00) Jakoetsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fout bij het uitvoeren van de "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " van de API."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3086,7 +3122,7 @@
   "IuHdCO": [
     {
       "type": 0,
-      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+      "value": "Dit is uw stroom! Vertel me wat u wilt als u wilt dat ik uw stroom wijzig. Bijvoorbeeld:"
     }
   ],
   "IxWip7": [
@@ -3170,7 +3206,7 @@
   "JJyT88": [
     {
       "type": 0,
-      "value": "Action undone"
+      "value": "Actie ongedaan gemaakt"
     }
   ],
   "JNQHws": [
@@ -3265,16 +3301,12 @@
   ],
   "KNDVnN": [
     {
-      "type": 0,
-      "value": "Replace \""
-    },
-    {
       "type": 1,
       "value": "selectedOperation"
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": " vervangen door"
     }
   ],
   "KP0Rr2": [
@@ -3286,7 +3318,7 @@
   "KV4uky": [
     {
       "type": 0,
-      "value": "When a new item..."
+      "value": "Wanneer een nieuw item..."
     }
   ],
   "KX1poC": [
@@ -3401,6 +3433,12 @@
       "value": "Functie-apps laden..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3452,7 +3490,7 @@
   "LaFlFh": [
     {
       "type": 0,
-      "value": "Removed this action"
+      "value": "Deze actie is verwijderd"
     }
   ],
   "LdITnG": [
@@ -3542,7 +3580,7 @@
   "M3kJsI": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Elke week op maandag"
     }
   ],
   "M4H0gh": [
@@ -3584,7 +3622,7 @@
   "MGZRu4": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Een actie toevoegen"
     }
   ],
   "MIX4f9": [
@@ -3827,6 +3865,12 @@
       "value": "Bestanden laden..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3890,7 +3934,7 @@
   "OQud51": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Vertel me er meer over"
     }
   ],
   "OSHNZ2": [
@@ -3914,7 +3958,7 @@
   "OYWZE4": [
     {
       "type": 0,
-      "value": "Save this workflow"
+      "value": "Deze werkstroom opslaan"
     }
   ],
   "OdNhwc": [
@@ -4293,6 +4337,12 @@
       "value": "Er wordt een tekenreeks in datumindeling geretourneerd"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4474,7 +4524,7 @@
   "SHXdzU": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Door AI gegenereerde inhoud is mogelijk onjuist"
     }
   ],
   "SJFVxf": [
@@ -4586,13 +4636,19 @@
   "TLMkrg": [
     {
       "type": 0,
-      "value": "Explain what an action does"
+      "value": "Leg uit wat een actie doet"
     }
   ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Vrijdag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4830,7 +4886,7 @@
   "UW+fkB": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Stuur me een e-mail wanneer"
     }
   ],
   "UYRIS/": [
@@ -4872,7 +4928,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Vereist. De lengte van elk segment."
     }
   ],
   "Umpr3z": [
@@ -4935,6 +4991,12 @@
       "value": "Voer een naam in voor de verbinding"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4974,7 +5036,7 @@
   "VEbE93": [
     {
       "type": 0,
-      "value": "Explain what the \""
+      "value": "Leg uit wat de actie "
     },
     {
       "type": 1,
@@ -4982,7 +5044,7 @@
     },
     {
       "type": 0,
-      "value": "\" action does in this flow"
+      "value": " doet in deze stroom"
     }
   ],
   "VHm1Sr": [
@@ -5005,6 +5067,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5102,7 +5170,13 @@
   "Vx6fwP": [
     {
       "type": 0,
-      "value": "Added this action"
+      "value": "Deze actie is toegevoegd"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5124,7 +5198,7 @@
   "WCASt1": [
     {
       "type": 0,
-      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Beschrijf iets in uw stroom dat moet worden vervangen en waarmee het moet worden vervangen. Voeg waar mogelijk details toe, inclusief de connector die moet worden gebruikt en of er inhoud moet worden opgenomen."
     }
   ],
   "WGwH45": [
@@ -5255,6 +5329,12 @@
       "value": "Opnieuw proberen"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Geavanceerde parameters"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5292,7 +5372,7 @@
   "XR4Sd/": [
     {
       "type": 0,
-      "value": "Like"
+      "value": "Vind-ik-leuk"
     }
   ],
   "XRK+gt": [
@@ -5428,7 +5508,7 @@
   "Y04+GH": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Een actie toevoegen"
     }
   ],
   "Y0H9aX": [
@@ -5458,7 +5538,7 @@
   "YCDF7A": [
     {
       "type": 0,
-      "value": "All required parameters are set"
+      "value": "Alle vereiste parameters zijn ingesteld"
     }
   ],
   "YCFhzp": [
@@ -5476,7 +5556,7 @@
   "YF1yZk": [
     {
       "type": 0,
-      "value": "chat-session-id:"
+      "value": "chatsessie-id:"
     }
   ],
   "YHsAKl": [
@@ -5676,7 +5756,7 @@
   "ZXoHXd": [
     {
       "type": 0,
-      "value": "Here’s your flow."
+      "value": "Dit is uw stroom."
     }
   ],
   "ZaIeDG": [
@@ -5715,6 +5795,12 @@
       "value": "Meer informatie over dynamische inhoud"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5727,16 +5813,16 @@
       "value": "Vereist. Het aantal exemplaren van de subtekenreeks dat moet worden gevonden."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Vereist. Het aantal objecten dat moet worden verwijderd uit het voorste deel van de verzameling. Dit aantal moet een geheel getal zijn."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Nieuwe parameters toevoegen"
     }
   ],
   "aK4iLW": [
@@ -5854,7 +5940,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Optioneel. Een sleutel die moet worden gebruikt voor het sorteren van objecten in de verzameling."
     }
   ],
   "bSZ0lL": [
@@ -5902,13 +5988,19 @@
   "blRFVt": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Stel deze verbindingen in om ze in uw stroom te gebruiken."
     }
   ],
   "bldzuj": [
     {
       "type": 0,
       "value": "Geschiedenis voor opnieuw proberen"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Alles wissen"
     }
   ],
   "bwlAWn": [
@@ -6130,13 +6222,13 @@
   "dMAC4C": [
     {
       "type": 0,
-      "value": "Replace action"
+      "value": "Actie vervangen"
     }
   ],
   "dNpnmn": [
     {
       "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+      "value": "Welkom terug! Vertel me wat u wilt als u wilt dat ik uw stroom wijzig. Bijvoorbeeld:"
     }
   ],
   "dOpdsP": [
@@ -6166,7 +6258,7 @@
   "dUbKuK": [
     {
       "type": 0,
-      "value": "Skip"
+      "value": "Overslaan"
     }
   ],
   "dWFyfN": [
@@ -6264,7 +6356,7 @@
   "eESljX": [
     {
       "type": 0,
-      "value": "Revert"
+      "value": "Herstellen"
     }
   ],
   "eFet4K": [
@@ -6330,7 +6422,7 @@
   "eqAUdj": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Wanneer een nieuw item"
     }
   ],
   "f/lWTW": [
@@ -6570,7 +6662,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Retourneert een booleaanse waarde die aangeeft of een tekenreeks een getal met drijvende komma is"
     }
   ],
   "gu9o9z": [
@@ -6656,13 +6748,19 @@
   "hRVVdR": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Ongedaan maken"
     }
   ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6853,6 +6951,12 @@
       "value": "Voorbeeld: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6938,7 +7042,7 @@
   "jN0YES": [
     {
       "type": 0,
-      "value": "Tell Microsoft how this feature could be improved"
+      "value": "Microsoft laten weten hoe deze functie kan worden verbeterd"
     }
   ],
   "jQ0Aqj": [
@@ -6959,6 +7063,24 @@
       "value": "Een bronschema toevoegen"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " van "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " wordt weergegeven"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -6968,7 +7090,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Vereist. De tekenreeks of matrix die moet worden gesplitst."
     }
   ],
   "jVpanH": [
@@ -7004,7 +7126,7 @@
   "jlcMGg": [
     {
       "type": 0,
-      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Beschrijf iets wat uw stroom moet doen. Voeg waar mogelijk details toe, inclusief de connector die moet worden gebruikt en of er inhoud moet worden opgenomen."
     }
   ],
   "juR40n": [
@@ -7076,13 +7198,13 @@
   "kHs5R4": [
     {
       "type": 0,
-      "value": "Check these actions to see if any parameters need to be set."
+      "value": "Controleer deze acties om te zien of er parameters moeten worden ingesteld."
     }
   ],
   "kKJMeM": [
     {
       "type": 0,
-      "value": "Every week on Monday..."
+      "value": "Elke week op maandag..."
     }
   ],
   "kM+Mr0": [
@@ -7182,7 +7304,7 @@
   "l2YXln": [
     {
       "type": 0,
-      "value": "Replace action with"
+      "value": "Actie vervangen door"
     }
   ],
   "l36V56": [
@@ -7254,7 +7376,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Vereist. De verzameling die moet worden omgekeerd."
     }
   ],
   "lexzgJ": [
@@ -7962,7 +8084,7 @@
   "qBNM3e": [
     {
       "type": 0,
-      "value": "Connecting to apps and services"
+      "value": "Verbinding maken met apps en services"
     }
   ],
   "qBkxGU": [
@@ -8115,6 +8237,12 @@
       "value": "."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8214,7 +8342,7 @@
   "rn5IsW": [
     {
       "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+      "value": "Sorry, ik begrijp uw aanvraag niet. Formuleer het op een andere manier en probeer het opnieuw."
     }
   ],
   "rsdJcV": [
@@ -8262,7 +8390,7 @@
   "sBBLuh": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up these actions:"
+      "value": "Als u deze werkstroom wilt opslaan, voltooit u het instellen van deze acties:"
     }
   ],
   "sDkAVZ": [
@@ -8358,7 +8486,7 @@
   "srMbm9": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annuleren"
     }
   ],
   "srpZD2": [
@@ -8482,7 +8610,7 @@
   "tTIsTX": [
     {
       "type": 0,
-      "value": "Test this workflow"
+      "value": "Deze werkstroom testen"
     }
   ],
   "tUCptx": [
@@ -8652,7 +8780,7 @@
   "uZpzqY": [
     {
       "type": 0,
-      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+      "value": "Copilot heeft de capaciteit bereikt en is tijdelijk niet beschikbaar. Probeer het later opnieuw."
     }
   ],
   "uanMWm": [
@@ -8742,7 +8870,7 @@
   "uxQ143": [
     {
       "type": 0,
-      "value": "Ask question related to your workflow or Logic Apps."
+      "value": "Stel een vraag met betrekking tot uw werkstroom of Logic Apps."
     }
   ],
   "uzsleE": [
@@ -8784,7 +8912,7 @@
   "vF+gWH": [
     {
       "type": 0,
-      "value": "Explain what this flow does"
+      "value": "Leg uit wat deze stroom doet"
     }
   ],
   "vLereV": [
@@ -8850,7 +8978,7 @@
   "vmlhVB": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up this action:"
+      "value": "Voltooi het instellen van deze actie om deze werkstroom voor te bereiden:"
     }
   ],
   "vr70Gn": [
@@ -9170,7 +9298,7 @@
   "xvav7+": [
     {
       "type": 0,
-      "value": "Connected to"
+      "value": "Verbinden met"
     }
   ],
   "xwD1VZ": [
@@ -9224,7 +9352,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Hiermee wordt een matrix geretourneerd die in oplopende volgorde is gesorteerd"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Alles weergeven"
     }
   ],
   "yVFIAQ": [
@@ -9242,7 +9376,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Een tekenreeks of matrix splitsen in segmenten van gelijke lengte"
     }
   ],
   "ydqOly": [
@@ -9268,7 +9402,7 @@
   "yk7L+4": [
     {
       "type": 0,
-      "value": "Dislike"
+      "value": "Vind-ik-niet-leuk"
     }
   ],
   "yoCi15": [
@@ -9292,7 +9426,7 @@
   "yrYEmk": [
     {
       "type": 0,
-      "value": "Send me an email when..."
+      "value": "Stuur me een e-mail wanneer..."
     }
   ],
   "ysoumb": [
@@ -9386,7 +9520,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Retourneert een booleaanse waarde die aangeeft of een tekenreeks een geheel getal is"
     }
   ],
   "zUgja+": [
@@ -9404,7 +9538,7 @@
   "zb3lE6": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up this action:"
+      "value": "Voltooi het instellen van deze acties om deze werkstroom op te slaan:"
     }
   ],
   "zcZpHT": [
@@ -9416,7 +9550,7 @@
   "zec5Ay": [
     {
       "type": 0,
-      "value": "Stop"
+      "value": "Stoppen"
     }
   ],
   "ziXw25": [

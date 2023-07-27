@@ -23,6 +23,12 @@
       "value": "Fel"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -52,7 +58,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obligatoriskt. Strängen som ska undersökas."
     }
   ],
   "+powfX": [
@@ -676,7 +682,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Valfri. RfC 4646-språkkoden som ska användas. Om inget anges används standardspråk. Om språkvarianten inte är ett giltigt värde genereras ett fel som anger att de nationella inställningarna är ogiltiga eller inte har en associerad språkvariant."
     }
   ],
   "3+TQMa": [
@@ -762,7 +768,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obligatoriskt. Strängen som ska undersökas."
     }
   ],
   "3QXY3z": [
@@ -774,7 +780,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Returnerar samlingen i omvänd ordning"
     }
   ],
   "3X4FHS": [
@@ -1147,6 +1153,12 @@
       "value": "Fel vid inläsning av indata"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Visa alla avancerade parametrar"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1475,6 +1487,12 @@
       "value": "Aktivera hanterad identitet för logikappen."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1689,6 +1707,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1781,6 +1805,12 @@
     {
       "type": 0,
       "value": "Välj frekvens."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Ta bort och rensa alla avancerade parametrar och deras värden"
     }
   ],
   "Ak2Lka": [
@@ -2055,6 +2085,12 @@
     {
       "type": 0,
       "value": "Hämta objekt som uppfyller det angivna tröskelvärdet genom att följa fortsättningstoken. På grund av anslutningsappens sidstorlek, kan antalet som returneras överstiga tröskelvärdet."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2715,6 +2751,20 @@
       "value": "Referensfunktioner"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2842,7 +2892,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Krävs. Den samling som ska sorteras."
     }
   ],
   "HMiE+4": [
@@ -3051,20 +3101,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fel vid körning av API:t "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "IooQu1": [
@@ -3395,6 +3431,12 @@
     {
       "type": 0,
       "value": "Läser in funktionsappar..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3821,6 +3863,12 @@
     {
       "type": 0,
       "value": "Läser in filer..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4285,6 +4333,12 @@
       "value": "Returnerar en sträng i datumformat"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4587,6 +4641,12 @@
       "value": "Fredag"
     }
   ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -4860,7 +4920,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Krävs. Längden på varje segment."
     }
   ],
   "Umpr3z": [
@@ -4921,6 +4981,12 @@
     {
       "type": 0,
       "value": "Ange ett namn för anslutningen."
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
     }
   ],
   "V+/c21": [
@@ -4993,6 +5059,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5091,6 +5163,12 @@
     {
       "type": 0,
       "value": "La till den här åtgärden"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5241,6 +5319,12 @@
     {
       "type": 0,
       "value": "Försök igen"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Avancerade parametrar"
     }
   ],
   "XH94im": [
@@ -5703,6 +5787,12 @@
       "value": "Läs mer om dynamiskt innehåll."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5715,16 +5805,16 @@
       "value": "Obligatoriskt. Antalet förekomster av delsträngen som ska hittas."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Lägg till nya parametrar"
     }
   ],
   "aK4iLW": [
@@ -5842,7 +5932,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Valfri. En nyckel som ska användas för att sortera objekt i samlingen."
     }
   ],
   "bSZ0lL": [
@@ -5897,6 +5987,12 @@
     {
       "type": 0,
       "value": "Återförsökshistorik"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Rensa alla"
     }
   ],
   "bwlAWn": [
@@ -6558,7 +6654,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Returnerar ett booleskt värde som anger om en sträng är ett flyttalsnummer"
     }
   ],
   "gu9o9z": [
@@ -6651,6 +6747,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6841,6 +6943,12 @@
       "value": "Exempel: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6947,6 +7055,24 @@
       "value": "Lägg till ett källschema"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Visar "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " av "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -6956,7 +7082,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Krävs. Den sträng eller matris som ska delas."
     }
   ],
   "jVpanH": [
@@ -7242,7 +7368,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Krävs. Den samling som ska omvändas."
     }
   ],
   "lexzgJ": [
@@ -8101,6 +8227,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
@@ -9216,7 +9348,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Returnerar en matris sorterad i stigande ordning"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Visa alla"
     }
   ],
   "yVFIAQ": [
@@ -9234,7 +9372,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Dela upp en sträng eller matris i segment med samma längd"
     }
   ],
   "ydqOly": [
@@ -9378,7 +9516,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Returnerar ett booleskt värde som anger om en sträng är ett heltal"
     }
   ],
   "zUgja+": [

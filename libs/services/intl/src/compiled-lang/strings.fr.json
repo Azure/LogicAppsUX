@@ -23,6 +23,12 @@
       "value": "En échec"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -48,7 +54,7 @@
   "+oelX4": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obligatoire. Chaîne à examiner."
     }
   ],
   "+powfX": [
@@ -672,7 +678,7 @@
   "2z5HGT": [
     {
       "type": 0,
-      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+      "value": "Facultatif. Code de paramètres régionaux RFC 4646 à utiliser. S’il n’est pas spécifié, les paramètres régionaux par défaut sont utilisés. Si la valeur des paramètres régionaux n’est pas valide, une erreur est générée indiquant que les paramètres régionaux fournis ne sont pas valides ou n’ont pas de paramètres régionaux associés."
     }
   ],
   "3+TQMa": [
@@ -758,7 +764,7 @@
   "3PJZH0": [
     {
       "type": 0,
-      "value": "Required. The string to examine."
+      "value": "Obligatoire. Chaîne à examiner."
     }
   ],
   "3QXY3z": [
@@ -770,7 +776,7 @@
   "3RoD4h": [
     {
       "type": 0,
-      "value": "Returns the collection in reverse order"
+      "value": "Renvoie la collection dans l’ordre inverse"
     }
   ],
   "3X4FHS": [
@@ -1143,6 +1149,12 @@
       "value": "Nous n’avons pas pu charger les entrées"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Afficher tous les paramètres avancés"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1471,6 +1483,12 @@
       "value": "Activez l'identité managée pour l'application logique."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1685,6 +1703,12 @@
       "value": "Texte"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1781,6 +1805,12 @@
     {
       "type": 0,
       "value": "Sélectionner une fréquence."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Supprimer et effacer tous les paramètres avancés et leurs valeurs"
     }
   ],
   "Ak2Lka": [
@@ -2066,6 +2096,12 @@
     {
       "type": 0,
       "value": "Récupérez des éléments pour atteindre le seuil spécifié en suivant le jeton de continuation. En raison de la taille de page du connecteur, le nombre retourné peut dépasser le seuil."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2733,6 +2769,20 @@
       "value": "Fonctions de références"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2860,7 +2910,7 @@
   "HILmmE": [
     {
       "type": 0,
-      "value": "Required. The collection to sort."
+      "value": "Obligatoire. Collection à trier."
     }
   ],
   "HMiE+4": [
@@ -3069,20 +3119,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Iakoutsk"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Nous n’avons pas pu exécuter l’API « "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " »."
     }
   ],
   "IooQu1": [
@@ -3424,6 +3460,12 @@
     {
       "type": 0,
       "value": "Chargement des applications de fonction..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3850,6 +3892,12 @@
     {
       "type": 0,
       "value": "Chargement des fichiers..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
     }
   ],
   "O9ZExg": [
@@ -4322,6 +4370,12 @@
       "value": "Retourne une chaîne au format de date"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4639,6 +4693,12 @@
       "value": "Vendredi"
     }
   ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -4912,7 +4972,7 @@
   "UgaIRz": [
     {
       "type": 0,
-      "value": "Required. The length of each chunk."
+      "value": "Obligatoire. Longueur de chaque bloc."
     }
   ],
   "Umpr3z": [
@@ -4973,6 +5033,12 @@
     {
       "type": 0,
       "value": "Entrez un nom pour la connexion"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
     }
   ],
   "V+/c21": [
@@ -5045,6 +5111,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5143,6 +5215,12 @@
     {
       "type": 0,
       "value": "Ajout de cette action"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "W070M2": [
@@ -5293,6 +5371,12 @@
     {
       "type": 0,
       "value": "Réessayer"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Paramètres avancés"
     }
   ],
   "XH94im": [
@@ -5755,6 +5839,12 @@
       "value": "Découvrez plus d'informations sur le contenu dynamique."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5767,16 +5857,16 @@
       "value": "Obligatoire. Numéro de l’occurrence de la sous-chaîne à rechercher."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Obligatoire. Nombre d'objets à supprimer de l'avant de la collection. Doit être un entier positif."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Ajouter de nouveaux paramètres"
     }
   ],
   "aK4iLW": [
@@ -5894,7 +5984,7 @@
   "bJEJoL": [
     {
       "type": 0,
-      "value": "Optional. A key to use for sorting objects in the collection."
+      "value": "Facultatif. Clé à utiliser pour trier les objets dans la collection."
     }
   ],
   "bSZ0lL": [
@@ -5949,6 +6039,12 @@
     {
       "type": 0,
       "value": "Historique des nouvelles tentatives"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Effacer tout"
     }
   ],
   "bwlAWn": [
@@ -6614,7 +6710,7 @@
   "gtQYgr": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+      "value": "Renvoie une valeur booléenne qui indique si une chaîne est un nombre à virgule flottante"
     }
   ],
   "gu9o9z": [
@@ -6718,6 +6814,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hébron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6908,6 +7010,12 @@
       "value": "Exemple : 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7014,6 +7122,24 @@
       "value": "Ajouter un schéma source"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Affichage de "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " sur "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
@@ -7023,7 +7149,7 @@
   "jVIgz1": [
     {
       "type": 0,
-      "value": "Required. The string or array to split."
+      "value": "Obligatoire. Chaîne ou tableau à fractionner."
     }
   ],
   "jVpanH": [
@@ -7320,7 +7446,7 @@
   "lckgnb": [
     {
       "type": 0,
-      "value": "Required. The collection to reverse."
+      "value": "Obligatoire. Collection à inverser."
     }
   ],
   "lexzgJ": [
@@ -8194,6 +8320,12 @@
     {
       "type": 0,
       "value": " »."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
     }
   ],
   "r/n6/9": [
@@ -9313,7 +9445,13 @@
   "yKOsmK": [
     {
       "type": 0,
-      "value": "Returns an array sorted in ascending order"
+      "value": "Renvoie un tableau trié dans ordre croissant"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Afficher tout"
     }
   ],
   "yVFIAQ": [
@@ -9331,7 +9469,7 @@
   "yc0GcM": [
     {
       "type": 0,
-      "value": "Split a string or array into chunks of equal length"
+      "value": "Fractionner une chaîne ou un tableau en blocs de longueur égale"
     }
   ],
   "ydqOly": [
@@ -9475,7 +9613,7 @@
   "zUWAsJ": [
     {
       "type": 0,
-      "value": "Returns a boolean that indicates whether a string is an integer"
+      "value": "Renvoie une valeur booléenne qui indique si une chaîne est un entier"
     }
   ],
   "zUgja+": [

@@ -1,7 +1,7 @@
+import Constants from '../constants';
 import { ActionButton, FontSizes } from '@fluentui/react';
 import { hexToRgbA } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
-import Constants from '../constants'
 
 export interface IChatSuggestionGroupProps {
   children: React.ReactElement<IChatSuggestionProps> | Array<React.ReactElement<IChatSuggestionProps> | null | undefined | false>;
@@ -54,4 +54,3 @@ export const ChatSuggestion: React.FC<IChatSuggestionProps> = ({ text, iconName,
   };
   return <ActionButton text={text} iconProps={{ iconName, styles: iconStyles }} onClick={onClick} styles={buttonStyles} />;
 };
-
