@@ -252,11 +252,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
     setMatchingOptions(matches);
 
-    if (value.length && matches.length < 1) {
-      setCustomValue(value);
-    } else {
-      setCustomValue(undefined);
-    }
+    setCustomValue(value);
   };
 
   const typeValidationMessage = useMemo<string | undefined>(() => {
@@ -327,7 +323,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         data-testid={`inputDropdown-dropdown-${inputIndex}`}
         onChange={onChange}
         onOptionSelect={onOptionSelect}
-        value={customValue || value}
+        value={customValue === undefined ? value : customValue}
         selectedOptions={selectedOptions}
         style={{ width: '500px' }}
       >
