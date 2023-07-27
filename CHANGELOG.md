@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.54.0](https://github.com/Azure/LogicAppsUX/compare/v2.53.0...v2.54.0) (2023-07-27)
+
+
+### Features
+
+* **designer:** Validate empty required actions inputs prior saving ([#3040](https://github.com/Azure/LogicAppsUX/issues/3040)) ([da2020d](https://github.com/Azure/LogicAppsUX/commit/da2020da3a36fff1a62344beff75306412124442))
+
 ## [2.53.0](https://github.com/Azure/LogicAppsUX/compare/v2.52.0...v2.53.0) (2023-07-25)
 
 
