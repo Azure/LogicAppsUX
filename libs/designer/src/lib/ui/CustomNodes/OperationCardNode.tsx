@@ -98,7 +98,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch]);
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName]);
 
   const dependencies = useTokenDependencies(id);
 
