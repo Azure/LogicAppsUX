@@ -132,6 +132,13 @@ export const workflowSlice = createSlice({
       if (!currentNode) throw new Error('node not set');
 
       moveNodeInWorkflow(currentNode, oldGraph, newGraph, action.payload.relationshipIds, state.nodesMetadata, state);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     deleteNode: (state: WorkflowState, action: PayloadAction<DeleteNodePayload>) => {
       if (!state.graph) {
@@ -171,6 +178,13 @@ export const workflowSlice = createSlice({
     },
     deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       delete (state.operations?.[action.payload.nodeId] as any).cases?.[action.payload.caseId];
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;
@@ -210,6 +224,13 @@ export const workflowSlice = createSlice({
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     setRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
       const { page, nodeId } = action.payload;
@@ -232,6 +253,13 @@ export const workflowSlice = createSlice({
       const node = getWorkflowNodeFromGraphState(state, state.nodesMetadata[nodeId].graphId);
       if (!node) throw new Error('node not set');
       addSwitchCaseToWorkflow(caseId, node, state.nodesMetadata, state);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
     },
     discardAllChanges: (_state: WorkflowState) => {
       // Will implement later, currently here to test host dispatch
