@@ -4,7 +4,7 @@ import type {
   IConnectionParameterEditorService,
   IConnectionParameterInfo,
 } from '@microsoft/designer-client-services-logic-apps';
-import { UniversalConnectionParameter } from '@microsoft/designer-ui';
+import { ConnectionParameterRow, UniversalConnectionParameter } from '@microsoft/designer-ui';
 import { useEffect, useState } from 'react';
 
 export class CustomConnectionParameterEditorService implements IConnectionParameterEditorService {
@@ -89,5 +89,18 @@ const TargetPicker = (props: IConnectionParameterEditorProps) => {
     props.setValue(customValue);
   };
 
-  return <UniversalConnectionParameter {...props} isLoading={isLoading} parameter={parameter} setValue={setValue} />;
+  return (
+    <>
+      <UniversalConnectionParameter {...props} isLoading={isLoading} parameter={parameter} setValue={setValue} />
+      <ConnectionParameterRow parameterKey={'targetId-2'} displayName={'Target ID'} tooltip="enter a value">
+        <input
+          value={props.value}
+          onChange={(e) => setValue(e.target.value)}
+          style={{
+            width: ' 100%',
+          }}
+        />
+      </ConnectionParameterRow>
+    </>
+  );
 };

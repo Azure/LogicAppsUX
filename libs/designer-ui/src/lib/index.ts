@@ -26,6 +26,7 @@ export * from './copilotGetStarted/index';
 export * from './copyinputcontrol';
 export * from './createConnection';
 export * from './createConnection/universalConnectionParameter';
+export * from './createConnection/connectionParameterRow';
 // export * from './datetimeeditor';
 export * from './dialogs';
 export * from './dictionary';
