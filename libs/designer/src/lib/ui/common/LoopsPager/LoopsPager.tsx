@@ -65,7 +65,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     if (normalizedType === constants.NODE.TYPE.FOREACH) {
       refetch();
     }
-  }, [runInstance?.id, refetch, scopeId, normalizedType, metadata?.runData]);
+  }, [runInstance?.id, refetch, scopeId, normalizedType]);
 
   if (!forEachItemsCount || isError || collapsed) {
     return null;
