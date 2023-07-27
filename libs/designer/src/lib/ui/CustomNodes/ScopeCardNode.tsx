@@ -92,7 +92,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch]);
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
