@@ -26,7 +26,7 @@
   "+Jryh+": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "Déclencheur"
     }
   ],
   "+Uvo/p": [
@@ -1706,7 +1706,7 @@
   "9aj+el": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Par défaut"
     }
   ],
   "9atGYe": [
@@ -2101,7 +2101,7 @@
   "CBzSJo": [
     {
       "type": 0,
-      "value": "True"
+      "value": "Vrai"
     }
   ],
   "CFOUe3": [
@@ -2776,7 +2776,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " sur "
     },
     {
       "type": 1,
@@ -3465,7 +3465,7 @@
   "LElaX3": [
     {
       "type": 0,
-      "value": "Next flow suggestion"
+      "value": "Suggestion de flux suivante"
     }
   ],
   "LJmfmK": [
@@ -3897,7 +3897,7 @@
   "O7HhyP": [
     {
       "type": 0,
-      "value": "to configure it"
+      "value": "pour le configurer."
     }
   ],
   "O9ZExg": [
@@ -4373,7 +4373,7 @@
   "QoPTod": [
     {
       "type": 0,
-      "value": "This is what the flow will do"
+      "value": "Permet de voir ce que le flux va faire"
     }
   ],
   "QpRRt3": [
@@ -4696,7 +4696,7 @@
   "TNH/nK": [
     {
       "type": 0,
-      "value": "Search Workflow Actions"
+      "value": "Rechercher des actions du flux de travail"
     }
   ],
   "TO7qos": [
@@ -5038,7 +5038,7 @@
   "Uxckds": [
     {
       "type": 0,
-      "value": "Suggested flow"
+      "value": "Flux suggéré"
     }
   ],
   "V+/c21": [
@@ -5116,7 +5116,7 @@
   "VIN7lB": [
     {
       "type": 0,
-      "value": "The flow starts when this happens"
+      "value": "Le flux démarre lorsque cela se produit"
     }
   ],
   "VKAk5g": [
@@ -5220,7 +5220,7 @@
   "W+mUyI": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "Suivant"
     }
   ],
   "W070M2": [
@@ -5842,7 +5842,7 @@
   "ZyDq4/": [
     {
       "type": 0,
-      "value": "Show a different suggestion"
+      "value": "Afficher une autre suggestion"
     }
   ],
   "a7j3gS": [
@@ -5860,7 +5860,7 @@
   "aE+2gr": [
     {
       "type": 0,
-      "value": "False"
+      "value": "Faux"
     }
   ],
   "aGyVJT": [
@@ -6819,7 +6819,7 @@
   "hbOvB4": [
     {
       "type": 0,
-      "value": "This isn't what I'm looking for"
+      "value": "Ce n’est pas ce que je recherche"
     }
   ],
   "hic23z": [
@@ -7013,7 +7013,7 @@
   "id4DBb": [
     {
       "type": 0,
-      "value": "After you review this AI generated flow suggestion, select"
+      "value": "Après avoir passé en revue cette suggestion de flux générée par IA, sélectionnez"
     }
   ],
   "idQjOP": [
@@ -8325,7 +8325,7 @@
   "qy5WqY": [
     {
       "type": 0,
-      "value": "Previous flow suggestion"
+      "value": "Suggestion de flux précédente"
     }
   ],
   "r/n6/9": [
