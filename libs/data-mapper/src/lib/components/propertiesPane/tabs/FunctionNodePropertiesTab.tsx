@@ -273,10 +273,10 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                   inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : undefined;
                 return (
                   <div key={idx} style={{ marginTop: 8 }}>
-                    {input.inputFormat === InputFormat.Textbox && (
+                    {input.displayAttribute === InputFormat.TextBox && (
                       <InputTextbox input={input} loadedInputValue={inputValue} functionNode={functionData}></InputTextbox>
                     )}
-                    {input.inputFormat !== InputFormat.Textbox && (
+                    {input.displayAttribute !== InputFormat.TextBox && (
                       <Tooltip relationship="label" content={input.tooltip || ''}>
                         <InputDropdown
                           currentNode={functionData}

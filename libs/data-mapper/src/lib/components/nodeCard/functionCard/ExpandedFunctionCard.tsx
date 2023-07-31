@@ -135,7 +135,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
       inputsForBody.push(
         functionData.inputs.map((input, index) => {
           let handle = null;
-          if (!input.inputFormat) {
+          if (!input.displayAttribute) {
             const handleTop = index * handleIndexOffset + handleBaseOffset;
             const curInput = curConnection.inputs[index][0];
             handle = (

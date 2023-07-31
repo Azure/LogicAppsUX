@@ -54,8 +54,8 @@ export enum NormalizedDataType {
 }
 
 export enum InputFormat {
-  Textbox = 'Textbox',
-  Filepicker = 'Filepicker', // danielle should this be more specific to use better formatter later?
+  TextBox = 'TextBox',
+  FilePicker = 'FilePicker',
 }
 
 export interface SchemaExtended extends Schema {
