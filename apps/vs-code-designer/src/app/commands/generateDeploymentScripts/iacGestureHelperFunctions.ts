@@ -9,38 +9,10 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 export class FileManagement {
-  /**
-   * Checks if a folder is present in the workspace.
-   * @param folder - The folder to check.
-   * @returns True if the folder is in the workspace, false otherwise.
-   */
   static isFolderInWorkspace(folder: vscode.Uri): boolean {
-    const isInWorkspace =
-      vscode.workspace.workspaceFolders?.some((workspaceFolder) => folder.fsPath.startsWith(workspaceFolder.uri.fsPath)) || false;
-    if (!isInWorkspace) {
-      this.addToWorkspaceSourceFile(folder);
-    }
-    return isInWorkspace;
+    return vscode.workspace.workspaceFolders?.some((workspaceFolder) => folder.fsPath.startsWith(workspaceFolder.uri.fsPath)) || false;
   }
 
-  /**
-   * Adds all workspace folders to the workspace source file
-   * @param folder - The folder to add.
-   */
-  static addToWorkspaceSourceFile(folder: vscode.Uri): void {
-    const projectRoot = path.dirname(folder.fsPath);
-    const workspaceSourcePath = path.join(projectRoot, 'devX.code-workspace'); // Path to workspace source file
-    const workspaceSource = JSON.parse(fs.readFileSync(workspaceSourcePath, 'utf8'));
-    workspaceSource.folders = workspaceSource.folders || [];
-    workspaceSource.folders.push({ path: folder.fsPath });
-    fs.writeFileSync(workspaceSourcePath, JSON.stringify(workspaceSource, null, 2));
-  }
-
-  /**
-   * Converts a folder to a workspace.
-   * @param folder - The folder to convert.
-   * @returns A promise that resolves when the folder is converted to a workspace.
-   */
   static async convertToWorkspace(folder: vscode.Uri): Promise<void> {
     const parentFolder = path.dirname(folder.fsPath);
     const workspaceConfig: vscode.WorkspaceFolder[] = [
@@ -53,11 +25,6 @@ export class FileManagement {
     await vscode.workspace.updateWorkspaceFolders(0, vscode.workspace.workspaceFolders?.length, ...workspaceConfig);
   }
 
-  /**
-   * Returns the root workspace path.
-   * @param folderPaths - An array of workspace folder paths.
-   * @returns The root workspace path.
-   */
   static getRootWorkspacePath(folderPaths: string[]): string {
     let rootPath = folderPaths[0];
     for (let i = 1; i < folderPaths.length; i++) {
@@ -74,21 +41,10 @@ export class FileManagement {
 }
 
 export class UserInput {
-  /**
-   * Prompts the user for a setting value from the local settings file.
-   * @param scriptContext - The script context.
-   * @param folder - The folder where the local settings file is located.
-   * @param key - The key of the setting to retrieve.
-   * @returns A promise that resolves to the value entered by the user.
-   */
   static async promptForSetting(scriptContext: IAzureScriptWizard, folder: vscode.Uri, key: string): Promise<string> {
     return await getSettingFromLocalSettings(scriptContext, folder, key);
   }
 
-  /**
-   * Prompts the user for the source control path.
-   * @returns A promise that resolves to the source control path entered by the user.
-   */
   static async promptForSourceControlPath(): Promise<string> {
     const workspaceFolders = vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath);
     const rootWorkspacePath = workspaceFolders ? FileManagement.getRootWorkspacePath(workspaceFolders) : '';
@@ -100,9 +56,9 @@ export class UserInput {
     const defaultPath = path.join(rootWorkspacePath, 'Deployment');
     if (!fs.existsSync(defaultPath)) {
       fs.mkdirSync(defaultPath);
-      const deploymentFolderUri = vscode.Uri.file(defaultPath);
-      FileManagement.addToWorkspaceSourceFile(deploymentFolderUri);
     }
+
+    this.addPathToCodeWorkspace(defaultPath);
 
     const selectedFolder = await vscode.window.showQuickPick(
       [
@@ -122,11 +78,31 @@ export class UserInput {
       });
 
       if (userSelectedFolder && userSelectedFolder.length > 0) {
-        return userSelectedFolder[0].fsPath;
+        const selectedPath = userSelectedFolder[0].fsPath;
+        this.addPathToCodeWorkspace(selectedPath);
+        return selectedPath;
       }
     }
 
     return defaultPath;
+  }
+
+  static addPathToCodeWorkspace(path: string): void {
+    const workspaceFilePath = vscode.workspace.workspaceFile?.fsPath;
+    if (workspaceFilePath) {
+      const workspaceFileContent = fs.readFileSync(workspaceFilePath, 'utf-8');
+      const updatedContent = this.updateCodeWorkspaceContent(workspaceFileContent, path);
+      fs.writeFileSync(workspaceFilePath, updatedContent);
+    }
+  }
+
+  static updateCodeWorkspaceContent(content: string, path: string): string {
+    const workspaceConfig = JSON.parse(content);
+    if (!workspaceConfig.folders) {
+      workspaceConfig.folders = [];
+    }
+    workspaceConfig.folders.push({ name: 'Deployment', path });
+    return JSON.stringify(workspaceConfig, null, 2);
   }
 }
 
