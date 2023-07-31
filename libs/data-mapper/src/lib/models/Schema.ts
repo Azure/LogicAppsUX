@@ -53,6 +53,11 @@ export enum NormalizedDataType {
   String = 'String',
 }
 
+export enum InputFormat {
+  Textbox = 'Textbox',
+  Filepicker = 'Filepicker', // danielle should this be more specific to use better formatter later?
+}
+
 export interface SchemaExtended extends Schema {
   schemaTreeRoot: SchemaNodeExtended;
 }

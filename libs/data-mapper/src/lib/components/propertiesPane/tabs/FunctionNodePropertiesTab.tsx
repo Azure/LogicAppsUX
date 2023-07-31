@@ -1,6 +1,7 @@
 import { customTokens } from '../../../core';
 import { setConnectionInput } from '../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
+import { InputFormat } from '../../../models';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../../models/Function';
@@ -20,7 +21,7 @@ import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
+import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles, Textarea } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { useMemo, useState } from 'react';
@@ -266,23 +267,32 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
           {functionData.maxNumberOfInputs > 0 && ( // Functions with bounded inputs
             <Stack>
-              {functionData.inputs.map((input, idx) => (
-                <div key={idx} style={{ marginTop: 8 }}>
-                  <Tooltip relationship="label" content={input.tooltip || ''}>
-                    <InputDropdown
-                      currentNode={functionData}
-                      label={input.name}
-                      placeholder={input.placeHolder}
-                      inputValue={
-                        inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : undefined
-                      }
-                      inputIndex={idx}
-                      inputStyles={{ width: '100%' }}
-                      inputAllowsCustomValues={input.allowCustomInput}
-                    />
-                  </Tooltip>
-                </div>
-              ))}
+              {functionData.inputs.map((input, idx) => {
+                const inputValue =
+                  inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : undefined;
+                return (
+                  <div key={idx} style={{ marginTop: 8 }}>
+                    {input.inputFormat === InputFormat.Textbox && (
+                      <Tooltip relationship="label" content={input.tooltip || ''}>
+                        <Textarea style={{ width: '100%' }} value={inputValue} placeholder={input.placeHolder}></Textarea>
+                      </Tooltip>
+                    )}
+                    {input.inputFormat !== InputFormat.Textbox && (
+                      <Tooltip relationship="label" content={input.tooltip || ''}>
+                        <InputDropdown
+                          currentNode={functionData}
+                          label={input.name}
+                          placeholder={input.placeHolder}
+                          inputValue={inputValue}
+                          inputIndex={idx}
+                          inputStyles={{ width: '100%' }}
+                          inputAllowsCustomValues={input.allowCustomInput}
+                        />
+                      </Tooltip>
+                    )}
+                  </div>
+                );
+              })}
             </Stack>
           )}
 

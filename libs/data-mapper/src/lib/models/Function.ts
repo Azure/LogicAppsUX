@@ -1,6 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
+import { InputFormat, NormalizedDataType } from './Schema';
 import type { SchemaNodeExtended } from './Schema';
-import { NormalizedDataType } from './Schema';
 
 export interface FunctionManifest {
   version: string;
@@ -26,6 +26,7 @@ export interface FunctionInput {
   allowedTypes: NormalizedDataType[];
   isOptional: boolean;
   allowCustomInput: boolean;
+  inputFormat?: InputFormat;
 
   tooltip?: string;
   placeHolder: string;
@@ -511,6 +512,46 @@ export const functionMock: FunctionData[] = [
     displayName: 'Sort',
     category: FunctionCategory.Collection,
     description: 'Sort the sequence by a given property',
+  },
+  {
+    key: 'XPath',
+    maxNumberOfInputs: 1,
+    functionName: 'xpath',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'XPATH expression',
+        allowedTypes: [NormalizedDataType.String],
+        inputFormat: InputFormat.Textbox,
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'expression',
+      },
+    ],
+    displayName: 'Execute XPath',
+    category: FunctionCategory.Utility,
+    // "iconFileName": "dm_category_customcode.svg",
+    description: 'Evaluates user supplied XPATH expression.',
+  },
+  {
+    key: 'InlineXslt',
+    maxNumberOfInputs: 1,
+    functionName: 'inline-xslt',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'XSLT File',
+        allowedTypes: [NormalizedDataType.String],
+        inputFormat: InputFormat.Filepicker,
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'File name inside inlineXslt folder under artifacts',
+      },
+    ],
+    displayName: 'Execute XSLT',
+    category: FunctionCategory.Utility,
+    // "iconFileName": "dm_category_customcode.svg",
+    description: 'Inserts user supplied XSLT into map.',
   },
   ...pseudoFunctions,
 ];
