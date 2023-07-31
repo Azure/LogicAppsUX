@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/designer-client-services-logic-apps",
-  "version": "2.54.0",
+  "version": "2.55.0",
   "scripts": {
     "yalcpush": "yalc push ../../../dist/libs/services/designer-client-services"
   }
