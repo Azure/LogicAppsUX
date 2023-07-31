@@ -86,6 +86,10 @@ export class StandardArtifactService {
     }
 
     const url = new URL(integrationAccountCallbackUrl);
+    if (url.pathname == '/') {
+      url.pathname += 'groups/common';
+    }
+
     url.pathname += '/maps';
     const response = await fetch(url.href);
     const responseJson = await response.json();
@@ -144,6 +148,10 @@ export class StandardArtifactService {
     }
 
     const url = new URL(integrationAccountCallbackUrl);
+    if (url.pathname == '/') {
+      url.pathname += 'groups/common';
+    }
+
     url.pathname += '/schemas';
     const response = await fetch(url.href);
     const responseJson = await response.json();
