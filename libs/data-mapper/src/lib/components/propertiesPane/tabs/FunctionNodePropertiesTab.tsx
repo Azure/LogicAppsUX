@@ -19,9 +19,10 @@ import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { LogCategory, LogService } from '../../../utils/Logging.Utils';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
-import { InputDropdown } from '../../inputDropdown/InputDropdown';
+import { InputDropdown } from '../../inputTypes/InputDropdown';
+import { InputTextbox } from '../../inputTypes/InputTextbox';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles, Textarea } from '@fluentui/react-components';
+import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { useMemo, useState } from 'react';
@@ -273,9 +274,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                 return (
                   <div key={idx} style={{ marginTop: 8 }}>
                     {input.inputFormat === InputFormat.Textbox && (
-                      <Tooltip relationship="label" content={input.tooltip || ''}>
-                        <Textarea style={{ width: '100%' }} value={inputValue} placeholder={input.placeHolder}></Textarea>
-                      </Tooltip>
+                      <InputTextbox input={input} loadedInputValue={inputValue} functionNode={functionData}></InputTextbox>
                     )}
                     {input.inputFormat !== InputFormat.Textbox && (
                       <Tooltip relationship="label" content={input.tooltip || ''}>

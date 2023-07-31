@@ -4,7 +4,7 @@ import type { Connection } from '../../../models/Connection';
 import { isCustomValue } from '../../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
-import { InputDropdown } from '../../inputDropdown/InputDropdown';
+import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { Stack } from '@fluentui/react';
 import {
   Accordion,

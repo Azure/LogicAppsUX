@@ -134,21 +134,28 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     if (functionData.maxNumberOfInputs > -1) {
       inputsForBody.push(
         functionData.inputs.map((input, index) => {
-          const handleTop = index * handleIndexOffset + handleBaseOffset;
-          const curInput = curConnection.inputs[index][0];
+          let handle = null;
+          if (!input.inputFormat) {
+            const handleTop = index * handleIndexOffset + handleBaseOffset;
+            const curInput = curConnection.inputs[index][0];
+            handle = (
+              <Handle
+                id={input.name}
+                type="target"
+                position={Position.Left}
+                style={{
+                  top: `${handleTop}px`,
+                  backgroundColor:
+                    typeof curInput === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
+                }}
+              />
+            );
+          }
+
           return (
             <StackItem key={input.name}>
               <div key={input.name} style={inputBodyStyles}>
-                <Handle
-                  id={input.name}
-                  type="target"
-                  position={Position.Left}
-                  style={{
-                    top: `${handleTop}px`,
-                    backgroundColor:
-                      typeof curInput === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
-                  }}
-                />
+                {handle}
                 {generateInputName(input.name, input.isOptional, input.tooltip)}
               </div>
             </StackItem>
