@@ -15,7 +15,25 @@ export class FileManagement {
    * @returns True if the folder is in the workspace, false otherwise.
    */
   static isFolderInWorkspace(folder: vscode.Uri): boolean {
-    return vscode.workspace.workspaceFolders?.some((workspaceFolder) => folder.fsPath.startsWith(workspaceFolder.uri.fsPath)) || false;
+    const isInWorkspace =
+      vscode.workspace.workspaceFolders?.some((workspaceFolder) => folder.fsPath.startsWith(workspaceFolder.uri.fsPath)) || false;
+    if (!isInWorkspace) {
+      this.addToWorkspaceSourceFile(folder);
+    }
+    return isInWorkspace;
+  }
+
+  /**
+   * Adds all workspace folders to the workspace source file
+   * @param folder - The folder to add.
+   */
+  static addToWorkspaceSourceFile(folder: vscode.Uri): void {
+    const projectRoot = path.dirname(folder.fsPath);
+    const workspaceSourcePath = path.join(projectRoot, 'devX.code-workspace'); // Path to workspace source file
+    const workspaceSource = JSON.parse(fs.readFileSync(workspaceSourcePath, 'utf8'));
+    workspaceSource.folders = workspaceSource.folders || [];
+    workspaceSource.folders.push({ path: folder.fsPath });
+    fs.writeFileSync(workspaceSourcePath, JSON.stringify(workspaceSource, null, 2));
   }
 
   /**
@@ -33,18 +51,6 @@ export class FileManagement {
       },
     ];
     await vscode.workspace.updateWorkspaceFolders(0, vscode.workspace.workspaceFolders?.length, ...workspaceConfig);
-  }
-
-  /**
-   * Creates a subfolder for the selected Logic App in the Deployment folder.
-   * @param root - The root folder where the Deployment folder is located.
-   * @param logicAppName - The name of the Logic App.
-   * @returns The path to the Logic App folder.
-   */
-  static createFolderForLogicApp(root: string, logicAppName: string): string {
-    const logicAppFolderPath = path.join(root, 'Deployment', logicAppName);
-    fs.ensureDirSync(logicAppFolderPath); // fs-extra's ensureDirSync creates a directory if it does not exist
-    return logicAppFolderPath;
   }
 
   /**
@@ -94,6 +100,8 @@ export class UserInput {
     const defaultPath = path.join(rootWorkspacePath, 'Deployment');
     if (!fs.existsSync(defaultPath)) {
       fs.mkdirSync(defaultPath);
+      const deploymentFolderUri = vscode.Uri.file(defaultPath);
+      FileManagement.addToWorkspaceSourceFile(deploymentFolderUri);
     }
 
     const selectedFolder = await vscode.window.showQuickPick(
@@ -126,10 +134,4 @@ async function getSettingFromLocalSettings(scriptContext: IAzureScriptWizard, fo
   const localSettingsPath = path.join(folder.fsPath, 'local.settings.json');
   const localSettings = await getLocalSettingsJson(scriptContext, localSettingsPath);
   return localSettings.Values?.[key] || '';
-}
-
-// Placeholder for your folder monitoring function
-export function monitorFolderForChanges(_folderPath: string, _callback: (changedFolderPath: string) => void) {
-  // TODO: Implement folder monitoring function
-  // This function should monitor the specified folder for changes, and execute the provided callback whenever a change is detected.
 }
