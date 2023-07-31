@@ -78,6 +78,14 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     mapDefinition = DataMapperExt.loadMapDefinition(fileContents);
   }
 
+  /*   const mapDefinition = yaml.load(
+    fileContents
+  ) as {
+    $sourceSchema: string;
+    $targetSchema: string;
+    [key: string]: any;
+  }; */
+
   if (
     !mapDefinition.$sourceSchema ||
     typeof mapDefinition.$sourceSchema !== 'string' ||
