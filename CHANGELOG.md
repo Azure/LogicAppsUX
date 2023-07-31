@@ -1,5 +1,12 @@
 # Logic Apps Designer
 
+## [2.55.0](https://github.com/Azure/LogicAppsUX/compare/v2.54.0...v2.55.0) (2023-07-31)
+
+### Bug Fixes
+
+- **designer:** Nested loops actions update in monitoring view ([#3050](https://github.com/Azure/LogicAppsUX/issues/3050)) ([24e71b3](https://github.com/Azure/LogicAppsUX/commit/24e71b34b7b60ac7df36da54b1a3a4743ac7de40))
+- **vscode:** Update functions worker runtime to only node ([#3033](https://github.com/Azure/LogicAppsUX/issues/3033)) ([e052677](https://github.com/Azure/LogicAppsUX/commit/e0526773886774997116741223f93b20bfc7ff6c))
+
 ## [2.54.0](https://github.com/Azure/LogicAppsUX/compare/v2.53.0...v2.54.0) (2023-07-27)
 
 ### Features
