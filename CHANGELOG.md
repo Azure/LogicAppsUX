@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.55.1](https://github.com/Azure/LogicAppsUX/compare/v2.55.0...v2.55.1) (2023-07-31)
+
+
+### Features
+
+* **ia:** Support Premium IA in artifact service ([#3063](https://github.com/Azure/LogicAppsUX/issues/3063)) ([5f42cbf](https://github.com/Azure/LogicAppsUX/commit/5f42cbf693c8f21ab2e8596f0190214142097db9))
+
 ## [2.55.0](https://github.com/Azure/LogicAppsUX/compare/v2.54.0...v2.55.0) (2023-07-31)
 
 
