@@ -16,12 +16,13 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const [inputTyped, setInputTyped] = useState<boolean>(false);
 
-  const [inputText, setCustomValue] = useState<string>(loadedInputValue ? loadedInputValue : '');
+  const [inputText, setInputText] = useState<string>(loadedInputValue ? loadedInputValue : '');
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (loadedInputValue !== undefined && inputText === '' && inputTyped === false) {
-      setCustomValue(loadedInputValue);
+      const formattedValue = removeQuotesFromString(loadedInputValue);
+      setInputText(formattedValue);
     }
   }, [loadedInputValue, inputText, inputTyped]);
 
@@ -36,13 +37,15 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
         return;
       }
 
+      const formattedValue = addQuotesToString(value);
+
       if (inputTyped) {
         dispatch(
           setConnectionInput({
             targetNode: functionNode,
             targetNodeReactFlowKey: selectedItemKey,
             inputIndex: 0,
-            input: value,
+            input: formattedValue,
           })
         );
       }
@@ -57,8 +60,32 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
         style={{ width: '100%' }}
         value={inputText}
         placeholder={input.placeHolder}
-        onChange={(_e, d) => setCustomValue(d.value)}
+        onChange={(_e, d) => setInputText(d.value)}
       ></Textarea>
     </Tooltip>
   );
+};
+
+const addQuotesToString = (value: string) => {
+  let formattedValue = value;
+
+  const quote = '"';
+  if (!value.startsWith(quote)) {
+    formattedValue = quote.concat(value);
+  }
+  if (!value.endsWith(quote)) {
+    formattedValue = formattedValue.concat(quote);
+  }
+  return formattedValue;
+};
+
+const removeQuotesFromString = (value: string) => {
+  let formattedValue = value;
+  if (formattedValue.endsWith('"')) {
+    formattedValue = formattedValue.substring(0, value.length - 1);
+  }
+  if (formattedValue.startsWith('"')) {
+    formattedValue = formattedValue.replace('"', '');
+  }
+  return formattedValue;
 };
