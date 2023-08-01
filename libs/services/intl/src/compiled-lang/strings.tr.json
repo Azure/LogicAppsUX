@@ -23,6 +23,12 @@
       "value": "Hatalı"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Tetikleyici"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1135,6 +1141,12 @@
       "value": "Girişler yüklenirken hata oluştu"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Tüm gelişmiş parametreleri göster"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1463,6 +1475,12 @@
       "value": "Lütfen mantıksal uygulama için yönetilen kimliği etkinleştirin."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Eylemler"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1677,6 +1695,12 @@
       "value": "Metin"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Varsayılan"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1773,6 +1797,12 @@
     {
       "type": 0,
       "value": "Sıklık seçin."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Tüm gelişmiş parametreleri ve bunların değerlerini kaldırın ve temizleyin"
     }
   ],
   "Ak2Lka": [
@@ -2047,6 +2077,12 @@
     {
       "type": 0,
       "value": "Devamlılık belirtecini izleyerek, belirtilen eşikleri karşılayacak şekilde öğeleri alın. Bağlayıcının sayfa boyutu nedeniyle, döndürülen sayı eşiği aşabilir."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Doğru"
     }
   ],
   "CFOUe3": [
@@ -2699,6 +2735,20 @@
       "value": "Başvuru işlevleri"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3033,20 +3083,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' API'si yürütülürken hata oluştu."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3375,6 +3411,12 @@
     {
       "type": 0,
       "value": "İşlev Uygulamaları Yükleniyor..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Sonraki akış önerisi"
     }
   ],
   "LJmfmK": [
@@ -3801,6 +3843,12 @@
     {
       "type": 0,
       "value": "Dosyalar Yükleniyor..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "yapılandırmak için seçin"
     }
   ],
   "O9ZExg": [
@@ -4273,6 +4321,12 @@
       "value": "Tarih biçiminde bir dize döndürür"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Akış bunu yapar"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4577,6 +4631,12 @@
     {
       "type": 0,
       "value": "Cuma"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "İş Akışı Eylemlerini Ara"
     }
   ],
   "TO7qos": [
@@ -4911,6 +4971,12 @@
       "value": "Bağlantı için bir ad girin"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Önerilen akış"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4981,6 +5047,12 @@
     {
       "type": 0,
       "value": " için sonuç bulunamadı"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Bu gerçekleştiğinde akış başlar"
     }
   ],
   "VKAk5g": [
@@ -5079,6 +5151,12 @@
     {
       "type": 0,
       "value": "Bu eylem eklendi"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "İleri"
     }
   ],
   "W070M2": [
@@ -5229,6 +5307,12 @@
     {
       "type": 0,
       "value": "Yeniden dene"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Gelişmiş parametreler"
     }
   ],
   "XH94im": [
@@ -5691,6 +5775,12 @@
       "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Farklı bir öneri göster"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5703,16 +5793,16 @@
       "value": "Gerekli. Bulunacak alt dizenin tekrar sayısı."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Yanlış"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Gerekli. Koleksiyonun önünden kaldırılacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Yeni parametreler ekle"
     }
   ],
   "aK4iLW": [
@@ -5885,6 +5975,12 @@
     {
       "type": 0,
       "value": "Yeniden Deneme Geçmişi"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Tümünü temizle"
     }
   ],
   "bwlAWn": [
@@ -6633,6 +6729,12 @@
       "value": "(UTC+02:00) Gazze, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Aradığım şey bu değil"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6817,6 +6919,12 @@
       "value": "Örnek: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Yapay zeka tarafından oluşturulan bu akış önerisini gözden geçirdikten sonra"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6921,6 +7029,24 @@
     {
       "type": 0,
       "value": "Kaynak şema ekleyin"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " gösteriliyor"
     }
   ],
   "jUDhbs": [
@@ -8083,6 +8209,12 @@
       "value": "' özelliği."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Önceki akış önerisi"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -9197,6 +9329,12 @@
     {
       "type": 0,
       "value": "Artan düzende sıralanan bir dizi döndürür"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Tümünü göster"
     }
   ],
   "yVFIAQ": [

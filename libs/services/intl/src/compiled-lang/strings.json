@@ -5,6 +5,12 @@
       "value": "Testing"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Faulted"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -1147,6 +1159,12 @@
       "value": "Error loading inputs"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1157,6 +1175,12 @@
     {
       "type": 0,
       "value": "Cancel"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1475,6 +1499,12 @@
       "value": "Please enable managed identity for the logic app."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1689,6 +1719,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1785,6 +1821,12 @@
     {
       "type": 0,
       "value": "Select frequency."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -1899,10 +1941,10 @@
       "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2059,6 +2101,12 @@
     {
       "type": 0,
       "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2279,12 +2327,6 @@
     {
       "type": 0,
       "value": "Duration"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Custom value does not match the schema node's type"
     }
   ],
   "Dhu3IS": [
@@ -2715,6 +2757,20 @@
       "value": "Referencing functions"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3053,26 +3109,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Error executing the api '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Advanced options"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3395,6 +3431,12 @@
     {
       "type": 0,
       "value": "Loading Function Apps..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3823,6 +3865,12 @@
       "value": "Loading Files..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3863,12 +3911,6 @@
     {
       "type": 0,
       "value": "Connection Name"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Enter custom value"
     }
   ],
   "OOUSLP": [
@@ -4031,12 +4073,6 @@
       "value": "Required. This value is the number of integers that is in the array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Default value"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4141,12 +4177,6 @@
     {
       "type": 0,
       "value": "Connection errors"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Do not generate if no value"
     }
   ],
   "Pudllg": [
@@ -4291,6 +4321,12 @@
     {
       "type": 0,
       "value": "Returns a string in date format"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
     }
   ],
   "QpRRt3": [
@@ -4493,12 +4529,6 @@
       "value": "Convert the parameter to an integer"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "The input node type doesn't match the schema node's type."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4597,6 +4627,12 @@
     {
       "type": 0,
       "value": "Friday"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4935,6 +4971,12 @@
       "value": "Enter a name for the connection"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5005,6 +5047,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5105,6 +5153,12 @@
       "value": "Added this action"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5183,6 +5237,12 @@
       "value": "Remove"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5253,6 +5313,12 @@
     {
       "type": 0,
       "value": "Retry"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
     }
   ],
   "XH94im": [
@@ -5579,12 +5645,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5715,6 +5775,12 @@
       "value": "Learn more about dynamic content."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5727,16 +5793,16 @@
       "value": "Required. The number of the occurrence of the substring to find."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Add new parameters"
     }
   ],
   "aK4iLW": [
@@ -5911,6 +5977,12 @@
       "value": "Retry History"
     }
   ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
+    }
+  ],
   "bwlAWn": [
     {
       "type": 0,
@@ -6035,12 +6107,6 @@
     {
       "type": 0,
       "value": "Bold (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -6661,6 +6727,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6849,6 +6921,12 @@
       "value": "Example: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6953,6 +7031,24 @@
     {
       "type": 0,
       "value": "Add a source schema"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -8115,6 +8211,12 @@
       "value": "'."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8293,6 +8395,12 @@
     {
       "type": 0,
       "value": "Add Case"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9233,6 +9341,12 @@
     {
       "type": 0,
       "value": "Returns an array sorted in ascending order"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
     }
   ],
   "yVFIAQ": [

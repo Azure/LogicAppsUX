@@ -23,6 +23,12 @@
       "value": "S chybou"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1151,6 +1157,12 @@
       "value": "Při načítání vstupů došlo k chybě"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Zobrazit všechny upřesňující parametry"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1479,6 +1491,12 @@
       "value": "Povolte prosím pro aplikaci logiky spravovanou identitu."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Akce"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1693,6 +1711,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Výchozí"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1789,6 +1813,12 @@
     {
       "type": 0,
       "value": "Vyberte frekvenci."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Odebrat a vymazat všechny upřesňující parametry a jejich hodnoty"
     }
   ],
   "Ak2Lka": [
@@ -2085,6 +2115,12 @@
     {
       "type": 0,
       "value": "Načtěte položky, aby se splnila zadaná prahová hodnota tak, že se bude následovat token pro pokračování. Kvůli velikosti stránky konektoru může počet vrácených položek překročit prahovou hodnotu."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True (Pravda)"
     }
   ],
   "CFOUe3": [
@@ -2771,6 +2807,20 @@
       "value": "Funkce odkazů"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " z "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3107,20 +3157,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutsk"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Při provádění rozhraní API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' došlo k chybě."
     }
   ],
   "IooQu1": [
@@ -3469,6 +3505,12 @@
     {
       "type": 0,
       "value": "Načítají se aplikace funkcí..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Další návrh toku"
     }
   ],
   "LJmfmK": [
@@ -3899,6 +3941,12 @@
     {
       "type": 0,
       "value": "Načítají se soubory..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "pro jeho konfiguraci"
     }
   ],
   "O9ZExg": [
@@ -4363,6 +4411,12 @@
       "value": "Vrátí řetězec ve formátu data."
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Toto bude tok dělat"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4685,6 +4739,12 @@
     {
       "type": 0,
       "value": "Pátek"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Hledat akce pracovního postupu"
     }
   ],
   "TO7qos": [
@@ -5023,6 +5083,12 @@
       "value": "Zadejte název připojení."
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Navrhovaný tok"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5093,6 +5159,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Když se to stane, tok se spustí."
     }
   ],
   "VKAk5g": [
@@ -5191,6 +5263,12 @@
     {
       "type": 0,
       "value": "Byla přidána této akce"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Další"
     }
   ],
   "W070M2": [
@@ -5341,6 +5419,12 @@
     {
       "type": 0,
       "value": "Zkusit znovu"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Rozšířené parametry"
     }
   ],
   "XH94im": [
@@ -5803,6 +5887,12 @@
       "value": "Další informace o dynamickém obsahu"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Zobrazit jiný návrh"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5815,16 +5905,16 @@
       "value": "Povinné. Počet výskytů podřetězce, které se mají najít"
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False (Nepravda)"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Vyžadováno. Počet objektů, které se mají odebrat ze začátku kolekce. Musí to být kladné celé číslo."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Přidat nové parametry"
     }
   ],
   "aK4iLW": [
@@ -5997,6 +6087,12 @@
     {
       "type": 0,
       "value": "Historie opakování pokusů"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Vymazat vše"
     }
   ],
   "bwlAWn": [
@@ -6775,6 +6871,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Toto nehledám"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6967,6 +7069,12 @@
       "value": "Příklad: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Až si prostudujete tento návrh toku vygenerovaný pomocí AI, vyberte"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7071,6 +7179,24 @@
     {
       "type": 0,
       "value": "Přidat zdrojové schéma"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Zobrazeno: "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " z(e) "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -8277,6 +8403,12 @@
       "value": "."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Předchozí návrh toku"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -9387,6 +9519,12 @@
     {
       "type": 0,
       "value": "Vrátí pole seřazené vzestupně"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Zobrazit vše"
     }
   ],
   "yVFIAQ": [

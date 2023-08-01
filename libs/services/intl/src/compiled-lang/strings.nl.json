@@ -23,6 +23,12 @@
       "value": "Mislukt"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1147,6 +1153,12 @@
       "value": "Fout bij het laden van invoer"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Alle geavanceerde parameters weergeven"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1475,6 +1487,12 @@
       "value": "Schakel de beheerde identiteit voor de logische app in."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Acties"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1689,6 +1707,12 @@
       "value": "Tekst"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Standaard"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1781,6 +1805,12 @@
     {
       "type": 0,
       "value": "Selecteer de frequentie."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Alle geavanceerde parameters en de bijbehorende waarden verwijderen en wissen"
     }
   ],
   "Ak2Lka": [
@@ -2055,6 +2085,12 @@
     {
       "type": 0,
       "value": "Items die voldoen aan de opgegeven drempelwaarde, ophalen door het vervolgtoken te volgen. Vanwege de paginagrootte van de connector kan het aantal geretourneerde items de drempelwaarde overschrijden."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Waar"
     }
   ],
   "CFOUe3": [
@@ -2719,6 +2755,20 @@
       "value": "Verwijzingsfuncties"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " van "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3057,20 +3107,6 @@
       "value": "(UTC+09:00) Jakoetsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fout bij het uitvoeren van de "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " van de API."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3395,6 +3431,12 @@
     {
       "type": 0,
       "value": "Functie-apps laden..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Volgende stroomsuggestie"
     }
   ],
   "LJmfmK": [
@@ -3821,6 +3863,12 @@
     {
       "type": 0,
       "value": "Bestanden laden..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "om het te configureren"
     }
   ],
   "O9ZExg": [
@@ -4289,6 +4337,12 @@
       "value": "Er wordt een tekenreeks in datumindeling geretourneerd"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Dit is wat de stroom doet"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4589,6 +4643,12 @@
     {
       "type": 0,
       "value": "Vrijdag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Werkstroomacties zoeken"
     }
   ],
   "TO7qos": [
@@ -4931,6 +4991,12 @@
       "value": "Voer een naam in voor de verbinding"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Voorgestelde stroom"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5001,6 +5067,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "De stroom wordt gestart wanneer dit gebeurt"
     }
   ],
   "VKAk5g": [
@@ -5099,6 +5171,12 @@
     {
       "type": 0,
       "value": "Deze actie is toegevoegd"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Volgende"
     }
   ],
   "W070M2": [
@@ -5249,6 +5327,12 @@
     {
       "type": 0,
       "value": "Opnieuw proberen"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Geavanceerde parameters"
     }
   ],
   "XH94im": [
@@ -5711,6 +5795,12 @@
       "value": "Meer informatie over dynamische inhoud"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Een andere suggestie weergeven"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5723,16 +5813,16 @@
       "value": "Vereist. Het aantal exemplaren van de subtekenreeks dat moet worden gevonden."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Onwaar"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Vereist. Het aantal objecten dat moet worden verwijderd uit het voorste deel van de verzameling. Dit aantal moet een geheel getal zijn."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Nieuwe parameters toevoegen"
     }
   ],
   "aK4iLW": [
@@ -5905,6 +5995,12 @@
     {
       "type": 0,
       "value": "Geschiedenis voor opnieuw proberen"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Alles wissen"
     }
   ],
   "bwlAWn": [
@@ -6661,6 +6757,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Dit is niet wat ik zoek"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6849,6 +6951,12 @@
       "value": "Voorbeeld: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Nadat u deze door AI gegenereerde stroomsuggestie hebt beoordeeld, selecteert u"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6953,6 +7061,24 @@
     {
       "type": 0,
       "value": "Een bronschema toevoegen"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " van "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " wordt weergegeven"
     }
   ],
   "jUDhbs": [
@@ -8111,6 +8237,12 @@
       "value": "."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Vorige stroomsuggestie"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -9221,6 +9353,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt een matrix geretourneerd die in oplopende volgorde is gesorteerd"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Alles weergeven"
     }
   ],
   "yVFIAQ": [

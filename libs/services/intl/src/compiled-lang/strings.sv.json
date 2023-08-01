@@ -23,6 +23,12 @@
       "value": "Fel"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Utlösare"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1147,6 +1153,12 @@
       "value": "Fel vid inläsning av indata"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Visa alla avancerade parametrar"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1475,6 +1487,12 @@
       "value": "Aktivera hanterad identitet för logikappen."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Åtgärder"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1689,6 +1707,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Standard"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1781,6 +1805,12 @@
     {
       "type": 0,
       "value": "Välj frekvens."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Ta bort och rensa alla avancerade parametrar och deras värden"
     }
   ],
   "Ak2Lka": [
@@ -2055,6 +2085,12 @@
     {
       "type": 0,
       "value": "Hämta objekt som uppfyller det angivna tröskelvärdet genom att följa fortsättningstoken. På grund av anslutningsappens sidstorlek, kan antalet som returneras överstiga tröskelvärdet."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Sant"
     }
   ],
   "CFOUe3": [
@@ -2715,6 +2751,20 @@
       "value": "Referensfunktioner"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " av "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3053,20 +3103,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fel vid körning av API:t "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3395,6 +3431,12 @@
     {
       "type": 0,
       "value": "Läser in funktionsappar..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Nästa flödesförslag"
     }
   ],
   "LJmfmK": [
@@ -3821,6 +3863,12 @@
     {
       "type": 0,
       "value": "Läser in filer..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "för att konfigurera det"
     }
   ],
   "O9ZExg": [
@@ -4285,6 +4333,12 @@
       "value": "Returnerar en sträng i datumformat"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Det här kommer flödet att göra"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4585,6 +4639,12 @@
     {
       "type": 0,
       "value": "Fredag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Sök efter arbetsflödesåtgärder"
     }
   ],
   "TO7qos": [
@@ -4923,6 +4983,12 @@
       "value": "Ange ett namn för anslutningen."
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Föreslaget flöde"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4993,6 +5059,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Flödet startar när detta inträffar"
     }
   ],
   "VKAk5g": [
@@ -5091,6 +5163,12 @@
     {
       "type": 0,
       "value": "La till den här åtgärden"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Nästa"
     }
   ],
   "W070M2": [
@@ -5241,6 +5319,12 @@
     {
       "type": 0,
       "value": "Försök igen"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Avancerade parametrar"
     }
   ],
   "XH94im": [
@@ -5703,6 +5787,12 @@
       "value": "Läs mer om dynamiskt innehåll."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Visa ett annat förslag"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5715,16 +5805,16 @@
       "value": "Obligatoriskt. Antalet förekomster av delsträngen som ska hittas."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Falskt"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Lägg till nya parametrar"
     }
   ],
   "aK4iLW": [
@@ -5897,6 +5987,12 @@
     {
       "type": 0,
       "value": "Återförsökshistorik"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Rensa alla"
     }
   ],
   "bwlAWn": [
@@ -6653,6 +6749,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Det här är inte vad jag letar efter"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6841,6 +6943,12 @@
       "value": "Exempel: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "När du har granskat det här AI-genererade flödesförslaget väljer du"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6945,6 +7053,24 @@
     {
       "type": 0,
       "value": "Lägg till ett källschema"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Visar "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " av "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -8103,6 +8229,12 @@
       "value": "."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Föregående flödesförslag"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -9217,6 +9349,12 @@
     {
       "type": 0,
       "value": "Returnerar en matris sorterad i stigande ordning"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Visa alla"
     }
   ],
   "yVFIAQ": [

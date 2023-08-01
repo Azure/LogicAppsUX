@@ -23,6 +23,12 @@
       "value": "Fehlerhaft"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1159,6 +1165,12 @@
       "value": "Fehler beim Laden der Eingaben"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Alle erweiterten Parameter anzeigen"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1487,6 +1499,12 @@
       "value": "Aktivieren Sie die verwaltete Identität für die Logik-App."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Aktionen"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1705,6 +1723,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Standard"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1801,6 +1825,12 @@
     {
       "type": 0,
       "value": "Wählen Sie die Häufigkeit aus."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Entfernen und Löschen aller erweiterten Parameter und ihrer Werte"
     }
   ],
   "Ak2Lka": [
@@ -2075,6 +2105,12 @@
     {
       "type": 0,
       "value": "Hiermit werden die im Schwellenwert angegebenen Elemente gemäß Fortsetzungstoken abgerufen. Aufgrund der Seitengröße des Connectors überschreitet die zurückgegebene Anzahl möglicherweise den Schwellenwert."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "WAHR"
     }
   ],
   "CFOUe3": [
@@ -2743,6 +2779,20 @@
       "value": "Referenzierende Funktionen"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3085,20 +3135,6 @@
       "value": "(UTC+09:00) Jakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fehler beim Ausführen der API „"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "“."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3427,6 +3463,12 @@
     {
       "type": 0,
       "value": "Funktions-Apps werden geladen..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Nächster Flowvorschlag"
     }
   ],
   "LJmfmK": [
@@ -3853,6 +3895,12 @@
     {
       "type": 0,
       "value": "Dateien werden geladen..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "um es zu konfigurieren"
     }
   ],
   "O9ZExg": [
@@ -4333,6 +4381,12 @@
       "value": "Gibt eine Zeichenfolge im Datumsformat zurück."
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Dies ist das, was der Flow tun wird"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4637,6 +4691,12 @@
     {
       "type": 0,
       "value": "Freitag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Workflowaktionen suchen"
     }
   ],
   "TO7qos": [
@@ -4975,6 +5035,12 @@
       "value": "Geben Sie einen Namen für die Verbindung ein"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Vorgeschlagener Flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5049,6 +5115,12 @@
     {
       "type": 0,
       "value": "“"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Der Flow startet, wenn dies geschieht"
     }
   ],
   "VKAk5g": [
@@ -5147,6 +5219,12 @@
     {
       "type": 0,
       "value": "Diese Aktion wurde hinzugefügt."
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Weiter"
     }
   ],
   "W070M2": [
@@ -5301,6 +5379,12 @@
     {
       "type": 0,
       "value": "Wiederholen"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Erweiterte Parameter"
     }
   ],
   "XH94im": [
@@ -5763,6 +5847,12 @@
       "value": "Erfahren Sie mehr über dynamische Inhalte."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Einen anderen Vorschlag anzeigen"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5775,16 +5865,16 @@
       "value": "Erforderlich. Die Anzahl des Vorkommens des zu suchenden Substrings."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "FALSCH"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Erforderlich. Die Anzahl von Objekten, die vom Anfang der Sammlung entfernt werden sollen. Muss eine positive ganze Zahl sein."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Neue Parameter hinzufügen"
     }
   ],
   "aK4iLW": [
@@ -5957,6 +6047,12 @@
     {
       "type": 0,
       "value": "Wiederholungsverlauf"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Alle löschen"
     }
   ],
   "bwlAWn": [
@@ -6717,6 +6813,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Dies ist nicht das, wonach ich suche"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6905,6 +7007,12 @@
       "value": "Beispiel: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Nachdem Sie diesen KI-generierten Flowvorschlag überprüft haben, wählen Sie"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7009,6 +7117,24 @@
     {
       "type": 0,
       "value": "Quellschema hinzufügen"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " werden angezeigt"
     }
   ],
   "jUDhbs": [
@@ -8175,6 +8301,12 @@
       "value": "\"."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Vorheriger Flowvorschlag"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -9293,6 +9425,12 @@
     {
       "type": 0,
       "value": "Gibt ein Array in aufsteigender Reihenfolge zurück."
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Alle anzeigen"
     }
   ],
   "yVFIAQ": [

@@ -8,12 +8,14 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
-import type { SchemaNodeExtended } from '../models';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
-import { FunctionCategory, ifPseudoFunctionKey } from '../models/Function';
-import { isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
+import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
+import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
@@ -134,3 +136,79 @@ export const functionsForLocation = (functions: FunctionDictionary, targetKey: s
   Object.fromEntries(
     Object.entries(functions).filter(([_key, value]) => value.functionLocations.some((location) => location.key === targetKey))
   );
+
+export const getFunctionLocationsForAllFunctions = (
+  dataMapConnections: ConnectionDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary
+): FunctionDictionary => {
+  const functionNodes: FunctionDictionary = {};
+  for (const connectionKey in dataMapConnections) {
+    const func = dataMapConnections[connectionKey].self.node as FunctionData;
+    if (func.functionName !== undefined) {
+      const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
+
+      const parentNodes: SchemaNodeExtended[] = [];
+      targetNodesConnectedToFunction.forEach((childNode) => {
+        if (childNode.parentKey) {
+          parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
+        }
+      });
+
+      const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
+      functionNodes[connectionKey] = { functionData: func, functionLocations: combinedTargetNodes };
+    }
+  }
+  return functionNodes;
+};
+export const functionDropDownItemText = (key: string, node: FunctionData, connections: ConnectionDictionary) => {
+  let fnInputValues: string[] = [];
+  const connection = connections[key];
+
+  if (connection) {
+    fnInputValues = Object.values(connection.inputs)
+      .flat()
+      .map((input) => {
+        if (!input) {
+          return undefined;
+        }
+
+        if (isCustomValue(input)) {
+          return input;
+        }
+
+        if (isFunctionData(input.node)) {
+          if (input.node.key === indexPseudoFunctionKey) {
+            const sourceNode = connections[input.reactFlowKey].inputs[0][0];
+            return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
+          }
+
+          if (functionInputHasInputs(input.reactFlowKey, connections)) {
+            return `${input.node.functionName}(...)`;
+          } else {
+            return `${input.node.functionName}()`;
+          }
+        }
+
+        // Source schema node
+        return input.node.name;
+      })
+      .filter((value) => !!value) as string[];
+  }
+
+  const inputs = connections[key].inputs[0];
+  const sourceNode = inputs && inputs[0];
+  let nodeName: string;
+  if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+    nodeName = calculateIndexValue(sourceNode.node);
+  } else if (node.key === directAccessPseudoFunctionKey) {
+    const functionValues = getInputValues(connections[key], connections);
+    nodeName =
+      functionValues.length === 3
+        ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+        : getFunctionOutputValue(fnInputValues, node.functionName);
+  } else {
+    nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
+  }
+
+  return nodeName;
+};

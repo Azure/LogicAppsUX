@@ -23,6 +23,12 @@
       "value": "Bermasalah"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Pemicu"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1135,6 +1141,12 @@
       "value": "Kesalahan saat memuat input"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Tampilkan semua parameter tingkat lanjut"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1463,6 +1475,12 @@
       "value": "Harap aktifkan identitas yang dikelola untuk aplikasi logika."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Tindakan"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1677,6 +1695,12 @@
       "value": "Teks"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1773,6 +1797,12 @@
     {
       "type": 0,
       "value": "Pilih frekuensi."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Hapus dan bersihkan semua parameter tingkat lanjut beserta nilainya"
     }
   ],
   "Ak2Lka": [
@@ -2036,6 +2066,12 @@
     {
       "type": 0,
       "value": "Ambil item untuk memenuhi ambang yang ditetapkan dengan mengikuti token terusan. Karena ukuran halaman konektor, angka yang dihasilkan dapat melebihi ambang."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2681,6 +2717,20 @@
       "value": "Fungsi referensi"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " dari "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3019,20 +3069,6 @@
       "value": "(UTC+09.00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Kesalahan saat menjalankan api '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3350,6 +3386,12 @@
     {
       "type": 0,
       "value": "Memuat Aplikasi Fungsi..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Saran alur berikutnya"
     }
   ],
   "LJmfmK": [
@@ -3776,6 +3818,12 @@
     {
       "type": 0,
       "value": "Memuat File..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "untuk mengonfigurasinya"
     }
   ],
   "O9ZExg": [
@@ -4248,6 +4296,12 @@
       "value": "Menampilkan string dalam format tanggal"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Inilah yang akan dilakukan alur"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4541,6 +4595,12 @@
     {
       "type": 0,
       "value": "Jumat"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Cari Tindakan Alur Kerja"
     }
   ],
   "TO7qos": [
@@ -4879,6 +4939,12 @@
       "value": "Masukkan nama untuk koneksi"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Alur yang disarankan"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4949,6 +5015,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Alur dimulai saat hal ini terjadi"
     }
   ],
   "VKAk5g": [
@@ -5047,6 +5119,12 @@
     {
       "type": 0,
       "value": "Menambahkan tindakan ini"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Berikutnya"
     }
   ],
   "W070M2": [
@@ -5197,6 +5275,12 @@
     {
       "type": 0,
       "value": "Coba lagi"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Parameter tingkat lanjut"
     }
   ],
   "XH94im": [
@@ -5659,6 +5743,12 @@
       "value": "Pelajari selengkapnya tentang konten dinamis."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Tampilkan saran lain"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5671,16 +5761,16 @@
       "value": "Wajib. Jumlah kejadian substring yang akan ditemukan."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Harus diisi. Jumlah objek untuk dihapus dari bagian depan Koleksi. Harus bilangan bulat positif."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Tambahkan parameter baru"
     }
   ],
   "aK4iLW": [
@@ -5853,6 +5943,12 @@
     {
       "type": 0,
       "value": "Coba Ulang Riwayat"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Hapus semua"
     }
   ],
   "bwlAWn": [
@@ -6594,6 +6690,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Ini bukan yang saya cari"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6782,6 +6884,12 @@
       "value": "Contoh: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Setelah Anda meninjau saran alur yang dibuat oleh AI ini, pilih"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6886,6 +6994,24 @@
     {
       "type": 0,
       "value": "Tambahkan skema sumber"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Menampilkan "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " dari "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -8026,6 +8152,12 @@
       "value": "' tidak valid."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Saran alur sebelumnya"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -9144,6 +9276,12 @@
     {
       "type": 0,
       "value": "Menghasilkan array yang diurutkan dalam urutan naik"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Tampilkan semua"
     }
   ],
   "yVFIAQ": [

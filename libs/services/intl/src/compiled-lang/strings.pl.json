@@ -23,6 +23,12 @@
       "value": "Błędne"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Wyzwalacz"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1151,6 +1157,12 @@
       "value": "Błąd podczas ładowania danych wejściowych"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Pokaż wszystkie parametry zaawansowane"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1479,6 +1491,12 @@
       "value": "Włącz tożsamość zarządzaną dla aplikacji logiki."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Akcje"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1693,6 +1711,12 @@
       "value": "Tekst"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Domyślny"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1789,6 +1813,12 @@
     {
       "type": 0,
       "value": "Wybierz częstotliwość."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Usuń i wyczyść wszystkie parametry zaawansowane i ich wartości"
     }
   ],
   "Ak2Lka": [
@@ -2085,6 +2115,12 @@
     {
       "type": 0,
       "value": "Pobierz elementy, aby osiągnąć określony próg, zgodnie z tokenem kontynuacji. Ze względu na rozmiar strony łącznika zwrócona liczba elementów może przekraczać próg."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2771,6 +2807,20 @@
       "value": "Funkcje odwołań"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " z "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3107,20 +3157,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakuck"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Błąd podczas wykonywania interfejsu API „"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "”."
     }
   ],
   "IooQu1": [
@@ -3473,6 +3509,12 @@
     {
       "type": 0,
       "value": "Trwa ładowanie aplikacji funkcji..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Następna sugestia dotycząca przepływu"
     }
   ],
   "LJmfmK": [
@@ -3899,6 +3941,12 @@
     {
       "type": 0,
       "value": "Trwa ładowanie plików..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "aby go skonfigurować"
     }
   ],
   "O9ZExg": [
@@ -4375,6 +4423,12 @@
       "value": "Zwraca ciąg w formacie daty"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "To jest działanie przepływu"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4701,6 +4755,12 @@
     {
       "type": 0,
       "value": "Piątek"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Akcje przepływu pracy wyszukiwania"
     }
   ],
   "TO7qos": [
@@ -5039,6 +5099,12 @@
       "value": "Wprowadź nazwę połączenia"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Sugerowany przepływ"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5109,6 +5175,12 @@
     {
       "type": 1,
       "value": "searchText"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Przepływ rozpoczyna się, gdy tak się stanie"
     }
   ],
   "VKAk5g": [
@@ -5207,6 +5279,12 @@
     {
       "type": 0,
       "value": "Dodano tę akcję"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Następna"
     }
   ],
   "W070M2": [
@@ -5357,6 +5435,12 @@
     {
       "type": 0,
       "value": "Ponów próbę"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Parametry zaawansowane"
     }
   ],
   "XH94im": [
@@ -5819,6 +5903,12 @@
       "value": "Dowiedz się więcej o zawartości dynamicznej."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Pokaż inną sugestię"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5831,16 +5921,16 @@
       "value": "Wymagane. Liczba wystąpień podciągu do znalezienia."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Parametr wymagany. Liczba obiektów do usunięcia z początku kolekcji. Musi być dodatnią liczbą całkowitą."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Dodaj nowe parametry"
     }
   ],
   "aK4iLW": [
@@ -6013,6 +6103,12 @@
     {
       "type": 0,
       "value": "Historia ponownych prób"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Wyczyść wszystkie"
     }
   ],
   "bwlAWn": [
@@ -6791,6 +6887,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Tego nie szukam"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6979,6 +7081,12 @@
       "value": "Przykład: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Po przejrzeniu tej sugestii przepływu wygenerowanej przez sztuczną inteligencję wybierz pozycję"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7083,6 +7191,24 @@
     {
       "type": 0,
       "value": "Dodawanie schematu źródłowego"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Pokazywanie "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " z "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -8305,6 +8431,12 @@
       "value": "”."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Poprzednia sugestia dotycząca przepływu"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -9423,6 +9555,12 @@
     {
       "type": 0,
       "value": "Zwraca tablicę posortowane w kolejności rosnącej"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Pokaż wszystkie"
     }
   ],
   "yVFIAQ": [

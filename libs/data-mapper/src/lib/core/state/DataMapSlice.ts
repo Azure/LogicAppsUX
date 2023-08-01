@@ -31,7 +31,7 @@ import {
   addParentConnectionForRepeatingElementsNested,
   getParentId,
 } from '../../utils/DataMap.Utils';
-import { functionsForLocation, isFunctionData } from '../../utils/Function.Utils';
+import { functionsForLocation, getFunctionLocationsForAllFunctions, isFunctionData } from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
 import {
@@ -186,6 +186,7 @@ export const dataMapSlice = createSlice({
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
+      const functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -194,6 +195,7 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
+        functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],

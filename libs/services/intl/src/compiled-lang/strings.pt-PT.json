@@ -23,6 +23,12 @@
       "value": "Com falhas"
     }
   ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Acionador"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1147,6 +1153,12 @@
       "value": "Erro ao carregar entradas"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Mostrar todos os parâmetros avançados"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1475,6 +1487,12 @@
       "value": "Ative a identidade gerida para a aplicação lógica."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Ações"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1689,6 +1707,12 @@
       "value": "Texto"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Predefinição"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1785,6 +1809,12 @@
     {
       "type": 0,
       "value": "Selecione a frequência."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remover e limpar todos os parâmetros avançados e os seus valores"
     }
   ],
   "Ak2Lka": [
@@ -2070,6 +2100,12 @@
     {
       "type": 0,
       "value": "Obter os itens para satisfazer o limiar especificado seguindo o token de continuação. Devido ao tamanho da página do conector, o número devolvido pode exceder o limiar."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Verdadeiro"
     }
   ],
   "CFOUe3": [
@@ -2745,6 +2781,20 @@
       "value": "Funções de referência"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3081,20 +3131,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Erro ao executar a API \""
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "\"."
     }
   ],
   "IooQu1": [
@@ -3436,6 +3472,12 @@
     {
       "type": 0,
       "value": "A carregar Aplicações de Funções..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Sugestão de fluxo seguinte"
     }
   ],
   "LJmfmK": [
@@ -3862,6 +3904,12 @@
     {
       "type": 0,
       "value": "A carregar Ficheiros..."
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "para configurá-lo"
     }
   ],
   "O9ZExg": [
@@ -4334,6 +4382,12 @@
       "value": "Devolve uma cadeia no formato de data"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Isto é o que o fluxo fará"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4649,6 +4703,12 @@
     {
       "type": 0,
       "value": "Sexta-feira"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Procurar Ações de Fluxo de Trabalho"
     }
   ],
   "TO7qos": [
@@ -4987,6 +5047,12 @@
       "value": "Insira um nome para a ligação"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Fluxo sugerido"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5057,6 +5123,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "O fluxo é iniciado quando isto acontece"
     }
   ],
   "VKAk5g": [
@@ -5155,6 +5227,12 @@
     {
       "type": 0,
       "value": "Adicionou esta ação"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Seguinte"
     }
   ],
   "W070M2": [
@@ -5305,6 +5383,12 @@
     {
       "type": 0,
       "value": "Tentar novamente"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Parâmetros avançados"
     }
   ],
   "XH94im": [
@@ -5767,6 +5851,12 @@
       "value": "Saiba mais sobre conteúdos dinâmicos."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Mostrar uma sugestão diferente"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5779,16 +5869,16 @@
       "value": "Necessário. O número da ocorrência da subcadeia a encontrar."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Falso"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Obrigatório. O número de objetos a remover da frente da Coleção. Tem de ser um número inteiro positivo."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Adicionar novos parâmetros"
     }
   ],
   "aK4iLW": [
@@ -5961,6 +6051,12 @@
     {
       "type": 0,
       "value": "Histórico de Novas Tentativas"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Limpar tudo"
     }
   ],
   "bwlAWn": [
@@ -6732,6 +6828,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Não é disto que estou à procura"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6920,6 +7022,12 @@
       "value": "Exemplo: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Após rever esta sugestão de fluxo gerada por IA, selecione"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7024,6 +7132,24 @@
     {
       "type": 0,
       "value": "Adicionar um esquema de origem"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "A mostrar "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
     }
   ],
   "jUDhbs": [
@@ -8208,6 +8334,12 @@
       "value": "”."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Sugestão de fluxo anterior"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -9326,6 +9458,12 @@
     {
       "type": 0,
       "value": "Devolve uma matriz ordenada por ordem crescente"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Mostrar tudo"
     }
   ],
   "yVFIAQ": [
