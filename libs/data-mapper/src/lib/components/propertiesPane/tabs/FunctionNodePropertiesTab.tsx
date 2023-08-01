@@ -4,17 +4,8 @@ import type { AppDispatch, RootState } from '../../../core/state/Store';
 import { InputFormat } from '../../../models';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
-import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../../models/Function';
-import { isConnectionUnit, isCustomValue } from '../../../utils/Connection.Utils';
-import { getInputValues } from '../../../utils/DataMap.Utils';
-import {
-  calculateIndexValue,
-  formatDirectAccess,
-  functionInputHasInputs,
-  getFunctionBrandingForCategory,
-  getFunctionOutputValue,
-  isFunctionData,
-} from '../../../utils/Function.Utils';
+import { isCustomValue } from '../../../utils/Connection.Utils';
+import { functionDropDownItemText, getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { LogCategory, LogService } from '../../../utils/Logging.Utils';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
@@ -22,10 +13,9 @@ import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { InputTextbox } from '../../inputTypes/InputTextbox';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
+import { Button, Divider, Text, Tooltip, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
-import { useDebouncedEffect } from '@react-hookz/web';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -67,8 +57,6 @@ const useStyles = makeStyles({
   },
 });
 
-type InputValueMatrix = (string | undefined)[][];
-
 interface FunctionNodePropertiesTabProps {
   functionData: FunctionData;
 }
@@ -80,10 +68,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
-
-  // Consists of node names/ids and constant values
-  const [inputValueArrays, setInputValueArrays] = useState<InputValueMatrix | undefined>(undefined);
-  const [outputValue, setOutputValue] = useState<string>(getFunctionOutputValue([], functionData.functionName));
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
@@ -130,8 +114,8 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
     );
   };
 
-  const addUnboundedInput = () => {
-    updateInput(inputValueArrays ? inputValueArrays[0].length : 0, undefined);
+  const addUnboundedInput = (connection: Connection) => {
+    updateInput(connection ? connection.inputs[0].length : 0, undefined);
   };
 
   const removeUnboundedInput = (index: number) => {
@@ -141,84 +125,27 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionData.category), [functionData]);
   const OutputValueTypeIcon = iconForNormalizedDataType(functionData.outputValueType, 16, false);
 
-  const connection = useMemo<Connection | undefined>(
-    () => connectionDictionary[selectedItemKey ?? ''],
-    [connectionDictionary, selectedItemKey]
-  );
+  const connection = connectionDictionary[selectedItemKey ?? ''];
 
-  // Compile Function's input value(-array)s from its Connection
-  useDebouncedEffect(
-    () => {
-      let newInputValueArrays: InputValueMatrix = [];
-      const newInputNameArrays: string[] = []; // Node name or formatted custom value for fnOutputValue
+  const getInputName = (inputConnection: InputConnection | undefined) => {
+    if (inputConnection) {
+      return isCustomValue(inputConnection)
+        ? inputConnection
+        : isSchemaNodeExtended(inputConnection.node)
+        ? inputConnection.node.name
+        : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+    }
 
-      if (functionData.maxNumberOfInputs !== 0) {
-        newInputValueArrays = functionData.inputs.map((_input) => []);
+    return undefined;
+  };
 
-        if (connection?.inputs) {
-          Object.values(connection.inputs).forEach((inputValueArray, idx) => {
-            if (!(idx in newInputValueArrays)) {
-              LogService.error(LogCategory.FunctionNodePropertiesTab, 'useEffect', {
-                message: 'Connection inputs had more input-value-arrays than its Function had input slots',
-                data: {
-                  inputs: Object.values(connection.inputs),
-                },
-              });
+  const getInputValue = (inputConnection: InputConnection | undefined) => {
+    if (inputConnection) {
+      return isCustomValue(inputConnection) ? inputConnection : inputConnection.reactFlowKey;
+    }
 
-              return;
-            }
-
-            inputValueArray.forEach((inputValue) => {
-              if (inputValue === undefined) {
-                newInputValueArrays[idx].push(undefined);
-              } else if (isCustomValue(inputValue)) {
-                newInputValueArrays[idx].push(inputValue);
-                newInputNameArrays.push(inputValue);
-              } else {
-                newInputValueArrays[idx].push(inputValue.reactFlowKey);
-                if (isFunctionData(inputValue.node)) {
-                  newInputNameArrays.push(
-                    `${inputValue.node.functionName}(${functionInputHasInputs(inputValue.reactFlowKey, connectionDictionary) ? '...' : ''})`
-                  );
-                } else {
-                  newInputNameArrays.push(inputValue.node.name);
-                }
-              }
-            });
-          });
-        }
-      }
-
-      setInputValueArrays(newInputValueArrays);
-
-      let newOutputValue: string;
-      if (functionData.key === indexPseudoFunctionKey) {
-        const indexFunctionSourceNode =
-          connection &&
-          connection.inputs[0][0] &&
-          isConnectionUnit(connection.inputs[0][0]) &&
-          isSchemaNodeExtended(connection.inputs[0][0].node) &&
-          connection.inputs[0][0].node;
-
-        newOutputValue = indexFunctionSourceNode
-          ? calculateIndexValue(indexFunctionSourceNode)
-          : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
-      } else if (functionData.key === directAccessPseudoFunctionKey) {
-        const functionValues = getInputValues(connection, connectionDictionary, false);
-        newOutputValue =
-          functionValues.length === 3
-            ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
-            : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
-      } else {
-        newOutputValue = getFunctionOutputValue(newInputNameArrays, functionData.functionName);
-      }
-
-      setOutputValue(newOutputValue);
-    },
-    [functionData, connection, connectionDictionary],
-    10,
-    10
-  );
+    return undefined;
+  };
 
   return (
     <div style={{ height: '100%' }}>
@@ -268,23 +195,30 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
           {functionData.maxNumberOfInputs > 0 && ( // Functions with bounded inputs
             <Stack>
-              {functionData.inputs.map((input, idx) => {
-                const inputValue =
-                  inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : undefined;
+              {functionData.inputs.map((input, index) => {
+                const inputConnection = !connection
+                  ? undefined
+                  : Object.values(connection.inputs).length > 1
+                  ? connection.inputs[index][0]
+                  : connection.inputs[0][index];
+
                 return (
-                  <div key={idx} style={{ marginTop: 8 }}>
+                  <div key={index} style={{ marginTop: 8 }}>
                     {input.displayAttribute === InputFormat.TextBox && (
-                      <InputTextbox input={input} loadedInputValue={inputValue} functionNode={functionData}></InputTextbox>
+                      <InputTextbox
+                        input={input}
+                        loadedInputValue={getInputValue(inputConnection)}
+                        functionNode={functionData}
+                      ></InputTextbox>
                     )}
                     {input.displayAttribute !== InputFormat.TextBox && (
                       <Tooltip relationship="label" content={input.tooltip || ''}>
                         <InputDropdown
                           currentNode={functionData}
-                          label={input.name}
                           placeholder={input.placeHolder}
-                          inputValue={inputValue}
-                          inputIndex={idx}
-                          inputStyles={{ width: '100%' }}
+                          inputName={getInputName(inputConnection)}
+                          inputValue={getInputValue(inputConnection)}
+                          inputIndex={index}
                           inputAllowsCustomValues={input.allowCustomInput}
                         />
                       </Tooltip>
@@ -297,74 +231,42 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
           {functionData.maxNumberOfInputs === -1 && ( // Function with unbounded input (first input will always be the only unbounded one)
             <>
-              {inputValueArrays &&
-                0 in inputValueArrays && // Unbounded input value mapping
-                inputValueArrays[0].map((unboundedInputValue, idx) => (
-                  <Stack key={`${functionData.inputs[0].name}-${idx}`} horizontal verticalAlign="start" style={{ marginTop: 8 }}>
-                    <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
-                      <InputDropdown
-                        currentNode={functionData}
-                        label={functionData.inputs[0].name}
-                        placeholder={functionData.inputs[0].placeHolder}
-                        inputValue={unboundedInputValue}
-                        inputIndex={idx}
-                        inputStyles={{ width: '100%' }}
-                        inputAllowsCustomValues={functionData.inputs[0].allowCustomInput}
-                        isUnboundedInput
-                      />
-                    </Tooltip>
+              {connection &&
+                connection.inputs[0].map((input, index) => {
+                  return (
+                    <Stack key={`${functionData.inputs[0].name}-${index}`} horizontal verticalAlign="start" style={{ marginTop: 8 }}>
+                      <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
+                        <InputDropdown
+                          currentNode={functionData}
+                          placeholder={functionData.inputs[0].placeHolder}
+                          inputName={getInputName(input)}
+                          inputValue={getInputValue(input)}
+                          inputIndex={index}
+                          inputAllowsCustomValues={functionData.inputs[0].allowCustomInput}
+                          isUnboundedInput
+                        />
+                      </Tooltip>
 
-                    <Button
-                      appearance="subtle"
-                      icon={<Delete20Regular />}
-                      onClick={() => removeUnboundedInput(idx)}
-                      style={{ marginLeft: '16px', marginTop: '26px' }}
-                      aria-label={removeInputLoc}
-                    />
-                  </Stack>
-                ))}
+                      <Button
+                        appearance="subtle"
+                        icon={<Delete20Regular />}
+                        onClick={() => removeUnboundedInput(index)}
+                        aria-label={removeInputLoc}
+                      />
+                    </Stack>
+                  );
+                })}
 
               <div>
                 <Button
                   appearance="subtle"
                   icon={<Add20Regular />}
-                  onClick={addUnboundedInput}
+                  onClick={() => addUnboundedInput(connection)}
                   style={{ minWidth: '50px', maxWidth: '300px', marginTop: '12px', padding: '4px' }}
                 >
                   {addFieldLoc}
                 </Button>
               </div>
-
-              {inputValueArrays && // Any other inputs after the first unbounded input
-                inputValueArrays.slice(1).map(
-                  (
-                    inputValueArray,
-                    idx // NOTE: Actual input index will be idx+1
-                  ) =>
-                    idx + 1 in functionData.inputs ? (
-                      <div key={idx} style={{ marginTop: 8 }}>
-                        <Tooltip relationship="label" content={functionData.inputs[idx + 1].tooltip || ''}>
-                          <InputDropdown
-                            currentNode={functionData}
-                            label={functionData.inputs[idx + 1].name}
-                            placeholder={functionData.inputs[idx + 1].placeHolder}
-                            inputValue={inputValueArray.length > 0 ? inputValueArray[0] : undefined}
-                            inputIndex={idx + 1}
-                            inputStyles={{ width: '100%' }}
-                            inputAllowsCustomValues={functionData.inputs[idx + 1].allowCustomInput}
-                          />
-                        </Tooltip>
-                      </div>
-                    ) : (
-                      LogService.error(LogCategory.FunctionNodePropertiesTab, 'render', {
-                        message: `inputValueArrays had value-array for an unspecified input on Function ${
-                          functionData.functionName
-                        } at idx ${idx + 1}: ${inputValueArray
-                          .map((inputVal) => (inputVal === undefined ? 'undefined' : `'${inputVal}'`))
-                          .toString()}`,
-                      })
-                    )
-                )}
             </>
           )}
         </Stack>
@@ -382,7 +284,9 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
             <OutputValueTypeIcon />
 
             <Text className={styles.bodyText} style={{ marginLeft: 4 }}>
-              {outputValue}
+              {connection
+                ? functionDropDownItemText(connection.self.reactFlowKey, functionData, connectionDictionary)
+                : `${functionData.functionName}()`}
             </Text>
           </Stack>
         </Stack>
