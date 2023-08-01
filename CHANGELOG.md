@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.55.2](https://github.com/Azure/LogicAppsUX/compare/v2.55.1...v2.55.2) (2023-08-01)
+
+
+### Bug Fixes
+
+* **Designer:** Disabled operation schema validation when parsing incoming swaggers ([#3066](https://github.com/Azure/LogicAppsUX/issues/3066)) ([a8479e7](https://github.com/Azure/LogicAppsUX/commit/a8479e79048e5abef62c9743e28736e739728b6f))
+
 ### [2.55.1](https://github.com/Azure/LogicAppsUX/compare/v2.55.0...v2.55.1) (2023-07-31)
 
 
