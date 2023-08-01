@@ -16,7 +16,7 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const [inputTyped, setInputTyped] = useState<boolean>(false);
 
-  const [inputText, setInputText] = useState<string>(loadedInputValue ? loadedInputValue : '');
+  const [inputText, setInputText] = useState<string>(loadedInputValue ? removeQuotesFromString(loadedInputValue) : '');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
         style={{ width: '100%' }}
         value={inputText}
         placeholder={input.placeHolder}
-        onChange={(_e, d) => setInputText(d.value)}
+        onChange={(_e, d) => setInputText(removeQuotesFromString(d.value))}
       ></Textarea>
     </Tooltip>
   );
@@ -81,11 +81,12 @@ const addQuotesToString = (value: string) => {
 
 const removeQuotesFromString = (value: string) => {
   let formattedValue = value;
-  if (formattedValue.endsWith('"')) {
+  const quote = '"';
+  if (formattedValue.endsWith(quote)) {
     formattedValue = formattedValue.substring(0, value.length - 1);
   }
-  if (formattedValue.startsWith('"')) {
-    formattedValue = formattedValue.replace('"', '');
+  if (formattedValue.startsWith(quote)) {
+    formattedValue = formattedValue.replace(quote, '');
   }
   return formattedValue;
 };
