@@ -183,7 +183,6 @@ export const getDesignerServices = (
       },
       getSwaggerOperations: (args: any) => {
         const { parameters } = args;
-        console.log('CHARLIE: getSwaggerOperations');
         return appService.getOperations(parameters.swaggerUrl);
       },
     },
