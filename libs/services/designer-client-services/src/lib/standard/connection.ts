@@ -627,7 +627,7 @@ function convertToServiceProviderConnectionsData(
       serviceProvider: { id: connectorId },
       displayName,
     },
-    settings: {},
+    settings: connectionInfo.appSettings ?? {},
     pathLocation: [serviceProviderLocation],
   };
   const rawConnection = createCopy(connectionsData.connectionData);

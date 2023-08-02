@@ -20,6 +20,7 @@ export interface ConnectionCreationInfo {
   alternativeParameterValues?: Record<string, any>;
   displayName?: string;
   parameterName?: string;
+  appSettings?: Record<string, string>;
 }
 
 export interface ConnectionParametersMetadata {
