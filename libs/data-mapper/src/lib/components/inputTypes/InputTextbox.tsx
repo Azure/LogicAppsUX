@@ -3,6 +3,7 @@ import type { RootState } from '../../core/state/Store';
 import type { FunctionData, FunctionInput } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { Tooltip, Textarea } from '@fluentui/react-components';
+import { useDebouncedCallback } from '@react-hookz/web';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -26,33 +27,37 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
     }
   }, [loadedInputValue, inputText, inputTyped]);
 
-  useEffect(() => {
-    const onCustomTextBoxChange = (value: string) => {
-      setInputTyped(true);
-      if (!selectedItemKey) {
-        LogService.error(LogCategory.InputTextbox, 'updateInput', {
-          message: 'Attempted to update input with nothing selected on canvas',
-        });
+  const onCustomTextBoxChange = (value: string) => {
+    if (!selectedItemKey) {
+      LogService.error(LogCategory.InputTextbox, 'updateInput', {
+        message: 'Attempted to update input with nothing selected on canvas',
+      });
 
-        return;
-      }
+      return;
+    }
 
-      const formattedValue = addQuotesToString(value);
+    const formattedValue = addQuotesToString(value);
 
-      if (inputTyped) {
-        dispatch(
-          setConnectionInput({
-            targetNode: functionNode,
-            targetNodeReactFlowKey: selectedItemKey,
-            inputIndex: 0,
-            input: formattedValue,
-          })
-        );
-      }
-    };
-    const timeOutId = setTimeout(() => onCustomTextBoxChange(inputText), 500);
-    return () => clearTimeout(timeOutId);
-  }, [inputText, dispatch, functionNode, selectedItemKey, inputTyped]);
+    if (inputTyped) {
+      dispatch(
+        setConnectionInput({
+          targetNode: functionNode,
+          targetNodeReactFlowKey: selectedItemKey,
+          inputIndex: 0,
+          input: formattedValue,
+        })
+      );
+    }
+  };
+
+  const debounceDelay = 300;
+  const onChangeSearchValueDebounced = useDebouncedCallback(onCustomTextBoxChange, [], debounceDelay);
+
+  const onChange = (value: string) => {
+    setInputText(removeQuotesFromString(value));
+    setInputTyped(true);
+    onChangeSearchValueDebounced(value);
+  };
 
   return (
     <Tooltip relationship="label" content={input.tooltip || ''}>
@@ -60,7 +65,7 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
         style={{ width: '100%' }}
         value={inputText}
         placeholder={input.placeHolder}
-        onChange={(_e, d) => setInputText(removeQuotesFromString(d.value))}
+        onChange={(_e, d) => onChange(d.value)}
       ></Textarea>
     </Tooltip>
   );

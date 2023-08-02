@@ -530,7 +530,6 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Execute XPath',
     category: FunctionCategory.Utility,
-    // "iconFileName": "dm_category_customcode.svg",
     description: 'Evaluates user supplied XPATH expression.',
   },
   {
@@ -550,7 +549,6 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Execute XSLT',
     category: FunctionCategory.Utility,
-    // "iconFileName": "dm_category_customcode.svg",
     description: 'Inserts user supplied XSLT into map.',
   },
   ...pseudoFunctions,
