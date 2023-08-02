@@ -5,6 +5,12 @@
       "value": "테스트"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1159,6 +1165,12 @@
       "value": "취소"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1898,10 +1910,10 @@
       "value": "이 타임스탬프 값의 형식을 지정하는 방법을 나타내는 단일 형식 지정자 문자 또는 사용자 지정 형식 패턴입니다. 형식을 제공하지 않으면 ISO 8601 형식('o')이 사용됩니다."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "사용자 지정 값 지우기"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2284,12 +2296,6 @@
     {
       "type": 0,
       "value": "기간"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "사용자 지정 값이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
   "Dhu3IS": [
@@ -3051,12 +3057,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 야쿠츠크"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "고급 옵션"
     }
   ],
   "IsVhkH": [
@@ -3852,12 +3852,6 @@
       "value": "연결 이름"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "사용자 지정 값 입력"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4018,12 +4012,6 @@
       "value": "필수 사항으로, 이 값은 배열에 있는 정수의 개수입니다."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "기본값"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4128,12 +4116,6 @@
     {
       "type": 0,
       "value": "연결 오류"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "값이 없으면 생성 안 함"
     }
   ],
   "Pudllg": [
@@ -4473,12 +4455,6 @@
     {
       "type": 0,
       "value": "매개 변수를 정수로 변환합니다."
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "입력 노드 형식이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
   "SLJkRn": [
@@ -5185,6 +5161,12 @@
       "value": "제거"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5585,12 +5567,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) 첸나이, 콜카타, 뭄바이, 뉴델리"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "사용자 지정 값이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
     }
   ],
   "YiOybp": [
@@ -6055,12 +6031,6 @@
     {
       "type": 0,
       "value": "굵게(⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
     }
   ],
   "cmTCsW": [
@@ -8300,6 +8270,12 @@
     {
       "type": 0,
       "value": "사례 추가"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

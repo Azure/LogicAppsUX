@@ -5,6 +5,12 @@
       "value": "Tesztelés folyamatban"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1183,6 +1189,12 @@
       "value": "Mégse"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1933,10 +1945,10 @@
       "value": "Egyetlen formátummegadó karakter, vagy pedig egy egyéni formátumminta, mely az időbélyeg értékének formátumát határozza meg. Ha nincs megadva formátum, a rendszer az ISO 8601 formátumot („o”) használja."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Egyéni érték törlése"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2323,12 +2335,6 @@
     {
       "type": 0,
       "value": "Időtartam"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Az egyéni érték nem felel meg a sémacsomópont típusának"
     }
   ],
   "Dhu3IS": [
@@ -3113,12 +3119,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutszk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Speciális beállítások"
     }
   ],
   "IsVhkH": [
@@ -3925,12 +3925,6 @@
       "value": "Kapcsolat neve"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy egyéni értéket"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4091,12 +4085,6 @@
       "value": "Kötelező megadni. Az érték a tömbben található egész számok száma."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Alapértelmezett érték"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4201,12 +4189,6 @@
     {
       "type": 0,
       "value": "Csatlakozási hibák"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Létrehozás mellőzése, ha nincs érték"
     }
   ],
   "Pudllg": [
@@ -4561,12 +4543,6 @@
     {
       "type": 0,
       "value": "A paraméter átalakítása egész számmá."
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "A bemeneti csomópont típusa nem felel meg a sémacsomópont típusának."
     }
   ],
   "SLJkRn": [
@@ -5257,6 +5233,12 @@
       "value": "Eltávolítás"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5657,12 +5639,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Csennai, Kolkata, Mumbai, Új-Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Az egyéni érték nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
   "YiOybp": [
@@ -6127,12 +6103,6 @@
     {
       "type": 0,
       "value": "Félkövér (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "A bemeneti csomóponttípus nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
   "cmTCsW": [
@@ -8433,6 +8403,12 @@
     {
       "type": 0,
       "value": "Eset hozzáadása"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

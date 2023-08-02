@@ -5,6 +5,12 @@
       "value": "Test"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1159,6 +1165,12 @@
       "value": "İptal"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1917,10 +1929,10 @@
       "value": "Bu zaman damgasının değerinin nasıl biçimlendirileceğini gösteren tek bir biçim tanımlayıcı karakteri veya özel biçim deseni. Biçim belirtilmezse ISO 8601 biçimi ('o') kullanılır."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Özel değeri temizle"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2303,12 +2315,6 @@
     {
       "type": 0,
       "value": "Süre"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Özel değer şema düğümünün türüyle eşleşmiyor"
     }
   ],
   "Dhu3IS": [
@@ -3081,12 +3087,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Gelişmiş seçenekler"
     }
   ],
   "IsVhkH": [
@@ -3893,12 +3893,6 @@
       "value": "Bağlantı Adı"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Özel değer girin"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4059,12 +4053,6 @@
       "value": "Gerekli. Bu değer, dizideki tamsayıların sayısıdır."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Varsayılan değer"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4169,12 +4157,6 @@
     {
       "type": 0,
       "value": "Bağlantı hataları"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Değer yoksa oluşturma"
     }
   ],
   "Pudllg": [
@@ -4525,12 +4507,6 @@
     {
       "type": 0,
       "value": "Parametreyi bir tamsayıya dönüştürür"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Giriş düğümü türü şema düğümünün türüyle eşleşmiyor."
     }
   ],
   "SLJkRn": [
@@ -5237,6 +5213,12 @@
       "value": "Kaldır"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5637,12 +5619,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata (Calcutta), Mumbai, Yeni Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Özel değer, bu giriş için izin verilen türlerden biriyle eşleşmiyor"
     }
   ],
   "YiOybp": [
@@ -6107,12 +6083,6 @@
     {
       "type": 0,
       "value": "Kalın (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Giriş düğümü türü bu giriş için izin verilen türlerden biri ile eşleşmiyor"
     }
   ],
   "cmTCsW": [
@@ -8393,6 +8363,12 @@
     {
       "type": 0,
       "value": "Servis Talebi Ekle"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

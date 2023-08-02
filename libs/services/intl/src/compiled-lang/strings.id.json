@@ -5,6 +5,12 @@
       "value": "Menguji"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1159,6 +1165,12 @@
       "value": "Batal"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1906,10 +1918,10 @@
       "value": "Karakter penentu pemformatan tunggal atau pola format khusus yang menunjukkan cara memformat nilai tanda waktu ini. Jika format tidak diberikan, format ISO 8601 ('o') digunakan."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Hapus nilai kustom"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2292,12 +2304,6 @@
     {
       "type": 0,
       "value": "Durasi"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Nilai kustom tidak cocok dengan tipe node skema"
     }
   ],
   "Dhu3IS": [
@@ -3067,12 +3073,6 @@
     {
       "type": 0,
       "value": "(UTC+09.00) Yakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Opsi tingkat lanjut"
     }
   ],
   "IsVhkH": [
@@ -3868,12 +3868,6 @@
       "value": "Nama Koneksi"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Masukkan nama kustom"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4034,12 +4028,6 @@
       "value": "Wajib. Nilai ini adalah nomor bilangan bulat yang ada dalam array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Nilai default"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4144,12 +4132,6 @@
     {
       "type": 0,
       "value": "Kesalahan koneksi"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Jangan buat jika tidak ada nilai"
     }
   ],
   "Pudllg": [
@@ -4489,12 +4471,6 @@
     {
       "type": 0,
       "value": "Konversikan parameter menjadi bilangan bulat"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Tipe node input tidak cocok dengan tipe node skema."
     }
   ],
   "SLJkRn": [
@@ -5205,6 +5181,12 @@
       "value": "Hapus"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5605,12 +5587,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Nilai kustom tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
   "YiOybp": [
@@ -6075,12 +6051,6 @@
     {
       "type": 0,
       "value": "Tebal (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Tipe node input tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
   "cmTCsW": [
@@ -8336,6 +8306,12 @@
     {
       "type": 0,
       "value": "Tambahkan Kasus"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

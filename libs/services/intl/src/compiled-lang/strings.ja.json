@@ -5,6 +5,12 @@
       "value": "テスト"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1159,6 +1165,12 @@
       "value": "キャンセル"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1906,10 +1918,10 @@
       "value": "このタイムスタンプの値の書式を設定する方法を示す、1 文字の有効な書式指定子またはカスタム書式パターン。書式が指定されていない場合は、ISO 8601 形式 ('o') が使用されます。"
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "カスタム値のクリア"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2292,12 +2304,6 @@
     {
       "type": 0,
       "value": "期間"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "カスタム値がスキーマ ノードの種類と一致しません"
     }
   ],
   "Dhu3IS": [
@@ -3059,12 +3065,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) ヤクーツク"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "詳細オプション"
     }
   ],
   "IsVhkH": [
@@ -3860,12 +3860,6 @@
       "value": "接続名"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "カスタム値の入力"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4026,12 +4020,6 @@
       "value": "必須。この値は、アレイに含まれる整数の数です。"
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "既定値"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4136,12 +4124,6 @@
     {
       "type": 0,
       "value": "接続エラー"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "値がない場合は生成しない"
     }
   ],
   "Pudllg": [
@@ -4481,12 +4463,6 @@
     {
       "type": 0,
       "value": "パラメーターを整数に変換します"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "入力ノードの種類がスキーマ ノードの種類と一致しません。"
     }
   ],
   "SLJkRn": [
@@ -5189,6 +5165,12 @@
       "value": "削除"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5589,12 +5571,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) チェンナイ、コルカタ、ムンバイ、ニューデリー"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "カスタム値が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "YiOybp": [
@@ -6059,12 +6035,6 @@
     {
       "type": 0,
       "value": "太字 (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "入力ノードの種類が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "cmTCsW": [
@@ -8304,6 +8274,12 @@
     {
       "type": 0,
       "value": "ケースの追加"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
