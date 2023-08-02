@@ -2,6 +2,7 @@ import type { AzureResourcePickerProps } from '../azureResourcePicker';
 import { AzureResourcePicker } from '../azureResourcePicker';
 import { filterRecord } from '../utils';
 import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
+import type { ConnectionParameterProps } from './universalConnectionParameter';
 import { UniversalConnectionParameter } from './universalConnectionParameter';
 import type { IDropdownOption } from '@fluentui/react';
 import {
@@ -16,6 +17,7 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
+import { ConnectionParameterEditorService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   ConnectionParameter,
   ConnectionParameterSet,
@@ -39,6 +41,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface CreateConnectionProps {
+  connectorId: string;
   connectorDisplayName: string;
   connectorCapabilities?: string[];
   connectionParameters?: Record<string, ConnectionParameter>;
@@ -76,6 +79,7 @@ enum LegacyMultiAuthOptions {
 
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const {
+    connectorId,
     connectorDisplayName,
     connectorCapabilities,
     connectionParameters,
@@ -572,20 +576,30 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         {/* Connector Parameters */}
         {showConfigParameters &&
           Object.entries(capabilityEnabledParameters)?.map(
-            ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => (
-              <UniversalConnectionParameter
-                key={key}
-                parameterKey={key}
-                parameter={parameter}
-                value={parameterValues[key]}
-                setValue={(val: any) => setParameterValues({ ...parameterValues, [key]: val })}
-                isLoading={isLoading}
-                selectedSubscriptionId={selectedSubscriptionId}
-                selectSubscriptionCallback={selectSubscriptionCallback}
-                availableGateways={availableGateways}
-                availableSubscriptions={availableSubscriptions}
-              />
-            )
+            ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
+              const connectionParameterProps: ConnectionParameterProps = {
+                parameterKey: key,
+                parameter,
+                value: parameterValues[key],
+                setValue: (val: any) => setParameterValues({ ...parameterValues, [key]: val }),
+                isLoading,
+                selectedSubscriptionId,
+                selectSubscriptionCallback,
+                availableGateways,
+                availableSubscriptions,
+              };
+
+              const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
+                connectorId: connectorId,
+                parameterKey: key,
+              });
+              if (customParameterOptions) {
+                const CustomConnectionParameter = customParameterOptions.EditorComponent;
+                return <CustomConnectionParameter key={key} {...connectionParameterProps} />;
+              }
+
+              return <UniversalConnectionParameter key={key} {...connectionParameterProps} />;
+            }
           )}
 
         {/* Resource Selector UI */}

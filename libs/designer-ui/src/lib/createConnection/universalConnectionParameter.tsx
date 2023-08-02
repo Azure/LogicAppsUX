@@ -1,10 +1,11 @@
+import { ConnectionParameterRow } from './connectionParameterRow';
 import GatewayPicker from './gatewayPicker';
 import type { IDropdownOption } from '@fluentui/react';
-import { Checkbox, Dropdown, TextField, Label, TooltipHost, Icon } from '@fluentui/react';
+import { Checkbox, Dropdown, TextField } from '@fluentui/react';
 import type { ConnectionParameter, ConnectionParameterAllowedValue } from '@microsoft/utils-logic-apps';
 import { ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
 
-interface ConnectionParameterProps {
+export interface ConnectionParameterProps {
   parameterKey: string;
   parameter: ConnectionParameter;
   value: any;
@@ -105,16 +106,14 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
   }
 
   return (
-    <div key={parameterKey} className="param-row">
-      <Label className="label" required={constraints?.required === 'true'} htmlFor={parameterKey} disabled={isLoading}>
-        {data?.displayName ?? parameterKey}
-        {data?.tooltip && (
-          <TooltipHost content={data?.tooltip}>
-            <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-          </TooltipHost>
-        )}
-      </Label>
+    <ConnectionParameterRow
+      parameterKey={parameterKey}
+      displayName={data?.displayName ?? parameterKey}
+      tooltip={data?.tooltip}
+      required={constraints?.required === 'true'}
+      disabled={isLoading}
+    >
       {inputComponent}
-    </div>
+    </ConnectionParameterRow>
   );
 };

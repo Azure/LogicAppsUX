@@ -1,4 +1,5 @@
 import type { RootState } from '../../state/store';
+import { CustomConnectionParameterEditorService } from './customConnectionParameterEditorService';
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
@@ -130,6 +131,8 @@ const hostService = { fetchAndDisplayContent: (title: string, url: string, type:
 
 const editorService = new CustomEditorService();
 
+const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+
 export const LocalDesigner = () => {
   const {
     workflowDefinition,
@@ -145,6 +148,7 @@ export const LocalDesigner = () => {
     areCustomEditorsEnabled,
   } = useSelector((state: RootState) => state.workflowLoader);
   editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
+  connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const designerProviderProps = {
     services: {
       connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
@@ -158,6 +162,7 @@ export const LocalDesigner = () => {
       hostService,
       runService,
       editorService,
+      connectionParameterEditorService,
     },
     readOnly: isReadOnly,
     isMonitoringView,
