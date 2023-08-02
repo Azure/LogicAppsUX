@@ -204,14 +204,14 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
                 return (
                   <div key={index} style={{ marginTop: 8 }}>
-                    {input.displayAttribute === InputFormat.TextBox && (
+                    {input.inputEntryType === InputFormat.TextBox && (
                       <InputTextbox
                         input={input}
                         loadedInputValue={getInputValue(inputConnection)}
                         functionNode={functionData}
                       ></InputTextbox>
                     )}
-                    {input.displayAttribute !== InputFormat.TextBox && (
+                    {input.inputEntryType !== InputFormat.TextBox && (
                       <Tooltip relationship="label" content={input.tooltip || ''}>
                         <InputDropdown
                           currentNode={functionData}

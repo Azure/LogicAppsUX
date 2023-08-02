@@ -1,5 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import { InputFormat as DisplayAttribute, NormalizedDataType } from './Schema';
+import { InputFormat as InputEntryType, NormalizedDataType } from './Schema';
 import type { SchemaNodeExtended } from './Schema';
 
 export interface FunctionManifest {
@@ -26,7 +26,7 @@ export interface FunctionInput {
   allowedTypes: NormalizedDataType[];
   isOptional: boolean;
   allowCustomInput: boolean;
-  displayAttribute?: DisplayAttribute;
+  inputEntryType?: InputEntryType;
 
   tooltip?: string;
   placeHolder: string;
@@ -522,7 +522,7 @@ export const functionMock: FunctionData[] = [
       {
         name: 'XPATH expression',
         allowedTypes: [NormalizedDataType.String],
-        displayAttribute: DisplayAttribute.TextBox,
+        inputEntryType: InputEntryType.TextBox,
         isOptional: false,
         allowCustomInput: true,
         placeHolder: 'expression',
@@ -541,7 +541,7 @@ export const functionMock: FunctionData[] = [
       {
         name: 'XSLT File',
         allowedTypes: [NormalizedDataType.String],
-        displayAttribute: DisplayAttribute.FilePicker,
+        inputEntryType: InputEntryType.FilePicker,
         isOptional: false,
         allowCustomInput: true,
         placeHolder: 'File name inside inlineXslt folder under artifacts',
