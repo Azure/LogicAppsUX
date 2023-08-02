@@ -5,6 +5,12 @@
       "value": "Test"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1167,6 +1173,12 @@
       "value": "Annuler"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1936,10 +1948,10 @@
       "value": "Caractère de spécificateur de format unique ou modèle de format personnalisé qui indique comment mettre en forme la valeur de cet horodateur. Si aucun format n'est fourni, le format ISO 8601 (« o ») est utilisé."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Effacer la valeur par défaut"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2322,12 +2334,6 @@
     {
       "type": 0,
       "value": "Durée"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "La valeur personnalisée ne correspond pas au type du nœud de schéma"
     }
   ],
   "Dhu3IS": [
@@ -3119,12 +3125,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Iakoutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Options avancées"
     }
   ],
   "IsVhkH": [
@@ -3942,12 +3942,6 @@
       "value": "Nom de la connexion"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Entrer une valeur personnalisée"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4108,12 +4102,6 @@
       "value": "Obligatoire. Cette valeur correspond au nombre d'entiers qui se trouvent dans le tableau."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Valeur par défaut"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4218,12 +4206,6 @@
     {
       "type": 0,
       "value": "Erreurs de connexion"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Ne pas générer si aucune valeur"
     }
   ],
   "Pudllg": [
@@ -4585,12 +4567,6 @@
     {
       "type": 0,
       "value": "Convertir le paramètre en entier"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Le type de nœud d’entrée ne correspond pas au type du nœud de schéma."
     }
   ],
   "SLJkRn": [
@@ -5301,6 +5277,12 @@
       "value": "Supprimer"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5701,12 +5683,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "La valeur personnalisée ne correspond pas à l’un des types autorisés pour cette entrée"
     }
   ],
   "YiOybp": [
@@ -6171,12 +6147,6 @@
     {
       "type": 0,
       "value": "Gras (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Le type de nœud d’entrée ne correspond pas à l’un des types autorisés pour cette entrée"
     }
   ],
   "cmTCsW": [
@@ -8506,6 +8476,12 @@
     {
       "type": 0,
       "value": "Ajouter un cas"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

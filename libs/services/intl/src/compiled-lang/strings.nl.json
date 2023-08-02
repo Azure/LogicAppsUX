@@ -5,6 +5,12 @@
       "value": "Testen..."
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1171,6 +1177,12 @@
       "value": "Annuleren"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1925,10 +1937,10 @@
       "value": "Eén teken voor aanduiding van de indeling of een aangepast indelingspatroon waarmee de indeling van de waarde voor dit tijdstempel wordt aangegeven. Als de indeling niet is opgegeven, wordt de ISO 8601-indeling ('o') gebruikt."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Aangepaste waarde wissen"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2311,12 +2323,6 @@
     {
       "type": 0,
       "value": "Duur"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "De aangepaste waarde komt niet overeen met het type van het schemaknooppunt"
     }
   ],
   "Dhu3IS": [
@@ -3105,12 +3111,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakoetsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Geavanceerde opties"
     }
   ],
   "IsVhkH": [
@@ -3913,12 +3913,6 @@
       "value": "Verbindingsnaam"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Aangepaste waarde invoeren"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4075,12 +4069,6 @@
       "value": "Vereist. Deze waarde is het aantal gehele getallen in de matrix."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Standaardwaarde"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4189,12 +4177,6 @@
     {
       "type": 0,
       "value": "Verbindingsfouten"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Niet genereren als er geen waarde is"
     }
   ],
   "Pudllg": [
@@ -4537,12 +4519,6 @@
     {
       "type": 0,
       "value": "De parameter naar een geheel getal converteren"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt."
     }
   ],
   "SLJkRn": [
@@ -5257,6 +5233,12 @@
       "value": "Verwijderen"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5657,12 +5639,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "De aangepaste waarde komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "YiOybp": [
@@ -6127,12 +6103,6 @@
     {
       "type": 0,
       "value": "Vet (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Het invoerknooppunttype komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "cmTCsW": [
@@ -8421,6 +8391,12 @@
     {
       "type": 0,
       "value": "Case toevoegen"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

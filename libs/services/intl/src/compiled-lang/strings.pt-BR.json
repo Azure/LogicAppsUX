@@ -5,6 +5,12 @@
       "value": "Testes"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1147,6 +1153,12 @@
       "value": "Cancelar"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1912,10 +1924,10 @@
       "value": "Um caractere especificador de formato único ou um padrão de formato personalizado que indica como formatar o valor desse carimbo de data/hora. Se o formato não for fornecido, o formato ISO 8601 ('o') será usado."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Limpar valor personalizado"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2298,12 +2310,6 @@
     {
       "type": 0,
       "value": "Duração"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "O valor personalizado não corresponde ao tipo do nó do esquema"
     }
   ],
   "Dhu3IS": [
@@ -3095,12 +3101,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Opções avançadas"
     }
   ],
   "IsVhkH": [
@@ -3918,12 +3918,6 @@
       "value": "Nome da Conexão"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Inserir valor personalizado"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4084,12 +4078,6 @@
       "value": "Necessário. Este valor é o número de inteiros que está na matriz."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Valor padrão"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4194,12 +4182,6 @@
     {
       "type": 0,
       "value": "Erros de conexão"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Não gerar se nenhum valor"
     }
   ],
   "Pudllg": [
@@ -4557,12 +4539,6 @@
     {
       "type": 0,
       "value": "Converter o parâmetro em um inteiro"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "O tipo de nó de entrada não corresponde ao tipo do nó de esquema."
     }
   ],
   "SLJkRn": [
@@ -5273,6 +5249,12 @@
       "value": "Remover"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5673,12 +5655,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata (Calcutá), Mumbai, Nova Délhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "O valor personalizado não corresponde a um dos tipos permitidos para esta entrada"
     }
   ],
   "YiOybp": [
@@ -6143,12 +6119,6 @@
     {
       "type": 0,
       "value": "Negrito (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "O tipo de nó de entrada não corresponde a um dos tipos permitidos para esta entrada"
     }
   ],
   "cmTCsW": [
@@ -8478,6 +8448,12 @@
     {
       "type": 0,
       "value": "Adicionar Caso"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
