@@ -5,6 +5,12 @@
       "value": "Testování"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1175,6 +1181,12 @@
       "value": "Zrušit"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1955,10 +1967,10 @@
       "value": "Jednoznakový specifikátor formátu nebo vlastní formátovací vzor, který určuje, jak formátovat hodnotu tohoto časového razítka. Pokud není formát zadaný, použije se formát ISO 8601 (o)."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Vymazat vlastní hodnotu"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2341,12 +2353,6 @@
     {
       "type": 0,
       "value": "Doba trvání"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Vlastní hodnota neodpovídá typu uzlu schématu"
     }
   ],
   "Dhu3IS": [
@@ -3157,12 +3163,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Upřesnit možnosti"
     }
   ],
   "IsVhkH": [
@@ -3991,12 +3991,6 @@
       "value": "Název připojení"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Zadat vlastní hodnotu"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4153,12 +4147,6 @@
       "value": "Povinný parametr. Tato hodnota představuje počet celých čísel v poli."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Výchozí hodnota"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4263,12 +4251,6 @@
     {
       "type": 0,
       "value": "Chyby připojení"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Negenerovat, pokud žádná hodnota"
     }
   ],
   "Pudllg": [
@@ -4633,12 +4615,6 @@
     {
       "type": 0,
       "value": "Převede parametr na celé číslo."
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
   "SLJkRn": [
@@ -5349,6 +5325,12 @@
       "value": "Odebrat"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5749,12 +5731,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Čennaj, Kalkata, Bombaj, Dillí"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup"
     }
   ],
   "YiOybp": [
@@ -6219,12 +6195,6 @@
     {
       "type": 0,
       "value": "Tučné (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup"
     }
   ],
   "cmTCsW": [
@@ -8587,6 +8557,12 @@
     {
       "type": 0,
       "value": "Přidat případ"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
