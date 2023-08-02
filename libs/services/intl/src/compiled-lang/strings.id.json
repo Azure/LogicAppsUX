@@ -5,6 +5,12 @@
       "value": "Menguji"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Bermasalah"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Pemicu"
     }
   ],
   "+Uvo/p": [
@@ -1138,7 +1150,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Tampilkan semua parameter tingkat lanjut"
     }
   ],
   "6OSgRP": [
@@ -1151,6 +1163,12 @@
     {
       "type": 0,
       "value": "Batal"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1469,6 +1487,12 @@
       "value": "Harap aktifkan identitas yang dikelola untuk aplikasi logika."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Tindakan"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1683,6 +1707,12 @@
       "value": "Teks"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1784,7 +1814,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Hapus dan bersihkan semua parameter tingkat lanjut beserta nilainya"
     }
   ],
   "Ak2Lka": [
@@ -1888,10 +1918,10 @@
       "value": "Karakter penentu pemformatan tunggal atau pola format khusus yang menunjukkan cara memformat nilai tanda waktu ini. Jika format tidak diberikan, format ISO 8601 ('o') digunakan."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Hapus nilai kustom"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2048,6 +2078,12 @@
     {
       "type": 0,
       "value": "Ambil item untuk memenuhi ambang yang ditetapkan dengan mengikuti token terusan. Karena ukuran halaman konektor, angka yang dihasilkan dapat melebihi ambang."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2268,12 +2304,6 @@
     {
       "type": 0,
       "value": "Durasi"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Nilai kustom tidak cocok dengan tipe node skema"
     }
   ],
   "Dhu3IS": [
@@ -2693,6 +2723,20 @@
       "value": "Fungsi referensi"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " dari "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3031,26 +3075,6 @@
       "value": "(UTC+09.00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Kesalahan saat menjalankan api '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Opsi tingkat lanjut"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3362,6 +3386,12 @@
     {
       "type": 0,
       "value": "Memuat Aplikasi Fungsi..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Saran alur berikutnya"
     }
   ],
   "LJmfmK": [
@@ -3790,6 +3820,12 @@
       "value": "Memuat File..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "untuk mengonfigurasinya"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3830,12 +3866,6 @@
     {
       "type": 0,
       "value": "Nama Koneksi"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Masukkan nama kustom"
     }
   ],
   "OOUSLP": [
@@ -3998,12 +4028,6 @@
       "value": "Wajib. Nilai ini adalah nomor bilangan bulat yang ada dalam array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Nilai default"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4108,12 +4132,6 @@
     {
       "type": 0,
       "value": "Kesalahan koneksi"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Jangan buat jika tidak ada nilai"
     }
   ],
   "Pudllg": [
@@ -4258,6 +4276,12 @@
     {
       "type": 0,
       "value": "Menampilkan string dalam format tanggal"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Inilah yang akan dilakukan alur"
     }
   ],
   "QpRRt3": [
@@ -4449,12 +4473,6 @@
       "value": "Konversikan parameter menjadi bilangan bulat"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Tipe node input tidak cocok dengan tipe node skema."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4553,6 +4571,12 @@
     {
       "type": 0,
       "value": "Jumat"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Cari Tindakan Alur Kerja"
     }
   ],
   "TO7qos": [
@@ -4891,6 +4915,12 @@
       "value": "Masukkan nama untuk koneksi"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Alur yang disarankan"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4961,6 +4991,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Alur dimulai saat hal ini terjadi"
     }
   ],
   "VKAk5g": [
@@ -5061,6 +5097,12 @@
       "value": "Menambahkan tindakan ini"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Berikutnya"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5139,6 +5181,12 @@
       "value": "Hapus"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5214,7 +5262,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Parameter tingkat lanjut"
     }
   ],
   "XH94im": [
@@ -5541,12 +5589,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Nilai kustom tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5677,6 +5719,12 @@
       "value": "Pelajari selengkapnya tentang konten dinamis."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Tampilkan saran lain"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5687,6 +5735,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah kejadian substring yang akan ditemukan."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -5870,7 +5924,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Hapus semua"
     }
   ],
   "bwlAWn": [
@@ -5997,12 +6051,6 @@
     {
       "type": 0,
       "value": "Tebal (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Tipe node input tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
   "cmTCsW": [
@@ -6612,6 +6660,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Ini bukan yang saya cari"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6800,6 +6854,12 @@
       "value": "Contoh: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Setelah Anda meninjau saran alur yang dibuat oleh AI ini, pilih"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6909,7 +6969,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Menampilkan "
     },
     {
       "type": 1,
@@ -6917,7 +6977,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " dari "
     },
     {
       "type": 1,
@@ -8062,6 +8122,12 @@
       "value": "' tidak valid."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Saran alur sebelumnya"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8240,6 +8306,12 @@
     {
       "type": 0,
       "value": "Tambahkan Kasus"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9185,7 +9257,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Tampilkan semua"
     }
   ],
   "yVFIAQ": [

@@ -5,6 +5,12 @@
       "value": "Test"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Hatalı"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Tetikleyici"
     }
   ],
   "+Uvo/p": [
@@ -1138,7 +1150,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Tüm gelişmiş parametreleri göster"
     }
   ],
   "6OSgRP": [
@@ -1151,6 +1163,12 @@
     {
       "type": 0,
       "value": "İptal"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1469,6 +1487,12 @@
       "value": "Lütfen mantıksal uygulama için yönetilen kimliği etkinleştirin."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Eylemler"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1683,6 +1707,12 @@
       "value": "Metin"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Varsayılan"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1784,7 +1814,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Tüm gelişmiş parametreleri ve bunların değerlerini kaldırın ve temizleyin"
     }
   ],
   "Ak2Lka": [
@@ -1899,10 +1929,10 @@
       "value": "Bu zaman damgasının değerinin nasıl biçimlendirileceğini gösteren tek bir biçim tanımlayıcı karakteri veya özel biçim deseni. Biçim belirtilmezse ISO 8601 biçimi ('o') kullanılır."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Özel değeri temizle"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2059,6 +2089,12 @@
     {
       "type": 0,
       "value": "Devamlılık belirtecini izleyerek, belirtilen eşikleri karşılayacak şekilde öğeleri alın. Bağlayıcının sayfa boyutu nedeniyle, döndürülen sayı eşiği aşabilir."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Doğru"
     }
   ],
   "CFOUe3": [
@@ -2279,12 +2315,6 @@
     {
       "type": 0,
       "value": "Süre"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Özel değer şema düğümünün türüyle eşleşmiyor"
     }
   ],
   "Dhu3IS": [
@@ -2711,6 +2741,20 @@
       "value": "Başvuru işlevleri"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3045,26 +3089,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' API'si yürütülürken hata oluştu."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Gelişmiş seçenekler"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3387,6 +3411,12 @@
     {
       "type": 0,
       "value": "İşlev Uygulamaları Yükleniyor..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Sonraki akış önerisi"
     }
   ],
   "LJmfmK": [
@@ -3815,6 +3845,12 @@
       "value": "Dosyalar Yükleniyor..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "yapılandırmak için seçin"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3855,12 +3891,6 @@
     {
       "type": 0,
       "value": "Bağlantı Adı"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Özel değer girin"
     }
   ],
   "OOUSLP": [
@@ -4023,12 +4053,6 @@
       "value": "Gerekli. Bu değer, dizideki tamsayıların sayısıdır."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Varsayılan değer"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4133,12 +4157,6 @@
     {
       "type": 0,
       "value": "Bağlantı hataları"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Değer yoksa oluşturma"
     }
   ],
   "Pudllg": [
@@ -4283,6 +4301,12 @@
     {
       "type": 0,
       "value": "Tarih biçiminde bir dize döndürür"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Akış bunu yapar"
     }
   ],
   "QpRRt3": [
@@ -4485,12 +4509,6 @@
       "value": "Parametreyi bir tamsayıya dönüştürür"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Giriş düğümü türü şema düğümünün türüyle eşleşmiyor."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4589,6 +4607,12 @@
     {
       "type": 0,
       "value": "Cuma"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "İş Akışı Eylemlerini Ara"
     }
   ],
   "TO7qos": [
@@ -4923,6 +4947,12 @@
       "value": "Bağlantı için bir ad girin"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Önerilen akış"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4993,6 +5023,12 @@
     {
       "type": 0,
       "value": " için sonuç bulunamadı"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Bu gerçekleştiğinde akış başlar"
     }
   ],
   "VKAk5g": [
@@ -5093,6 +5129,12 @@
       "value": "Bu eylem eklendi"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "İleri"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5171,6 +5213,12 @@
       "value": "Kaldır"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5246,7 +5294,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Gelişmiş parametreler"
     }
   ],
   "XH94im": [
@@ -5573,12 +5621,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata (Calcutta), Mumbai, Yeni Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Özel değer, bu giriş için izin verilen türlerden biriyle eşleşmiyor"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5709,6 +5751,12 @@
       "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Farklı bir öneri göster"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5719,6 +5767,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bulunacak alt dizenin tekrar sayısı."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Yanlış"
     }
   ],
   "aGyVJT": [
@@ -5902,7 +5956,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Tümünü temizle"
     }
   ],
   "bwlAWn": [
@@ -6029,12 +6083,6 @@
     {
       "type": 0,
       "value": "Kalın (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Giriş düğümü türü bu giriş için izin verilen türlerden biri ile eşleşmiyor"
     }
   ],
   "cmTCsW": [
@@ -6651,6 +6699,12 @@
       "value": "(UTC+02:00) Gazze, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Aradığım şey bu değil"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6835,6 +6889,12 @@
       "value": "Örnek: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Yapay zeka tarafından oluşturulan bu akış önerisini gözden geçirdikten sonra"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6943,20 +7003,20 @@
   ],
   "jTHUFb": [
     {
-      "type": 0,
-      "value": "Showing "
-    },
-    {
       "type": 1,
       "value": "countShowing"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": "/"
     },
     {
       "type": 1,
       "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " gösteriliyor"
     }
   ],
   "jUDhbs": [
@@ -8119,6 +8179,12 @@
       "value": "' özelliği."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Önceki akış önerisi"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8297,6 +8363,12 @@
     {
       "type": 0,
       "value": "Servis Talebi Ekle"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9238,7 +9310,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Tümünü göster"
     }
   ],
   "yVFIAQ": [

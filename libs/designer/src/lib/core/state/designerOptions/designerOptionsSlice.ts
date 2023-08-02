@@ -15,6 +15,8 @@ import {
   InitFunctionService,
   InitAppServiceService,
   InitRunService,
+  InitEditorService,
+  InitConnectionParameterEditorService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -44,6 +46,8 @@ export const initializeServices = createAsyncThunk(
     hostService,
     apimService,
     runService,
+    editorService,
+    connectionParameterEditorService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -72,6 +76,9 @@ export const initializeServices = createAsyncThunk(
     if (runService) {
       InitRunService(runService);
     }
+
+    InitEditorService(editorService);
+    InitConnectionParameterEditorService(connectionParameterEditorService);
 
     return true;
   }

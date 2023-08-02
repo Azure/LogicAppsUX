@@ -5,6 +5,12 @@
       "value": "Testes"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Com falhas"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Acionador"
     }
   ],
   "+Uvo/p": [
@@ -1150,7 +1162,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Mostrar todos os parâmetros avançados"
     }
   ],
   "6OSgRP": [
@@ -1163,6 +1175,12 @@
     {
       "type": 0,
       "value": "Cancelar"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1481,6 +1499,12 @@
       "value": "Ative a identidade gerida para a aplicação lógica."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Ações"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1695,6 +1719,12 @@
       "value": "Texto"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Predefinição"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1796,7 +1826,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Remover e limpar todos os parâmetros avançados e os seus valores"
     }
   ],
   "Ak2Lka": [
@@ -1922,10 +1952,10 @@
       "value": "Um caráter especificador de formato único ou um padrão de formato personalizado que indica como formatar o valor deste carimbo de data/hora. Se não fornecer o formato, é utilizado o formato ISO 8601 (\"o\")."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Limpar valor personalizado"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2082,6 +2112,12 @@
     {
       "type": 0,
       "value": "Obter os itens para satisfazer o limiar especificado seguindo o token de continuação. Devido ao tamanho da página do conector, o número devolvido pode exceder o limiar."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Verdadeiro"
     }
   ],
   "CFOUe3": [
@@ -2302,12 +2338,6 @@
     {
       "type": 0,
       "value": "Duração"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "O valor personalizado não corresponde ao tipo do nó de esquema"
     }
   ],
   "Dhu3IS": [
@@ -2757,6 +2787,20 @@
       "value": "Funções de referência"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3095,26 +3139,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Erro ao executar a API \""
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "\"."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Opções avançadas"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3448,6 +3472,12 @@
     {
       "type": 0,
       "value": "A carregar Aplicações de Funções..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Sugestão de fluxo seguinte"
     }
   ],
   "LJmfmK": [
@@ -3876,6 +3906,12 @@
       "value": "A carregar Ficheiros..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "para configurá-lo"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3916,12 +3952,6 @@
     {
       "type": 0,
       "value": "Nome da Ligação"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Introduzir valor personalizado"
     }
   ],
   "OOUSLP": [
@@ -4084,12 +4114,6 @@
       "value": "Obrigatório. Este valor é o número de números inteiros que existe na matriz."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Valor predefinido"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4194,12 +4218,6 @@
     {
       "type": 0,
       "value": "Erros de ligação"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Não gerar se não existir valor"
     }
   ],
   "Pudllg": [
@@ -4344,6 +4362,12 @@
     {
       "type": 0,
       "value": "Devolve uma cadeia no formato de data"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Isto é o que o fluxo fará"
     }
   ],
   "QpRRt3": [
@@ -4557,12 +4581,6 @@
       "value": "Converter o parâmetro em um número inteiro"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "O tipo de nó de entrada não corresponde ao tipo do nó de esquema."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4661,6 +4679,12 @@
     {
       "type": 0,
       "value": "Sexta-feira"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Procurar Ações de Fluxo de Trabalho"
     }
   ],
   "TO7qos": [
@@ -4999,6 +5023,12 @@
       "value": "Insira um nome para a ligação"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Fluxo sugerido"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5069,6 +5099,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "O fluxo é iniciado quando isto acontece"
     }
   ],
   "VKAk5g": [
@@ -5169,6 +5205,12 @@
       "value": "Adicionou esta ação"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Seguinte"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5247,6 +5289,12 @@
       "value": "Remover"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5322,7 +5370,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Parâmetros avançados"
     }
   ],
   "XH94im": [
@@ -5649,12 +5697,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata (Calcutá), Mumbai, Nova Deli"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "O valor personalizado não corresponde a um dos tipos permitidos para esta entrada"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5785,6 +5827,12 @@
       "value": "Saiba mais sobre conteúdos dinâmicos."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Mostrar uma sugestão diferente"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5795,6 +5843,12 @@
     {
       "type": 0,
       "value": "Necessário. O número da ocorrência da subcadeia a encontrar."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Falso"
     }
   ],
   "aGyVJT": [
@@ -5978,7 +6032,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Limpar tudo"
     }
   ],
   "bwlAWn": [
@@ -6105,12 +6159,6 @@
     {
       "type": 0,
       "value": "Negrito (⌘N)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "O tipo de nó de entrada não corresponde a nenhum dos tipos permitidos para esta entrada"
     }
   ],
   "cmTCsW": [
@@ -6750,6 +6798,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Não é disto que estou à procura"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6938,6 +6992,12 @@
       "value": "Exemplo: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Após rever esta sugestão de fluxo gerada por IA, selecione"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7047,7 +7107,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "A mostrar "
     },
     {
       "type": 1,
@@ -7055,7 +7115,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " de "
     },
     {
       "type": 1,
@@ -8244,6 +8304,12 @@
       "value": "”."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Sugestão de fluxo anterior"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8422,6 +8488,12 @@
     {
       "type": 0,
       "value": "Adicionar Incidente"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9367,7 +9439,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Mostrar tudo"
     }
   ],
   "yVFIAQ": [

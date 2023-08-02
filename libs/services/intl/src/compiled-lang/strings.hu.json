@@ -5,6 +5,12 @@
       "value": "Tesztelés folyamatban"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Hibás"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Aktiválás"
     }
   ],
   "+Uvo/p": [
@@ -1162,7 +1174,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Az összes speciális paraméter megjelenítése"
     }
   ],
   "6OSgRP": [
@@ -1175,6 +1187,12 @@
     {
       "type": 0,
       "value": "Mégse"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1485,6 +1503,12 @@
       "value": "Engedélyezze a felügyelt identitás használatát a logikai alkalmazásban."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Műveletek"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1699,6 +1723,12 @@
       "value": "Szöveg"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Alapértelmezés"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1800,7 +1830,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Az összes speciális paraméter és az értékük eltávolítása és törlése"
     }
   ],
   "Ak2Lka": [
@@ -1915,10 +1945,10 @@
       "value": "Egyetlen formátummegadó karakter, vagy pedig egy egyéni formátumminta, mely az időbélyeg értékének formátumát határozza meg. Ha nincs megadva formátum, a rendszer az ISO 8601 formátumot („o”) használja."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Egyéni érték törlése"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2075,6 +2105,12 @@
     {
       "type": 0,
       "value": "Elemek beolvasása a megadott küszöbérték teljesítéséhez a folytatási kódot követve. Az összekötő oldalmérete miatt a visszaadott elemek száma meghaladhatja a küszöbértéket."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Igaz"
     }
   ],
   "CFOUe3": [
@@ -2299,12 +2335,6 @@
     {
       "type": 0,
       "value": "Időtartam"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Az egyéni érték nem felel meg a sémacsomópont típusának"
     }
   ],
   "Dhu3IS": [
@@ -2739,6 +2769,20 @@
       "value": "Hivatkozási függvények"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": ", összesen "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3077,26 +3121,6 @@
       "value": "(UTC+09:00) Jakutszk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Hiba történt az API „"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "” paraméterekkel való végrehajtása közben."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Speciális beállítások"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3419,6 +3443,12 @@
     {
       "type": 0,
       "value": "Függvényalkalmazások betöltése..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Következő folyamatjavaslat"
     }
   ],
   "LJmfmK": [
@@ -3847,6 +3877,12 @@
       "value": "Fájlok betöltése..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "lehetőséget a konfigurálásához."
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3887,12 +3923,6 @@
     {
       "type": 0,
       "value": "Kapcsolat neve"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy egyéni értéket"
     }
   ],
   "OOUSLP": [
@@ -4055,12 +4085,6 @@
       "value": "Kötelező megadni. Az érték a tömbben található egész számok száma."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Alapértelmezett érték"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4165,12 +4189,6 @@
     {
       "type": 0,
       "value": "Csatlakozási hibák"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Létrehozás mellőzése, ha nincs érték"
     }
   ],
   "Pudllg": [
@@ -4319,6 +4337,12 @@
     {
       "type": 0,
       "value": "Egy dátumformátumú sztringet ad vissza."
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "A folyamat ezt fogja tenni."
     }
   ],
   "QpRRt3": [
@@ -4521,12 +4545,6 @@
       "value": "A paraméter átalakítása egész számmá."
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "A bemeneti csomópont típusa nem felel meg a sémacsomópont típusának."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4625,6 +4643,12 @@
     {
       "type": 0,
       "value": "Péntek"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Munkafolyamat-műveletek keresése"
     }
   ],
   "TO7qos": [
@@ -4943,6 +4967,12 @@
       "value": "Adjon egy nevet a kapcsolatnak."
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Javasolt folyamat"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5013,6 +5043,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "A folyamat akkor indul el, amikor ez megtörténik."
     }
   ],
   "VKAk5g": [
@@ -5113,6 +5149,12 @@
       "value": "Művelet hozzáadva"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Tovább"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5191,6 +5233,12 @@
       "value": "Eltávolítás"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5266,7 +5314,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Speciális paraméterek"
     }
   ],
   "XH94im": [
@@ -5593,12 +5641,6 @@
       "value": "(UTC+05:30) Csennai, Kolkata, Mumbai, Új-Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Az egyéni érték nem felel meg a bemenethez engedélyezett típusok egyikének"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5729,6 +5771,12 @@
       "value": "További információ a dinamikus tartalmakról."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Másik javaslat megjelenítése"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5739,6 +5787,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A keresett sztringrészlet előfordulásainak száma."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Hamis"
     }
   ],
   "aGyVJT": [
@@ -5922,7 +5976,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Az összes törlése"
     }
   ],
   "bwlAWn": [
@@ -6049,12 +6103,6 @@
     {
       "type": 0,
       "value": "Félkövér (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "A bemeneti csomóponttípus nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
   "cmTCsW": [
@@ -6683,6 +6731,12 @@
       "value": "(UTC+02:00) Gáza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Nem ezt keresem"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6871,6 +6925,12 @@
       "value": "Példa: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Miután áttekintette ezt a mesterséges intelligencia által generált folyamatjavaslatot, válassza a(z)"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6979,20 +7039,20 @@
   ],
   "jTHUFb": [
     {
-      "type": 0,
-      "value": "Showing "
-    },
-    {
       "type": 1,
       "value": "countShowing"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " paraméter látható összesen "
     },
     {
       "type": 1,
       "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " közül"
     }
   ],
   "jUDhbs": [
@@ -8159,6 +8219,12 @@
       "value": "“ hitelesítési típushoz."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Előző folyamatjavaslat"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8337,6 +8403,12 @@
     {
       "type": 0,
       "value": "Eset hozzáadása"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9278,7 +9350,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Az összes megjelenítése"
     }
   ],
   "yVFIAQ": [

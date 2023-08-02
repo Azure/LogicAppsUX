@@ -20,3 +20,5 @@ export * from './lib/function';
 export * from './lib/appService';
 export * from './lib/run';
 export * from './lib/staticresult';
+export * from './lib/editor';
+export * from './lib/connectionParameterEditor';

@@ -12,6 +12,8 @@ import type {
   IFunctionService,
   IAppServiceService,
   IRunService,
+  IEditorService,
+  IConnectionParameterEditorService,
 } from '@microsoft/designer-client-services-logic-apps';
 
 export interface DesignerOptionsState {
@@ -39,4 +41,6 @@ export interface ServiceOptions {
   functionService?: IFunctionService;
   appServiceService?: IAppServiceService;
   runService?: IRunService;
+  editorService?: IEditorService;
+  connectionParameterEditorService?: IConnectionParameterEditorService;
 }

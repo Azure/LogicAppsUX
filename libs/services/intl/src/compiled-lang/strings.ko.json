@@ -5,6 +5,12 @@
       "value": "테스트"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "오류"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "트리거"
     }
   ],
   "+Uvo/p": [
@@ -1138,7 +1150,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "고급 매개 변수 모두 표시"
     }
   ],
   "6OSgRP": [
@@ -1151,6 +1163,12 @@
     {
       "type": 0,
       "value": "취소"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1469,6 +1487,12 @@
       "value": "논리 앱의 관리 ID를 사용하도록 설정하세요."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "작업"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1675,6 +1699,12 @@
       "value": "텍스트"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "기본값"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1776,7 +1806,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "모든 고급 매개 변수 및 해당 값을 제거하고 지우기"
     }
   ],
   "Ak2Lka": [
@@ -1880,10 +1910,10 @@
       "value": "이 타임스탬프 값의 형식을 지정하는 방법을 나타내는 단일 형식 지정자 문자 또는 사용자 지정 형식 패턴입니다. 형식을 제공하지 않으면 ISO 8601 형식('o')이 사용됩니다."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "사용자 지정 값 지우기"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2040,6 +2070,12 @@
     {
       "type": 0,
       "value": "연속 토큰에 따라 지정된 임계값을 충족하는 항목을 검색합니다. 커넥터의 페이지 크기로 인해 반환되는 수가 임계값을 초과할 수 있습니다."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2260,12 +2296,6 @@
     {
       "type": 0,
       "value": "기간"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "사용자 지정 값이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
   "Dhu3IS": [
@@ -2681,6 +2711,20 @@
       "value": "참조 함수"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3015,26 +3059,6 @@
       "value": "(UTC+09:00) 야쿠츠크"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'을(를) 실행하는 동안 오류가 발생했습니다."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "고급 옵션"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3346,6 +3370,12 @@
     {
       "type": 0,
       "value": "함수 앱을 로드하는 중..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "다음 흐름 제안"
     }
   ],
   "LJmfmK": [
@@ -3774,6 +3804,12 @@
       "value": "파일을 로드하는 중..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "구성하려면"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3814,12 +3850,6 @@
     {
       "type": 0,
       "value": "연결 이름"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "사용자 지정 값 입력"
     }
   ],
   "OOUSLP": [
@@ -3982,12 +4012,6 @@
       "value": "필수 사항으로, 이 값은 배열에 있는 정수의 개수입니다."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "기본값"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4092,12 +4116,6 @@
     {
       "type": 0,
       "value": "연결 오류"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "값이 없으면 생성 안 함"
     }
   ],
   "Pudllg": [
@@ -4242,6 +4260,12 @@
     {
       "type": 0,
       "value": "날짜 형식에서 문자열을 반환합니다."
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "흐름이 수행하는 작업은 다음과 같습니다."
     }
   ],
   "QpRRt3": [
@@ -4433,12 +4457,6 @@
       "value": "매개 변수를 정수로 변환합니다."
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "입력 노드 형식이 스키마 노드의 형식과 일치하지 않습니다."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4537,6 +4555,12 @@
     {
       "type": 0,
       "value": "금요일"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "워크플로 작업 검색"
     }
   ],
   "TO7qos": [
@@ -4871,6 +4895,12 @@
       "value": "연결 이름 입력"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "제안된 흐름"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4941,6 +4971,12 @@
     {
       "type": 0,
       "value": "에 대해 찾은 결과가 없음"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "이 경우 흐름이 시작됩니다."
     }
   ],
   "VKAk5g": [
@@ -5041,6 +5077,12 @@
       "value": "이 작업을 추가했습니다."
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "다음"
+    }
+  ],
   "W070M2": [
     {
       "type": 1,
@@ -5119,6 +5161,12 @@
       "value": "제거"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5194,7 +5242,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "고급 매개 변수"
     }
   ],
   "XH94im": [
@@ -5521,12 +5569,6 @@
       "value": "(UTC+05:30) 첸나이, 콜카타, 뭄바이, 뉴델리"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "사용자 지정 값이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5657,6 +5699,12 @@
       "value": "동적 콘텐츠에 대해 자세히 알아보세요."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "다른 제안 표시"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5667,6 +5715,12 @@
     {
       "type": 0,
       "value": "필수 항목. 찾으려는 substring의 발생 횟수입니다."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -5850,7 +5904,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "모두 지우기"
     }
   ],
   "bwlAWn": [
@@ -5977,12 +6031,6 @@
     {
       "type": 0,
       "value": "굵게(⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
     }
   ],
   "cmTCsW": [
@@ -6588,6 +6636,12 @@
       "value": "(UTC+02:00) 가자, 헤브론"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "찾고 있는 항목이 아닙니다."
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6772,6 +6826,12 @@
       "value": "예: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "이 AI 생성 흐름 제안을 검토한 후"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6880,8 +6940,12 @@
   ],
   "jTHUFb": [
     {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
       "type": 0,
-      "value": "Showing "
+      "value": "개 중 "
     },
     {
       "type": 1,
@@ -6889,11 +6953,7 @@
     },
     {
       "type": 0,
-      "value": " of "
-    },
-    {
-      "type": 1,
-      "value": "countTotal"
+      "value": "개 표시"
     }
   ],
   "jUDhbs": [
@@ -8026,6 +8086,12 @@
       "value": "'이(가) 잘못되었습니다."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "이전 흐름 제안"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8204,6 +8270,12 @@
     {
       "type": 0,
       "value": "사례 추가"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9141,7 +9213,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "모두 표시"
     }
   ],
   "yVFIAQ": [

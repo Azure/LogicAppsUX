@@ -5,6 +5,12 @@
       "value": "测试"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "已出错"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "触发器"
     }
   ],
   "+Uvo/p": [
@@ -1150,7 +1162,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "显示所有高级参数"
     }
   ],
   "6OSgRP": [
@@ -1163,6 +1175,12 @@
     {
       "type": 0,
       "value": "取消"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1481,6 +1499,12 @@
       "value": "请为逻辑应用启用托管标识。"
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "操作"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1695,6 +1719,12 @@
       "value": "文本"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "默认"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1796,7 +1826,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "删除和清除所有高级参数及其值"
     }
   ],
   "Ak2Lka": [
@@ -1900,10 +1930,10 @@
       "value": "一个单格式说明符字符或一个自定义格式模式，它指示如何设置此时间戳的值的格式。如果未提供格式，则使用 ISO 8601 格式(\"o\")。"
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "清除自定义值"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2060,6 +2090,12 @@
     {
       "type": 0,
       "value": "按下述继续标记检索要满足指定阈值的项目。由于连接器的页面大小，返回的数量可能超出阈值。"
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2284,12 +2320,6 @@
     {
       "type": 0,
       "value": "持续时间"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "自定义值与架构节点的类型不匹配"
     }
   ],
   "Dhu3IS": [
@@ -2709,6 +2739,20 @@
       "value": "引用函数"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3047,26 +3091,6 @@
       "value": "(UTC+09:00)雅库茨克"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "执行 API \""
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "\" 时出错。"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "高级选项"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3378,6 +3402,12 @@
     {
       "type": 0,
       "value": "正在加载函数应用..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "下一个流建议"
     }
   ],
   "LJmfmK": [
@@ -3806,6 +3836,12 @@
       "value": "正在加载文件..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "以进行配置"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3846,12 +3882,6 @@
     {
       "type": 0,
       "value": "连接名称"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "输入自定义值"
     }
   ],
   "OOUSLP": [
@@ -4014,12 +4044,6 @@
       "value": "必需。此值为数组中的整数数目。"
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "默认值"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4124,12 +4148,6 @@
     {
       "type": 0,
       "value": "连接错误"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "如果没有值，则不生成"
     }
   ],
   "Pudllg": [
@@ -4278,6 +4296,12 @@
     {
       "type": 0,
       "value": "以日期格式返回字符串"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "这是流将执行的操作"
     }
   ],
   "QpRRt3": [
@@ -4469,12 +4493,6 @@
       "value": "将参数转换为整数"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "输入节点类型与架构节点的类型不匹配。"
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4573,6 +4591,12 @@
     {
       "type": 0,
       "value": "星期五"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "搜索工作流操作"
     }
   ],
   "TO7qos": [
@@ -4911,6 +4935,12 @@
       "value": "输入连接的名称"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "建议的流"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4985,6 +5015,12 @@
     {
       "type": 0,
       "value": " 的结果"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "发生此情况时，流将启动"
     }
   ],
   "VKAk5g": [
@@ -5085,6 +5121,12 @@
       "value": "已添加此操作"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "下一个"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5171,6 +5213,12 @@
       "value": "删除"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5246,7 +5294,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "高级参数"
     }
   ],
   "XH94im": [
@@ -5573,12 +5621,6 @@
       "value": "(UTC+05:30)钦奈，加尔各答，孟买，新德里"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "自定义值与此输入的允许类型之一不匹配"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5709,6 +5751,12 @@
       "value": "详细了解动态内容。"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "显示其他建议"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5719,6 +5767,12 @@
     {
       "type": 0,
       "value": "必填。要查找的子字符串的出现次数。"
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -5902,7 +5956,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "全部清除"
     }
   ],
   "bwlAWn": [
@@ -6029,12 +6083,6 @@
     {
       "type": 0,
       "value": "加粗(⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "输入节点类型与此输入允许的类型之一不匹配"
     }
   ],
   "cmTCsW": [
@@ -6652,6 +6700,12 @@
       "value": "(UTC+02:00)加沙，希伯伦"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "这不是我要查找的内容"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6840,6 +6894,12 @@
       "value": "示例: 0、10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "查看此 AI 生成的流建议后，选择"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6949,7 +7009,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "显示 "
     },
     {
       "type": 1,
@@ -6957,11 +7017,15 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " 个，共 "
     },
     {
       "type": 1,
       "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " 个"
     }
   ],
   "jUDhbs": [
@@ -8114,6 +8178,12 @@
       "value": "”无效。"
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "上一个流建议"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8292,6 +8362,12 @@
     {
       "type": 0,
       "value": "添加案例"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9233,7 +9309,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "全部显示"
     }
   ],
   "yVFIAQ": [

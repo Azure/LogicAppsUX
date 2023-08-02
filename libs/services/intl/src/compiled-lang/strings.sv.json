@@ -5,6 +5,12 @@
       "value": "Testning"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Fel"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Utlösare"
     }
   ],
   "+Uvo/p": [
@@ -1150,7 +1162,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Visa alla avancerade parametrar"
     }
   ],
   "6OSgRP": [
@@ -1163,6 +1175,12 @@
     {
       "type": 0,
       "value": "Avbryt"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1481,6 +1499,12 @@
       "value": "Aktivera hanterad identitet för logikappen."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Åtgärder"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1695,6 +1719,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Standard"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1792,7 +1822,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Ta bort och rensa alla avancerade parametrar och deras värden"
     }
   ],
   "Ak2Lka": [
@@ -1907,10 +1937,10 @@
       "value": "Antingen ett enskilt formatspecificerartecken eller ett anpassat formatmönster som indikerar hur värdet för den här tidsstämpeln ska formateras. Om formatet inte anges så används ISO 8601-formatet (o)."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Rensa anpassat värde"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2067,6 +2097,12 @@
     {
       "type": 0,
       "value": "Hämta objekt som uppfyller det angivna tröskelvärdet genom att följa fortsättningstoken. På grund av anslutningsappens sidstorlek, kan antalet som returneras överstiga tröskelvärdet."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Sant"
     }
   ],
   "CFOUe3": [
@@ -2283,12 +2319,6 @@
     {
       "type": 0,
       "value": "Varaktighet"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Det anpassade värdet matchar inte schemanodens typ"
     }
   ],
   "Dhu3IS": [
@@ -2727,6 +2757,20 @@
       "value": "Referensfunktioner"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " av "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3065,26 +3109,6 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fel vid körning av API:t "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Avancerade alternativ"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3407,6 +3431,12 @@
     {
       "type": 0,
       "value": "Läser in funktionsappar..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Nästa flödesförslag"
     }
   ],
   "LJmfmK": [
@@ -3835,6 +3865,12 @@
       "value": "Läser in filer..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "för att konfigurera det"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3875,12 +3911,6 @@
     {
       "type": 0,
       "value": "Anslutningens namn"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Ange ett anpassat värde"
     }
   ],
   "OOUSLP": [
@@ -4039,12 +4069,6 @@
       "value": "Krävs. Det här värdet är antalet heltal som finns i matrisen."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Standardvärde"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4149,12 +4173,6 @@
     {
       "type": 0,
       "value": "Anslutningsfel"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Generera inte om inget värde"
     }
   ],
   "Pudllg": [
@@ -4295,6 +4313,12 @@
     {
       "type": 0,
       "value": "Returnerar en sträng i datumformat"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Det här kommer flödet att göra"
     }
   ],
   "QpRRt3": [
@@ -4493,12 +4517,6 @@
       "value": "Konverterar parametern till ett heltal"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Indatanodens typ matchar inte schemanodens typ."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4597,6 +4615,12 @@
     {
       "type": 0,
       "value": "Fredag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Sök efter arbetsflödesåtgärder"
     }
   ],
   "TO7qos": [
@@ -4935,6 +4959,12 @@
       "value": "Ange ett namn för anslutningen."
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Föreslaget flöde"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5005,6 +5035,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Flödet startar när detta inträffar"
     }
   ],
   "VKAk5g": [
@@ -5105,6 +5141,12 @@
       "value": "La till den här åtgärden"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Nästa"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5183,6 +5225,12 @@
       "value": "Ta bort"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5258,7 +5306,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Avancerade parametrar"
     }
   ],
   "XH94im": [
@@ -5585,12 +5633,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Det anpassade värdet matchar inte någon av de tillåtna typerna för dessa indata"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5721,6 +5763,12 @@
       "value": "Läs mer om dynamiskt innehåll."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Visa ett annat förslag"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5731,6 +5779,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Antalet förekomster av delsträngen som ska hittas."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Falskt"
     }
   ],
   "aGyVJT": [
@@ -5914,7 +5968,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Rensa alla"
     }
   ],
   "bwlAWn": [
@@ -6041,12 +6095,6 @@
     {
       "type": 0,
       "value": "Fet (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Typ av indatanod matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
   "cmTCsW": [
@@ -6671,6 +6719,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Det här är inte vad jag letar efter"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6859,6 +6913,12 @@
       "value": "Exempel: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "När du har granskat det här AI-genererade flödesförslaget väljer du"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6968,7 +7028,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Visar "
     },
     {
       "type": 1,
@@ -6976,7 +7036,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " av "
     },
     {
       "type": 1,
@@ -8139,6 +8199,12 @@
       "value": "."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Föregående flödesförslag"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8317,6 +8383,12 @@
     {
       "type": 0,
       "value": "Lägg till fall"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9258,7 +9330,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Visa alla"
     }
   ],
   "yVFIAQ": [

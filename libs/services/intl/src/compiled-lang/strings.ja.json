@@ -5,6 +5,12 @@
       "value": "テスト"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "エラーが発生しました"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "トリガー"
     }
   ],
   "+Uvo/p": [
@@ -1138,7 +1150,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "すべての詳細パラメーターを表示します"
     }
   ],
   "6OSgRP": [
@@ -1151,6 +1163,12 @@
     {
       "type": 0,
       "value": "キャンセル"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1469,6 +1487,12 @@
       "value": "ロジック アプリのマネージド ID を有効にしてください。"
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "アクション"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1683,6 +1707,12 @@
       "value": "テキスト"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "既定"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1784,7 +1814,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "すべての詳細パラメーターとその値を削除してクリアします"
     }
   ],
   "Ak2Lka": [
@@ -1888,10 +1918,10 @@
       "value": "このタイムスタンプの値の書式を設定する方法を示す、1 文字の有効な書式指定子またはカスタム書式パターン。書式が指定されていない場合は、ISO 8601 形式 ('o') が使用されます。"
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "カスタム値のクリア"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2048,6 +2078,12 @@
     {
       "type": 0,
       "value": "継続トークンに従い、指定されたしきい値を満たすように項目を取得します。コネクタのページ サイズにより、返される数がしきい値を超える場合があります。"
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2268,12 +2304,6 @@
     {
       "type": 0,
       "value": "期間"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "カスタム値がスキーマ ノードの種類と一致しません"
     }
   ],
   "Dhu3IS": [
@@ -2689,6 +2719,20 @@
       "value": "参照関数"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3023,26 +3067,6 @@
       "value": "(UTC+09:00) ヤクーツク"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' の実行でエラーが発生しました。"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "詳細オプション"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3354,6 +3378,12 @@
     {
       "type": 0,
       "value": "関数アプリを読み込んでいます..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "次のフローの提案"
     }
   ],
   "LJmfmK": [
@@ -3782,6 +3812,12 @@
       "value": "ファイルを読み込んでいます..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "を選択し、構成します"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3822,12 +3858,6 @@
     {
       "type": 0,
       "value": "接続名"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "カスタム値の入力"
     }
   ],
   "OOUSLP": [
@@ -3990,12 +4020,6 @@
       "value": "必須。この値は、アレイに含まれる整数の数です。"
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "既定値"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4100,12 +4124,6 @@
     {
       "type": 0,
       "value": "接続エラー"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "値がない場合は生成しない"
     }
   ],
   "Pudllg": [
@@ -4250,6 +4268,12 @@
     {
       "type": 0,
       "value": "文字列を日付形式で返します"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "これはフローの実行内容です"
     }
   ],
   "QpRRt3": [
@@ -4441,12 +4465,6 @@
       "value": "パラメーターを整数に変換します"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "入力ノードの種類がスキーマ ノードの種類と一致しません。"
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4545,6 +4563,12 @@
     {
       "type": 0,
       "value": "金曜日"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "ワークフローのアクションの検索"
     }
   ],
   "TO7qos": [
@@ -4875,6 +4899,12 @@
       "value": "接続の名前を入力してください"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "提案されたフロー"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4945,6 +4975,12 @@
     {
       "type": 0,
       "value": " の結果が見つかりませんでした"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "これが発生したときにフローが開始されます"
     }
   ],
   "VKAk5g": [
@@ -5045,6 +5081,12 @@
       "value": "このアクションを追加しました"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "次へ"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5123,6 +5165,12 @@
       "value": "削除"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5198,7 +5246,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "詳細パラメーター"
     }
   ],
   "XH94im": [
@@ -5525,12 +5573,6 @@
       "value": "(UTC+05:30) チェンナイ、コルカタ、ムンバイ、ニューデリー"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "カスタム値が、この入力に許可されている型のいずれかと一致しません"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5661,6 +5703,12 @@
       "value": "動的コンテンツの詳細情報。"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "別の提案を表示する"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5671,6 +5719,12 @@
     {
       "type": 0,
       "value": "必須。検索する部分文字列の出現回数です。"
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "aGyVJT": [
@@ -5854,7 +5908,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "すべてクリア"
     }
   ],
   "bwlAWn": [
@@ -5981,12 +6035,6 @@
     {
       "type": 0,
       "value": "太字 (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "入力ノードの種類が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "cmTCsW": [
@@ -6592,6 +6640,12 @@
       "value": "(UTC+02:00) ガザ、ヘブロン"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "これは私が探しているものではありません"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6776,6 +6830,12 @@
       "value": "例: 0、10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "AI によって生成されたこのフローの提案を確認した後、"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6884,8 +6944,12 @@
   ],
   "jTHUFb": [
     {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
       "type": 0,
-      "value": "Showing "
+      "value": " 件中 "
     },
     {
       "type": 1,
@@ -6893,11 +6957,7 @@
     },
     {
       "type": 0,
-      "value": " of "
-    },
-    {
-      "type": 1,
-      "value": "countTotal"
+      "value": " 件を表示しています"
     }
   ],
   "jUDhbs": [
@@ -8030,6 +8090,12 @@
       "value": "' が無効です。"
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "前のフローの提案"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8208,6 +8274,12 @@
     {
       "type": 0,
       "value": "ケースの追加"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9145,7 +9217,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "すべてを表示"
     }
   ],
   "yVFIAQ": [

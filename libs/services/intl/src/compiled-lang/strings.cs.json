@@ -5,6 +5,12 @@
       "value": "Testování"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "S chybou"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -1154,7 +1166,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Zobrazit všechny upřesňující parametry"
     }
   ],
   "6OSgRP": [
@@ -1167,6 +1179,12 @@
     {
       "type": 0,
       "value": "Zrušit"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1485,6 +1503,12 @@
       "value": "Povolte prosím pro aplikaci logiky spravovanou identitu."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Akce"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1699,6 +1723,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Výchozí"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1800,7 +1830,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Odebrat a vymazat všechny upřesňující parametry a jejich hodnoty"
     }
   ],
   "Ak2Lka": [
@@ -1937,10 +1967,10 @@
       "value": "Jednoznakový specifikátor formátu nebo vlastní formátovací vzor, který určuje, jak formátovat hodnotu tohoto časového razítka. Pokud není formát zadaný, použije se formát ISO 8601 (o)."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Vymazat vlastní hodnotu"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2097,6 +2127,12 @@
     {
       "type": 0,
       "value": "Načtěte položky, aby se splnila zadaná prahová hodnota tak, že se bude následovat token pro pokračování. Kvůli velikosti stránky konektoru může počet vrácených položek překročit prahovou hodnotu."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True (Pravda)"
     }
   ],
   "CFOUe3": [
@@ -2317,12 +2353,6 @@
     {
       "type": 0,
       "value": "Doba trvání"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Vlastní hodnota neodpovídá typu uzlu schématu"
     }
   ],
   "Dhu3IS": [
@@ -2783,6 +2813,20 @@
       "value": "Funkce odkazů"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " z "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3119,26 +3163,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutsk"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Při provádění rozhraní API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' došlo k chybě."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Upřesnit možnosti"
     }
   ],
   "IsVhkH": [
@@ -3481,6 +3505,12 @@
     {
       "type": 0,
       "value": "Načítají se aplikace funkcí..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Další návrh toku"
     }
   ],
   "LJmfmK": [
@@ -3913,6 +3943,12 @@
       "value": "Načítají se soubory..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "pro jeho konfiguraci"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3953,12 +3989,6 @@
     {
       "type": 0,
       "value": "Název připojení"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Zadat vlastní hodnotu"
     }
   ],
   "OOUSLP": [
@@ -4117,12 +4147,6 @@
       "value": "Povinný parametr. Tato hodnota představuje počet celých čísel v poli."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Výchozí hodnota"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4227,12 +4251,6 @@
     {
       "type": 0,
       "value": "Chyby připojení"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Negenerovat, pokud žádná hodnota"
     }
   ],
   "Pudllg": [
@@ -4373,6 +4391,12 @@
     {
       "type": 0,
       "value": "Vrátí řetězec ve formátu data."
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Toto bude tok dělat"
     }
   ],
   "QpRRt3": [
@@ -4593,12 +4617,6 @@
       "value": "Převede parametr na celé číslo."
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Typ vstupního uzlu neodpovídá typu uzlu schématu."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4697,6 +4715,12 @@
     {
       "type": 0,
       "value": "Pátek"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Hledat akce pracovního postupu"
     }
   ],
   "TO7qos": [
@@ -5035,6 +5059,12 @@
       "value": "Zadejte název připojení."
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Navrhovaný tok"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5105,6 +5135,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Když se to stane, tok se spustí."
     }
   ],
   "VKAk5g": [
@@ -5205,6 +5241,12 @@
       "value": "Byla přidána této akce"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Další"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5283,6 +5325,12 @@
       "value": "Odebrat"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5358,7 +5406,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Rozšířené parametry"
     }
   ],
   "XH94im": [
@@ -5685,12 +5733,6 @@
       "value": "(UTC+05:30) Čennaj, Kalkata, Bombaj, Dillí"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5821,6 +5863,12 @@
       "value": "Další informace o dynamickém obsahu"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Zobrazit jiný návrh"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5831,6 +5879,12 @@
     {
       "type": 0,
       "value": "Povinné. Počet výskytů podřetězce, které se mají najít"
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False (Nepravda)"
     }
   ],
   "aGyVJT": [
@@ -6014,7 +6068,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Vymazat vše"
     }
   ],
   "bwlAWn": [
@@ -6141,12 +6195,6 @@
     {
       "type": 0,
       "value": "Tučné (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup"
     }
   ],
   "cmTCsW": [
@@ -6793,6 +6841,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Toto nehledám"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6985,6 +7039,12 @@
       "value": "Příklad: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Až si prostudujete tento návrh toku vygenerovaný pomocí AI, vyberte"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7094,7 +7154,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Zobrazeno: "
     },
     {
       "type": 1,
@@ -7102,7 +7162,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " z(e) "
     },
     {
       "type": 1,
@@ -8313,6 +8373,12 @@
       "value": "."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Předchozí návrh toku"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8491,6 +8557,12 @@
     {
       "type": 0,
       "value": "Přidat případ"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9428,7 +9500,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Zobrazit vše"
     }
   ],
   "yVFIAQ": [

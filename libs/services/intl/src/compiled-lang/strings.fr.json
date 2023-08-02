@@ -5,6 +5,12 @@
       "value": "Test"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "En échec"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Déclencheur"
     }
   ],
   "+Uvo/p": [
@@ -1146,7 +1158,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Afficher tous les paramètres avancés"
     }
   ],
   "6OSgRP": [
@@ -1159,6 +1171,12 @@
     {
       "type": 0,
       "value": "Annuler"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1477,6 +1495,12 @@
       "value": "Activez l'identité managée pour l'application logique."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1691,6 +1715,12 @@
       "value": "Texte"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Par défaut"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1792,7 +1822,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Supprimer et effacer tous les paramètres avancés et leurs valeurs"
     }
   ],
   "Ak2Lka": [
@@ -1918,10 +1948,10 @@
       "value": "Caractère de spécificateur de format unique ou modèle de format personnalisé qui indique comment mettre en forme la valeur de cet horodateur. Si aucun format n'est fourni, le format ISO 8601 (« o ») est utilisé."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Effacer la valeur par défaut"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2078,6 +2108,12 @@
     {
       "type": 0,
       "value": "Récupérez des éléments pour atteindre le seuil spécifié en suivant le jeton de continuation. En raison de la taille de page du connecteur, le nombre retourné peut dépasser le seuil."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Vrai"
     }
   ],
   "CFOUe3": [
@@ -2298,12 +2334,6 @@
     {
       "type": 0,
       "value": "Durée"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "La valeur personnalisée ne correspond pas au type du nœud de schéma"
     }
   ],
   "Dhu3IS": [
@@ -2745,6 +2775,20 @@
       "value": "Fonctions de références"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " sur "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3083,26 +3127,6 @@
       "value": "(UTC+09:00) Iakoutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Nous n’avons pas pu exécuter l’API « "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " »."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Options avancées"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3436,6 +3460,12 @@
     {
       "type": 0,
       "value": "Chargement des applications de fonction..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Suggestion de flux suivante"
     }
   ],
   "LJmfmK": [
@@ -3864,6 +3894,12 @@
       "value": "Chargement des fichiers..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "pour le configurer."
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3904,12 +3940,6 @@
     {
       "type": 0,
       "value": "Nom de la connexion"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Entrer une valeur personnalisée"
     }
   ],
   "OOUSLP": [
@@ -4072,12 +4102,6 @@
       "value": "Obligatoire. Cette valeur correspond au nombre d'entiers qui se trouvent dans le tableau."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Valeur par défaut"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4182,12 +4206,6 @@
     {
       "type": 0,
       "value": "Erreurs de connexion"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Ne pas générer si aucune valeur"
     }
   ],
   "Pudllg": [
@@ -4332,6 +4350,12 @@
     {
       "type": 0,
       "value": "Retourne une chaîne au format de date"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Permet de voir ce que le flux va faire"
     }
   ],
   "QpRRt3": [
@@ -4545,12 +4569,6 @@
       "value": "Convertir le paramètre en entier"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Le type de nœud d’entrée ne correspond pas au type du nœud de schéma."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4649,6 +4667,12 @@
     {
       "type": 0,
       "value": "Vendredi"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Rechercher des actions du flux de travail"
     }
   ],
   "TO7qos": [
@@ -4987,6 +5011,12 @@
       "value": "Entrez un nom pour la connexion"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Flux suggéré"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5057,6 +5087,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Le flux démarre lorsque cela se produit"
     }
   ],
   "VKAk5g": [
@@ -5157,6 +5193,12 @@
       "value": "Ajout de cette action"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Suivant"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5235,6 +5277,12 @@
       "value": "Supprimer"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5310,7 +5358,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Paramètres avancés"
     }
   ],
   "XH94im": [
@@ -5637,12 +5685,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "La valeur personnalisée ne correspond pas à l’un des types autorisés pour cette entrée"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5773,6 +5815,12 @@
       "value": "Découvrez plus d'informations sur le contenu dynamique."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Afficher une autre suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5783,6 +5831,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Numéro de l’occurrence de la sous-chaîne à rechercher."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Faux"
     }
   ],
   "aGyVJT": [
@@ -5966,7 +6020,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Effacer tout"
     }
   ],
   "bwlAWn": [
@@ -6093,12 +6147,6 @@
     {
       "type": 0,
       "value": "Gras (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Le type de nœud d’entrée ne correspond pas à l’un des types autorisés pour cette entrée"
     }
   ],
   "cmTCsW": [
@@ -6738,6 +6786,12 @@
       "value": "(UTC+02:00) Gaza, Hébron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Ce n’est pas ce que je recherche"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6926,6 +6980,12 @@
       "value": "Exemple : 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Après avoir passé en revue cette suggestion de flux générée par IA, sélectionnez"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7035,7 +7095,7 @@
   "jTHUFb": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Affichage de "
     },
     {
       "type": 1,
@@ -7043,7 +7103,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " sur "
     },
     {
       "type": 1,
@@ -8232,6 +8292,12 @@
       "value": " »."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Suggestion de flux précédente"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8410,6 +8476,12 @@
     {
       "type": 0,
       "value": "Ajouter un cas"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9355,7 +9427,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Afficher tout"
     }
   ],
   "yVFIAQ": [

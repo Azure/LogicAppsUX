@@ -5,6 +5,12 @@
       "value": "Testen..."
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Mislukt"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -1150,7 +1162,7 @@
   "63fQWE": [
     {
       "type": 0,
-      "value": "Show all advanced parameters"
+      "value": "Alle geavanceerde parameters weergeven"
     }
   ],
   "6OSgRP": [
@@ -1163,6 +1175,12 @@
     {
       "type": 0,
       "value": "Annuleren"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1481,6 +1499,12 @@
       "value": "Schakel de beheerde identiteit voor de logische app in."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Acties"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1695,6 +1719,12 @@
       "value": "Tekst"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Standaard"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1792,7 +1822,7 @@
   "AhvQ7r": [
     {
       "type": 0,
-      "value": "Remove and clear all advanced parameters and their values"
+      "value": "Alle geavanceerde parameters en de bijbehorende waarden verwijderen en wissen"
     }
   ],
   "Ak2Lka": [
@@ -1907,10 +1937,10 @@
       "value": "Eén teken voor aanduiding van de indeling of een aangepast indelingspatroon waarmee de indeling van de waarde voor dit tijdstempel wordt aangegeven. Als de indeling niet is opgegeven, wordt de ISO 8601-indeling ('o') gebruikt."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Aangepaste waarde wissen"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2067,6 +2097,12 @@
     {
       "type": 0,
       "value": "Items die voldoen aan de opgegeven drempelwaarde, ophalen door het vervolgtoken te volgen. Vanwege de paginagrootte van de connector kan het aantal geretourneerde items de drempelwaarde overschrijden."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Waar"
     }
   ],
   "CFOUe3": [
@@ -2287,12 +2323,6 @@
     {
       "type": 0,
       "value": "Duur"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "De aangepaste waarde komt niet overeen met het type van het schemaknooppunt"
     }
   ],
   "Dhu3IS": [
@@ -2731,6 +2761,20 @@
       "value": "Verwijzingsfuncties"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " van "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -3069,26 +3113,6 @@
       "value": "(UTC+09:00) Jakoetsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Fout bij het uitvoeren van de "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " van de API."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Geavanceerde opties"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3407,6 +3431,12 @@
     {
       "type": 0,
       "value": "Functie-apps laden..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Volgende stroomsuggestie"
     }
   ],
   "LJmfmK": [
@@ -3835,6 +3865,12 @@
       "value": "Bestanden laden..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "om het te configureren"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3875,12 +3911,6 @@
     {
       "type": 0,
       "value": "Verbindingsnaam"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Aangepaste waarde invoeren"
     }
   ],
   "OOUSLP": [
@@ -4039,12 +4069,6 @@
       "value": "Vereist. Deze waarde is het aantal gehele getallen in de matrix."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Standaardwaarde"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4153,12 +4177,6 @@
     {
       "type": 0,
       "value": "Verbindingsfouten"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Niet genereren als er geen waarde is"
     }
   ],
   "Pudllg": [
@@ -4299,6 +4317,12 @@
     {
       "type": 0,
       "value": "Er wordt een tekenreeks in datumindeling geretourneerd"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Dit is wat de stroom doet"
     }
   ],
   "QpRRt3": [
@@ -4497,12 +4521,6 @@
       "value": "De parameter naar een geheel getal converteren"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4601,6 +4619,12 @@
     {
       "type": 0,
       "value": "Vrijdag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Werkstroomacties zoeken"
     }
   ],
   "TO7qos": [
@@ -4943,6 +4967,12 @@
       "value": "Voer een naam in voor de verbinding"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Voorgestelde stroom"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5013,6 +5043,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "De stroom wordt gestart wanneer dit gebeurt"
     }
   ],
   "VKAk5g": [
@@ -5113,6 +5149,12 @@
       "value": "Deze actie is toegevoegd"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Volgende"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5191,6 +5233,12 @@
       "value": "Verwijderen"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5266,7 +5314,7 @@
   "XFzzaw": [
     {
       "type": 0,
-      "value": "Advanced parameters"
+      "value": "Geavanceerde parameters"
     }
   ],
   "XH94im": [
@@ -5593,12 +5641,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "De aangepaste waarde komt niet overeen met een van de toegestane typen voor deze invoer"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5729,6 +5771,12 @@
       "value": "Meer informatie over dynamische inhoud"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Een andere suggestie weergeven"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5739,6 +5787,12 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal exemplaren van de subtekenreeks dat moet worden gevonden."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Onwaar"
     }
   ],
   "aGyVJT": [
@@ -5922,7 +5976,7 @@
   "bt2CaQ": [
     {
       "type": 0,
-      "value": "Clear all"
+      "value": "Alles wissen"
     }
   ],
   "bwlAWn": [
@@ -6049,12 +6103,6 @@
     {
       "type": 0,
       "value": "Vet (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Het invoerknooppunttype komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "cmTCsW": [
@@ -6679,6 +6727,12 @@
       "value": "(UTC+02:00) Gaza, Hebron"
     }
   ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Dit is niet wat ik zoek"
+    }
+  ],
   "hic23z": [
     {
       "type": 0,
@@ -6867,6 +6921,12 @@
       "value": "Voorbeeld: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Nadat u deze door AI gegenereerde stroomsuggestie hebt beoordeeld, selecteert u"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6975,20 +7035,20 @@
   ],
   "jTHUFb": [
     {
-      "type": 0,
-      "value": "Showing "
-    },
-    {
       "type": 1,
       "value": "countShowing"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " van "
     },
     {
       "type": 1,
       "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " wordt weergegeven"
     }
   ],
   "jUDhbs": [
@@ -8147,6 +8207,12 @@
       "value": "."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Vorige stroomsuggestie"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8325,6 +8391,12 @@
     {
       "type": 0,
       "value": "Case toevoegen"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9262,7 +9334,7 @@
   "yRDuqj": [
     {
       "type": 0,
-      "value": "Show all"
+      "value": "Alles weergeven"
     }
   ],
   "yVFIAQ": [
