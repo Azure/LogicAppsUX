@@ -11,6 +11,7 @@ import {
   StandardArtifactService,
   BaseApiManagementService,
   BaseFunctionService,
+  BaseAppServiceService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
   ApiHubServiceDetails,
@@ -121,6 +122,7 @@ export const getDesignerServices = (
   });
 
   const manualWorkflows = Object.keys(workflowDetails).map((name) => ({ value: name, displayName: name }));
+  const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
 
   const connectorService = new StandardConnectorService({
     apiVersion,
@@ -160,6 +162,10 @@ export const getDesignerServices = (
 
         return apimService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
       },
+      getSwaggerOperationSchema: (args: any) => {
+        const { parameters, isInput } = args;
+        return appService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
+      },
     },
     valuesClient: {
       getWorkflows: () => Promise.resolve(manualWorkflows),
@@ -174,6 +180,11 @@ export const getDesignerServices = (
           throw new Error('Missing api information to make dynamic call');
         }
         return apimService.getOperations(configuration?.connection?.apiId);
+      },
+      getSwaggerOperations: (args: any) => {
+        const { parameters } = args;
+        console.log('CHARLIE: getSwaggerOperations');
+        return appService.getOperations(parameters.swaggerUrl);
       },
     },
     apiHubServiceDetails,
