@@ -6,7 +6,7 @@ import { isCustomValue } from '../../../utils/Connection.Utils';
 import { functionDropDownItemText } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
-import { InputDropdown } from '../../inputDropdown/InputDropdown';
+import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { Stack } from '@fluentui/react';
 import { Label, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { useMemo } from 'react';
