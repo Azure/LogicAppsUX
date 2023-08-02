@@ -153,6 +153,7 @@ export enum LogCategory {
   DataMapperDesigner = 'DataMapperDesigner',
   FunctionsQuery = 'FunctionsQuery',
   InputDropDown = 'InputDropDown',
+  InputTextbox = 'InputTextbox',
   FunctionNodePropertiesTab = 'FunctionNodePropertiesTab',
   TestMapPanel = 'TestMapPanel',
   DataMapUtils = 'DataMapUtils',
