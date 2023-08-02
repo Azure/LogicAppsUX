@@ -5,6 +5,12 @@
       "value": "Test"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1183,6 +1189,12 @@
       "value": "Abbrechen"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1945,10 +1957,10 @@
       "value": "Hiermit wird entweder ein einzelnes Zeichen als Formatbezeichner oder ein benutzerdefiniertes Formatmuster angegeben, das festlegt, wie der Wert dieses Zeitstempels formatiert werden soll. Wenn kein Format angegeben wird, wird das ISO 8601-Format (\"o\") verwendet."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Benutzerdefinierten Wert löschen"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2335,12 +2347,6 @@
     {
       "type": 0,
       "value": "Dauer"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Der benutzerdefinierte Wert stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
   "Dhu3IS": [
@@ -3133,12 +3139,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Erweiterte Optionen"
     }
   ],
   "IsVhkH": [
@@ -3945,12 +3945,6 @@
       "value": "Verbindungsname"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Benutzerdefinierten Wert eingeben"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4111,12 +4105,6 @@
       "value": "Erforderlich. Dieser Wert entspricht der Anzahl von ganzen Zahlen im Array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Standardwert"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4225,12 +4213,6 @@
     {
       "type": 0,
       "value": "Verbindungsfehler"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Nicht generieren, wenn kein Wert vorhanden ist"
     }
   ],
   "Pudllg": [
@@ -4585,12 +4567,6 @@
     {
       "type": 0,
       "value": "Parameter in ganze Zahl konvertieren"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
   "SLJkRn": [
@@ -5309,6 +5285,12 @@
       "value": "Entfernen"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5709,12 +5691,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, Neu-Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Der benutzerdefinierte Wert stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
     }
   ],
   "YiOybp": [
@@ -6179,12 +6155,6 @@
     {
       "type": 0,
       "value": "Fett (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Der Eingabeknotentyp stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
     }
   ],
   "cmTCsW": [
@@ -8485,6 +8455,12 @@
     {
       "type": 0,
       "value": "Fall hinzufügen"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

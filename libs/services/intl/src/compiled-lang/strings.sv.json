@@ -5,6 +5,12 @@
       "value": "Testning"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1171,6 +1177,12 @@
       "value": "Avbryt"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1925,10 +1937,10 @@
       "value": "Antingen ett enskilt formatspecificerartecken eller ett anpassat formatmönster som indikerar hur värdet för den här tidsstämpeln ska formateras. Om formatet inte anges så används ISO 8601-formatet (o)."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Rensa anpassat värde"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2307,12 +2319,6 @@
     {
       "type": 0,
       "value": "Varaktighet"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Det anpassade värdet matchar inte schemanodens typ"
     }
   ],
   "Dhu3IS": [
@@ -3101,12 +3107,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Avancerade alternativ"
     }
   ],
   "IsVhkH": [
@@ -3913,12 +3913,6 @@
       "value": "Anslutningens namn"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Ange ett anpassat värde"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4075,12 +4069,6 @@
       "value": "Krävs. Det här värdet är antalet heltal som finns i matrisen."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Standardvärde"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4185,12 +4173,6 @@
     {
       "type": 0,
       "value": "Anslutningsfel"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Generera inte om inget värde"
     }
   ],
   "Pudllg": [
@@ -4533,12 +4515,6 @@
     {
       "type": 0,
       "value": "Konverterar parametern till ett heltal"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Indatanodens typ matchar inte schemanodens typ."
     }
   ],
   "SLJkRn": [
@@ -5249,6 +5225,12 @@
       "value": "Ta bort"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5649,12 +5631,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Det anpassade värdet matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
   "YiOybp": [
@@ -6119,12 +6095,6 @@
     {
       "type": 0,
       "value": "Fet (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Typ av indatanod matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
   "cmTCsW": [
@@ -8413,6 +8383,12 @@
     {
       "type": 0,
       "value": "Lägg till fall"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

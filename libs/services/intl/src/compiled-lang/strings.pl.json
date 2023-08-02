@@ -5,6 +5,12 @@
       "value": "Testowanie"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1175,6 +1181,12 @@
       "value": "Anuluj"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1955,10 +1967,10 @@
       "value": "Może to być pojedynczy znak specyfikatora formatu lub niestandardowy wzorzec formatu, który określa sposób formatowania wartości tej sygnatury czasowej. Jeśli format nie zostanie podany, zostanie użyty format ISO 8601 („o”)."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Wyczyść wartość niestandardową"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2341,12 +2353,6 @@
     {
       "type": 0,
       "value": "Czas trwania"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Wartość niestandardowa jest niezgodna z typem węzła schematu"
     }
   ],
   "Dhu3IS": [
@@ -3157,12 +3163,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakuck"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Opcje zaawansowane"
     }
   ],
   "IsVhkH": [
@@ -3991,12 +3991,6 @@
       "value": "Nazwa połączenia"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Wprowadź wartość niestandardową"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4157,12 +4151,6 @@
       "value": "Wymagane. Ta wartość określa ilość liczb całkowitych w tablicy."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Wartość domyślna"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4267,12 +4255,6 @@
     {
       "type": 0,
       "value": "Błędy połączeń"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Nie generuj, jeśli brak wartości"
     }
   ],
   "Pudllg": [
@@ -4649,12 +4631,6 @@
     {
       "type": 0,
       "value": "Konwertuj parametr na liczbę całkowitą"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Typ węzła wejściowego jest niezgodny z typem węzła schematu."
     }
   ],
   "SLJkRn": [
@@ -5365,6 +5341,12 @@
       "value": "Usuń"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5765,12 +5747,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata (Kalkuta), Mumbaj (Bombaj), Nowe Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Wartość niestandardowa nie jest zgodna z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
   "YiOybp": [
@@ -6235,12 +6211,6 @@
     {
       "type": 0,
       "value": "Pogrubienie (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Typ węzła wejściowego nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
   "cmTCsW": [
@@ -8615,6 +8585,12 @@
     {
       "type": 0,
       "value": "Dodaj przypadek"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

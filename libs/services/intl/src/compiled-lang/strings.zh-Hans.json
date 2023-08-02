@@ -5,6 +5,12 @@
       "value": "测试"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1171,6 +1177,12 @@
       "value": "取消"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1918,10 +1930,10 @@
       "value": "一个单格式说明符字符或一个自定义格式模式，它指示如何设置此时间戳的值的格式。如果未提供格式，则使用 ISO 8601 格式(\"o\")。"
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "清除自定义值"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2308,12 +2320,6 @@
     {
       "type": 0,
       "value": "持续时间"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "自定义值与架构节点的类型不匹配"
     }
   ],
   "Dhu3IS": [
@@ -3083,12 +3089,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00)雅库茨克"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "高级选项"
     }
   ],
   "IsVhkH": [
@@ -3884,12 +3884,6 @@
       "value": "连接名称"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "输入自定义值"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4050,12 +4044,6 @@
       "value": "必需。此值为数组中的整数数目。"
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "默认值"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4160,12 +4148,6 @@
     {
       "type": 0,
       "value": "连接错误"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "如果没有值，则不生成"
     }
   ],
   "Pudllg": [
@@ -4509,12 +4491,6 @@
     {
       "type": 0,
       "value": "将参数转换为整数"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "输入节点类型与架构节点的类型不匹配。"
     }
   ],
   "SLJkRn": [
@@ -5237,6 +5213,12 @@
       "value": "删除"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5637,12 +5619,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30)钦奈，加尔各答，孟买，新德里"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "自定义值与此输入的允许类型之一不匹配"
     }
   ],
   "YiOybp": [
@@ -6107,12 +6083,6 @@
     {
       "type": 0,
       "value": "加粗(⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "输入节点类型与此输入允许的类型之一不匹配"
     }
   ],
   "cmTCsW": [
@@ -8392,6 +8362,12 @@
     {
       "type": 0,
       "value": "添加案例"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [

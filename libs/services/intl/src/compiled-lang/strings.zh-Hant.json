@@ -5,6 +5,12 @@
       "value": "測試"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1167,6 +1173,12 @@
       "value": "取消"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1914,10 +1926,10 @@
       "value": "指出如何將此時間戳記值格式化的單一格式指定名稱字元或自訂格式模式。若未提供格式，將會使用 ISO 8601 格式 ('o')。"
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "清除自訂值"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2288,12 +2300,6 @@
     {
       "type": 0,
       "value": "持續時間"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "自訂值與結構描述節點的類型不符。"
     }
   ],
   "Dhu3IS": [
@@ -3063,12 +3069,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 雅庫茨克"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "進階選項"
     }
   ],
   "IsVhkH": [
@@ -3864,12 +3864,6 @@
       "value": "連線名稱"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "輸入自訂值"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4022,12 +4016,6 @@
       "value": "必要。此值是陣列中整數數目。"
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "預設值"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4136,12 +4124,6 @@
     {
       "type": 0,
       "value": "連線錯誤"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "若沒有值，則不要產生"
     }
   ],
   "Pudllg": [
@@ -4477,12 +4459,6 @@
     {
       "type": 0,
       "value": "將參數轉換為整數"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "輸入節點類型不符合結構描述節點的類型。"
     }
   ],
   "SLJkRn": [
@@ -5205,6 +5181,12 @@
       "value": "移除"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5605,12 +5587,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) 辰內，加爾各答，孟拜，新德里"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "自訂值不符合此輸入允許的其中一種類型"
     }
   ],
   "YiOybp": [
@@ -6075,12 +6051,6 @@
     {
       "type": 0,
       "value": "粗體 (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "輸入節點類型不符合此輸入允許的其中一種類型"
     }
   ],
   "cmTCsW": [
@@ -8328,6 +8298,12 @@
     {
       "type": 0,
       "value": "新增案例"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
