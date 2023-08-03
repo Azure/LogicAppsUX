@@ -182,7 +182,6 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, workflowDefinition
         if (query.includes('flow' /*intlText.queryTemplates.explainFlowSentence.toLocaleLowerCase()*/) && workflowDefinition) {
           query = query.concat(': ' + JSON.stringify(workflowDefinition));
         }
-        setInputQuery(query);
         stopAnswerGeneration(false);
         fetch('http://localhost:3000/submit', {
           method: 'POST',
@@ -243,7 +242,7 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, workflowDefinition
           });
       }
     },
-    [intlText.assistantErrorMessage, intlText.queryTemplates.explainFlowSentence, signal, workflowDefinition]
+    [intlText.assistantErrorMessage, signal, workflowDefinition]
   );
 
   const onPromptGuideItemClicked = useCallback(
