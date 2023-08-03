@@ -342,7 +342,7 @@ function shouldSoftHide(parameter: ResolvedParameter): boolean {
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
-  return !!parameter?.value;
+  return parameter?.value !== undefined;
 }
 
 export function getParameterEditorProps(
