@@ -47,7 +47,18 @@ export const clientSupportedOperations = [
     connectorId: 'connectionProviders/dataMapperOperations',
     operationId: 'xsltTransform',
   },
-  { connectorId: '/connectionProviders/apiManagementOperation', operationId: 'apiManagement' },
+  {
+    connectorId: '/connectionProviders/apiManagementOperation',
+    operationId: 'apiManagement',
+  },
+  {
+    connectorId: 'connectionProviders/http',
+    operationId: 'httpswaggeraction',
+  },
+  {
+    connectorId: 'connectionProviders/http',
+    operationId: 'httpswaggertrigger',
+  },
 ];
 
 export const integrationAccount = 'IntegrationAccount';
