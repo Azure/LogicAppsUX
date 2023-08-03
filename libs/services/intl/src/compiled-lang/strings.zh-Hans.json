@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "警告: 输入节点类型与架构节点的类型不匹配"
     }
   ],
   "+0cO6t": [
@@ -1180,7 +1180,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "警告: 输入节点类型与此输入允许的类型之一不匹配"
     }
   ],
   "6ZviI7": [
@@ -1933,7 +1933,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "警告: 自定义值与此输入的允许类型之一不匹配"
     }
   ],
   "BFTwRN": [
@@ -5216,7 +5216,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(自定义值)"
     }
   ],
   "WgoP7R": [
@@ -8367,7 +8367,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "警告: 自定义值与架构节点的类型不匹配"
     }
   ],
   "sVQe34": [
