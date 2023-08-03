@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Varning! Indatanodens typ matchar inte typ av schemanod"
     }
   ],
   "+0cO6t": [
@@ -1180,7 +1180,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Varning! Typ av indatanod matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
   "6ZviI7": [
@@ -1940,7 +1940,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Varning! Det anpassade värdet matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
   "BFTwRN": [
@@ -5228,7 +5228,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Anpassat värde)"
     }
   ],
   "WgoP7R": [
@@ -8388,7 +8388,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Varning! Det anpassade värdet matchar inte typ av schemanod"
     }
   ],
   "sVQe34": [

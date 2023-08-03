@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Figyelmeztetés: a bemeneti csomópont típusa nem felel meg a sémacsomópont típusának"
     }
   ],
   "+0cO6t": [
@@ -1192,7 +1192,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Figyelmeztetés: a bemeneti csomóponttípus nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
   "6ZviI7": [
@@ -1948,7 +1948,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Figyelmeztetés: az egyéni érték nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
   "BFTwRN": [
@@ -5236,7 +5236,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Egyéni érték)"
     }
   ],
   "WgoP7R": [
@@ -8408,7 +8408,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Figyelmeztetés: az egyéni érték nem felel meg a sémacsomópont típusának"
     }
   ],
   "sVQe34": [

@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Предупреждение. Тип входного узла не совпадает с типом узла схемы"
     }
   ],
   "+0cO6t": [
@@ -1180,7 +1180,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Предупреждение. Тип входного узла не совпадает с одним из разрешенных типов для этого входного значения"
     }
   ],
   "6ZviI7": [
@@ -1966,7 +1966,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Предупреждение. Пользовательское значение не совпадает с одним из разрешенных типов для этого входного значения"
     }
   ],
   "BFTwRN": [
@@ -5336,7 +5336,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Пользовательское значение)"
     }
   ],
   "WgoP7R": [
@@ -8570,7 +8570,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Предупреждение. Пользовательское значение не совпадает с типом узла схемы"
     }
   ],
   "sVQe34": [

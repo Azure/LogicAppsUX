@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "경고: 입력 노드 형식이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
   "+0cO6t": [
@@ -1168,7 +1168,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "경고: 입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
     }
   ],
   "6ZviI7": [
@@ -1913,7 +1913,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "경고: 사용자 지정 값이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
     }
   ],
   "BFTwRN": [
@@ -5164,7 +5164,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(사용자 지정 값)"
     }
   ],
   "WgoP7R": [
@@ -8275,7 +8275,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "경고: 사용자 지정 값이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
   "sVQe34": [
