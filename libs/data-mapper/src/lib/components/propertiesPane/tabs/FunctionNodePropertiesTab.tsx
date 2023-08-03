@@ -1,6 +1,7 @@
 import { customTokens } from '../../../core';
 import { setConnectionInput } from '../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
+import { InputFormat } from '../../../models';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
 import { isCustomValue } from '../../../utils/Connection.Utils';
@@ -9,7 +10,8 @@ import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { LogCategory, LogService } from '../../../utils/Logging.Utils';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
-import { InputDropdown } from '../../inputDropdown/InputDropdown';
+import { InputDropdown } from '../../inputTypes/InputDropdown';
+import { InputTextbox } from '../../inputTypes/InputTextbox';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, Text, Tooltip, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
@@ -202,16 +204,25 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
                 return (
                   <div key={index} style={{ marginTop: 8 }}>
-                    <Tooltip relationship="label" content={input.tooltip || ''}>
-                      <InputDropdown
-                        currentNode={functionData}
-                        placeholder={input.placeHolder}
-                        inputName={getInputName(inputConnection)}
-                        inputValue={getInputValue(inputConnection)}
-                        inputIndex={index}
-                        inputAllowsCustomValues={input.allowCustomInput}
-                      />
-                    </Tooltip>
+                    {input.inputEntryType === InputFormat.TextBox && (
+                      <InputTextbox
+                        input={input}
+                        loadedInputValue={getInputValue(inputConnection)}
+                        functionNode={functionData}
+                      ></InputTextbox>
+                    )}
+                    {input.inputEntryType !== InputFormat.TextBox && (
+                      <Tooltip relationship="label" content={input.tooltip || ''}>
+                        <InputDropdown
+                          currentNode={functionData}
+                          placeholder={input.placeHolder}
+                          inputName={getInputName(inputConnection)}
+                          inputValue={getInputValue(inputConnection)}
+                          inputIndex={index}
+                          inputAllowsCustomValues={input.allowCustomInput}
+                        />
+                      </Tooltip>
+                    )}
                   </div>
                 );
               })}

@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Peringatan: tipe node input tidak cocok dengan tipe node skema"
     }
   ],
   "+0cO6t": [
@@ -1168,7 +1168,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Peringatan: tipe node input tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
   "6ZviI7": [
@@ -1921,7 +1921,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Peringatan: nilai kustom tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
   "BFTwRN": [
@@ -5184,7 +5184,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Nilai kustom)"
     }
   ],
   "WgoP7R": [
@@ -8311,7 +8311,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Peringatan: nilai kustom tidak cocok dengan tipe node skema"
     }
   ],
   "sVQe34": [
