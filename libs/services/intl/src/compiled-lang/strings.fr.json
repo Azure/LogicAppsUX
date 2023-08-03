@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Avertissement : le type de nœud d’entrée ne correspond pas au type du nœud de schéma"
     }
   ],
   "+0cO6t": [
@@ -1176,7 +1176,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Avertissement : le type de nœud d’entrée ne correspond pas aux types autorisés pour cette entrée"
     }
   ],
   "6ZviI7": [
@@ -1951,7 +1951,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Avertissement : la valeur personnalisée ne correspond pas à l’un des types autorisés pour cette entrée"
     }
   ],
   "BFTwRN": [
@@ -5280,7 +5280,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(valeur personnalisée}"
     }
   ],
   "WgoP7R": [
@@ -8481,7 +8481,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Avertissement : la valeur personnalisée ne correspond pas au type du nœud de schéma"
     }
   ],
   "sVQe34": [
