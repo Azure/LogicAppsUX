@@ -19,8 +19,8 @@ type ChatBubbleProps = {
   isEmphasized?: boolean;
   footerActions?: IButtonProps[];
   className?: string;
-  selectedReaction?: string; // TODO: store as something else potentially?
-  onThumbsReactionClicked?: (reaction: string) => void;
+  selectedReaction?: ChatEntryReaction;
+  onThumbsReactionClicked?: (reaction: ChatEntryReaction) => void;
   disabled?: boolean;
 };
 

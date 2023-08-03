@@ -1,4 +1,3 @@
-import Sparkle from '../images/sparkle.svg';
 import { FontSizes, getTheme, IconButton, mergeStyles, mergeStyleSets, TextField } from '@fluentui/react';
 import type { IButtonProps, IStyle, ITextField, ITextFieldStyles } from '@fluentui/react';
 import React from 'react';
@@ -88,9 +87,7 @@ export const ChatInput: React.FC<IChatInputProps> = ({
       <div className={footerClassName}>
         <div>
           {footerActionsProps?.map((actionProps, index) => (
-            <IconButton key={index} {...actionProps} disabled={disabled || actionProps.disabled}>
-              <img src={Sparkle} alt="Actions" />
-            </IconButton>
+            <IconButton key={index} {...actionProps} disabled={disabled || actionProps.disabled} />
           ))}
         </div>
         <IconButton {...submitButtonProps} disabled={disabled || submitButtonProps.disabled} />

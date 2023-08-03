@@ -1,26 +1,24 @@
 import { Confirm } from '../../dialogs/confirm';
+import { useFeedbackMessage, useReportBugButton } from '../helper';
 import { ChatBubble } from './chatBubble';
 import { UndoStatus, type AssistantReplyWithFlowItem } from './conversationItem';
-import { FeedbackMessage } from './feedbackMessage';
+import { FlowDiffPreview } from './flowDiffPreview';
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { FlowDiffPreview } from './flowDiffPreview';
 
 type AssistantReplyWithFlowProps = {
   item: AssistantReplyWithFlowItem;
 };
 
 export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ item }) => {
+  const reportBugButton = useReportBugButton(false);
+  const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const [isUndoConfirmationOpen, setIsUndoConfirmationOpen] = React.useState<boolean>(false);
   const intl = useIntl();
   const intlText = {
     actionUndone: intl.formatMessage({
       defaultMessage: 'Action undone',
       description: 'Chatbot action was undone text',
-    }),
-    reportABugText: intl.formatMessage({
-      defaultMessage: 'Report a bug',
-      description: 'Chatbot report a bug button',
     }),
     undo: intl.formatMessage({
       defaultMessage: 'Undo',
@@ -77,12 +75,7 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
   }
 
   // TODO: add check for if isUsingDebugOptions
-  footerActions.push({
-    text: intlText.reportABugText,
-    //TODO: add onClick: () => onReportBugClick(item),
-    iconProps: { iconName: 'Bug' },
-    disabled: false, // TODO: add isBlockingOperationInProgress,
-  });
+  footerActions.push(reportBugButton);
 
   return (
     <div>
@@ -91,8 +84,8 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
         isUserMessage={false}
         isAIGenerated={true}
         date={item.date}
-        selectedReaction={item.reaction}
-        onThumbsReactionClicked={(reaction) => reaction} // TODO: add onMessageReactionClicked(item, reaction)}
+        selectedReaction={reaction}
+        onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         footerActions={footerActions}
       >
         <FlowDiffPreview />
@@ -104,7 +97,7 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
           onDismiss={() => setIsUndoConfirmationOpen(false)}
         />
       </ChatBubble>
-      <FeedbackMessage item={item} />
+      {feedbackMessage}
     </div>
   );
 };

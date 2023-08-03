@@ -1,7 +1,7 @@
+import { useFeedbackMessage } from '../helper';
 import { ChatBubble } from './chatBubble';
 import { ConnectionsLoading, ConnectionStatusList } from './connectionStatus';
 import type { ConnectionsSetupItem } from './conversationItem';
-import { FeedbackMessage } from './feedbackMessage';
 import { css } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -34,6 +34,7 @@ type ConnectionsSetupProps = {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ConnectionsSetup: React.FC<ConnectionsSetupProps> = ({ item }) => {
+  const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const isLoading = false;
   const [isHidden, setIsHidden] = React.useState(true);
   const intl = useIntl();
@@ -75,14 +76,14 @@ const ConnectionsSetup: React.FC<ConnectionsSetupProps> = ({ item }) => {
             iconProps: { iconName: 'Forward' },
           },
         ]}
-        selectedReaction={item.reaction}
-        onThumbsReactionClicked={(reaction) => reaction} //TODO
+        selectedReaction={reaction}
+        onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         className={css('msla-connections-bubble', isHidden && HIDDEN_CLASS)}
         disabled={false} //TODO
       >
         <div className={'msla-connections-message'}>{intlText.connectionsSetupCardDescription}</div>
       </ChatBubble>
-      <FeedbackMessage item={item} />
+      {feedbackMessage}
     </div>
   );
 };

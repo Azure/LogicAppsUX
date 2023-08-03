@@ -1,15 +1,17 @@
 import { ChatBubble } from './chatBubble';
-import type { ReactionItem } from './conversationItem';
 import { ChatEntryReaction } from './conversationItem';
 import { Link, mergeStyles } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
 type FeedbackMessageProps = {
-  item: ReactionItem;
+  id: string;
+  date: Date;
+  reaction: ChatEntryReaction | undefined;
+  askFeedback: boolean;
 };
 
-export const FeedbackMessage: React.FC<FeedbackMessageProps> = ({ item }) => {
+export const FeedbackMessage: React.FC<FeedbackMessageProps> = ({ id, date, reaction, askFeedback }) => {
   const intl = useIntl();
   const intlText = {
     feedbackCardPanelTitle: intl.formatMessage({
@@ -25,28 +27,32 @@ export const FeedbackMessage: React.FC<FeedbackMessageProps> = ({ item }) => {
       description: 'Chatbot feedback card link asking what user liked about the feature',
     }),
   };
-  return item.askFeedback ? (
+  return askFeedback ? (
     <ChatBubble
-      key={item.id}
+      key={id}
       isUserMessage={false}
       isAIGenerated={false}
-      date={item.date}
+      date={date}
       isMarkdownMessage={false}
       className={mergeStyles({ marginTop: 8 })}
     >
-      {item.reaction === ChatEntryReaction.thumbsUp && (
+      {reaction === ChatEntryReaction.thumbsUp && (
         <Link
+          className="msla-feedbackmessage-link"
           // TODO: onClick={} openFeedbackPanel(item)}
-          text={intlText.feedbackCardThumbsUpLinkText}
           isUnderlinedStyle={true}
-        />
+        >
+          {intlText.feedbackCardThumbsUpLinkText}
+        </Link>
       )}
-      {item.reaction === ChatEntryReaction.thumbsDown && (
+      {reaction === ChatEntryReaction.thumbsDown && (
         <Link
+          className="msla-feedbackmessage-link"
           // TODO: onClick={} openFeedbackPanel(item)}
-          text={intlText.feedbackCardThumbsUpLinkText}
           isUnderlinedStyle={true}
-        />
+        >
+          {intlText.feedbackCardThumbsDownLinkText}
+        </Link>
       )}
     </ChatBubble>
   ) : null;
