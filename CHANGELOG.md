@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [2.56.0](https://github.com/Azure/LogicAppsUX/compare/v2.55.0...v2.56.0) (2023-08-03)
+
+
+### Features
+
+* **data mapper:** XPath function now works (when backend makes metadata change) ([#3065](https://github.com/Azure/LogicAppsUX/issues/3065)) ([66a1666](https://github.com/Azure/LogicAppsUX/commit/66a16662bd2dd2bf585fed25bd85f9425b34eedd))
+* **designer:** Add IConnectionParameterEditorService to support customization of connections fields ([#3038](https://github.com/Azure/LogicAppsUX/issues/3038)) ([402cf8a](https://github.com/Azure/LogicAppsUX/commit/402cf8a798dc507a7b6e8a6608df4edd09074699))
+* **designer:** File system client configure password as App settings ([#3069](https://github.com/Azure/LogicAppsUX/issues/3069)) ([cb80021](https://github.com/Azure/LogicAppsUX/commit/cb800216e756e25836214945d9d0a823a2b4da1a))
+* **ia:** Support Premium IA in artifact service ([#3063](https://github.com/Azure/LogicAppsUX/issues/3063)) ([07eaaed](https://github.com/Azure/LogicAppsUX/commit/07eaaed170001d6ac3753c61cdc93c859effe9ec))
+
+
+### Bug Fixes
+
+* **data mapper:** custom code input ([#3049](https://github.com/Azure/LogicAppsUX/issues/3049)) ([6de3020](https://github.com/Azure/LogicAppsUX/commit/6de302011f7387959dd7ae7f0758676bffe524ba))
+* **Designer:** Disabled operation schema validation when parsing incoming swaggers ([#3066](https://github.com/Azure/LogicAppsUX/issues/3066)) ([b492287](https://github.com/Azure/LogicAppsUX/commit/b492287aa70d5999251dd62f28a7a353ce99f533))
+* **vscode:** Add swagger to supported operations list ([#3076](https://github.com/Azure/LogicAppsUX/issues/3076)) ([b792a97](https://github.com/Azure/LogicAppsUX/commit/b792a977aee87feae3496c5e00a35097a0650f02))
 
 ## [2.55.0](https://github.com/Azure/LogicAppsUX/compare/v2.54.0...v2.55.0) (2023-07-31)
 
