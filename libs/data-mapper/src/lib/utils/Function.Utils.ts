@@ -232,3 +232,28 @@ export const getInputValue = (inputConnection: InputConnection | undefined) => {
 
   return undefined;
 };
+
+export const addQuotesToString = (value: string) => {
+  let formattedValue = value;
+
+  const quote = '"';
+  if (!value.startsWith(quote)) {
+    formattedValue = quote.concat(value);
+  }
+  if (!value.endsWith(quote)) {
+    formattedValue = formattedValue.concat(quote);
+  }
+  return formattedValue;
+};
+
+export const removeQuotesFromString = (value: string) => {
+  let formattedValue = value;
+  const quote = '"';
+  if (formattedValue.endsWith(quote)) {
+    formattedValue = formattedValue.substring(0, value.length - 1);
+  }
+  if (formattedValue.startsWith(quote)) {
+    formattedValue = formattedValue.replace(quote, '');
+  }
+  return formattedValue;
+};

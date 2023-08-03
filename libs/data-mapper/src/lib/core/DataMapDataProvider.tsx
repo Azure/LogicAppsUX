@@ -8,7 +8,7 @@ import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
 import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
-import { loadFunctions } from './state/FunctionSlice';
+import { loadCustomFunctionPaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
@@ -23,6 +23,7 @@ export interface DataMapDataProviderProps {
   sourceSchema?: Schema;
   targetSchema?: Schema;
   availableSchemas?: string[];
+  customFunctionsPaths?: string[];
   fetchedFunctions?: FunctionData[];
   theme?: ThemeType;
   children?: React.ReactNode;
@@ -37,6 +38,7 @@ const DataProviderInner = ({
   targetSchema,
   availableSchemas,
   fetchedFunctions,
+  customFunctionsPaths,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
@@ -107,6 +109,12 @@ const DataProviderInner = ({
       dispatch(loadFunctions(fetchedFunctions ?? []));
     }
   }, [dispatch, fetchedFunctions]);
+
+  useEffect(() => {
+    if (customFunctionsPaths) {
+      dispatch(loadCustomFunctionPaths(customFunctionsPaths ?? []));
+    }
+  }, [dispatch, customFunctionsPaths]);
 
   return <>{children}</>;
 };

@@ -3,7 +3,7 @@ import type { IStackTokens } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
 import { Combobox, makeStyles, shorthands, Text, tokens, Option } from '@fluentui/react-components';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 export type FileDropdownProps = {
   allPathOptions: string[];
@@ -12,6 +12,7 @@ export type FileDropdownProps = {
   relativePathMessage: string;
   placeholder: string;
   ariaLabel: string;
+  loadedSelection: string;
 };
 
 const useStyles = makeStyles({
@@ -28,34 +29,13 @@ const useStyles = makeStyles({
 
 export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownProps) => {
   const styles = useStyles();
-  // intl
-  //  const intl = useIntl();
-
-  //   const folderLocationLabel = intl.formatMessage({
-  //     defaultMessage: 'Existing schemas from',
-  //     description: 'Schema dropdown aria label',
-  //   });
-  //   const dropdownAriaLabel = intl.formatMessage({
-  //     defaultMessage: 'Select the schema for dropdown',
-  //     description: 'Schema dropdown aria label',
-  //   });
-  //   const schemaDropdownPlaceholder = useMemo(() => {
-  //     if (props.schemaType === SchemaType.Source) {
-  //       return intl.formatMessage({
-  //         defaultMessage: 'Select a source schema',
-  //         description: 'Source schema dropdown placeholder',
-  //       });
-  //     } else {
-  //       return intl.formatMessage({
-  //         defaultMessage: 'Select a target schema',
-  //         description: 'Target schema dropdown placeholder',
-  //       });
-  //     }
-  //   }, [intl, props.schemaType]);
 
   const [matchingOptions, setMatchingOptions] = React.useState([...props.allPathOptions]);
+  const [typedInput, setTypedInput] = React.useState(props.loadedSelection || '');
 
   const setSelectedSchema = props.setSelectedPath;
+
+  useEffect(() => setTypedInput(props.loadedSelection), [setTypedInput, props.loadedSelection]);
 
   const onSelectOption = useCallback(
     (option?: string) => {
@@ -66,6 +46,7 @@ export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownPro
 
   const updateOptions: ComboboxProps['onChange'] = (event) => {
     const value = event.target.value.trim();
+    setTypedInput(value);
     if (value && value.length > 0) {
       const matches = props.allPathOptions.filter((o) => o.toLowerCase().indexOf(value?.toLowerCase()) !== -1);
       setMatchingOptions(matches);
@@ -82,6 +63,11 @@ export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownPro
       ? sortedOptions.map((option) => OptionWithPath(option))
       : props.allPathOptions.map((option) => OptionWithPath(option));
 
+  const onOptionSelect = (value: string) => {
+    setTypedInput(value);
+    props.setSelectedPath(value);
+  };
+
   return (
     <>
       <Text size={200}>{props.relativePathMessage}</Text>
@@ -90,11 +76,14 @@ export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownPro
         aria-label={props.ariaLabel}
         placeholder={props.placeholder}
         onChange={updateOptions}
-        onOptionSelect={(e, data) => props.setSelectedPath(data.optionValue)}
+        onOptionSelect={(e, data) => {
+          if (data.optionText) onOptionSelect(data.optionText);
+        }}
         freeform={true}
         autoComplete="on"
         className={styles.combobox}
         appearance="outline"
+        value={typedInput}
       >
         {formattedOptions}
       </Combobox>

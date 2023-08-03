@@ -97,6 +97,7 @@ export interface DataMapperDesignerProps {
   saveDraftStateCall?: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
+  readCurrentCustomFunctionsOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
   setFunctionDisplayExpanded: (isFunctionDisplaySimple: boolean) => void;
   useExpandedFunctionCards: boolean;
@@ -108,6 +109,7 @@ export const DataMapperDesigner = ({
   saveDraftStateCall,
   addSchemaFromFile,
   readCurrentSchemaOptions,
+  readCurrentCustomFunctionsOptions,
   setIsMapStateDirty,
   setFunctionDisplayExpanded,
   useExpandedFunctionCards,
@@ -136,6 +138,8 @@ export const DataMapperDesigner = ({
   const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
   const [showMapOverview, setShowMapOverview] = useState(false);
   const [showGlobalView, setShowGlobalView] = useState(false);
+
+  useEffect(() => readCurrentCustomFunctionsOptions && readCurrentCustomFunctionsOptions(), [readCurrentCustomFunctionsOptions]);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {

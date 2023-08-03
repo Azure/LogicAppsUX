@@ -21,6 +21,7 @@ export interface DataMapLoadingState {
   xsltFilename: string;
   xsltContent: string;
   fetchedFunctions?: FunctionData[];
+  customFunctionPaths: string[];
 }
 
 const initialState: DataMapLoadingState = {
@@ -30,6 +31,7 @@ const initialState: DataMapLoadingState = {
   xsltFilename: '',
   xsltContent: '',
   fetchedFunctions: [...functionMock],
+  customFunctionPaths: ['folder/file.xslt', 'file2.xslt'],
 };
 
 export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunkAPI) => {

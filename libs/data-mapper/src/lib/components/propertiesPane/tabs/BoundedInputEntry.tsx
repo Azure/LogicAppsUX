@@ -1,12 +1,15 @@
+import { setConnectionInput } from '../../../core/state/DataMapSlice';
+import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionInput } from '../../../models';
 import { InputFormat } from '../../../models';
 import type { Connection, ConnectionDictionary } from '../../../models/Connection';
-import { getInputName, getInputValue } from '../../../utils/Function.Utils';
+import { addQuotesToString, getInputName, getInputValue, removeQuotesFromString } from '../../../utils/Function.Utils';
 import { FileDropdown } from '../../fileDropdown/fileDropdown';
 import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { InputTextbox } from '../../inputTypes/InputTextbox';
 import { Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface BoundedInputEntryProps {
   index: number;
@@ -18,6 +21,10 @@ export interface BoundedInputEntryProps {
 
 export const BoundedInputEntry = ({ index, input, functionData, connection, connectionDictionary }: BoundedInputEntryProps) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+
+  const pathOptions = useSelector((state: RootState) => state.function.customFunctionPaths);
   const inputConnection = !connection
     ? undefined
     : Object.values(connection.inputs).length > 1
@@ -47,13 +54,22 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
         defaultMessage: 'Dropdown to select filepath ',
         description: 'Label of the file path selection box',
       });
-      const customFunctionPath = 'DataMapper/Extension/Functions';
+      const customFunctionPath = 'DataMapper/Extensions/Functions';
       inputBox = (
         <FileDropdown
-          allPathOptions={['abc']}
+          loadedSelection={removeQuotesFromString((connection?.inputs[0][0] as string) || '')}
+          allPathOptions={pathOptions}
           placeholder={placeholder}
-          setSelectedPath={(_item: string | undefined) => {
-            return null;
+          setSelectedPath={(item: string | undefined) => {
+            if (item && selectedItemKey && pathOptions.find((path) => path === item))
+              dispatch(
+                setConnectionInput({
+                  targetNode: functionData,
+                  targetNodeReactFlowKey: selectedItemKey,
+                  inputIndex: 0,
+                  input: addQuotesToString(item),
+                })
+              );
           }}
           relativePathMessage={`${relativePathMessage} ${customFunctionPath}`}
           errorMessage="errormessage"
