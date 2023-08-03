@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.55.3](https://github.com/Azure/LogicAppsUX/compare/v2.55.2...v2.55.3) (2023-08-03)
+
+
+### Features
+
+* **designer:** File system client configure password as App settings… ([#3081](https://github.com/Azure/LogicAppsUX/issues/3081)) ([d548d2d](https://github.com/Azure/LogicAppsUX/commit/d548d2dca62a9418d96e539321d275d6ecf306c8)), closes [#3069](https://github.com/Azure/LogicAppsUX/issues/3069)
+
 ### [2.55.2](https://github.com/Azure/LogicAppsUX/compare/v2.55.1...v2.55.2) (2023-08-01)
 
 
