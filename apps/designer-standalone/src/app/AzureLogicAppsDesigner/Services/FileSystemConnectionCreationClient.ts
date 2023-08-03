@@ -83,11 +83,20 @@ export class FileSystemConnectionCreationClient implements ConnectionCreationCli
     };
   };
 
+  escapeSpecialChars = (value: string): string => {
+    const escapedUnderscore = value.replace(/_/g, '__');
+    return escapedUnderscore.replace(/-/g, '_1');
+  };
+
   connectionCreationFunc = async (connectionInfo: ConnectionCreationInfo, connectionName: string): Promise<ConnectionCreationInfo> => {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient } = this.options;
     const newFileShareConfig = FileSystemConnectionCreationClient.createConfigFromConnectionParameters(connectionInfo, connectionName);
     const configBaseUrl = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/config/azurestorageaccounts`;
     const configFetchUrl = `${configBaseUrl}/list`;
+
+    const password = newFileShareConfig.accessKey;
+    const appSettingNameForPassword = `${this.escapeSpecialChars(connectionName)}_password`;
+    newFileShareConfig.accessKey = `@AppSettingRef(${appSettingNameForPassword})`;
 
     const response = await httpClient.post<any, ConfigMap>({
       uri: configFetchUrl,
@@ -102,10 +111,10 @@ export class FileSystemConnectionCreationClient implements ConnectionCreationCli
     });
 
     const mountPath = `C:${newFileShareConfig.mountPath}`;
-
     return {
       ...connectionInfo,
       connectionParameters: { mountPath: mountPath },
+      appSettings: { [appSettingNameForPassword]: password },
     };
   };
 }
