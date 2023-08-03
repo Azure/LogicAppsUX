@@ -9,7 +9,7 @@ import {
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import type { Connection, ConnectionDictionary } from '../models/Connection';
+import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
@@ -211,4 +211,24 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
   }
 
   return nodeName;
+};
+
+export const getInputName = (inputConnection: InputConnection | undefined, connectionDictionary: ConnectionDictionary) => {
+  if (inputConnection) {
+    return isCustomValue(inputConnection)
+      ? inputConnection
+      : isSchemaNodeExtended(inputConnection.node)
+      ? inputConnection.node.name
+      : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+  }
+
+  return undefined;
+};
+
+export const getInputValue = (inputConnection: InputConnection | undefined) => {
+  if (inputConnection) {
+    return isCustomValue(inputConnection) ? inputConnection : inputConnection.reactFlowKey;
+  }
+
+  return undefined;
 };

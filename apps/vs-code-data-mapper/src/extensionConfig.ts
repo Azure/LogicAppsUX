@@ -4,9 +4,11 @@ export const outputChannelPrefix = 'azureLogicAppsDataMapper';
 
 export const supportedDataMapDefinitionFileExts = ['.yml'];
 export const supportedSchemaFileExts = ['.xsd', '.json'];
+export const supportedCustomFunctionFileExts = ['.xslt'];
 
 const artifactsPath = '/Artifacts/';
 export const schemasPath = `${artifactsPath}/Schemas`;
+export const customFunctionsPath = `${artifactsPath}/DataMapper/Extensions/Functions`;
 export const dataMapsPath = `${artifactsPath}/Maps`;
 export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
 export const workflowDesignTimeDir = '/workflow-designtime';

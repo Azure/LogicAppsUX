@@ -71,7 +71,7 @@ export const App = () => {
 
   const readLocalFileOptions = useCallback(() => {
     sendMsgToVsix({
-      command: 'readLocalFileOptions',
+      command: 'readLocalSchemaFileOptions',
     });
   }, [sendMsgToVsix]);
 

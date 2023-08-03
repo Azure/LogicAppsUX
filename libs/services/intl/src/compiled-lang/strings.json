@@ -245,6 +245,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "07Axz0": [
+    {
+      "type": 0,
+      "value": "Select file"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -1279,6 +1285,12 @@
     {
       "type": 0,
       "value": "Data type"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -7367,6 +7379,12 @@
     {
       "type": 0,
       "value": "Stateless run mode:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
