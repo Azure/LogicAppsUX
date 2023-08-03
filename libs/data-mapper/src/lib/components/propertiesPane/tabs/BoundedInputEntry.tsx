@@ -24,7 +24,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
   const dispatch = useDispatch();
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
-  const pathOptions = useSelector((state: RootState) => state.function.customFunctionPaths);
+  const pathOptions = useSelector((state: RootState) => state.function.customXsltFilePaths);
   const inputConnection = !connection
     ? undefined
     : Object.values(connection.inputs).length > 1
@@ -54,7 +54,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
         defaultMessage: 'Dropdown to select filepath ',
         description: 'Label of the file path selection box',
       });
-      const customFunctionPath = 'DataMapper/Extensions/Functions';
+      const customXsltPath = 'DataMapper/Extensions/InlineXslt';
       inputBox = (
         <FileDropdown
           loadedSelection={removeQuotesFromString((connection?.inputs[0][0] as string) || '')}
@@ -71,7 +71,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
                 })
               );
           }}
-          relativePathMessage={`${relativePathMessage} ${customFunctionPath}`}
+          relativePathMessage={`${relativePathMessage} ${customXsltPath}`}
           errorMessage="errormessage"
           ariaLabel={ariaLabel}
         />

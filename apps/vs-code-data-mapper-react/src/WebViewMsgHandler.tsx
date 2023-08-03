@@ -1,5 +1,5 @@
 import {
-  changeCustomFunctionList,
+  changeCustomXsltPathList,
   changeDataMapMetadata,
   changeMapDefinition,
   changeRuntimePort,
@@ -54,8 +54,8 @@ export const WebViewMsgHandler = ({ children }: WebViewMsgHandlerProps) => {
       case 'showAvailableSchemas':
         dispatch(changeSchemaList(msg.data));
         break;
-      case 'getAvailableFunctionPaths':
-        dispatch(changeCustomFunctionList(msg.data));
+      case 'getAvailableCustomXsltPaths':
+        dispatch(changeCustomXsltPathList(msg.data));
         break;
       case 'setXsltData':
         dispatch(changeXsltFilename(msg.data.filename));

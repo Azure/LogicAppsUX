@@ -43,7 +43,7 @@ export const App = () => {
   const targetSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.targetSchemaFilename);
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
-  const customFunctionPathsList = useSelector((state: RootState) => state.dataMapDataLoader.customFunctionPathsList);
+  const customXsltPathsList = useSelector((state: RootState) => state.dataMapDataLoader.customXsltPathsList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
   const useExpandedFunctionCards = useSelector((state: RootState) => state.dataMapDataLoader.useExpandedFunctionCards);
 
@@ -76,9 +76,9 @@ export const App = () => {
     });
   }, [sendMsgToVsix]);
 
-  const readLocalFunctionFileOptions = useCallback(() => {
+  const readLocalxsltFileOptions = useCallback(() => {
     sendMsgToVsix({
-      command: 'readLocalFunctionFileOptions',
+      command: 'readLocalCustomXsltFileOptions',
     });
   }, [sendMsgToVsix]);
 
@@ -221,7 +221,7 @@ export const App = () => {
         sourceSchema={sourceSchema}
         targetSchema={targetSchema}
         availableSchemas={schemaFileList}
-        customFunctionsPaths={customFunctionPathsList}
+        customXsltPaths={customXsltPathsList}
         fetchedFunctions={fetchedFunctions}
         // Passed in here too so it can be managed in the Redux store so components can track the current theme
         theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
@@ -232,7 +232,7 @@ export const App = () => {
           saveDraftStateCall={saveDraftDataMapDefinition}
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalSchemaFileOptions}
-          readCurrentCustomFunctionsOptions={readLocalFunctionFileOptions}
+          readCurrentCustomXsltPathOptions={readLocalxsltFileOptions}
           setIsMapStateDirty={setIsMapStateDirty}
           setFunctionDisplayExpanded={setFunctionDisplayExpanded}
           useExpandedFunctionCards={useExpandedFunctionCards}

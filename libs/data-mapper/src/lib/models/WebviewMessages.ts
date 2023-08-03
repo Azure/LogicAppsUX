@@ -17,7 +17,7 @@ export type MessageToWebview =
   | { command: 'fetchSchema'; data: FetchSchemaData }
   | { command: 'loadDataMap'; data: MapDefinitionData }
   | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'getAvailableFunctionPaths'; data: string[] }
+  | { command: 'getAvailableCustomXsltPaths'; data: string[] }
   | { command: 'setXsltData'; data: XsltData }
   | { command: 'setRuntimePort'; data: string }
   | { command: 'getConfigurationSetting'; data: boolean };
@@ -32,7 +32,7 @@ export type MessageToVsix =
       data: string;
     }
   | {
-      command: 'webviewLoaded' | 'readLocalSchemaFileOptions' | 'readLocalFunctionFileOptions';
+      command: 'webviewLoaded' | 'readLocalSchemaFileOptions' | 'readLocalCustomXsltFileOptions';
     }
   | {
       command: 'webviewRscLoadError';

@@ -29,7 +29,7 @@ const workflowSchemaFilenames = [
   'a/b/c.json',
 ];
 
-const customFunctionPath = ['folder/file.xslt', 'file2.xslt'];
+const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
 
 export const DataMapperStandaloneDesigner = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -103,7 +103,7 @@ export const DataMapperStandaloneDesigner = () => {
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
             availableSchemas={workflowSchemaFilenames}
-            customFunctionsPaths={customFunctionPath}
+            customXsltPaths={customXsltPath}
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >

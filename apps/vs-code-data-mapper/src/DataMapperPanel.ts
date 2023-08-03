@@ -6,9 +6,9 @@ import {
   mapDefinitionExtension,
   mapXsltExtension,
   schemasPath,
-  customFunctionsPath,
+  customXsltPath,
   supportedSchemaFileExts,
-  supportedCustomFunctionFileExts,
+  supportedCustomXsltFileExts,
 } from './extensionConfig';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -46,9 +46,9 @@ export default class DataMapperPanel {
 
     // watch folder for file changes
     const schemaFolderWatcher = this.watchFolderForChanges(schemasPath, supportedSchemaFileExts, this.handleReadSchemaFileOptions);
-    const customFunctionsFolderWatcher = this.watchFolderForChanges(
-      customFunctionsPath,
-      supportedCustomFunctionFileExts,
+    const customXsltFolderWatcher = this.watchFolderForChanges(
+      customXsltPath,
+      supportedCustomXsltFileExts,
       this.handleReadAvailableFunctionPaths
     );
 
@@ -59,7 +59,7 @@ export default class DataMapperPanel {
       () => {
         delete DataMapperExt.panelManagers[this.dataMapName];
         schemaFolderWatcher.dispose();
-        customFunctionsFolderWatcher.dispose();
+        customXsltFolderWatcher.dispose();
       },
       null,
       DataMapperExt.context.subscriptions
@@ -122,7 +122,7 @@ export default class DataMapperPanel {
         this.handleReadSchemaFileOptions();
         break;
       }
-      case 'readLocalFunctionFileOptions': {
+      case 'readLocalCustomXsltFileOptions': {
         this.handleReadAvailableFunctionPaths();
         break;
       }
@@ -205,17 +205,17 @@ export default class DataMapperPanel {
   }
 
   public handleReadAvailableFunctionPaths() {
-    return this.getFilesForPath(customFunctionsPath, 'getAvailableFunctionPaths', supportedCustomFunctionFileExts);
+    return this.getFilesForPath(customXsltPath, 'getAvailableCustomXsltPaths', supportedCustomXsltFileExts);
   }
 
-  private getFilesForPath(folderPath: string, command: 'showAvailableSchemas' | 'getAvailableFunctionPaths', fileTypes: string[]) {
+  private getFilesForPath(folderPath: string, command: 'showAvailableSchemas' | 'getAvailableCustomXsltPaths', fileTypes: string[]) {
     fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
         this.getNestedFilePaths(file, '', filesToDisplay, fileTypes);
       }),
         this.sendMsgToWebview({
-          command,
+          command: 'getAvailableCustomXsltPaths',
           data: filesToDisplay,
         });
     });

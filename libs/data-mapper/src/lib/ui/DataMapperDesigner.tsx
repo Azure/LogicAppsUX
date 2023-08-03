@@ -97,7 +97,7 @@ export interface DataMapperDesignerProps {
   saveDraftStateCall?: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
-  readCurrentCustomFunctionsOptions?: () => void;
+  readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
   setFunctionDisplayExpanded: (isFunctionDisplaySimple: boolean) => void;
   useExpandedFunctionCards: boolean;
@@ -109,7 +109,7 @@ export const DataMapperDesigner = ({
   saveDraftStateCall,
   addSchemaFromFile,
   readCurrentSchemaOptions,
-  readCurrentCustomFunctionsOptions,
+  readCurrentCustomXsltPathOptions,
   setIsMapStateDirty,
   setFunctionDisplayExpanded,
   useExpandedFunctionCards,
@@ -139,7 +139,7 @@ export const DataMapperDesigner = ({
   const [showMapOverview, setShowMapOverview] = useState(false);
   const [showGlobalView, setShowGlobalView] = useState(false);
 
-  useEffect(() => readCurrentCustomFunctionsOptions && readCurrentCustomFunctionsOptions(), [readCurrentCustomFunctionsOptions]);
+  useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
