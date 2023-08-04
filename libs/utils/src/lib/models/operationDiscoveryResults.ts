@@ -30,6 +30,7 @@ export interface SomeKindOfAzureOperationDiscovery {
   capabilities?: string[];
   isNotification?: boolean;
   api: OperationApi;
+  displayApi?: OperationApi;
   description: string;
   operationType?: string;
   operationKind?: string;
@@ -54,6 +55,7 @@ export interface BuiltInOperation {
     status: string;
   };
   api: OperationApi;
+  displayApi?: OperationApi;
   description: string;
   operationType: 'serviceProvider' | string;
   operationKind?: string;

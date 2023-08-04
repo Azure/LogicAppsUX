@@ -61,7 +61,8 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
     if (!allOperations || !selectedOperationGroupId) return;
     const filteredOps = allOperations.filter((operation) => {
       const apiId = operation.properties.api.id;
-      return areApiIdsEqual(apiId, selectedOperationGroupId);
+      const displayApiId = operation.properties.displayApi?.id || apiId;
+      return areApiIdsEqual(displayApiId, selectedOperationGroupId);
     });
     setAllOperationsForGroup(filteredOps);
     setSelectionState(SELECTION_STATES.DETAILS);

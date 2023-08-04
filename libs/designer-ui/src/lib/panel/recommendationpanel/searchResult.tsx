@@ -4,7 +4,7 @@ import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
 import { List, Spinner, Text } from '@fluentui/react';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import type { BuiltInOperation, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
@@ -36,7 +36,12 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   const intl = useIntl();
 
   const apiIds = useMemo(
-    () => Array.from(new Set(operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.api?.id))),
+    () =>
+      Array.from(
+        new Set(
+          operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.displayApi?.id || res.properties?.api?.id)
+        )
+      ),
     [operationSearchResults]
   );
 
@@ -60,9 +65,12 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   const onRenderOperationGroup = React.useCallback(
     (apiId: string | undefined, _index: number | undefined) => {
       if (!apiId) return;
-      const operations = operationSearchResults.filter((res) => res?.properties.api.id === apiId);
+      const operations = operationSearchResults.filter((res) => {
+        const displayApi = res?.properties.displayApi || res?.properties.api;
+        return displayApi?.id === apiId;
+      });
       if (operations.length === 0) return null;
-      const api = operations[0].properties.api;
+      const api = operations[0].properties.displayApi || operations[0].properties.api;
       return (
         <div style={{ marginBottom: '24px' }}>
           <OperationSearchGroup
@@ -129,8 +137,8 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   id: operation.id,
   title: operation.properties.summary,
   description: operation.properties.description,
-  brandColor: operation.properties.api.brandColor,
-  iconUri: operation.properties.api.iconUri,
+  brandColor: (operation.properties as BuiltInOperation).brandColor || operation.properties.api.brandColor,
+  iconUri: (operation.properties as BuiltInOperation).iconUri || operation.properties.api.iconUri,
   connectorName: operation.properties.api.displayName,
   category: getConnectorCategoryString(operation.properties.api.id),
   isTrigger: !!operation.properties?.trigger,
