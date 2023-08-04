@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Uyarı: Giriş düğümü türü şema düğümünün türüyle eşleşmiyor"
     }
   ],
   "+0cO6t": [
@@ -1168,7 +1168,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Uyarı: Giriş düğümü türü bu giriş için izin verilen türlerden biri ile eşleşmiyor"
     }
   ],
   "6ZviI7": [
@@ -1932,7 +1932,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Uyarı: Özel değer, bu giriş için izin verilen türlerden biriyle eşleşmiyor"
     }
   ],
   "BFTwRN": [
@@ -5216,7 +5216,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Özel değer)"
     }
   ],
   "WgoP7R": [
@@ -8368,7 +8368,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Uyarı: Özel değer şema düğümünün türüyle eşleşmiyor"
     }
   ],
   "sVQe34": [

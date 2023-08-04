@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
     }
   ],
   "+0cO6t": [
@@ -1168,7 +1168,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Avviso: il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input"
     }
   ],
   "6ZviI7": [
@@ -1943,7 +1943,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Avviso: il valore personalizzato non corrisponde a uno dei tipi consentiti per questo input"
     }
   ],
   "BFTwRN": [
@@ -5272,7 +5272,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Valore personalizzato)"
     }
   ],
   "WgoP7R": [
@@ -8461,7 +8461,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Avviso: il valore personalizzato non corrisponde al tipo del nodo dello schema"
     }
   ],
   "sVQe34": [

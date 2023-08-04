@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Ostrzeżenie: typ węzła danych wejściowych jest niezgodny z typem węzła schematu"
     }
   ],
   "+0cO6t": [
@@ -1184,7 +1184,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Ostrzeżenie: typ węzła danych wejściowych nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
   "6ZviI7": [
@@ -1970,7 +1970,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Ostrzeżenie: wartość niestandardowa nie jest zgodna z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
   "BFTwRN": [
@@ -5344,7 +5344,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(wartość niestandardowa)"
     }
   ],
   "WgoP7R": [
@@ -8590,7 +8590,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Ostrzeżenie: wartość niestandardowa jest niezgodna z typem węzła schematu"
     }
   ],
   "sVQe34": [
