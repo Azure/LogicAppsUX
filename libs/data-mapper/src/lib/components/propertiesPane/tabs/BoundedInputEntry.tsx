@@ -42,10 +42,6 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
       );
       break;
     case InputFormat.FilePicker: {
-      const placeholder = intl.formatMessage({
-        defaultMessage: 'Select file',
-        description: 'Indicates user should choose a file',
-      });
       const relativePathMessage = intl.formatMessage({
         defaultMessage: 'Select function from ',
         description: 'Path to the function to select',
@@ -59,7 +55,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
         <FileDropdown
           loadedSelection={removeQuotesFromString((connection?.inputs[0][0] as string) || '')}
           allPathOptions={pathOptions}
-          placeholder={placeholder}
+          placeholder={`${relativePathMessage} ${customXsltPath}`}
           setSelectedPath={(item: string | undefined) => {
             if (item && selectedItemKey && pathOptions.find((path) => path === item))
               dispatch(
@@ -71,8 +67,8 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
                 })
               );
           }}
-          relativePathMessage={`${relativePathMessage} ${customXsltPath}`}
-          errorMessage="errormessage"
+          relativePathMessage={''}
+          errorMessage=""
           ariaLabel={ariaLabel}
         />
       );

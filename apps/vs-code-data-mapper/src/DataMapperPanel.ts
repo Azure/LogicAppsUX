@@ -58,8 +58,8 @@ export default class DataMapperPanel {
     this.panel.onDidDispose(
       () => {
         delete DataMapperExt.panelManagers[this.dataMapName];
-        schemaFolderWatcher.dispose();
-        customXsltFolderWatcher.dispose();
+        if (schemaFolderWatcher) schemaFolderWatcher.dispose();
+        if (customXsltFolderWatcher) customXsltFolderWatcher.dispose();
       },
       null,
       DataMapperExt.context.subscriptions
@@ -69,10 +69,13 @@ export default class DataMapperPanel {
   private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
     // Watch folder for changes to update available file list within Data Mapper
     const absoluteFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath);
-    const folderWatcher = workspace.createFileSystemWatcher(new RelativePattern(absoluteFolderPath, `**/*.{${fileExtensions.join()}}`));
-    folderWatcher.onDidCreate(fn);
-    folderWatcher.onDidDelete(fn);
-    return folderWatcher;
+    if (fileExistsSync(absoluteFolderPath)) {
+      const folderWatcher = workspace.createFileSystemWatcher(new RelativePattern(absoluteFolderPath, `**/*.{${fileExtensions.join()}}`));
+      folderWatcher.onDidCreate(fn);
+      folderWatcher.onDidDelete(fn);
+      return folderWatcher;
+    }
+    return;
   }
 
   private async _setWebviewHtml() {
@@ -205,7 +208,10 @@ export default class DataMapperPanel {
   }
 
   public handleReadAvailableFunctionPaths() {
-    return this.getFilesForPath(customXsltPath, 'getAvailableCustomXsltPaths', supportedCustomXsltFileExts);
+    const absoluteFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), customXsltPath);
+    if (fileExistsSync(absoluteFolderPath)) {
+      return this.getFilesForPath(customXsltPath, 'getAvailableCustomXsltPaths', supportedCustomXsltFileExts);
+    }
   }
 
   private getFilesForPath(folderPath: string, command: 'showAvailableSchemas' | 'getAvailableCustomXsltPaths', fileTypes: string[]) {
@@ -215,7 +221,7 @@ export default class DataMapperPanel {
         this.getNestedFilePaths(file, '', filesToDisplay, fileTypes);
       }),
         this.sendMsgToWebview({
-          command: 'getAvailableCustomXsltPaths',
+          command,
           data: filesToDisplay,
         });
     });

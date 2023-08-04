@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     ...shorthands.borderBottom('.5px', 'solid', tokens.colorNeutralStroke1),
   },
   combobox: {
-    width: '290px',
+    width: '100%',
   },
   errorMessage: {
     color: tokens.colorPaletteRedForeground1,
