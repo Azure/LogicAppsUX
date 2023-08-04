@@ -629,7 +629,7 @@ function TrackingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boo
   };
 
   const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
-    let trackedPropertiesInput: Record<string, any> = {}; // tslint:disable-line: no-any
+    let trackedPropertiesInput: Record<string, any> | undefined = {}; // tslint:disable-line: no-any
     if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
       trackedPropertiesInput = {};
       for (const key of Object.keys(newValue)) {
@@ -642,6 +642,10 @@ function TrackingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boo
 
         trackedPropertiesInput[key] = propertyValue;
       }
+    }
+    // if tracked properties is empty, set it to undefined
+    if (Object.keys(trackedPropertiesInput).length === 0) {
+      trackedPropertiesInput = undefined;
     }
 
     dispatch(
@@ -666,6 +670,11 @@ function TrackingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boo
         trackedPropertiesInput = newValue;
       }
     }
+
+    if (trackedPropertiesInput === '') {
+      trackedPropertiesInput = undefined;
+    }
+
     dispatch(
       updateNodeSettings({
         id: nodeId,
