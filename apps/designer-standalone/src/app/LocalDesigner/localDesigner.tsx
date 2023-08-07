@@ -1,4 +1,6 @@
 import type { RootState } from '../../state/store';
+import { CustomConnectionParameterEditorService } from './customConnectionParameterEditorService';
+import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
 import { Chatbot } from '@microsoft/chatbot';
@@ -127,9 +129,26 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
+const editorService = new CustomEditorService();
+
+const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+
 export const LocalDesigner = () => {
-  const { workflowDefinition, isReadOnly, isMonitoringView, isDarkMode, isConsumption, connections, runInstance, showChatBot, language } =
-    useSelector((state: RootState) => state.workflowLoader);
+  const {
+    workflowDefinition,
+    isReadOnly,
+    isMonitoringView,
+    isDarkMode,
+    isConsumption,
+    connections,
+    runInstance,
+    showChatBot,
+    workflowKind,
+    language,
+    areCustomEditorsEnabled,
+  } = useSelector((state: RootState) => state.workflowLoader);
+  editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
+  connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const designerProviderProps = {
     services: {
       connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
@@ -142,6 +161,8 @@ export const LocalDesigner = () => {
       workflowService,
       hostService,
       runService,
+      editorService,
+      connectionParameterEditorService,
     },
     readOnly: isReadOnly,
     isMonitoringView,
@@ -157,6 +178,7 @@ export const LocalDesigner = () => {
             definition: workflowDefinition,
             connectionReferences: connections,
             parameters: workflowDefinition.parameters,
+            kind: workflowKind,
           }}
           runInstance={runInstance}
         >

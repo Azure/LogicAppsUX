@@ -5,6 +5,12 @@
       "value": "Menguji"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Peringatan: tipe node input tidak cocok dengan tipe node skema"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Bermasalah"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Pemicu"
     }
   ],
   "+Uvo/p": [
@@ -43,6 +55,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Kuala Lumpur, Singapura"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String yang akan diperiksa."
     }
   ],
   "+powfX": [
@@ -663,6 +681,12 @@
       "value": "Simpan"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Opsional. Kode lokal RFC 4646 yang akan digunakan. Jika tidak ditentukan, akan menggunakan lokal default. Jika lokal bukan merupakan nilai yang valid, akan menghasilkan kesalahan bahwa lokal yang diberikan tidak valid atau tidak memiliki lokal terkait."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -735,10 +759,22 @@
       "value": "Konten tidak tersedia"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String yang akan diperiksa."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Mengganti skema yang ada dengan skema yang tidak kompatibel dapat membuat kesalahan di dalam peta Anda."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Menghasilkan koleksi dalam urutan terbalik"
     }
   ],
   "3X4FHS": [
@@ -922,7 +958,7 @@
   "4hi3ks": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Alur Anda telah diperbarui."
     }
   ],
   "4j2MEv": [
@@ -974,7 +1010,7 @@
   "50W8FI": [
     {
       "type": 0,
-      "value": "Explain action"
+      "value": "Jelaskan tindakan"
     }
   ],
   "53MgCQ": [
@@ -992,13 +1028,13 @@
   "5H+8Sb": [
     {
       "type": 0,
-      "value": "Add a condition"
+      "value": "Tambahkan kondisi"
     }
   ],
   "5J9jne": [
     {
       "type": 0,
-      "value": "Tell Microsoft what you liked about this feature"
+      "value": "Beri tahu Microsoft apa yang Anda sukai dari fitur ini"
     }
   ],
   "5OvGgn": [
@@ -1111,6 +1147,12 @@
       "value": "Kesalahan saat memuat input"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Tampilkan semua parameter tingkat lanjut"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1121,6 +1163,12 @@
     {
       "type": 0,
       "value": "Batal"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Peringatan: tipe node input tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
   "6ZviI7": [
@@ -1152,7 +1200,7 @@
   "6gblzt": [
     {
       "type": 0,
-      "value": "Updated this action"
+      "value": "Memperbarui tindakan ini"
     }
   ],
   "6jiO7t": [
@@ -1188,7 +1236,7 @@
   "6pISgk": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up these actions:"
+      "value": "Untuk menyiapkan alur kerja ini, selesaikan penyetelan tindakan ini:"
     }
   ],
   "6qkBwz": [
@@ -1200,7 +1248,7 @@
   "6sGj3J": [
     {
       "type": 0,
-      "value": "Create flow"
+      "value": "Buat alur"
     }
   ],
   "6u6CS+": [
@@ -1304,7 +1352,7 @@
   "7gUE8h": [
     {
       "type": 0,
-      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+      "value": "Ini akan mengembalikan alur kerja Anda ke status sebelum Copilot diedit. Jika Anda membuat pengeditan tambahan pada alur kerja setelah Copilot, perubahannya akan hilang. Tindakan ini tidak dapat dibatalkan. Anda ingin melanjutkan?"
     }
   ],
   "7k9jXx": [
@@ -1316,7 +1364,7 @@
   "7ku9t+": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Laporkan bug"
     }
   ],
   "7lnElz": [
@@ -1439,16 +1487,22 @@
       "value": "Harap aktifkan identitas yang dikelola untuk aplikasi logika."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Tindakan"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
-      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Jelaskan bagaimana alur Anda harus diubah. Tambahkan detail jika memungkinkan, termasuk konektor yang akan digunakan dan jika ada konten yang harus disertakan."
     }
   ],
   "8Q7ns/": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Edit alur ini untuk"
     }
   ],
   "8SxNQC": [
@@ -1612,7 +1666,7 @@
   "9QNZSj": [
     {
       "type": 0,
-      "value": "Revert your flow"
+      "value": "Kembalikan alur Anda"
     }
   ],
   "9SuA/E": [
@@ -1653,6 +1707,12 @@
       "value": "Teks"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1674,7 +1734,7 @@
   "9wX3u9": [
     {
       "type": 0,
-      "value": "Send feedback"
+      "value": "Kirimkan umpan balik"
     }
   ],
   "9x8hg8": [
@@ -1751,10 +1811,16 @@
       "value": "Pilih frekuensi."
     }
   ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Hapus dan bersihkan semua parameter tingkat lanjut beserta nilainya"
+    }
+  ],
   "Ak2Lka": [
     {
       "type": 0,
-      "value": "Not connected to"
+      "value": "Tidak tersambung ke"
     }
   ],
   "AnX5yC": [
@@ -1852,10 +1918,10 @@
       "value": "Karakter penentu pemformatan tunggal atau pola format khusus yang menunjukkan cara memformat nilai tanda waktu ini. Jika format tidak diberikan, format ISO 8601 ('o') digunakan."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Hapus nilai kustom"
+      "value": "Peringatan: nilai kustom tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
   "BFTwRN": [
@@ -1873,7 +1939,7 @@
   "BIzX3S": [
     {
       "type": 0,
-      "value": "Learn more about undo operations"
+      "value": "Pelajari selengkapnya tentang operasi batalkan"
     }
   ],
   "BJNUxN": [
@@ -1909,7 +1975,7 @@
   "BS3gy8": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Maaf, ada yang tidak beres. Coba lagi."
     }
   ],
   "BSgavq": [
@@ -1999,7 +2065,7 @@
   "BynK4X": [
     {
       "type": 0,
-      "value": "Ask a question"
+      "value": "Ajukan pertanyaan"
     }
   ],
   "C1cy54": [
@@ -2014,10 +2080,16 @@
       "value": "Ambil item untuk memenuhi ambang yang ditetapkan dengan mengikuti token terusan. Karena ukuran halaman konektor, angka yang dihasilkan dapat melebihi ambang."
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "CFOUe3": [
     {
       "type": 0,
-      "value": "Add an action that sends an email"
+      "value": "Tambahkan tindakan yang mengirim email"
     }
   ],
   "CG772M": [
@@ -2234,12 +2306,6 @@
       "value": "Durasi"
     }
   ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Nilai kustom tidak cocok dengan tipe node skema"
-    }
-  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2323,7 +2389,7 @@
   "EKjaix": [
     {
       "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+      "value": "Periksa tindakan alur untuk melihat apakah ada parameter yang perlu ditetapkan. Jangan lupa untuk menyimpan bila Anda sudah selesai!"
     }
   ],
   "EKtYQF": [
@@ -2423,7 +2489,7 @@
   "EqX3Mi": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Siapkan koneksi ini untuk menggunakannya dalam alur Anda."
     }
   ],
   "EurkzL": [
@@ -2489,7 +2555,7 @@
   "FMA0Q0": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Alur Anda telah diperbarui."
     }
   ],
   "FN5zHQ": [
@@ -2642,7 +2708,7 @@
   "GQnN3U": [
     {
       "type": 0,
-      "value": "Explain flow"
+      "value": "Jelaskan alur"
     }
   ],
   "GXXLuT": [
@@ -2655,6 +2721,20 @@
     {
       "type": 0,
       "value": "Fungsi referensi"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " dari "
+    },
+    {
+      "type": 1,
+      "value": "s2"
     }
   ],
   "GcG0qf": [
@@ -2672,7 +2752,7 @@
   "Ggkf4s": [
     {
       "type": 0,
-      "value": "Get started"
+      "value": "Memulai"
     }
   ],
   "Gi72X5": [
@@ -2781,6 +2861,12 @@
       "value": "Bulan"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Diperlukan. Koleksi yang akan diurutkan."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -2826,7 +2912,7 @@
   "HfmDk9": [
     {
       "type": 0,
-      "value": "Edit Flow"
+      "value": "Edit Alur"
     }
   ],
   "HfrUId": [
@@ -2989,26 +3075,6 @@
       "value": "(UTC+09.00) Yakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Kesalahan saat menjalankan api '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Opsi tingkat lanjut"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3018,7 +3084,7 @@
   "IuHdCO": [
     {
       "type": 0,
-      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+      "value": "Berikut adalah alur Anda. Jika Anda ingin agar saya mengubahnya, cukup katakan apa yang Anda inginkan. Misalnya:"
     }
   ],
   "IxWip7": [
@@ -3102,7 +3168,7 @@
   "JJyT88": [
     {
       "type": 0,
-      "value": "Action undone"
+      "value": "Tindakan dibatalkan"
     }
   ],
   "JNQHws": [
@@ -3198,7 +3264,7 @@
   "KNDVnN": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "Ganti \""
     },
     {
       "type": 1,
@@ -3206,7 +3272,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\" dengan"
     }
   ],
   "KP0Rr2": [
@@ -3218,7 +3284,7 @@
   "KV4uky": [
     {
       "type": 0,
-      "value": "When a new item..."
+      "value": "Saat item baru..."
     }
   ],
   "KX1poC": [
@@ -3322,6 +3388,12 @@
       "value": "Memuat Aplikasi Fungsi..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Saran alur berikutnya"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3373,7 +3445,7 @@
   "LaFlFh": [
     {
       "type": 0,
-      "value": "Removed this action"
+      "value": "Menghapus tindakan ini"
     }
   ],
   "LdITnG": [
@@ -3463,7 +3535,7 @@
   "M3kJsI": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Setiap minggu pada hari Senin"
     }
   ],
   "M4H0gh": [
@@ -3505,7 +3577,7 @@
   "MGZRu4": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Tambahkan tindakan"
     }
   ],
   "MIX4f9": [
@@ -3748,6 +3820,12 @@
       "value": "Memuat File..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "untuk mengonfigurasinya"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3790,12 +3868,6 @@
       "value": "Nama Koneksi"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Masukkan nama kustom"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -3811,7 +3883,7 @@
   "OQud51": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Beri tahu saya selengkapnya tentang"
     }
   ],
   "OSHNZ2": [
@@ -3835,7 +3907,7 @@
   "OYWZE4": [
     {
       "type": 0,
-      "value": "Save this workflow"
+      "value": "Simpan alur kerja ini"
     }
   ],
   "OdNhwc": [
@@ -3956,12 +4028,6 @@
       "value": "Wajib. Nilai ini adalah nomor bilangan bulat yang ada dalam array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Nilai default"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4066,12 +4132,6 @@
     {
       "type": 0,
       "value": "Kesalahan koneksi"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Jangan buat jika tidak ada nilai"
     }
   ],
   "Pudllg": [
@@ -4216,6 +4276,12 @@
     {
       "type": 0,
       "value": "Menampilkan string dalam format tanggal"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Inilah yang akan dilakukan alur"
     }
   ],
   "QpRRt3": [
@@ -4392,7 +4458,7 @@
   "SHXdzU": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Konten yang dibuat AI mungkin salah"
     }
   ],
   "SJFVxf": [
@@ -4405,12 +4471,6 @@
     {
       "type": 0,
       "value": "Konversikan parameter menjadi bilangan bulat"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Tipe node input tidak cocok dengan tipe node skema."
     }
   ],
   "SLJkRn": [
@@ -4504,13 +4564,19 @@
   "TLMkrg": [
     {
       "type": 0,
-      "value": "Explain what an action does"
+      "value": "Jelaskan apa fungsi tindakan"
     }
   ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Jumat"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Cari Tindakan Alur Kerja"
     }
   ],
   "TO7qos": [
@@ -4744,7 +4810,7 @@
   "UW+fkB": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Kirimi saya email juga saat"
     }
   ],
   "UYRIS/": [
@@ -4781,6 +4847,12 @@
     {
       "type": 0,
       "value": "Luaskan"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Diperlukan. Panjang setiap potongan."
     }
   ],
   "Umpr3z": [
@@ -4843,6 +4915,12 @@
       "value": "Masukkan nama untuk koneksi"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Alur yang disarankan"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4882,7 +4960,7 @@
   "VEbE93": [
     {
       "type": 0,
-      "value": "Explain what the \""
+      "value": "Jelaskan apa fungsi tindakan \""
     },
     {
       "type": 1,
@@ -4890,7 +4968,7 @@
     },
     {
       "type": 0,
-      "value": "\" action does in this flow"
+      "value": "\" dalam alur ini"
     }
   ],
   "VHm1Sr": [
@@ -4913,6 +4991,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Alur dimulai saat hal ini terjadi"
     }
   ],
   "VKAk5g": [
@@ -5010,7 +5094,13 @@
   "Vx6fwP": [
     {
       "type": 0,
-      "value": "Added this action"
+      "value": "Menambahkan tindakan ini"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Berikutnya"
     }
   ],
   "W070M2": [
@@ -5032,7 +5122,7 @@
   "WCASt1": [
     {
       "type": 0,
-      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Jelaskan sesuatu dalam alur Anda yang harus diganti, serta apa yang harus menggantikannya. Tambahkan detail jika memungkinkan, termasuk konektor yang akan digunakan dan jika ada konten yang harus disertakan."
     }
   ],
   "WGwH45": [
@@ -5089,6 +5179,12 @@
     {
       "type": 0,
       "value": "Hapus"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Nilai kustom)"
     }
   ],
   "WgoP7R": [
@@ -5163,6 +5259,12 @@
       "value": "Coba lagi"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Parameter tingkat lanjut"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5200,7 +5302,7 @@
   "XR4Sd/": [
     {
       "type": 0,
-      "value": "Like"
+      "value": "Suka"
     }
   ],
   "XRK+gt": [
@@ -5336,7 +5438,7 @@
   "Y04+GH": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Tambahkan tindakan"
     }
   ],
   "Y0H9aX": [
@@ -5366,7 +5468,7 @@
   "YCDF7A": [
     {
       "type": 0,
-      "value": "All required parameters are set"
+      "value": "Semua parameter yang diperlukan sudah diatur"
     }
   ],
   "YCFhzp": [
@@ -5487,12 +5589,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Nilai kustom tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5584,7 +5680,7 @@
   "ZXoHXd": [
     {
       "type": 0,
-      "value": "Here’s your flow."
+      "value": "Berikut adalah alur Anda."
     }
   ],
   "ZaIeDG": [
@@ -5623,6 +5719,12 @@
       "value": "Pelajari selengkapnya tentang konten dinamis."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Tampilkan saran lain"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5635,16 +5737,16 @@
       "value": "Wajib. Jumlah kejadian substring yang akan ditemukan."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Harus diisi. Jumlah objek untuk dihapus dari bagian depan Koleksi. Harus bilangan bulat positif."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Tambahkan parameter baru"
     }
   ],
   "aK4iLW": [
@@ -5759,6 +5861,12 @@
       "value": "Wajib. Nilai yang dikonversi menjadi biner."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Opsional. Kunci yang akan digunakan untuk mengurutkan objek di dalam koleksi."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5804,13 +5912,19 @@
   "blRFVt": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Siapkan koneksi ini untuk menggunakannya dalam alur Anda."
     }
   ],
   "bldzuj": [
     {
       "type": 0,
       "value": "Coba Ulang Riwayat"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Hapus semua"
     }
   ],
   "bwlAWn": [
@@ -5939,12 +6053,6 @@
       "value": "Tebal (⌘B)"
     }
   ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Tipe node input tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
-    }
-  ],
   "cmTCsW": [
     {
       "type": 0,
@@ -6032,13 +6140,13 @@
   "dMAC4C": [
     {
       "type": 0,
-      "value": "Replace action"
+      "value": "Ganti tindakan"
     }
   ],
   "dNpnmn": [
     {
       "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+      "value": "Selamat datang kembali! Jika Anda ingin agar saya mengubah alur Anda, cukup katakan apa yang Anda inginkan. Misalnya:"
     }
   ],
   "dOpdsP": [
@@ -6068,7 +6176,7 @@
   "dUbKuK": [
     {
       "type": 0,
-      "value": "Skip"
+      "value": "Lompati"
     }
   ],
   "dWFyfN": [
@@ -6166,7 +6274,7 @@
   "eESljX": [
     {
       "type": 0,
-      "value": "Revert"
+      "value": "Kembalikan"
     }
   ],
   "eFet4K": [
@@ -6232,7 +6340,7 @@
   "eqAUdj": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Saat item baru"
     }
   ],
   "f/lWTW": [
@@ -6465,6 +6573,12 @@
       "value": "Masukkan audiens."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Menghasilkan boolean yang menunjukkan apakah string merupakan angka titik mengambang"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6537,13 +6651,19 @@
   "hRVVdR": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Batalkan"
     }
   ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Ini bukan yang saya cari"
     }
   ],
   "hic23z": [
@@ -6734,6 +6854,12 @@
       "value": "Contoh: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Setelah Anda meninjau saran alur yang dibuat oleh AI ini, pilih"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6819,7 +6945,7 @@
   "jN0YES": [
     {
       "type": 0,
-      "value": "Tell Microsoft how this feature could be improved"
+      "value": "Beri tahu Microsoft bagaimana fitur ini dapat ditingkatkan"
     }
   ],
   "jQ0Aqj": [
@@ -6840,10 +6966,34 @@
       "value": "Tambahkan skema sumber"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Menampilkan "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " dari "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "Skema target"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String atau array yang akan dipisah."
     }
   ],
   "jVpanH": [
@@ -6879,7 +7029,7 @@
   "jlcMGg": [
     {
       "type": 0,
-      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Jelaskan hal yang harus dilakukan alur Anda. Tambahkan detail jika memungkinkan, termasuk konektor yang akan digunakan dan jika ada konten yang harus disertakan."
     }
   ],
   "juR40n": [
@@ -6951,13 +7101,13 @@
   "kHs5R4": [
     {
       "type": 0,
-      "value": "Check these actions to see if any parameters need to be set."
+      "value": "Periksa tindakan ini untuk melihat apakah ada parameter yang perlu ditetapkan."
     }
   ],
   "kKJMeM": [
     {
       "type": 0,
-      "value": "Every week on Monday..."
+      "value": "Setiap minggu pada hari Senin..."
     }
   ],
   "kM+Mr0": [
@@ -7046,7 +7196,7 @@
   "l2YXln": [
     {
       "type": 0,
-      "value": "Replace action with"
+      "value": "Ganti tindakan dengan"
     }
   ],
   "l36V56": [
@@ -7113,6 +7263,12 @@
     {
       "type": 0,
       "value": "Tambahkan Grup"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Diperlukan. Koleksi yang akan dibalik."
     }
   ],
   "lexzgJ": [
@@ -7824,7 +7980,7 @@
   "qBNM3e": [
     {
       "type": 0,
-      "value": "Connecting to apps and services"
+      "value": "Menyambungkan ke aplikasi dan layanan"
     }
   ],
   "qBkxGU": [
@@ -7966,6 +8122,12 @@
       "value": "' tidak valid."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Saran alur sebelumnya"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8065,7 +8227,7 @@
   "rn5IsW": [
     {
       "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+      "value": "Maaf, saya tidak dapat memahami permintaan Anda. Rumuskan ulang permintaan Anda dan coba lagi."
     }
   ],
   "rsdJcV": [
@@ -8113,7 +8275,7 @@
   "sBBLuh": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up these actions:"
+      "value": "Untuk menyimpan alur kerja ini, selesaikan penyetelan tindakan ini:"
     }
   ],
   "sDkAVZ": [
@@ -8144,6 +8306,12 @@
     {
       "type": 0,
       "value": "Tambahkan Kasus"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Peringatan: nilai kustom tidak cocok dengan tipe node skema"
     }
   ],
   "sVQe34": [
@@ -8209,7 +8377,7 @@
   "srMbm9": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Batal"
     }
   ],
   "srpZD2": [
@@ -8337,7 +8505,7 @@
   "tTIsTX": [
     {
       "type": 0,
-      "value": "Test this workflow"
+      "value": "Uji alur kerja ini"
     }
   ],
   "tUCptx": [
@@ -8511,7 +8679,7 @@
   "uZpzqY": [
     {
       "type": 0,
-      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+      "value": "Maaf, kapasitas Copilot sedang penuh dan sementara tidak tersedia — coba beberapa saat lagi."
     }
   ],
   "uanMWm": [
@@ -8601,7 +8769,7 @@
   "uxQ143": [
     {
       "type": 0,
-      "value": "Ask question related to your workflow or Logic Apps."
+      "value": "Ajukan pertanyaan yang terkait dengan alur kerja atau Logic Apps Anda."
     }
   ],
   "uzsleE": [
@@ -8643,7 +8811,7 @@
   "vF+gWH": [
     {
       "type": 0,
-      "value": "Explain what this flow does"
+      "value": "Jelaskan fungsi alur ini"
     }
   ],
   "vLereV": [
@@ -8709,7 +8877,7 @@
   "vmlhVB": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up this action:"
+      "value": "Untuk menyiapkan alur kerja ini, selesaikan penyetelan tindakan ini:"
     }
   ],
   "vr70Gn": [
@@ -9029,7 +9197,7 @@
   "xvav7+": [
     {
       "type": 0,
-      "value": "Connected to"
+      "value": "Tersambung ke"
     }
   ],
   "xwD1VZ": [
@@ -9080,6 +9248,18 @@
       "value": "Menampilkan subset karakter dari string."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Menghasilkan array yang diurutkan dalam urutan naik"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Tampilkan semua"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -9090,6 +9270,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Pisahkan string atau array menjadi potongan dengan panjang yang sama"
     }
   ],
   "ydqOly": [
@@ -9115,7 +9301,7 @@
   "yk7L+4": [
     {
       "type": 0,
-      "value": "Dislike"
+      "value": "Tidak suka"
     }
   ],
   "yoCi15": [
@@ -9139,7 +9325,7 @@
   "yrYEmk": [
     {
       "type": 0,
-      "value": "Send me an email when..."
+      "value": "Kirimi saya email juga saat..."
     }
   ],
   "ysoumb": [
@@ -9230,6 +9416,12 @@
       "value": "Pilih Tindakan"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Menghasilkan boolean yang menunjukkan apakah string merupakan bilangan bulat"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -9245,7 +9437,7 @@
   "zb3lE6": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up this action:"
+      "value": "Untuk menyimpan alur kerja ini, selesaikan penyetelan tindakan ini:"
     }
   ],
   "zcZpHT": [
@@ -9257,7 +9449,7 @@
   "zec5Ay": [
     {
       "type": 0,
-      "value": "Stop"
+      "value": "Berhenti"
     }
   ],
   "ziXw25": [

@@ -1,6 +1,7 @@
+import { getAzureResourceRecursive } from '../common/azure';
 import type { IGatewayService } from '../gateway';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
-import type { Gateway, ArmResources, Subscription, SubscriptionsResponse } from '@microsoft/utils-logic-apps';
+import type { Gateway, ArmResources, Subscription } from '@microsoft/utils-logic-apps';
 import { ArgumentException } from '@microsoft/utils-logic-apps';
 
 export interface BaseGatewayServiceOptions {
@@ -52,36 +53,10 @@ export class BaseGatewayService implements IGatewayService {
   }
 
   public getSubscriptions(): Promise<Subscription[]> {
-    return this.fetchSubscriptions();
-  }
-
-  private async fetchSubscriptions(): Promise<Subscription[]> {
     const { baseUrl, apiVersions } = this.options;
-    const request: HttpRequestOptions<SubscriptionsResponse> = {
-      uri: `${baseUrl}/subscriptions/`,
-      queryParameters: {
-        'api-version': apiVersions.subscription,
-      },
-    };
 
     try {
-      const subscriptions: Subscription[] = [];
-      let nextLink: string | undefined, value: Subscription[];
-      do {
-        const response = await this.options.httpClient.get<SubscriptionsResponse>(request);
-        value = response.value;
-        nextLink = response.nextLink;
-        subscriptions.push(...value);
-
-        if (nextLink) request.uri = '/subscriptions' + new URL(nextLink).search;
-      } while (nextLink !== undefined);
-
-      return subscriptions;
-
-      // if (this._tenantId === undefined) {
-      //   this._tenantId = await this.options.getTenantId();
-      // }
-      // return subscriptions.filter((subscription: Subscription) => subscription.tenantId === this._tenantId);
+      return getAzureResourceRecursive(this.options.httpClient, `${baseUrl}/subscriptions/`, { 'api-version': apiVersions.subscription });
     } catch (error) {
       throw new Error(error as any);
     }

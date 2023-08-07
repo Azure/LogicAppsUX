@@ -152,6 +152,15 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     connectionReferences,
     parameters,
   };
+
+  const workflowService = WorkflowService();
+  if (workflowService && workflowService.getDefinitionWithDynamicInputs) {
+    serializedWorkflow.definition = workflowService.getDefinitionWithDynamicInputs(
+      serializedWorkflow.definition,
+      rootState.operations.outputParameters
+    );
+  }
+
   return serializedWorkflow;
 };
 

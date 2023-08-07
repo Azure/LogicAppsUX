@@ -5,6 +5,12 @@
       "value": "Testování"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Upozornění: Typ vstupního uzlu neodpovídá typu uzlu schématu."
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "S chybou"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -43,6 +55,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Kuala Lumpur, Singapur"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec, který se má prozkoumat."
     }
   ],
   "+powfX": [
@@ -667,6 +685,12 @@
       "value": "Uložit"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Volitelné. Kód národního prostředí RFC 4646, který se má použít. Pokud se nezadá, použije se výchozí národní prostředí. Pokud národní prostředí není platná hodnota, vygeneruje se chyba se zprávou, že zadané národní prostředí není platné nebo nemá přidružené národní prostředí."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -747,10 +771,22 @@
       "value": "Není k dispozici žádný obsah."
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec, který se má prozkoumat."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Nahrazení existujícího schématu nekompatibilním schématem může způsobit chyby v mapě."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Vrátí kolekci v obráceném pořadí"
     }
   ],
   "3X4FHS": [
@@ -934,7 +970,7 @@
   "4hi3ks": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Váš tok se aktualizoval."
     }
   ],
   "4j2MEv": [
@@ -990,7 +1026,7 @@
   "50W8FI": [
     {
       "type": 0,
-      "value": "Explain action"
+      "value": "Vysvětlit akci"
     }
   ],
   "53MgCQ": [
@@ -1008,13 +1044,13 @@
   "5H+8Sb": [
     {
       "type": 0,
-      "value": "Add a condition"
+      "value": "Přidat podmínku"
     }
   ],
   "5J9jne": [
     {
       "type": 0,
-      "value": "Tell Microsoft what you liked about this feature"
+      "value": "Povězte Microsoftu, co se vám na této funkci líbilo"
     }
   ],
   "5OvGgn": [
@@ -1127,6 +1163,12 @@
       "value": "Při načítání vstupů došlo k chybě"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Zobrazit všechny upřesňující parametry"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1137,6 +1179,12 @@
     {
       "type": 0,
       "value": "Zrušit"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Upozornění: Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
   "6ZviI7": [
@@ -1168,7 +1216,7 @@
   "6gblzt": [
     {
       "type": 0,
-      "value": "Updated this action"
+      "value": "Byla aktualizována tato akce"
     }
   ],
   "6jiO7t": [
@@ -1204,7 +1252,7 @@
   "6pISgk": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up these actions:"
+      "value": "Pokud chcete tento pracovní postup připravit, dokončete nastavení těchto akcí:"
     }
   ],
   "6qkBwz": [
@@ -1216,7 +1264,7 @@
   "6sGj3J": [
     {
       "type": 0,
-      "value": "Create flow"
+      "value": "Vytvořit tok"
     }
   ],
   "6u6CS+": [
@@ -1320,7 +1368,7 @@
   "7gUE8h": [
     {
       "type": 0,
-      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+      "value": "Tím se pracovní postup vrátí do stavu, ve který byl před úpravami Copilotem. Pokud jste po úpravách Copilotem provedli další úpravy pracovního postupu, přijdete o ně. Tuto akci nelze vrátit zpět. Chcete pokračovat?"
     }
   ],
   "7k9jXx": [
@@ -1332,7 +1380,7 @@
   "7ku9t+": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Nahlásit chybu"
     }
   ],
   "7lnElz": [
@@ -1455,16 +1503,22 @@
       "value": "Povolte prosím pro aplikaci logiky spravovanou identitu."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Akce"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
-      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Popište, jak by se měl tok změnit. Pokud je to možné, přidejte podrobnosti včetně konektoru, který se má použít, a uveďte, jestli by měl být zahrnut nějaký obsah."
     }
   ],
   "8Q7ns/": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Upravit tento tok do"
     }
   ],
   "8SxNQC": [
@@ -1628,7 +1682,7 @@
   "9QNZSj": [
     {
       "type": 0,
-      "value": "Revert your flow"
+      "value": "Vrácení toku zpět"
     }
   ],
   "9SuA/E": [
@@ -1669,6 +1723,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Výchozí"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1690,7 +1750,7 @@
   "9wX3u9": [
     {
       "type": 0,
-      "value": "Send feedback"
+      "value": "Poslat zpětnou vazbu"
     }
   ],
   "9x8hg8": [
@@ -1767,10 +1827,16 @@
       "value": "Vyberte frekvenci."
     }
   ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Odebrat a vymazat všechny upřesňující parametry a jejich hodnoty"
+    }
+  ],
   "Ak2Lka": [
     {
       "type": 0,
-      "value": "Not connected to"
+      "value": "Nepřipojeno k"
     }
   ],
   "AnX5yC": [
@@ -1901,10 +1967,10 @@
       "value": "Jednoznakový specifikátor formátu nebo vlastní formátovací vzor, který určuje, jak formátovat hodnotu tohoto časového razítka. Pokud není formát zadaný, použije se formát ISO 8601 (o)."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Vymazat vlastní hodnotu"
+      "value": "Upozornění: Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
   "BFTwRN": [
@@ -1922,7 +1988,7 @@
   "BIzX3S": [
     {
       "type": 0,
-      "value": "Learn more about undo operations"
+      "value": "Další informace o operacích vrácení zpět"
     }
   ],
   "BJNUxN": [
@@ -1958,7 +2024,7 @@
   "BS3gy8": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Bohužel došlo k chybě. Opakujte akci."
     }
   ],
   "BSgavq": [
@@ -2048,7 +2114,7 @@
   "BynK4X": [
     {
       "type": 0,
-      "value": "Ask a question"
+      "value": "Zeptejte se"
     }
   ],
   "C1cy54": [
@@ -2063,10 +2129,16 @@
       "value": "Načtěte položky, aby se splnila zadaná prahová hodnota tak, že se bude následovat token pro pokračování. Kvůli velikosti stránky konektoru může počet vrácených položek překročit prahovou hodnotu."
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True (Pravda)"
+    }
+  ],
   "CFOUe3": [
     {
       "type": 0,
-      "value": "Add an action that sends an email"
+      "value": "Přidat akci, která odešle e-mail"
     }
   ],
   "CG772M": [
@@ -2283,12 +2355,6 @@
       "value": "Doba trvání"
     }
   ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Vlastní hodnota neodpovídá typu uzlu schématu"
-    }
-  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2372,7 +2438,7 @@
   "EKjaix": [
     {
       "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+      "value": "Zkontrolujte akce toku a zjistěte, jestli je potřeba nastavit nějaké parametry. Až to budete mít, nezapomeňte vše uložit."
     }
   ],
   "EKtYQF": [
@@ -2472,7 +2538,7 @@
   "EqX3Mi": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Nastavte tato připojení tak, aby se používala ve vašem toku."
     }
   ],
   "EurkzL": [
@@ -2538,7 +2604,7 @@
   "FMA0Q0": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "Váš tok se aktualizoval."
     }
   ],
   "FN5zHQ": [
@@ -2732,7 +2798,7 @@
   "GQnN3U": [
     {
       "type": 0,
-      "value": "Explain flow"
+      "value": "Vysvětlit tok"
     }
   ],
   "GXXLuT": [
@@ -2745,6 +2811,20 @@
     {
       "type": 0,
       "value": "Funkce odkazů"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " z "
+    },
+    {
+      "type": 1,
+      "value": "s2"
     }
   ],
   "GcG0qf": [
@@ -2762,7 +2842,7 @@
   "Ggkf4s": [
     {
       "type": 0,
-      "value": "Get started"
+      "value": "Začínáme"
     }
   ],
   "Gi72X5": [
@@ -2871,6 +2951,12 @@
       "value": "Měsíc"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Povinné. Kolekce, která se má seřadit."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -2916,7 +3002,7 @@
   "HfmDk9": [
     {
       "type": 0,
-      "value": "Edit Flow"
+      "value": "Upravit tok"
     }
   ],
   "HfrUId": [
@@ -3079,26 +3165,6 @@
       "value": "(UTC+09:00) Jakutsk"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Při provádění rozhraní API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' došlo k chybě."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Upřesnit možnosti"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3108,7 +3174,7 @@
   "IuHdCO": [
     {
       "type": 0,
-      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+      "value": "Tady je váš tok. Pokud ho mám změnit, stačí říct, co chcete. Například:"
     }
   ],
   "IxWip7": [
@@ -3188,7 +3254,7 @@
   "JJyT88": [
     {
       "type": 0,
-      "value": "Action undone"
+      "value": "Akce byla vrácena zpět."
     }
   ],
   "JNQHws": [
@@ -3284,7 +3350,7 @@
   "KNDVnN": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "Nahradit "
     },
     {
       "type": 1,
@@ -3292,7 +3358,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": " za"
     }
   ],
   "KP0Rr2": [
@@ -3304,7 +3370,7 @@
   "KV4uky": [
     {
       "type": 0,
-      "value": "When a new item..."
+      "value": "Když nová položka…"
     }
   ],
   "KX1poC": [
@@ -3441,6 +3507,12 @@
       "value": "Načítají se aplikace funkcí..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Další návrh toku"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3492,7 +3564,7 @@
   "LaFlFh": [
     {
       "type": 0,
-      "value": "Removed this action"
+      "value": "Tato akce se odebrala."
     }
   ],
   "LdITnG": [
@@ -3582,7 +3654,7 @@
   "M3kJsI": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Každý týden v pondělí"
     }
   ],
   "M4H0gh": [
@@ -3624,7 +3696,7 @@
   "MGZRu4": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Přidat akci"
     }
   ],
   "MIX4f9": [
@@ -3871,6 +3943,12 @@
       "value": "Načítají se soubory..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "pro jeho konfiguraci"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3913,12 +3991,6 @@
       "value": "Název připojení"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Zadat vlastní hodnotu"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -3934,7 +4006,7 @@
   "OQud51": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Chci se dozvědět víc o"
     }
   ],
   "OSHNZ2": [
@@ -3958,7 +4030,7 @@
   "OYWZE4": [
     {
       "type": 0,
-      "value": "Save this workflow"
+      "value": "Uložit tento pracovní postup"
     }
   ],
   "OdNhwc": [
@@ -4075,12 +4147,6 @@
       "value": "Povinný parametr. Tato hodnota představuje počet celých čísel v poli."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Výchozí hodnota"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4185,12 +4251,6 @@
     {
       "type": 0,
       "value": "Chyby připojení"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Negenerovat, pokud žádná hodnota"
     }
   ],
   "Pudllg": [
@@ -4331,6 +4391,12 @@
     {
       "type": 0,
       "value": "Vrátí řetězec ve formátu data."
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Toto bude tok dělat"
     }
   ],
   "QpRRt3": [
@@ -4536,7 +4602,7 @@
   "SHXdzU": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Obsah vygenerovaný umělou inteligencí může být nesprávný."
     }
   ],
   "SJFVxf": [
@@ -4549,12 +4615,6 @@
     {
       "type": 0,
       "value": "Převede parametr na celé číslo."
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
   "SLJkRn": [
@@ -4648,13 +4708,19 @@
   "TLMkrg": [
     {
       "type": 0,
-      "value": "Explain what an action does"
+      "value": "Vysvětlit, co akce dělá"
     }
   ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "Pátek"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Hledat akce pracovního postupu"
     }
   ],
   "TO7qos": [
@@ -4888,7 +4954,7 @@
   "UW+fkB": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Poslat mi e-mail, když"
     }
   ],
   "UYRIS/": [
@@ -4925,6 +4991,12 @@
     {
       "type": 0,
       "value": "Rozbalit"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Povinné. Délka každého bloku."
     }
   ],
   "Umpr3z": [
@@ -4987,6 +5059,12 @@
       "value": "Zadejte název připojení."
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Navrhovaný tok"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -5026,7 +5104,7 @@
   "VEbE93": [
     {
       "type": 0,
-      "value": "Explain what the \""
+      "value": "Vysvětlit, co akce "
     },
     {
       "type": 1,
@@ -5034,7 +5112,7 @@
     },
     {
       "type": 0,
-      "value": "\" action does in this flow"
+      "value": " v tomto toku dělá"
     }
   ],
   "VHm1Sr": [
@@ -5057,6 +5135,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Když se to stane, tok se spustí."
     }
   ],
   "VKAk5g": [
@@ -5154,7 +5238,13 @@
   "Vx6fwP": [
     {
       "type": 0,
-      "value": "Added this action"
+      "value": "Byla přidána této akce"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Další"
     }
   ],
   "W070M2": [
@@ -5176,7 +5266,7 @@
   "WCASt1": [
     {
       "type": 0,
-      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Popište ve svém toku něco, co by se mělo nahradit, a uveďte, za co by to mělo nahradit. Pokud je to možné, přidejte podrobnosti, včetně konektoru, který se má použít, a uveďte, jestli by měl být zahrnut nějaký obsah."
     }
   ],
   "WGwH45": [
@@ -5233,6 +5323,12 @@
     {
       "type": 0,
       "value": "Odebrat"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Vlastní hodnota)"
     }
   ],
   "WgoP7R": [
@@ -5307,6 +5403,12 @@
       "value": "Zkusit znovu"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Rozšířené parametry"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5344,7 +5446,7 @@
   "XR4Sd/": [
     {
       "type": 0,
-      "value": "Like"
+      "value": "To se mi líbí"
     }
   ],
   "XRK+gt": [
@@ -5480,7 +5582,7 @@
   "Y04+GH": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Přidat akci"
     }
   ],
   "Y0H9aX": [
@@ -5510,7 +5612,7 @@
   "YCDF7A": [
     {
       "type": 0,
-      "value": "All required parameters are set"
+      "value": "Jsou nastaveny všechny požadované parametry."
     }
   ],
   "YCFhzp": [
@@ -5631,12 +5733,6 @@
       "value": "(UTC+05:30) Čennaj, Kalkata, Bombaj, Dillí"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5728,7 +5824,7 @@
   "ZXoHXd": [
     {
       "type": 0,
-      "value": "Here’s your flow."
+      "value": "Tady je váš tok."
     }
   ],
   "ZaIeDG": [
@@ -5767,6 +5863,12 @@
       "value": "Další informace o dynamickém obsahu"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Zobrazit jiný návrh"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5779,16 +5881,16 @@
       "value": "Povinné. Počet výskytů podřetězce, které se mají najít"
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False (Nepravda)"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Vyžadováno. Počet objektů, které se mají odebrat ze začátku kolekce. Musí to být kladné celé číslo."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Přidat nové parametry"
     }
   ],
   "aK4iLW": [
@@ -5903,6 +6005,12 @@
       "value": "Povinný parametr. Hodnota, která se převádí do binárního formátu."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Volitelné. Klíč, který se má použít k řazení objektů v kolekci."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5948,13 +6056,19 @@
   "blRFVt": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "Nastavte tato připojení tak, aby se používala ve vašem toku."
     }
   ],
   "bldzuj": [
     {
       "type": 0,
       "value": "Historie opakování pokusů"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Vymazat vše"
     }
   ],
   "bwlAWn": [
@@ -6083,12 +6197,6 @@
       "value": "Tučné (⌘B)"
     }
   ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup"
-    }
-  ],
   "cmTCsW": [
     {
       "type": 0,
@@ -6176,13 +6284,13 @@
   "dMAC4C": [
     {
       "type": 0,
-      "value": "Replace action"
+      "value": "Nahradit akci"
     }
   ],
   "dNpnmn": [
     {
       "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+      "value": "Vítej zpět! Pokud mám váš tok změnit, stačí říct, co chcete. Například:"
     }
   ],
   "dOpdsP": [
@@ -6212,7 +6320,7 @@
   "dUbKuK": [
     {
       "type": 0,
-      "value": "Skip"
+      "value": "Přeskočit"
     }
   ],
   "dWFyfN": [
@@ -6310,7 +6418,7 @@
   "eESljX": [
     {
       "type": 0,
-      "value": "Revert"
+      "value": "Vrátit"
     }
   ],
   "eFet4K": [
@@ -6376,7 +6484,7 @@
   "eqAUdj": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Když nová položka"
     }
   ],
   "f/lWTW": [
@@ -6613,6 +6721,12 @@
       "value": "Zadejte cílovou skupinu."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Vrátí logickou hodnotu, která označuje, jestli je řetězec číslo s plovoucí desetinnou čárkou"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6718,13 +6832,19 @@
   "hRVVdR": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Vrátit zpět"
     }
   ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Toto nehledám"
     }
   ],
   "hic23z": [
@@ -6919,6 +7039,12 @@
       "value": "Příklad: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Až si prostudujete tento návrh toku vygenerovaný pomocí AI, vyberte"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -7004,7 +7130,7 @@
   "jN0YES": [
     {
       "type": 0,
-      "value": "Tell Microsoft how this feature could be improved"
+      "value": "Povězte Microsoftu, jak by se tato funkce mohla zlepšit."
     }
   ],
   "jQ0Aqj": [
@@ -7025,10 +7151,34 @@
       "value": "Přidat zdrojové schéma"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Zobrazeno: "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " z(e) "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "Cílové schéma"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec nebo pole, které se má rozdělit."
     }
   ],
   "jVpanH": [
@@ -7064,7 +7214,7 @@
   "jlcMGg": [
     {
       "type": 0,
-      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
+      "value": "Popište něco, co by měl váš tok udělat. Pokud je to možné, přidejte podrobnosti, včetně konektoru, který se má použít, a uveďte, jestli by měl být zahrnut nějaký obsah."
     }
   ],
   "juR40n": [
@@ -7136,13 +7286,13 @@
   "kHs5R4": [
     {
       "type": 0,
-      "value": "Check these actions to see if any parameters need to be set."
+      "value": "Zkontrolujte tyto akce a zjistěte, jestli je potřeba nastavit nějaké parametry."
     }
   ],
   "kKJMeM": [
     {
       "type": 0,
-      "value": "Every week on Monday..."
+      "value": "Každý týden v pondělí…"
     }
   ],
   "kM+Mr0": [
@@ -7264,7 +7414,7 @@
   "l2YXln": [
     {
       "type": 0,
-      "value": "Replace action with"
+      "value": "Nahradit akci za"
     }
   ],
   "l36V56": [
@@ -7331,6 +7481,12 @@
     {
       "type": 0,
       "value": "Přidat skupinu"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Povinné. Kolekce, která se má vrátit."
     }
   ],
   "lexzgJ": [
@@ -8042,7 +8198,7 @@
   "qBNM3e": [
     {
       "type": 0,
-      "value": "Connecting to apps and services"
+      "value": "Připojování k aplikacím a službám"
     }
   ],
   "qBkxGU": [
@@ -8217,6 +8373,12 @@
       "value": "."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Předchozí návrh toku"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8316,7 +8478,7 @@
   "rn5IsW": [
     {
       "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+      "value": "Je mi to líto, ale nepovedlo se mi porozumět vaší žádosti. Přeformulujte ji prosím a zkuste to znovu."
     }
   ],
   "rsdJcV": [
@@ -8364,7 +8526,7 @@
   "sBBLuh": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up these actions:"
+      "value": "Pokud chcete tento pracovní postup uložit, dokončete nastavení těchto akcí:"
     }
   ],
   "sDkAVZ": [
@@ -8395,6 +8557,12 @@
     {
       "type": 0,
       "value": "Přidat případ"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Upozornění: Vlastní hodnota neodpovídá typu uzlu schématu."
     }
   ],
   "sVQe34": [
@@ -8460,7 +8628,7 @@
   "srMbm9": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "srpZD2": [
@@ -8584,7 +8752,7 @@
   "tTIsTX": [
     {
       "type": 0,
-      "value": "Test this workflow"
+      "value": "Otestovat tento pracovní postup"
     }
   ],
   "tUCptx": [
@@ -8754,7 +8922,7 @@
   "uZpzqY": [
     {
       "type": 0,
-      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+      "value": "Je nám líto, ale funkce Copilot vyčerpala svou kapacitu a je dočasně nedostupná . Zkuste to prosím znovu za chvíli."
     }
   ],
   "uanMWm": [
@@ -8844,7 +9012,7 @@
   "uxQ143": [
     {
       "type": 0,
-      "value": "Ask question related to your workflow or Logic Apps."
+      "value": "Položte otázku související s pracovním postupem nebo Logic Apps."
     }
   ],
   "uzsleE": [
@@ -8886,7 +9054,7 @@
   "vF+gWH": [
     {
       "type": 0,
-      "value": "Explain what this flow does"
+      "value": "Vysvětlit, co tento tok dělá"
     }
   ],
   "vLereV": [
@@ -8952,7 +9120,7 @@
   "vmlhVB": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up this action:"
+      "value": "Pokud chcete tento pracovní postup připravit, dokončete nastavení této akce:"
     }
   ],
   "vr70Gn": [
@@ -9272,7 +9440,7 @@
   "xvav7+": [
     {
       "type": 0,
-      "value": "Connected to"
+      "value": "Připojeno k"
     }
   ],
   "xwD1VZ": [
@@ -9323,6 +9491,18 @@
       "value": "Vrátí podmnožinu znaků z řetězce."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Vrátí pole seřazené vzestupně"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Zobrazit vše"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -9333,6 +9513,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Rozdělí řetězec nebo pole na bloky stejné délky"
     }
   ],
   "ydqOly": [
@@ -9358,7 +9544,7 @@
   "yk7L+4": [
     {
       "type": 0,
-      "value": "Dislike"
+      "value": "To se mi nelíbí"
     }
   ],
   "yoCi15": [
@@ -9382,7 +9568,7 @@
   "yrYEmk": [
     {
       "type": 0,
-      "value": "Send me an email when..."
+      "value": "Poslat mi e-mail, když…"
     }
   ],
   "ysoumb": [
@@ -9473,6 +9659,12 @@
       "value": "Vybrat akce"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Vrátí logickou hodnotu, která označuje, jestli je řetězec integer"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -9488,7 +9680,7 @@
   "zb3lE6": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up this action:"
+      "value": "Pokud chcete tento pracovní postup uložit, dokončete nastavení této akce:"
     }
   ],
   "zcZpHT": [
@@ -9500,7 +9692,7 @@
   "zec5Ay": [
     {
       "type": 0,
-      "value": "Stop"
+      "value": "Zastavit"
     }
   ],
   "ziXw25": [
