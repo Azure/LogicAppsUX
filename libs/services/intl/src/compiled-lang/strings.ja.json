@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "警告: 入力ノードの種類がスキーマ ノードの種類と一致しません"
     }
   ],
   "+0cO6t": [
@@ -1168,7 +1168,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "警告: 入力ノードの種類が、この入力に許可されている種類のいずれかと一致しません"
     }
   ],
   "6ZviI7": [
@@ -1921,7 +1921,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "警告: カスタム値が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "BFTwRN": [
@@ -5168,7 +5168,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(カスタム値)"
     }
   ],
   "WgoP7R": [
@@ -8279,7 +8279,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "警告: カスタム値がスキーマ ノードの種類と一致しません"
     }
   ],
   "sVQe34": [
