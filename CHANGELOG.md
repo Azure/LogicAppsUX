@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.55.4](https://github.com/Azure/LogicAppsUX/compare/v2.55.3...v2.55.4) (2023-08-07)
+
+
+### Bug Fixes
+
+* **vscode:** Add swagger to supported operations list ([#3076](https://github.com/Azure/LogicAppsUX/issues/3076)) ([#3097](https://github.com/Azure/LogicAppsUX/issues/3097)) ([9eb30c5](https://github.com/Azure/LogicAppsUX/commit/9eb30c56be7235087295c211832cab17a40e2749))
+
 ### [2.55.3](https://github.com/Azure/LogicAppsUX/compare/v2.55.2...v2.55.3) (2023-08-03)
 
 
