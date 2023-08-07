@@ -58,11 +58,11 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
           });
           paragraph.append(listItemNode);
         }
-        // Non line break nodes are parsed  and appended to the paragraph node
+        // Non line break nodes are parsed and appended to the paragraph node
         else if (!$isLineBreakNode(childNode)) {
           appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled);
         }
-        // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
+        // // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
         else if ($isLineBreakNode(childNode)) {
           paragraph.append($createTextNode('\n'));
         }
