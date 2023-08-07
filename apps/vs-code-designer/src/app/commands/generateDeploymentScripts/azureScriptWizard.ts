@@ -11,14 +11,18 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
+import { LogicAppHostingPlanStep } from '../createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { UserInput } from './iacGestureHelperFunctions';
+import type { AppServicePlan, Site } from '@azure/arm-appservice';
+import { SiteNameStep, type IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
+import type { IFunctionAppWizardContext } from '@microsoft/vscode-extension';
 import type { Progress } from 'vscode';
 
 // Define the interface for the Azure Script Wizard
-export interface IAzureScriptWizard extends IActionContext {
+export interface IAzureScriptWizard extends IAppServiceWizardContext, IFunctionAppWizardContext, IActionContext {
   credentials: any;
   subscriptionId: any;
   resourceGroup: any;
@@ -26,17 +30,8 @@ export interface IAzureScriptWizard extends IActionContext {
   tenantId: any;
   environment: any;
   sourceControlPath?: string;
-}
-
-// Define a new Wizard Step class
-class GetSourceControlPathStep extends AzureWizardPromptStep<IAzureScriptWizard> {
-  public async prompt(context: IAzureScriptWizard): Promise<void> {
-    context.sourceControlPath = await UserInput.promptForSourceControlPath();
-  }
-
-  public shouldPrompt(context: IAzureScriptWizard): boolean {
-    return context.sourceControlPath === undefined;
-  }
+  site?: Site;
+  hostingPlan?: AppServicePlan;
 }
 
 /**
@@ -47,13 +42,13 @@ class GetSourceControlPathStep extends AzureWizardPromptStep<IAzureScriptWizard>
  */
 export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath: string): AzureWizard<IAzureScriptWizard> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetSubscriptionDetailsStep(), new GetSourceControlPathStep()],
+    promptSteps: [new GetLogicAppDetailsStep(), new GetSourceControlPathStep()],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
 
 // Define the GetSubscriptionDetailsStep class
-class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureScriptWizard> {
+class GetLogicAppDetailsStep extends AzureWizardPromptStep<IAzureScriptWizard> {
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.enabled = true; // Set the enabled flag to true to skip the connector prompt
   }
@@ -69,10 +64,22 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureScriptWizar
     if (subscriptionPromptStep) {
       azurePromptSteps.push(subscriptionPromptStep);
     }
-
+    azurePromptSteps.push(new LogicAppHostingPlanStep());
+    azurePromptSteps.push(new SiteNameStep());
     azurePromptSteps.push(new ResourceGroupListStep());
 
     return { promptSteps: azurePromptSteps };
+  }
+}
+
+// Define a new Wizard Step class
+class GetSourceControlPathStep extends AzureWizardPromptStep<IAzureScriptWizard> {
+  public async prompt(context: IAzureScriptWizard): Promise<void> {
+    context.sourceControlPath = await UserInput.promptForSourceControlPath();
+  }
+
+  public shouldPrompt(context: IAzureScriptWizard): boolean {
+    return context.sourceControlPath === undefined;
   }
 }
 

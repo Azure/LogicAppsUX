@@ -101,7 +101,11 @@ export class UserInput {
     if (!workspaceConfig.folders) {
       workspaceConfig.folders = [];
     }
-    workspaceConfig.folders.push({ name: 'Deployment', path });
+    const hasDeploymentFolder = workspaceConfig.folders.some((folder) => folder.name === 'Deployment');
+
+    if (!hasDeploymentFolder) {
+      workspaceConfig.folders.unshift({ name: 'Deployment', path });
+    }
     return JSON.stringify(workspaceConfig, null, 2);
   }
 }
