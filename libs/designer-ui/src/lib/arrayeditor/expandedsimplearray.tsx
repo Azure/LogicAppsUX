@@ -95,6 +95,7 @@ export const ExpandedSimpleArray = ({
                   })
                 )}
                 initialValue={item.value ?? []}
+                placeholder={placeholder}
                 onChange={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
               />
             ) : (
@@ -123,7 +124,7 @@ export const ExpandedSimpleArray = ({
   );
 };
 
-export const renderLabel = (index: number, labelName?: string, isRequired?: boolean): JSX.Element => {
+const renderLabel = (index: number, labelName?: string, isRequired?: boolean): JSX.Element => {
   return (
     <div className="msla-array-editor-label">
       <Label text={labelName + ' - ' + (index + 1)} isRequiredField={isRequired ?? false} />

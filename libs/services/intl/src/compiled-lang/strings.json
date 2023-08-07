@@ -5,6 +5,12 @@
       "value": "Testing"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "Faulted"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "+Uvo/p": [
@@ -47,6 +59,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
     }
   ],
   "+powfX": [
@@ -353,16 +371,6 @@
       "value": "Required. The string that may contain the value."
     }
   ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -667,6 +675,12 @@
       "value": "Save"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Optional. The RFC 4646 locale code to use. If not specified, default locale is used. If locale isn't a valid value, an error is generated that the provided locale isn't valid or doesn't have an associated locale."
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -747,10 +761,22 @@
       "value": "There is no content available"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Required. The string to examine."
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Returns the collection in reverse order"
     }
   ],
   "3X4FHS": [
@@ -873,6 +899,20 @@
       "value": "Required. The lowest integer that can be returned."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is required."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -947,16 +987,6 @@
     {
       "type": 0,
       "value": "Button to add dynamic content if TokenPicker is hidden"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is required."
     }
   ],
   "4vcnOA": [
@@ -1123,6 +1153,12 @@
       "value": "Error loading inputs"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Show all advanced parameters"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1133,6 +1169,12 @@
     {
       "type": 0,
       "value": "Cancel"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
     }
   ],
   "6ZviI7": [
@@ -1219,6 +1261,20 @@
     {
       "type": 0,
       "value": "Required. The value for which to find the index."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "6ueRYm": [
@@ -1451,6 +1507,12 @@
       "value": "Please enable managed identity for the logic app."
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
@@ -1665,6 +1727,12 @@
       "value": "Text"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Default"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1761,6 +1829,12 @@
     {
       "type": 0,
       "value": "Select frequency."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remove and clear all advanced parameters and their values"
     }
   ],
   "Ak2Lka": [
@@ -1875,10 +1949,10 @@
       "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2035,6 +2109,12 @@
     {
       "type": 0,
       "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "CFOUe3": [
@@ -2255,12 +2335,6 @@
     {
       "type": 0,
       "value": "Duration"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Custom value does not match the schema node's type"
     }
   ],
   "Dhu3IS": [
@@ -2691,6 +2765,20 @@
       "value": "Referencing functions"
     }
   ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
   "GcG0qf": [
     {
       "type": 0,
@@ -2815,6 +2903,12 @@
       "value": "Month"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Required. The collection to sort."
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -2879,20 +2973,6 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
-    }
-  ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Enter a valid value for "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -3021,26 +3101,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "Error executing the api '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Advanced options"
     }
   ],
   "IsVhkH": [
@@ -3365,6 +3425,12 @@
     {
       "type": 0,
       "value": "Loading Function Apps..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Next flow suggestion"
     }
   ],
   "LJmfmK": [
@@ -3793,6 +3859,12 @@
       "value": "Loading Files..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "to configure it"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3833,12 +3905,6 @@
     {
       "type": 0,
       "value": "Connection Name"
-    }
-  ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Enter custom value"
     }
   ],
   "OOUSLP": [
@@ -4001,12 +4067,6 @@
       "value": "Required. This value is the number of integers that is in the array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Default value"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4111,12 +4171,6 @@
     {
       "type": 0,
       "value": "Connection errors"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Do not generate if no value"
     }
   ],
   "Pudllg": [
@@ -4263,6 +4317,12 @@
       "value": "Returns a string in date format"
     }
   ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "This is what the flow will do"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -4301,12 +4361,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Coordinated Universal Time+12"
-    }
-  ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Enter a valid condition."
     }
   ],
   "RFjYpH": [
@@ -4463,12 +4517,6 @@
       "value": "Convert the parameter to an integer"
     }
   ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "The input node type doesn't match the schema node's type."
-    }
-  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -4567,6 +4615,12 @@
     {
       "type": 0,
       "value": "Friday"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Search Workflow Actions"
     }
   ],
   "TO7qos": [
@@ -4839,6 +4893,12 @@
       "value": "Expand"
     }
   ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Required. The length of each chunk."
+    }
+  ],
   "Umpr3z": [
     {
       "type": 0,
@@ -4899,6 +4959,12 @@
       "value": "Enter a name for the connection"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Suggested flow"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4915,6 +4981,20 @@
     {
       "type": 0,
       "value": "Enter a valid JSON."
+    }
+  ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
     }
   ],
   "V5f3ha": [
@@ -4969,6 +5049,12 @@
     {
       "type": 1,
       "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "The flow starts when this happens"
     }
   ],
   "VKAk5g": [
@@ -5069,6 +5155,12 @@
       "value": "Added this action"
     }
   ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -5129,6 +5221,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition statement."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5145,6 +5243,12 @@
     {
       "type": 0,
       "value": "Remove"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
     }
   ],
   "WgoP7R": [
@@ -5217,6 +5321,12 @@
     {
       "type": 0,
       "value": "Retry"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Advanced parameters"
     }
   ],
   "XH94im": [
@@ -5543,12 +5653,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5679,6 +5783,12 @@
       "value": "Learn more about dynamic content."
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Show a different suggestion"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5691,16 +5801,16 @@
       "value": "Required. The number of the occurrence of the substring to find."
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "Add new parameters"
     }
   ],
   "aK4iLW": [
@@ -5815,6 +5925,12 @@
       "value": "Required. The value that is converted to binary."
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Optional. A key to use for sorting objects in the collection."
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5869,6 +5985,12 @@
       "value": "Retry History"
     }
   ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Clear all"
+    }
+  ],
   "bwlAWn": [
     {
       "type": 0,
@@ -5921,6 +6043,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "c7tRg/": [
@@ -5993,12 +6121,6 @@
     {
       "type": 0,
       "value": "Bold (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -6521,6 +6643,12 @@
       "value": "Enter the audience."
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is a floating-point number"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6611,6 +6739,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "This isn't what I'm looking for"
     }
   ],
   "hic23z": [
@@ -6801,6 +6935,12 @@
       "value": "Example: 0, 10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "After you review this AI generated flow suggestion, select"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6907,10 +7047,34 @@
       "value": "Add a source schema"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "Target schema"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Required. The string or array to split."
     }
   ],
   "jVpanH": [
@@ -7191,6 +7355,12 @@
     {
       "type": 0,
       "value": "Add Group"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Required. The collection to reverse."
     }
   ],
   "lexzgJ": [
@@ -8055,6 +8225,12 @@
       "value": "'."
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Previous flow suggestion"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8233,6 +8409,12 @@
     {
       "type": 0,
       "value": "Add Case"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -9169,6 +9351,18 @@
       "value": "Returns a subset of characters from a string."
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Returns an array sorted in ascending order"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Show all"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -9179,6 +9373,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Split a string or array into chunks of equal length"
     }
   ],
   "ydqOly": [
@@ -9321,6 +9521,12 @@
     {
       "type": 0,
       "value": "Select Actions"
+    }
+  ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Returns a boolean that indicates whether a string is an integer"
     }
   ],
   "zUgja+": [

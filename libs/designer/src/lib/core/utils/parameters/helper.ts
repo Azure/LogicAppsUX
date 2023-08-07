@@ -361,7 +361,10 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
+    } else if (
+      (schemaEnum || schema?.enum || (schemaEnum && schema?.[ExtensionProperties.CustomEnum])) &&
+      !equals(visibility, Visibility.Internal)
+    ) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
@@ -478,15 +481,20 @@ export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; ite
 };
 
 // Create Array Editor View Model Schema
-export const parseArrayItemSchema = (itemSchema: any, itemPath = ''): any => {
+const parseArrayItemSchema = (itemSchema: any, itemPath = itemSchema?.title?.toLowerCase() ?? ''): any => {
+  // convert array schema to object schema
   if (Array.isArray(itemSchema)) {
     return itemSchema.map((item) => parseArrayItemSchema(item, itemPath));
-  } else if (itemSchema !== null && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
+  }
+  // parse the initial item schema
+  else if (!isNullOrUndefined(itemSchema) && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
+    // updated item schema
     const result: { [key: string]: any } = { key: itemPath };
     Object.keys(itemSchema).forEach((key) => {
       const value = itemSchema[key];
+      // some parameters don't have a title, so we use the key instead
       const newKey = key === 'x-ms-summary' ? 'title' : key;
-      const newPath = key !== 'properties' && key !== 'items' ? (itemPath ? `${itemPath}.${key}` : key) : itemPath;
+      const newPath = itemPath ? `${itemPath}.${key}` : key;
       result[newKey] = parseArrayItemSchema(value, newPath);
     });
     return result;
@@ -2165,7 +2173,12 @@ const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat:
   return stringValue;
 };
 
-export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
+export const recurseSerializeCondition = (
+  parameter: ParameterInfo,
+  editorViewModel: any,
+  isDefinitionValue: boolean,
+  errors?: string[]
+): any => {
   const returnVal: any = {};
   const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
   if (editorViewModel.type === GroupType.ROW) {
@@ -2180,21 +2193,25 @@ export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewMo
       operator = RowDropdownOptions.EQUALS;
     }
 
-    const stringifiedOperand1 =
-      getJSONValueFromString(
-        parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue),
-        'any'
-      ) ?? '';
-    const stringifiedOperand2 =
-      getJSONValueFromString(
-        parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue),
-        'any'
-      ) ?? '';
+    const operand1String = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
+    const operand2String = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
+    if (errors && errors.length === 0 && (operand1String || operand2String)) {
+      if (!operand1String || !operand2String) {
+        errors.push(
+          getIntl().formatMessage({
+            defaultMessage: 'Enter a valid condition statement.',
+            description: 'Error validation message for invalid condition statement',
+          })
+        );
+      }
+    }
+    const JSONOperand1 = getJSONValueFromString(operand1String, 'any') ?? '';
+    const JSONOperand2 = getJSONValueFromString(operand2String, 'any') ?? '';
     if (not) {
       returnVal.not = {};
-      returnVal['not'][operator] = [stringifiedOperand1, stringifiedOperand2];
+      returnVal['not'][operator] = [JSONOperand1, JSONOperand2];
     } else {
-      returnVal[operator] = [stringifiedOperand1, stringifiedOperand2];
+      returnVal[operator] = [JSONOperand1, JSONOperand2];
     }
   } else {
     let { condition, items } = editorViewModel;
@@ -2212,7 +2229,7 @@ export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewMo
       ];
     }
     returnVal[condition] = items.map((item: any) => {
-      return recurseSerializeCondition(parameter, item, isDefinitionValue);
+      return recurseSerializeCondition(parameter, item, isDefinitionValue, errors);
     });
   }
   return returnVal;

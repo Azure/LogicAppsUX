@@ -58,11 +58,11 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
           });
           paragraph.append(listItemNode);
         }
-        // Non line break nodes are parsed  and appended to the paragraph node
+        // Non line break nodes are parsed and appended to the paragraph node
         else if (!$isLineBreakNode(childNode)) {
           appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled);
         }
-        // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
+        // // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
         else if ($isLineBreakNode(childNode)) {
           paragraph.append($createTextNode('\n'));
         }
@@ -196,12 +196,16 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
         throw new Error('Token Node is missing title or name');
       }
     } else {
-      const splitSegment = segmentValue.split('\n');
-      paragraph.append($createTextNode(splitSegment[0]));
-      for (let i = 1; i < splitSegment.length; i++) {
-        root.append(paragraph);
-        paragraph = $createParagraphNode();
-        paragraph.append($createTextNode(splitSegment[i]));
+      if (typeof segmentValue === 'string') {
+        const splitSegment = segmentValue.split('\n');
+        paragraph.append($createTextNode(splitSegment[0]));
+        for (let i = 1; i < splitSegment.length; i++) {
+          root.append(paragraph);
+          paragraph = $createParagraphNode();
+          paragraph.append($createTextNode(splitSegment[i]));
+        }
+      } else {
+        paragraph.append($createTextNode(JSON.stringify(segmentValue)));
       }
     }
   });

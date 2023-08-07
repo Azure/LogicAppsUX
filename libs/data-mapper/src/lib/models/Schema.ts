@@ -53,6 +53,11 @@ export enum NormalizedDataType {
   String = 'String',
 }
 
+export enum InputFormat {
+  TextBox = 'TextBox',
+  FilePicker = 'FilePicker',
+}
+
 export interface SchemaExtended extends Schema {
   schemaTreeRoot: SchemaNodeExtended;
 }
@@ -64,7 +69,7 @@ export interface SchemaNodeExtended extends SchemaNode {
   pathToRoot: PathItem[];
   parentKey: string | undefined;
   // Used only in ArrayItem arrays, not regular arrays
-  arrayItemIndex: number | undefined;
+  arrayItemIndex?: number | undefined;
 }
 
 export interface PathItem {

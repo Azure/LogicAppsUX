@@ -5,6 +5,12 @@
       "value": "テスト"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "警告: 入力ノードの種類がスキーマ ノードの種類と一致しません"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -21,6 +27,12 @@
     {
       "type": 0,
       "value": "エラーが発生しました"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "トリガー"
     }
   ],
   "+Uvo/p": [
@@ -43,6 +55,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) クアラルンプール、シンガポール"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "必須。調べる文字列です。"
     }
   ],
   "+powfX": [
@@ -663,6 +681,12 @@
       "value": "保存"
     }
   ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "オプション。使用する RFC 4646 ロケール コードです。指定しない場合、既定のロケールが使用されます。ロケールが有効な値でない場合、指定されたロケールが無効であるか、ロケールが関連付けられていないというエラーが生成されます。"
+    }
+  ],
   "3+TQMa": [
     {
       "type": 0,
@@ -735,10 +759,22 @@
       "value": "使用可能なコンテンツがありません"
     }
   ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "必須。調べる文字列です。"
+    }
+  ],
   "3QXY3z": [
     {
       "type": 0,
       "value": "既存のスキーマを互換性のないスキーマに置き換えると、マップにエラーが発生する可能性があります。"
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "コレクションを逆の順序で返します"
     }
   ],
   "3X4FHS": [
@@ -922,7 +958,7 @@
   "4hi3ks": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "フローが更新されました。"
     }
   ],
   "4j2MEv": [
@@ -974,7 +1010,7 @@
   "50W8FI": [
     {
       "type": 0,
-      "value": "Explain action"
+      "value": "アクションについて説明してください"
     }
   ],
   "53MgCQ": [
@@ -992,13 +1028,13 @@
   "5H+8Sb": [
     {
       "type": 0,
-      "value": "Add a condition"
+      "value": "条件を追加してください"
     }
   ],
   "5J9jne": [
     {
       "type": 0,
-      "value": "Tell Microsoft what you liked about this feature"
+      "value": "この機能について満足した点を Microsoft に伝える"
     }
   ],
   "5OvGgn": [
@@ -1111,6 +1147,12 @@
       "value": "入力の読み込みでエラーが発生しました"
     }
   ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "すべての詳細パラメーターを表示します"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1121,6 +1163,12 @@
     {
       "type": 0,
       "value": "キャンセル"
+    }
+  ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "警告: 入力ノードの種類が、この入力に許可されている種類のいずれかと一致しません"
     }
   ],
   "6ZviI7": [
@@ -1152,7 +1200,7 @@
   "6gblzt": [
     {
       "type": 0,
-      "value": "Updated this action"
+      "value": "このアクションを更新しました"
     }
   ],
   "6jiO7t": [
@@ -1188,7 +1236,7 @@
   "6pISgk": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up these actions:"
+      "value": "このワークフローを準備するには、これらのアクションの設定を終了してください:"
     }
   ],
   "6qkBwz": [
@@ -1200,7 +1248,7 @@
   "6sGj3J": [
     {
       "type": 0,
-      "value": "Create flow"
+      "value": "フローを作成します"
     }
   ],
   "6u6CS+": [
@@ -1304,7 +1352,7 @@
   "7gUE8h": [
     {
       "type": 0,
-      "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+      "value": "ワークフローが Copilot の編集前の状態に戻ります。Copilot の編集の後にワークフローに対して追加の編集を行った場合、その編集内容は失われます。このアクションは元に戻すことができません。続行しますか?"
     }
   ],
   "7k9jXx": [
@@ -1316,7 +1364,7 @@
   "7ku9t+": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "バグをレポートする"
     }
   ],
   "7lnElz": [
@@ -1439,16 +1487,22 @@
       "value": "ロジック アプリのマネージド ID を有効にしてください。"
     }
   ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "アクション"
+    }
+  ],
   "8NUqpR": [
     {
       "type": 0,
-      "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
+      "value": "フローの変更方法を説明してください。使用するコネクタやコンテンツを含める必要があるかどうかなど、可能な場合は詳細情報を追加してください。"
     }
   ],
   "8Q7ns/": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "このフローを次のものに編集してください"
     }
   ],
   "8SxNQC": [
@@ -1612,7 +1666,7 @@
   "9QNZSj": [
     {
       "type": 0,
-      "value": "Revert your flow"
+      "value": "フローを元に戻す"
     }
   ],
   "9SuA/E": [
@@ -1653,6 +1707,12 @@
       "value": "テキスト"
     }
   ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "既定"
+    }
+  ],
   "9atGYe": [
     {
       "type": 0,
@@ -1674,7 +1734,7 @@
   "9wX3u9": [
     {
       "type": 0,
-      "value": "Send feedback"
+      "value": "フィードバックの送信"
     }
   ],
   "9x8hg8": [
@@ -1751,10 +1811,16 @@
       "value": "頻度を選択します。"
     }
   ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "すべての詳細パラメーターとその値を削除してクリアします"
+    }
+  ],
   "Ak2Lka": [
     {
       "type": 0,
-      "value": "Not connected to"
+      "value": "次のものに接続していません"
     }
   ],
   "AnX5yC": [
@@ -1852,10 +1918,10 @@
       "value": "このタイムスタンプの値の書式を設定する方法を示す、1 文字の有効な書式指定子またはカスタム書式パターン。書式が指定されていない場合は、ISO 8601 形式 ('o') が使用されます。"
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "カスタム値のクリア"
+      "value": "警告: カスタム値が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
   "BFTwRN": [
@@ -1873,7 +1939,7 @@
   "BIzX3S": [
     {
       "type": 0,
-      "value": "Learn more about undo operations"
+      "value": "元に戻された操作に関する詳細情報"
     }
   ],
   "BJNUxN": [
@@ -1909,7 +1975,7 @@
   "BS3gy8": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "問題が発生しました。もう一度やり直してください。"
     }
   ],
   "BSgavq": [
@@ -1999,7 +2065,7 @@
   "BynK4X": [
     {
       "type": 0,
-      "value": "Ask a question"
+      "value": "質問してください"
     }
   ],
   "C1cy54": [
@@ -2014,10 +2080,16 @@
       "value": "継続トークンに従い、指定されたしきい値を満たすように項目を取得します。コネクタのページ サイズにより、返される数がしきい値を超える場合があります。"
     }
   ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "CFOUe3": [
     {
       "type": 0,
-      "value": "Add an action that sends an email"
+      "value": "メールを送信するアクションを追加してください"
     }
   ],
   "CG772M": [
@@ -2234,12 +2306,6 @@
       "value": "期間"
     }
   ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "カスタム値がスキーマ ノードの種類と一致しません"
-    }
-  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2323,7 +2389,7 @@
   "EKjaix": [
     {
       "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
+      "value": "フローのアクションをチェックして、パラメータを設定する必要があるかどうかを確認してください。完了したら、忘れずに保存してください。"
     }
   ],
   "EKtYQF": [
@@ -2419,7 +2485,7 @@
   "EqX3Mi": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "フローで使用されるようにこれらの接続を設定します。"
     }
   ],
   "EurkzL": [
@@ -2485,7 +2551,7 @@
   "FMA0Q0": [
     {
       "type": 0,
-      "value": "Your flow has been updated."
+      "value": "フローが更新されました。"
     }
   ],
   "FN5zHQ": [
@@ -2638,7 +2704,7 @@
   "GQnN3U": [
     {
       "type": 0,
-      "value": "Explain flow"
+      "value": "フローを説明してください"
     }
   ],
   "GXXLuT": [
@@ -2651,6 +2717,20 @@
     {
       "type": 0,
       "value": "参照関数"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "s2"
     }
   ],
   "GcG0qf": [
@@ -2668,7 +2748,7 @@
   "Ggkf4s": [
     {
       "type": 0,
-      "value": "Get started"
+      "value": "はじめましょう"
     }
   ],
   "Gi72X5": [
@@ -2777,6 +2857,12 @@
       "value": "月"
     }
   ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "必須。並べ替えるコレクションです。"
+    }
+  ],
   "HMiE+4": [
     {
       "type": 0,
@@ -2822,7 +2908,7 @@
   "HfmDk9": [
     {
       "type": 0,
-      "value": "Edit Flow"
+      "value": "フローを編集してください"
     }
   ],
   "HfrUId": [
@@ -2981,26 +3067,6 @@
       "value": "(UTC+09:00) ヤクーツク"
     }
   ],
-  "IjEKvh": [
-    {
-      "type": 0,
-      "value": "API '"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "' の実行でエラーが発生しました。"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "詳細オプション"
-    }
-  ],
   "IsVhkH": [
     {
       "type": 0,
@@ -3010,7 +3076,7 @@
   "IuHdCO": [
     {
       "type": 0,
-      "value": "Here’s your flow. If you want me to change it, just say what you want. For example:"
+      "value": "フローは次のとおりです。変更をご希望の場合は、ご希望の点をお知らせください。例："
     }
   ],
   "IxWip7": [
@@ -3094,7 +3160,7 @@
   "JJyT88": [
     {
       "type": 0,
-      "value": "Action undone"
+      "value": "アクションは元に戻されました"
     }
   ],
   "JNQHws": [
@@ -3190,7 +3256,7 @@
   "KNDVnN": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "\""
     },
     {
       "type": 1,
@@ -3198,7 +3264,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\"と置き換える操作"
     }
   ],
   "KP0Rr2": [
@@ -3210,7 +3276,7 @@
   "KV4uky": [
     {
       "type": 0,
-      "value": "When a new item..."
+      "value": "新しいアイテムが..."
     }
   ],
   "KX1poC": [
@@ -3314,6 +3380,12 @@
       "value": "関数アプリを読み込んでいます..."
     }
   ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "次のフローの提案"
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3365,7 +3437,7 @@
   "LaFlFh": [
     {
       "type": 0,
-      "value": "Removed this action"
+      "value": "このアクションを削除しました"
     }
   ],
   "LdITnG": [
@@ -3455,7 +3527,7 @@
   "M3kJsI": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "毎週月曜日の"
     }
   ],
   "M4H0gh": [
@@ -3497,7 +3569,7 @@
   "MGZRu4": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "アクションを追加してください"
     }
   ],
   "MIX4f9": [
@@ -3740,6 +3812,12 @@
       "value": "ファイルを読み込んでいます..."
     }
   ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "を選択し、構成します"
+    }
+  ],
   "O9ZExg": [
     {
       "type": 0,
@@ -3782,12 +3860,6 @@
       "value": "接続名"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "カスタム値の入力"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -3803,7 +3875,7 @@
   "OQud51": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "次のものの詳細を説明してください"
     }
   ],
   "OSHNZ2": [
@@ -3827,7 +3899,7 @@
   "OYWZE4": [
     {
       "type": 0,
-      "value": "Save this workflow"
+      "value": "このワークフローを保存してください"
     }
   ],
   "OdNhwc": [
@@ -3948,12 +4020,6 @@
       "value": "必須。この値は、アレイに含まれる整数の数です。"
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "既定値"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4058,12 +4124,6 @@
     {
       "type": 0,
       "value": "接続エラー"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "値がない場合は生成しない"
     }
   ],
   "Pudllg": [
@@ -4208,6 +4268,12 @@
     {
       "type": 0,
       "value": "文字列を日付形式で返します"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "これはフローの実行内容です"
     }
   ],
   "QpRRt3": [
@@ -4384,7 +4450,7 @@
   "SHXdzU": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "AI によって生成されたコンテンツが正しくない可能性があります"
     }
   ],
   "SJFVxf": [
@@ -4397,12 +4463,6 @@
     {
       "type": 0,
       "value": "パラメーターを整数に変換します"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "入力ノードの種類がスキーマ ノードの種類と一致しません。"
     }
   ],
   "SLJkRn": [
@@ -4496,13 +4556,19 @@
   "TLMkrg": [
     {
       "type": 0,
-      "value": "Explain what an action does"
+      "value": "アクションの実行内容を説明してください"
     }
   ],
   "TNEttQ": [
     {
       "type": 0,
       "value": "金曜日"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "ワークフローのアクションの検索"
     }
   ],
   "TO7qos": [
@@ -4732,7 +4798,7 @@
   "UW+fkB": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "メールを送信する場合"
     }
   ],
   "UYRIS/": [
@@ -4769,6 +4835,12 @@
     {
       "type": 0,
       "value": "展開する"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "必須。各チャンクの長さです。"
     }
   ],
   "Umpr3z": [
@@ -4827,6 +4899,12 @@
       "value": "接続の名前を入力してください"
     }
   ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "提案されたフロー"
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -4866,7 +4944,7 @@
   "VEbE93": [
     {
       "type": 0,
-      "value": "Explain what the \""
+      "value": "このフローで \""
     },
     {
       "type": 1,
@@ -4874,7 +4952,7 @@
     },
     {
       "type": 0,
-      "value": "\" action does in this flow"
+      "value": "\" アクションが実行する内容を説明してください"
     }
   ],
   "VHm1Sr": [
@@ -4897,6 +4975,12 @@
     {
       "type": 0,
       "value": " の結果が見つかりませんでした"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "これが発生したときにフローが開始されます"
     }
   ],
   "VKAk5g": [
@@ -4994,7 +5078,13 @@
   "Vx6fwP": [
     {
       "type": 0,
-      "value": "Added this action"
+      "value": "このアクションを追加しました"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "次へ"
     }
   ],
   "W070M2": [
@@ -5016,7 +5106,7 @@
   "WCASt1": [
     {
       "type": 0,
-      "value": "Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included."
+      "value": "フロー内で何を何に置き換える必要があるかについて説明してください。使用するコネクタやコンテンツを含める必要があるかどうかなど、可能な場合は詳細情報を追加してください。"
     }
   ],
   "WGwH45": [
@@ -5073,6 +5163,12 @@
     {
       "type": 0,
       "value": "削除"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(カスタム値)"
     }
   ],
   "WgoP7R": [
@@ -5147,6 +5243,12 @@
       "value": "再試行"
     }
   ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "詳細パラメーター"
+    }
+  ],
   "XH94im": [
     {
       "type": 0,
@@ -5184,7 +5286,7 @@
   "XR4Sd/": [
     {
       "type": 0,
-      "value": "Like"
+      "value": "満足"
     }
   ],
   "XRK+gt": [
@@ -5320,7 +5422,7 @@
   "Y04+GH": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "アクションを追加してください"
     }
   ],
   "Y0H9aX": [
@@ -5350,7 +5452,7 @@
   "YCDF7A": [
     {
       "type": 0,
-      "value": "All required parameters are set"
+      "value": "必須パラメータがすべて設定されています"
     }
   ],
   "YCFhzp": [
@@ -5368,7 +5470,7 @@
   "YF1yZk": [
     {
       "type": 0,
-      "value": "chat-session-id:"
+      "value": "チャット セッション ID:"
     }
   ],
   "YHsAKl": [
@@ -5471,12 +5573,6 @@
       "value": "(UTC+05:30) チェンナイ、コルカタ、ムンバイ、ニューデリー"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "カスタム値が、この入力に許可されている型のいずれかと一致しません"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -5568,7 +5664,7 @@
   "ZXoHXd": [
     {
       "type": 0,
-      "value": "Here’s your flow."
+      "value": "フローは次のとおりです。"
     }
   ],
   "ZaIeDG": [
@@ -5607,6 +5703,12 @@
       "value": "動的コンテンツの詳細情報。"
     }
   ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "別の提案を表示する"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5619,16 +5721,16 @@
       "value": "必須。検索する部分文字列の出現回数です。"
     }
   ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "aGyVJT": [
     {
       "type": 0,
       "value": "必須。Collection の先頭から除去するオブジェクトの数。正の整数にする必要があります。"
-    }
-  ],
-  "aJxefp": [
-    {
-      "type": 0,
-      "value": "新しいパラメーターの追加"
     }
   ],
   "aK4iLW": [
@@ -5743,6 +5845,12 @@
       "value": "必須。バイナリに変換される値。"
     }
   ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "オプション。コレクション内のオブジェクトの並べ替えに使用するキーです。"
+    }
+  ],
   "bSZ0lL": [
     {
       "type": 0,
@@ -5788,13 +5896,19 @@
   "blRFVt": [
     {
       "type": 0,
-      "value": "Set up these connections to use them in your flow."
+      "value": "フローで使用されるようにこれらの接続を設定します。"
     }
   ],
   "bldzuj": [
     {
       "type": 0,
       "value": "再試行の履歴"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "すべてクリア"
     }
   ],
   "bwlAWn": [
@@ -5923,12 +6037,6 @@
       "value": "太字 (⌘B)"
     }
   ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "入力ノードの種類が、この入力に許可されている型のいずれかと一致しません"
-    }
-  ],
   "cmTCsW": [
     {
       "type": 0,
@@ -6016,13 +6124,13 @@
   "dMAC4C": [
     {
       "type": 0,
-      "value": "Replace action"
+      "value": "アクションを置き換えてください"
     }
   ],
   "dNpnmn": [
     {
       "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
+      "value": "お帰りなさい! フローの変更をご希望の場合は、ご希望の点をお知らせください。例："
     }
   ],
   "dOpdsP": [
@@ -6052,7 +6160,7 @@
   "dUbKuK": [
     {
       "type": 0,
-      "value": "Skip"
+      "value": "スキップ"
     }
   ],
   "dWFyfN": [
@@ -6146,7 +6254,7 @@
   "eESljX": [
     {
       "type": 0,
-      "value": "Revert"
+      "value": "元に戻す"
     }
   ],
   "eFet4K": [
@@ -6212,7 +6320,7 @@
   "eqAUdj": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "新しいアイテム"
     }
   ],
   "f/lWTW": [
@@ -6445,6 +6553,12 @@
       "value": "対象ユーザーを入力してください。"
     }
   ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "文字列が浮動小数点数であるかどうかを示すブール値を返します"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6517,13 +6631,19 @@
   "hRVVdR": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "元に戻す"
     }
   ],
   "hZqQdt": [
     {
       "type": 0,
       "value": "(UTC+02:00) ガザ、ヘブロン"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "これは私が探しているものではありません"
     }
   ],
   "hic23z": [
@@ -6710,6 +6830,12 @@
       "value": "例: 0、10"
     }
   ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "AI によって生成されたこのフローの提案を確認した後、"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -6795,7 +6921,7 @@
   "jN0YES": [
     {
       "type": 0,
-      "value": "Tell Microsoft how this feature could be improved"
+      "value": "この機能を改善する方法を Microsoft に伝える"
     }
   ],
   "jQ0Aqj": [
@@ -6816,10 +6942,34 @@
       "value": "ソース スキーマの追加"
     }
   ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " 件中 "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " 件を表示しています"
+    }
+  ],
   "jUDhbs": [
     {
       "type": 0,
       "value": "ターゲット スキーマ"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "必須。分割する文字列または配列です。"
     }
   ],
   "jVpanH": [
@@ -6855,7 +7005,7 @@
   "jlcMGg": [
     {
       "type": 0,
-      "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
+      "value": "フローで実行される必要があることについて説明してください。使用するコネクタやコンテンツを含める必要があるかどうかなど、可能な場合は詳細情報を追加してください。"
     }
   ],
   "juR40n": [
@@ -6927,13 +7077,13 @@
   "kHs5R4": [
     {
       "type": 0,
-      "value": "Check these actions to see if any parameters need to be set."
+      "value": "これらのアクションをチェックして、パラメータを設定する必要があるかどうかを確認してください。"
     }
   ],
   "kKJMeM": [
     {
       "type": 0,
-      "value": "Every week on Monday..."
+      "value": "毎週月曜日の..."
     }
   ],
   "kM+Mr0": [
@@ -7022,7 +7172,7 @@
   "l2YXln": [
     {
       "type": 0,
-      "value": "Replace action with"
+      "value": "アクションを次のものと置き換えてください"
     }
   ],
   "l36V56": [
@@ -7089,6 +7239,12 @@
     {
       "type": 0,
       "value": "グループの追加"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "必須。反転するコレクションです。"
     }
   ],
   "lexzgJ": [
@@ -7792,7 +7948,7 @@
   "qBNM3e": [
     {
       "type": 0,
-      "value": "Connecting to apps and services"
+      "value": "アプリとサービスに接続しています"
     }
   ],
   "qBkxGU": [
@@ -7934,6 +8090,12 @@
       "value": "' が無効です。"
     }
   ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "前のフローの提案"
+    }
+  ],
   "r/n6/9": [
     {
       "type": 0,
@@ -8033,7 +8195,7 @@
   "rn5IsW": [
     {
       "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
+      "value": "申し訳ございません。要求を理解できませんでした。言い換えて、もう一度お試しください。"
     }
   ],
   "rsdJcV": [
@@ -8081,7 +8243,7 @@
   "sBBLuh": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up these actions:"
+      "value": "このワークフローを保存するには、これらのアクションの設定を終了してください:"
     }
   ],
   "sDkAVZ": [
@@ -8112,6 +8274,12 @@
     {
       "type": 0,
       "value": "ケースの追加"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "警告: カスタム値がスキーマ ノードの種類と一致しません"
     }
   ],
   "sVQe34": [
@@ -8177,7 +8345,7 @@
   "srMbm9": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "キャンセル"
     }
   ],
   "srpZD2": [
@@ -8305,7 +8473,7 @@
   "tTIsTX": [
     {
       "type": 0,
-      "value": "Test this workflow"
+      "value": "このワークフローをテストしてください"
     }
   ],
   "tUCptx": [
@@ -8475,7 +8643,7 @@
   "uZpzqY": [
     {
       "type": 0,
-      "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
+      "value": "申し訳ございません。Copilot はフル操業しており、一時的に利用できません。しばらくしてからもう一度お試しください。"
     }
   ],
   "uanMWm": [
@@ -8565,7 +8733,7 @@
   "uxQ143": [
     {
       "type": 0,
-      "value": "Ask question related to your workflow or Logic Apps."
+      "value": "ワークフローまたは Logic Apps に関連する質問をしてください。"
     }
   ],
   "uzsleE": [
@@ -8607,7 +8775,7 @@
   "vF+gWH": [
     {
       "type": 0,
-      "value": "Explain what this flow does"
+      "value": "このフローの実行内容を説明してください"
     }
   ],
   "vLereV": [
@@ -8673,7 +8841,7 @@
   "vmlhVB": [
     {
       "type": 0,
-      "value": "To get this workflow ready, finish setting up this action:"
+      "value": "このワークフローを準備するには、このアクションの設定を終了してください:"
     }
   ],
   "vr70Gn": [
@@ -8989,7 +9157,7 @@
   "xvav7+": [
     {
       "type": 0,
-      "value": "Connected to"
+      "value": "接続されました"
     }
   ],
   "xwD1VZ": [
@@ -9040,6 +9208,18 @@
       "value": "文字列から文字のサブセットを返します。"
     }
   ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "昇順に並べ替えられた配列を返します"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "すべてを表示"
+    }
+  ],
   "yVFIAQ": [
     {
       "type": 0,
@@ -9050,6 +9230,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "文字列または配列を同じ長さのチャンクに分割します"
     }
   ],
   "ydqOly": [
@@ -9075,7 +9261,7 @@
   "yk7L+4": [
     {
       "type": 0,
-      "value": "Dislike"
+      "value": "不満"
     }
   ],
   "yoCi15": [
@@ -9099,7 +9285,7 @@
   "yrYEmk": [
     {
       "type": 0,
-      "value": "Send me an email when..."
+      "value": "メールを送信する場合は...です"
     }
   ],
   "ysoumb": [
@@ -9190,6 +9376,12 @@
       "value": "アクションの選択"
     }
   ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "文字列が整数であるかどうかを示すブール値を返します"
+    }
+  ],
   "zUgja+": [
     {
       "type": 0,
@@ -9205,7 +9397,7 @@
   "zb3lE6": [
     {
       "type": 0,
-      "value": "To save this workflow, finish setting up this action:"
+      "value": "このワークフローを保存するには、このアクションの設定を終了してください:"
     }
   ],
   "zcZpHT": [
@@ -9217,7 +9409,7 @@
   "zec5Ay": [
     {
       "type": 0,
-      "value": "Stop"
+      "value": "停止"
     }
   ],
   "ziXw25": [
