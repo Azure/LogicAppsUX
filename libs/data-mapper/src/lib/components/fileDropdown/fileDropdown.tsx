@@ -13,6 +13,7 @@ export type FileDropdownProps = {
   placeholder: string;
   ariaLabel: string;
   loadedSelection: string;
+  disabled?: boolean;
 };
 
 const useStyles = makeStyles({
@@ -84,6 +85,7 @@ export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownPro
         className={styles.combobox}
         appearance="outline"
         value={typedInput}
+        disabled={props.disabled === true}
       >
         {formattedOptions}
       </Combobox>

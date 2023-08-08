@@ -42,6 +42,8 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
       );
       break;
     case InputFormat.FilePicker: {
+      const customXsltPath = 'DataMapper/Extensions/InlineXslt';
+
       const relativePathMessage = intl.formatMessage({
         defaultMessage: 'Select function from ',
         description: 'Path to the function to select',
@@ -50,12 +52,29 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
         defaultMessage: 'Dropdown to select filepath ',
         description: 'Label of the file path selection box',
       });
-      const customXsltPath = 'DataMapper/Extensions/InlineXslt';
+      const noFilesFound = intl.formatMessage(
+        {
+          defaultMessage: 'No files found in {filePath}, please save XSLT to specified path to use this function',
+          description: 'Files could not be found in specified path',
+        },
+        {
+          filePath: customXsltPath,
+        }
+      );
+
+      let placeholder = `${relativePathMessage} ${customXsltPath}`;
+      let isDisabled = false;
+
+      if (pathOptions.length === 0) {
+        placeholder = noFilesFound;
+        isDisabled = true;
+      }
+
       inputBox = (
         <FileDropdown
           loadedSelection={removeQuotesFromString((connection?.inputs[0][0] as string) || '')}
           allPathOptions={pathOptions}
-          placeholder={`${relativePathMessage} ${customXsltPath}`}
+          placeholder={placeholder}
           setSelectedPath={(item: string | undefined) => {
             if (item && selectedItemKey && pathOptions.find((path) => path === item))
               dispatch(
@@ -70,6 +89,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
           relativePathMessage={''}
           errorMessage=""
           ariaLabel={ariaLabel}
+          disabled={isDisabled}
         />
       );
       break;
