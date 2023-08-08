@@ -12,7 +12,7 @@ import {
   isStringLiteral,
   isTemplateExpression,
 } from '@microsoft/parsers-logic-apps';
-import { endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
+import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
 
 const regex = {
   datetime:
@@ -44,7 +44,7 @@ export function validateStaticParameterInfo(
 
   const parameterTitle = getTitleOrSummary(parameterMetadata.schema) || parameterMetadata.parameterName;
   const parameterFormat = parameterMetadata.info.format,
-    parameterName = formatParameterName(parameterTitle),
+    parameterName = capitalizeFirstLetter(parameterTitle),
     pattern = parameterMetadata.pattern,
     type = parameterMetadata.type,
     editor = parameterMetadata.editor,
@@ -280,7 +280,7 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
     : parameterValueToJSONString(parameterValue, false, true);
 
   const parameterTitle = getTitleOrSummary(parameterMetadata.schema) || parameterMetadata.parameterName;
-  const parameterName = formatParameterName(parameterTitle);
+  const parameterName = capitalizeFirstLetter(parameterTitle);
   const required = isParameterRequired(parameterMetadata);
   if (required && !value) {
     return [
@@ -419,8 +419,4 @@ function isValidArrayFormat(value: string): boolean {
 export const isISO8601 = (s: string) => {
   const ISO_8601_REGEX = /^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$/;
   return ISO_8601_REGEX.test(s);
-};
-
-export const formatParameterName = (s: string): string => {
-  return s && "'" + s[0].toUpperCase() + s.slice(1) + "'";
 };

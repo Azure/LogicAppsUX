@@ -20,6 +20,8 @@ import { useUpdateEffect } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
+export { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
+
 export enum AuthenticationType {
   NONE = 'None',
   BASIC = 'Basic',
