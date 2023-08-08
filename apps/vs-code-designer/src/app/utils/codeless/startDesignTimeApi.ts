@@ -16,7 +16,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
-import { getWorkspaceSetting } from '../vsCodeConfig/settings';
+import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { delay } from '@azure/ms-rest-js';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import { WorkerRuntime } from '@microsoft/vscode-extension';
@@ -77,8 +77,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
       const cwd: string = designTimeDirectory.fsPath;
       const portArgs = `--port ${ext.workflowDesignTimePort}`;
-      const funcBinariesLocation = getWorkspaceSetting<string>('funcCoreToolsPath');
-      startDesignTimeProcess(ext.outputChannel, cwd, funcBinariesLocation, 'host', 'start', portArgs);
+      startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
       await waitForDesingTimeStartUp(url, new Date().getTime());
     } else {
       throw new Error(localize('DesignTimeDirectoryError', 'Design time directory could not be created.'));

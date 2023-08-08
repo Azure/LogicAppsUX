@@ -8,8 +8,9 @@ import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
+import { getGlobalSetting, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
-import { extensionCommand, logicAppFilter } from './constants';
+import { defaultDependencyPathValue, dependenciesPathSettingKey, extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
@@ -41,6 +42,13 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
+
+    // Dependency Path
+    if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
+      await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
+      activateContext.telemetry.properties.dependencyPath = defaultDependencyPathValue;
+    }
+
     validateFuncCoreToolsIsLatest();
 
     ext.extensionVersion = getExtensionVersion();

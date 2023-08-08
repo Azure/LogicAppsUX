@@ -687,17 +687,10 @@
             "type": "string",
             "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
           },
-          "azureLogicAppsStandard.dotnetPath": {
+          "azureLogicAppsStandard.dependenciesPath": {
             "scope": "resource",
             "type": "string",
-            "default": "dotnet",
-            "description": "The path for dotnet binaries"
-          },
-          "azureLogicAppsStandard.funcCoreToolsPath": {
-            "scope": "resource",
-            "type": "string",
-            "default": "func",
-            "description": "The path for func core tools binaries"
+            "description": "The path for Logic App Extension dependency binaries"
           },
           "azureLogicAppsStandard.projectSubpath": {
             "scope": "resource",
@@ -842,7 +835,8 @@
     "onView:azureResourceGroups",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
-    "onDebugInitialConfigurations"
+    "onDebugInitialConfigurations",
+    "onStartupFinished"
   ],
   "galleryBanner": {
     "color": "#015cda",

@@ -3,16 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { PackageManager } from '../../../constants';
-import { validateFuncCoreToolsSetting, funcVersionSetting } from '../../../constants';
+import { validateFuncCoreToolsSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
-import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { installFuncCoreTools } from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion } from '@microsoft/vscode-extension';
 import type { MessageItem } from 'vscode';
 
 /**
@@ -49,8 +48,7 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
       innerContext.telemetry.properties.dialogResult = input.title;
 
       if (input === install) {
-        const version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, fsPath));
-        await installFuncCoreTools(innerContext, packageManagers, version);
+        await installFuncCoreTools(innerContext);
         installed = true;
       } else if (input === DialogResponses.learnMore) {
         await openUrl('https://aka.ms/Dqur4e');
@@ -79,8 +77,7 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
  */
 export async function isFuncToolsInstalled(): Promise<boolean> {
   try {
-    const funcBinariesLocation = getWorkspaceSetting<string>('funcCoreToolsPath');
-    await executeCommand(undefined, undefined, funcBinariesLocation, '--version');
+    await executeCommand(undefined, undefined, getFunctionsCommand(), '--version');
     return true;
   } catch (error) {
     return false;

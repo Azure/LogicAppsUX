@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from './localize';
+import * as os from 'os';
+import * as path from 'path';
 
 // File names
 export const hostFileName = 'host.json';
@@ -157,12 +159,21 @@ export const extInstallTaskName = `${func}: ${extInstallCommand}`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
+export const dependenciesPathSettingKey = 'dependenciesPath';
+export const defaultDependencyPathValue = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+export const defaultFuncCoreToolsPathValue = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'funcCoreTools');
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+
+// Fallback Dependency Versions
+export enum DependencyVersion {
+  dotnet6 = '6.0.412',
+  funcCoreTools = '4.0.5198',
+}
 
 // .NET
 export enum DotnetVersion {
@@ -176,6 +187,13 @@ export enum DotnetVersion {
 export enum PackageManager {
   npm = 'npm',
   brew = 'brew',
+}
+
+// Operating System Platforms
+export enum Platform {
+  windows = 'win32',
+  mac = 'darwin',
+  linux = 'linux',
 }
 
 // Resources
