@@ -70,7 +70,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
         return displayApi?.id === apiId;
       });
       if (operations.length === 0) return null;
-      const api = operations[0].properties.displayApi || operations[0].properties.api;
+      const api = operations[0].properties.displayApi ?? operations[0].properties.api;
       return (
         <div style={{ marginBottom: '24px' }}>
           <OperationSearchGroup
