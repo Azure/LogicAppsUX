@@ -29,7 +29,6 @@ describe('ui/settings/multiselectsettings', () => {
     minimal = {
       options: defaultOptions,
       selections: [],
-      visible: true,
     };
 
     renderer = ReactShallowRenderer.createRenderer();

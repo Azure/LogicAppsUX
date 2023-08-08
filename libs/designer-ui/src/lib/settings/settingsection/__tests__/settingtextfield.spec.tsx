@@ -7,7 +7,7 @@ describe('ui/settings/settingtextfield', () => {
   let minimal: SettingTextFieldProps, shallow: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    minimal = { id: 'testId', readOnly: false, label: 'label text', value: 'sample value', visible: true };
+    minimal = { id: 'testId', readOnly: false, label: 'label text', value: 'sample value' };
     shallow = ReactShallowRenderer.createRenderer();
   });
 

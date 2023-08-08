@@ -325,8 +325,9 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
 
     const removeParamTooltip = intl.formatMessage(
       {
-        defaultMessage: 'Remove parameter "{parameterName}" and its value',
-        description: 'Tooltip for remove parameter button',
+        defaultMessage: "Remove parameter ''{parameterName}'' and its value",
+        description:
+          'Tooltip for button to remove parameter. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
       },
       { parameterName: (settingProp as any).label }
     );
