@@ -39,7 +39,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     () =>
       Array.from(
         new Set(
-          operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.displayApi?.id || res.properties?.api?.id)
+          operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.displayApi?.id ?? res.properties?.api?.id)
         )
       ),
     [operationSearchResults]
