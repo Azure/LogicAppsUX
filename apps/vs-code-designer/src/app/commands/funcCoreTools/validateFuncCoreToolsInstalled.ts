@@ -2,12 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { PackageManager } from '../../../constants';
 import { validateFuncCoreToolsSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
-import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { installFuncCoreTools } from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
@@ -35,16 +33,8 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
     } else if (await isFuncToolsInstalled()) {
       installed = true;
     } else {
-      const items: MessageItem[] = [];
-      const packageManagers: PackageManager[] = await getFuncPackageManagers(false /* isFuncInstalled */);
-      if (packageManagers.length > 0) {
-        items.push(install);
-      } else {
-        items.push(DialogResponses.learnMore);
-      }
-
+      const items: MessageItem[] = [install, DialogResponses.learnMore];
       input = await innerContext.ui.showWarningMessage(message, { modal: true }, ...items);
-
       innerContext.telemetry.properties.dialogResult = input.title;
 
       if (input === install) {
