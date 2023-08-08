@@ -21,12 +21,7 @@ import * as vscode from 'vscode';
  * @param {string} targetFolder - Module name to check.
  */
 
-export async function downloadAndExtractBinaries(
-  context: IActionContext,
-  binariesUrl: string,
-  targetFolder: string,
-  dependencyName: string
-): Promise<void> {
+export async function downloadAndExtractBinaries(binariesUrl: string, targetFolder: string, dependencyName: string): Promise<void> {
   const tempFolderPath = path.join(os.tmpdir(), '.azurelogicapps', dependencyName);
   targetFolder = path.join(targetFolder, dependencyName);
   fs.mkdirSync(targetFolder, { recursive: true });
@@ -38,26 +33,28 @@ export async function downloadAndExtractBinaries(
 
     // Step 2: Download the zip
     await new Promise<void>((resolve, reject) => {
+      executeCommand(ext.outputChannel, undefined, 'echo', `Donwloading binaries from: ${binariesUrl}}`);
       const downloadStream = request(binariesUrl).pipe(fs.createWriteStream(zipFilePath));
       downloadStream.on('finish', () => {
-        executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded from ${binariesUrl}`);
+        executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName}.`);
         resolve();
       });
       downloadStream.on('error', reject);
     });
 
     // Step 3: Extract the zip to targetFolder
+    executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${zipFilePath}`);
     const zip = new AdmZip(zipFilePath);
     zip.extractAllTo(targetFolder, /* overwrite */ true);
+    executeCommand(ext.outputChannel, undefined, 'echo', `Extraction completed successfully.`);
 
-    executeCommand(ext.outputChannel, undefined, 'echo', `Download and extraction completed successfully.`);
+    vscode.window.showInformationMessage(`Successfully installed ${dependencyName}`);
   } catch (error) {
     vscode.window.showErrorMessage(`Error downloading and extracting the zip: ${error.message}`);
     throw error;
   } finally {
-    executeCommand(ext.outputChannel, undefined, 'echo', `Removing ${tempFolderPath}`);
-    fs.unlinkSync(zipFilePath);
     fs.rmdirSync(tempFolderPath, { recursive: true });
+    executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
   }
 }
 

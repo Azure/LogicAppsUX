@@ -37,5 +37,5 @@ export async function installFuncCoreTools(context: IActionContext, targetDirect
       azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'osx', arch);
       break;
   }
-  downloadAndExtractBinaries(context, azureFunctionCoreToolsReleasesUrl, targetDirectory, 'FuncCoreTools');
+  downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, 'FuncCoreTools');
 }
