@@ -127,8 +127,10 @@ const runService = new StandardRunService({
 
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
-const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
-
+const hostService = {
+  fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
+  openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
+};
 const editorService = new CustomEditorService();
 
 const connectionParameterEditorService = new CustomConnectionParameterEditorService();

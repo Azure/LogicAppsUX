@@ -31,7 +31,7 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
       onAddParameter={onWorkflowParameterAdd}
       onDeleteParameter={onDeleteWorkflowParameter}
       onUpdateParameter={onUpdateParameter}
-      onManageParameters={useLegacy && !readOnly && !isMonitoringView ? HostService().openWorkflowParametersBlade : undefined}
+      onManageParameters={!readOnly && !isMonitoringView ? HostService().openWorkflowParametersBlade : undefined}
     />
   );
 };
