@@ -32,7 +32,7 @@ export interface FunctionInput {
   placeHolder: string;
 }
 
-// NOTE: These values must be in alphabetical order (used in sorting within FunctionsList)
+// NOTE: These values must be in alphabetical order (used in sorting within FunctionsList) with the exception of 'Custom' which goes at the bottom
 export enum FunctionCategory {
   Collection = 'Collection',
   Conversion = 'Conversion',
