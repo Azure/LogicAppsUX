@@ -1,6 +1,7 @@
 import {
   collectionBranding,
   conversionBranding,
+  customBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
@@ -41,6 +42,9 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
     }
     case FunctionCategory.Conversion: {
       return conversionBranding;
+    }
+    case FunctionCategory.Custom: {
+      return customBranding;
     }
     default: {
       LogService.error(LogCategory.FunctionUtils, 'getFunctionBrandingForCategory', {
