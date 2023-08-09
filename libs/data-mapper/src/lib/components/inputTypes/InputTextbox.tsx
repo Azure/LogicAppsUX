@@ -39,16 +39,14 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
 
     const formattedValue = addQuotesToString(value);
 
-    if (inputTyped) {
-      dispatch(
-        setConnectionInput({
-          targetNode: functionNode,
-          targetNodeReactFlowKey: selectedItemKey,
-          inputIndex: 0,
-          input: formattedValue,
-        })
-      );
-    }
+    dispatch(
+      setConnectionInput({
+        targetNode: functionNode,
+        targetNodeReactFlowKey: selectedItemKey,
+        inputIndex: 0,
+        input: formattedValue,
+      })
+    );
   };
 
   const debounceDelay = 300;

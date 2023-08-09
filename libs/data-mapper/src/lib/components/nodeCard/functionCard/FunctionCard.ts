@@ -1,5 +1,6 @@
 import type { FunctionGroupBranding } from '../../../constants/FunctionConstants';
 import { simpleFunctionCardDiameter } from '../../../constants/NodeConstants';
+import { InputFormat } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
 import { areInputTypesValidForFunction } from '../../../utils/MapChecker.Utils';
@@ -60,8 +61,12 @@ export const shouldDisplayTargetHandle = (
 ) =>
   displayHandle &&
   functionData.maxNumberOfInputs !== 0 &&
+  !hasOnlyCustomInputType(functionData) &&
   !!sourceNodeConnectionBeingDrawnFromId &&
   sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
+
+export const hasOnlyCustomInputType = (functionData: FunctionData) =>
+  functionData.inputs[0]?.inputEntryType === InputFormat.FilePicker || functionData.inputs[0]?.inputEntryType === InputFormat.TextBox;
 
 export const shouldDisplaySourceHandle = (
   displayHandle: boolean,
