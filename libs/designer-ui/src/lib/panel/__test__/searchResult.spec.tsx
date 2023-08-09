@@ -38,7 +38,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
     expect(list.props.items).toContain('api_id');
     expect(list.props.items).toContain('displayApi_id');
 
-    const cell = list.props.onRenderCell!('displayApi_id');
+    const cell = list.props.onRenderCell?.('displayApi_id');
     expectValidReactElement(cell);
     const group = findByName<OperationSearchGroupProps>('OperationSearchGroup', cell);
     expect(group.props.operationApi.displayName).toBe('displayApi_displayName');
@@ -53,7 +53,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
     expect(list.props.items).toContain(operation);
     expect(list.props.items).toContain(aliasedOperation);
 
-    const cell = list.props.onRenderCell!(aliasedOperation);
+    const cell = list.props.onRenderCell?.(aliasedOperation);
     expectValidReactElement(cell);
     const operationCard = findByName<OperationSearchCardProps>('OperationSearchCard', cell);
     expect(operationCard.props.operationActionData.brandColor).toBe('aliased_operation_brandColor');

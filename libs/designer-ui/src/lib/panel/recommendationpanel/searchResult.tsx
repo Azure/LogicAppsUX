@@ -39,7 +39,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     () =>
       Array.from(
         new Set(
-          operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.displayApi?.id || res.properties?.api?.id)
+          operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.displayApi?.id ?? res.properties?.api?.id)
         )
       ),
     [operationSearchResults]
@@ -66,11 +66,11 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     (apiId: string | undefined, _index: number | undefined) => {
       if (!apiId) return;
       const operations = operationSearchResults.filter((res) => {
-        const displayApi = res?.properties.displayApi || res?.properties.api;
+        const displayApi = res?.properties.displayApi ?? res?.properties.api;
         return displayApi?.id === apiId;
       });
       if (operations.length === 0) return null;
-      const api = operations[0].properties.displayApi || operations[0].properties.api;
+      const api = operations[0].properties.displayApi ?? operations[0].properties.api;
       return (
         <div style={{ marginBottom: '24px' }}>
           <OperationSearchGroup
