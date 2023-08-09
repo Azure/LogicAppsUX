@@ -2985,20 +2985,6 @@
       "value": " Install Gateway"
     }
   ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Remove parameter \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" and its value"
-    }
-  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -8873,6 +8859,20 @@
     {
       "type": 0,
       "value": "Ask question related to your workflow or Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remove parameter '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' and its value"
     }
   ],
   "uzsleE": [

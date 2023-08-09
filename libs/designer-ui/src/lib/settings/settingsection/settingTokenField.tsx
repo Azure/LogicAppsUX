@@ -69,7 +69,9 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
           </Label>
         </div>
       )}
-      {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
+      <div key={props.id}>
+        {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
+      </div>
     </>
   );
 };
