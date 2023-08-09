@@ -137,7 +137,7 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   id: operation.id,
   title: operation.properties.summary,
   description: operation.properties.description,
-  brandColor: (operation.properties as BuiltInOperation).brandColor || operation.properties.api.brandColor,
+  brandColor: (operation.properties as BuiltInOperation).brandColor ?? operation.properties.api.brandColor,
   iconUri: (operation.properties as BuiltInOperation).iconUri || operation.properties.api.iconUri,
   connectorName: operation.properties.api.displayName,
   category: getConnectorCategoryString(operation.properties.api.id),
