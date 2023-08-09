@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt"
     }
   ],
   "+0cO6t": [
@@ -1180,7 +1180,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "6ZviI7": [
@@ -1940,7 +1940,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Waarschuwing: De aangepaste waarde komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "BFTwRN": [
@@ -5236,7 +5236,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(aangepaste waarde)"
     }
   ],
   "WgoP7R": [
@@ -8396,7 +8396,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Waarschuwing: De aangepaste waarde komt niet overeen met het type van het schemaknooppunt"
     }
   ],
   "sVQe34": [

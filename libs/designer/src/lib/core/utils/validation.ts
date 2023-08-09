@@ -2,7 +2,7 @@ import Constants from '../../common/constants';
 import { getTitleOrSummary } from './openapi/schema';
 import { isParameterRequired, parameterValueToJSONString, recurseSerializeCondition } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
-import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
+import { type ParameterInfo, type ValueSegment } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Expression, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
 import {
@@ -12,7 +12,7 @@ import {
   isStringLiteral,
   isTemplateExpression,
 } from '@microsoft/parsers-logic-apps';
-import { endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
+import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
 
 const regex = {
   datetime:
@@ -44,7 +44,7 @@ export function validateStaticParameterInfo(
 
   const parameterTitle = getTitleOrSummary(parameterMetadata.schema) || parameterMetadata.parameterName;
   const parameterFormat = parameterMetadata.info.format,
-    parameterName = formatParameterName(parameterTitle),
+    parameterName = capitalizeFirstLetter(parameterTitle),
     pattern = parameterMetadata.pattern,
     type = parameterMetadata.type,
     editor = parameterMetadata.editor,
@@ -60,7 +60,11 @@ export function validateStaticParameterInfo(
   if (pattern && !new RegExp(pattern).test(parameterValue)) {
     parameterErrorMessages.push(
       intl.formatMessage(
-        { defaultMessage: 'Enter a valid value for {parameterName}.', description: 'Invalid Pattern error message' },
+        {
+          defaultMessage: "Enter a valid value for ''{parameterName}''.",
+          description:
+            'Invalid Pattern error message. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+        },
         { parameterName }
       )
     );
@@ -69,7 +73,11 @@ export function validateStaticParameterInfo(
   if (required && !parameterValue) {
     parameterErrorMessages.push(
       intl.formatMessage(
-        { defaultMessage: '{parameterName} is required.', description: 'Required Parameter error message' },
+        {
+          defaultMessage: "''{parameterName}'' is required.",
+          description:
+            'Required Parameter error message. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+        },
         { parameterName }
       )
     );
@@ -80,8 +88,9 @@ export function validateStaticParameterInfo(
       intl.formatMessage(
         {
           defaultMessage:
-            '{parameterName} is no longer present in the operation schema. It should be removed before the workflow is re-saved.',
-          description: 'Unknown Parameter error message',
+            "''{parameterName}'' is no longer present in the operation schema. It should be removed before the workflow is re-saved.",
+          description:
+            'Unknown Parameter error message. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
         },
         { parameterName }
       )
@@ -113,7 +122,6 @@ export function validateType(type: string, parameterFormat: string, parameterVal
     }
     return;
   }
-
   switch (type.toLowerCase()) {
     case Constants.SWAGGER.TYPE.INTEGER:
       if (isExpression) {
@@ -266,18 +274,22 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
   const intl = getIntl();
   const { editor, editorOptions } = parameterMetadata;
   const isConditionEditor = editor === Constants.EDITOR.CONDITION && !editorOptions?.isOldFormat;
+  const errors: string[] = [];
   const value = isConditionEditor
-    ? JSON.stringify(recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true))
+    ? JSON.stringify(recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true, errors))
     : parameterValueToJSONString(parameterValue, false, true);
 
-  const errors: string[] = [];
   const parameterTitle = getTitleOrSummary(parameterMetadata.schema) || parameterMetadata.parameterName;
-  const parameterName = formatParameterName(parameterTitle);
+  const parameterName = capitalizeFirstLetter(parameterTitle);
   const required = isParameterRequired(parameterMetadata);
   if (required && !value) {
     return [
       intl.formatMessage(
-        { defaultMessage: '{parameterName} is required.', description: 'Required Parameter error message' },
+        {
+          defaultMessage: "''{parameterName}'' is required.",
+          description:
+            'Required Parameter error message. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
+        },
         { parameterName }
       ),
     ];
@@ -286,15 +298,12 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
   if (shouldValidateJSON(parameterValue) && value) {
     try {
       JSON.parse(value);
-      if (isConditionEditor) {
-        validateConditionalEditor(value, errors);
-      }
-    } catch {
+    } catch (e) {
       if (!parameterHasOnlyTokenBinding(parameterValue)) {
         errors.push(
           intl.formatMessage({
             defaultMessage: 'Enter a valid JSON.',
-            description: 'Invalid JSON',
+            description: 'Error validation message for invalid JSON',
           })
         );
       }
@@ -303,30 +312,6 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
 
   return errors;
 }
-
-const validateConditionalEditor = (value: string, errors: string[]) => {
-  const intl = getIntl();
-  let index = value.indexOf('null');
-  const indices = [];
-  while (index !== -1) {
-    indices.push(index);
-    index = value.indexOf('null', index + 1);
-  }
-
-  for (let i = 0; i < indices.length; i++) {
-    if (value[indices[i] - 1] === '@' || (value.substring(indices[i] - 2, indices[i]) === '@{' && value[indices[i] + 4] === '}')) {
-      continue;
-    } else {
-      errors.push(
-        intl.formatMessage({
-          defaultMessage: 'Enter a valid condition.',
-          description: 'Invalid condition',
-        })
-      );
-      return;
-    }
-  }
-};
 
 function shouldValidateJSON(expressions: ValueSegment[]): boolean {
   const shouldValidate = true;
@@ -434,8 +419,4 @@ function isValidArrayFormat(value: string): boolean {
 export const isISO8601 = (s: string) => {
   const ISO_8601_REGEX = /^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$/;
   return ISO_8601_REGEX.test(s);
-};
-
-export const formatParameterName = (s: string): string => {
-  return s && "'" + s[0].toUpperCase() + s.slice(1) + "'";
 };

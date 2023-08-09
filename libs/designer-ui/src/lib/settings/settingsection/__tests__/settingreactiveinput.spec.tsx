@@ -13,7 +13,6 @@ describe('ui/settings/settingreactiveinput', () => {
       textFieldLabel: 'text field label',
       textFieldValue: 'test',
       checked: false,
-      visible: true,
       onToggleLabel: 'On',
       offToggleLabel: 'Off',
       onValueChange: () => null,
