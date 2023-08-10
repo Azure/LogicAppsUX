@@ -367,16 +367,6 @@
       "value": "Obligatorio. La cadena que debería contener el valor."
     }
   ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " ya no está presente en el esquema de la operación. Debe quitarse antes de que se vuelva a guardar el flujo de trabajo."
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -905,6 +895,20 @@
       "value": "Obligatorio. El entero menor que pudo devolverse."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is required."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -979,20 +983,6 @@
     {
       "type": 0,
       "value": "Botón para agregar contenido dinámico si TokenPicker está oculto"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "Se requiere "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "4vcnOA": [
@@ -1267,6 +1257,20 @@
     {
       "type": 0,
       "value": "Obligatorio. Valor para el que se va a buscar el índice."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "6ueRYm": [
@@ -2989,20 +2993,6 @@
       "value": "Escribir una fecha y hora válidas."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Escriba un valor válido para "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3011,20 +3001,6 @@
     {
       "type": 0,
       "value": " Instalar puerta de enlace"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Quitar el parámetro \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" y su valor"
     }
   ],
   "HzS2gJ": [
@@ -4402,12 +4378,6 @@
       "value": "(UTC+12:00) Hora universal coordinada +12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Escribir una condición válida."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5039,6 +5009,20 @@
       "value": "Especifica un nombre válido."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5261,6 +5245,12 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition statement."
     }
   ],
   "WUe3DY": [
@@ -6079,6 +6069,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "c7tRg/": [
@@ -8936,6 +8932,20 @@
     {
       "type": 0,
       "value": "Haga una pregunta relacionada con su flujo de trabajo o Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remove parameter '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' and its value"
     }
   ],
   "uzsleE": [
