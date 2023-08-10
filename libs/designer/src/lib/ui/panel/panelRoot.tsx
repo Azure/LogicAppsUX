@@ -57,8 +57,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   );
 
   const onRenderFooterContent = useCallback(
-    () =>
-      currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : <></>, // Caught above
+    () => (currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : <></>), // Caught above
     [currentPanelMode]
   );
 
@@ -77,6 +76,12 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       customWidth={width}
       onRenderFooterContent={onRenderFooterContent}
       isFooterAtBottom={true}
+      styles={({ theme }) => ({
+        footer: {
+          backgroundColor: theme?.semanticColors.bodyBackground,
+          borderTop: 0,
+        },
+      })}
     >
       {
         currentPanelMode === 'WorkflowParameters' ? (
