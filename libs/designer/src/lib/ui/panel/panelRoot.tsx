@@ -57,13 +57,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   );
 
   const onRenderFooterContent = useCallback(
-    () => (
-      <>
-        {
-          currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : null // Caught above
-        }
-      </>
-    ),
+    () =>
+      currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : <></>, // Caught above
     [currentPanelMode]
   );
 
