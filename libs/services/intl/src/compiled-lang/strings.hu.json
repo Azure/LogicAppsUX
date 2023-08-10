@@ -371,20 +371,6 @@
       "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
     }
   ],
-  "0qcKzG": [
-    {
-      "type": 0,
-      "value": "A(z) "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " már nem szerepel a műveleti sémában. Távolítsa el, mielőtt újból mentené a munkafolyamatot."
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -917,6 +903,20 @@
       "value": "Kötelező megadni. A legkisebb visszaadható egész szám."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is required."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -991,20 +991,6 @@
     {
       "type": 0,
       "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker rejtett"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "A(z) "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " megadása kötelező."
     }
   ],
   "4vcnOA": [
@@ -1271,6 +1257,20 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az az érték, amelyhez az indexet meg kell keresni."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "6ueRYm": [
@@ -2979,20 +2979,6 @@
       "value": "Adjon meg egy érvényes dátum/idő típusú értéket."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes értéket a(z) "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " paraméterhez."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3001,20 +2987,6 @@
     {
       "type": 0,
       "value": " Átjáró telepítése"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "A(z) „"
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "“ paraméter és értékének eltávolítása"
     }
   ],
   "HzS2gJ": [
@@ -4385,12 +4357,6 @@
       "value": "(UTC+12:00) Egyezményes világidő+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Adjon meg érvényes feltételt."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4991,6 +4957,20 @@
       "value": "Érvényes JSON-t adjon meg."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5213,6 +5193,12 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition statement."
     }
   ],
   "WUe3DY": [
@@ -6031,6 +6017,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "c7tRg/": [
@@ -8863,6 +8855,20 @@
     {
       "type": 0,
       "value": "Tegyen fel a munkafolyamattal vagy a Logic Apps szolgáltatással kapcsolatos kérdést."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remove parameter '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' and its value"
     }
   ],
   "uzsleE": [
