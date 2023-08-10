@@ -371,16 +371,6 @@
       "value": "Obligatoriskt. Strängen kan innehålla värdet."
     }
   ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " finns inte längre i åtgärdsschemat. Den bör tas bort innan arbetsflödet sparas på nytt."
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -909,6 +899,20 @@
       "value": "Krävs. Det lägsta heltalet som kunde returneras."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is required."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -983,16 +987,6 @@
     {
       "type": 0,
       "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker är dolt"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " måste anges."
     }
   ],
   "4vcnOA": [
@@ -1267,6 +1261,20 @@
     {
       "type": 0,
       "value": "Måste anges. Det värde som indexet ska hittas för."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "6ueRYm": [
@@ -2967,20 +2975,6 @@
       "value": "Ange giltigt datetime."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt värde för "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2989,20 +2983,6 @@
     {
       "type": 0,
       "value": " Installera gateway"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Ta bort parametern "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " och dess värde"
     }
   ],
   "HzS2gJ": [
@@ -4361,12 +4341,6 @@
       "value": "(UTC+12:00) Coordinated Universal Time+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt villkor."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4983,6 +4957,20 @@
       "value": "Ange en giltig JSON."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5205,6 +5193,12 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition statement."
     }
   ],
   "WUe3DY": [
@@ -6023,6 +6017,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "c7tRg/": [
@@ -8843,6 +8843,20 @@
     {
       "type": 0,
       "value": "Ställ en fråga som är relaterad till arbetsflödet eller Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remove parameter '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' and its value"
     }
   ],
   "uzsleE": [

@@ -367,20 +367,6 @@
       "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
     }
   ],
-  "0qcKzG": [
-    {
-      "type": 0,
-      "value": "Parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " se už v operačním schématu nenachází. Než se pracovní postup znovu uloží, měl by se tento parametr odebrat."
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -909,6 +895,20 @@
       "value": "Povinný parametr. Nejnižší celé číslo, které se může vrátit."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is required."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -983,20 +983,6 @@
     {
       "type": 0,
       "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker skrytý"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "Vyžaduje se parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "4vcnOA": [
@@ -1271,6 +1257,20 @@
     {
       "type": 0,
       "value": "Požadované. Hodnota, pro kterou má být nalezen index."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "6ueRYm": [
@@ -3023,20 +3023,6 @@
       "value": "Zadejte platné datum a čas."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Zadejte platnou hodnotu parametru "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3045,20 +3031,6 @@
     {
       "type": 0,
       "value": " Nainstalovat bránu"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Odebrat parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " a jeho hodnotu"
     }
   ],
   "HzS2gJ": [
@@ -4439,12 +4411,6 @@
       "value": "(UTC+12:00) Koordinovaný univerzální čas (UTC)+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Zadejte platnou podmínku."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5083,6 +5049,20 @@
       "value": "Zadejte platný kód JSON."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5305,6 +5285,12 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition statement."
     }
   ],
   "WUe3DY": [
@@ -6123,6 +6109,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "c7tRg/": [
@@ -9013,6 +9005,20 @@
     {
       "type": 0,
       "value": "Položte otázku související s pracovním postupem nebo Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remove parameter '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' and its value"
     }
   ],
   "uzsleE": [
