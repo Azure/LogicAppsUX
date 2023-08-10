@@ -8,7 +8,9 @@ import { usePanelTabs } from './nodeDetailsPanel/tabInitialization';
 import { NodeSearchPanel } from './nodeSearchPanel/nodeSearchPanel';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParametersPanel';
+import { WorkflowParametersPanelFooter } from './workflowParametersPanel/workflowParametersPanelFooter';
 import { Panel, PanelType } from '@fluentui/react';
+import { isUndefined } from '@microsoft/applicationinsights-core-js';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { PanelLocation, PanelSize } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -54,7 +56,18 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     [collapsed, dismissPanel, panelLocation, width]
   );
 
-  return !currentPanelMode ? (
+  const onRenderFooterContent = useCallback(
+    () => (
+      <>
+        {
+          currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : null // Caught above
+        }
+      </>
+    ),
+    [currentPanelMode]
+  );
+
+  return isUndefined(currentPanelMode) ? (
     <NodeDetailsPanel {...commonPanelProps} />
   ) : (
     <Panel
@@ -67,6 +80,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       focusTrapZoneProps={{ disabled: collapsed, forceFocusInsideTrap: true }}
       layerProps={layerProps}
       customWidth={width}
+      onRenderFooterContent={onRenderFooterContent}
+      isFooterAtBottom={true}
     >
       {
         currentPanelMode === 'WorkflowParameters' ? (
