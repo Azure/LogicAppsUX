@@ -897,16 +897,12 @@
   ],
   "49YUXK": [
     {
-      "type": 0,
-      "value": "'"
-    },
-    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": " is vereist."
     }
   ],
   "4BH9uU": [
@@ -1266,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Voer een geldige waarde in voor "
     },
     {
       "type": 1,
@@ -1274,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "6ueRYm": [
@@ -4967,16 +4963,12 @@
   ],
   "V3vpin": [
     {
-      "type": 0,
-      "value": "'"
-    },
-    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " is niet meer aanwezig in het bewerkingsschema. Deze moet worden verwijderd voordat de werkstroom opnieuw wordt opgeslagen."
     }
   ],
   "V5f3ha": [
@@ -5206,7 +5198,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Voer een geldige voorwaarde in."
     }
   ],
   "WUe3DY": [
@@ -6030,7 +6022,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Voer een geldige JSON in."
     }
   ],
   "c7tRg/": [
@@ -8852,7 +8844,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "De parameter "
     },
     {
       "type": 1,
@@ -8860,7 +8852,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": " en de bijbehorende waarde verwijderen"
     }
   ],
   "uzsleE": [

@@ -902,7 +902,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "' 為必要項目。"
     }
   ],
   "4BH9uU": [
@@ -1262,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "請為 '"
     },
     {
       "type": 1,
@@ -1270,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' 輸入有效值。"
     }
   ],
   "6ueRYm": [
@@ -4916,7 +4916,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "' 已不存在於作業結構描述中。在重新儲存工作流程前，應予以移除。"
     }
   ],
   "V5f3ha": [
@@ -5154,7 +5154,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "輸入有效的條件陳述式。"
     }
   ],
   "WUe3DY": [
@@ -5978,7 +5978,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "c7tRg/": [
@@ -8767,7 +8767,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "移除參數 '"
     },
     {
       "type": 1,
@@ -8775,7 +8775,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "' 及其值"
     }
   ],
   "uzsleE": [

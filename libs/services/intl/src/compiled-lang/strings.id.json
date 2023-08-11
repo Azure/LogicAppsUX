@@ -898,7 +898,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "' diperlukan."
     }
   ],
   "4BH9uU": [
@@ -1254,7 +1254,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Masukkan nilai yang valid untuk '"
     },
     {
       "type": 1,
@@ -4924,7 +4924,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "' tidak lagi ada dalam skema operasi. Alur kerja harus dihapus sebelum alur kerja disimpan kembali."
     }
   ],
   "V5f3ha": [
@@ -5154,7 +5154,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Masukkan pernyataan kondisi yang valid."
     }
   ],
   "WUe3DY": [
@@ -5978,7 +5978,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Masukkan JSON yang valid."
     }
   ],
   "c7tRg/": [
@@ -8775,7 +8775,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "Hapus parameter '"
     },
     {
       "type": 1,
@@ -8783,7 +8783,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "' dan nilainya"
     }
   ],
   "uzsleE": [
