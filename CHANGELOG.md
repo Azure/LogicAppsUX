@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.55.5](https://github.com/Azure/LogicAppsUX/compare/v2.55.4...v2.55.5) (2023-08-11)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed creation of phantom "cases" node input object - cherrypick release 2.55 ([#3120](https://github.com/Azure/LogicAppsUX/issues/3120)) ([11b3a8b](https://github.com/Azure/LogicAppsUX/commit/11b3a8ba35751fa590d93057517d04e7f7fc1d28))
+
 ### [2.55.4](https://github.com/Azure/LogicAppsUX/compare/v2.55.3...v2.55.4) (2023-08-07)
 
 
