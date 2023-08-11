@@ -80,6 +80,7 @@ import {
   DynamicCallStatus,
   ValueSegmentType,
   TokenType,
+  AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type {
@@ -342,7 +343,7 @@ function shouldSoftHide(parameter: ResolvedParameter): boolean {
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
-  return !!parameter?.value;
+  return parameter?.value !== undefined;
 }
 
 export function getParameterEditorProps(
@@ -471,6 +472,7 @@ const convertStringToInputParameter = (
     type: 'any',
     hideInUI: false,
     value: newValue,
+    suppressCasting: true,
   };
 };
 
@@ -708,7 +710,9 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
             aadOAuth: {
               oauthTenant: loadParameterValue(convertStringToInputParameter(value.tenant)),
               oauthAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
+              oauthAuthority: loadParameterValue(convertStringToInputParameter(value.authority)),
               oauthClientId: loadParameterValue(convertStringToInputParameter(value.clientId)),
+              oauthType: loadOauthType(value),
               oauthTypeSecret: loadParameterValue(convertStringToInputParameter(value.secret)),
               oauthTypeCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
               oauthTypeCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
@@ -744,6 +748,10 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
 
   return emptyValue;
 }
+
+const loadOauthType = (value: any): AuthenticationOAuthType => {
+  return value.pfx ? AuthenticationOAuthType.CERTIFICATE : AuthenticationOAuthType.SECRET;
+};
 
 interface ParameterEditorProps {
   editor?: string;
