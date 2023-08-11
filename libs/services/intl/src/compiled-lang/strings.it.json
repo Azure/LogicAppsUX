@@ -898,7 +898,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "' è obbligatorio."
     }
   ],
   "4BH9uU": [
@@ -1254,7 +1254,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Immettere un valore valido per '"
     },
     {
       "type": 1,
@@ -5012,7 +5012,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "' non è più presente nello schema dell'operazione. Deve essere rimosso prima di salvare nuovamente il flusso di lavoro."
     }
   ],
   "V5f3ha": [
@@ -5242,7 +5242,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Immettere un'istruzione di condizione valida."
     }
   ],
   "WUe3DY": [
@@ -6066,7 +6066,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Immettere un oggetto JSON valido."
     }
   ],
   "c7tRg/": [
@@ -8925,7 +8925,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "Rimuovere il parametro '"
     },
     {
       "type": 1,
@@ -8933,7 +8933,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "' e il relativo valore"
     }
   ],
   "uzsleE": [

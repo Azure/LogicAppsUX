@@ -898,7 +898,7 @@
   "49YUXK": [
     {
       "type": 0,
-      "value": "'"
+      "value": "O parâmetro \""
     },
     {
       "type": 1,
@@ -906,7 +906,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "\" é obrigatório."
     }
   ],
   "4BH9uU": [
@@ -1262,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Introduza um valor válido para \""
     },
     {
       "type": 1,
@@ -1270,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "6ueRYm": [
@@ -5020,7 +5020,7 @@
   "V3vpin": [
     {
       "type": 0,
-      "value": "'"
+      "value": "O \""
     },
     {
       "type": 1,
@@ -5028,7 +5028,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "\" já não está presente no esquema da operação. Deverá remover o mesmo antes de guardar novamente o fluxo de trabalho."
     }
   ],
   "V5f3ha": [
@@ -5258,7 +5258,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Introduza uma condição de instrução válida."
     }
   ],
   "WUe3DY": [
@@ -6082,7 +6082,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Introduza um JSON válido."
     }
   ],
   "c7tRg/": [
@@ -8953,7 +8953,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "Remover parâmetro \""
     },
     {
       "type": 1,
@@ -8961,7 +8961,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "\" e o respetivo valor"
     }
   ],
   "uzsleE": [

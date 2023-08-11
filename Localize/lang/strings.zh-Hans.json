@@ -899,7 +899,7 @@
   "c3G/zq": "返回一个对象，此对象的某个属性已设置为所提供的值",
   "c4GQZE": "选择下拉列表的架构",
   "c6XbVI": "面板",
-  "c7kfkV": "Enter a valid JSON.",
+  "c7kfkV": "输入有效的 JSON。",
   "c7tRg/": "如果使用 GZip 或 Deflate 压缩了请求正文，请解压缩请求正文。此设置仅适用于 HTTP 触发器。",
   "c8UPLp": "也可以从其他源添加动态内容。",
   "cHiBAn": "(UTC+09:00)首尔",

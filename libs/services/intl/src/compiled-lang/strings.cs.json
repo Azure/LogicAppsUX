@@ -898,7 +898,7 @@
   "49YUXK": [
     {
       "type": 0,
-      "value": "'"
+      "value": "Vyžaduje se parametr "
     },
     {
       "type": 1,
@@ -906,7 +906,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "."
     }
   ],
   "4BH9uU": [
@@ -1262,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Zadejte platnou hodnotu parametru "
     },
     {
       "type": 1,
@@ -1270,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "6ueRYm": [
@@ -5052,7 +5052,7 @@
   "V3vpin": [
     {
       "type": 0,
-      "value": "'"
+      "value": "Parametr "
     },
     {
       "type": 1,
@@ -5060,7 +5060,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " se už v operačním schématu nenachází. Než se pracovní postup znovu uloží, měl by se tento parametr odebrat."
     }
   ],
   "V5f3ha": [
@@ -5290,7 +5290,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Zadejte platný příkaz podmínky."
     }
   ],
   "WUe3DY": [
@@ -6114,7 +6114,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Zadejte platný kód JSON."
     }
   ],
   "c7tRg/": [
@@ -9010,7 +9010,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "Odebrat parametr "
     },
     {
       "type": 1,
@@ -9018,7 +9018,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": " a jeho hodnotu"
     }
   ],
   "uzsleE": [

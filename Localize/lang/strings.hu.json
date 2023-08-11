@@ -899,7 +899,7 @@
   "c3G/zq": "Egy objektumot ad vissza, melyben egy tulajdonság be lett állítva a megadott értékre",
   "c4GQZE": "Válassza ki a sémát a legördülő listához.",
   "c6XbVI": "panel",
-  "c7kfkV": "Enter a valid JSON.",
+  "c7kfkV": "Érvényes JSON-t adjon meg.",
   "c7tRg/": "A kérelem törzsének kibontása, ha GZip vagy Deflate használatával van tömörítve. Ez a beállítás csak HTTP-trigger esetén alkalmazható.",
   "c8UPLp": "Más forrásokból is hozzáadható dinamikus tartalom.",
   "cHiBAn": "(UTC+09:00) Szöul",

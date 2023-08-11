@@ -898,7 +898,7 @@
   "49YUXK": [
     {
       "type": 0,
-      "value": "'"
+      "value": "Parametr „"
     },
     {
       "type": 1,
@@ -906,7 +906,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "” jest wymagany."
     }
   ],
   "4BH9uU": [
@@ -1262,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Wprowadź prawidłową wartość parametru „"
     },
     {
       "type": 1,
@@ -1270,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”."
     }
   ],
   "6ueRYm": [
@@ -5068,7 +5068,7 @@
   "V3vpin": [
     {
       "type": 0,
-      "value": "'"
+      "value": "Parametr „"
     },
     {
       "type": 1,
@@ -5076,7 +5076,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "” już nie istnieje w schemacie operacji. Należy go usunąć przed ponownym zapisaniem przepływu pracy."
     }
   ],
   "V5f3ha": [
@@ -5306,7 +5306,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Wprowadź prawidłową instrukcję warunku."
     }
   ],
   "WUe3DY": [
@@ -6130,7 +6130,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "c7tRg/": [
@@ -9046,7 +9046,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "Usuń parametr „"
     },
     {
       "type": 1,
@@ -9054,7 +9054,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "” i jego wartość"
     }
   ],
   "uzsleE": [
