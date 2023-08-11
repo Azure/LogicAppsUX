@@ -1,10 +1,9 @@
-import { useLegacyWorkflowParameters, useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useLegacyWorkflowParameters, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { addParameter, deleteParameter, updateParameter } from '../../../core/state/workflowparameters/workflowparametersSlice';
 import {
   useWorkflowParameters,
   useWorkflowParameterValidationErrors,
 } from '../../../core/state/workflowparameters/workflowparametersselector';
-import { HostService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { WorkflowParameters } from '@microsoft/designer-ui';
 import { useDispatch } from 'react-redux';
@@ -12,7 +11,6 @@ import { useDispatch } from 'react-redux';
 export const WorkflowParametersPanel = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
   const readOnly = useReadOnly();
-  const isMonitoringView = useMonitoringView();
   const useLegacy = useLegacyWorkflowParameters();
   const workflowParameters = useWorkflowParameters();
   const workflowParametersValidationErrors = useWorkflowParameterValidationErrors();
@@ -31,7 +29,6 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
       onAddParameter={onWorkflowParameterAdd}
       onDeleteParameter={onDeleteWorkflowParameter}
       onUpdateParameter={onUpdateParameter}
-      onManageParameters={useLegacy && !readOnly && !isMonitoringView ? HostService().openWorkflowParametersBlade : undefined}
     />
   );
 };

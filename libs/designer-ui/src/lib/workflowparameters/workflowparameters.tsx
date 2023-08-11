@@ -3,15 +3,9 @@ import Constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, WorkflowParameterUpdateHandler } from './workflowparameter';
 import { WorkflowParameter } from './workflowparameter';
-import { IconButton, CommandBarButton, Icon, Link, List, MessageBar, useTheme, Text } from '@fluentui/react';
-import type { IIconProps, IIconStyles, IMessageBarStyles } from '@fluentui/react';
+import { IconButton, CommandBarButton, List, MessageBar, useTheme, Text } from '@fluentui/react';
+import type { IIconProps, IMessageBarStyles } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-
-const navigateIconStyle: IIconStyles = {
-  root: {
-    color: Constants.BRAND_COLOR,
-  },
-};
 
 const lightMessageBarStyles: IMessageBarStyles = {
   root: {
@@ -64,7 +58,6 @@ export interface WorkflowParametersProps {
   onDismiss?: OnClickHandler;
   onAddParameter?: OnClickHandler;
   onDeleteParameter?: WorkflowParameterDeleteHandler;
-  onManageParameters?: OnClickHandler;
   onRegisterLanguageProvider?: OnClickHandler;
   onUpdateParameter?: WorkflowParameterUpdateHandler;
 }
@@ -78,7 +71,6 @@ export function WorkflowParameters({
   isReadOnly,
   useLegacy,
   onDismiss,
-  onManageParameters,
   onAddParameter,
   onDeleteParameter,
   onUpdateParameter,
@@ -131,23 +123,6 @@ export function WorkflowParameters({
     );
   };
 
-  const ManageParametersLink = (): JSX.Element => {
-    const intl = useIntl();
-
-    const jsonText = intl.formatMessage({
-      defaultMessage: 'Edit in JSON',
-      description: 'Parameter Link Text',
-    });
-    return (
-      <footer className="msla-workflow-parameters-link">
-        <Link className="msla-workflow-parameters-link-text" onClick={onManageParameters}>
-          {jsonText}
-        </Link>
-        <Icon iconName="NavigateExternalInline" styles={navigateIconStyle} className="msla-workflow-parameters-link-icon" />
-      </footer>
-    );
-  };
-
   const renderParameter = (item?: WorkflowParameterDefinition): JSX.Element => {
     // TODO: 12798972 Workflow Parameter
     const parameterErrors = validationErrors && item ? validationErrors[item.id] : undefined;
@@ -189,7 +164,6 @@ export function WorkflowParameters({
       </div>
       {parameters.length ? null : renderTitleAndDescription()}
       {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : null}
-      {onManageParameters ? <ManageParametersLink /> : null}
     </div>
   );
 }

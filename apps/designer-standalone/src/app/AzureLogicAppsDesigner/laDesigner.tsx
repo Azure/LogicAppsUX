@@ -32,6 +32,7 @@ import {
   StandardRunService,
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
+import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId } from '@microsoft/utils-logic-apps';
@@ -371,6 +372,11 @@ const getDesignerServices = (
     isExplicitAuthRequiredForManagedIdentity: () => true,
   };
 
+  const hostService = {
+    fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
+    openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
+  };
+
   const functionService = new BaseFunctionService({
     baseUrl: armUrl,
     apiVersion,
@@ -398,6 +404,7 @@ const getDesignerServices = (
     apimService: apiManagementService,
     functionService,
     runService,
+    hostService,
   };
 };
 
