@@ -304,24 +304,6 @@ const processChildGraphAndItsInputs = (
             });
           }
         }
-
-        const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
-          subGraphKey,
-          subManifest,
-          /* presetParameterValues */ undefined,
-          /* customSwagger */ undefined,
-          subOperation
-        );
-        const nodeOutputs = { outputs: {} };
-        nodesData.push({
-          id: subGraphKey,
-          nodeInputs,
-          nodeOutputs,
-          nodeDependencies: { inputs: inputDependencies, outputs: {} },
-          operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
-          manifest: subManifest,
-          operationMetadata: { iconUri: '', brandColor: '' },
-        });
       }
     }
   }
