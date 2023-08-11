@@ -901,16 +901,12 @@
   ],
   "49YUXK": [
     {
-      "type": 0,
-      "value": "'"
-    },
-    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": " måste anges."
     }
   ],
   "4BH9uU": [
@@ -1266,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Ange ett giltigt värde för "
     },
     {
       "type": 1,
@@ -1274,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "6ueRYm": [
@@ -4959,16 +4955,12 @@
   ],
   "V3vpin": [
     {
-      "type": 0,
-      "value": "'"
-    },
-    {
       "type": 1,
       "value": "parameterName"
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": " finns inte längre i åtgärdsschemat. Den bör tas bort innan arbetsflödet sparas på nytt."
     }
   ],
   "V5f3ha": [
@@ -5198,7 +5190,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Ange en giltig villkorsinstruktion."
     }
   ],
   "WUe3DY": [
@@ -6022,7 +6014,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Ange en giltig JSON."
     }
   ],
   "c7tRg/": [
@@ -8848,7 +8840,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "Ta bort parametern "
     },
     {
       "type": 1,
@@ -8856,7 +8848,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": " och dess värde"
     }
   ],
   "uzsleE": [

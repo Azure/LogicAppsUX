@@ -898,7 +898,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "'이(가) 필요합니다."
     }
   ],
   "4BH9uU": [
@@ -1254,7 +1254,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1262,7 +1262,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "'에 유효한 값을 입력하세요."
     }
   ],
   "6ueRYm": [
@@ -4908,7 +4908,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "'이(가) 더 이상 작업 스키마에 없습니다. 워크플로를 다시 저장하기 전에 제거해야 합니다."
     }
   ],
   "V5f3ha": [
@@ -5138,7 +5138,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "유효한 조건 문을 입력하세요."
     }
   ],
   "WUe3DY": [
@@ -5962,7 +5962,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "c7tRg/": [
@@ -8739,7 +8739,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "매개 변수 '"
     },
     {
       "type": 1,
@@ -8747,7 +8747,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "' 및 해당 값 제거"
     }
   ],
   "uzsleE": [

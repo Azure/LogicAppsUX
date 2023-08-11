@@ -898,7 +898,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "' は必須です。"
     }
   ],
   "4BH9uU": [
@@ -1254,7 +1254,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1262,7 +1262,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' の有効な値を入力してください。"
     }
   ],
   "6ueRYm": [
@@ -4912,7 +4912,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "' は、操作スキーマに存在しなくなりました。ワークフローを再保存する前に、削除する必要があります。"
     }
   ],
   "V5f3ha": [
@@ -5142,7 +5142,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "有効な条件ステートメントを入力してください。"
     }
   ],
   "WUe3DY": [
@@ -5966,7 +5966,7 @@
   "c7kfkV": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "c7tRg/": [
@@ -8743,7 +8743,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "パラメーター '"
     },
     {
       "type": 1,
@@ -8751,7 +8751,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "' とその値を削除します"
     }
   ],
   "uzsleE": [
