@@ -899,7 +899,7 @@
   "c3G/zq": "Devuelve un objeto con una propiedad establecida en el valor proporcionado.",
   "c4GQZE": "Seleccione el esquema para la lista desplegable",
   "c6XbVI": "panel",
-  "c7kfkV": "Enter a valid JSON.",
+  "c7kfkV": "Especifica un nombre válido.",
   "c7tRg/": "Descomprima el cuerpo de la solicitud si se comprime mediante GZip o Deflate. Esta configuración solo es aplicable para el desencadenador HTTP.",
   "c8UPLp": "También se puede agregar contenido dinámico desde otros orígenes.",
   "cHiBAn": "(UTC+09:00) Seúl",
