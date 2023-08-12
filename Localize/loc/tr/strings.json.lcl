@@ -1272,6 +1272,9 @@
       <Item ItemId=";49YUXK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[''{parameterName}'' is required.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{parameterName}'' gereklidir.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1773,6 +1776,9 @@
       <Item ItemId=";6uCEoM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid value for ''{parameterName}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{parameterName}'' için geçerli bir değer girin.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6849,6 +6855,9 @@
       <Item ItemId=";V3vpin" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[''{parameterName}'' is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{parameterName}'' artık işlem şemasında yok. İş akışı yeniden kaydedilmeden önce bu parametrenin kaldırılması gerekir.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7143,6 +7152,9 @@
       <Item ItemId=";WToL/O" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid condition statement.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geçerli bir koşul deyimi girin.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -12252,6 +12264,9 @@
       <Item ItemId=";uxt1xW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove parameter ''{parameterName}'' and its value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{parameterName}'' parametresini ve değerini kaldır]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
