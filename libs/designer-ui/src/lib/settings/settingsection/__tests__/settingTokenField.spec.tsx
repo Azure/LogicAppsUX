@@ -44,13 +44,16 @@ describe('ui/settings/settingTokenField', () => {
     const { children } = render(SettingTokenField, props);
 
     expect(children).toHaveLength(2);
-    const [label, tokenField] = children as [any, any];
+    const [label, tokenFieldContainer] = children as [any, any];
 
     expect(label.type).toBe('div');
     expect(label.props.className).toBe('msla-input-parameter-label');
 
-    expect(tokenField.type).toBe(TokenField);
-    expect(tokenField.props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
+    expect(tokenFieldContainer.type).toBe('div');
+
+    const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
+    expect(tokenField[0].type).toBe(TokenField);
+    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
   });
 
   it('custom editor: should render label and custom token field', () => {
@@ -78,13 +81,14 @@ describe('ui/settings/settingTokenField', () => {
     const { children } = render(SettingTokenField, props);
 
     expect(children).toHaveLength(2);
-    const [label, tokenField] = children as [any, any];
+    const [label, tokenFieldContainer] = children as [any, any];
 
     expect(label.type).toBe('div');
     expect(label.props.className).toBe('msla-input-parameter-label');
 
-    expect(tokenField.type).toBe(CustomTokenField);
-    expect(tokenField.props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
+    const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
+    expect(tokenField[0].type).toBe(CustomTokenField);
+    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
   });
 
   it('custom editor: should support hiding label label', () => {
@@ -113,9 +117,10 @@ describe('ui/settings/settingTokenField', () => {
     const { children } = render(SettingTokenField, props);
 
     expect(children).toHaveLength(1);
-    const [tokenField] = children as [any];
+    const [tokenFieldContainer] = children as [any];
 
-    expect(tokenField.type).toBe(CustomTokenField);
-    expect(tokenField.props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
+    const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
+    expect(tokenField[0].type).toBe(CustomTokenField);
+    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
   });
 });

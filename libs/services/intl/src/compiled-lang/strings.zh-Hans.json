@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "警告: 输入节点类型与架构节点的类型不匹配"
     }
   ],
   "+0cO6t": [
@@ -365,16 +365,6 @@
     {
       "type": 0,
       "value": "必需。可包含值的字符串。"
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " 不再出现在操作架构中。应在重新保存工作流前删除它。"
     }
   ],
   "0uj1Li": [
@@ -909,6 +899,20 @@
       "value": "必需。可返回的最小整数。"
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”是必需的。"
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -983,16 +987,6 @@
     {
       "type": 0,
       "value": "当 TokenPicker 隐藏时添加动态内容的按钮"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " 是必需的。"
     }
   ],
   "4vcnOA": [
@@ -1180,7 +1174,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "警告: 输入节点类型与此输入允许的类型之一不匹配"
     }
   ],
   "6ZviI7": [
@@ -1267,6 +1261,20 @@
     {
       "type": 0,
       "value": "必填。要为其查找索引的值。"
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "输入“"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”的有效值。"
     }
   ],
   "6ueRYm": [
@@ -1933,7 +1941,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "警告: 自定义值与此输入的允许类型之一不匹配"
     }
   ],
   "BFTwRN": [
@@ -2949,20 +2957,6 @@
       "value": "输入有效日期/时间。"
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "输入 "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " 的有效值。"
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2971,20 +2965,6 @@
     {
       "type": 0,
       "value": " 安装网关"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "删除参数 \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" 及其值"
     }
   ],
   "HzS2gJ": [
@@ -4344,12 +4324,6 @@
       "value": "(UTC+12:00)协调世界时+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "输入有效的条件。"
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4959,6 +4933,20 @@
       "value": "输入有效的 JSON。"
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”不再出现在操作架构中。应在重新保存工作流前删除它。"
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5195,6 +5183,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "输入有效的条件语句。"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5216,7 +5210,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(自定义值)"
     }
   ],
   "WgoP7R": [
@@ -6011,6 +6005,12 @@
     {
       "type": 0,
       "value": "面板"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
     }
   ],
   "c7tRg/": [
@@ -8367,7 +8367,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "警告: 自定义值与架构节点的类型不匹配"
     }
   ],
   "sVQe34": [
@@ -8822,6 +8822,20 @@
     {
       "type": 0,
       "value": "提出与工作流或逻辑应用相关的问题。"
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "删除参数“"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”及其值"
     }
   ],
   "uzsleE": [

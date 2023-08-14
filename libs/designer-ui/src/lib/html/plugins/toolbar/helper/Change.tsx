@@ -46,6 +46,8 @@ const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSeg
     // Get the cleaned HTML string
     let cleanedHtmlString = tempElement.innerHTML;
     cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
+    // remove when issue is fixed: https://github.com/facebook/lexical/issues/3879#issuecomment-1640215777
+    cleanedHtmlString = cleanedHtmlString.replace(/<(p|h[1-4])><br><\/\1>/g, '<br>');
 
     // Regular expression pattern to match <span id="..."></span>
     const spanIdPattern = /<span id="(.*?)"><\/span>/g;

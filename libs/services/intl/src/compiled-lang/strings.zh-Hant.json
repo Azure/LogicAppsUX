@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "警告: 輸入節點類型不符合結構描述節點的類型"
     }
   ],
   "+0cO6t": [
@@ -365,16 +365,6 @@
     {
       "type": 0,
       "value": "必要。包含值的字串。"
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " 已不存在於作業結構描述中。在重新儲存工作流程前，應予以移除。"
     }
   ],
   "0uj1Li": [
@@ -901,6 +891,20 @@
       "value": "必要。可傳回的最低整數。"
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' 為必要項目。"
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -979,16 +983,6 @@
     {
       "type": 0,
       "value": "當 TokenPicker 隱藏時新增動態內容的按鈕"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " 為必要項目。"
     }
   ],
   "4vcnOA": [
@@ -1176,7 +1170,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "警告: 輸入節點類型不符合此輸入允許的其中一種類型"
     }
   ],
   "6ZviI7": [
@@ -1263,6 +1257,20 @@
     {
       "type": 0,
       "value": "必填。要尋找索引的值。"
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "請為 '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' 輸入有效值。"
     }
   ],
   "6ueRYm": [
@@ -1929,7 +1937,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "警告: 自訂值不符合此輸入允許的其中一種類型"
     }
   ],
   "BFTwRN": [
@@ -2929,20 +2937,6 @@
       "value": "輸入有效日期/時間。"
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "請為 "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " 輸入有效值。"
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2951,20 +2945,6 @@
     {
       "type": 0,
       "value": " 安裝閘道"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "移除參數 \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" 及其值"
     }
   ],
   "HzS2gJ": [
@@ -4312,12 +4292,6 @@
       "value": "(UTC+12:00) 國際標準時間+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "輸入有效的條件。"
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4931,6 +4905,20 @@
       "value": "請輸入有效的 JSON。"
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' 已不存在於作業結構描述中。在重新儲存工作流程前，應予以移除。"
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5163,6 +5151,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "輸入有效的條件陳述式。"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5184,7 +5178,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(自訂值)"
     }
   ],
   "WgoP7R": [
@@ -5979,6 +5973,12 @@
     {
       "type": 0,
       "value": "面板"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "c7tRg/": [
@@ -8303,7 +8303,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "警告: 自訂值不符合結構描述節點的類型。"
     }
   ],
   "sVQe34": [
@@ -8762,6 +8762,20 @@
     {
       "type": 0,
       "value": "詢問與您的工作流程或 Logic Apps 相關的問題。"
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "移除參數 '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' 及其值"
     }
   ],
   "uzsleE": [

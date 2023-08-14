@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Upozornění: Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
   "+0cO6t": [
@@ -365,20 +365,6 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 0,
-      "value": "Parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " se už v operačním schématu nenachází. Než se pracovní postup znovu uloží, měl by se tento parametr odebrat."
     }
   ],
   "0uj1Li": [
@@ -909,6 +895,20 @@
       "value": "Povinný parametr. Nejnižší celé číslo, které se může vrátit."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "Vyžaduje se parametr "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -983,20 +983,6 @@
     {
       "type": 0,
       "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker skrytý"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "Vyžaduje se parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "4vcnOA": [
@@ -1184,7 +1170,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Upozornění: Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
   "6ZviI7": [
@@ -1271,6 +1257,20 @@
     {
       "type": 0,
       "value": "Požadované. Hodnota, pro kterou má být nalezen index."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Zadejte platnou hodnotu parametru "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "6ueRYm": [
@@ -1970,7 +1970,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Upozornění: Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
   "BFTwRN": [
@@ -3023,20 +3023,6 @@
       "value": "Zadejte platné datum a čas."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Zadejte platnou hodnotu parametru "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3045,20 +3031,6 @@
     {
       "type": 0,
       "value": " Nainstalovat bránu"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Odebrat parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " a jeho hodnotu"
     }
   ],
   "HzS2gJ": [
@@ -4439,12 +4411,6 @@
       "value": "(UTC+12:00) Koordinovaný univerzální čas (UTC)+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Zadejte platnou podmínku."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5083,6 +5049,20 @@
       "value": "Zadejte platný kód JSON."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "Parametr "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " se už v operačním schématu nenachází. Než se pracovní postup znovu uloží, měl by se tento parametr odebrat."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5307,6 +5287,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Zadejte platný příkaz podmínky."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5328,7 +5314,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Vlastní hodnota)"
     }
   ],
   "WgoP7R": [
@@ -6123,6 +6109,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Zadejte platný kód JSON."
     }
   ],
   "c7tRg/": [
@@ -8562,7 +8554,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Upozornění: Vlastní hodnota neodpovídá typu uzlu schématu."
     }
   ],
   "sVQe34": [
@@ -9013,6 +9005,20 @@
     {
       "type": 0,
       "value": "Položte otázku související s pracovním postupem nebo Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Odebrat parametr "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " a jeho hodnotu"
     }
   ],
   "uzsleE": [

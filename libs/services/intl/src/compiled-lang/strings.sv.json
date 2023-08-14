@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Varning! Indatanodens typ matchar inte typ av schemanod"
     }
   ],
   "+0cO6t": [
@@ -369,16 +369,6 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Strängen kan innehålla värdet."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " finns inte längre i åtgärdsschemat. Den bör tas bort innan arbetsflödet sparas på nytt."
     }
   ],
   "0uj1Li": [
@@ -909,6 +899,16 @@
       "value": "Krävs. Det lägsta heltalet som kunde returneras."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " måste anges."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -983,16 +983,6 @@
     {
       "type": 0,
       "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker är dolt"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " måste anges."
     }
   ],
   "4vcnOA": [
@@ -1180,7 +1170,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Varning! Typ av indatanod matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
   "6ZviI7": [
@@ -1267,6 +1257,20 @@
     {
       "type": 0,
       "value": "Måste anges. Det värde som indexet ska hittas för."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt värde för "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "6ueRYm": [
@@ -1940,7 +1944,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Varning! Det anpassade värdet matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
   "BFTwRN": [
@@ -2967,20 +2971,6 @@
       "value": "Ange giltigt datetime."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt värde för "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2989,20 +2979,6 @@
     {
       "type": 0,
       "value": " Installera gateway"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Ta bort parametern "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " och dess värde"
     }
   ],
   "HzS2gJ": [
@@ -4361,12 +4337,6 @@
       "value": "(UTC+12:00) Coordinated Universal Time+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt villkor."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4983,6 +4953,16 @@
       "value": "Ange en giltig JSON."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " finns inte längre i åtgärdsschemat. Den bör tas bort innan arbetsflödet sparas på nytt."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5207,6 +5187,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Ange en giltig villkorsinstruktion."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5228,7 +5214,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Anpassat värde)"
     }
   ],
   "WgoP7R": [
@@ -6023,6 +6009,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Ange en giltig JSON."
     }
   ],
   "c7tRg/": [
@@ -8388,7 +8380,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Varning! Det anpassade värdet matchar inte typ av schemanod"
     }
   ],
   "sVQe34": [
@@ -8843,6 +8835,20 @@
     {
       "type": 0,
       "value": "Ställ en fråga som är relaterad till arbetsflödet eller Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Ta bort parametern "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " och dess värde"
     }
   ],
   "uzsleE": [

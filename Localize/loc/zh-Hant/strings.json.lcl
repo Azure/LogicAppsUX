@@ -18,6 +18,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+0H8Or" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: input node type does not match the schema node's type]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[警告: 輸入節點類型不符合結構描述節點的類型]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+0cO6t" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Create connection reference]]></Val>
@@ -518,15 +527,6 @@
           <Val><![CDATA[Required. The string that may contain the value.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[必要。包含值的字串。]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";0qcKzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{parameterName} is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{parameterName} 已不存在於作業結構描述中。在重新儲存工作流程前，應予以移除。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1269,6 +1269,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";49YUXK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[''{parameterName}'' is required.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{parameterName}'' 為必要項目。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";4BH9uU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Errors]]></Val>
@@ -1373,15 +1382,6 @@
           <Val><![CDATA[Button to add dynamic content if TokenPicker is hidden]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[當 TokenPicker 隱藏時新增動態內容的按鈕]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";4sYR0J" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{parameterName} is required.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{parameterName} 為必要項目。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1647,6 +1647,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6WmLx1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: input node type does not match one of the allowed types for this input]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[警告: 輸入節點類型不符合此輸入允許的其中一種類型]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6ZviI7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection reference]]></Val>
@@ -1760,6 +1769,15 @@
           <Val><![CDATA[Required. The value for which to find the index.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[必填。要尋找索引的值。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";6uCEoM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid value for ''{parameterName}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[請為 ''{parameterName}'' 輸入有效值。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2700,11 +2718,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";BEZWxB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";BCgiRh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Clear custom value]]></Val>
+          <Val><![CDATA[Warning: custom value does not match one of the allowed types for this input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[清除自訂值]]></Val>
+            <Val><![CDATA[警告: 自訂值不符合此輸入允許的其中一種類型]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3218,15 +3236,6 @@
           <Val><![CDATA[Duration]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[持續時間]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";DZc8wP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Custom value does not match the schema node's type]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[自訂值與結構描述節點的類型不符。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4131,29 +4140,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Hs5+Mk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid value for {parameterName}.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[請為 {parameterName} 輸入有效值。]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";HsO1Rd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{addIcon} Install Gateway]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{addIcon} 安裝閘道]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";Hyp0Ao" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Remove parameter "{parameterName}" and its value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[移除參數 "{parameterName}" 及其值]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4298,15 +4289,6 @@
           <Val><![CDATA[(UTC+09:00) Yakutsk]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+09:00) 雅庫茨克]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";IooQu1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Advanced options]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[進階選項]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5445,15 +5427,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";OL5S5H" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter custom value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[輸入自訂值]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";OOUSLP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This function doesn't require any input.]]></Val>
@@ -5652,15 +5625,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";P2rzqn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Default value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[預設值]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";P3Zpc4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Custom Tracking Id]]></Val>
@@ -5810,15 +5774,6 @@
           <Val><![CDATA[Connection errors]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[連線錯誤]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";PtqSHp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Do not generate if no value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[若沒有值，則不要產生]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6066,15 +6021,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";R7X0wG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid condition.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[輸入有效的條件。]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";RFjYpH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Name]]></Val>
@@ -6287,15 +6233,6 @@
           <Val><![CDATA[Convert the parameter to an integer]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[將參數轉換為整數]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";SKy5tj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[The input node type doesn't match the schema node's type.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[輸入節點類型不符合結構描述節點的類型。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6903,6 +6840,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";V3vpin" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[''{parameterName}'' is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{parameterName}'' 已不存在於作業結構描述中。在重新儲存工作流程前，應予以移除。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";V5f3ha" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Week]]></Val>
@@ -7191,6 +7137,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WToL/O" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid condition statement.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[輸入有效的條件陳述式。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WUe3DY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Shorthand for trigger().outputs]]></Val>
@@ -7214,6 +7169,15 @@
           <Val><![CDATA[Remove]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[移除]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WgChTm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[(Custom value)]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(自訂值)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7745,15 +7709,6 @@
           <Val><![CDATA[(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+05:30) 辰內，加爾各答，孟拜，新德里]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";Yh5OVd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Custom value does not match one of the allowed types for this input]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[自訂值不符合此輸入允許的其中一種類型]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8316,6 +8271,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";c7kfkV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid JSON.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[請輸入有效的 JSON。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";c7tRg/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger.]]></Val>
@@ -8420,15 +8384,6 @@
           <Val><![CDATA[Bold (⌘B)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[粗體 (⌘B)]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";cjcEOf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Input node type does not match one of the allowed types for this input]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[輸入節點類型不符合此輸入允許的其中一種類型]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11637,6 +11592,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";sRpETS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: custom value does not match the schema node's type]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[警告: 自訂值不符合結構描述節點的類型。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sVQe34" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Provide parameters to test the output.]]></Val>
@@ -12272,6 +12236,15 @@
           <Val><![CDATA[Ask question related to your workflow or Logic Apps.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[詢問與您的工作流程或 Logic Apps 相關的問題。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";uxt1xW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Remove parameter ''{parameterName}'' and its value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[移除參數 ''{parameterName}'' 及其值]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

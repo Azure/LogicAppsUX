@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt"
     }
   ],
   "+0cO6t": [
@@ -365,16 +365,6 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die de waarde mag bevatten."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is niet meer aanwezig in het bewerkingsschema. Deze moet worden verwijderd voordat de werkstroom opnieuw wordt opgeslagen."
     }
   ],
   "0uj1Li": [
@@ -905,6 +895,16 @@
       "value": "Vereist. Het laagste gehele getal dat kan worden geretourneerd."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is vereist."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -983,16 +983,6 @@
     {
       "type": 0,
       "value": "Knop om dynamische inhoud toe te voegen als TokenPicker is verborgen"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is vereist."
     }
   ],
   "4vcnOA": [
@@ -1180,7 +1170,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "6ZviI7": [
@@ -1267,6 +1257,20 @@
     {
       "type": 0,
       "value": "Vereist. De waarde waarvoor de index moet worden gevonden."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Voer een geldige waarde in voor "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "6ueRYm": [
@@ -1940,7 +1944,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Waarschuwing: De aangepaste waarde komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "BFTwRN": [
@@ -2971,20 +2975,6 @@
       "value": "Voer een geldige datum/tijd in."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Voer een geldige waarde in voor "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2993,20 +2983,6 @@
     {
       "type": 0,
       "value": " Gateway installeren"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "De parameter "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " en de bijbehorende waarde verwijderen"
     }
   ],
   "HzS2gJ": [
@@ -4365,12 +4341,6 @@
       "value": "(UTC+12:00) Coordinated Universal Time+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Voer een geldige voorwaarde in."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4991,6 +4961,16 @@
       "value": "Voer een geldige JSON in."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is niet meer aanwezig in het bewerkingsschema. Deze moet worden verwijderd voordat de werkstroom opnieuw wordt opgeslagen."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5215,6 +5195,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Voer een geldige voorwaarde in."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5236,7 +5222,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(aangepaste waarde)"
     }
   ],
   "WgoP7R": [
@@ -6031,6 +6017,12 @@
     {
       "type": 0,
       "value": "paneel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Voer een geldige JSON in."
     }
   ],
   "c7tRg/": [
@@ -8396,7 +8388,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Waarschuwing: De aangepaste waarde komt niet overeen met het type van het schemaknooppunt"
     }
   ],
   "sVQe34": [
@@ -8847,6 +8839,20 @@
     {
       "type": 0,
       "value": "Stel een vraag met betrekking tot uw werkstroom of Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "De parameter "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " en de bijbehorende waarde verwijderen"
     }
   ],
   "uzsleE": [

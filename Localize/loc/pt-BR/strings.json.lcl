@@ -18,6 +18,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+0H8Or" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: input node type does not match the schema node's type]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+0cO6t" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Create connection reference]]></Val>
@@ -518,15 +527,6 @@
           <Val><![CDATA[Required. The string that may contain the value.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Necessário. A cadeia de caracteres que pode conter o valor.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";0qcKzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{parameterName} is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{parameterName} não está mais presente no esquema de operação. Ele deve ser removido antes que o fluxo de trabalho seja salvo novamente.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1269,6 +1269,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";49YUXK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[''{parameterName}'' is required.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{parameterName}'' é necessário.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";4BH9uU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Errors]]></Val>
@@ -1373,15 +1382,6 @@
           <Val><![CDATA[Button to add dynamic content if TokenPicker is hidden]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Botão para adicionar conteúdo dinâmico se o Seletor de Token estiver oculto]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";4sYR0J" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{parameterName} is required.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[O {parameterName} é necessário.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1647,6 +1647,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6WmLx1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: input node type does not match one of the allowed types for this input]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[O tipo de nó de entrada não corresponde a um dos tipos permitidos para essa entrada]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6ZviI7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection reference]]></Val>
@@ -1760,6 +1769,15 @@
           <Val><![CDATA[Required. The value for which to find the index.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Necessário. O valor para o qual localizar o índice.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";6uCEoM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid value for ''{parameterName}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Insira um valor válido para ''{parameterName}''.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2706,11 +2724,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";BEZWxB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";BCgiRh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Clear custom value]]></Val>
+          <Val><![CDATA[Warning: custom value does not match one of the allowed types for this input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Limpar valor personalizado]]></Val>
+            <Val><![CDATA[O valor personalizado não corresponde a um dos tipos permitidos para essa entrada]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3224,15 +3242,6 @@
           <Val><![CDATA[Duration]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Duração]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";DZc8wP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Custom value does not match the schema node's type]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[O valor personalizado não corresponde ao tipo do nó do esquema]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4143,29 +4152,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Hs5+Mk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid value for {parameterName}.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Insira um valor válido para {parameterName}.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";HsO1Rd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{addIcon} Install Gateway]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{addIcon} Instalar Gateway]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";Hyp0Ao" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Remove parameter "{parameterName}" and its value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Remover o parâmetro "{parameterName}" e seu valor]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4310,15 +4301,6 @@
           <Val><![CDATA[(UTC+09:00) Yakutsk]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+09:00) Yakutsk]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";IooQu1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Advanced options]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Opções avançadas]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5463,15 +5445,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";OL5S5H" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter custom value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Inserir valor personalizado]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";OOUSLP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This function doesn't require any input.]]></Val>
@@ -5670,15 +5643,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";P2rzqn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Default value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Valor padrão]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";P3Zpc4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Custom Tracking Id]]></Val>
@@ -5828,15 +5792,6 @@
           <Val><![CDATA[Connection errors]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erros de conexão]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";PtqSHp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Do not generate if no value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Não gerar se nenhum valor]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6084,15 +6039,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";R7X0wG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid condition.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Insira uma condição válida.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";RFjYpH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Name]]></Val>
@@ -6311,15 +6257,6 @@
           <Val><![CDATA[Convert the parameter to an integer]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Converter o parâmetro em um inteiro]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";SKy5tj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[The input node type doesn't match the schema node's type.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[O tipo de nó de entrada não corresponde ao tipo do nó de esquema.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6927,6 +6864,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";V3vpin" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[''{parameterName}'' is no longer present in the operation schema. It should be removed before the workflow is re-saved.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{parameterName}'' não está mais presente no esquema de operação. Ele deve ser removido antes que o fluxo de trabalho seja salvo novamente.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";V5f3ha" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Week]]></Val>
@@ -7215,6 +7161,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WToL/O" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid condition statement.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Insira uma instrução de condição válida.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WUe3DY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Shorthand for trigger().outputs]]></Val>
@@ -7238,6 +7193,15 @@
           <Val><![CDATA[Remove]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Remover]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WgChTm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[(Custom value)]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(Valor personalizado)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7769,15 +7733,6 @@
           <Val><![CDATA[(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+05:30) Chennai, Kolkata (Calcutá), Mumbai, Nova Délhi]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";Yh5OVd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Custom value does not match one of the allowed types for this input]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[O valor personalizado não corresponde a um dos tipos permitidos para esta entrada]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8340,6 +8295,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";c7kfkV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid JSON.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Insira um JSON válido.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";c7tRg/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger.]]></Val>
@@ -8444,15 +8408,6 @@
           <Val><![CDATA[Bold (⌘B)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Negrito (⌘B)]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";cjcEOf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Input node type does not match one of the allowed types for this input]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[O tipo de nó de entrada não corresponde a um dos tipos permitidos para esta entrada]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11679,6 +11634,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";sRpETS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: custom value does not match the schema node's type]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[O valor personalizado não corresponde ao tipo do nó do esquema]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sVQe34" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Provide parameters to test the output.]]></Val>
@@ -12314,6 +12278,15 @@
           <Val><![CDATA[Ask question related to your workflow or Logic Apps.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Faça uma pergunta relacionada ao fluxo de trabalho ou aos Aplicativos Lógicos.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";uxt1xW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Remove parameter ''{parameterName}'' and its value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Remover o parâmetro ''{parameterName}'' e seu valor]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

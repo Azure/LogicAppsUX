@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.55.0",
+  "version": "2.58.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -64,8 +64,7 @@
     "@fluentui/style-utilities": "8.9.6",
     "@fluentui/theme": "2.6.25",
     "@fluentui/web-components": "^2.5.12",
-    "@lexical/headless": "^0.11.1",
-    "@lexical/react": "^0.11.1",
+    "@lexical/react": "^0.11.3",
     "@mdx-js/react": "^1.6.22",
     "@microsoft/applicationinsights-react-js": "^3.4.0",
     "@microsoft/applicationinsights-web": "^2.8.9",
@@ -97,7 +96,7 @@
     "jest-environment-jsdom": "^29.3.1",
     "js-yaml": "4.1.0",
     "jwt-decode": "^3.1.2",
-    "lexical": "^0.11.1",
+    "lexical": "^0.11.3",
     "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "monaco-editor": "0.36.1",

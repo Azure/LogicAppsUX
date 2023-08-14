@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Ostrzeżenie: typ węzła danych wejściowych jest niezgodny z typem węzła schematu"
     }
   ],
   "+0cO6t": [
@@ -365,20 +365,6 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg, który może zawierać wartość."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 0,
-      "value": "Parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " już nie istnieje w schemacie operacji. Należy go usunąć przed ponownym zapisaniem przepływu pracy."
     }
   ],
   "0uj1Li": [
@@ -909,6 +895,20 @@
       "value": "Wymagane. Najmniejsza liczba całkowita, która może zostać zwrócona."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "Parametr „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "” jest wymagany."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -983,20 +983,6 @@
     {
       "type": 0,
       "value": "Przycisk dodawania zawartości dynamicznej, jeśli platforma TokenPicker jest ukryta"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "Parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " jest wymagany."
     }
   ],
   "4vcnOA": [
@@ -1184,7 +1170,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Ostrzeżenie: typ węzła danych wejściowych nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
   "6ZviI7": [
@@ -1271,6 +1257,20 @@
     {
       "type": 0,
       "value": "Wymagane. wartość, dla której ma zostać odnaleziony indeks."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową wartość parametru „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "6ueRYm": [
@@ -1970,7 +1970,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Ostrzeżenie: wartość niestandardowa nie jest zgodna z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
   "BFTwRN": [
@@ -3023,20 +3023,6 @@
       "value": "Wprowadź prawidłową datę/godzinę."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową wartość parametru "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3045,20 +3031,6 @@
     {
       "type": 0,
       "value": " Zainstaluj bramę"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Usuń parametr „"
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "” i jego wartość"
     }
   ],
   "HzS2gJ": [
@@ -4451,12 +4423,6 @@
       "value": "(UTC+12:00) Uniwersalny czas koordynowany+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy warunek."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5099,6 +5065,20 @@
       "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "Parametr „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "” już nie istnieje w schemacie operacji. Należy go usunąć przed ponownym zapisaniem przepływu pracy."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5323,6 +5303,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową instrukcję warunku."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5344,7 +5330,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(wartość niestandardowa)"
     }
   ],
   "WgoP7R": [
@@ -6139,6 +6125,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "c7tRg/": [
@@ -8590,7 +8582,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Ostrzeżenie: wartość niestandardowa jest niezgodna z typem węzła schematu"
     }
   ],
   "sVQe34": [
@@ -9049,6 +9041,20 @@
     {
       "type": 0,
       "value": "Zadaj pytanie związane z przepływem pracy lub usługą Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Usuń parametr „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "” i jego wartość"
     }
   ],
   "uzsleE": [

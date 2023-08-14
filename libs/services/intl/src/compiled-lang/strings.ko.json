@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "경고: 입력 노드 형식이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
   "+0cO6t": [
@@ -365,16 +365,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 값을 포함할 수 있는 문자열입니다."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "이(가) 더 이상 작업 스키마에 없습니다. 워크플로를 다시 저장하기 전에 제거해야 합니다."
     }
   ],
   "0uj1Li": [
@@ -897,6 +887,20 @@
       "value": "필수 사항으로, 반환할 수 있는 최하 정수입니다."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'이(가) 필요합니다."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -971,16 +975,6 @@
     {
       "type": 0,
       "value": "TokenPicker가 숨겨진 경우 동적 콘텐츠를 추가하는 버튼"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "이(가) 필요합니다."
     }
   ],
   "4vcnOA": [
@@ -1168,7 +1162,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "경고: 입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
     }
   ],
   "6ZviI7": [
@@ -1255,6 +1249,20 @@
     {
       "type": 0,
       "value": "필수. 인덱스 찾기에 사용할 값입니다."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'에 유효한 값을 입력하세요."
     }
   ],
   "6ueRYm": [
@@ -1913,7 +1921,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "경고: 사용자 지정 값이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
     }
   ],
   "BFTwRN": [
@@ -2921,16 +2929,6 @@
       "value": "유효한 날짜를 입력하세요."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "에 유효한 값을 입력하세요."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2939,20 +2937,6 @@
     {
       "type": 0,
       "value": " 게이트웨이 설치"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "매개 변수 \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" 및 해당 값 제거"
     }
   ],
   "HzS2gJ": [
@@ -4308,12 +4292,6 @@
       "value": "(UTC+12:00) 협정 세계시+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "유효한 조건을 입력하세요."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4919,6 +4897,20 @@
       "value": "올바른 JSON을 입력하세요."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'이(가) 더 이상 작업 스키마에 없습니다. 워크플로를 다시 저장하기 전에 제거해야 합니다."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5143,6 +5135,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "유효한 조건 문을 입력하세요."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5164,7 +5162,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(사용자 지정 값)"
     }
   ],
   "WgoP7R": [
@@ -5959,6 +5957,12 @@
     {
       "type": 0,
       "value": "패널"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "c7tRg/": [
@@ -8275,7 +8279,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "경고: 사용자 지정 값이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
   "sVQe34": [
@@ -8730,6 +8734,20 @@
     {
       "type": 0,
       "value": "워크플로 또는 Logic Apps 관련된 질문을 합니다."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "매개 변수 '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' 및 해당 값 제거"
     }
   ],
   "uzsleE": [

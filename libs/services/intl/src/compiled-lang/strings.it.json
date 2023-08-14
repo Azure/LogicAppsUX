@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
     }
   ],
   "+0cO6t": [
@@ -365,16 +365,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa che può contenere il valore."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " non è più presente nello schema dell'operazione. Deve essere rimosso prima di salvare nuovamente il flusso di lavoro."
     }
   ],
   "0uj1Li": [
@@ -897,6 +887,20 @@
       "value": "Obbligatorio. Integer più basso che può essere restituito."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' è obbligatorio."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -971,16 +975,6 @@
     {
       "type": 0,
       "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è nascosto"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " è obbligatorio."
     }
   ],
   "4vcnOA": [
@@ -1168,7 +1162,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Avviso: il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input"
     }
   ],
   "6ZviI7": [
@@ -1255,6 +1249,20 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore per il quale trovare l'indice."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Immettere un valore valido per '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "6ueRYm": [
@@ -1943,7 +1951,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Avviso: il valore personalizzato non corrisponde a uno dei tipi consentiti per questo input"
     }
   ],
   "BFTwRN": [
@@ -2969,20 +2977,6 @@
       "value": "Immetti un valore datetime valido."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Immetti un valore valido per "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2991,20 +2985,6 @@
     {
       "type": 0,
       "value": " Installa gateway"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Rimuovi il parametro \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" e il relativo valore"
     }
   ],
   "HzS2gJ": [
@@ -4390,12 +4370,6 @@
       "value": "(UTC + 12.00 h) Coordinated Universal Time+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Immetti una condizione valida."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5027,6 +5001,20 @@
       "value": "Immettere un oggetto JSON valido."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' non è più presente nello schema dell'operazione. Deve essere rimosso prima di salvare nuovamente il flusso di lavoro."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5251,6 +5239,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Immettere un'istruzione di condizione valida."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5272,7 +5266,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Valore personalizzato)"
     }
   ],
   "WgoP7R": [
@@ -6067,6 +6061,12 @@
     {
       "type": 0,
       "value": "pannello"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Immettere un oggetto JSON valido."
     }
   ],
   "c7tRg/": [
@@ -8461,7 +8461,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Avviso: il valore personalizzato non corrisponde al tipo del nodo dello schema"
     }
   ],
   "sVQe34": [
@@ -8920,6 +8920,20 @@
     {
       "type": 0,
       "value": "Porre una domanda relativa al flusso di lavoro o alle app per la logica."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Rimuovere il parametro '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' e il relativo valore"
     }
   ],
   "uzsleE": [

@@ -8,7 +8,7 @@
   "+0H8Or": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match the schema node's type"
+      "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
   "+0cO6t": [
@@ -369,16 +369,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " ist im Vorgangsschema nicht mehr vorhanden. Der Parameter muss entfernt werden, bevor der Workflow erneut gespeichert wird."
     }
   ],
   "0uj1Li": [
@@ -913,6 +903,20 @@
       "value": "Erforderlich. Die niedrigste ganze Zahl, die zurückgegeben werden kann."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "Der „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ist erforderlich."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -991,20 +995,6 @@
     {
       "type": 0,
       "value": "Schaltfläche zum Hinzufügen dynamischer Inhalte, wenn TokenPicker ausgeblendet ist"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "Der "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " ist erforderlich."
     }
   ],
   "4vcnOA": [
@@ -1192,7 +1182,7 @@
   "6WmLx1": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
     }
   ],
   "6ZviI7": [
@@ -1279,6 +1269,20 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, für den der Index gesucht werden soll."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen Wert für „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ein."
     }
   ],
   "6ueRYm": [
@@ -1960,7 +1964,7 @@
   "BCgiRh": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match one of the allowed types for this input"
+      "value": "Warnung: Der benutzerdefinierte Wert stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
     }
   ],
   "BFTwRN": [
@@ -2999,20 +3003,6 @@
       "value": "Geben Sie einen gültigen Wert für „Datum/Uhrzeit“ ein."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen Wert für "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " ein."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3021,20 +3011,6 @@
     {
       "type": 0,
       "value": " Gateway installieren"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Parameter „"
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "“ und seinen Wert entfernen"
     }
   ],
   "HzS2gJ": [
@@ -4409,12 +4385,6 @@
       "value": "(UTC+12:00) Koordinierte Weltzeit +12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Geben Sie eine gültige Bedingung ein."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5035,6 +5005,20 @@
       "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "Der „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ist im Vorgangsschema nicht mehr vorhanden. Der Parameter muss entfernt werden, bevor der Workflow erneut gespeichert wird."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5267,6 +5251,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige Bedingungsanweisung ein."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5288,7 +5278,7 @@
   "WgChTm": [
     {
       "type": 0,
-      "value": "(Custom value)"
+      "value": "(Benutzerdefinierter Wert)"
     }
   ],
   "WgoP7R": [
@@ -6083,6 +6073,12 @@
     {
       "type": 0,
       "value": "Bereich"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "c7tRg/": [
@@ -8460,7 +8456,7 @@
   "sRpETS": [
     {
       "type": 0,
-      "value": "Warning: custom value does not match the schema node's type"
+      "value": "Warnung: Der benutzerdefinierte Wert stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
   "sVQe34": [
@@ -8919,6 +8915,20 @@
     {
       "type": 0,
       "value": "Stellen Sie Fragen im Zusammenhang mit Ihrem Workflow oder Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Parameter „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ und seinen Wert entfernen"
     }
   ],
   "uzsleE": [
