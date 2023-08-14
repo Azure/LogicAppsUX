@@ -59,8 +59,9 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
         IsEncrypted: false,
         Values: {
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
-          FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated',
           WORKFLOWS_SUBSCRIPTION_ID: '',
+          FUNCTIONS_WORKER_RUNTIME: 'node',
+          APP_KIND: 'workflowapp',
           AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
         },
       };
