@@ -906,7 +906,7 @@
   "49YUXK": [
     {
       "type": 0,
-      "value": "'"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -914,7 +914,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "” megadása kötelező."
     }
   ],
   "4BH9uU": [
@@ -1262,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Adjon meg egy érvényes értéket a(z) „"
     },
     {
       "type": 1,
@@ -1270,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "” paraméterhez."
     }
   ],
   "6ueRYm": [
@@ -4960,7 +4960,7 @@
   "V3vpin": [
     {
       "type": 0,
-      "value": "'"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -4968,7 +4968,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "” már nem szerepel a műveleti sémában. Távolítsa el, mielőtt újból mentené a munkafolyamatot."
     }
   ],
   "V5f3ha": [
@@ -5198,7 +5198,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Adjon meg egy érvényes feltételutasítást."
     }
   ],
   "WUe3DY": [
@@ -8860,7 +8860,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -8868,7 +8868,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "“ paraméter és értékének eltávolítása"
     }
   ],
   "uzsleE": [

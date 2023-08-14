@@ -898,7 +898,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "' gereklidir."
     }
   ],
   "4BH9uU": [
@@ -1254,7 +1254,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1262,7 +1262,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' için geçerli bir değer girin."
     }
   ],
   "6ueRYm": [
@@ -4960,7 +4960,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "' artık işlem şemasında yok. İş akışı yeniden kaydedilmeden önce bu parametrenin kaldırılması gerekir."
     }
   ],
   "V5f3ha": [
@@ -5190,7 +5190,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Geçerli bir koşul deyimi girin."
     }
   ],
   "WUe3DY": [
@@ -8836,7 +8836,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -8844,7 +8844,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "' parametresini ve değerini kaldır"
     }
   ],
   "uzsleE": [

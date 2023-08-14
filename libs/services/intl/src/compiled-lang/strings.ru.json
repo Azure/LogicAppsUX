@@ -898,7 +898,7 @@
   "49YUXK": [
     {
       "type": 0,
-      "value": "'"
+      "value": "Требуется параметр \""
     },
     {
       "type": 1,
@@ -906,7 +906,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "\"."
     }
   ],
   "4BH9uU": [
@@ -1262,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Введите допустимое значение параметра \""
     },
     {
       "type": 1,
@@ -1270,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "6ueRYm": [
@@ -5064,7 +5064,7 @@
   "V3vpin": [
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     },
     {
       "type": 1,
@@ -5072,7 +5072,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "\" больше не существует в схеме операции. Удалите его, прежде чем вновь сохранять рабочий процесс."
     }
   ],
   "V5f3ha": [
@@ -5302,7 +5302,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Введите допустимый оператор условия."
     }
   ],
   "WUe3DY": [
@@ -9030,7 +9030,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "Удалить параметр \""
     },
     {
       "type": 1,
@@ -9038,7 +9038,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "\" и его значение"
     }
   ],
   "uzsleE": [
