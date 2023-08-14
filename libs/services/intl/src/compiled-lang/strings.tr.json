@@ -367,16 +367,6 @@
       "value": "Gerekli. Değeri içeriyor olabilecek dize."
     }
   ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " artık işlem şemasında yok. İş akışı yeniden kaydedilmeden önce bunun kaldırılması gerekir."
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -897,6 +887,20 @@
       "value": "Gerekli. Döndürülebilecek en düşük tamsayı."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' gereklidir."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -971,16 +975,6 @@
     {
       "type": 0,
       "value": "TokenPicker gizliyse dinamik içerik ekleme düğmesi"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " gerekli."
     }
   ],
   "4vcnOA": [
@@ -1255,6 +1249,20 @@
     {
       "type": 0,
       "value": "Gerekli. Dizinin bulunacağı değer."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' için geçerli bir değer girin."
     }
   ],
   "6ueRYm": [
@@ -2951,16 +2959,6 @@
       "value": "Geçerli bir tarih saat girin."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " için geçerli bir değer girin."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2969,20 +2967,6 @@
     {
       "type": 0,
       "value": " Ağ Geçidini Yükle"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "\""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" parametresini ve değerini kaldır"
     }
   ],
   "HzS2gJ": [
@@ -4349,12 +4333,6 @@
       "value": "(UTC+12:00) Eşgüdümlü Evrensel Saat+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Geçerli bir koşul girin."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4971,6 +4949,20 @@
       "value": "Geçerli bir JSON girin."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' artık işlem şemasında yok. İş akışı yeniden kaydedilmeden önce bu parametrenin kaldırılması gerekir."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5193,6 +5185,12 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Geçerli bir koşul deyimi girin."
     }
   ],
   "WUe3DY": [
@@ -6011,6 +6009,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Geçerli bir JSON girin."
     }
   ],
   "c7tRg/": [
@@ -8827,6 +8831,20 @@
     {
       "type": 0,
       "value": "İş akışınız veya Logic Apps ile ilgili soru sorun."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' parametresini ve değerini kaldır"
     }
   ],
   "uzsleE": [

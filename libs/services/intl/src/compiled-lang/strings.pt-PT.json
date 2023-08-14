@@ -367,20 +367,6 @@
       "value": "Obrigatório. A cadeia que poderá conter o valor."
     }
   ],
-  "0qcKzG": [
-    {
-      "type": 0,
-      "value": "O "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " já não está presente no esquema da operação. Deve remover o mesmo antes de guardar novamente o fluxo de trabalho."
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -909,6 +895,20 @@
       "value": "Obrigatório. O menor número inteiro que pode ser devolvido."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "O parâmetro \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" é obrigatório."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -983,16 +983,6 @@
     {
       "type": 0,
       "value": "Botão para adicionar conteúdo dinâmico se TokenPicker estiver oculto"
-    }
-  ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " é obrigatório."
     }
   ],
   "4vcnOA": [
@@ -1267,6 +1257,20 @@
     {
       "type": 0,
       "value": "Necessário. O valor para o qual encontrar o índice."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Introduza um valor válido para \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "6ueRYm": [
@@ -2997,20 +3001,6 @@
       "value": "Introduza um datetime válido."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Introduza um valor válido para "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3019,20 +3009,6 @@
     {
       "type": 0,
       "value": " Instalar Gateway"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Remover parâmetro \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" e o respetivo valor"
     }
   ],
   "HzS2gJ": [
@@ -4410,12 +4386,6 @@
       "value": "(UTC+12:00) Hora Universal Coordenada +12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Introduza uma condição válida."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5047,6 +5017,20 @@
       "value": "Introduza um JSON válido."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "O \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" já não está presente no esquema da operação. Deverá remover o mesmo antes de guardar novamente o fluxo de trabalho."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5269,6 +5253,12 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Introduza uma condição de instrução válida."
     }
   ],
   "WUe3DY": [
@@ -6087,6 +6077,12 @@
     {
       "type": 0,
       "value": "painel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Introduza um JSON válido."
     }
   ],
   "c7tRg/": [
@@ -8952,6 +8948,20 @@
     {
       "type": 0,
       "value": "Faça uma pergunta relacionada com o seu fluxo de trabalho ou Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remover parâmetro \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" e o respetivo valor"
     }
   ],
   "uzsleE": [

@@ -1,4 +1,30 @@
 # Logic Apps Designer
+## [2.58.0](https://github.com/Azure/LogicAppsUX/compare/v2.57.0...v2.58.0) (2023-08-14)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed creation of phantom "cases" node input object ([#3119](https://github.com/Azure/LogicAppsUX/issues/3119)) ([9afeeb7](https://github.com/Azure/LogicAppsUX/commit/9afeeb78fd0419574a560e01344bbccf7320d0d9))
+* **designer:** Ignore validation on parameterGroups without parameters ([#3129](https://github.com/Azure/LogicAppsUX/issues/3129)) ([84b5a8a](https://github.com/Azure/LogicAppsUX/commit/84b5a8ab23d49948ff38d40237c7ff9b1b527d54))
+* **designer:** Show 'Edit in JSON' link for parameters ([#3108](https://github.com/Azure/LogicAppsUX/issues/3108)) ([49706b7](https://github.com/Azure/LogicAppsUX/commit/49706b71f585750c8c689af54eb7e030a49d0cf3))
+
+## [2.57.0](https://github.com/Azure/LogicAppsUX/compare/v2.56.0...v2.57.0) (2023-08-10)
+
+
+### Features
+
+* **data mapper:** New category for custom functions ([#3074](https://github.com/Azure/LogicAppsUX/issues/3074)) ([8ca2121](https://github.com/Azure/LogicAppsUX/commit/8ca2121a4b7a1030f2e734bd4d221314e01036ac))
+
+
+### Bug Fixes
+
+* **designer:** Additional Parameters Not Fully Populating ([#3084](https://github.com/Azure/LogicAppsUX/issues/3084)) ([fb719fe](https://github.com/Azure/LogicAppsUX/commit/fb719fe891aa99b87e4b1aa85f6b72523a3ae920))
+* **designer:** Auth Editor Deserialization ([#3105](https://github.com/Azure/LogicAppsUX/issues/3105)) ([b989829](https://github.com/Azure/LogicAppsUX/commit/b98982999b6394553d9c073f8b4e015996cac6c4))
+* **Designer:** Fixed issue with empty Tracked Properties ([#3094](https://github.com/Azure/LogicAppsUX/issues/3094)) ([c0d1dc7](https://github.com/Azure/LogicAppsUX/commit/c0d1dc71bf897816eab764465e5f7f8e13aace79))
+* **designer:** make it so that customEnums require enum property to also be set ([#3072](https://github.com/Azure/LogicAppsUX/issues/3072)) ([86c73a9](https://github.com/Azure/LogicAppsUX/commit/86c73a9f02e39ce868387873ccba1f71c95e8ae0))
+* **designer:** querybuilder valdiation ([#3100](https://github.com/Azure/LogicAppsUX/issues/3100)) ([2f579f4](https://github.com/Azure/LogicAppsUX/commit/2f579f4338ab370217cfc4bc181c1c979942672f))
+* **desinger:** Support Serialization of adding new lines in html editor ([#3099](https://github.com/Azure/LogicAppsUX/issues/3099)) ([446c854](https://github.com/Azure/LogicAppsUX/commit/446c85418ae2ceaecef6f4a07a387ea70b20cb58))
+
 ## [2.56.0](https://github.com/Azure/LogicAppsUX/compare/v2.55.0...v2.56.0) (2023-08-03)
 
 
