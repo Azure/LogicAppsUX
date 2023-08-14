@@ -1,7 +1,6 @@
 import {
   collectionBranding,
   conversionBranding,
-  customBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
@@ -9,7 +8,7 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
+import { InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
@@ -42,9 +41,6 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
     }
     case FunctionCategory.Conversion: {
       return conversionBranding;
-    }
-    case FunctionCategory.Custom: {
-      return customBranding;
     }
     default: {
       LogService.error(LogCategory.FunctionUtils, 'getFunctionBrandingForCategory', {
@@ -261,3 +257,6 @@ export const removeQuotesFromString = (value: string) => {
   }
   return formattedValue;
 };
+
+export const hasOnlyCustomInputType = (functionData: FunctionData) =>
+  functionData.inputs[0]?.inputEntryType === InputFormat.FilePicker || functionData.inputs[0]?.inputEntryType === InputFormat.TextBox;

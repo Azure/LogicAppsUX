@@ -1,8 +1,8 @@
 import type { FunctionGroupBranding } from '../../../constants/FunctionConstants';
 import { simpleFunctionCardDiameter } from '../../../constants/NodeConstants';
-import { InputFormat } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
+import { hasOnlyCustomInputType } from '../../../utils/Function.Utils';
 import { areInputTypesValidForFunction } from '../../../utils/MapChecker.Utils';
 import type { CardProps } from '../NodeCard';
 import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
@@ -64,9 +64,6 @@ export const shouldDisplayTargetHandle = (
   !hasOnlyCustomInputType(functionData) &&
   !!sourceNodeConnectionBeingDrawnFromId &&
   sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
-
-export const hasOnlyCustomInputType = (functionData: FunctionData) =>
-  functionData.inputs[0]?.inputEntryType === InputFormat.FilePicker || functionData.inputs[0]?.inputEntryType === InputFormat.TextBox;
 
 export const shouldDisplaySourceHandle = (
   displayHandle: boolean,
