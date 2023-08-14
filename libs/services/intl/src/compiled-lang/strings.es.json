@@ -898,7 +898,7 @@
   "49YUXK": [
     {
       "type": 0,
-      "value": "'"
+      "value": "Se requiere \""
     },
     {
       "type": 1,
@@ -906,7 +906,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "\"."
     }
   ],
   "4BH9uU": [
@@ -1262,7 +1262,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "Escriba un valor válido para \""
     },
     {
       "type": 1,
@@ -1270,7 +1270,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "6ueRYm": [
@@ -5012,7 +5012,7 @@
   "V3vpin": [
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     },
     {
       "type": 1,
@@ -5020,7 +5020,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "\" ya no está presente en el esquema de la operación. Debe quitarse antes de que se vuelva a guardar el flujo de trabajo."
     }
   ],
   "V5f3ha": [
@@ -5250,7 +5250,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "Escriba una instrucción de condición válida."
     }
   ],
   "WUe3DY": [
@@ -8937,7 +8937,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "Quitar el parámetro \""
     },
     {
       "type": 1,
@@ -8945,7 +8945,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "\" y su valor"
     }
   ],
   "uzsleE": [

@@ -902,7 +902,7 @@
   "49YUXK": [
     {
       "type": 0,
-      "value": "'"
+      "value": "“"
     },
     {
       "type": 1,
@@ -910,7 +910,7 @@
     },
     {
       "type": 0,
-      "value": "' is required."
+      "value": "”是必需的。"
     }
   ],
   "4BH9uU": [
@@ -1266,7 +1266,7 @@
   "6uCEoM": [
     {
       "type": 0,
-      "value": "Enter a valid value for '"
+      "value": "输入“"
     },
     {
       "type": 1,
@@ -1274,7 +1274,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”的有效值。"
     }
   ],
   "6ueRYm": [
@@ -4936,7 +4936,7 @@
   "V3vpin": [
     {
       "type": 0,
-      "value": "'"
+      "value": "“"
     },
     {
       "type": 1,
@@ -4944,7 +4944,7 @@
     },
     {
       "type": 0,
-      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+      "value": "”不再出现在操作架构中。应在重新保存工作流前删除它。"
     }
   ],
   "V5f3ha": [
@@ -5186,7 +5186,7 @@
   "WToL/O": [
     {
       "type": 0,
-      "value": "Enter a valid condition statement."
+      "value": "输入有效的条件语句。"
     }
   ],
   "WUe3DY": [
@@ -8827,7 +8827,7 @@
   "uxt1xW": [
     {
       "type": 0,
-      "value": "Remove parameter '"
+      "value": "删除参数“"
     },
     {
       "type": 1,
@@ -8835,7 +8835,7 @@
     },
     {
       "type": 0,
-      "value": "' and its value"
+      "value": "”及其值"
     }
   ],
   "uzsleE": [
