@@ -186,13 +186,13 @@ export default class DataMapperPanel {
     }
   }
 
-  public getNestedFilePaths(fileName: string, parentPath: string, filesToDisplay: string[], filetypes: string[]) {
-    const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
+  public getNestedFilePaths(fileName: string, parentPath: string, relativePath: string, filesToDisplay: string[], filetypes: string[]) {
+    const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), relativePath);
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       readdirSync(absolutePath).forEach((childFileName) => {
-        const relativePath = path.join(parentPath, fileName);
-        this.getNestedFilePaths(childFileName, relativePath, filesToDisplay, filetypes);
+        const combinedRelativePath = path.join(parentPath, fileName);
+        this.getNestedFilePaths(childFileName, combinedRelativePath, relativePath, filesToDisplay, filetypes);
       });
     } else {
       const fileExt = path.extname(fileName).toLowerCase();
@@ -218,7 +218,7 @@ export default class DataMapperPanel {
     fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
-        this.getNestedFilePaths(file, '', filesToDisplay, fileTypes);
+        this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
       }),
         this.sendMsgToWebview({
           command,
