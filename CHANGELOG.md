@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [2.58.0](https://github.com/Azure/LogicAppsUX/compare/v2.57.0...v2.58.0) (2023-08-14)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed creation of phantom "cases" node input object ([#3119](https://github.com/Azure/LogicAppsUX/issues/3119)) ([9afeeb7](https://github.com/Azure/LogicAppsUX/commit/9afeeb78fd0419574a560e01344bbccf7320d0d9))
+* **designer:** Ignore validation on parameterGroups without parameters ([#3129](https://github.com/Azure/LogicAppsUX/issues/3129)) ([84b5a8a](https://github.com/Azure/LogicAppsUX/commit/84b5a8ab23d49948ff38d40237c7ff9b1b527d54))
+* **designer:** Show 'Edit in JSON' link for parameters ([#3108](https://github.com/Azure/LogicAppsUX/issues/3108)) ([49706b7](https://github.com/Azure/LogicAppsUX/commit/49706b71f585750c8c689af54eb7e030a49d0cf3))
+
 ## [2.57.0](https://github.com/Azure/LogicAppsUX/compare/v2.56.0...v2.57.0) (2023-08-10)
 
 
