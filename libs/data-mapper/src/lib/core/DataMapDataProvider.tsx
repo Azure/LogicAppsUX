@@ -38,7 +38,7 @@ const DataProviderInner = ({
   targetSchema,
   availableSchemas,
   fetchedFunctions,
-  customXsltPaths: customXsltPaths,
+  customXsltPaths,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
