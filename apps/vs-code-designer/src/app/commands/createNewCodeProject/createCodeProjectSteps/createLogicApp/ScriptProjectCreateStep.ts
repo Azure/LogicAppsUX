@@ -60,6 +60,7 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
         Values: {
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           WORKFLOWS_SUBSCRIPTION_ID: '',
+          FUNCTIONS_WORKER_RUNTIME: 'node',
           APP_KIND: 'workflowapp',
           AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
         },
