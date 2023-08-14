@@ -46,8 +46,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     });
 
     const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
-      const hasValidationErrors = Object.values(nodeInputs.parameterGroups).every((parameterGroup) => {
-        return parameterGroup.parameters.every((parameter) => {
+      const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
+        return parameterGroup.parameters.some((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
           if (validationErrors.length > 0) {
             dispatch(updateParameterValidation({ nodeId: id, groupId: parameterGroup.id, parameterId: parameter.id, validationErrors }));
