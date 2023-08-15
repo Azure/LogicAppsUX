@@ -1289,6 +1289,12 @@
       "value": "Data type"
     }
   ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Select function from"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
@@ -7369,6 +7375,12 @@
       "value": "Stateless run mode:"
     }
   ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
+    }
+  ],
   "lhL/KL": [
     {
       "type": 0,
@@ -8287,6 +8299,20 @@
     {
       "type": 0,
       "value": "Enter value for parameter."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

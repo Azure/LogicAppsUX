@@ -14,6 +14,7 @@ export interface DataMapLoadingState {
   targetSchemaFilename?: string;
   targetSchema?: Schema;
   schemaFileList?: string[];
+  customXsltPathsList?: string[];
   xsltFilename: string;
   xsltContent: string;
   fetchedFunctions?: FunctionData[];
@@ -67,6 +68,9 @@ export const dataMapDataLoaderSlice = createSlice({
     changeSchemaList: (state, action: PayloadAction<string[]>) => {
       state.schemaFileList = action.payload;
     },
+    changeCustomXsltPathList: (state, action: PayloadAction<string[]>) => {
+      state.customXsltPathsList = action.payload;
+    },
     changeFetchedFunctions: (state, action: PayloadAction<FunctionData[]>) => {
       state.fetchedFunctions = action.payload;
     },
@@ -90,6 +94,7 @@ export const {
   changeTargetSchemaFilename,
   changeTargetSchema,
   changeSchemaList,
+  changeCustomXsltPathList,
   changeFetchedFunctions,
   changeUseExpandedFunctionCards,
 } = dataMapDataLoaderSlice.actions;

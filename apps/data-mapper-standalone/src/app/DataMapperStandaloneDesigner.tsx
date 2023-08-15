@@ -29,6 +29,8 @@ const workflowSchemaFilenames = [
   'a/b/c.json',
 ];
 
+const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
+
 export const DataMapperStandaloneDesigner = () => {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useSelector((state: RootState) => state.dataMapDataLoader.theme);
@@ -101,6 +103,7 @@ export const DataMapperStandaloneDesigner = () => {
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
             availableSchemas={workflowSchemaFilenames}
+            customXsltPaths={customXsltPath}
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >

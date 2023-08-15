@@ -43,6 +43,7 @@ export const App = () => {
   const targetSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.targetSchemaFilename);
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
+  const customXsltPathsList = useSelector((state: RootState) => state.dataMapDataLoader.customXsltPathsList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
   const useExpandedFunctionCards = useSelector((state: RootState) => state.dataMapDataLoader.useExpandedFunctionCards);
 
@@ -69,9 +70,15 @@ export const App = () => {
     });
   };
 
-  const readLocalFileOptions = useCallback(() => {
+  const readLocalSchemaFileOptions = useCallback(() => {
     sendMsgToVsix({
-      command: 'readLocalFileOptions',
+      command: 'readLocalSchemaFileOptions',
+    });
+  }, [sendMsgToVsix]);
+
+  const readLocalxsltFileOptions = useCallback(() => {
+    sendMsgToVsix({
+      command: 'readLocalCustomXsltFileOptions',
     });
   }, [sendMsgToVsix]);
 
@@ -214,6 +221,7 @@ export const App = () => {
         sourceSchema={sourceSchema}
         targetSchema={targetSchema}
         availableSchemas={schemaFileList}
+        customXsltPaths={customXsltPathsList}
         fetchedFunctions={fetchedFunctions}
         // Passed in here too so it can be managed in the Redux store so components can track the current theme
         theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
@@ -223,7 +231,8 @@ export const App = () => {
           saveXsltCall={saveXsltCall}
           saveDraftStateCall={saveDraftDataMapDefinition}
           addSchemaFromFile={addSchemaFromFile}
-          readCurrentSchemaOptions={readLocalFileOptions}
+          readCurrentSchemaOptions={readLocalSchemaFileOptions}
+          readCurrentCustomXsltPathOptions={readLocalxsltFileOptions}
           setIsMapStateDirty={setIsMapStateDirty}
           setFunctionDisplayExpanded={setFunctionDisplayExpanded}
           useExpandedFunctionCards={useExpandedFunctionCards}
