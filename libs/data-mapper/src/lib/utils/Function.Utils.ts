@@ -1,7 +1,6 @@
 import {
   collectionBranding,
   conversionBranding,
-  customBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
@@ -9,8 +8,8 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import type { Connection, ConnectionDictionary } from '../models/Connection';
+import { InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '../models';
+import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
@@ -42,9 +41,6 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
     }
     case FunctionCategory.Conversion: {
       return conversionBranding;
-    }
-    case FunctionCategory.Custom: {
-      return customBranding;
     }
     default: {
       LogService.error(LogCategory.FunctionUtils, 'getFunctionBrandingForCategory', {
@@ -216,3 +212,51 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
 
   return nodeName;
 };
+
+export const getInputName = (inputConnection: InputConnection | undefined, connectionDictionary: ConnectionDictionary) => {
+  if (inputConnection) {
+    return isCustomValue(inputConnection)
+      ? inputConnection
+      : isSchemaNodeExtended(inputConnection.node)
+      ? inputConnection.node.name
+      : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+  }
+
+  return undefined;
+};
+
+export const getInputValue = (inputConnection: InputConnection | undefined) => {
+  if (inputConnection) {
+    return isCustomValue(inputConnection) ? inputConnection : inputConnection.reactFlowKey;
+  }
+
+  return undefined;
+};
+
+export const addQuotesToString = (value: string) => {
+  let formattedValue = value;
+
+  const quote = '"';
+  if (!value.startsWith(quote)) {
+    formattedValue = quote.concat(value);
+  }
+  if (!value.endsWith(quote)) {
+    formattedValue = formattedValue.concat(quote);
+  }
+  return formattedValue;
+};
+
+export const removeQuotesFromString = (value: string) => {
+  let formattedValue = value;
+  const quote = '"';
+  if (formattedValue.endsWith(quote)) {
+    formattedValue = formattedValue.substring(0, value.length - 1);
+  }
+  if (formattedValue.startsWith(quote)) {
+    formattedValue = formattedValue.replace(quote, '');
+  }
+  return formattedValue;
+};
+
+export const hasOnlyCustomInputType = (functionData: FunctionData) =>
+  functionData.inputs[0]?.inputEntryType === InputFormat.FilePicker || functionData.inputs[0]?.inputEntryType === InputFormat.TextBox;

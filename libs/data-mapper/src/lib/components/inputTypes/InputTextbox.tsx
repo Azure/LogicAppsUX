@@ -1,6 +1,7 @@
 import { setConnectionInput } from '../../core/state/DataMapSlice';
 import type { RootState } from '../../core/state/Store';
 import type { FunctionData, FunctionInput } from '../../models';
+import { addQuotesToString, removeQuotesFromString } from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { Tooltip, Textarea } from '@fluentui/react-components';
 import { useDebouncedCallback } from '@react-hookz/web';
@@ -38,16 +39,14 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
 
     const formattedValue = addQuotesToString(value);
 
-    if (inputTyped) {
-      dispatch(
-        setConnectionInput({
-          targetNode: functionNode,
-          targetNodeReactFlowKey: selectedItemKey,
-          inputIndex: 0,
-          input: formattedValue,
-        })
-      );
-    }
+    dispatch(
+      setConnectionInput({
+        targetNode: functionNode,
+        targetNodeReactFlowKey: selectedItemKey,
+        inputIndex: 0,
+        input: formattedValue,
+      })
+    );
   };
 
   const debounceDelay = 300;
@@ -69,29 +68,4 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
       ></Textarea>
     </Tooltip>
   );
-};
-
-const addQuotesToString = (value: string) => {
-  let formattedValue = value;
-
-  const quote = '"';
-  if (!value.startsWith(quote)) {
-    formattedValue = quote.concat(value);
-  }
-  if (!value.endsWith(quote)) {
-    formattedValue = formattedValue.concat(quote);
-  }
-  return formattedValue;
-};
-
-const removeQuotesFromString = (value: string) => {
-  let formattedValue = value;
-  const quote = '"';
-  if (formattedValue.endsWith(quote)) {
-    formattedValue = formattedValue.substring(0, value.length - 1);
-  }
-  if (formattedValue.startsWith(quote)) {
-    formattedValue = formattedValue.replace(quote, '');
-  }
-  return formattedValue;
 };
