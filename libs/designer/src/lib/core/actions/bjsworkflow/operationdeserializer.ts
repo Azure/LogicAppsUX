@@ -148,6 +148,8 @@ export const initializeOperationMetadata = async (
   }
 
   const variables = initializeVariables(operations, allNodeData);
+  const output = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
+  console.log('Original - variables: ', variables, 'outputs: ', output);
   dispatch(
     initializeTokensAndVariables({
       outputTokens: initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata),
@@ -368,7 +370,7 @@ const updateTokenMetadataInParameters = (
   }
 };
 
-const initializeOutputTokensForOperations = (
+export const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,
@@ -424,7 +426,7 @@ const initializeOutputTokensForOperations = (
   return result;
 };
 
-const initializeVariables = (
+export const initializeVariables = (
   operations: Operations,
   allNodesData: NodeDataWithOperationMetadata[]
 ): Record<string, VariableDeclaration[]> => {

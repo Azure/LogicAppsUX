@@ -34,7 +34,13 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  getReactQueryClient,
+  deserializeWorkflowTokens,
+} from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId } from '@microsoft/utils-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
@@ -195,6 +201,15 @@ const DesignerEditor = () => {
 
     return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
   };
+
+  const test2 = async () => {
+    if (workflow?.definition) {
+      const test = await deserializeWorkflowTokens(workflow?.definition, connectionReferences);
+      console.log('Original (not) - variables: ', test.variables, 'outputs: ', test.outputTokens);
+    }
+  };
+
+  test2();
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
