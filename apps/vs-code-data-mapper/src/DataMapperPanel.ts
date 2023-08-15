@@ -196,7 +196,7 @@ export default class DataMapperPanel {
       });
     } else {
       const fileExt = path.extname(fileName).toLowerCase();
-      if (filetypes.find((val) => val === fileExt)) {
+      if (filetypes.includes(fileExt)) {
         const relativePath = path.join(parentPath, fileName);
         filesToDisplay.push(relativePath);
       }
