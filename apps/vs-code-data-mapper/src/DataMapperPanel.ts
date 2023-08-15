@@ -6,7 +6,9 @@ import {
   mapDefinitionExtension,
   mapXsltExtension,
   schemasPath,
+  customXsltPath,
   supportedSchemaFileExts,
+  supportedCustomXsltFileExts,
 } from './extensionConfig';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -42,13 +44,13 @@ export default class DataMapperPanel {
 
     this._setWebviewHtml();
 
-    // Watch Schemas folder for changes to update available schemas list within Data Mapper
-    const schemaFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
-    const schemaFolderWatcher = workspace.createFileSystemWatcher(
-      new RelativePattern(schemaFolderPath, `**/*.{${supportedSchemaFileExts.join()}}`)
+    // watch folder for file changes
+    const schemaFolderWatcher = this.watchFolderForChanges(schemasPath, supportedSchemaFileExts, this.handleReadSchemaFileOptions);
+    const customXsltFolderWatcher = this.watchFolderForChanges(
+      customXsltPath,
+      supportedCustomXsltFileExts,
+      this.handleReadAvailableFunctionPaths
     );
-    schemaFolderWatcher.onDidCreate(this.handleReadSchemaFileOptions);
-    schemaFolderWatcher.onDidDelete(this.handleReadSchemaFileOptions);
 
     // Handle messages from the webview (Data Mapper component)
     this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.context.subscriptions);
@@ -56,11 +58,24 @@ export default class DataMapperPanel {
     this.panel.onDidDispose(
       () => {
         delete DataMapperExt.panelManagers[this.dataMapName];
-        schemaFolderWatcher.dispose();
+        if (schemaFolderWatcher) schemaFolderWatcher.dispose();
+        if (customXsltFolderWatcher) customXsltFolderWatcher.dispose();
       },
       null,
       DataMapperExt.context.subscriptions
     );
+  }
+
+  private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
+    // Watch folder for changes to update available file list within Data Mapper
+    const absoluteFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath);
+    if (fileExistsSync(absoluteFolderPath)) {
+      const folderWatcher = workspace.createFileSystemWatcher(new RelativePattern(absoluteFolderPath, `**/*.{${fileExtensions.join()}}`));
+      folderWatcher.onDidCreate(fn);
+      folderWatcher.onDidDelete(fn);
+      return folderWatcher;
+    }
+    return;
   }
 
   private async _setWebviewHtml() {
@@ -106,8 +121,12 @@ export default class DataMapperPanel {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
-      case 'readLocalFileOptions': {
+      case 'readLocalSchemaFileOptions': {
         this.handleReadSchemaFileOptions();
+        break;
+      }
+      case 'readLocalCustomXsltFileOptions': {
+        this.handleReadAvailableFunctionPaths();
         break;
       }
       case 'saveDataMapDefinition': {
@@ -167,17 +186,17 @@ export default class DataMapperPanel {
     }
   }
 
-  public getNestedSchemas(fileName: string, parentPath: string, filesToDisplay: string[]) {
-    const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
+  public getNestedFilePaths(fileName: string, parentPath: string, relativePath: string, filesToDisplay: string[], filetypes: string[]) {
+    const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), relativePath);
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       readdirSync(absolutePath).forEach((childFileName) => {
-        const relativePath = path.join(parentPath, fileName);
-        this.getNestedSchemas(childFileName, relativePath, filesToDisplay);
+        const combinedRelativePath = path.join(parentPath, fileName);
+        this.getNestedFilePaths(childFileName, combinedRelativePath, relativePath, filesToDisplay, filetypes);
       });
     } else {
       const fileExt = path.extname(fileName).toLowerCase();
-      if (fileExt === '.xsd' || fileExt === '.json') {
+      if (filetypes.includes(fileExt)) {
         const relativePath = path.join(parentPath, fileName);
         filesToDisplay.push(relativePath);
       }
@@ -185,13 +204,24 @@ export default class DataMapperPanel {
   }
 
   public handleReadSchemaFileOptions() {
-    fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath)).then((result) => {
+    return this.getFilesForPath(schemasPath, 'showAvailableSchemas', supportedSchemaFileExts);
+  }
+
+  public handleReadAvailableFunctionPaths() {
+    const absoluteFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), customXsltPath);
+    if (fileExistsSync(absoluteFolderPath)) {
+      return this.getFilesForPath(customXsltPath, 'getAvailableCustomXsltPaths', supportedCustomXsltFileExts);
+    }
+  }
+
+  private getFilesForPath(folderPath: string, command: 'showAvailableSchemas' | 'getAvailableCustomXsltPaths', fileTypes: string[]) {
+    fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
-        this.getNestedSchemas(file, '', filesToDisplay);
+        this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
       }),
         this.sendMsgToWebview({
-          command: 'showAvailableSchemas',
+          command,
           data: filesToDisplay,
         });
     });
