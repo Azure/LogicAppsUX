@@ -34,7 +34,7 @@
         {
           "command": "azureLogicAppsStandard.createLogicApp",
           "title": "Create Logic App in Azure...",
-          "type": "microsoft.web/sites",
+          "type": "LogicApp",
           "detail": "To create and run automated workflows with little to no code."
         }
       ],
