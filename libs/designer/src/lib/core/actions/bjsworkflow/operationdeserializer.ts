@@ -148,8 +148,6 @@ export const initializeOperationMetadata = async (
   }
 
   const variables = initializeVariables(operations, allNodeData);
-  const output = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
-  console.log('Original - variables: ', variables, 'outputs: ', output);
   dispatch(
     initializeTokensAndVariables({
       outputTokens: initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata),
