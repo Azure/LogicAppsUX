@@ -207,7 +207,6 @@ export const operationMetadataSlice = createSlice({
         state.operationMetadata[id] = operationMetadata;
 
         if (settings) {
-          console.log(id, settings);
           state.settings[id] = settings;
         }
 
