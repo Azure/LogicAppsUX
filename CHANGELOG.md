@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [2.59.0](https://github.com/Azure/LogicAppsUX/compare/v2.58.0...v2.59.0) (2023-08-16)
+
+
+### Features
+
+* **data mapper:** Inline xslt filepicker ([#3085](https://github.com/Azure/LogicAppsUX/issues/3085)) ([2657fca](https://github.com/Azure/LogicAppsUX/commit/2657fca7a2e6b0fc7d5f5b3efccd4037f5565c27))
+* **designer:** Export function for deserialization of tokens ([#3137](https://github.com/Azure/LogicAppsUX/issues/3137)) ([e5a6dde](https://github.com/Azure/LogicAppsUX/commit/e5a6ddef79a2e50cdf7c9a3ceacd28c80eb2ae63))
+* **vscode:** Add icon to create command ([#3135](https://github.com/Azure/LogicAppsUX/issues/3135)) ([c89da93](https://github.com/Azure/LogicAppsUX/commit/c89da937907fecf05d6052eaae2600857e2fd8de))
+* **vscode:** Logic App Workspace Local Settings Updates.  ([#3087](https://github.com/Azure/LogicAppsUX/issues/3087)) ([d2501fb](https://github.com/Azure/LogicAppsUX/commit/d2501fb720cc61de534c799e364c517872e705b4))
+
+
+### Bug Fixes
+
+* **designer:** Settings not Deserializing ([#3143](https://github.com/Azure/LogicAppsUX/issues/3143)) ([5d393e0](https://github.com/Azure/LogicAppsUX/commit/5d393e0f4d272e0fed633731c87f016802fc981b))
+
 ## [2.58.0](https://github.com/Azure/LogicAppsUX/compare/v2.57.0...v2.58.0) (2023-08-14)
 
 
