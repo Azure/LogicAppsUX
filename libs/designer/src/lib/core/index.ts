@@ -29,6 +29,6 @@ export { initializeServices } from './state/designerOptions/designerOptionsSlice
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { validateParameter } from './utils/parameters/helper';
 export { createLiteralValueSegment, createTokenValueSegment } from './utils/parameters/segment';
-export { getOutputTokenSections, getExpressionTokenSections } from './utils/tokens';
+export { getOutputTokenSections, getExpressionTokenSections, deserializeWorkflowTokens } from './utils/tokens';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
