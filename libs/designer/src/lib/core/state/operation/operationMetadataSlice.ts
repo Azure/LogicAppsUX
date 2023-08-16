@@ -207,6 +207,7 @@ export const operationMetadataSlice = createSlice({
         state.operationMetadata[id] = operationMetadata;
 
         if (settings) {
+          console.log(id, settings);
           state.settings[id] = settings;
         }
 
@@ -216,10 +217,6 @@ export const operationMetadataSlice = createSlice({
 
         if (actionMetadata) {
           state.actionMetadata[id] = actionMetadata;
-        }
-
-        if (settings) {
-          state.settings[id] = settings;
         }
 
         if (repetitionInfo) {

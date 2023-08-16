@@ -669,6 +669,7 @@ const getUploadChunk = (
   definition?: LogicAppsV2.OperationDefinition,
   workflowKind?: WorkflowKind
 ): UploadChunk | undefined => {
+  console.log(manifest, definition);
   if (definition) {
     const runtimeConfiguration = getRuntimeConfiguration(definition);
     return {
@@ -695,6 +696,10 @@ const getUploadChunk = (
     } else if (equals(nodeType, Constants.NODE.TYPE.API_CONNECTION) && swagger && operationId) {
       isChunkTransferSupported = !!swagger.getOperationByOperationId(operationId)?.uploadChunkMetadata?.chunkTransferSupported;
     }
+    console.log(
+      'isChunkTransferSupported',
+      isChunkTransferSupported ? { transferMode: Constants.SETTINGS.TRANSFER_MODE.CHUNKED } : undefined
+    );
 
     return isChunkTransferSupported ? { transferMode: Constants.SETTINGS.TRANSFER_MODE.CHUNKED } : undefined;
   }
