@@ -2,18 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Platform, dependenciesPathSettingKey, funcDependencyName } from '../../../constants';
+import { Platform, dependenciesPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import {
-  downloadAndExtractBinaries,
-  getCpuArchitecture,
-  getFunctionCoreToolsBinariesReleaseUrl,
-  getNewestFunctionRuntimeVersion,
-} from '../../utils/binaries';
+import { downloadAndExtractBinaries, getCpuArchitecture, getNewestNodeJsVersion, getNodeJsBinariesReleaseUrl } from '../../utils/binaries';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
-export async function installFuncCoreTools(context: IActionContext, targetDirectory?: string): Promise<void> {
+export async function installNodeJs(context: IActionContext, targetDirectory?: string): Promise<void> {
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
 
@@ -21,21 +16,22 @@ export async function installFuncCoreTools(context: IActionContext, targetDirect
     targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
   }
 
-  const version = getNewestFunctionRuntimeVersion(context);
+  const version = getNewestNodeJsVersion(context);
+
   let azureFunctionCoreToolsReleasesUrl;
 
   switch (process.platform) {
     case Platform.windows:
-      azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'win', arch);
+      azureFunctionCoreToolsReleasesUrl = getNodeJsBinariesReleaseUrl(version, 'win', arch);
       break;
 
     case Platform.linux:
-      azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'linux', arch);
+      azureFunctionCoreToolsReleasesUrl = getNodeJsBinariesReleaseUrl(version, 'linux', arch);
       break;
 
     case Platform.mac:
-      azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'osx', arch);
+      azureFunctionCoreToolsReleasesUrl = getNodeJsBinariesReleaseUrl(version, 'darwin', arch);
       break;
   }
-  downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
+  downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, nodeJsDependencyName);
 }

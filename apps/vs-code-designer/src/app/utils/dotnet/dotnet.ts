@@ -2,15 +2,20 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DotnetVersion, isolatedSdkName } from '../../../constants';
+import { DotnetVersion, dependenciesPathSettingKey, dotnetDependencyName, isolatedSdkName } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
+import { getGlobalSetting } from '../vsCodeConfig/settings';
 import { findFiles } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import type { IWorkerRuntime } from '@microsoft/vscode-extension';
 import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
+import * as fs from 'fs';
 import * as path from 'path';
+import * as semver from 'semver';
 
 export class ProjectFile {
   public name: string;
@@ -169,4 +174,30 @@ export async function tryGetFuncVersion(projFile: ProjectFile): Promise<string |
 export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string {
   const isIsolated = runtimeInfo.sdk.name.toLowerCase() === isolatedSdkName.toLowerCase();
   return getProjectTemplateKey(runtimeInfo.targetFramework, isIsolated);
+}
+
+/**
+ * Get the dotnet binaries executable or use the system dotnet executable.
+ */
+export function getDotNetCommand(): string {
+  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
+  const binariesExist = fs.existsSync(dotNetBinariesPath);
+  const command = binariesExist ? `${dotNetBinariesPath}\\${ext.dotNetCliPath}` : ext.dotNetCliPath;
+  executeCommand(ext.outputChannel, undefined, 'echo', `${command}`);
+  return command;
+}
+
+export async function getLocalDotNetVersion(): Promise<string> {
+  try {
+    const output: string = await executeCommand(undefined, undefined, `${getDotNetCommand()}`, '--version');
+    const version: string | null = semver.clean(output);
+    if (version) {
+      return version;
+    }
+  } catch (error) {
+    return null;
+  }
+
+  return null;
 }

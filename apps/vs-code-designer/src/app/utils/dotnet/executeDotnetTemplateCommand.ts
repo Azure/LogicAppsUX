@@ -5,7 +5,7 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand, wrapArgInQuotes } from '../funcCoreTools/cpUtils';
-import { getWorkspaceSetting } from '../vsCodeConfig/settings';
+import { getDotNetCommand } from './dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension';
 import * as path from 'path';
@@ -40,7 +40,7 @@ export async function executeDotnetTemplateCommand(
   return await executeCommand(
     undefined,
     workingDirectory,
-    'dotnet',
+    getDotNetCommand(),
     wrapArgInQuotes(jsonDllPath),
     '--templateDir',
     wrapArgInQuotes(getDotnetTemplateDir(version, projTemplateKey)),
@@ -86,7 +86,7 @@ export async function validateDotnetInstalled(context: IActionContext): Promise<
 export async function getFramework(context: IActionContext, workingDirectory: string | undefined): Promise<string> {
   if (!cachedFramework) {
     let versions = '';
-    const dotnetBinariesLocation = getWorkspaceSetting<string>('dotnetPath');
+    const dotnetBinariesLocation = getDotNetCommand();
 
     try {
       versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--version');

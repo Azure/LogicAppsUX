@@ -33,6 +33,15 @@ export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
 export const defaultFuncPort = '7071';
 export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
+export const funcDependencyName = 'FuncCoreTools';
+
+// DotNet
+export const dotnet = 'dotnet';
+export const dotnetDependencyName = 'DotNetSDK';
+
+// Node
+export const node = 'node';
+export const nodeJsDependencyName = 'NodeJs';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -168,11 +177,15 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+export const defaultProductionBundleUrl =
+  'https://functionscdn.azureedge.net/public/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/index-v2.json';
 
 // Fallback Dependency Versions
 export enum DependencyVersion {
   dotnet6 = '6.0.412',
   funcCoreTools = '4.0.5198',
+  nodeJs = '16.20.2',
 }
 
 // .NET

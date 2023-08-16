@@ -722,6 +722,16 @@
             "description": "Show a warning if your installed version of Azure Functions Core Tools is out-of-date.",
             "default": true
           },
+          "azureLogicAppsStandard.showDotNetWarning": {
+            "type": "boolean",
+            "description": "Show a warning if your installed version of .Net SDK is out-of-date.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showNodeJsWarning": {
+            "type": "boolean",
+            "description": "Show a warning if your installed version of NodeJs is out-of-date.",
+            "default": true
+          },
           "azureLogicAppsStandard.showMultiCoreToolsWarning": {
             "type": "boolean",
             "description": "Show a warning if multiple installs of Azure Functions Core Tools are detected.",

@@ -1,6 +1,8 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
+import { validateDotNetIsLatest } from './app/commands/dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
+import { validateNodeJsIsLatest } from './app/commands/nodeJs/validateNodeIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
@@ -49,7 +51,10 @@ export async function activate(context: vscode.ExtensionContext) {
       activateContext.telemetry.properties.dependencyPath = defaultDependencyPathValue;
     }
 
-    validateFuncCoreToolsIsLatest();
+    validateNodeJsIsLatest().then(() => {
+      validateFuncCoreToolsIsLatest();
+    });
+    await validateDotNetIsLatest();
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();

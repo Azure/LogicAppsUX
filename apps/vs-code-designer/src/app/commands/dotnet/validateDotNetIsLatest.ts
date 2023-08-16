@@ -2,40 +2,39 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcDependencyName } from '../../../constants';
+import { dotnetDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
-import { binariesExist, getNewestFunctionRuntimeVersion } from '../../utils/binaries';
-import { getLocalFuncCoreToolsVersion } from '../../utils/funcCoreTools/funcVersion';
+import { binariesExist, getNewestDotNetVersion } from '../../utils/binaries';
+import { getLocalDotNetVersion } from '../../utils/dotnet/dotnet';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { installFuncCoreTools } from './installFuncCoreTools';
+import { installDotNet } from './installDotNet';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
-export async function validateFuncCoreToolsIsLatest(): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
+export async function validateDotNetIsLatest(): Promise<void> {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
 
-    const showCoreToolsWarningKey = 'showCoreToolsWarning';
-    const showCoreToolsWarning = !!getWorkspaceSetting<boolean>(showCoreToolsWarningKey);
-
-    const binaries = binariesExist(funcDependencyName);
+    const showDotNetWarningKey = 'showDotNetWarning';
+    const showDotNetWarning = !!getWorkspaceSetting<boolean>(showDotNetWarningKey);
+    const binaries = binariesExist(dotnetDependencyName);
 
     if (!binaries) {
-      installFuncCoreTools(context);
+      installDotNet(context);
     }
 
-    if (showCoreToolsWarning) {
-      const localVersion: string | null = await getLocalFuncCoreToolsVersion();
+    if (showDotNetWarning) {
+      const localVersion: string | null = await getLocalDotNetVersion();
       context.telemetry.properties.localVersion = localVersion;
-      const newestVersion: string | undefined = await getNewestFunctionRuntimeVersion(context);
+      const newestVersion: string | undefined = await getNewestDotNetVersion(context);
       if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
-        context.telemetry.properties.outOfDateFunc = 'true';
+        context.telemetry.properties.outOfDateDotNet = 'true';
         const message: string = localize(
-          'outdatedFunctionRuntime',
-          'Update your Azure Functions Core Tools ({0}) to the latest ({1}) for the best experience.',
+          'outdatedDotNetRuntime',
+          'Update your .Net SDK 6 ({0}) to the latest ({1}) for the best experience.',
           localVersion,
           newestVersion
         );
@@ -47,11 +46,11 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
               ? await context.ui.showWarningMessage(message, update, DialogResponses.learnMore, DialogResponses.dontWarnAgain)
               : await context.ui.showWarningMessage(message, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
           if (result === DialogResponses.learnMore) {
-            await openUrl('https://aka.ms/azFuncOutdated');
+            await openUrl('https://dotnet.microsoft.com/en-us/download/dotnet/6.0');
           } else if (result === update) {
-            await installFuncCoreTools(context);
+            await installDotNet(context);
           } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showCoreToolsWarningKey, false);
+            await updateGlobalSetting(showDotNetWarningKey, false);
           }
         } while (result === DialogResponses.learnMore);
       }

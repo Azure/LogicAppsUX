@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { func } from './constants';
+import { dotnet, func, node } from './constants';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type * as cp from 'child_process';
@@ -32,6 +32,12 @@ export namespace ext {
 
   // Functions
   export const funcCliPath: string = func;
+
+  // DotNet
+  export const dotNetCliPath: string = dotnet;
+
+  // Node Js
+  export const nodeJsCliPath: string = node;
 
   // WebViews
   export enum webViewKey {

@@ -2,40 +2,39 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcDependencyName } from '../../../constants';
+import { nodeJsDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
-import { binariesExist, getNewestFunctionRuntimeVersion } from '../../utils/binaries';
-import { getLocalFuncCoreToolsVersion } from '../../utils/funcCoreTools/funcVersion';
+import { binariesExist, getNewestNodeJsVersion } from '../../utils/binaries';
+import { getLocalNodeJsVersion } from '../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { installFuncCoreTools } from './installFuncCoreTools';
+import { installNodeJs } from './installNodeJs';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
-export async function validateFuncCoreToolsIsLatest(): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
+export async function validateNodeJsIsLatest(): Promise<void> {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
 
-    const showCoreToolsWarningKey = 'showCoreToolsWarning';
-    const showCoreToolsWarning = !!getWorkspaceSetting<boolean>(showCoreToolsWarningKey);
-
-    const binaries = binariesExist(funcDependencyName);
+    const showNodeJsWarningKey = 'showNodeJsWarning';
+    const showNodeJsWarning = !!getWorkspaceSetting<boolean>(showNodeJsWarningKey);
+    const binaries = binariesExist(nodeJsDependencyName);
 
     if (!binaries) {
-      installFuncCoreTools(context);
+      installNodeJs(context);
     }
 
-    if (showCoreToolsWarning) {
-      const localVersion: string | null = await getLocalFuncCoreToolsVersion();
+    if (showNodeJsWarning) {
+      const localVersion: string | null = await getLocalNodeJsVersion();
       context.telemetry.properties.localVersion = localVersion;
-      const newestVersion: string | undefined = await getNewestFunctionRuntimeVersion(context);
+      const newestVersion: string | undefined = await getNewestNodeJsVersion(context);
       if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
-        context.telemetry.properties.outOfDateFunc = 'true';
+        context.telemetry.properties.outOfDateDotNet = 'true';
         const message: string = localize(
-          'outdatedFunctionRuntime',
-          'Update your Azure Functions Core Tools ({0}) to the latest ({1}) for the best experience.',
+          'outdatedNodeJsRuntime',
+          'Update your Node JS ({0}) to the latest ({1}) for the best experience.',
           localVersion,
           newestVersion
         );
@@ -47,11 +46,11 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
               ? await context.ui.showWarningMessage(message, update, DialogResponses.learnMore, DialogResponses.dontWarnAgain)
               : await context.ui.showWarningMessage(message, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
           if (result === DialogResponses.learnMore) {
-            await openUrl('https://aka.ms/azFuncOutdated');
+            await openUrl('https://nodejs.org/en/download');
           } else if (result === update) {
-            await installFuncCoreTools(context);
+            await installNodeJs(context);
           } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showCoreToolsWarningKey, false);
+            await updateGlobalSetting(showNodeJsWarningKey, false);
           }
         } while (result === DialogResponses.learnMore);
       }
