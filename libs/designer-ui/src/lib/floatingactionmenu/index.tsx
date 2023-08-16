@@ -24,8 +24,9 @@ export interface FloatingActionMenuItem {
 
 export interface FloatingActionMenuProps {
   supportedTypes: Array<string>;
-  useStaticInputs: boolean |  undefined;
+  useStaticInputs: boolean | undefined;
   initialValue: ValueSegment[];
+  isManualTrigger: boolean;
   onChange?: ChangeHandler;
 }
 
@@ -41,7 +42,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   if (props.initialValue.length > 0 && !props.initialValue[0].value) {
     const { onChange } = props;
     if (onChange) {
-      const value = getEmptySchemaValueSegmentForInitialization(!!props.useStaticInputs);
+      const value = getEmptySchemaValueSegmentForInitialization(!!props.useStaticInputs, props.isManualTrigger);
       onChange({ value });
     }
   }
@@ -62,7 +63,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     if (onChange) {
       const indexOfPropToUpdate = dynamicParameterProps.findIndex((prop) => prop.schemaKey === schemaKey);
       safeSetObjectPropertyValue(dynamicParameterProps[indexOfPropToUpdate], ['properties', propertyName], newPropertyValue);
-      const value = serialize(dynamicParameterProps);
+      const value = serialize(dynamicParameterProps, props.isManualTrigger);
       onChange({ value });
     }
   };
@@ -72,12 +73,12 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     if (onChange) {
       const indexToDelete = dynamicParameterProps.findIndex((prop) => prop.schemaKey === schemaKey);
       dynamicParameterProps.splice(indexToDelete, 1);
-      const value = serialize(dynamicParameterProps);
+      const value = serialize(dynamicParameterProps, props.isManualTrigger);
       onChange({ value });
     }
   };
 
-  const dynamicParameterProps: DynamicallyAddedParameterProps[] = deserialize(props.initialValue).map((prop) => ({
+  const dynamicParameterProps: DynamicallyAddedParameterProps[] = deserialize(props.initialValue, props.isManualTrigger).map((prop) => ({
     ...prop,
     onChange: onDynamicallyAddedParameterChange,
     onDelete: onDynamicallyAddedParameterDelete,
@@ -191,7 +192,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
 
     const { onChange } = props;
     if (onChange) {
-      const value = serialize(dynamicParameterProps);
+      const value = serialize(dynamicParameterProps, props.isManualTrigger);
       onChange({ value });
     }
   };

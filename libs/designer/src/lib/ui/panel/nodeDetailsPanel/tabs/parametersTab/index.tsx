@@ -360,7 +360,14 @@ const ParameterSection = ({
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
-      const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
+      const { editor, editorOptions } = getEditorAndOptions(
+        operationInfo,
+        param,
+        upstreamNodeIds ?? [],
+        variables,
+        operationInfo.type,
+        operationInfo.kind
+      );
 
       const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
 
@@ -426,7 +433,9 @@ export const getEditorAndOptions = (
   operationInfo: OperationInfo,
   parameter: ParameterInfo,
   upstreamNodeIds: string[],
-  variables: Record<string, VariableDeclaration[]>
+  variables: Record<string, VariableDeclaration[]>,
+  operationType?: string,
+  operationKind?: string
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -451,6 +460,25 @@ export const getEditorAndOptions = (
             value: variable.name,
             displayName: variable.name,
           })),
+      },
+    };
+  }
+  // add a flag for Manual triggers v/s Hybrid triggers to determine the schema object to be added for Serialization/Deserialization
+  if (equals(editor, 'floatingactionmenu')) {
+    let isManualTrigger = true;
+    if (
+      equals(operationType?.toLowerCase(), constants.NODE.TYPE.REQUEST) &&
+      equals(operationKind?.toLowerCase(), constants.NODE.KIND.APICONNECTION)
+    ) {
+      isManualTrigger = false;
+    }
+    return {
+      editor: editor,
+      editorOptions: {
+        ...editorOptions,
+        ...{
+          isManualTrigger,
+        },
       },
     };
   }

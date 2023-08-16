@@ -300,6 +300,7 @@ export const TokenField = ({
           supportedTypes={editorOptions?.supportedTypes}
           useStaticInputs={editorOptions?.useStaticInputs}
           initialValue={value}
+          isManualTrigger={editorOptions?.isManualTrigger}
           onChange={onValueChange}
         />
       );
