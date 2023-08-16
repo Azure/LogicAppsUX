@@ -501,7 +501,7 @@ exports[`lib/card should render with an icon 1`] = `
             className="panel-card-content-icon-section"
           >
             <img
-              alt=""
+              alt=" connector icon"
               className="panel-card-icon"
               src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             />
