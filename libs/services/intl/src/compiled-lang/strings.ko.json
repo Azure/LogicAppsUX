@@ -1277,6 +1277,12 @@
       "value": "데이터 형식"
     }
   ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Select function from"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
@@ -7259,6 +7265,12 @@
       "value": "상태 비저장 실행 모드:"
     }
   ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
+    }
+  ],
   "lhL/KL": [
     {
       "type": 0,
@@ -8166,6 +8178,20 @@
     {
       "type": 0,
       "value": "매개 변수 값을 입력합니다."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

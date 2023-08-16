@@ -1289,6 +1289,12 @@
       "value": "数据类型"
     }
   ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Select function from"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
@@ -7339,6 +7345,12 @@
       "value": "无状态运行模式:"
     }
   ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
+    }
+  ],
   "lhL/KL": [
     {
       "type": 0,
@@ -8254,6 +8266,20 @@
     {
       "type": 0,
       "value": "输入参数的值。"
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [
