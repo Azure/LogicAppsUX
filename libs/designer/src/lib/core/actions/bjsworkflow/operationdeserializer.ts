@@ -24,7 +24,7 @@ import {
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import type { NodesMetadata, Operations, WorkflowKind } from '../../state/workflow/workflowInterfaces';
+import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
@@ -89,7 +89,6 @@ export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
   workflowParameters: Record<string, WorkflowParameter>,
-  workflowKind: WorkflowKind,
   dispatch: Dispatch
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
@@ -108,9 +107,9 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, workflowKind, dispatch));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
-      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch) as any);
+      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
     }
   }
 
@@ -184,7 +183,6 @@ export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
-  workflowKind: WorkflowKind,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
@@ -229,15 +227,7 @@ export const initializeOperationDetailsForManifest = async (
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
-      const settings = getOperationSettings(
-        isTrigger,
-        nodeOperationInfo,
-        nodeOutputs,
-        manifest,
-        /* swagger */ undefined,
-        operation,
-        workflowKind
-      );
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, /* swagger */ undefined, operation);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
