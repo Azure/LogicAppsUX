@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.55.6](https://github.com/Azure/LogicAppsUX/compare/v2.55.5...v2.55.6) (2023-08-14)
+
+
+### Bug Fixes
+
+* **designer:** Ignore validation on parameterGroups without parameters ([#3130](https://github.com/Azure/LogicAppsUX/issues/3130)) ([253fa79](https://github.com/Azure/LogicAppsUX/commit/253fa7927df86a91aa7395d6417faac9dc0619f1))
+
 ### [2.55.5](https://github.com/Azure/LogicAppsUX/compare/v2.55.4...v2.55.5) (2023-08-11)
 
 
