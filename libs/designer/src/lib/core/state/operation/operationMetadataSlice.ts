@@ -218,10 +218,6 @@ export const operationMetadataSlice = createSlice({
           state.actionMetadata[id] = actionMetadata;
         }
 
-        if (settings) {
-          state.settings[id] = settings;
-        }
-
         if (repetitionInfo) {
           state.repetitionInfos[id] = repetitionInfo;
         }
