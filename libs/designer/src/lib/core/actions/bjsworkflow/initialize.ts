@@ -122,19 +122,11 @@ export const getInputParametersFromManifest = (
     // avoid pushing a parameter for it as it is already being
     // handled in the settings store.
     // NOTE: this could be expanded to more settings that are treated as inputs.
-    if (
-      manifest.properties.settings &&
-      manifest.properties.settings.retryPolicy &&
-      operationData.inputs &&
-      operationData.inputs[PropertyName.RETRYPOLICY]
-    ) {
+    if (manifest.properties.settings?.retryPolicy && operationData.inputs?.[PropertyName.RETRYPOLICY]) {
       delete operationData.inputs.retryPolicy;
     }
 
-    if (
-      manifest.properties.connectionReference &&
-      manifest.properties.connectionReference.referenceKeyFormat === ConnectionReferenceKeyFormat.Function
-    ) {
+    if (manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.Function) {
       delete operationData.inputs.function;
     }
 

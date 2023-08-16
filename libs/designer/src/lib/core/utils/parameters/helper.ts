@@ -120,6 +120,7 @@ import {
   SchemaProcessor,
   SegmentType,
   Visibility,
+  PropertyName,
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
@@ -1829,6 +1830,16 @@ async function loadDynamicContentForInputsInNode(
             dispatch
           );
           const allInputParameters = getAllInputParameters(allInputs);
+
+          // In the case of retry policy, it is treated as an input
+          // avoid pushing a parameter for it as it is already being
+          // handled in the settings store.
+          // NOTE: this could be expanded to more settings that are treated as inputs.
+          const newOperationDefinition = clone(operationDefinition);
+          if (newOperationDefinition.inputs?.[PropertyName.RETRYPOLICY]) {
+            delete newOperationDefinition.inputs.retryPolicy;
+          }
+
           const allInputKeys = allInputParameters.map((param) => param.parameterKey);
           const schemaInputs = inputSchema
             ? await getDynamicInputsFromSchema(
@@ -1836,7 +1847,7 @@ async function loadDynamicContentForInputsInNode(
                 info.parameter as InputParameter,
                 operationInfo,
                 allInputKeys,
-                operationDefinition
+                newOperationDefinition
               )
             : [];
           const inputParameters = schemaInputs.map((input) => ({
