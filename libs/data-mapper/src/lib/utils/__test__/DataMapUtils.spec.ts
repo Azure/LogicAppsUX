@@ -2,11 +2,15 @@ import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { FunctionCategory, NormalizedDataType, SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
+  Reserved,
+  Separators,
   addAncestorNodesToCanvas,
   addParentConnectionForRepeatingElementsNested,
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
+  lexThisThing,
   qualifyLoopRelativeSourceKeys,
+  removeSequenceFunction,
   splitKeyIntoChildren,
 } from '../DataMap.Utils';
 import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
@@ -100,6 +104,18 @@ describe('utils/DataMap', () => {
         flattenedSchema
       );
       expect(result).toEqual('/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect');
+    });
+
+    it('gets the source key from a sequence function looped target string', () => {
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+
+      const result = getSourceValueFromLoop(
+        'Name',
+        '/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name',
+        flattenedSchema
+      );
+      expect(result).toEqual('/ns0:Root/Looping/Employee/Name');
     });
   });
 
@@ -222,6 +238,12 @@ describe('utils/DataMap', () => {
       );
     });
 
+    it('Single loop with sequence function with absolute source keys', () => {
+      expect(qualifyLoopRelativeSourceKeys('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name')).toBe(
+        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name'
+      );
+    });
+
     it('Nested loops with already-qualified/absolute source keys', () => {
       expect(
         qualifyLoopRelativeSourceKeys(
@@ -258,6 +280,40 @@ describe('utils/DataMap', () => {
           0
         )
       ).toBe('/ns0:TargetSchemaRoot/Looping/ManyToOne/RandomNode/Simple/Direct');
+    });
+  });
+
+  describe('removeSequenceFunction', () => {
+    it('separates a loop and sequence target', () => {
+      const result = removeSequenceFunction([
+        '/ns0:Root/Looping/',
+        '$',
+        'for',
+        '(',
+        'reverse',
+        '(',
+        '/ns0:Root/Looping/Employee',
+        ')',
+        ')',
+        '/Person/Name',
+      ]);
+      expect(result).toEqual('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
+    });
+  });
+
+  describe('lexThisThing', () => {
+    it('separates a loop and sequence target', () => {
+      const result = lexThisThing('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name');
+      expect(result[0]).toEqual('/ns0:Root/Looping/');
+      expect(result[1]).toEqual(Separators.Dollar);
+      expect(result[2]).toEqual(Reserved.for);
+      expect(result[3]).toEqual(Separators.OpenParenthesis);
+      expect(result[4]).toEqual('reverse');
+      expect(result[5]).toEqual(Separators.OpenParenthesis);
+      expect(result[6]).toEqual('/ns0:Root/Looping/Employee');
+      expect(result[7]).toEqual(Separators.CloseParenthesis);
+      expect(result[8]).toEqual(Separators.CloseParenthesis);
+      expect(result[9]).toEqual('/Person/Name');
     });
   });
 });

@@ -1134,6 +1134,23 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
       });
     });
+
+    it('creates a simple sequence function', () => {
+      simpleMap['ns0:Root'] = {
+        Looping: {
+          '$for(reverse(/ns0:Root/Looping/Employee))': {
+            Person: {
+              Name: 'Name',
+            },
+          },
+        },
+      };
+
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const result = mapDefinitionDeserializer.convertFromMapDefinition();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+    });
   });
 
   describe('JSON', () => {
