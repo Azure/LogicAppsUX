@@ -158,7 +158,7 @@ export function deserialize(value: ValueSegment[], isManualTrigger: boolean): Dy
   if (isManualTrigger) {
     itemsProperties = rootObject;
   } else {
-    itemsProperties = rootObject.rows.items;
+    itemsProperties = rootObject.properties ? rootObject.properties.rows.items : rootObject.rows.items;
   }
 
   for (const [schemaKey, propertiesUnknown] of Object.entries(itemsProperties?.properties)) {
