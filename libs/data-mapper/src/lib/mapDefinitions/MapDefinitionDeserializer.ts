@@ -180,6 +180,7 @@ export class MapDefinitionDeserializer {
       } else {
         let childTargetKey = targetKey;
         if (childKey !== mapNodeParams.value && !(childTargetKey.indexOf(mapNodeParams.if) > -1 && childTargetKey.endsWith(')'))) {
+          // danielle refactor this
           const trimmedChildKey = childKey.startsWith('$@') ? childKey.substring(1) : childKey;
           if (!targetKey.endsWith(trimmedChildKey) || this._targetSchemaFlattened[`${targetPrefix}${targetKey}/${trimmedChildKey}`]) {
             childTargetKey = `${targetKey}/${trimmedChildKey}`;
@@ -241,11 +242,11 @@ export class MapDefinitionDeserializer {
   ) => {
     const isLoop: boolean = targetKey.includes(mapNodeParams.for);
     const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
-    const sourceEndOfFunctionName = sourceNodeString.indexOf('(');
     const amendedTargetKey = isLoop ? qualifyLoopRelativeSourceKeys(targetKey) : targetKey;
-    let amendedSourceKey = isLoop
+    let amendedSourceKey = isLoop // danielle this rearranges and combines the string
       ? getSourceValueFromLoop(sourceNodeString, amendedTargetKey, this._sourceSchemaFlattened)
       : sourceNodeString;
+    const sourceEndOfFunctionName = amendedSourceKey.indexOf('(');
 
     let mockDirectAccessFnKey = '';
     [amendedSourceKey, mockDirectAccessFnKey] = amendSourceKeyForDirectAccessIfNeeded(amendedSourceKey);
@@ -394,6 +395,7 @@ export class MapDefinitionDeserializer {
       !isConditional &&
       (isLoopCase || !isKeyAnIndexValue(sourceNodeString) || (!isLoopCase && isKeyAnIndexValue(sourceNodeString)))
     ) {
+      // danielle is this true for sequences
       if (!sourceNode && amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
         applyConnectionValue(connections, {
           targetNode: destinationNode,

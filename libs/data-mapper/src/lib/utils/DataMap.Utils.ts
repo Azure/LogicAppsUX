@@ -377,8 +377,12 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
     relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
         // Replace './' to deal with relative attribute paths
-        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
+        let removedFunc = srcKeyWithinFor.replace('reverse(', '');
+        removedFunc = removedFunc.replace(')', '');
+
+        const fullyQualifiedSourceKey = `${removedFunc}/${relativeKeyMatch.replace('./', '')}`;
         const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
+        // danielle could remove function here
 
         constructedSourceKey = isValidSrcNode
           ? constructedSourceKey.replace(relativeKeyMatch, fullyQualifiedSourceKey)
@@ -393,16 +397,92 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   return constructedSourceKey;
 };
 
-export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
-  let qualifiedTargetKey = targetKey;
-  const srcKeys: string[] = [];
+export enum Separators {
+  OpenParenthesis = '(', // this is at the beginning of each function tho?
+  CloseParenthesis = ')',
+  Comma = ',',
+  Dollar = '$',
+}
+export const separators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma, Separators.Dollar];
 
-  const splitLoops = qualifiedTargetKey.split(')');
-  splitLoops.forEach((splitLoop) => {
-    if (splitLoop.includes(mapNodeParams.for)) {
-      srcKeys.push(getSourceKeyOfLastLoop(`${splitLoop})`));
+export enum Reserved {
+  for = 'for', // or do we not include the '('?
+  if = 'if',
+}
+export const reserved: string[] = [Reserved.for, Reserved.if];
+
+export const lexThisThing = (targetKey: string): string[] => {
+  const tokens: string[] = [];
+
+  let i = 0;
+  let currentToken = '';
+  while (i < targetKey.length) {
+    const currentChar = targetKey[i];
+    if (separators.includes(currentChar)) {
+      if (!currentToken) {
+        // if it is a Separator
+        tokens.push(currentChar);
+        i++;
+        continue;
+      } else {
+        tokens.push(currentToken);
+        currentToken = '';
+        tokens.push(currentChar);
+        i++;
+        continue;
+      }
     }
-  });
+
+    currentToken = currentToken + currentChar;
+    if (reserved.includes(currentToken)) {
+      tokens.push(currentToken);
+      currentToken = '';
+      i++;
+      continue;
+    }
+    if (i === targetKey.length - 1) {
+      tokens.push(currentToken);
+    }
+    i++;
+  }
+  return tokens;
+};
+
+export const removeSequenceFunction = (tokens: string[]): string => {
+  let i = 0;
+  const length = tokens.length;
+  const indexToRemove: number[] = [];
+  let removeNextCloseParen = false;
+  while (i < length) {
+    if (tokens[i] === Reserved.for) {
+      if (i + 3 < length && tokens[i + 3] === Separators.OpenParenthesis) {
+        indexToRemove.push(i + 2);
+        indexToRemove.push(i + 3);
+        removeNextCloseParen = true;
+        // danielle account for multiple sequences
+      }
+    }
+    if (tokens[i] === Separators.CloseParenthesis && removeNextCloseParen) {
+      indexToRemove.push(i);
+      removeNextCloseParen = false;
+    }
+    i++;
+  }
+  let result = '';
+  for (let j = 0; j < length; j++) {
+    if (!indexToRemove.includes(j)) {
+      // danielle could make more efficient
+      result = result + tokens[j];
+    }
+  }
+  return result;
+};
+
+export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
+  const tokens = lexThisThing(targetKey);
+  let qualifiedTargetKey = removeSequenceFunction(tokens);
+
+  const srcKeys: string[] = [];
 
   let curSrcParentKey = srcKeys[0];
   srcKeys.forEach((srcKey) => {
