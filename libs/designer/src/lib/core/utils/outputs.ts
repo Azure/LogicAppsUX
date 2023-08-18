@@ -341,19 +341,18 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       }
 
       const currentSchemaValue = getObjectPropertyValue(updatedManifest.properties.outputs, outputLocation);
-      let newSchemaValue;
 
       // if schema contains static object returned from RP, merge the current schema value and new schema value
       if (schemaToReplace && 'rows' in schemaToReplace) {
-        const shouldMerge = 'rows' in currentSchemaValue && Object.keys(schemaToReplace.rows.items.properties).length !== 0;
-        newSchemaValue = shouldMerge ? { ...currentSchemaValue, ...schemaToReplace } : { ...currentSchemaValue };
-      } else if (schemaToReplace) {
-        newSchemaValue = { ...currentSchemaValue, ...schemaToReplace };
-      } else {
-        newSchemaValue = { ...currentSchemaValue };
-      }
-
-      safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, newSchemaValue);
+        if (!Object.keys(schemaToReplace.rows.items.properties) !== undefined && 'rows' in currentSchemaValue) {
+          safeSetObjectPropertyValue(
+            updatedManifest.properties.outputs,
+            outputLocation,
+            { ...currentSchemaValue, ...schemaToReplace },
+            true
+          );
+        }
+      } else safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, { ...currentSchemaValue, ...schemaToReplace });
     }
   }
 

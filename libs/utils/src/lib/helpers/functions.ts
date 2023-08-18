@@ -282,12 +282,14 @@ export function setObjectPropertyValue(object: Record<string, unknown>, properti
  * @arg {Record<string, any> | null | undefined} target - The target object.
  * @arg {string[]} properties - The ordered array of property according to its path in object.
  * @arg {any} value - The value
+ * @arg {boolean} merge - Boolean flag that determines if a merge operation needs to be performed.
  * @return {Record<string, any>} - The updated object.
  */
 export function safeSetObjectPropertyValue(
   target: Record<string, any> | null | undefined,
   properties: string[],
-  value: any
+  value: any,
+  merge = false
 ): Record<string, any> | null | undefined {
   if (properties.includes('__proto__') || properties.includes('constructor')) throw new Error('attempting to access protected properties');
   if (!properties.length) {
@@ -315,9 +317,38 @@ export function safeSetObjectPropertyValue(
     }
   }
 
-  current[property] = value;
+  // if merge flag is set, do a deep merge of the current value to the target source.
+  if (merge) {
+    if (typeof current[property] === 'object' && typeof value === 'object') {
+      deepMerge(current[property], value);
+    } else if (property === 'body' && typeof current[property] === 'object') {
+      deepMerge(current[property], value.properties);
+    } else {
+      current[property] = value;
+    }
+  } else {
+    current[property] = value;
+  }
 
   return target;
+}
+
+/**
+ *
+ * @arg {any} target The target location to be merged at.
+ * @arg {any} The source location to be merged from.
+ */
+function deepMerge(target: any, source: any) {
+  for (const key in source) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      if (source[key] instanceof Object && !(source[key] instanceof Function)) {
+        if (!target[key]) target[key] = {};
+        deepMerge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    }
+  }
 }
 
 /**

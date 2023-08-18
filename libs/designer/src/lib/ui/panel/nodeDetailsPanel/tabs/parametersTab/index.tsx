@@ -465,12 +465,14 @@ export const getEditorAndOptions = (
   }
   // add a flag for Manual triggers v/s Hybrid triggers to determine the schema object to be added for Serialization/Deserialization
   if (equals(editor, 'floatingactionmenu')) {
-    let isManualTrigger = true;
+    let isManualTrigger = false;
     if (
-      equals(operationType?.toLowerCase(), constants.NODE.TYPE.REQUEST) &&
-      equals(operationKind?.toLowerCase(), constants.NODE.KIND.APICONNECTION)
+      !(
+        equals(operationType?.toLowerCase(), constants.NODE.TYPE.REQUEST) &&
+        equals(operationKind?.toLowerCase(), constants.NODE.KIND.APICONNECTION)
+      )
     ) {
-      isManualTrigger = false;
+      isManualTrigger = true;
     }
     return {
       editor: editor,

@@ -145,7 +145,7 @@ function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedPa
  * @param onChange - handler to update value when the user changes their input in one of the dynamic parameters
  * @returns - array of props to render DynamicallyAddedParameter editors with
  */
-export function deserialize(value: ValueSegment[], isManualTrigger: boolean): DynamicallyAddedParameterProps[] {
+export function deserialize(value: ValueSegment[], isManualTrigger = false): DynamicallyAddedParameterProps[] {
   if (!value || value.length === 0 || !value[0].value) {
     return [];
   }
@@ -184,7 +184,7 @@ export function deserialize(value: ValueSegment[], isManualTrigger: boolean): Dy
  * @param isManualTrigger - Flag that sets the rootObject to required schema type.
  * @returns - ValueSegment array with one literal -- value for which is a JSON representation of the dynamically added parameters in the shape expected by FlowRP
  */
-export function serialize(props: DynamicallyAddedParameterProps[], isManualTrigger: boolean): ValueSegment[] {
+export function serialize(props: DynamicallyAddedParameterProps[], isManualTrigger = false): ValueSegment[] {
   const requiredArray: string[] = [];
   props.forEach((prop) => {
     if (prop.required) requiredArray.push(prop.schemaKey);
@@ -230,7 +230,7 @@ export function serialize(props: DynamicallyAddedParameterProps[], isManualTrigg
   ];
 }
 
-export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isManualTrigger: boolean) {
+export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isManualTrigger = false) {
   let rootObject;
   if (isManualTrigger) {
     rootObject = {

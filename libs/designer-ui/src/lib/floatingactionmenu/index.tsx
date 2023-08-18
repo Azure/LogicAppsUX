@@ -26,7 +26,7 @@ export interface FloatingActionMenuProps {
   supportedTypes: Array<string>;
   useStaticInputs: boolean | undefined;
   initialValue: ValueSegment[];
-  isManualTrigger: boolean;
+  isManualTrigger?: boolean;
   onChange?: ChangeHandler;
 }
 
