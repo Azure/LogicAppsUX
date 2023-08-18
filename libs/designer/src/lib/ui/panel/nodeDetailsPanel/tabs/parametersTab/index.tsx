@@ -365,8 +365,8 @@ const ParameterSection = ({
         param,
         upstreamNodeIds ?? [],
         variables,
-        operationInfo.type,
-        operationInfo.kind
+        operationInfo?.type,
+        operationInfo?.kind
       );
 
       const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
