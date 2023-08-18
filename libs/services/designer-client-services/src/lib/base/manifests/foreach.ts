@@ -29,7 +29,24 @@ export default {
       loopParameter: 'foreach',
     },
 
-    outputs: {},
+    outputs: {
+      type: 'object',
+      properties: {
+        item: {
+          type: 'object',
+          title: 'Current item',
+        },
+      },
+    },
+    outputsSchema: {
+      outputPaths: [
+        {
+          outputLocation: ['properties'],
+          name: 'item',
+          schema: 'ValueSchema',
+        },
+      ],
+    },
     isOutputsOptional: false,
 
     connector: {

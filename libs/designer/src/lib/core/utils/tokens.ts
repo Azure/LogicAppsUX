@@ -251,6 +251,8 @@ export const getOutputTokenSections = (
     });
   }
 
+  console.log('charlie', nodeTokens);
+
   if (nodeTokens) {
     tokenGroups.push({
       id: 'variables',
@@ -289,6 +291,8 @@ export const getOutputTokenSections = (
 
     tokenGroups.push(...(outputTokenGroups.filter((group) => !!group) as TokenGroup[]));
   }
+
+  console.log('charlie2', tokenGroups);
 
   return tokenGroups;
 };
