@@ -37,7 +37,7 @@ describe('getEditorAndOptions', () => {
     ${'recurrence'}         | ${undefined}
     ${'filepicker'}         | ${undefined}
     ${'html'}               | ${undefined}
-    ${'floatingactionmenu'} | ${undefined}
+    ${'floatingactionmenu'} | ${{ isManualTrigger: true }}
   `('"$editor" editor is returned by default', ({ editor, editorOptions }) => {
     const parameter = getParameterInfo();
     parameter.editor = editor;
