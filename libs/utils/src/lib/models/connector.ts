@@ -102,6 +102,7 @@ export interface OAuthSetting {
 
 export interface ManagedIdentitySetting {
   resourceUri: string;
+  additionalResourceUris?: string[];
 }
 
 export interface GatewaySetting {

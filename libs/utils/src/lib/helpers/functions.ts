@@ -428,6 +428,37 @@ export function deleteObjectProperties(object: Record<string, unknown>, properti
 }
 
 /**
+ * Removes an object's source property and then returns the target property of the removed object.
+ * sample
+ *      object: {
+ *          prop1: {
+ *              prop2: 'val',
+ *              prop3: 'val2'
+ *          }
+ *          prop4: {
+ *              prop5: 'val3',
+ *              prop6: 'val4'
+ *          }
+ *      }
+ *      source: ['prop1', 'prop2']
+ *      target: ['prop1']
+ *      result :
+ *          prop1: {
+ *              prop3: 'val2'
+ *          }
+ * @arg {Object} object - The object for search.
+ * @arg {string[]} source - The ordered array of property to remove.
+ * @arg {string[]} target - The ordered array of property to get object from.
+ * @return {any} - The value of the property, if found.
+ */
+export function excludePathValueFromTarget(object: Record<string, any>, source: string[], target: string[]): any {
+  const copiedObject = clone(object);
+  deleteObjectProperty(copiedObject, source);
+  const result = getObjectPropertyValue(copiedObject, target);
+  return result;
+}
+
+/**
  * Returns true if an object has a property whose name is case-insensitive.
  * @arg {Object} object - An object to search.
  * @arg {string} property - The property to search for.
