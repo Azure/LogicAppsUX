@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [2.60.0](https://github.com/Azure/LogicAppsUX/compare/v2.59.0...v2.60.0) (2023-08-17)
+
+
+### Bug Fixes
+
+* **Designer:** Added alt text for the connector icon on action cards ([#3145](https://github.com/Azure/LogicAppsUX/issues/3145)) ([36ce47c](https://github.com/Azure/LogicAppsUX/commit/36ce47c1a8c298dd4bf6b621f02c88689559899c))
+* **Designer:** Retry policy setting now de/serializing properly ([#3146](https://github.com/Azure/LogicAppsUX/issues/3146)) ([883390f](https://github.com/Azure/LogicAppsUX/commit/883390fe9358ec06ae896222d584247d71ff5c4f))
+
 ## [2.59.0](https://github.com/Azure/LogicAppsUX/compare/v2.58.0...v2.59.0) (2023-08-16)
 
 
