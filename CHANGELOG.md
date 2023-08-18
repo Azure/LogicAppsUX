@@ -1,4 +1,17 @@
 # Logic Apps Designer
+### [2.59.1](https://github.com/Azure/LogicAppsUX/compare/v2.59.0...v2.59.1) (2023-08-18)
+
+
+### Features
+
+* **Designer:** Added support for additional audiences on Managed Identity connections ([#3156](https://github.com/Azure/LogicAppsUX/issues/3156)) ([7e3f927](https://github.com/Azure/LogicAppsUX/commit/7e3f9272fa77ffdfba349a37328bdd93f3ac677a))
+
+
+### Bug Fixes
+
+* **Designer:** Added alt text for the connector icon on action cards ([#3145](https://github.com/Azure/LogicAppsUX/issues/3145)) ([c03e3e4](https://github.com/Azure/LogicAppsUX/commit/c03e3e4175b998997d504cc5d58893e2db57cd09))
+* **Designer:** Retry policy setting now de/serializing properly ([#3146](https://github.com/Azure/LogicAppsUX/issues/3146)) ([e5b5390](https://github.com/Azure/LogicAppsUX/commit/e5b53906ced9013602e239cc948960dca8725a74))
+
 ## [2.59.0](https://github.com/Azure/LogicAppsUX/compare/v2.58.0...v2.59.0) (2023-08-16)
 
 
