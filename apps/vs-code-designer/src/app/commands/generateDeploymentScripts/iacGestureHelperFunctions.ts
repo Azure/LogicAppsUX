@@ -2,8 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
-import type { IAzureScriptWizard } from './azureScriptWizard';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -41,10 +39,6 @@ export class FileManagement {
 }
 
 export class UserInput {
-  static async promptForSetting(scriptContext: IAzureScriptWizard, folder: vscode.Uri, key: string): Promise<string> {
-    return await getSettingFromLocalSettings(scriptContext, folder, key);
-  }
-
   static async promptForSourceControlPath(): Promise<string> {
     const workspaceFolders = vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath);
     const rootWorkspacePath = workspaceFolders ? FileManagement.getRootWorkspacePath(workspaceFolders) : '';
@@ -108,10 +102,31 @@ export class UserInput {
     }
     return JSON.stringify(workspaceConfig, null, 2);
   }
-}
 
-async function getSettingFromLocalSettings(scriptContext: IAzureScriptWizard, folder: vscode.Uri, key: string): Promise<string> {
-  const localSettingsPath = path.join(folder.fsPath, 'local.settings.json');
-  const localSettings = await getLocalSettingsJson(scriptContext, localSettingsPath);
-  return localSettings.Values?.[key] || '';
+  static async promptForLogicAppName(): Promise<string> {
+    const logicAppName = await vscode.window.showInputBox({
+      prompt: 'Enter the logic app name:',
+      placeHolder: 'Logic App Name',
+    });
+
+    return logicAppName || '';
+  }
+
+  static async promptForStorageAccountName(): Promise<string> {
+    const storageAccountName = await vscode.window.showInputBox({
+      prompt: 'Enter the storage account name:',
+      placeHolder: 'Storage Account Name',
+    });
+
+    return storageAccountName || '';
+  }
+
+  static async promptForPlanServiceName(): Promise<string> {
+    const planServiceName = await vscode.window.showInputBox({
+      prompt: 'Enter the plan service name:',
+      placeHolder: 'Plan Service Name',
+    });
+
+    return planServiceName || '';
+  }
 }

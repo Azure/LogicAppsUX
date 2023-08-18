@@ -11,9 +11,7 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { LogicAppHostingPlanStep } from '../createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
-import { UserInput } from './iacGestureHelperFunctions';
-import type { AppServicePlan, Site } from '@azure/arm-appservice';
+import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { SiteNameStep, type IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
@@ -22,7 +20,7 @@ import type { IFunctionAppWizardContext } from '@microsoft/vscode-extension';
 import type { Progress } from 'vscode';
 
 // Define the interface for the Azure Script Wizard
-export interface IAzureScriptWizard extends IAppServiceWizardContext, IFunctionAppWizardContext, IActionContext {
+export interface IAzureScriptWizard extends IAppServiceWizardContext, IFunctionAppWizardContext, IDeployContext, IActionContext {
   credentials: any;
   subscriptionId: any;
   resourceGroup: any;
@@ -30,10 +28,12 @@ export interface IAzureScriptWizard extends IAppServiceWizardContext, IFunctionA
   tenantId: any;
   environment: any;
   sourceControlPath?: string;
-  site?: Site;
-  hostingPlan?: AppServicePlan;
+  suppressCreate: boolean;
+  location: string;
+  storageAccountName: string;
+  logicAppName: string;
+  appServicePlan: string;
 }
-
 /**
  * Creates an instance of the Azure Wizard for the Azure Script Wizard.
  * @param wizardContext - The wizard context.
@@ -42,21 +42,18 @@ export interface IAzureScriptWizard extends IAppServiceWizardContext, IFunctionA
  */
 export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath: string): AzureWizard<IAzureScriptWizard> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetLogicAppDetailsStep(), new GetSourceControlPathStep()],
+    promptSteps: [new GetLogicAppDetailsStep()],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
-
 // Define the GetSubscriptionDetailsStep class
 class GetLogicAppDetailsStep extends AzureWizardPromptStep<IAzureScriptWizard> {
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.enabled = true; // Set the enabled flag to true to skip the connector prompt
   }
-
   public shouldPrompt(context: IAzureScriptWizard): boolean {
     return context.enabled === undefined;
   }
-
   public async getSubWizard(context: IAzureScriptWizard): Promise<IWizardOptions<IAzureScriptWizard> | undefined> {
     const azurePromptSteps: AzureWizardPromptStep<IActionContext>[] = [];
     const subscriptionPromptStep: AzureWizardPromptStep<IActionContext> | undefined =
@@ -64,35 +61,19 @@ class GetLogicAppDetailsStep extends AzureWizardPromptStep<IAzureScriptWizard> {
     if (subscriptionPromptStep) {
       azurePromptSteps.push(subscriptionPromptStep);
     }
-    azurePromptSteps.push(new LogicAppHostingPlanStep());
     azurePromptSteps.push(new SiteNameStep());
     azurePromptSteps.push(new ResourceGroupListStep());
-
     return { promptSteps: azurePromptSteps };
   }
 }
-
-// Define a new Wizard Step class
-class GetSourceControlPathStep extends AzureWizardPromptStep<IAzureScriptWizard> {
-  public async prompt(context: IAzureScriptWizard): Promise<void> {
-    context.sourceControlPath = await UserInput.promptForSourceControlPath();
-  }
-
-  public shouldPrompt(context: IAzureScriptWizard): boolean {
-    return context.sourceControlPath === undefined;
-  }
-}
-
 // Define the SaveAzureContext class
 class SaveAzureContext extends AzureWizardExecuteStep<IAzureScriptWizard> {
   public priority = 100;
   private _projectPath: string;
-
   constructor(projectPath: string) {
     super();
     this._projectPath = projectPath;
   }
-
   public async execute(
     context: IAzureScriptWizard,
     _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
@@ -108,10 +89,8 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureScriptWizard> {
       valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
       valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
     }
-
     await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);
   }
-
   public shouldExecute(context: IAzureScriptWizard): boolean {
     return context.enabled === false || !!context.subscriptionId || !!context.resourceGroup;
   }
