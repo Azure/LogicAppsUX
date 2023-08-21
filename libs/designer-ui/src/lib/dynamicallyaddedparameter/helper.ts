@@ -141,11 +141,11 @@ function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedPa
  *             }
  *           }
  * @param value - valueSegment provided to us by rest of designer parent components
- * @param isManualTrigger - Flag that sets the rootObject to required schema type.
+ * @param isRequestApiConnectionTrigger - Flag that sets the rootObject to hybrid trigger schema type.
  * @param onChange - handler to update value when the user changes their input in one of the dynamic parameters
  * @returns - array of props to render DynamicallyAddedParameter editors with
  */
-export function deserialize(value: ValueSegment[], isManualTrigger = false): DynamicallyAddedParameterProps[] {
+export function deserialize(value: ValueSegment[], isRequestApiConnectionTrigger = false): DynamicallyAddedParameterProps[] {
   if (!value || value.length === 0 || !value[0].value) {
     return [];
   }
@@ -155,9 +155,9 @@ export function deserialize(value: ValueSegment[], isManualTrigger = false): Dyn
 
   const retval: DynamicallyAddedParameterProps[] = [];
   let itemsProperties: any;
-  if (isManualTrigger) {
-    itemsProperties = rootObject;
-  } else {
+
+  itemsProperties = rootObject;
+  if (isRequestApiConnectionTrigger) {
     itemsProperties = rootObject.properties ? rootObject.properties.rows.items : rootObject.rows.items;
   }
 
@@ -184,7 +184,7 @@ export function deserialize(value: ValueSegment[], isManualTrigger = false): Dyn
  * @param isManualTrigger - Flag that sets the rootObject to required schema type.
  * @returns - ValueSegment array with one literal -- value for which is a JSON representation of the dynamically added parameters in the shape expected by FlowRP
  */
-export function serialize(props: DynamicallyAddedParameterProps[], isManualTrigger = false): ValueSegment[] {
+export function serialize(props: DynamicallyAddedParameterProps[], isRequestApiConnectionTrigger = false): ValueSegment[] {
   const requiredArray: string[] = [];
   props.forEach((prop) => {
     if (prop.required) requiredArray.push(prop.schemaKey);
@@ -202,13 +202,14 @@ export function serialize(props: DynamicallyAddedParameterProps[], isManualTrigg
     }, {});
 
   let rootObject: any;
-  if (isManualTrigger) {
-    rootObject = {
-      type: 'object',
-      properties,
-      required: requiredArray,
-    };
-  } else {
+
+  rootObject = {
+    type: 'object',
+    properties,
+    required: requiredArray,
+  };
+
+  if (isRequestApiConnectionTrigger) {
     rootObject = {
       rows: {
         type: 'array',
@@ -230,15 +231,16 @@ export function serialize(props: DynamicallyAddedParameterProps[], isManualTrigg
   ];
 }
 
-export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isManualTrigger = false) {
-  let rootObject;
-  if (isManualTrigger) {
-    rootObject = {
-      type: 'object',
-      properties: {},
-      required: [],
-    };
-  } else {
+export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isRequestApiConnectionTrigger = false) {
+  let rootObject: any;
+
+  rootObject = {
+    type: 'object',
+    properties: {},
+    required: [],
+  };
+
+  if (isRequestApiConnectionTrigger) {
     rootObject = {
       rows: {
         type: 'array',
