@@ -11,7 +11,7 @@ import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParam
 import { WorkflowParametersPanelFooter } from './workflowParametersPanel/workflowParametersPanelFooter';
 import { Panel, PanelType } from '@fluentui/react';
 import { isUndefined } from '@microsoft/applicationinsights-core-js';
-import type { CommonPanelProps } from '@microsoft/designer-ui';
+import type { CommonPanelProps, CustomPanelLocation } from '@microsoft/designer-ui';
 import { PanelLocation, PanelSize } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -60,6 +60,13 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     () => (currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : null),
     [currentPanelMode]
   );
+
+  const customPanelLocations: CustomPanelLocation[] = [];
+  for (const customPanelLocation of customPanelLocations) {
+    if (currentPanelMode === customPanelLocation.panelMode) {
+      commonPanelProps.panelLocation = customPanelLocation.panelLocation;
+    }
+  }
 
   return isUndefined(currentPanelMode) ? (
     <NodeDetailsPanel {...commonPanelProps} />
