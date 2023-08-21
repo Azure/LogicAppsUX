@@ -4,6 +4,7 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
+import type { Schema } from '@microsoft/parsers-logic-apps';
 import { generateUniqueName, guid } from '@microsoft/utils-logic-apps';
 
 export type DynamicallyAddedParameterIcon = string;
@@ -111,7 +112,7 @@ function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedPa
 }
 
 /**
- * Sample shape of schema object JSON expected by FlowRP that we are serializing/deserializing:
+ * Sample shape of schema object JSON expected by FlowRP that we are serializing/deserializing for Manual trigger:
  *      object: {
  *          schema: {
  *              type: 'object',
@@ -123,20 +124,45 @@ function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedPa
  *              required: ['text', 'text_1'],
  *          }
  *      }
- *
+ * Sample shape of schema object JSON expected by FlowRP that we are serializing/deserializing for Hybrid trigger:
+ *         schema: {
+ *           rows: {
+ *             type: 'array',
+ *             items: {
+ *               type: 'object',
+ *               properties: {
+ *                 type: 'object',
+ *                 properties: {
+ *                   'text' : ...,
+ *                   'text_1': ...,
+ *                   'number': ...,
+ *                 }
+ *                 required: ['text', 'text_1'],
+ *               },
+ *             }
+ *           }
  * @param value - valueSegment provided to us by rest of designer parent components
+ * @param isRequestApiConnectionTrigger - Flag that sets the rootObject to hybrid trigger schema type.
  * @param onChange - handler to update value when the user changes their input in one of the dynamic parameters
  * @returns - array of props to render DynamicallyAddedParameter editors with
  */
-export function deserialize(value: ValueSegment[]): DynamicallyAddedParameterProps[] {
+export function deserialize(value: ValueSegment[], isRequestApiConnectionTrigger = false): DynamicallyAddedParameterProps[] {
   if (!value || value.length === 0 || !value[0].value) {
     return [];
   }
   // ASSUMPTION: for manual trigger, we assume there is *only one* ValueSegment which contains the required data
+  // ASSUMPTION: for hybrid triggers, the floating action segmets are always nested within rows.items
   const rootObject = JSON.parse(value[0].value);
 
   const retval: DynamicallyAddedParameterProps[] = [];
-  for (const [schemaKey, propertiesUnknown] of Object.entries(rootObject?.properties)) {
+  let itemsProperties: any;
+
+  itemsProperties = rootObject;
+  if (isRequestApiConnectionTrigger) {
+    itemsProperties = rootObject.properties ? rootObject.properties.rows.items : rootObject.rows.items;
+  }
+
+  for (const [schemaKey, propertiesUnknown] of Object.entries(itemsProperties?.properties)) {
     const properties = propertiesUnknown as IDynamicallyAddedParameterProperties;
     if (properties) {
       const icon = getIconForDynamicallyAddedParameterType(properties['x-ms-content-hint'] as DynamicallyAddedParameterTypeType);
@@ -156,9 +182,10 @@ export function deserialize(value: ValueSegment[]): DynamicallyAddedParameterPro
 /**
  * See deserialize function above for sample.
  * @param props - array of props of all DynamicallyAddedParameter editors currently rendered
+ * @param isManualTrigger - Flag that sets the rootObject to required schema type.
  * @returns - ValueSegment array with one literal -- value for which is a JSON representation of the dynamically added parameters in the shape expected by FlowRP
  */
-export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment[] {
+export function serialize(props: DynamicallyAddedParameterProps[], isRequestApiConnectionTrigger = false): ValueSegment[] {
   const requiredArray: string[] = [];
   props.forEach((prop) => {
     if (prop.required) requiredArray.push(prop.schemaKey);
@@ -175,11 +202,26 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
       return { ...resultPropertiesObj, [schemaKey]: propertyValue };
     }, {});
 
-  const rootObject = {
+  let rootObject: Schema;
+
+  rootObject = {
     type: 'object',
     properties,
     required: requiredArray,
   };
+
+  if (isRequestApiConnectionTrigger) {
+    rootObject = {
+      rows: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties,
+          required: requiredArray,
+        },
+      },
+    };
+  }
 
   return [
     {
@@ -190,12 +232,27 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
   ];
 }
 
-export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean) {
-  let rootObject: { type: string; properties: unknown; required: string[] } = {
+export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isRequestApiConnectionTrigger = false) {
+  let rootObject: Schema;
+
+  rootObject = {
     type: 'object',
     properties: {},
     required: [],
   };
+
+  if (isRequestApiConnectionTrigger) {
+    rootObject = {
+      rows: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {},
+          required: [],
+        },
+      },
+    };
+  }
 
   if (useStaticInputs) {
     rootObject = rootObjectWithStaticInputs;
