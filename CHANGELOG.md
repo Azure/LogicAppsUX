@@ -1,4 +1,27 @@
 # Logic Apps Designer
+## [2.60.0](https://github.com/Azure/LogicAppsUX/compare/v2.59.0...v2.60.0) (2023-08-17)
+
+
+### Bug Fixes
+
+* **Designer:** Added alt text for the connector icon on action cards ([#3145](https://github.com/Azure/LogicAppsUX/issues/3145)) ([36ce47c](https://github.com/Azure/LogicAppsUX/commit/36ce47c1a8c298dd4bf6b621f02c88689559899c))
+* **Designer:** Retry policy setting now de/serializing properly ([#3146](https://github.com/Azure/LogicAppsUX/issues/3146)) ([883390f](https://github.com/Azure/LogicAppsUX/commit/883390fe9358ec06ae896222d584247d71ff5c4f))
+
+## [2.59.0](https://github.com/Azure/LogicAppsUX/compare/v2.58.0...v2.59.0) (2023-08-16)
+
+
+### Features
+
+* **data mapper:** Inline xslt filepicker ([#3085](https://github.com/Azure/LogicAppsUX/issues/3085)) ([2657fca](https://github.com/Azure/LogicAppsUX/commit/2657fca7a2e6b0fc7d5f5b3efccd4037f5565c27))
+* **designer:** Export function for deserialization of tokens ([#3137](https://github.com/Azure/LogicAppsUX/issues/3137)) ([e5a6dde](https://github.com/Azure/LogicAppsUX/commit/e5a6ddef79a2e50cdf7c9a3ceacd28c80eb2ae63))
+* **vscode:** Add icon to create command ([#3135](https://github.com/Azure/LogicAppsUX/issues/3135)) ([c89da93](https://github.com/Azure/LogicAppsUX/commit/c89da937907fecf05d6052eaae2600857e2fd8de))
+* **vscode:** Logic App Workspace Local Settings Updates.  ([#3087](https://github.com/Azure/LogicAppsUX/issues/3087)) ([d2501fb](https://github.com/Azure/LogicAppsUX/commit/d2501fb720cc61de534c799e364c517872e705b4))
+
+
+### Bug Fixes
+
+* **designer:** Settings not Deserializing ([#3143](https://github.com/Azure/LogicAppsUX/issues/3143)) ([5d393e0](https://github.com/Azure/LogicAppsUX/commit/5d393e0f4d272e0fed633731c87f016802fc981b))
+
 ## [2.58.0](https://github.com/Azure/LogicAppsUX/compare/v2.57.0...v2.58.0) (2023-08-14)
 
 

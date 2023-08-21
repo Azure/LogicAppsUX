@@ -1057,6 +1057,16 @@
       "value": "Textkörper"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector icon"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1295,6 +1305,12 @@
     {
       "type": 0,
       "value": "Datentyp"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -7421,6 +7437,12 @@
       "value": "Zustandsloser Ausführungsmodus:"
     }
   ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
+    }
+  ],
   "lhL/KL": [
     {
       "type": 0,
@@ -8343,6 +8365,20 @@
     {
       "type": 0,
       "value": "Geben Sie einen Wert für den Parameter ein."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

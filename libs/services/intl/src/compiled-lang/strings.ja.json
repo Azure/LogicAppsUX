@@ -1037,6 +1037,16 @@
       "value": "本文"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector icon"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1275,6 +1285,12 @@
     {
       "type": 0,
       "value": "データ型"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -7263,6 +7279,12 @@
       "value": "ステートレス実行モード:"
     }
   ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
+    }
+  ],
   "lhL/KL": [
     {
       "type": 0,
@@ -8170,6 +8192,20 @@
     {
       "type": 0,
       "value": "パラメーターの値を入力してください。"
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

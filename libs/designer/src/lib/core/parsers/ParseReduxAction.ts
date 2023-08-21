@@ -53,7 +53,6 @@ export const initializeGraphState = createAsyncThunk<
         deserializedWorkflow,
         thunkAPI.getState().connections.connectionReferences,
         parameters ?? {},
-        workflow.workflowKind,
         thunkAPI.dispatch
       );
       const actionsAndTriggers = deserializedWorkflow.actionData;
