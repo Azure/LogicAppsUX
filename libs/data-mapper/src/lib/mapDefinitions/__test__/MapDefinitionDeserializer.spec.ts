@@ -1,6 +1,6 @@
 import type { MapDefinitionEntry } from '../../models';
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
-import type { ConnectionUnit } from '../../models/Connection';
+import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
 import {
@@ -1135,13 +1135,15 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       });
     });
 
+    const getFirstInputReactFlowKey = (conn: Connection) => (conn.inputs[0][0] as ConnectionUnit).reactFlowKey;
+
     it('creates a simple sequence function', () => {
       simpleMap['ns0:Root'] = {
         Looping: {
           '$for(reverse(/ns0:Root/Looping/Employee))': {
             Person: {
               Name: 'Name',
-              Other: 'TelephoneNumber',
+              // Other: 'TelephoneNumber',
             },
           },
         },
@@ -1151,6 +1153,18 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       const result = mapDefinitionDeserializer.convertFromMapDefinition();
       const resultEntries = Object.entries(result);
       resultEntries.sort();
+
+      expect(resultEntries[0][0].startsWith('Reverse')).toBeTruthy();
+      expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee');
+
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+      expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Looping/Person');
+      expect(getFirstInputReactFlowKey(resultEntries[3][1]).startsWith('Reverse')).toBeTruthy();
+
+      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+      expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
     });
   });
 
