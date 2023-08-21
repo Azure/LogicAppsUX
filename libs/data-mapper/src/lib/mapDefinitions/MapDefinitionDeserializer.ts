@@ -6,6 +6,7 @@ import { SchemaType, ifPseudoFunction, ifPseudoFunctionKey, indexPseudoFunction,
 import type { ConnectionDictionary } from '../models/Connection';
 import { applyConnectionValue, isConnectionUnit } from '../utils/Connection.Utils';
 import {
+  Reserved,
   amendSourceKeyForDirectAccessIfNeeded,
   flattenMapDefinitionValues,
   getDestinationNode,
@@ -14,6 +15,7 @@ import {
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
   getTargetValueWithoutLoopsSchemaSpecific,
+  lexThisThing,
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
@@ -360,8 +362,32 @@ export class MapDefinitionDeserializer {
           }
         }
 
+        const targetTokens = lexThisThing(targetKey);
+        let lookForSequence = false;
+        for (let i = 0; i < targetTokens.length; i++) {
+          if (targetTokens[i] === Reserved.for) {
+            lookForSequence = true;
+          }
+          if (lookForSequence) {
+            const destinationFunc = this._functions.find((func) => func.functionName === targetTokens[i]); // danielle this is a case for tuple list
+            if (destinationFunc) {
+              const destinationKey = createReactFlowFunctionKey(destinationFunc);
+              applyConnectionValue(connections, {
+                targetNode: destinationFunc,
+                targetNodeReactFlowKey: destinationKey,
+                findInputSlot: true,
+                input: {
+                  reactFlowKey: sourceKey,
+                  node: sourceNode as SchemaNodeExtended, // danielle fix this hack
+                },
+              });
+            }
+          }
+        }
+
         // Make the connection between loop nodes
         if (srcLoopNode && tgtLoopNode && !conditionalLoopKey) {
+          // danielle conditional for sequences
           addParentConnectionForRepeatingElements(
             tgtLoopNode,
             srcLoopNode,

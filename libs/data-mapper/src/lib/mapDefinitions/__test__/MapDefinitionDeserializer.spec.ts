@@ -1141,6 +1141,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           '$for(reverse(/ns0:Root/Looping/Employee))': {
             Person: {
               Name: 'Name',
+              Other: 'TelephoneNumber',
             },
           },
         },
