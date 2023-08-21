@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 
 export interface PanelRootProps {
   panelLocation?: PanelLocation;
+  customPanelLocations?: CustomPanelLocation[];
   displayRuntimeInfo: boolean;
 }
 
@@ -27,7 +28,7 @@ const layerProps = {
 };
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
-  const { panelLocation, displayRuntimeInfo } = props;
+  const { panelLocation, customPanelLocations, displayRuntimeInfo } = props;
   const dispatch = useDispatch<AppDispatch>();
 
   const isDarkMode = useIsDarkMode();
@@ -45,28 +46,26 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const dismissPanel = useCallback(() => dispatch(clearPanel()), [dispatch]);
 
-  const commonPanelProps: CommonPanelProps = useMemo(
-    () => ({
+  const commonPanelProps: CommonPanelProps = useMemo(() => {
+    let customLocation = undefined;
+    for (const customPanelLocation of customPanelLocations ?? []) {
+      if (currentPanelMode === customPanelLocation.panelMode) {
+        customLocation = customPanelLocation.panelLocation;
+      }
+    }
+    return {
       isCollapsed: collapsed,
       toggleCollapse: dismissPanel,
       width,
       layerProps,
-      panelLocation: panelLocation ?? PanelLocation.Right,
-    }),
-    [collapsed, dismissPanel, panelLocation, width]
-  );
+      panelLocation: customLocation ?? panelLocation ?? PanelLocation.Right,
+    };
+  }, [customPanelLocations, currentPanelMode, collapsed, dismissPanel, panelLocation, width]);
 
   const onRenderFooterContent = useCallback(
     () => (currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : null),
     [currentPanelMode]
   );
-
-  const customPanelLocations: CustomPanelLocation[] = [];
-  for (const customPanelLocation of customPanelLocations) {
-    if (currentPanelMode === customPanelLocation.panelMode) {
-      commonPanelProps.panelLocation = customPanelLocation.panelLocation;
-    }
-  }
 
   return isUndefined(currentPanelMode) ? (
     <NodeDetailsPanel {...commonPanelProps} />
