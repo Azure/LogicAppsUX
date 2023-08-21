@@ -39,17 +39,7 @@ export const initializeGraphState = createAsyncThunk<
 
     getConnectionsQuery();
     const { definition, connectionReferences, parameters } = workflowDefinition;
-
-    const deserializeTraceId = LoggerService().startTrace({
-      name: 'BJSDeserialize',
-      action: 'BJSDeserialize',
-      source: 'BJSDeserializer.ts',
-    });
-
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
-
-    LoggerService().endTrace(deserializeTraceId, { status: Status.Success });
-
     // For situations where there is an existing workflow, respect the node dimensions so that they are not reset
     const previousGraphFlattened = flattenWorkflowNodes(workflow.graph?.children || []);
     updateChildrenDimensions(deserializedWorkflow?.graph?.children || [], previousGraphFlattened);

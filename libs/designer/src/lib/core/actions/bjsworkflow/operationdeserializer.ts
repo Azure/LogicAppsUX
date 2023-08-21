@@ -360,7 +360,7 @@ const updateTokenMetadataInParameters = (
   }
 };
 
-export const initializeOutputTokensForOperations = (
+const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,
@@ -416,7 +416,7 @@ export const initializeOutputTokensForOperations = (
   return result;
 };
 
-export const initializeVariables = (
+const initializeVariables = (
   operations: Operations,
   allNodesData: NodeDataWithOperationMetadata[]
 ): Record<string, VariableDeclaration[]> => {
