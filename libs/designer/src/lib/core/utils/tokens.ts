@@ -1,13 +1,6 @@
 import Constants from '../../common/constants';
-import type { ConnectionReferences } from '../../common/models/workflow';
-import {
-  initializeOperationDetailsForManifest,
-  initializeOutputTokensForOperations,
-  initializeVariables,
-  type NodeDataWithOperationMetadata,
-} from '../actions/bjsworkflow/operationdeserializer';
+import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../actions/bjsworkflow/settings';
-import { Deserialize } from '../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { updateRepetitionContext } from '../state/operation/operationMetadataSlice';
@@ -15,7 +8,7 @@ import type { TokensState } from '../state/tokens/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
 import type { AppDispatch, RootState } from '../store';
-import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds, isRootNodeInGraph } from './graph';
+import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds } from './graph';
 import {
   addForeachToNode,
   getForeachActionName,
@@ -40,15 +33,14 @@ import {
 } from './parameters/helper';
 import { createTokenValueSegment } from './parameters/segment';
 import { getSplitOnValue, hasSecureOutputs } from './setting';
-import { initializeOperationDetailsForSwagger } from './swagger/operation';
 import { getVariableTokens } from './variables';
-import { OperationManifestService, supportedBaseManifestTypes } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
-import type { BuiltInOutput, LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
-import { labelCase, unmap, equals, filterRecord, aggregate } from '@microsoft/utils-logic-apps';
+import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
+import { labelCase, unmap, equals, filterRecord } from '@microsoft/utils-logic-apps';
 
 export interface TokenGroup {
   id: string;
@@ -198,37 +190,6 @@ export const getExpressionTokenSections = (): TokenGroup[] => {
       tokens,
     };
   });
-};
-
-const isSupportedManifest = (operationType: string): boolean => {
-  const normalizedOperationType = operationType.toLowerCase();
-  return supportedBaseManifestTypes.indexOf(normalizedOperationType) > -1;
-};
-
-export const deserializeWorkflowTokens = async (definition: LogicAppsV2.WorkflowDefinition, references: ConnectionReferences) => {
-  const deserializedWorkflow = Deserialize(definition, null);
-  const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
-  const promises: Promise<NodeDataWithOperationMetadata[] | undefined>[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const dispatch: any = () => {};
-
-  for (const [operationId, operation] of Object.entries(operations)) {
-    if (operationId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
-    const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
-
-    if (isSupportedManifest(operation.type)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
-    } else {
-      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
-    }
-  }
-
-  const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
-
-  const variables = initializeVariables(operations, allNodeData);
-  const outputTokens = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
-
-  return { variables, outputTokens };
 };
 
 export const getOutputTokenSections = (
