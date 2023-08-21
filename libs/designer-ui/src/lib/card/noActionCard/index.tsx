@@ -13,20 +13,13 @@ export const NoActionCard: React.FC = () => {
     <div style={{ position: 'relative' }}>
       <div
         aria-label={triggerTitle}
-        className="msla-panel-card-container msla-panel-card-container--no-action"
+        className="msla-panel-card-container--no-action"
         data-testid={`card-${triggerTitle}`}
         data-automation-id={`card-${convertUIElementNameToAutomationId(triggerTitle)}`}
         tabIndex={0}
       >
-        <div className="msla-selection-box" />
-        <div className="panel-card-main">
-          <div className="panel-card-header" role="button">
-            <div className="panel-card-content-container">
-              <div className="panel-card-top-content panel-card-top-content--no-action">
-                <div className="panel-msla-title">{triggerTitle}</div>
-              </div>
-            </div>
-          </div>
+        <div className="panel-card--no-action">
+          <div className="panel-msla-title">{triggerTitle}</div>
         </div>
       </div>
     </div>

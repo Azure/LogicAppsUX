@@ -969,9 +969,30 @@
   .msla-pill {
     .msla-pill-card();
   }
+}
 
-  &--no-action {
-    border: 1px dashed #c8c6c4;
+.msla-panel-card-container--no-action {
+  border: 1px dashed #c8c6c4;
+  box-sizing: border-box;
+  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+  font-size: 12px;
+  border-radius: 2px;
+  width: @panel-mode-card-width;
+  -webkit-user-select: none;
+  user-select: none;
+  background-color: #fff;
+  cursor: default;
+
+  .panel-card--no-action {
+    display: flex;
+    justify-content: space-around;
+
+    .panel-msla-title {
+      display: inline-block;
+      font: 14px/20px normal @semibold-font-family;
+      margin: 10px 8px 10px 0;
+      word-break: break-word;
+    }
   }
 }
 
@@ -1080,14 +1101,11 @@
         color: @ms-color-black;
       }
     }
+  }
 
-    &--no-action {
-      border: 1px dashed @ms-color-primaryBorder;
-
-      &:hover {
-        background-color: @ms-color-primaryBackground;
-      }
-    }
+  .msla-panel-card-container--no-action {
+    background-color: @ms-color-primaryBackground;
+    border: 1px dashed @ms-color-primaryBorder;
   }
 
   .msla-button-link {
