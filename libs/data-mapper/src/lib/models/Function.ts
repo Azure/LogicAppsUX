@@ -577,5 +577,26 @@ export const functionMock: FunctionData[] = [
     category: FunctionCategory.Utility,
     description: 'Inserts user supplied XSLT into map.',
   },
+  {
+    key: 'Reverse',
+    maxNumberOfInputs: 1,
+    functionName: 'reverse',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'Collection',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: true,
+        tooltip: 'Sequence or collection of items to be reversed.',
+        placeHolder: 'Input Collection',
+        inputEntryType: undefined,
+      },
+    ],
+    displayName: 'Reverse',
+    category: FunctionCategory.Collection,
+    description: 'Reverses the order of items in a sequence or collection.',
+    tooltip: 'Reverses the order of items in a sequence or collection.',
+  },
   ...pseudoFunctions,
 ];
