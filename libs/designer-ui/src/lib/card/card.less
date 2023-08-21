@@ -831,6 +831,10 @@
             color: @card-text-color;
             text-align: left;
           }
+
+          &--no-action {
+            justify-content: space-around;
+          }
         }
 
         .panel-card-expand {
@@ -965,6 +969,10 @@
   .msla-pill {
     .msla-pill-card();
   }
+
+  &--no-action {
+    border: 1px dashed #c8c6c4;
+  }
 }
 
 .msla-main-page {
@@ -1070,6 +1078,14 @@
       .panel-card-slideout-content {
         background-color: @ms-color-white;
         color: @ms-color-black;
+      }
+    }
+
+    &--no-action {
+      border: 1px dashed @ms-color-primaryBorder;
+
+      &:hover {
+        background-color: @ms-color-primaryBackground;
       }
     }
   }
