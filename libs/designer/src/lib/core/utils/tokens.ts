@@ -1,10 +1,10 @@
 import Constants from '../../common/constants';
 import type { ConnectionReferences } from '../../common/models/workflow';
+import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import {
   initializeOperationDetailsForManifest,
   initializeOutputTokensForOperations,
   initializeVariables,
-  type NodeDataWithOperationMetadata,
 } from '../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../actions/bjsworkflow/settings';
 import { Deserialize } from '../parsers/BJSWorkflow/BJSDeserializer';
