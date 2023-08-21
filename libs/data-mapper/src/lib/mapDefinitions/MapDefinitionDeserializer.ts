@@ -21,7 +21,7 @@ import {
 } from '../utils/DataMap.Utils';
 import { isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
-import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
+import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
@@ -377,8 +377,24 @@ export class MapDefinitionDeserializer {
                 targetNodeReactFlowKey: destinationKey,
                 findInputSlot: true,
                 input: {
-                  reactFlowKey: sourceKey,
+                  reactFlowKey: addSourceReactFlowPrefix(targetTokens[i + 2]), // danielle this does not work for nested loops
                   node: sourceNode as SchemaNodeExtended, // danielle fix this hack
+                },
+              });
+              const targets = targetTokens[targetTokens.length - 1];
+              const loopTarget = targets.split('/')[1];
+              const loopDestinationNode = getDestinationNode(
+                targetTokens[0] + loopTarget,
+                this._functions,
+                this._targetSchema.schemaTreeRoot
+              ) as SchemaNodeExtended;
+              applyConnectionValue(connections, {
+                targetNode: loopDestinationNode, // this needs to be the first string outside of the 'for'
+                targetNodeReactFlowKey: addTargetReactFlowPrefix(loopDestinationNode.key),
+                findInputSlot: true,
+                input: {
+                  reactFlowKey: destinationKey, // danielle this does not work for nested loops
+                  node: destinationFunc as FunctionData, // danielle fix this hack
                 },
               });
             }

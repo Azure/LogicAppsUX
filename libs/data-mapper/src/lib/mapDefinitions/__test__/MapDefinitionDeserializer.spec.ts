@@ -1137,6 +1137,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
     const getFirstInputReactFlowKey = (conn: Connection) => (conn.inputs[0][0] as ConnectionUnit).reactFlowKey;
 
+    //   ns0:Root:
+    //    ConditionalLooping:
+    //      $for(reverse(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)):
+    //        CategorizedCatalog:
+    //          PetProduct:
+    //            Name: Name
+
     it('creates a simple sequence function', () => {
       simpleMap['ns0:Root'] = {
         Looping: {
@@ -1164,7 +1171,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(getFirstInputReactFlowKey(resultEntries[3][1]).startsWith('Reverse')).toBeTruthy();
 
       expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
-      expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+      expect(getFirstInputReactFlowKey(resultEntries[4][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
     });
   });
 
