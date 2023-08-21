@@ -4,6 +4,7 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
+import type { Schema } from '@microsoft/parsers-logic-apps';
 import { generateUniqueName, guid } from '@microsoft/utils-logic-apps';
 
 export type DynamicallyAddedParameterIcon = string;
@@ -201,7 +202,7 @@ export function serialize(props: DynamicallyAddedParameterProps[], isRequestApiC
       return { ...resultPropertiesObj, [schemaKey]: propertyValue };
     }, {});
 
-  let rootObject: any;
+  let rootObject: Schema;
 
   rootObject = {
     type: 'object',
@@ -232,7 +233,7 @@ export function serialize(props: DynamicallyAddedParameterProps[], isRequestApiC
 }
 
 export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isRequestApiConnectionTrigger = false) {
-  let rootObject: any;
+  let rootObject: Schema;
 
   rootObject = {
     type: 'object',
