@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { nodeJsDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
-import { binariesExist, getNewestNodeJsVersion } from '../../utils/binaries';
-import { getLocalNodeJsVersion } from '../../utils/nodeJs/nodeJsVersion';
+import { binariesExist, getLatestNodeJsVersion } from '../../utils/binaries';
+import { getLocalNodeJsVersion, getNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { installNodeJs } from './installNodeJs';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
@@ -13,23 +13,24 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
-export async function validateNodeJsIsLatest(): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsLatest', async (context: IActionContext) => {
+export async function validateNodeJsIsLatest(majorVersion?: string): Promise<void> {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateNodeJsIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
 
     const showNodeJsWarningKey = 'showNodeJsWarning';
     const showNodeJsWarning = !!getWorkspaceSetting<boolean>(showNodeJsWarningKey);
     const binaries = binariesExist(nodeJsDependencyName);
+    context.telemetry.properties.binariesExist = `${binaries}`;
 
     if (!binaries) {
-      installNodeJs(context);
-    }
-
-    if (showNodeJsWarning) {
+      await installNodeJs(context, majorVersion);
+      context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
+    } else if (showNodeJsWarning) {
+      context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
       const localVersion: string | null = await getLocalNodeJsVersion();
       context.telemetry.properties.localVersion = localVersion;
-      const newestVersion: string | undefined = await getNewestNodeJsVersion(context);
+      const newestVersion: string | undefined = await getLatestNodeJsVersion(context, majorVersion);
       if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
         context.telemetry.properties.outOfDateDotNet = 'true';
         const message: string = localize(
@@ -48,7 +49,7 @@ export async function validateNodeJsIsLatest(): Promise<void> {
           if (result === DialogResponses.learnMore) {
             await openUrl('https://nodejs.org/en/download');
           } else if (result === update) {
-            await installNodeJs(context);
+            await installNodeJs(context, majorVersion);
           } else if (result === DialogResponses.dontWarnAgain) {
             await updateGlobalSetting(showNodeJsWarningKey, false);
           }

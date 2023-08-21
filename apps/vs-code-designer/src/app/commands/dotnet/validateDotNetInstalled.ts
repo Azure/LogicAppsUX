@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { validateFuncCoreToolsSetting } from '../../../constants';
+import { validateDotNetSDKSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { getDotNetCommand } from '../../utils/dotnet/dotnet';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
@@ -27,7 +27,7 @@ export async function validateDotNetIsInstalled(context: IActionContext, message
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsInstalled', async (innerContext: IActionContext) => {
     innerContext.errorHandling.suppressDisplay = true;
 
-    if (!getWorkspaceSetting<boolean>(validateFuncCoreToolsSetting, fsPath)) {
+    if (!getWorkspaceSetting<boolean>(validateDotNetSDKSetting, fsPath)) {
       innerContext.telemetry.properties.validateDotNet = 'false';
       installed = true;
     } else if (await isDotNetInstalled()) {

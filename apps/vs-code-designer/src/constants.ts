@@ -41,6 +41,7 @@ export const dotnetDependencyName = 'DotNetSDK';
 
 // Node
 export const node = 'node';
+export const npm = 'npm';
 export const nodeJsDependencyName = 'NodeJs';
 
 // Workflow
@@ -128,6 +129,7 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
+  validateOrInstallBinaries = 'azureLogicAppsStandard.validateOrInstallBinaries',
 }
 
 // Context
@@ -151,6 +153,8 @@ export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
+export const validateDotNetSDKSetting = 'validateDotNetSDK';
+export const validateNodeJsSetting = 'validateNodeJs';
 export const showDeployConfirmationSetting = 'showDeployConfirmation';
 export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
@@ -179,7 +183,8 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 export const defaultProductionBundleUrl =
-  'https://functionscdn.azureedge.net/public/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/index-v2.json';
+  'https://cdnforlogicappsv2.blob.core.windows.net/npathakdevex/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/index-v2.json';
+// 'https://functionscdn.azureedge.net/public/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/index-v2.json';
 
 // Fallback Dependency Versions
 export enum DependencyVersion {

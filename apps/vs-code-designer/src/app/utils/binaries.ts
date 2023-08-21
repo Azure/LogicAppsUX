@@ -2,19 +2,42 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DependencyVersion, dependenciesPathSettingKey } from '../../constants';
+import { DependencyVersion, defaultDependencyPathValue, dependenciesPathSettingKey, funcPackageName } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { validateDotNetIsLatest } from '../commands/dotnet/validateDotNetIsLatest';
+import { validateFuncCoreToolsIsLatest } from '../commands/funcCoreTools/validateFuncCoreToolsIsLatest';
+import { validateNodeJsIsLatest } from '../commands/nodeJs/validateNodeIsLatest';
+import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
+import { getDependenciesVersion } from './bundleFeed';
 import { executeCommand } from './funcCoreTools/cpUtils';
-import { getGlobalSetting } from './vsCodeConfig/settings';
+import { getNpmCommand } from './nodeJs/nodeJsVersion';
+import { getGlobalSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import * as AdmZip from 'adm-zip';
+import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as request from 'request';
+import * as semver from 'semver';
 import * as tar from 'tar';
 import * as vscode from 'vscode';
+
+export async function validateOrInstallBinaries(context: IActionContext) {
+  if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
+    await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
+    context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
+  }
+
+  const dependenciesVersions: IBundleDependencyFeed = await getDependenciesVersion(context);
+  context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
+
+  validateNodeJsIsLatest(dependenciesVersions?.nodejs);
+  validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
+  validateDotNetIsLatest(dependenciesVersions?.dotnet);
+}
 
 /**
  * Download and Extracts Binaries zip.
@@ -42,7 +65,7 @@ export async function downloadAndExtractBinaries(binariesUrl: string, targetFold
     executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
 
-    // Step 2: Download the compressed binaries
+    // Download the compressed binaries
     await new Promise<void>((resolve, reject) => {
       executeCommand(ext.outputChannel, undefined, 'echo', `Donwloading binaries from: ${binariesUrl}`);
       const downloadStream = request(binariesUrl).pipe(fs.createWriteStream(binariesFilePath));
@@ -53,49 +76,98 @@ export async function downloadAndExtractBinaries(binariesUrl: string, targetFold
       downloadStream.on('error', reject);
     });
 
-    // Step 3: Extract to targetFolder
+    // Extract to targetFolder
     extractBinaries(binariesFilePath, targetFolder, dependencyName);
   } catch (error) {
     vscode.window.showErrorMessage(`Error downloading and extracting the ${dependencyName} zip: ${error.message}`);
-    fs.rmdirSync(targetFolder, { recursive: true });
+    fs.rmSync(targetFolder, { recursive: true });
     throw error;
   } finally {
-    fs.rmdirSync(tempFolderPath, { recursive: true });
+    fs.rmSync(tempFolderPath, { recursive: true });
     executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
   }
 }
 
-export function getNewestFunctionRuntimeVersion(context: IActionContext): string {
-  context.telemetry.properties.newestFunctionRuntimeVersion = 'true';
-  // const dependencyJson = await readJsonFromUrl(defaultProductionBundleUrl);
-  // if( dependencyJson ) {
-  //   return dependencyJson.dotnet;
-  // }
-  // else
-  // Check host.json for Target Bundle
-  // "FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI":
-  // https://cdnforlogicappsv2.blob.core.windows.net/npathakdevex
-  // append /ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/index-v2.json
-  // dependencies.funcCoreTools: 4 <-- Major Version
-  // GET from cdn manifest, if fail --> fallback to constants
+export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
+  context.telemetry.properties.funcCoreTools = majorVersion;
+
+  // Use npm to find newest func core tools version
+  const hasNodeJs = await isNodeJsInstalled();
+  let latestVersion: string | null;
+  if (hasNodeJs) {
+    context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'node';
+    latestVersion = (await executeCommand(undefined, undefined, `${getNpmCommand()}`, 'view', funcPackageName, 'version'))?.trim();
+    if (checkMajorVersion(latestVersion, majorVersion)) {
+      return latestVersion;
+    }
+  }
+
+  // fallback to github api to look for latest version
+  await readJsonFromUrl('https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest').then(
+    (response: IGitHubReleaseInfo) => {
+      latestVersion = semver.valid(semver.coerce(response.tag_name));
+      context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'github';
+      context.telemetry.properties.latestGithubVersion = response.tag_name;
+      if (checkMajorVersion(latestVersion, majorVersion)) {
+        return latestVersion;
+      }
+    }
+  );
+
+  // Fall back to hardcoded version
+  context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'fallback';
   return DependencyVersion.funcCoreTools;
 }
 
-export function getNewestDotNetVersion(context: IActionContext): string {
-  context.telemetry.properties.newestDotNetVersion = 'true';
-  // GET from cdn manifest, if fail --> fallback
+export async function getLatestDotNetVersion(context: IActionContext, majorVersion?: string): Promise<string> {
+  context.telemetry.properties.dotNetMajorVersion = majorVersion;
+
+  if (majorVersion) {
+    await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
+      .then((response: IGitHubReleaseInfo[]) => {
+        context.telemetry.properties.getLatestDotNetVersion = 'github';
+        response.forEach((releaseInfo: IGitHubReleaseInfo) => {
+          const releaseVersion: string | null = semver.valid(semver.coerce(releaseInfo.tag_name));
+          context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
+          if (checkMajorVersion(releaseVersion, majorVersion)) {
+            return releaseVersion;
+          }
+        });
+      })
+      .catch((error) => {
+        throw Error(localize('errorNewestDotNetVersion', `Error getting latest dotnet sdk version: ${error}`));
+      });
+  }
+
+  context.telemetry.properties.getLatestDotNetVersion = 'fallback';
   return DependencyVersion.dotnet6;
 }
 
-export function getNewestNodeJsVersion(context: IActionContext): string {
-  context.telemetry.properties.newestNodeJsVersion = 'true';
-  // GET from cdn manifest, if fail --> fallback
+export async function getLatestNodeJsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
+  context.telemetry.properties.nodeMajorVersion = majorVersion;
+
+  if (majorVersion) {
+    await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
+      .then((response: IGitHubReleaseInfo[]) => {
+        context.telemetry.properties.getLatestNodeJsVersion = 'github';
+        response.forEach((releaseInfo: IGitHubReleaseInfo) => {
+          const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
+          context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
+          if (checkMajorVersion(releaseVersion, majorVersion)) {
+            return releaseVersion;
+          }
+        });
+      })
+      .catch((error) => {
+        throw Error(localize('errorNewestNodeJsVersion', `Error getting latest node version: ${error}`));
+      });
+  }
+
+  context.telemetry.properties.getLatestNodeJsVersion = 'fallback';
   return DependencyVersion.nodeJs;
 }
 
 export function getNodeJsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
-  // https://nodejs.org/dist/v18.17.1/node-v18.17.1-linux-x64.tar.xz
-  // https://nodejs.org/dist/v18.17.1/node-v18.17.1-darwin-x64.tar.gz
   if (osPlatform != 'win') {
     return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.tar.gz`;
   }
@@ -105,13 +177,14 @@ export function getNodeJsBinariesReleaseUrl(version: string, osPlatform: string,
 }
 
 export function getFunctionCoreToolsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
-  // https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.5198/Azure.Functions.Cli.win-x64.4.0.5198.zip
-  // https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.5198/Azure.Functions.Cli.linux-x64.4.0.5198.zip
-  // https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.5198/Azure.Functions.Cli.osx-x64.4.0.5198.zip
   return `https://github.com/Azure/azure-functions-core-tools/releases/download/${version}/Azure.Functions.Cli.${osPlatform}-${arch}.${version}.zip`;
 }
 
 export function getDotNetBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
+  // Webscrape?
+  // Source Code. Would need to run the build script - Not sure what dependencies are installed and where ...
+  // https://github.com/dotnet/sdk/archive/refs/tags/v6.0.412.zip
+
   // This is a redirect and not the actual ... Is there a way to get the redirect link...
   // https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.412-windows-x64-binaries
   // https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.412-linux-x64-binaries
@@ -128,9 +201,7 @@ export function getDotNetBinariesReleaseUrl(version: string, osPlatform: string,
     `https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-${version}-${osPlatform}-${arch}-binaries`
   );
 
-  // Source Code. Would need to run the build script - Not sure what dependencies are installed and where ...
-  // https://github.com/dotnet/sdk/archive/refs/tags/v6.0.412.zip
-  return 'https://download.visualstudio.microsoft.com/download/pr/28be1206-08c5-44bb-ab3d-6775bc03b392/2146d7b8060998ea83d381ee80471557/dotnet-sdk-6.0.412-win-x64.zip';
+  return 'https://download.visualstudio.microsoft.com/download/pr/3d28b406-bdbd-423e-a173-015215ae83d5/abf5701bb34a153e073409858758eea1/dotnet-sdk-6.0.413-win-x64.zip';
 }
 
 export function getCpuArchitecture() {
@@ -145,7 +216,7 @@ export function getCpuArchitecture() {
 }
 
 /**
- * Checks if binaries folder director path exists.
+ * Checks if binaries folder directory path exists.
  * @param dependencyName The name of the dependency.
  * @returns true if expected binaries folder directory path exists
  */
@@ -158,21 +229,19 @@ export function binariesExist(dependencyName: string): boolean {
   return binariesExist;
 }
 
-// async function readJsonFromUrl(url: string): Promise<any> {
-//   try {
-//     const response = await axios.get(url);
-//     if(response.status === 200) {
-//       return response.data;
-//     }
-//     else {
-//       throw new Error(`Request failed with status ${response.status}`);
-//     }
-//   }
-//   catch (error) {
-//     vscode.window.showErrorMessage(`Error reading JSON from URL: ${error.message}`);
-//     throw error;
-//   }
-// }
+async function readJsonFromUrl(url: string): Promise<any> {
+  try {
+    const response = await axios.get(url);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    vscode.window.showErrorMessage(`Error reading JSON from URL: ${error.message}`);
+    throw error;
+  }
+}
 
 function getCompressionFileExtension(binariesUrl: string): string {
   if (binariesUrl.endsWith('.zip')) {
@@ -192,35 +261,37 @@ function getCompressionFileExtension(binariesUrl: string): string {
 
 function extractBinaries(binariesFilePath: string, targetFolder: string, dependencyName: string): void {
   executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${binariesFilePath}`);
-
   if (binariesFilePath.endsWith('.zip')) {
     const zip = new AdmZip(binariesFilePath);
     zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
-
-    // Clean up if there is only a container folder
-    const extractedContents = fs.readdirSync(targetFolder);
-    if (extractedContents.length === 1 && fs.statSync(path.join(targetFolder, extractedContents[0])).isDirectory()) {
-      const containerFolderPath = path.join(targetFolder, extractedContents[0]);
-      const containerContents = fs.readdirSync(containerFolderPath);
-
-      containerContents.forEach((content) => {
-        const contentPath = path.join(containerFolderPath, content);
-        const destinationPath = path.join(targetFolder, content);
-
-        fs.renameSync(contentPath, destinationPath);
-      });
-
-      fs.rmdirSync(containerFolderPath);
-    }
-
-    executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} completed successfully.`);
   } else {
     tar.x({
       file: binariesFilePath,
       cwd: targetFolder,
-      strip: 1, // Remove the first parent directory if it exists
     });
   }
 
-  vscode.window.showInformationMessage(`Successfully installed ${dependencyName}`);
+  // Clean up if there is only a container folder
+  const extractedContents = fs.readdirSync(targetFolder);
+  if (extractedContents.length === 1 && fs.statSync(path.join(targetFolder, extractedContents[0])).isDirectory()) {
+    const containerFolderPath = path.join(targetFolder, extractedContents[0]);
+    const containerContents = fs.readdirSync(containerFolderPath);
+
+    containerContents.forEach((content) => {
+      const contentPath = path.join(containerFolderPath, content);
+      const destinationPath = path.join(targetFolder, content);
+
+      fs.renameSync(contentPath, destinationPath);
+    });
+
+    if (fs.readdirSync(containerFolderPath).length === 0) {
+      fs.rmSync(containerFolderPath, { recursive: true });
+    }
+  }
+  executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} completed successfully.`);
+  vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+}
+
+function checkMajorVersion(version: string, majorVersion: string): boolean {
+  return semver.satisfies(version, `^${majorVersion}.x`);
 }

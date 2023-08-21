@@ -29,13 +29,25 @@ export async function getLocalNodeJsVersion(): Promise<string | null> {
 }
 
 /**
- * Get the functions binaries executable or use the system functions executable.
+ * Get the nodejs binaries executable or use the system nodejs executable.
  */
 export function getNodeJsCommand(): string {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
   const binariesExist = fs.existsSync(nodeJsBinariesPath);
   const command = binariesExist ? `${nodeJsBinariesPath}\\${ext.nodeJsCliPath}` : ext.nodeJsCliPath;
+  executeCommand(ext.outputChannel, undefined, 'echo', `${command}`);
+  return command;
+}
+
+/**
+ * Get the npm binaries executable or use the system npm executable.
+ */
+export function getNpmCommand(): string {
+  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
+  const binariesExist = fs.existsSync(nodeJsBinariesPath);
+  const command = binariesExist ? `${nodeJsBinariesPath}\\${ext.npmCliPath}` : ext.npmCliPath;
   executeCommand(ext.outputChannel, undefined, 'echo', `${command}`);
   return command;
 }

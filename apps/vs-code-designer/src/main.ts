@@ -1,18 +1,15 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import { validateDotNetIsLatest } from './app/commands/dotnet/validateDotNetIsLatest';
-import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
-import { validateNodeJsIsLatest } from './app/commands/nodeJs/validateNodeIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { validateOrInstallBinaries } from './app/utils/binaries';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
-import { getGlobalSetting, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
-import { defaultDependencyPathValue, dependenciesPathSettingKey, extensionCommand, logicAppFilter } from './constants';
+import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
@@ -45,16 +42,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
 
-    // Dependency Path
-    if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
-      await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
-      activateContext.telemetry.properties.dependencyPath = defaultDependencyPathValue;
-    }
-
-    validateNodeJsIsLatest().then(() => {
-      validateFuncCoreToolsIsLatest();
-    });
-    await validateDotNetIsLatest();
+    validateOrInstallBinaries(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();

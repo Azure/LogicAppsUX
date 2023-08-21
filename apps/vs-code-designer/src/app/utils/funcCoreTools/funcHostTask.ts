@@ -6,6 +6,7 @@ import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } 
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
+import { getFunctionsCommand } from './funcVersion';
 import { delay } from '@azure/ms-rest-js';
 import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -27,7 +28,8 @@ export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, 
  */
 export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
-  return /func (host )?start/i.test(commandLine || '');
+  const funcRegex = new RegExp(`${getFunctionsCommand()} (host )?start`, 'i');
+  return funcRegex.test(commandLine || '') || /func (host )?start/i.test(commandLine || '');
 }
 
 export function registerFuncHostTaskEvents(): void {

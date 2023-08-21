@@ -8,20 +8,17 @@ import {
   downloadAndExtractBinaries,
   getCpuArchitecture,
   getFunctionCoreToolsBinariesReleaseUrl,
-  getNewestFunctionRuntimeVersion,
+  getLatestFunctionCoreToolsVersion,
 } from '../../utils/binaries';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
-export async function installFuncCoreTools(context: IActionContext, targetDirectory?: string): Promise<void> {
+export async function installFuncCoreTools(context: IActionContext, majorVersion?: string): Promise<void> {
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
+  const targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
 
-  if (!targetDirectory) {
-    targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
-  }
-
-  const version = getNewestFunctionRuntimeVersion(context);
+  const version = await getLatestFunctionCoreToolsVersion(context, majorVersion);
   let azureFunctionCoreToolsReleasesUrl;
 
   switch (process.platform) {

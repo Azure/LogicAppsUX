@@ -5,7 +5,7 @@
 import { debugSymbolDll } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import * as cp from 'child_process';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -35,8 +35,7 @@ export async function getDebugSymbolDll(): Promise<string> {
  * @returns {string} Extension bundle folder path.
  */
 async function getExtensionBundleFolder(): Promise<string> {
-  const funcBinariesLocation = getWorkspaceSetting<string>('funcCoreToolsPath');
-  const command = `${funcBinariesLocation} GetExtensionBundlePath`;
+  const command = `${getFunctionsCommand()} GetExtensionBundlePath`;
   const outputChannel = ext.outputChannel;
 
   if (outputChannel) {

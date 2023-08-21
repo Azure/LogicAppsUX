@@ -305,6 +305,11 @@
         "command": "azureLogicAppsStandard.reportIssue",
         "title": "Report Issue...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.validateOrInstallBinaries",
+        "title": "Validate or Install Dependenies Binaries",
+        "category": "Azure Logic Apps"
       }
     ],
     "submenus": [
@@ -710,6 +715,16 @@
           "azureLogicAppsStandard.validateFuncCoreTools": {
             "type": "boolean",
             "description": "Validate the Azure Functions Core Tools is installed before debugging.",
+            "default": true
+          },
+          "azureLogicAppsStandard.validateDotNetSDK": {
+            "type": "boolean",
+            "description": "Validate .NET SDK is installed before debugging.",
+            "default": true
+          },
+          "azureLogicAppsStandard.validateNodeJs": {
+            "type": "boolean",
+            "description": "Validate Node Js is installed before debugging.",
             "default": true
           },
           "azureLogicAppsStandard.showDeployConfirmation": {

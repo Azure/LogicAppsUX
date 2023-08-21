@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { validateFuncCoreToolsSetting } from '../../../constants';
+import { validateNodeJsSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
@@ -24,10 +24,10 @@ export async function validateNodeJsInstalled(context: IActionContext, message: 
   let installed = false;
   const install: MessageItem = { title: localize('install', 'Install') };
 
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsInstalled', async (innerContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateNodeJsIsInstalled', async (innerContext: IActionContext) => {
     innerContext.errorHandling.suppressDisplay = true;
 
-    if (!getWorkspaceSetting<boolean>(validateFuncCoreToolsSetting, fsPath)) {
+    if (!getWorkspaceSetting<boolean>(validateNodeJsSetting, fsPath)) {
       innerContext.telemetry.properties.validateDotNet = 'false';
       installed = true;
     } else if (await isNodeJsInstalled()) {
@@ -50,7 +50,7 @@ export async function validateNodeJsInstalled(context: IActionContext, message: 
   if (input === install && !installed) {
     if (
       (await context.ui.showWarningMessage(
-        localize('failedInstallDotNet', 'The .Net SDK installion has failed and will have to be installed manually.'),
+        localize('failedInstallDotNet', 'The NodeJS installion has failed and will have to be installed manually.'),
         DialogResponses.learnMore
       )) === DialogResponses.learnMore
     ) {

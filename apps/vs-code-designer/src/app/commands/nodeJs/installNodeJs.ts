@@ -4,20 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 import { Platform, dependenciesPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { downloadAndExtractBinaries, getCpuArchitecture, getNewestNodeJsVersion, getNodeJsBinariesReleaseUrl } from '../../utils/binaries';
+import { downloadAndExtractBinaries, getCpuArchitecture, getLatestNodeJsVersion, getNodeJsBinariesReleaseUrl } from '../../utils/binaries';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
-export async function installNodeJs(context: IActionContext, targetDirectory?: string): Promise<void> {
+export async function installNodeJs(context: IActionContext, majorVersion?: string): Promise<void> {
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
+  const targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
 
-  if (!targetDirectory) {
-    targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
-  }
-
-  const version = getNewestNodeJsVersion(context);
-
+  const version = await getLatestNodeJsVersion(context, majorVersion);
   let azureFunctionCoreToolsReleasesUrl;
 
   switch (process.platform) {

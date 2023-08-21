@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
-import { binariesExist, getNewestFunctionRuntimeVersion } from '../../utils/binaries';
-import { getLocalFuncCoreToolsVersion } from '../../utils/funcCoreTools/funcVersion';
+import { binariesExist, getLatestFunctionCoreToolsVersion } from '../../utils/binaries';
+import { getFunctionsCommand, getLocalFuncCoreToolsVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { installFuncCoreTools } from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
@@ -13,7 +13,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
-export async function validateFuncCoreToolsIsLatest(): Promise<void> {
+export async function validateFuncCoreToolsIsLatest(majorVersion?: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
@@ -22,15 +22,16 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
     const showCoreToolsWarning = !!getWorkspaceSetting<boolean>(showCoreToolsWarningKey);
 
     const binaries = binariesExist(funcDependencyName);
+    context.telemetry.properties.binariesExist = `${binaries}`;
 
     if (!binaries) {
-      installFuncCoreTools(context);
-    }
-
-    if (showCoreToolsWarning) {
+      await installFuncCoreTools(context, majorVersion);
+      context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
+    } else if (showCoreToolsWarning) {
+      context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
       const localVersion: string | null = await getLocalFuncCoreToolsVersion();
       context.telemetry.properties.localVersion = localVersion;
-      const newestVersion: string | undefined = await getNewestFunctionRuntimeVersion(context);
+      const newestVersion: string | undefined = await getLatestFunctionCoreToolsVersion(context, majorVersion);
       if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
         context.telemetry.properties.outOfDateFunc = 'true';
         const message: string = localize(
@@ -49,7 +50,7 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
           if (result === DialogResponses.learnMore) {
             await openUrl('https://aka.ms/azFuncOutdated');
           } else if (result === update) {
-            await installFuncCoreTools(context);
+            await installFuncCoreTools(context, majorVersion);
           } else if (result === DialogResponses.dontWarnAgain) {
             await updateGlobalSetting(showCoreToolsWarningKey, false);
           }

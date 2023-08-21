@@ -190,7 +190,7 @@ export function getDotNetCommand(): string {
 
 export async function getLocalDotNetVersion(): Promise<string> {
   try {
-    const output: string = await executeCommand(undefined, undefined, `${getDotNetCommand()}`, '--version');
+    const output: string = await executeCommand(ext.outputChannel, undefined, `${getDotNetCommand()}`, '--version');
     const version: string | null = semver.clean(output);
     if (version) {
       return version;
