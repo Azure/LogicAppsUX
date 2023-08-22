@@ -47,12 +47,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const dismissPanel = useCallback(() => dispatch(clearPanel()), [dispatch]);
 
   const commonPanelProps: CommonPanelProps = useMemo(() => {
-    let customLocation = undefined;
-    for (const customPanelLocation of customPanelLocations ?? []) {
-      if (currentPanelMode === customPanelLocation.panelMode) {
-        customLocation = customPanelLocation.panelLocation;
-      }
-    }
+    const customLocation = customPanelLocations?.find((x) => currentPanelMode === x.panelMode)?.panelLocation;
     return {
       isCollapsed: collapsed,
       toggleCollapse: dismissPanel,
