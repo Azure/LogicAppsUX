@@ -13,6 +13,7 @@ export * from './card/types';
 export * from './card/hooks';
 export * from './card/images/dynamicsvgs/trafficlightsvgs';
 export * from './card/addActionCard';
+export * from './card/noActionCard';
 export * from './chatbot/index';
 export * from './checkbox';
 // export * from './colorizer'
