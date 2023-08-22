@@ -21,7 +21,14 @@ import { convertOutputsToTokens } from './tokens';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter, OutputParameters } from '@microsoft/parsers-logic-apps';
+import type {
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  OutputParameter,
+  OutputParameters,
+  Schema,
+} from '@microsoft/parsers-logic-apps';
 import {
   create,
   OutputKeys,
@@ -342,17 +349,26 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
 
       const currentSchemaValue = getObjectPropertyValue(updatedManifest.properties.outputs, outputLocation);
 
+      const inputSchema = updatedManifest.properties?.inputs?.properties?.schema;
+      const isRequestApiConnectionTrigger =
+        'x-ms-editor-options' in inputSchema ? inputSchema['x-ms-editor-options'].isRequestApiConnectionTrigger : undefined;
+
+      let schemaValue: Schema;
+      let shouldMerge: boolean;
       // if schema contains static object returned from RP, merge the current schema value and new schema value
-      if (schemaToReplace && 'rows' in schemaToReplace) {
-        if (!Object.keys(schemaToReplace.rows.items.properties) !== undefined && 'rows' in currentSchemaValue) {
-          safeSetObjectPropertyValue(
-            updatedManifest.properties.outputs,
-            outputLocation,
-            { ...currentSchemaValue, ...schemaToReplace },
-            true
-          );
+      if (isRequestApiConnectionTrigger && schemaToReplace && 'rows' in schemaToReplace) {
+        if ('rows' in currentSchemaValue) {
+          schemaValue = { ...currentSchemaValue, ...schemaToReplace };
+          shouldMerge = true;
+        } else {
+          schemaValue = currentSchemaValue;
+          shouldMerge = false;
         }
-      } else safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, { ...currentSchemaValue, ...schemaToReplace });
+      } else {
+        schemaValue = { ...currentSchemaValue, ...schemaToReplace };
+        shouldMerge = false;
+      }
+      safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, schemaValue, shouldMerge);
     }
   }
 
