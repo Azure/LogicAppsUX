@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.58.0",
+  "version": "2.60.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -121,7 +121,7 @@
     "react-remark": "2.1.0",
     "react-router-dom": "6.4.1",
     "react-use": "17.4.0",
-    "reactflow": "^11.6.1",
+    "reactflow": "^11.8.2",
     "regenerator-runtime": "0.13.9",
     "request": "^2.88.2",
     "request-promise": "^4.2.4",

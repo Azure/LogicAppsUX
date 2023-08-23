@@ -55,6 +55,7 @@ import {
   replaceTemplatePlaceholders,
   unmap,
   filterRecord,
+  excludePathValueFromTarget,
 } from '@microsoft/utils-logic-apps';
 import merge from 'lodash.merge';
 
@@ -568,10 +569,9 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
   if (!swapMap?.length) {
     return parametersValue;
   }
-
   let finalValue = clone(parametersValue);
   for (const { source, target } of swapMap) {
-    const value = getObjectPropertyValue(parametersValue, source);
+    const value = { ...excludePathValueFromTarget(parametersValue, source, target), ...getObjectPropertyValue(parametersValue, source) };
     deleteObjectProperty(finalValue, source);
     finalValue = !target.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, target, value);
   }

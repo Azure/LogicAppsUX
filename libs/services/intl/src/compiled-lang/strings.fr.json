@@ -1045,6 +1045,16 @@
       "value": "Corps"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "Icône de connecteur "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1283,6 +1293,12 @@
     {
       "type": 0,
       "value": "Type de données"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Sélectionner une fonction depuis"
     }
   ],
   "73iM9+": [
@@ -6888,6 +6904,12 @@
       "value": "Cette valeur contient une valeur incorrecte"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7437,6 +7459,12 @@
     {
       "type": 0,
       "value": "Mode d’exécution sans état :"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Liste déroulante pour sélectionner le chemin d’accès au fichier"
     }
   ],
   "lhL/KL": [
@@ -8368,6 +8396,20 @@
     {
       "type": 0,
       "value": "Entrez une valeur pour le paramètre."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Fichiers introuvables dans "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", enregistrez XSLT dans le chemin d’accès spécifié pour utiliser cette fonction"
     }
   ],
   "raBiud": [

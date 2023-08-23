@@ -1045,6 +1045,20 @@
       "value": "Brödtext"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "Ikon för "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " anslutning"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1283,6 +1297,12 @@
     {
       "type": 0,
       "value": "Datatyp"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Välj funktion från"
     }
   ],
   "73iM9+": [
@@ -6813,6 +6833,12 @@
       "value": "Det här innehåller ett ogiltigt värde"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7351,6 +7377,12 @@
     {
       "type": 0,
       "value": "Tillståndslöst körningsläge:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Listruta för att välja filsökväg"
     }
   ],
   "lhL/KL": [
@@ -8267,6 +8299,20 @@
     {
       "type": 0,
       "value": "Inget värde för parameter."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Inga filer hittades i "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ". Spara XSLT på den angivna sökvägen om du vill använda den här funktionen"
     }
   ],
   "raBiud": [

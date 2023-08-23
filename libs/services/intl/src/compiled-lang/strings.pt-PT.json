@@ -1045,6 +1045,16 @@
       "value": "Corpo"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "ícone do conector de "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1283,6 +1293,12 @@
     {
       "type": 0,
       "value": "Tipo de dados"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Selecionar função a partir de"
     }
   ],
   "73iM9+": [
@@ -6896,6 +6912,12 @@
       "value": "Contém um valor inválido"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7445,6 +7467,12 @@
     {
       "type": 0,
       "value": "Modo de execução sem estado:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Lista pendente para selecionar caminho de ficheiro"
     }
   ],
   "lhL/KL": [
@@ -8376,6 +8404,20 @@
     {
       "type": 0,
       "value": "Introduza o valor para o parâmetro."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Não foram encontrados ficheiros no caminho "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ". Guarde o ficheiro XSLT no caminho especificado para utilizar esta função"
     }
   ],
   "raBiud": [

@@ -1049,6 +1049,16 @@
       "value": "Body"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector icon"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -6833,6 +6843,12 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
     }
   ],
   "iB8YKD": [
