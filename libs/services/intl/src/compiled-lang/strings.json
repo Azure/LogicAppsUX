@@ -5,6 +5,12 @@
       "value": "Testing"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -363,16 +369,6 @@
     {
       "type": 0,
       "value": "Required. The string that may contain the value."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
     }
   ],
   "0uj1Li": [
@@ -903,6 +899,20 @@
       "value": "Required. The lowest integer that can be returned."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is required."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -979,16 +989,6 @@
       "value": "Button to add dynamic content if TokenPicker is hidden"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is required."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1047,6 +1047,16 @@
     {
       "type": 0,
       "value": "Body"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector icon"
     }
   ],
   "5SAQOb": [
@@ -1171,6 +1181,12 @@
       "value": "Cancel"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1257,6 +1273,20 @@
       "value": "Required. The value for which to find the index."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1267,6 +1297,12 @@
     {
       "type": 0,
       "value": "Data type"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -1929,10 +1965,10 @@
       "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2315,12 +2351,6 @@
     {
       "type": 0,
       "value": "Duration"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Custom value does not match the schema node's type"
     }
   ],
   "Dhu3IS": [
@@ -2961,20 +2991,6 @@
       "value": "Enter a valid datetime."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Enter a valid value for "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2983,20 +2999,6 @@
     {
       "type": 0,
       "value": " Install Gateway"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Remove parameter \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" and its value"
     }
   ],
   "HzS2gJ": [
@@ -3101,12 +3103,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Advanced options"
     }
   ],
   "IsVhkH": [
@@ -3913,12 +3909,6 @@
       "value": "Connection Name"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Enter custom value"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4079,12 +4069,6 @@
       "value": "Required. This value is the number of integers that is in the array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Default value"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4189,12 +4173,6 @@
     {
       "type": 0,
       "value": "Connection errors"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Do not generate if no value"
     }
   ],
   "Pudllg": [
@@ -4387,12 +4365,6 @@
       "value": "(UTC+12:00) Coordinated Universal Time+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Enter a valid condition."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4545,12 +4517,6 @@
     {
       "type": 0,
       "value": "Convert the parameter to an integer"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "The input node type doesn't match the schema node's type."
     }
   ],
   "SLJkRn": [
@@ -5019,6 +4985,20 @@
       "value": "Enter a valid JSON."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5243,6 +5223,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition statement."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5259,6 +5245,12 @@
     {
       "type": 0,
       "value": "Remove"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
     }
   ],
   "WgoP7R": [
@@ -5663,12 +5655,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -6061,6 +6047,12 @@
       "value": "panel"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6131,12 +6123,6 @@
     {
       "type": 0,
       "value": "Bold (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -6859,6 +6845,12 @@
       "value": "This contains an invalid value"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7397,6 +7389,12 @@
     {
       "type": 0,
       "value": "Stateless run mode:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8319,6 +8317,20 @@
       "value": "Enter value for parameter."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", please save XSLT to specified path to use this function"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8425,6 +8437,12 @@
     {
       "type": 0,
       "value": "Add Case"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
@@ -8883,6 +8901,20 @@
     {
       "type": 0,
       "value": "Ask question related to your workflow or Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remove parameter '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' and its value"
     }
   ],
   "uzsleE": [

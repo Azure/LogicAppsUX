@@ -1,7 +1,7 @@
+import StopGenerating from '../images/StopGenerating.svg';
 import { animations } from './animations';
 import type { IContainerWithProgressBarStyles } from './containerWithProgressBar';
 import { ContainerWithProgressBar } from './containerWithProgressBar';
-import StopGenerating from '../images/StopGenerating.svg';
 import type { IStyle } from '@fluentui/react';
 import { getTheme, keyframes, mergeStyleSets } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
@@ -28,9 +28,9 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
   const intlText = {
     stopButtonAltText: intl.formatMessage({
       defaultMessage: 'Stop',
-      description: 'Chatbot stop generating flow button alt text'
-    })
-  }
+      description: 'Chatbot stop generating flow button alt text',
+    }),
+  };
   const classNames = mergeStyleSets(getStyles(), styles);
   return (
     <div className={animations.progressCardEnter}>

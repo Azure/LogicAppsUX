@@ -80,6 +80,7 @@ import {
   DynamicCallStatus,
   ValueSegmentType,
   TokenType,
+  AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type {
@@ -119,6 +120,7 @@ import {
   SchemaProcessor,
   SegmentType,
   Visibility,
+  PropertyName,
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
@@ -342,7 +344,7 @@ function shouldSoftHide(parameter: ResolvedParameter): boolean {
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
-  return !!parameter?.value;
+  return parameter?.value !== undefined;
 }
 
 export function getParameterEditorProps(
@@ -361,7 +363,10 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
+    } else if (
+      (schemaEnum || schema?.enum || (schemaEnum && schema?.[ExtensionProperties.CustomEnum])) &&
+      !equals(visibility, Visibility.Internal)
+    ) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
@@ -468,6 +473,7 @@ const convertStringToInputParameter = (
     type: 'any',
     hideInUI: false,
     value: newValue,
+    suppressCasting: true,
   };
 };
 
@@ -705,7 +711,9 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
             aadOAuth: {
               oauthTenant: loadParameterValue(convertStringToInputParameter(value.tenant)),
               oauthAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
+              oauthAuthority: loadParameterValue(convertStringToInputParameter(value.authority)),
               oauthClientId: loadParameterValue(convertStringToInputParameter(value.clientId)),
+              oauthType: loadOauthType(value),
               oauthTypeSecret: loadParameterValue(convertStringToInputParameter(value.secret)),
               oauthTypeCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
               oauthTypeCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
@@ -741,6 +749,10 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
 
   return emptyValue;
 }
+
+const loadOauthType = (value: any): AuthenticationOAuthType => {
+  return value.pfx ? AuthenticationOAuthType.CERTIFICATE : AuthenticationOAuthType.SECRET;
+};
 
 interface ParameterEditorProps {
   editor?: string;
@@ -1818,6 +1830,16 @@ async function loadDynamicContentForInputsInNode(
             dispatch
           );
           const allInputParameters = getAllInputParameters(allInputs);
+
+          // In the case of retry policy, it is treated as an input
+          // avoid pushing a parameter for it as it is already being
+          // handled in the settings store.
+          // NOTE: this could be expanded to more settings that are treated as inputs.
+          const newOperationDefinition = clone(operationDefinition);
+          if (newOperationDefinition.inputs?.[PropertyName.RETRYPOLICY]) {
+            delete newOperationDefinition.inputs.retryPolicy;
+          }
+
           const allInputKeys = allInputParameters.map((param) => param.parameterKey);
           const schemaInputs = inputSchema
             ? await getDynamicInputsFromSchema(
@@ -1825,7 +1847,7 @@ async function loadDynamicContentForInputsInNode(
                 info.parameter as InputParameter,
                 operationInfo,
                 allInputKeys,
-                operationDefinition
+                newOperationDefinition
               )
             : [];
           const inputParameters = schemaInputs.map((input) => ({
@@ -2170,7 +2192,12 @@ const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat:
   return stringValue;
 };
 
-export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
+export const recurseSerializeCondition = (
+  parameter: ParameterInfo,
+  editorViewModel: any,
+  isDefinitionValue: boolean,
+  errors?: string[]
+): any => {
   const returnVal: any = {};
   const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
   if (editorViewModel.type === GroupType.ROW) {
@@ -2185,21 +2212,25 @@ export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewMo
       operator = RowDropdownOptions.EQUALS;
     }
 
-    const stringifiedOperand1 =
-      getJSONValueFromString(
-        parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue),
-        'any'
-      ) ?? '';
-    const stringifiedOperand2 =
-      getJSONValueFromString(
-        parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue),
-        'any'
-      ) ?? '';
+    const operand1String = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
+    const operand2String = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
+    if (errors && errors.length === 0 && (operand1String || operand2String)) {
+      if (!operand1String || !operand2String) {
+        errors.push(
+          getIntl().formatMessage({
+            defaultMessage: 'Enter a valid condition statement.',
+            description: 'Error validation message for invalid condition statement',
+          })
+        );
+      }
+    }
+    const JSONOperand1 = getJSONValueFromString(operand1String, 'any') ?? '';
+    const JSONOperand2 = getJSONValueFromString(operand2String, 'any') ?? '';
     if (not) {
       returnVal.not = {};
-      returnVal['not'][operator] = [stringifiedOperand1, stringifiedOperand2];
+      returnVal['not'][operator] = [JSONOperand1, JSONOperand2];
     } else {
-      returnVal[operator] = [stringifiedOperand1, stringifiedOperand2];
+      returnVal[operator] = [JSONOperand1, JSONOperand2];
     }
   } else {
     let { condition, items } = editorViewModel;
@@ -2217,7 +2248,7 @@ export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewMo
       ];
     }
     returnVal[condition] = items.map((item: any) => {
-      return recurseSerializeCondition(parameter, item, isDefinitionValue);
+      return recurseSerializeCondition(parameter, item, isDefinitionValue, errors);
     });
   }
   return returnVal;

@@ -22,6 +22,7 @@ import { changePanelNode, setSelectedNodeId, showDefaultTabs } from '../../core/
 import {
   useAllOperations,
   useBrandColor,
+  useConnectorName,
   useIconUri,
   useIsConnectionRequired,
   useNodeConnectionName,
@@ -69,6 +70,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const errorInfo = useOperationErrorInfo(id);
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
+  const connectorName = useConnectorName(operationInfo);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
@@ -106,7 +108,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch]);
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName]);
 
   const dependencies = useTokenDependencies(id);
 
@@ -289,6 +291,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           id={id}
           connectionRequired={isConnectionRequired}
           connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
+          connectorName={connectorName?.result}
           commentBox={comment}
           drag={drag}
           dragPreview={dragPreview}

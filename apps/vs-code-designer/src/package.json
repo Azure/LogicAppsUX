@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.52.0",
+  "version": "2.60.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -34,7 +34,7 @@
         {
           "command": "azureLogicAppsStandard.createLogicApp",
           "title": "Create Logic App in Azure...",
-          "type": "microsoft.web/sites",
+          "type": "LogicApp",
           "detail": "To create and run automated workflows with little to no code."
         }
       ],

@@ -63,7 +63,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       IsEncrypted: false,
       Values: {
         AzureWebJobsSecretStorageType: 'Files',
-        FUNCTIONS_WORKER_RUNTIME: os.platform() === 'win32' ? WorkerRuntime.DotnetIsolated : WorkerRuntime.Node,
+        FUNCTIONS_WORKER_RUNTIME: WorkerRuntime.Node,
         APP_KIND: logicAppKind,
       },
     };

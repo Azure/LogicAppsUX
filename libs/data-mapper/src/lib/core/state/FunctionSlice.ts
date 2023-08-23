@@ -4,10 +4,12 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export interface FunctionState {
   availableFunctions: FunctionData[];
+  customXsltFilePaths: string[];
 }
 
 export const initialFunctionState: FunctionState = {
   availableFunctions: [],
+  customXsltFilePaths: [],
 };
 
 export const functionSlice = createSlice({
@@ -17,9 +19,12 @@ export const functionSlice = createSlice({
     loadFunctions: (state, action: PayloadAction<FunctionData[]>) => {
       state.availableFunctions = action.payload;
     },
+    loadCustomXsltFilePaths: (state, action: PayloadAction<string[]>) => {
+      state.customXsltFilePaths = action.payload;
+    },
   },
 });
 
-export const { loadFunctions } = functionSlice.actions;
+export const { loadFunctions, loadCustomXsltFilePaths } = functionSlice.actions;
 
 export default functionSlice.reducer;

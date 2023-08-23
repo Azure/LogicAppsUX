@@ -1,4 +1,5 @@
 import type { RootState } from '../../state/store';
+import { CustomConnectionParameterEditorService } from './customConnectionParameterEditorService';
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
@@ -126,9 +127,13 @@ const runService = new StandardRunService({
 
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
-const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
-
+const hostService = {
+  fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
+  openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
+};
 const editorService = new CustomEditorService();
+
+const connectionParameterEditorService = new CustomConnectionParameterEditorService();
 
 export const LocalDesigner = () => {
   const {
@@ -145,6 +150,7 @@ export const LocalDesigner = () => {
     areCustomEditorsEnabled,
   } = useSelector((state: RootState) => state.workflowLoader);
   editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
+  connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const designerProviderProps = {
     services: {
       connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
@@ -158,6 +164,7 @@ export const LocalDesigner = () => {
       hostService,
       runService,
       editorService,
+      connectionParameterEditorService,
     },
     readOnly: isReadOnly,
     isMonitoringView,
