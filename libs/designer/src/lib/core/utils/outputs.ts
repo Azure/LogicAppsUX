@@ -349,9 +349,8 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
 
       const currentSchemaValue = getObjectPropertyValue(updatedManifest.properties.outputs, outputLocation);
 
-      const inputSchema = updatedManifest.properties?.inputs?.properties?.schema;
       const isRequestApiConnectionTrigger =
-        'x-ms-editor-options' in inputSchema ? inputSchema['x-ms-editor-options'].isRequestApiConnectionTrigger : undefined;
+        !!updatedManifest.properties?.inputs?.properties?.schema?.['x-ms-editor-options']?.isRequestApiConnectionTrigger;
 
       let schemaValue: Schema;
       let shouldMerge: boolean;
@@ -365,8 +364,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           shouldMerge = false;
         }
       } else {
-        schemaValue = { ...currentSchemaValue, ...schemaToReplace };
-        shouldMerge = false;
+        continue;
       }
       safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, schemaValue, shouldMerge);
     }
