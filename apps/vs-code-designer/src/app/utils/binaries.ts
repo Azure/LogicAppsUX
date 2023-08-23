@@ -37,7 +37,7 @@ export async function validateOrInstallBinaries(context: IActionContext) {
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification, // Location of the progress indicator
-      title: 'Validating Dependencies Binaries', // Title displayed in the progress notification
+      title: 'Validating Dependency Binaries', // Title displayed in the progress notification
       cancellable: true, // Allow the user to cancel the task
     },
     async (progress, token) => {

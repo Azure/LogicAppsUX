@@ -190,7 +190,7 @@ export const defaultProductionBundleUrl =
 export enum DependencyVersion {
   dotnet6 = '6.0.412',
   funcCoreTools = '4.0.5198',
-  nodeJs = '16.20.2',
+  nodeJs = '18.17.1',
 }
 
 // .NET
