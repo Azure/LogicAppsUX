@@ -1037,6 +1037,16 @@
       "value": "Gövde"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " bağlayıcı simgesi"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1275,6 +1285,12 @@
     {
       "type": 0,
       "value": "Veri türü"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "İşlev seçin"
     }
   ],
   "73iM9+": [
@@ -6805,6 +6821,12 @@
       "value": "Bu geçersiz bir değer içeriyor"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7339,6 +7361,12 @@
     {
       "type": 0,
       "value": "Durum bilgisi olmayan çalıştırma modu:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dosya yolu seçmek için açılan liste"
     }
   ],
   "lhL/KL": [
@@ -8259,6 +8287,16 @@
     {
       "type": 0,
       "value": "Parametre için değer girin."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": " içinde dosya bulunamadı, bu işlevi kullanmak için lütfen XSLT'yi belirtilen yola kaydedin"
     }
   ],
   "raBiud": [

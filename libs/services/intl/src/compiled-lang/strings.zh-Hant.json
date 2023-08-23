@@ -1045,6 +1045,16 @@
       "value": "本文"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 連接器圖示"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1283,6 +1293,12 @@
     {
       "type": 0,
       "value": "資料類型"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "從以下路徑選取函式:"
     }
   ],
   "73iM9+": [
@@ -6762,6 +6778,12 @@
       "value": "這包含無效值"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7281,6 +7303,12 @@
     {
       "type": 0,
       "value": "無狀態執行模式:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "用於選取檔案路徑的下拉式清單"
     }
   ],
   "lhL/KL": [
@@ -8190,6 +8218,20 @@
     {
       "type": 0,
       "value": "輸入參數的值。"
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": " 中找不到檔案，請將 XSLT 儲存到指定的路徑以使用此函式"
     }
   ],
   "raBiud": [

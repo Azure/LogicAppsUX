@@ -10,6 +10,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { inputFromHandleId } from '../../utils/Connection.Utils';
+import { hasOnlyCustomInputType } from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
@@ -128,6 +129,8 @@ export const FunctionList = () => {
         if (inlineFunctionInputOutputKeys.length === 2) {
           // Functions with no inputs shouldn't be shown when adding inline functions
           functionsList = functionsList.filter((functionNode) => functionNode.inputs.length !== 0);
+          // Functions with only custom input shouldn't be shown when adding inline either
+          functionsList = functionsList.filter((functionNode) => !hasOnlyCustomInputType(functionNode));
         }
 
         if (searchTerm) {

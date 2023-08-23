@@ -62,7 +62,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
       IsEncrypted: false,
       Values: {
         AzureWebJobsSecretStorageType: 'Files',
-        FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+        FUNCTIONS_WORKER_RUNTIME: 'node',
         ProjectDirectoryPath: designerProjPath,
       },
     };

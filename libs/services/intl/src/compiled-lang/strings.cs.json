@@ -1045,6 +1045,16 @@
       "value": "Obsah"
     }
   ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "Ikona konektoru "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1283,6 +1293,12 @@
     {
       "type": 0,
       "value": "Datový typ"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Vybrat funkci z"
     }
   ],
   "73iM9+": [
@@ -6939,6 +6955,12 @@
       "value": "Obsahuje neplatnou hodnotu"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7499,6 +7521,12 @@
     {
       "type": 0,
       "value": "Bezstavový režim spuštění:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Rozevírací seznam pro výběr cesty k souboru"
     }
   ],
   "lhL/KL": [
@@ -8441,6 +8469,20 @@
     {
       "type": 0,
       "value": "Zadejte hodnotu parametru."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "V cestě "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": " nebyly nalezeny žádné soubory. Chcete-li tuto funkci použít, uložte soubor XSLT do zadané cesty."
     }
   ],
   "raBiud": [

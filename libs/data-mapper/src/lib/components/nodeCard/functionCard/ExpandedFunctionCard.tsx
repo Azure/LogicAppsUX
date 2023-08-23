@@ -3,6 +3,7 @@ import { customTokens } from '../../../core';
 import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import { generateInputHandleId } from '../../../utils/Connection.Utils';
+import { hasOnlyCustomInputType } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { isNodeHighlighted } from '../../../utils/ReactFlow.Util';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
@@ -139,16 +140,22 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
           return (
             <StackItem key={input.name}>
               <div key={input.name} style={inputBodyStyles}>
-                <Handle
-                  id={input.name}
-                  type="target"
-                  position={Position.Left}
-                  style={{
-                    top: `${handleTop}px`,
-                    backgroundColor:
-                      typeof curInput === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
-                  }}
-                />
+                {!hasOnlyCustomInputType(functionData) && (
+                  <Handle
+                    id={input.name}
+                    type="target"
+                    position={Position.Left}
+                    style={{
+                      top: `${handleTop}px`,
+                      backgroundColor:
+                        typeof curInput === 'string'
+                          ? input
+                            ? tokens.colorPaletteBlueBackground2
+                            : tokens.colorPaletteRedBackground3
+                          : '',
+                    }}
+                  />
+                )}
                 {generateInputName(input.name, input.isOptional, input.tooltip)}
               </div>
             </StackItem>
