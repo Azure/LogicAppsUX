@@ -1047,12 +1047,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Ikona łącznika "
     },
     {
-      "type": 0,
-      "value": " connector icon"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Wybierz funkcję z"
     }
   ],
   "73iM9+": [
@@ -6967,6 +6967,12 @@
       "value": "To zawiera nieprawidłową wartość"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7548,7 +7554,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Lista rozwijana umożliwiająca wybranie ścieżki pliku"
     }
   ],
   "lhL/KL": [
@@ -8496,7 +8502,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Nie znaleziono plików w ścieżce "
     },
     {
       "type": 1,
@@ -8504,7 +8510,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": ". Zapisz plik XSLT w określonej ścieżce, aby użyć tej funkcji"
     }
   ],
   "raBiud": [

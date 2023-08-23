@@ -1044,7 +1044,7 @@
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": " 커넥터 아이콘"
     }
   ],
   "5SAQOb": [
@@ -1290,7 +1290,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "다음에서 함수 선택"
     }
   ],
   "73iM9+": [
@@ -6758,6 +6758,12 @@
       "value": "잘못된 값이 포함되어 있습니다."
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7278,7 +7284,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "파일 경로를 선택하는 드롭다운"
     }
   ],
   "lhL/KL": [
@@ -8192,16 +8198,12 @@
   ],
   "rSa1Id": [
     {
-      "type": 0,
-      "value": "No files found in "
-    },
-    {
       "type": 1,
       "value": "filePath"
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": "에서 파일을 찾을 수 없습니다. 이 함수를 사용하려면 지정된 경로에 XSLT를 저장하세요."
     }
   ],
   "raBiud": [

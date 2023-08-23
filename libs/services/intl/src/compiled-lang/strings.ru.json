@@ -1047,12 +1047,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Значок соединителя "
     },
     {
-      "type": 0,
-      "value": " connector icon"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Выберите функцию из"
     }
   ],
   "73iM9+": [
@@ -6963,6 +6963,12 @@
       "value": "Содержится недопустимое значение"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7532,7 +7538,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Раскрывающийся список для выбора пути к файлу"
     }
   ],
   "lhL/KL": [
@@ -8480,7 +8486,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Не найдены файлы в "
     },
     {
       "type": 1,
@@ -8488,7 +8494,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": ". Сохраните XSLT в указанном пути, чтобы использовать эту функцию"
     }
   ],
   "raBiud": [
