@@ -300,6 +300,7 @@ export const TokenField = ({
           supportedTypes={editorOptions?.supportedTypes}
           useStaticInputs={editorOptions?.useStaticInputs}
           initialValue={value}
+          isRequestApiConnectionTrigger={editorOptions?.isRequestApiConnectionTrigger}
           onChange={onValueChange}
         />
       );
