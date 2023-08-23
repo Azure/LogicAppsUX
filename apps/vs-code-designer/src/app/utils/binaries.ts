@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DependencyVersion, defaultDependencyPathValue, dependenciesPathSettingKey, funcPackageName } from '../../constants';
+import {
+  DependencyVersion,
+  Platform,
+  defaultDependencyPathValue,
+  dependenciesPathSettingKey,
+  dotnetDependencyName,
+  funcPackageName,
+} from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { validateDotNetIsLatest } from '../commands/dotnet/validateDotNetIsLatest';
@@ -13,7 +20,7 @@ import { getDependenciesVersion } from './bundleFeed';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import * as AdmZip from 'adm-zip';
 import axios from 'axios';
@@ -24,19 +31,37 @@ import * as request from 'request';
 import * as semver from 'semver';
 import * as tar from 'tar';
 import * as vscode from 'vscode';
+import type { MessageItem } from 'vscode';
 
 export async function validateOrInstallBinaries(context: IActionContext) {
-  if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
-    await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
-    context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
-  }
+  await vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification, // Location of the progress indicator
+      title: 'Validating Dependencies Binaries', // Title displayed in the progress notification
+      cancellable: true, // Allow the user to cancel the task
+    },
+    async (progress, token) => {
+      token.onCancellationRequested(() => {
+        // Handle cancellation logic
+        executeCommand(ext.outputChannel, undefined, 'echo', 'validateOrInstallBinaries was cancelled');
+      });
+      progress.report({ increment: 10, message: `Get Settings` });
+      if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
+        await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
+        context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
+      }
+      progress.report({ increment: 10, message: `Get Dependency Version from CDN` });
+      const dependenciesVersions: IBundleDependencyFeed = await getDependenciesVersion(context);
+      context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
 
-  const dependenciesVersions: IBundleDependencyFeed = await getDependenciesVersion(context);
-  context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
-
-  validateNodeJsIsLatest(dependenciesVersions?.nodejs);
-  validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
-  validateDotNetIsLatest(dependenciesVersions?.dotnet);
+      progress.report({ increment: 20, message: `NodeJs` });
+      await validateNodeJsIsLatest(dependenciesVersions?.nodejs);
+      progress.report({ increment: 20, message: `Azure Function Core Tools` });
+      await validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
+      progress.report({ increment: 20, message: `DotNet SDK` });
+      await validateDotNetIsLatest(dependenciesVersions?.dotnet);
+    }
+  );
 }
 
 /**
@@ -78,6 +103,13 @@ export async function downloadAndExtractBinaries(binariesUrl: string, targetFold
 
     // Extract to targetFolder
     extractBinaries(binariesFilePath, targetFolder, dependencyName);
+
+    // Build dotnet source code
+    if (dependencyName == dotnetDependencyName) {
+      await dotNetBuild(targetFolder, dependencyName);
+    } else {
+      vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+    }
   } catch (error) {
     vscode.window.showErrorMessage(`Error downloading and extracting the ${dependencyName} zip: ${error.message}`);
     fs.rmSync(targetFolder, { recursive: true });
@@ -172,7 +204,6 @@ export function getNodeJsBinariesReleaseUrl(version: string, osPlatform: string,
     return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.tar.gz`;
   }
 
-  // https://nodejs.org/dist/v18.17.1/node-v18.17.1-win-x64.zip
   return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.zip`;
 }
 
@@ -180,28 +211,8 @@ export function getFunctionCoreToolsBinariesReleaseUrl(version: string, osPlatfo
   return `https://github.com/Azure/azure-functions-core-tools/releases/download/${version}/Azure.Functions.Cli.${osPlatform}-${arch}.${version}.zip`;
 }
 
-export function getDotNetBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
-  // Webscrape?
-  // Source Code. Would need to run the build script - Not sure what dependencies are installed and where ...
-  // https://github.com/dotnet/sdk/archive/refs/tags/v6.0.412.zip
-
-  // This is a redirect and not the actual ... Is there a way to get the redirect link...
-  // https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.412-windows-x64-binaries
-  // https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.412-linux-x64-binaries
-  // https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.412-macos-x64-binaries
-
-  // https://download.visualstudio.microsoft.com/download/pr/28be1206-08c5-44bb-ab3d-6775bc03b392/2146d7b8060998ea83d381ee80471557/dotnet-sdk-6.0.412-win-x64.zip
-  // https://download.visualstudio.microsoft.com/download/pr/8eed69b0-0f3a-4d43-a47d-37dd67ece54d/0f2a9e86ff24fbd7bbc129b2c18851fe/dotnet-sdk-6.0.412-linux-x64.tar.gz
-  // https://download.visualstudio.microsoft.com/download/pr/398d17e1-bdee-419a-b50e-e0a1841c8a3c/2e8177e8c2c46af1f34094369f2219be/dotnet-sdk-6.0.412-osx-x64.tar.gz
-
-  executeCommand(
-    ext.outputChannel,
-    undefined,
-    'echo',
-    `https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-${version}-${osPlatform}-${arch}-binaries`
-  );
-
-  return 'https://download.visualstudio.microsoft.com/download/pr/3d28b406-bdbd-423e-a173-015215ae83d5/abf5701bb34a153e073409858758eea1/dotnet-sdk-6.0.413-win-x64.zip';
+export function getDotNetBinariesReleaseUrl(version: string): string {
+  return `https://github.com/dotnet/sdk/archive/refs/tags/v${version}.zip`;
 }
 
 export function getCpuArchitecture() {
@@ -270,8 +281,55 @@ function extractBinaries(binariesFilePath: string, targetFolder: string, depende
       cwd: targetFolder,
     });
   }
+  cleanupContainerFolder(targetFolder);
+  executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} completed successfully.`);
+}
 
-  // Clean up if there is only a container folder
+function checkMajorVersion(version: string, majorVersion: string): boolean {
+  return semver.satisfies(version, `^${majorVersion}.x`);
+}
+
+/**
+ * Runs the build script.
+ * @param targetFolder
+ * @param dependencyName
+ */
+async function dotNetBuild(targetFolder: string, dependencyName: string) {
+  try {
+    switch (process.platform) {
+      case Platform.windows:
+        await executeCommand(ext.outputChannel, targetFolder, 'build.cmd');
+        break;
+
+      default:
+        await executeCommand(ext.outputChannel, targetFolder, 'build.sh');
+    }
+  } catch (error) {
+    // Output shows errors but .dotnet sdk exe runs - need to test
+    // Seems comparable to the manual binary installation. Maybe clean up the folder...
+    if (!fs.existsSync(path.join(targetFolder, '.dotnet'))) {
+      const errorMessage: string = localize('buildErrorDotNet', `Error building ${dependencyName}: ${error}`);
+      fs.rmSync(targetFolder, { recursive: true });
+      let result: MessageItem;
+      do {
+        result = await vscode.window.showWarningMessage(errorMessage, DialogResponses.learnMore);
+        if (result == DialogResponses.learnMore) {
+          await openUrl('https://dotnet.microsoft.com/en-us/download/dotnet/6.0');
+        }
+      } while (result === DialogResponses.learnMore);
+    }
+  } finally {
+    // Build task creates .NET Host processes ...
+    await executeCommand(undefined, targetFolder, 'taskkill /f /im dotnet.exe');
+  }
+}
+
+/**
+ * Cleans up by removing Container Folder:
+ * path/to/folder/container/files --> /path/to/folder/files
+ * @param targetFolder
+ */
+function cleanupContainerFolder(targetFolder: string) {
   const extractedContents = fs.readdirSync(targetFolder);
   if (extractedContents.length === 1 && fs.statSync(path.join(targetFolder, extractedContents[0])).isDirectory()) {
     const containerFolderPath = path.join(targetFolder, extractedContents[0]);
@@ -288,10 +346,4 @@ function extractBinaries(binariesFilePath: string, targetFolder: string, depende
       fs.rmSync(containerFolderPath, { recursive: true });
     }
   }
-  executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} completed successfully.`);
-  vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-}
-
-function checkMajorVersion(version: string, majorVersion: string): boolean {
-  return semver.satisfies(version, `^${majorVersion}.x`);
 }

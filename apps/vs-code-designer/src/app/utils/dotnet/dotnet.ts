@@ -183,7 +183,7 @@ export function getDotNetCommand(): string {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const binariesExist = fs.existsSync(dotNetBinariesPath);
-  const command = binariesExist ? `${dotNetBinariesPath}\\${ext.dotNetCliPath}` : ext.dotNetCliPath;
+  const command = binariesExist ? `${dotNetBinariesPath}\\.dotnet\\${ext.dotNetCliPath}` : ext.dotNetCliPath;
   executeCommand(ext.outputChannel, undefined, 'echo', `${command}`);
   return command;
 }

@@ -29,5 +29,6 @@ export async function installNodeJs(context: IActionContext, majorVersion?: stri
       azureFunctionCoreToolsReleasesUrl = getNodeJsBinariesReleaseUrl(version, 'darwin', arch);
       break;
   }
-  downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, nodeJsDependencyName);
+
+  await downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, nodeJsDependencyName);
 }
