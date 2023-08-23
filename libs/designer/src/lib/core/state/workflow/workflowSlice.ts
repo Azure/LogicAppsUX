@@ -12,7 +12,12 @@ import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
-import { updateNodeParameters, updateNodeSettings, updateStaticResults } from '../operation/operationMetadataSlice';
+import {
+  updateNodeParameters,
+  updateNodeSettings,
+  updateParameterConditionalVisibility,
+  updateStaticResults,
+} from '../operation/operationMetadataSlice';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { WorkflowKind } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
@@ -396,7 +401,8 @@ export const workflowSlice = createSlice({
         replaceId,
         updateNodeSettings,
         updateNodeConnection.fulfilled,
-        updateStaticResults
+        updateStaticResults,
+        updateParameterConditionalVisibility
       ),
       (state) => {
         state.isDirty = true;
