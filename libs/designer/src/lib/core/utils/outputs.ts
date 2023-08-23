@@ -360,11 +360,11 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           schemaValue = { ...currentSchemaValue, ...schemaToReplace };
           shouldMerge = true;
         } else {
-          schemaValue = currentSchemaValue;
-          shouldMerge = false;
+          continue;
         }
       } else {
-        continue;
+        schemaValue = { ...currentSchemaValue, ...schemaToReplace };
+        shouldMerge = false;
       }
       safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, schemaValue, shouldMerge);
     }
