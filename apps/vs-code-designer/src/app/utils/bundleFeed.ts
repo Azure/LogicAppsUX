@@ -42,15 +42,16 @@ async function getBundleDependencyFeed(
   context: IActionContext,
   bundleMetadata: IBundleMetadata | undefined
 ): Promise<IBundleDependencyFeed> {
-  const bundleId: string = (bundleMetadata && bundleMetadata.id) || defaultBundleId;
-  const projectPath: string | undefined = vscode.workspace.workspaceFolders[0].uri.fsPath;
-  const envVarUri: string | undefined =
-    process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI ??
-    (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+  const bundleId: string = (bundleMetadata && bundleMetadata?.id) || defaultBundleId;
+  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+  let envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+  if (projectPath) {
+    envVarUri = (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName)))?.Values
+      ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+  }
 
   const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
   const url = `${baseUrl}/ExtensionBundles/${bundleId}.Workflows/dependency.json`;
-
   return getJsonFeed(context, url);
 }
 

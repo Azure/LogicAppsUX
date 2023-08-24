@@ -42,7 +42,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
 
-    validateOrInstallBinaries(activateContext);
+    activateContext.telemetry.properties.lastStep = 'validateOrInstallBinaries';
+    callWithTelemetryAndErrorHandling(extensionCommand.validateOrInstallBinaries, async (actionContext: IActionContext) => {
+      await validateOrInstallBinaries(actionContext);
+    });
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
@@ -50,10 +53,12 @@ export async function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
+    activateContext.telemetry.properties.lastStep = 'registerEvent';
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
     });
 
+    activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';
     registerEvent(
       extensionCommand.validateLogicAppProjects,
       vscode.workspace.onDidChangeWorkspaceFolders,
@@ -65,8 +70,11 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
 
+    activateContext.telemetry.properties.lastStep = 'registerReportIssueCommand';
     registerReportIssueCommand(extensionCommand.reportIssue);
+    activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
+    activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());

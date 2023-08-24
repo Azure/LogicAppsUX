@@ -45,19 +45,24 @@ export async function validateOrInstallBinaries(context: IActionContext) {
         // Handle cancellation logic
         executeCommand(ext.outputChannel, undefined, 'echo', 'validateOrInstallBinaries was canceled');
       });
+      context.telemetry.properties.lastStep = 'getGlobalSetting';
       progress.report({ increment: 10, message: `Get Settings` });
       if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
         await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
         context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
       }
+      context.telemetry.properties.lastStep = 'getDependenciesVersion';
       progress.report({ increment: 10, message: `Get dependency version from CDN` });
       const dependenciesVersions: IBundleDependencyFeed = await getDependenciesVersion(context);
       context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
 
+      context.telemetry.properties.lastStep = 'validateNodeJsIsLatest';
       progress.report({ increment: 20, message: `Node Js` });
       await validateNodeJsIsLatest(dependenciesVersions?.nodejs);
+      context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
       progress.report({ increment: 20, message: `Azure Function Core Tools` });
       await validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
+      context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
       progress.report({ increment: 20, message: `.NET SDK` });
       await validateDotNetIsLatest(dependenciesVersions?.dotnet);
     }
