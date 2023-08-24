@@ -1136,6 +1136,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     });
 
     const getFirstInputReactFlowKey = (conn: Connection) => (conn.inputs[0][0] as ConnectionUnit).reactFlowKey;
+    const getSecondInputReactFlowKey = (conn: Connection) => (conn.inputs[1][0] as ConnectionUnit).reactFlowKey;
 
     //   ns0:Root:
     //    ConditionalLooping:
@@ -1145,6 +1146,69 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     //            Name: Name
 
     it('creates a simple sequence function', () => {
+      simpleMap['ns0:Root'] = {
+        Looping: {
+          '$for(reverse(/ns0:Root/Looping/Employee))': {
+            Person: {
+              Name: 'Name',
+              // Other: 'TelephoneNumber',
+            },
+          },
+        },
+      };
+
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const result = mapDefinitionDeserializer.convertFromMapDefinition();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries[0][0].startsWith('Reverse')).toBeTruthy();
+      expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee');
+
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+      expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Looping/Person');
+      expect(getFirstInputReactFlowKey(resultEntries[3][1]).startsWith('Reverse')).toBeTruthy();
+
+      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+      expect(getFirstInputReactFlowKey(resultEntries[4][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+    });
+
+    it('creates nested sequences', () => {
+      simpleMap['ns0:Root'] = {
+        Looping: {
+          '$for(reverse(distinct-values(/ns0:Root/Looping/Employee,/ns0:Root/Looping/Employee/Name)))': {
+            Person: {
+              Name: 'Name',
+            },
+          },
+        },
+      };
+
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const result = mapDefinitionDeserializer.convertFromMapDefinition();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries[0][0].startsWith('DistinctValues')).toBeTruthy();
+      expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(getSecondInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+      expect(resultEntries[1][0].startsWith('Reverse')).toBeTruthy();
+      expect(getFirstInputReactFlowKey(resultEntries[1][1]).startsWith('DistinctValues')).toBeTruthy();
+
+      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person');
+      expect(getFirstInputReactFlowKey(resultEntries[4][1]).startsWith('Reverse')).toBeTruthy();
+
+      expect(resultEntries[5][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+      // expect(getFirstInputReactFlowKey(resultEntries[4][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+    });
+
+    it('creates a simple sequence function with multiple mapped children', () => {
       simpleMap['ns0:Root'] = {
         Looping: {
           '$for(reverse(/ns0:Root/Looping/Employee))': {

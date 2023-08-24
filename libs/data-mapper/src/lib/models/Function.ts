@@ -598,5 +598,33 @@ export const functionMock: FunctionData[] = [
     description: 'Reverses the order of items in a sequence or collection.',
     tooltip: 'Reverses the order of items in a sequence or collection.',
   },
+  {
+    key: 'DistinctValues',
+    maxNumberOfInputs: 2,
+    functionName: 'distinct-values',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'Collection',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: false,
+        tooltip: 'Sequence or collection of items to use as input for retrieving distinct values.',
+        placeHolder: 'Input Collection',
+      },
+      {
+        name: 'Collation',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: false,
+        tooltip: 'Collation to be used for string comparison or blank for default.',
+        placeHolder: 'http://www.w3.org/2013/collation/UCA?lang=se',
+      },
+    ],
+    displayName: 'Distinct Values',
+    category: FunctionCategory.Collection,
+    description: 'Returns the values that appear in a collection, with duplicates eliminated.',
+    tooltip: 'Returns the values that appear in a collection, with duplicates eliminated.',
+  },
   ...pseudoFunctions,
 ];

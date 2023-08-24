@@ -425,6 +425,7 @@ export const lexThisThing = (targetKey: string): string[] => {
         i++;
         continue;
       } else {
+        // if it is a function or identifier token
         tokens.push(currentToken);
         currentToken = '';
         tokens.push(currentChar);
@@ -451,36 +452,27 @@ export const lexThisThing = (targetKey: string): string[] => {
 export const removeSequenceFunction = (tokens: string[]): string => {
   let i = 0;
   const length = tokens.length;
-  const indexToRemove: number[] = [];
-  let removeNextCloseParen = false;
+  let isSearchingForSource = false;
+  let result = '';
   while (i < length) {
+    // how do you identify the src path vs other function details
     if (tokens[i] === Reserved.for) {
-      if (i + 3 < length && tokens[i + 3] === Separators.OpenParenthesis) {
-        indexToRemove.push(i + 2);
-        indexToRemove.push(i + 3);
-        removeNextCloseParen = true;
-        // danielle account for multiple sequences
-      }
-    }
-    if (tokens[i] === Separators.CloseParenthesis && removeNextCloseParen) {
-      indexToRemove.push(i);
-      removeNextCloseParen = false;
+      // 'reverse(sort(/ns0:Root/Looping/Employee, /ns0:Root/Looping/Age)))
+      isSearchingForSource = true;
+      result = result + tokens[i] + '(';
+    } else if (isSearchingForSource && tokens[i + 1] !== '(' && tokens[i].length > 1) {
+      result = result + tokens[i] + ')' + tokens[length - 1];
+      break;
+    } else if (!isSearchingForSource) {
+      result = result + tokens[i];
     }
     i++;
-  }
-  let result = '';
-  for (let j = 0; j < length; j++) {
-    if (!indexToRemove.includes(j)) {
-      // danielle could make more efficient
-      result = result + tokens[j];
-    }
   }
   return result;
 };
 
 export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
-  const tokens = lexThisThing(targetKey);
-  let qualifiedTargetKey = removeSequenceFunction(tokens);
+  let qualifiedTargetKey = targetKey;
 
   const srcKeys: string[] = [];
 

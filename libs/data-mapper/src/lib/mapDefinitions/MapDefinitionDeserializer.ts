@@ -17,11 +17,12 @@ import {
   getTargetValueWithoutLoopsSchemaSpecific,
   lexThisThing,
   qualifyLoopRelativeSourceKeys,
+  removeSequenceFunction,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
 import { isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
-import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
+import { addSourceReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
@@ -244,8 +245,9 @@ export class MapDefinitionDeserializer {
   ) => {
     const isLoop: boolean = targetKey.includes(mapNodeParams.for);
     const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
-    const amendedTargetKey = isLoop ? qualifyLoopRelativeSourceKeys(targetKey) : targetKey;
-    let amendedSourceKey = isLoop // danielle this rearranges and combines the string
+    const sequencesRemovedTargetKey: string = isLoop ? removeSequenceFunction(lexThisThing(targetKey)) : targetKey;
+    const amendedTargetKey = isLoop ? qualifyLoopRelativeSourceKeys(sequencesRemovedTargetKey) : targetKey;
+    let amendedSourceKey = isLoop
       ? getSourceValueFromLoop(sourceNodeString, amendedTargetKey, this._sourceSchemaFlattened)
       : sourceNodeString;
     const sourceEndOfFunctionName = amendedSourceKey.indexOf('(');
@@ -368,50 +370,37 @@ export class MapDefinitionDeserializer {
           if (targetTokens[i] === Reserved.for) {
             lookForSequence = true;
           }
-          if (lookForSequence) {
-            const destinationFunc = this._functions.find((func) => func.functionName === targetTokens[i]); // danielle this is a case for tuple list
-            if (destinationFunc) {
-              const destinationKey = createReactFlowFunctionKey(destinationFunc);
-              applyConnectionValue(connections, {
-                targetNode: destinationFunc,
-                targetNodeReactFlowKey: destinationKey,
-                findInputSlot: true,
-                input: {
-                  reactFlowKey: addSourceReactFlowPrefix(targetTokens[i + 2]), // danielle this does not work for nested loops
-                  node: sourceNode as SchemaNodeExtended, // danielle fix this hack
-                },
-              });
-              const targets = targetTokens[targetTokens.length - 1];
-              const loopTarget = targets.split('/')[1];
-              const loopDestinationNode = getDestinationNode(
-                targetTokens[0] + loopTarget,
-                this._functions,
-                this._targetSchema.schemaTreeRoot
-              ) as SchemaNodeExtended;
-              applyConnectionValue(connections, {
-                targetNode: loopDestinationNode, // this needs to be the first string outside of the 'for'
-                targetNodeReactFlowKey: addTargetReactFlowPrefix(loopDestinationNode.key),
-                findInputSlot: true,
-                input: {
-                  reactFlowKey: destinationKey, // danielle this does not work for nested loops
-                  node: destinationFunc as FunctionData, // danielle fix this hack
-                },
-              });
+          if (lookForSequence && targetKey !== sequencesRemovedTargetKey) {
+            const remainingFn = splitKeyIntoChildren(targetKey);
+            if (!remainingFn[0].includes('(')) {
+              // no sequence functions
+              break;
             }
+
+            const targetEnding = targetTokens[targetTokens.length - 1];
+            const loopTarget = targetEnding.split('/')[1];
+            const loopTargetKey = targetTokens[0] + loopTarget;
+
+            remainingFn.forEach((fnInputKey) => {
+              this._parseDefinitionToConnection(fnInputKey, loopTargetKey, targetArrayDepth, connections);
+            });
+            break;
           }
         }
 
         // Make the connection between loop nodes
         if (srcLoopNode && tgtLoopNode && !conditionalLoopKey) {
           // danielle conditional for sequences
-          addParentConnectionForRepeatingElements(
-            tgtLoopNode,
-            srcLoopNode,
-            this._sourceSchemaFlattened,
-            this._targetSchemaFlattened,
-            connections,
-            indexFnRfKey
-          );
+          if (!connections[addSourceReactFlowPrefix(srcLoopNode.key)]) {
+            addParentConnectionForRepeatingElements(
+              tgtLoopNode,
+              srcLoopNode,
+              this._sourceSchemaFlattened,
+              this._targetSchemaFlattened,
+              connections,
+              indexFnRfKey
+            );
+          }
         }
 
         // This should handle cases where the index is being directly applied to the target property
@@ -437,7 +426,6 @@ export class MapDefinitionDeserializer {
       !isConditional &&
       (isLoopCase || !isKeyAnIndexValue(sourceNodeString) || (!isLoopCase && isKeyAnIndexValue(sourceNodeString)))
     ) {
-      // danielle is this true for sequences
       if (!sourceNode && amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
         applyConnectionValue(connections, {
           targetNode: destinationNode,
