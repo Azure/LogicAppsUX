@@ -1060,7 +1060,7 @@
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": " összekötő ikonja"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Függvény kiválasztása innen:"
     }
   ],
   "73iM9+": [
@@ -6841,6 +6841,12 @@
       "value": "Ez érvénytelen értéket tartalmaz"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7384,7 +7390,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Legördülő lista a fájlelérési út kiválasztásához"
     }
   ],
   "lhL/KL": [
@@ -8314,7 +8320,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Nem találhatók fájlok a megadott "
     },
     {
       "type": 1,
@@ -8322,7 +8328,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": " elérési úton, a függvény használatához mentsen XSLT-fájlt a megadott elérési útra"
     }
   ],
   "raBiud": [
