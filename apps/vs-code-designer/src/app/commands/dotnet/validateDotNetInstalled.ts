@@ -41,7 +41,7 @@ export async function validateDotNetIsInstalled(context: IActionContext, message
         await installDotNet(innerContext);
         installed = true;
       } else if (input === DialogResponses.learnMore) {
-        await openUrl('https://dotnet.microsoft.com/en-us/download/dotnet/6.0');
+        await openUrl('https://dotnet.microsoft.com/download/dotnet/6.0');
       }
     }
   });
@@ -50,11 +50,11 @@ export async function validateDotNetIsInstalled(context: IActionContext, message
   if (input === install && !installed) {
     if (
       (await context.ui.showWarningMessage(
-        localize('failedInstallDotNet', 'The .Net SDK installion has failed and will have to be installed manually.'),
+        localize('failedInstallDotNet', 'The .NET SDK installation failed. Please try manually installing instead.'),
         DialogResponses.learnMore
       )) === DialogResponses.learnMore
     ) {
-      await openUrl('https://dotnet.microsoft.com/en-us/download/dotnet/6.0');
+      await openUrl('https://dotnet.microsoft.com/download/dotnet/6.0');
     }
   }
 

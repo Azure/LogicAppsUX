@@ -50,7 +50,7 @@ export async function validateNodeJsInstalled(context: IActionContext, message: 
   if (input === install && !installed) {
     if (
       (await context.ui.showWarningMessage(
-        localize('failedInstallDotNet', 'The NodeJS installion has failed and will have to be installed manually.'),
+        localize('failedInstallDotNet', 'The Node JS installation failed. Please manually install instead.'),
         DialogResponses.learnMore
       )) === DialogResponses.learnMore
     ) {

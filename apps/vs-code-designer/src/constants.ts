@@ -182,9 +182,6 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
-export const defaultProductionBundleUrl =
-  'https://cdnforlogicappsv2.blob.core.windows.net/npathakdevex/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/index-v2.json';
-// 'https://functionscdn.azureedge.net/public/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/index-v2.json';
 
 // Fallback Dependency Versions
 export enum DependencyVersion {

@@ -37,28 +37,28 @@ export async function validateOrInstallBinaries(context: IActionContext) {
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification, // Location of the progress indicator
-      title: 'Validating Dependency Binaries', // Title displayed in the progress notification
+      title: 'Validating dependency binaries', // Title displayed in the progress notification
       cancellable: true, // Allow the user to cancel the task
     },
     async (progress, token) => {
       token.onCancellationRequested(() => {
         // Handle cancellation logic
-        executeCommand(ext.outputChannel, undefined, 'echo', 'validateOrInstallBinaries was cancelled');
+        executeCommand(ext.outputChannel, undefined, 'echo', 'validateOrInstallBinaries was canceled');
       });
       progress.report({ increment: 10, message: `Get Settings` });
       if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
         await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
         context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
       }
-      progress.report({ increment: 10, message: `Get Dependency Version from CDN` });
+      progress.report({ increment: 10, message: `Get dependency version from CDN` });
       const dependenciesVersions: IBundleDependencyFeed = await getDependenciesVersion(context);
       context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
 
-      progress.report({ increment: 20, message: `NodeJs` });
+      progress.report({ increment: 20, message: `Node Js` });
       await validateNodeJsIsLatest(dependenciesVersions?.nodejs);
       progress.report({ increment: 20, message: `Azure Function Core Tools` });
       await validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
-      progress.report({ increment: 20, message: `DotNet SDK` });
+      progress.report({ increment: 20, message: `.Net SDK` });
       await validateDotNetIsLatest(dependenciesVersions?.dotnet);
     }
   );
@@ -92,7 +92,7 @@ export async function downloadAndExtractBinaries(binariesUrl: string, targetFold
 
     // Download the compressed binaries
     await new Promise<void>((resolve, reject) => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Donwloading binaries from: ${binariesUrl}`);
+      executeCommand(ext.outputChannel, undefined, 'echo', `Downloading binaries from: ${binariesUrl}`);
       const downloadStream = request(binariesUrl).pipe(fs.createWriteStream(binariesFilePath));
       downloadStream.on('finish', () => {
         executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName}.`);
@@ -167,7 +167,7 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
         });
       })
       .catch((error) => {
-        throw Error(localize('errorNewestDotNetVersion', `Error getting latest dotnet sdk version: ${error}`));
+        throw Error(localize('errorNewestDotNetVersion', `Error getting latest .NET SDK version: ${error}`));
       });
   }
 
@@ -191,7 +191,7 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
         });
       })
       .catch((error) => {
-        throw Error(localize('errorNewestNodeJsVersion', `Error getting latest node version: ${error}`));
+        throw Error(localize('errorNewestNodeJsVersion', `Error getting latest Node JS version: ${error}`));
       });
   }
 
@@ -222,7 +222,7 @@ export function getCpuArchitecture() {
       return process.arch;
 
     default:
-      throw new Error(localize('UnsupportedCPUArchitecture', `Unsupported CPU Architecture: ${process.arch}`));
+      throw new Error(localize('UnsupportedCPUArchitecture', `Unsupported CPU architecture: ${process.arch}`));
   }
 }
 
@@ -246,7 +246,7 @@ async function readJsonFromUrl(url: string): Promise<any> {
     if (response.status === 200) {
       return response.data;
     } else {
-      throw new Error(`Request failed with status ${response.status}`);
+      throw new Error(`Request failed with status: ${response.status}`);
     }
   } catch (error) {
     vscode.window.showErrorMessage(`Error reading JSON from URL: ${error.message}`);
@@ -267,7 +267,7 @@ function getCompressionFileExtension(binariesUrl: string): string {
     return 'tar.xz';
   }
 
-  throw new Error(localize('UnsupportedCompressionFileExtension', `Unsupported Compression file extension: ${binariesUrl}`));
+  throw new Error(localize('UnsupportedCompressionFileExtension', `Unsupported compression file extension: ${binariesUrl}`));
 }
 
 function extractBinaries(binariesFilePath: string, targetFolder: string, dependencyName: string): void {
