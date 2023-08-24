@@ -174,7 +174,9 @@ export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
 export const dependenciesPathSettingKey = 'dependenciesPath';
 export const defaultDependencyPathValue = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
-export const defaultFuncCoreToolsPathValue = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'funcCoreTools');
+export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
+export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
+export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';

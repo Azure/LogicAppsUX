@@ -50,7 +50,7 @@ export async function validateDotNetIsInstalled(context: IActionContext, message
   if (input === install && !installed) {
     if (
       (await context.ui.showWarningMessage(
-        localize('failedInstallDotNet', 'The .NET SDK installation failed. Please try manually installing instead.'),
+        localize('failedInstallDotNet', 'The .NET SDK installation failed. Please manually install instead.'),
         DialogResponses.learnMore
       )) === DialogResponses.learnMore
     ) {

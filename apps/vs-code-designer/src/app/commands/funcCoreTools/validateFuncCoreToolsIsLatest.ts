@@ -36,7 +36,7 @@ export async function validateFuncCoreToolsIsLatest(majorVersion?: string): Prom
         context.telemetry.properties.outOfDateFunc = 'true';
         const message: string = localize(
           'outdatedFunctionRuntime',
-          'Update your Azure Functions Core Tools ({0}) to the latest ({1}) for the best experience.',
+          'Update your local Azure Functions Core Tools version ({0}) to the latest version ({1}) for the best experience.',
           localVersion,
           newestVersion
         );

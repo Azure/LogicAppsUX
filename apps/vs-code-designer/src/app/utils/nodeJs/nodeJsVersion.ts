@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dependenciesPathSettingKey, nodeJsDependencyName } from '../../../constants';
+import { dependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
-import { getGlobalSetting } from '../vsCodeConfig/settings';
+import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
@@ -29,18 +29,6 @@ export async function getLocalNodeJsVersion(): Promise<string | null> {
 }
 
 /**
- * Get the nodejs binaries executable or use the system nodejs executable.
- */
-export function getNodeJsCommand(): string {
-  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
-  const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
-  const binariesExist = fs.existsSync(nodeJsBinariesPath);
-  const command = binariesExist ? `${nodeJsBinariesPath}\\${ext.nodeJsCliPath}` : ext.nodeJsCliPath;
-  executeCommand(ext.outputChannel, undefined, 'echo', `${command}`);
-  return command;
-}
-
-/**
  * Get the npm binaries executable or use the system npm executable.
  */
 export function getNpmCommand(): string {
@@ -50,4 +38,26 @@ export function getNpmCommand(): string {
   const command = binariesExist ? `${nodeJsBinariesPath}\\${ext.npmCliPath}` : ext.npmCliPath;
   executeCommand(ext.outputChannel, undefined, 'echo', `${command}`);
   return command;
+}
+
+/**
+ * Get the nodejs binaries executable or use the system nodejs executable.
+ */
+export function getNodeJsCommand(): string {
+  const command = getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
+  executeCommand(ext.outputChannel, undefined, 'echo', `getNodeJsCommand = ${command}`);
+  return command;
+}
+
+export function setNodeJsCommand(): void {
+  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
+  const binariesExist = fs.existsSync(nodeJsBinariesPath);
+  let command = ext.nodeJsCliPath;
+  if (binariesExist) {
+    // windows the executable is at root folder, linux & macos its in the bin
+    command = `${nodeJsBinariesPath}\\${ext.nodeJsCliPath}`;
+  }
+  executeCommand(ext.outputChannel, undefined, 'echo', `setNodeJsCommand = ${command}`);
+  updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
 }

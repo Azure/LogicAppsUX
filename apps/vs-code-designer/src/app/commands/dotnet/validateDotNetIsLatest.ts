@@ -35,7 +35,7 @@ export async function validateDotNetIsLatest(majorVersion?: string): Promise<voi
         context.telemetry.properties.outOfDateDotNet = 'true';
         const message: string = localize(
           'outdatedDotNetRuntime',
-          'Update your .NET SDK ({0}) to the latest ({1}) for the best experience.',
+          'Update your local .NET SDK version ({0}) to the latest version ({1}) for the best experience.',
           localVersion,
           newestVersion
         );

@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dependenciesPathSettingKey, funcDependencyName, funcVersionSetting } from '../../../constants';
+import { dependenciesPathSettingKey, funcCoreToolsBinaryPathSettingKey, funcDependencyName, funcVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getGlobalSetting, getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
+import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -145,10 +145,20 @@ export function checkSupportedFuncVersion(version: FuncVersion) {
  * Get the functions binaries executable or use the system functions executable.
  */
 export function getFunctionsCommand(): string {
+  const command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+  executeCommand(ext.outputChannel, undefined, 'echo', `getFunctionsCommand = ${command}`);
+  return command;
+}
+
+export function setFunctionsCommand(): void {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
   const binariesExist = fs.existsSync(funcBinariesPath);
-  const command = binariesExist ? `${funcBinariesPath}\\${ext.funcCliPath}` : ext.funcCliPath;
-  executeCommand(ext.outputChannel, undefined, 'echo', `${command}`);
-  return command;
+  let command = ext.funcCliPath;
+  if (binariesExist) {
+    // windows the executable is at root folder, linux & macos its in the bin
+    command = `${funcBinariesPath}\\${ext.funcCliPath}`;
+  }
+  executeCommand(ext.outputChannel, undefined, 'echo', `setFunctionsCommand = ${command}`);
+  updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
 }

@@ -5,6 +5,7 @@
 import { dependenciesPathSettingKey, dotnetDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { downloadAndExtractBinaries, getDotNetBinariesReleaseUrl, getLatestDotNetVersion } from '../../utils/binaries';
+import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -16,4 +17,5 @@ export async function installDotNet(context: IActionContext, majorVersion?: stri
   const azureFunctionCoreToolsReleasesUrl = getDotNetBinariesReleaseUrl(version);
 
   await downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, dotnetDependencyName);
+  await setDotNetCommand();
 }

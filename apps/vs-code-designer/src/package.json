@@ -697,6 +697,21 @@
             "type": "string",
             "description": "The path for Azure Logic Apps extension dependency binaries."
           },
+          "azureLogicAppsStandard.dotnetBinaryPath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The path for Azure Logic Apps extension .NET SDK dependency binary."
+          },
+          "azureLogicAppsStandard.nodeJsBinaryPath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The path for Azure Logic Apps extension Node JS dependency binary."
+          },
+          "azureLogicAppsStandard.funcCoreToolsBinaryPath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The path for Azure Logic Apps extension Azure Function Core Tools dependency binary."
+          },
           "azureLogicAppsStandard.projectSubpath": {
             "scope": "resource",
             "type": "string",

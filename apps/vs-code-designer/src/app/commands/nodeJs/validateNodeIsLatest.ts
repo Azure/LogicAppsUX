@@ -35,7 +35,7 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
         context.telemetry.properties.outOfDateDotNet = 'true';
         const message: string = localize(
           'outdatedNodeJsRuntime',
-          'Update your Node JS ({0}) to the latest ({1}) for the best experience.',
+          'Update your local Node JS version ({0}) to the latest version ({1}) for the best experience.',
           localVersion,
           newestVersion
         );

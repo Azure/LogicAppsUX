@@ -58,7 +58,7 @@ export async function validateOrInstallBinaries(context: IActionContext) {
       await validateNodeJsIsLatest(dependenciesVersions?.nodejs);
       progress.report({ increment: 20, message: `Azure Function Core Tools` });
       await validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
-      progress.report({ increment: 20, message: `.Net SDK` });
+      progress.report({ increment: 20, message: `.NET SDK` });
       await validateDotNetIsLatest(dependenciesVersions?.dotnet);
     }
   );
@@ -314,7 +314,7 @@ async function dotNetBuild(targetFolder: string, dependencyName: string) {
       do {
         result = await vscode.window.showWarningMessage(errorMessage, DialogResponses.learnMore);
         if (result == DialogResponses.learnMore) {
-          await openUrl('https://dotnet.microsoft.com/en-us/download/dotnet/6.0');
+          await openUrl('https://dotnet.microsoft.com/download/dotnet/6.0');
         }
       } while (result === DialogResponses.learnMore);
     }
