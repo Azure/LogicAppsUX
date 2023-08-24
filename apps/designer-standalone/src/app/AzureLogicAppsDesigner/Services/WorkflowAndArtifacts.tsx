@@ -108,12 +108,9 @@ export const listCallbackUrl = async (
   }
 
   let callbackUri: URL;
-
   if (callbackInfo.relativePath) {
-    callbackUri = new URL(callbackInfo.basePath, validateResourceId(callbackInfo.relativePath));
-    Object.entries(callbackInfo.queries).forEach(([key, value]) =>
-      callbackUri.searchParams.append(encodeURIComponent(key), encodeURIComponent((value as any) ?? ''))
-    );
+    callbackUri = new URL(`${callbackInfo.basePath}${validateResourceId(callbackInfo.relativePath)}`);
+    Object.entries(callbackInfo.queries).forEach(([key, value]) => callbackUri.searchParams.append(key, (value as any) ?? ''));
   } else {
     callbackUri = callbackInfo.value;
   }
