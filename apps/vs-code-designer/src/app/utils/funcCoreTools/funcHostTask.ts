@@ -28,8 +28,13 @@ export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, 
  */
 export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
-  const funcRegex = new RegExp(`${getFunctionsCommand()} (host )?start`, 'i');
-  return funcRegex.test(commandLine || '') || /func (host )?start/i.test(commandLine || '');
+  if (task.definition.type == 'shell') {
+    const command = (task.execution as vscode.ShellExecution).command?.toString();
+    const funcRegex = new RegExp(`${getFunctionsCommand().replaceAll('\\', '\\\\')}`);
+    // check for args?
+    return funcRegex.test(command || '');
+  }
+  return /func (host )?start/i.test(commandLine || '');
 }
 
 export function registerFuncHostTaskEvents(): void {
