@@ -1056,7 +1056,7 @@
     },
     {
       "type": 0,
-      "value": " 连接器图标"
+      "value": " connector icon"
     }
   ],
   "5SAQOb": [
@@ -1302,7 +1302,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "选择函数来源"
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -6818,12 +6818,6 @@
       "value": "此项包含无效值"
     }
   ],
-  "i8xPfO": [
-    {
-      "type": 0,
-      "value": "No actions"
-    }
-  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7364,7 +7358,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "用于选择文件路径的下拉列表"
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8287,7 +8281,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "在 "
+      "value": "No files found in "
     },
     {
       "type": 1,
@@ -8295,7 +8289,7 @@
     },
     {
       "type": 0,
-      "value": " 中找不到文件，请将 XSLT 保存到指定路径以使用此函数"
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

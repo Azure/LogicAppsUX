@@ -1047,16 +1047,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 0,
-      "value": "pictogram "
-    },
-    {
       "type": 1,
       "value": "connectorName"
     },
     {
       "type": 0,
-      "value": "-connector"
+      "value": " connector icon"
     }
   ],
   "5SAQOb": [
@@ -1302,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Functie selecteren uit"
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -6841,12 +6837,6 @@
       "value": "Deze bevat een ongeldige waarde"
     }
   ],
-  "i8xPfO": [
-    {
-      "type": 0,
-      "value": "No actions"
-    }
-  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7390,7 +7380,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Vervolgkeuzelijst om bestandspad te selecteren"
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8312,7 +8302,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "Er zijn geen bestanden gevonden in "
+      "value": "No files found in "
     },
     {
       "type": 1,
@@ -8320,7 +8310,7 @@
     },
     {
       "type": 0,
-      "value": ". Sla XSLT op in het opgegeven pad om deze functie te gebruiken"
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

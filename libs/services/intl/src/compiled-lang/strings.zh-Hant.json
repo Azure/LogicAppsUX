@@ -1052,7 +1052,7 @@
     },
     {
       "type": 0,
-      "value": " 連接器圖示"
+      "value": " connector icon"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "從以下路徑選取函式:"
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -6778,12 +6778,6 @@
       "value": "這包含無效值"
     }
   ],
-  "i8xPfO": [
-    {
-      "type": 0,
-      "value": "No actions"
-    }
-  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7308,7 +7302,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "用於選取檔案路徑的下拉式清單"
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8223,7 +8217,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "在 "
+      "value": "No files found in "
     },
     {
       "type": 1,
@@ -8231,7 +8225,7 @@
     },
     {
       "type": 0,
-      "value": " 中找不到檔案，請將 XSLT 儲存到指定的路徑以使用此函式"
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

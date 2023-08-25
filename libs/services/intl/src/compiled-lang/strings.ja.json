@@ -1044,7 +1044,7 @@
     },
     {
       "type": 0,
-      "value": " コネクタ アイコン"
+      "value": " connector icon"
     }
   ],
   "5SAQOb": [
@@ -1290,7 +1290,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "関数の選択元"
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -6762,12 +6762,6 @@
       "value": "無効な値が含まれています"
     }
   ],
-  "i8xPfO": [
-    {
-      "type": 0,
-      "value": "No actions"
-    }
-  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7288,7 +7282,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "ファイルパスを選択するためのドロップダウン"
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8202,12 +8196,16 @@
   ],
   "rSa1Id": [
     {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
       "type": 1,
       "value": "filePath"
     },
     {
       "type": 0,
-      "value": " でファイルが見つかりません。この関数を使用するには、指定されたパスに XSLT を保存してください。"
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

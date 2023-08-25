@@ -1,25 +1,4 @@
 # Logic Apps Designer
-## [2.61.0](https://github.com/Azure/LogicAppsUX/compare/v2.60.0...v2.61.0) (2023-08-24)
-
-
-### Features
-
-* **designer:** Add no actions node for is read only mode ([#3173](https://github.com/Azure/LogicAppsUX/issues/3173)) ([252e12e](https://github.com/Azure/LogicAppsUX/commit/252e12e9aeca00268692173f8ff3130defe0430a))
-* **Designer:** Added support for additional audiences on Managed Identity connections ([#3156](https://github.com/Azure/LogicAppsUX/issues/3156)) ([68eb661](https://github.com/Azure/LogicAppsUX/commit/68eb661a4179649ae69b5eb7b0a1a33d91a90e6f))
-* **ia:** Support Premium IA in artifact service ([#3147](https://github.com/Azure/LogicAppsUX/issues/3147)) ([25ac33f](https://github.com/Azure/LogicAppsUX/commit/25ac33f2fe373e4542059198737286cf12f97d03))
-
-
-### Bug Fixes
-
-* **designer:** decode callback URL  ([#3136](https://github.com/Azure/LogicAppsUX/issues/3136)) ([0e13f9b](https://github.com/Azure/LogicAppsUX/commit/0e13f9ba48644260ec830fb36b2a5a1ec2754f98))
-* **designer:** Enable isDirty When removing Optional Parameter ([#3182](https://github.com/Azure/LogicAppsUX/issues/3182)) ([b5a3728](https://github.com/Azure/LogicAppsUX/commit/b5a372835da0d1899008e2005526737e9b6176d3))
-* **Designer:** Ensure outputs merge only based on isRequestApiConnection FF ([#3180](https://github.com/Azure/LogicAppsUX/issues/3180)) ([add9d85](https://github.com/Azure/LogicAppsUX/commit/add9d85c2b49b6cfc3f2d573894b56917270752f))
-* **Designer:** Fixed broken horizontal scrolling with shift + mouse wheel ([#3171](https://github.com/Azure/LogicAppsUX/issues/3171)) ([8f52469](https://github.com/Azure/LogicAppsUX/commit/8f5246907cfb95736eca73706933fbb0cc510f18))
-* **Designer:** Fixed issue with some alternate swagger-based dynamic parameter formatting ([#3186](https://github.com/Azure/LogicAppsUX/issues/3186)) ([3b302a9](https://github.com/Azure/LogicAppsUX/commit/3b302a9f06baabd3bb7b89578a81d8dd3767757e))
-* **Designer:** Fixing the foatingActionMenu root object for HybridTriggers ([#3148](https://github.com/Azure/LogicAppsUX/issues/3148)) ([d3e8f6a](https://github.com/Azure/LogicAppsUX/commit/d3e8f6a92bcc2007132675cc5491d53ce8e4844b))
-* **designer:** Revert export function for deserialization of tokens ([#3160](https://github.com/Azure/LogicAppsUX/issues/3160)) ([2209bd0](https://github.com/Azure/LogicAppsUX/commit/2209bd0d6cd81ba543c1e13f53eb1f4558206843)), closes [#3137](https://github.com/Azure/LogicAppsUX/issues/3137)
-* **designer:** swapInputsLocation replacing whole input instead of only replacing source item ([#3155](https://github.com/Azure/LogicAppsUX/issues/3155)) ([96ff127](https://github.com/Azure/LogicAppsUX/commit/96ff127a392fccf3fcb62f08201427fdf2812e50))
-
 ## [2.60.0](https://github.com/Azure/LogicAppsUX/compare/v2.59.0...v2.60.0) (2023-08-17)
 
 

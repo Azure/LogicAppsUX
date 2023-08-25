@@ -1039,12 +1039,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 0,
-      "value": "Ikon konektor "
-    },
-    {
       "type": 1,
       "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector icon"
     }
   ],
   "5SAQOb": [
@@ -1290,7 +1290,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Pilih fungsi dari"
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -6778,12 +6778,6 @@
       "value": "Berisi nilai yang tidak valid"
     }
   ],
-  "i8xPfO": [
-    {
-      "type": 0,
-      "value": "No actions"
-    }
-  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7316,7 +7310,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Daftar menurun untuk memilih jalur file"
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8231,7 +8225,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "Tidak ada file yang ditemukan di "
+      "value": "No files found in "
     },
     {
       "type": 1,
@@ -8239,7 +8233,7 @@
     },
     {
       "type": 0,
-      "value": ", simpan XSLT ke jalur yang ditentukan untuk menggunakan fungsi ini"
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [

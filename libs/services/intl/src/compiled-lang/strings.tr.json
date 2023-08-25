@@ -1044,7 +1044,7 @@
     },
     {
       "type": 0,
-      "value": " bağlayıcı simgesi"
+      "value": " connector icon"
     }
   ],
   "5SAQOb": [
@@ -1290,7 +1290,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "İşlev seçin"
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -6821,12 +6821,6 @@
       "value": "Bu geçersiz bir değer içeriyor"
     }
   ],
-  "i8xPfO": [
-    {
-      "type": 0,
-      "value": "No actions"
-    }
-  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7366,7 +7360,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dosya yolu seçmek için açılan liste"
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8291,12 +8285,16 @@
   ],
   "rSa1Id": [
     {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
       "type": 1,
       "value": "filePath"
     },
     {
       "type": 0,
-      "value": " içinde dosya bulunamadı, bu işlevi kullanmak için lütfen XSLT'yi belirtilen yola kaydedin"
+      "value": ", please save XSLT to specified path to use this function"
     }
   ],
   "raBiud": [
