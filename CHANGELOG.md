@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.62.0](https://github.com/Azure/LogicAppsUX/compare/v2.61.0...v2.62.0) (2023-08-25)
+
+
+### Features
+
+* **designer:** Allow a workflow to be resubmitted from a specific action if supported by the flow ([#3198](https://github.com/Azure/LogicAppsUX/issues/3198)) ([55d857f](https://github.com/Azure/LogicAppsUX/commit/55d857f0ec3fcde6fd63ca2900c0f88047c46483))
+
+
+### Bug Fixes
+
+* **Designer:** Modified several azure resource requests to be recursive ([#3193](https://github.com/Azure/LogicAppsUX/issues/3193)) ([5fc8fe1](https://github.com/Azure/LogicAppsUX/commit/5fc8fe15bcc4faa3b2999b162bffbe4e09e5b45b))
+
 ## [2.61.0](https://github.com/Azure/LogicAppsUX/compare/v2.60.0...v2.61.0) (2023-08-24)
 
 
