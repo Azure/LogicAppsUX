@@ -38,7 +38,7 @@ export async function validateOrInstallBinaries(context: IActionContext) {
     {
       location: vscode.ProgressLocation.Notification, // Location of the progress indicator
       title: 'Validating dependency binaries', // Title displayed in the progress notification
-      cancellable: true, // Allow the user to cancel the task
+      cancellable: false, // Allow the user to cancel the task
     },
     async (progress, token) => {
       token.onCancellationRequested(() => {
@@ -53,8 +53,14 @@ export async function validateOrInstallBinaries(context: IActionContext) {
       }
       context.telemetry.properties.lastStep = 'getDependenciesVersion';
       progress.report({ increment: 10, message: `Get dependency version from CDN` });
-      const dependenciesVersions: IBundleDependencyFeed = await getDependenciesVersion(context);
-      context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
+      let dependenciesVersions: IBundleDependencyFeed;
+      try {
+        dependenciesVersions = await getDependenciesVersion(context);
+        context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
+      } catch (error) {
+        // Unable to get dependency.json, will default to fallback versions
+        console.log(error);
+      }
 
       context.telemetry.properties.lastStep = 'validateNodeJsIsLatest';
       progress.report({ increment: 20, message: `Node Js` });
@@ -324,7 +330,7 @@ async function dotNetBuild(targetFolder: string, dependencyName: string) {
       } while (result === DialogResponses.learnMore);
     }
   } finally {
-    // Build task creates .NET Host processes ...
+    // Build task creates .NET Host processes, cleaning up the processes here ...
     await executeCommand(undefined, targetFolder, 'taskkill /f /im dotnet.exe');
   }
 }
