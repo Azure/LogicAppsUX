@@ -9,6 +9,7 @@ export interface StatusPillProps {
   endTime?: string;
   hasRetries?: boolean;
   status?: string;
+  resubmittedResults?: boolean;
 }
 
 export const StatusPill: React.FC<StatusPillProps> = ({
@@ -17,6 +18,7 @@ export const StatusPill: React.FC<StatusPillProps> = ({
   startTime,
   endTime,
   hasRetries = false,
+  resubmittedResults = false,
   status = 'Waiting',
 }) => {
   const statusString = getStatusString(status, hasRetries);
@@ -32,7 +34,7 @@ export const StatusPill: React.FC<StatusPillProps> = ({
       <TooltipHost content={tooltipLabel}>
         <div className="msla-pill--inner">
           {!statusOnly && <span aria-hidden={true}>{duration}</span>}
-          <StatusIcon hasRetries={hasRetries} status={status} />
+          <StatusIcon hasRetries={hasRetries} status={status} iconOpacity={resubmittedResults ? '50%' : '100%'} />
         </div>
       </TooltipHost>
     </div>
