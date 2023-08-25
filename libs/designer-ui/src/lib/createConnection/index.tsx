@@ -242,9 +242,14 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
+  const usingLegacyGatewayAuth = useMemo(
+    () => !hasOnlyOnPremGateway && enabledCapabilities.includes(Capabilities.gateway),
+    [enabledCapabilities, hasOnlyOnPremGateway]
+  );
+
   const hasOAuth = useMemo(
-    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams) && !enabledCapabilities.includes(Capabilities.gateway),
-    [checkOAuthCallback, enabledCapabilities, isMultiAuth, multiAuthParams, singleAuthParams]
+    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams) && !usingLegacyGatewayAuth,
+    [checkOAuthCallback, isMultiAuth, multiAuthParams, singleAuthParams, usingLegacyGatewayAuth]
   );
 
   const isUsingOAuth = useMemo(
