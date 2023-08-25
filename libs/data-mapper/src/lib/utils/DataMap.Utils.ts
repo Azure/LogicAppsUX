@@ -455,18 +455,16 @@ export const removeSequenceFunction = (tokens: string[]): string => {
   let isSearchingForSource = false;
   let result = '';
   while (i < length) {
-    // how do you identify the src path vs other function details
     if (tokens[i] === Reserved.for) {
       // 'reverse(sort(/ns0:Root/Looping/Employee, /ns0:Root/Looping/Age)))
       isSearchingForSource = true;
       result = result + tokens[i] + '(';
     } else if (isSearchingForSource && tokens[i + 1] !== '(' && tokens[i].length > 1) {
-      result = result + tokens[i] + ')' + tokens[length - 1];
-      break;
-    } else if (!isSearchingForSource) {
+      result = result + tokens[i] + ')';
+      isSearchingForSource = false;
+    } else if (!isSearchingForSource && tokens.findIndex((token) => token === 'for') > i) {
       result = result + tokens[i];
-    }
-    i++;
+    } else if (tokens[i] === ')') i++;
   }
   return result;
 };
