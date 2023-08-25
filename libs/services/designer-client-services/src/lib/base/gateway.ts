@@ -1,7 +1,7 @@
 import { getAzureResourceRecursive } from '../common/azure';
 import type { IGatewayService } from '../gateway';
-import type { HttpRequestOptions, IHttpClient } from '../httpClient';
-import type { Gateway, ArmResources, Subscription } from '@microsoft/utils-logic-apps';
+import type { IHttpClient } from '../httpClient';
+import type { Gateway, Subscription } from '@microsoft/utils-logic-apps';
 import { ArgumentException } from '@microsoft/utils-logic-apps';
 
 export interface BaseGatewayServiceOptions {
@@ -34,29 +34,25 @@ export class BaseGatewayService implements IGatewayService {
   }
 
   private async fetchGatewaysList(subscriptionId: string, apiName: string): Promise<Gateway[]> {
-    const filter = `apiName eq '${apiName}'`;
-    const { baseUrl, apiVersions } = this.options;
-    const request: HttpRequestOptions<any> = {
-      uri: `${baseUrl}${subscriptionId}/providers/Microsoft.Web/connectionGateways`,
-      queryParameters: {
-        'api-version': apiVersions.gateway,
-        $filter: filter,
-      },
-    };
-
     try {
-      const response = await this.options.httpClient.get<ArmResources<Gateway>>(request);
-      return response.value;
+      const { baseUrl, apiVersions, httpClient } = this.options;
+      const uri = `${baseUrl}${subscriptionId}/providers/Microsoft.Web/connectionGateways`;
+      const queryParameters = {
+        'api-version': apiVersions.gateway,
+        $filter: `apiName eq '${apiName}'`,
+      };
+      return getAzureResourceRecursive(httpClient, uri, queryParameters);
     } catch (error) {
       throw new Error(error as any);
     }
   }
 
   public getSubscriptions(): Promise<Subscription[]> {
-    const { baseUrl, apiVersions } = this.options;
-
     try {
-      return getAzureResourceRecursive(this.options.httpClient, `${baseUrl}/subscriptions/`, { 'api-version': apiVersions.subscription });
+      const { baseUrl, apiVersions, httpClient } = this.options;
+      const uri = `${baseUrl}/subscriptions/`;
+      const queryParameters = { 'api-version': apiVersions.subscription };
+      return getAzureResourceRecursive(httpClient, uri, queryParameters);
     } catch (error) {
       throw new Error(error as any);
     }

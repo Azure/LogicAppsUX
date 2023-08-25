@@ -1,3 +1,4 @@
+import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IFunctionService } from '../function';
 import { isFunctionContainer } from '../helpers';
@@ -29,28 +30,28 @@ export class BaseFunctionService implements IFunctionService {
   }
 
   async fetchFunctionApps(): Promise<any> {
-    const functionAppsResponse = await this.options.httpClient.get<any>({
-      uri: this.getFunctionAppsRequestPath(),
-      queryParameters: { 'api-version': this.options.apiVersion },
-    });
+    const { apiVersion, httpClient } = this.options;
 
-    return functionAppsResponse.value.filter((app: any) => isFunctionContainer(app.kind));
+    const uri = this.getFunctionAppsRequestPath();
+    const queryParameters = { 'api-version': apiVersion };
+    const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
+    return response.filter((app: any) => isFunctionContainer(app.kind));
   }
 
   async fetchFunctionAppsFunctions(functionAppId: string) {
-    const { baseUrl } = this.options;
-    const functionsResponse = await this.options.httpClient.get<any>({
-      uri: `${baseUrl}/${functionAppId}/functions`,
-      queryParameters: { 'api-version': this.options.apiVersion },
-    });
-    return functionsResponse?.value ?? [];
+    const { baseUrl, apiVersion, httpClient } = this.options;
+
+    const uri = `${baseUrl}/${functionAppId}/functions`;
+    const queryParameters = { 'api-version': apiVersion };
+    const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
+    return response ?? [];
   }
 
   async fetchFunctionKey(functionId: string) {
-    const { baseUrl } = this.options;
-    const keysResponse = await this.options.httpClient.post<any, any>({
+    const { baseUrl, apiVersion, httpClient } = this.options;
+    const keysResponse = await httpClient.post<any, any>({
       uri: `${baseUrl}/${functionId}/listkeys`,
-      queryParameters: { 'api-version': this.options.apiVersion },
+      queryParameters: { 'api-version': apiVersion },
     });
     return keysResponse?.default ?? 'NotFound';
   }

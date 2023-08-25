@@ -79,7 +79,7 @@ const GatewayPicker = (props: any) => {
         ariaLabel={subscriptionDropdownLabel}
         placeholder={subscriptionDropdownLabel}
         options={subscriptionOptions}
-        styles={{ callout: { height: '300px' } }}
+        styles={{ callout: { maxHeight: '300px' } }}
       />
       <Dropdown
         id={`connection-param-${parameterKey}-gateways`}
@@ -97,7 +97,7 @@ const GatewayPicker = (props: any) => {
         ariaLabel={gatewayDropdownLabel}
         placeholder={gatewayDropdownLabel}
         options={gatewayOptions}
-        styles={{ callout: { height: '300px' } }}
+        styles={{ callout: { maxHeight: '300px' } }}
       />
     </div>
   );
