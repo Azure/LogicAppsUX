@@ -1,4 +1,6 @@
 # Logic Apps Designer
+## [2.63.0](https://github.com/Azure/LogicAppsUX/compare/v2.62.2...v2.63.0) (2023-08-25)
+
 ## [2.62.0](https://github.com/Azure/LogicAppsUX/compare/v2.61.0...v2.62.0) (2023-08-25)
 
 
