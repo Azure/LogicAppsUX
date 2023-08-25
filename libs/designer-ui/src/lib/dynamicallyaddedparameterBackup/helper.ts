@@ -1,7 +1,10 @@
-import type { DynamicallyAddedParameterTypeType } from '../dynamicallyaddedparameter';
-import { DynamicallyAddedParameterType } from '../dynamicallyaddedparameter';
+import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType, IDynamicallyAddedParameterProperties } from '.';
+import { DynamicallyAddedParameterType } from '.';
+import constants from '../constants';
+import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { generateUniqueName } from '@microsoft/utils-logic-apps';
+import { generateUniqueName, guid } from '@microsoft/utils-logic-apps';
 
 export type DynamicallyAddedParameterIcon = string;
 
@@ -71,7 +74,7 @@ export function getDefaultTitleForDynamicallyAddedParameterType(type: Dynamicall
   }
 }
 
-export function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedParameterTypeType): string {
+function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedParameterTypeType): string {
   const intl = getIntl();
   switch (type) {
     case DynamicallyAddedParameterType.Text:
@@ -107,9 +110,236 @@ export function getDescriptionForDynamicallyAddedParameterType(type: Dynamically
   }
 }
 
-export function generateDynamicParameterKey(existingSchemaKeys: string[], typeHint: DynamicallyAddedParameterTypeType): string {
+/**
+ * Sample shape of schema object JSON expected by FlowRP that we are serializing/deserializing:
+ *      object: {
+ *          schema: {
+ *              type: 'object',
+ *              properties: {
+ *                  'text' : ...,
+ *                  'text_1': ...,
+ *                  'number': ...,
+ *              },
+ *              required: ['text', 'text_1'],
+ *          }
+ *      }
+ *
+ * @param value - valueSegment provided to us by rest of designer parent components
+ * @param onChange - handler to update value when the user changes their input in one of the dynamic parameters
+ * @returns - array of props to render DynamicallyAddedParameter editors with
+ */
+export function deserialize(value: ValueSegment[]): DynamicallyAddedParameterProps[] {
+  if (!value || value.length === 0 || !value[0].value) {
+    return [];
+  }
+  // ASSUMPTION: for manual trigger, we assume there is *only one* ValueSegment which contains the required data
+  const rootObject = JSON.parse(value[0].value);
+
+  const retval: DynamicallyAddedParameterProps[] = [];
+  for (const [schemaKey, propertiesUnknown] of Object.entries(rootObject?.properties)) {
+    const properties = propertiesUnknown as IDynamicallyAddedParameterProperties;
+    if (properties) {
+      const icon = getIconForDynamicallyAddedParameterType(properties['x-ms-content-hint'] as DynamicallyAddedParameterTypeType);
+      const required = rootObject?.required?.includes(schemaKey);
+      retval.push({
+        icon,
+        schemaKey,
+        properties,
+        required,
+      });
+    }
+  }
+
+  return retval;
+}
+
+/**
+ * See deserialize function above for sample.
+ * @param props - array of props of all DynamicallyAddedParameter editors currently rendered
+ * @returns - ValueSegment array with one literal -- value for which is a JSON representation of the dynamically added parameters in the shape expected by FlowRP
+ */
+export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment[] {
+  const requiredArray: string[] = [];
+  props.forEach((prop) => {
+    if (prop.required) requiredArray.push(prop.schemaKey);
+  });
+
+  const properties = props
+    .map((prop) => {
+      // Reshape array objects so schemaKey is the key
+      return { [prop.schemaKey]: prop.properties };
+    })
+    .reduce((resultPropertiesObj, nextProperty) => {
+      // Convert array to object; replace array index key with schemaKey
+      const [schemaKey, propertyValue] = Object.entries(nextProperty)[0];
+      return { ...resultPropertiesObj, [schemaKey]: propertyValue };
+    }, {});
+
+  const rootObject = {
+    type: 'object',
+    properties,
+    required: requiredArray,
+  };
+
+  return [
+    {
+      id: guid(),
+      type: ValueSegmentType.LITERAL,
+      value: JSON.stringify(rootObject),
+    },
+  ];
+}
+
+export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean) {
+  let rootObject: { type: string; properties: unknown; required: string[] } = {
+    type: 'object',
+    properties: {},
+    required: [],
+  };
+
+  if (useStaticInputs) {
+    rootObject = rootObjectWithStaticInputs;
+  }
+
+  return [
+    {
+      id: guid(),
+      type: ValueSegmentType.LITERAL,
+      value: JSON.stringify(rootObject),
+    },
+  ];
+}
+
+export function createDynamicallyAddedParameterProperties(
+  itemType: DynamicallyAddedParameterTypeType,
+  schemaKey: string
+): IDynamicallyAddedParameterProperties {
+  let format, fileProperties;
+  let type = '';
+  switch (itemType) {
+    case DynamicallyAddedParameterType.Date:
+    case DynamicallyAddedParameterType.Email:
+      type = constants.SWAGGER.TYPE.STRING;
+      format = itemType.toLowerCase();
+      break;
+    case DynamicallyAddedParameterType.Text:
+      type = constants.SWAGGER.TYPE.STRING;
+      break;
+    case DynamicallyAddedParameterType.File:
+      type = constants.SWAGGER.TYPE.OBJECT;
+      fileProperties = {
+        contentBytes: { type: constants.SWAGGER.TYPE.STRING, format: constants.SWAGGER.FORMAT.BYTE },
+        name: { type: constants.SWAGGER.TYPE.STRING },
+      };
+      break;
+    case DynamicallyAddedParameterType.Boolean:
+      type = constants.SWAGGER.TYPE.BOOLEAN;
+      break;
+    case DynamicallyAddedParameterType.Number:
+      type = constants.SWAGGER.TYPE.NUMBER;
+      break;
+  }
+
+  return {
+    description: getDescriptionForDynamicallyAddedParameterType(itemType),
+    format,
+    title: convertDynamicallyAddedSchemaKeyToTitle(schemaKey, itemType),
+    type,
+    properties: fileProperties,
+    'x-ms-content-hint': itemType,
+    'x-ms-dynamically-added': true,
+  };
+}
+
+export function generateDynamicParameterKey(
+  parameters: DynamicallyAddedParameterProps[],
+  typeHint: DynamicallyAddedParameterTypeType
+): string {
+  const currentKeys = parameters.map((parameter) => parameter.schemaKey);
+
   const processedTypeHint = typeHint.toLowerCase().replace(/\s+/g, '');
-  const newTitle = generateUniqueName(processedTypeHint, existingSchemaKeys, 1);
+  const newTitle = generateUniqueName(processedTypeHint, currentKeys, 1);
 
   return newTitle.replace(/\s+/g, '_');
 }
+
+function convertDynamicallyAddedSchemaKeyToTitle(name: string, itemType: DynamicallyAddedParameterTypeType): string {
+  const title = getDefaultTitleForDynamicallyAddedParameterType(itemType);
+  let result = title;
+
+  if (name && name.indexOf('_') > -1) {
+    const split = name.split('_');
+    result = `${title} ${split[1]}`;
+  }
+
+  return result;
+}
+
+const rootObjectWithStaticInputs = {
+  type: 'object',
+  properties: {
+    'key-button-date': {
+      title: 'Date',
+      type: 'string',
+      'x-ms-dynamically-added': false,
+    },
+    location: {
+      type: 'object',
+      properties: {
+        fullAddress: {
+          title: 'Full address',
+          type: 'string',
+          'x-ms-dynamically-added': false,
+        },
+        address: {
+          type: 'object',
+          properties: {
+            countryOrRegion: {
+              title: 'Country/Region',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+            city: {
+              title: 'City',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+            state: {
+              title: 'State',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+            street: {
+              title: 'Street',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+            postalCode: {
+              title: 'Postal code',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+          },
+          required: ['countryOrRegion', 'city', 'state', 'street', 'postalCode'],
+        },
+        coordinates: {
+          type: 'object',
+          properties: {
+            latitude: {
+              title: 'Latitude',
+              type: 'number',
+              'x-ms-dynamically-added': false,
+            },
+            longitude: {
+              title: 'Longitude',
+              type: 'number',
+              'x-ms-dynamically-added': false,
+            },
+          },
+          required: ['latitude', 'longitude'],
+        },
+      },
+    },
+  },
+  required: ['key-button-date', 'location'],
+};
