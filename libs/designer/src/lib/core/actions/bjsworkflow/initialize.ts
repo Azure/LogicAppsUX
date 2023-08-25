@@ -36,6 +36,7 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
+  ISearchService2,
 } from '@microsoft/designer-client-services-logic-apps';
 import {
   WorkflowService,
@@ -75,6 +76,7 @@ export interface ServiceOptions {
   connectionService: IConnectionService;
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
+  searchService2?: ISearchService2;
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;
 }

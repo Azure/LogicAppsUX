@@ -14,6 +14,7 @@ import type {
   IRunService,
   IEditorService,
   IConnectionParameterEditorService,
+  ISearchService2,
 } from '@microsoft/designer-client-services-logic-apps';
 
 export interface DesignerOptionsState {
@@ -31,6 +32,7 @@ export interface ServiceOptions {
   connectionService: IConnectionService;
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
+  searchService2?: ISearchService2;
   connectorService?: IConnectorService;
   gatewayService?: IGatewayService;
   loggerService?: ILoggerService;

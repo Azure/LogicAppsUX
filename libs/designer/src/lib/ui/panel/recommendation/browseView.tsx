@@ -1,8 +1,8 @@
 import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
+import { SearchService2 } from '@microsoft/designer-client-services-logic-apps';
 import { BrowseGrid } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/utils-logic-apps';
-import { isCustomConnector, isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -25,9 +25,7 @@ export const BrowseView = ({
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       if (filters['runtime']) {
-        if (filters['runtime'] === 'inapp' && !isBuiltInConnector(connector.id)) return false;
-        else if (filters['runtime'] === 'custom' && !isCustomConnector(connector.id)) return false;
-        else if (filters['runtime'] === 'shared') if (isBuiltInConnector(connector.id) || isCustomConnector(connector.id)) return false;
+        if (!SearchService2([]).filterConnector(connector, filters['runtime'])) return false;
       }
 
       if (filters['actionType']) {
