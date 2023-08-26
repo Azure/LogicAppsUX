@@ -307,8 +307,6 @@ export const TokenField = ({
     }
 
     default:
-      console.log('charlie', value);
-
       return (
         <StringEditor
           labelId={labelId}

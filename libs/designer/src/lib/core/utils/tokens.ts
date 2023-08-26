@@ -1,3 +1,4 @@
+import constants from '../../common/constants';
 import Constants from '../../common/constants';
 import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../actions/bjsworkflow/settings';
@@ -149,7 +150,7 @@ export const convertOutputsToTokens = (
       description,
       isAdvanced,
       outputInfo: {
-        type: TokenType.OUTPUTS,
+        type: nodeType.toLowerCase() === Constants.NODE.TYPE.FOREACH ? TokenType.ITEM : TokenType.OUTPUTS,
         required,
         format,
         source,
@@ -212,8 +213,6 @@ export const getOutputTokenSections = (
     });
   }
 
-  console.log('charlie', nodeTokens);
-
   if (nodeTokens) {
     tokenGroups.push({
       id: 'variables',
@@ -252,8 +251,6 @@ export const getOutputTokenSections = (
 
     tokenGroups.push(...(outputTokenGroups.filter((group) => !!group) as TokenGroup[]));
   }
-
-  console.log('charlie2', tokenGroups);
 
   return tokenGroups;
 };
@@ -345,15 +342,21 @@ export const createValueSegmentFromToken = async (
   return tokenValueSegment;
 };
 
-const convertTokenToValueSegment = (token: OutputToken, nodeType: string): ValueSegment => {
-  const tokenType = equals(nodeType, Constants.NODE.TYPE.FOREACH)
-    ? TokenType.ITEM
-    : token.outputInfo?.functionName
-    ? equals(token.outputInfo.functionName, Constants.FUNCTION_NAME.PARAMETERS)
-      ? TokenType.PARAMETER
-      : TokenType.VARIABLE
-    : TokenType.OUTPUTS;
+const getTokenValueSegmentTokenType = (token: OutputToken, nodeType: string): TokenType => {
+  const { key } = token;
 
+  if (nodeType.toLowerCase() === Constants.NODE.TYPE.FOREACH) {
+    return TokenType.ITEM;
+  } else if (key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY) {
+    return TokenType.ITERATIONINDEX;
+  } else if (token.outputInfo?.functionName) {
+    return equals(token.outputInfo.functionName, Constants.FUNCTION_NAME.PARAMETERS) ? TokenType.PARAMETER : TokenType.VARIABLE;
+  }
+  return TokenType.OUTPUTS;
+};
+
+const convertTokenToValueSegment = (token: OutputToken, nodeType: string): ValueSegment => {
+  const tokenType = getTokenValueSegmentTokenType(token, nodeType);
   const { key, brandColor, icon, title, description, name, type, outputInfo } = token;
   const { actionName, required, format, source, isSecure, arrayDetails, schema } = outputInfo;
   const segmentToken: Token = {

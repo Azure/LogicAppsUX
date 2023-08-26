@@ -35,6 +35,7 @@ export default {
         item: {
           type: 'object',
           title: 'Current item',
+          description: 'Current item',
         },
       },
     },
