@@ -312,6 +312,8 @@ const ParameterSection = ({
       constants.SWAGGER.TYPE.ANY;
     const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
 
+    console.log('charlie tokenGroup', tokenGroup);
+
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
       tokens: group.tokens.filter((token: OutputToken) => {

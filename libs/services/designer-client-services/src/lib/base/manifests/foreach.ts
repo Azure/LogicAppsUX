@@ -30,23 +30,9 @@ export default {
     },
 
     outputs: {
-      type: 'object',
-      properties: {
-        item: {
-          type: 'object',
-          title: 'Current item',
-          description: 'Current item',
-        },
-      },
-    },
-    outputsSchema: {
-      outputPaths: [
-        {
-          outputLocation: ['properties'],
-          name: 'item',
-          schema: 'ValueSchema',
-        },
-      ],
+      type: 'any',
+      title: 'Current item',
+      required: true,
     },
     isOutputsOptional: false,
 
