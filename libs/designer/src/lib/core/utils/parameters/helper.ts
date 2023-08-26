@@ -72,6 +72,7 @@ import type {
 import {
   removeQuotes,
   ArrayType,
+  FloatingActionMenuKind,
   getOuterMostCommaIndex,
   RowDropdownOptions,
   GroupDropdownOptions,
@@ -152,12 +153,6 @@ import {
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';
-
-// TODO(WIFUN): Why does export from designer-ui no work?
-export enum FloatingActionMenuKind {
-  inputs = 'inputs',
-  outputs = 'outputs',
-}
 
 export const ParameterBrandColor = '#916F6F';
 export const ParameterIcon =
@@ -767,13 +762,14 @@ const loadOauthType = (value: any): AuthenticationOAuthType => {
 function toFloatingActionMenuOutputsViewModel(value: any) {
   const clonedValue = clone(value);
 
-  const outputValueSegmentsMap: Record<string, ValueSegment[] | undefined> = {};
+  const outputValueSegmentsMap: Record<string, ValueSegment[]> = {};
   const outputValueMap = clonedValue?.additionalProperties?.outputValueMap;
   if (outputValueMap) {
-    Object.entries<string>(outputValueMap).forEach(([key, outputValue]) => {
-      // TODO(wifun): what do the optional parameters to convertStringToInputParameter mean?
-      outputValueSegmentsMap[key] = loadParameterValue(convertStringToInputParameter(outputValue));
+    Object.entries(outputValueMap).forEach(([key, outputValue]) => {
+      outputValueSegmentsMap[key] = loadParameterValue(convertStringToInputParameter(outputValue as string));
     });
+
+    // So editor does not need to worry about keeping this in sync with outputValueSegmentsMap
     delete clonedValue.additionalProperties.outputValueMap;
   }
 
@@ -2219,15 +2215,16 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
   isDefinitionValue: boolean,
   editorViewModel: FloatingActionMenuOutputViewModel
 ): string | undefined => {
-  const value: typeof editorViewModel.schema & { additionalProperties?: { outputValueMap?: Record<string, string> } } = clone(
+  const value: typeof editorViewModel.schema & { additionalProperties?: { outputValueMap?: Record<string, unknown> } } = clone(
     editorViewModel.schema
   );
   const schemaProperties: typeof editorViewModel.schema.properties = {};
-  const outputValueMap: Record<string, string> = {};
-  const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
+  const outputValueMap: Record<string, unknown> = {};
 
+  // We want to cast (for example) "1" to 1 if the dynamically added parameter type is 'Number'
+  const commonProperties = { supressCasting: false, info: parameter.info };
   Object.entries(value.properties).forEach(([key, config]) => {
-    if (!config['x-ms-dynamically-added']) {
+    if (!config?.['x-ms-dynamically-added']) {
       schemaProperties[key] = config;
       return;
     }
@@ -2237,8 +2234,7 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
       schemaProperties[keyFromTitle] = config;
 
       const valueSegments = editorViewModel.outputValueSegmentsMap?.[key];
-      if (valueSegments) {
-        // TODO(WIFUN): Is this the correct way to convert ValueSegment[] to string.
+      if (valueSegments?.length) {
         outputValueMap[keyFromTitle] =
           parameterValueToString({ type: config.type, value: valueSegments, ...commonProperties } as any, isDefinitionValue) || '';
       }

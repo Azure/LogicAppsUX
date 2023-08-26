@@ -107,6 +107,7 @@ export function getDescriptionForDynamicallyAddedParameterType(type: Dynamically
   }
 }
 
+// Generates a new key name, unique from the existing keys, based on the type hint
 export function generateDynamicParameterKey(existingSchemaKeys: string[], typeHint: DynamicallyAddedParameterTypeType): string {
   const processedTypeHint = typeHint.toLowerCase().replace(/\s+/g, '');
   const newTitle = generateUniqueName(processedTypeHint, existingSchemaKeys, 1);
