@@ -199,7 +199,7 @@ export default {
     FILE: 'file',
     FOLDER: 'folder',
   },
-  FOREACH_CURRENT_ITEM_KEY: 'builtin.$.currentItem',
+  FOREACH_CURRENT_ITEM_KEY: 'builtin.$',
   FOREACH_CURRENT_ITEM_EXPRESSION_NAME: 'items',
   FREQUENCY: {
     MONTH: 'month',
