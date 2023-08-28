@@ -16,12 +16,12 @@ import {
   extensionCommand,
   functionsExtensionId,
   funcDependencyName,
+  hostStartCommand,
 } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { localize } from '../../../../../../localize';
 import { binariesExist } from '../../../../../utils/binaries';
 import { isSubpath, confirmEditJsonFile, confirmOverwriteFile } from '../../../../../utils/fs';
-import { getFunctionsCommand } from '../../../../../utils/funcCoreTools/funcVersion';
 import {
   getDebugConfigs,
   getLaunchVersion,
@@ -120,9 +120,8 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
    **/
   public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
     const tasksJsonPath: string = path.join(context.projectPath, '.vscode', 'Tasks.json');
-    let tasksJsonContent;
-    if (binariesExist(funcDependencyName)) {
-      tasksJsonContent = `{
+    const funcBinariesExist = binariesExist(funcDependencyName);
+    const tasksJsonContent = `{
         "version": "2.0.0",
         "tasks": [
           {
@@ -135,41 +134,9 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
             "problemMatcher": "$msCompile"
           },
           {
-            "label": "Start Azure Functions Host",
-            "command": ${getFunctionsCommand()},
-            "args": [
-              "host",
-              "start"
-            ],
-            "type": "shell",
-            "isBackground": true,
-            "problemMatcher": "$func-watch"
-          }
-        ],
-        "inputs": [
-          {
-            "id": "getDebugSymbolDll",
-            "type": "command",
-            "command": "azureLogicAppsStandard.getDebugSymbolDll"
-          }
-        ]
-      }`;
-    } else {
-      tasksJsonContent = `{
-        "version": "2.0.0",
-        "tasks": [
-          {
-            "label": "generateDebugSymbols",
-            "command": "dotnet",
-            "args": [
-              "\${input:getDebugSymbolDll}"
-            ],
-            "type": "process",
-            "problemMatcher": "$msCompile"
-          },
-          {
-            "type": "func",
-            "command": "host start",
+            "type": "${funcBinariesExist ? 'shell' : func}",
+            "command": ${funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand},
+            "args" : ${funcBinariesExist ? ['host', 'start'] : undefined}
             "problemMatcher": "$func-watch",
             "isBackground": true,
             "label": "func: host start",
@@ -187,7 +154,6 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
           }
         ]
       }`;
-    }
 
     if (await confirmOverwriteFile(context, tasksJsonPath)) {
       await fse.writeFile(tasksJsonPath, tasksJsonContent);

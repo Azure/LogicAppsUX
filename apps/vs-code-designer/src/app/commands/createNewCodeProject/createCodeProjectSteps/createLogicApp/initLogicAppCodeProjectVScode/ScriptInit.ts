@@ -2,7 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extInstallTaskName, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../../../constants';
+import { binariesExist } from '../../../../../../app/utils/binaries';
+import { extInstallTaskName, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../../../constants';
 import { getLocalFuncCoreToolsVersion } from '../../../../../utils/funcCoreTools/funcVersion';
 import { InitCodeProject } from './InitCodeProject';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
@@ -19,10 +20,12 @@ export class ScriptInit extends InitCodeProject {
   protected useFuncExtensionsInstall = false;
 
   protected getTasks(): TaskDefinition[] {
+    const funcBinariesExist = binariesExist(funcDependencyName);
     return [
       {
-        type: func,
-        command: hostStartCommand,
+        type: funcBinariesExist ? 'shell' : func,
+        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
+        args: funcBinariesExist ? ['host', 'start'] : undefined,
         problemMatcher: funcWatchProblemMatcher,
         dependsOn: this.useFuncExtensionsInstall ? extInstallTaskName : undefined,
         isBackground: true,

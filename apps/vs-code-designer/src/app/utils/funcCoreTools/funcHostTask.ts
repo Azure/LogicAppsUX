@@ -6,7 +6,7 @@ import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } 
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
-import { getFunctionsCommand } from './funcVersion';
+//import { getFunctionsCommand } from './funcVersion';
 import { delay } from '@azure/ms-rest-js';
 import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -30,9 +30,9 @@ export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
   if (task.definition.type == 'shell') {
     const command = (task.execution as vscode.ShellExecution).command?.toString();
-    const funcRegex = new RegExp(`${getFunctionsCommand().replaceAll('\\', '\\\\')}`);
+    const funcRegex = new RegExp('\\$\\{config:azureLogicAppsStandard\\.funcCoreToolsBinaryPath\\}');
     // check for args?
-    return funcRegex.test(command || '');
+    return funcRegex.test(command);
   }
   return /func (host )?start/i.test(commandLine || '');
 }
