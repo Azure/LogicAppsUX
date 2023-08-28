@@ -2969,6 +2969,12 @@
       "value": "不支援在驗證中的屬性使用動態內容。"
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6637,6 +6643,12 @@
       "value": "請先新增來源結構描述，然後選取要建立對應的項目"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6781,7 +6793,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "無動作"
     }
   ],
   "iB8YKD": [

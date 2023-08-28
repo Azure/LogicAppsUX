@@ -2989,6 +2989,12 @@
       "value": "不支持将动态内容作为身份验证中的属性。"
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6677,6 +6683,12 @@
       "value": "先添加源架构，然后选择元素以生成映射"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6821,7 +6833,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "无操作"
     }
   ],
   "iB8YKD": [
