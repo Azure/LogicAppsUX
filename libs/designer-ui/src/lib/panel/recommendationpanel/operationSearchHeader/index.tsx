@@ -2,7 +2,9 @@ import { DesignerSearchBox } from '../../../searchbox';
 import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { Dropdown } from '@fluentui/react/lib/Dropdown';
-import { SearchService2 } from '@microsoft/designer-client-services-logic-apps';
+import type { OperationRuntimeCategory } from '@microsoft/designer-client-services-logic-apps';
+import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 
 interface OperationSearchHeaderProps {
@@ -15,6 +17,23 @@ interface OperationSearchHeaderProps {
   setFilters?: (filters: Record<string, string>) => void;
   isTriggerNode: boolean;
 }
+
+const getDefaultRuntimeCategories = (intl: IntlShape): OperationRuntimeCategory[] => {
+  return [
+    {
+      key: 'inapp',
+      text: intl.formatMessage({ defaultMessage: 'In-App', description: 'Filter by In App category of connectors' }),
+    },
+    {
+      key: 'shared',
+      text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
+    },
+    {
+      key: 'custom',
+      text: intl.formatMessage({ defaultMessage: 'Custom', description: 'Filter by Custom category of connectors' }),
+    },
+  ];
+};
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   const {
@@ -30,12 +49,10 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
 
   const intl = useIntl();
 
-  const runtimeFilters = SearchService2([], intl)
-    .getRuntimeCategories()
-    .map((category) => ({
-      key: `runtime-${category.key}`,
-      text: category.text,
-    }));
+  const runtimeFilters = (SearchService().getRuntimeCategories?.() ?? getDefaultRuntimeCategories(intl)).map((category) => ({
+    key: `runtime-${category.key}`,
+    text: category.text,
+  }));
 
   const actionTypeFilters = isTriggerNode
     ? [
