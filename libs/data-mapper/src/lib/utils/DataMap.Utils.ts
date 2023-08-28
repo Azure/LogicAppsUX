@@ -449,24 +449,64 @@ export const lexThisThing = (targetKey: string): string[] => {
   return tokens;
 };
 
+// danielle make this function kinda context dependent like if "for" what are all possible options
+// what should the output of this be? function could be the name, and all of the inputs; this doesn't really help us here
+// /ns0:TargetSchemaRoot/Looping/ManyToMany/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)/
+// Simple/$for(SourceSimpleChild)/SimpleChild/$for(SourceSimpleChildChild)/SimpleChildChild/Direct
+
+interface ParseFunc {
+  name: string;
+  inputs: FunctionInput[];
+}
+
+type FunctionInput = string | ParseFunc;
+
+const createTargetOrFunction = (tokens: string[]): { term: FunctionInput; nextIndex: number } => {
+  // determine if token is a
+  if (tokens[1] === Separators.OpenParenthesis) {
+    // this is a function
+    const func: ParseFunc = { name: tokens[0], inputs: [] }; // 'func1'  '('  'func2'  '('  'path1'  ')'  ','  'path2' ')'
+    let i = 2; // start of the inputs
+    let parenCount = 1;
+    while (i < tokens.length && parenCount !== 0) {
+      if (tokens[i] === Separators.OpenParenthesis) {
+        parenCount++;
+      } else if (tokens[i] === Separators.CloseParenthesis) {
+        parenCount--;
+      } else if (tokens[i] !== Separators.Comma) {
+        func.inputs.push(createTargetOrFunction(tokens.slice(i)).term);
+      }
+      i++;
+    }
+    return { term: func, nextIndex: i + 1 };
+  }
+  return { term: tokens[0], nextIndex: 2 };
+};
+
 export const removeSequenceFunction = (tokens: string[]): string => {
   let i = 0;
   const length = tokens.length;
-  let isSearchingForSource = false;
   let result = '';
   while (i < length) {
     if (tokens[i] === Reserved.for) {
-      // 'reverse(sort(/ns0:Root/Looping/Employee, /ns0:Root/Looping/Age)))
-      isSearchingForSource = true;
-      result = result + tokens[i] + '(';
-    } else if (isSearchingForSource && tokens[i + 1] !== '(' && tokens[i].length > 1) {
-      result = result + tokens[i] + ')';
-      isSearchingForSource = false;
-    } else if (!isSearchingForSource && tokens.findIndex((token) => token === 'for') > i) {
-      result = result + tokens[i];
-    } else if (tokens[i] === ')') i++;
+      const idk = createTargetOrFunction(tokens.slice(i + 2));
+      const src = getInput(idk.term);
+      result += 'for(' + src;
+      i += idk.nextIndex;
+    } else {
+      result += tokens[i];
+    }
+    i++;
   }
   return result;
+};
+
+const getInput = (term: FunctionInput) => {
+  let currentTerm = term;
+  while (typeof currentTerm !== 'string') {
+    currentTerm = currentTerm.inputs[0];
+  }
+  return currentTerm;
 };
 
 export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
@@ -477,6 +517,7 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   let curSrcParentKey = srcKeys[0];
   srcKeys.forEach((srcKey) => {
     if (!srcKey.includes(curSrcParentKey) && srcKey !== '*') {
+      // why does this happen?
       const fullyQualifiedSrcKey = `${curSrcParentKey}/${srcKey}`;
       qualifiedTargetKey = qualifiedTargetKey.replace(srcKey, fullyQualifiedSrcKey);
 
