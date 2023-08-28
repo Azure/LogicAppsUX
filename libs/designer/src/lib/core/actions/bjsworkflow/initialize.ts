@@ -189,7 +189,8 @@ export const getOutputParametersFromManifest = (
   isTrigger: boolean,
   inputs: NodeInputs,
   splitOnValue?: string,
-  operationInfo?: OperationInfo
+  operationInfo?: OperationInfo,
+  nodeId?: string
 ): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
   let originalOutputs: Record<string, OutputInfo> | undefined;
@@ -222,7 +223,7 @@ export const getOutputParametersFromManifest = (
     operationOutputs = {
       'builtin.$.item': {
         key: Constants.FOREACH_CURRENT_ITEM_KEY,
-        name: `${Constants.FOREACH_CURRENT_ITEM_EXPRESSION_NAME}('${Constants.FOREACH_CURRENT_ITEM_KEY}')`,
+        name: `${Constants.FOREACH_CURRENT_ITEM_EXPRESSION_NAME}('${nodeId}')`,
         required: false,
         title: manifest.properties.outputs.title,
         type: Constants.SWAGGER.TYPE.ANY,
@@ -302,7 +303,7 @@ export const updateOutputsAndTokens = async (
   let tokens: OutputToken[];
   if (supportsManifest) {
     const manifest = await getOperationManifest(operationInfo);
-    nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, splitOnValue, operationInfo).outputs;
+    nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, splitOnValue, operationInfo, nodeId).outputs;
     tokens = [
       ...getBuiltInTokens(manifest),
       ...convertOutputsToTokens(

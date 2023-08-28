@@ -98,6 +98,7 @@ export const ParametersTab = () => {
   }
 
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
+  console.log('charlie, tokenGroup', selectedNodeId, tokenGroup);
   const expressionGroup = getExpressionTokenSections();
 
   return (

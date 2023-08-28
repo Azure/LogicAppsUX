@@ -121,7 +121,8 @@ const initializeOperationDetails = async (
       isTrigger,
       nodeInputs,
       /* splitOnValue */ undefined,
-      operationInfo
+      operationInfo,
+      nodeId
     );
     let updatedOutputs = nodeOutputs;
     parsedManifest = new ManifestParser(manifest);
@@ -144,7 +145,8 @@ const initializeOperationDetails = async (
         isTrigger,
         nodeInputs,
         settings.splitOn?.value?.value,
-        operationInfo
+        operationInfo,
+        nodeId
       ).outputs;
     }
 
@@ -157,6 +159,7 @@ const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
+    console.log('charlie add', initData);
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
@@ -251,7 +254,8 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     false,
     nodeInputs,
     /* splitOnValue */ undefined,
-    /* operationInfo */ undefined
+    /* operationInfo */ undefined,
+    id
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {
@@ -333,7 +337,7 @@ export const addTokensAndVariables = (
       tokensAndVariables.variables[nodeId] = variables;
     }
   }
-
+  console.log('charlie add token', tokensAndVariables);
   dispatch(initializeTokensAndVariables(tokensAndVariables));
 };
 
