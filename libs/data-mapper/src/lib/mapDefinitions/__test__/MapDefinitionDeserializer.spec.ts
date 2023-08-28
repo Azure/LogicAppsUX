@@ -1138,20 +1138,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     const getFirstInputReactFlowKey = (conn: Connection) => (conn.inputs[0][0] as ConnectionUnit).reactFlowKey;
     const getSecondInputReactFlowKey = (conn: Connection) => (conn.inputs[1][0] as ConnectionUnit).reactFlowKey;
 
-    //   ns0:Root:
-    //    ConditionalLooping:
-    //      $for(reverse(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)):
-    //        CategorizedCatalog:
-    //          PetProduct:
-    //            Name: Name
-
     it('creates a simple sequence function', () => {
       simpleMap['ns0:Root'] = {
         Looping: {
           '$for(reverse(/ns0:Root/Looping/Employee))': {
             Person: {
               Name: 'Name',
-              // Other: 'TelephoneNumber',
             },
           },
         },
@@ -1205,7 +1197,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(getFirstInputReactFlowKey(resultEntries[4][1]).startsWith('Reverse')).toBeTruthy();
 
       expect(resultEntries[5][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
-      // expect(getFirstInputReactFlowKey(resultEntries[4][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+      expect(getFirstInputReactFlowKey(resultEntries[5][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
     });
 
     it('creates a simple sequence function with multiple mapped children', () => {
@@ -1214,7 +1206,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           '$for(reverse(/ns0:Root/Looping/Employee))': {
             Person: {
               Name: 'Name',
-              // Other: 'TelephoneNumber',
+              Other: 'TelephoneNumber',
             },
           },
         },
@@ -1230,12 +1222,16 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
       expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
 
-      expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Looping/Person');
-      expect(getFirstInputReactFlowKey(resultEntries[3][1]).startsWith('Reverse')).toBeTruthy();
+      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person');
+      expect(getFirstInputReactFlowKey(resultEntries[4][1]).startsWith('Reverse')).toBeTruthy();
 
-      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
-      expect(getFirstInputReactFlowKey(resultEntries[4][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+      expect(resultEntries[5][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+      expect(getFirstInputReactFlowKey(resultEntries[5][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+      expect(resultEntries[6][0]).toEqual('target-/ns0:Root/Looping/Person/Other');
+      expect(getFirstInputReactFlowKey(resultEntries[6][1])).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
     });
   });
 
