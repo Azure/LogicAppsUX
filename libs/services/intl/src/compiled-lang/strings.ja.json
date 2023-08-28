@@ -2969,6 +2969,12 @@
       "value": "動的コンテンツは認証のプロパティとしてサポートされていません。"
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6621,6 +6627,12 @@
       "value": "最初にソース スキーマを追加してから、マップを作成する要素を選択します"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6765,7 +6777,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "アクションなし"
     }
   ],
   "iB8YKD": [

@@ -2997,6 +2997,12 @@
       "value": "Não há suporte para conteúdo dinâmico como propriedades na autenticação."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6709,6 +6715,12 @@
       "value": "Adicione um esquema de origem primeiro e, em seguida, selecione os elementos para criar o mapa"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6875,7 +6887,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Nenhuma ação"
     }
   ],
   "iB8YKD": [

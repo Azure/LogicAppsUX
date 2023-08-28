@@ -3025,6 +3025,12 @@
       "value": "El contenido dinámico no se admite como propiedades en la autenticación."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6741,6 +6747,12 @@
       "value": "Agregue primero un esquema de origen y, a continuación, seleccione los elementos para compilar el mapa."
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6907,7 +6919,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "No hay acciones"
     }
   ],
   "iB8YKD": [
