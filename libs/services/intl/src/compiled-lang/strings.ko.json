@@ -2961,6 +2961,12 @@
       "value": "동적 콘텐츠는 인증의 속성으로 지원되지 않습니다."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6617,6 +6623,12 @@
       "value": "먼저 원본 스키마를 추가한 다음, 요소를 선택하여 맵을 빌드합니다."
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6761,7 +6773,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "작업 없음"
     }
   ],
   "iB8YKD": [

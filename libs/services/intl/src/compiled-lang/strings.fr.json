@@ -3025,6 +3025,12 @@
       "value": "Contenu dynamique non pris en charge comme propriétés dans l'authentification."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6741,6 +6747,12 @@
       "value": "Commencez par ajouter un schéma source, puis sélectionnez des éléments pour générer votre carte"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6907,7 +6919,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Aucune action"
     }
   ],
   "iB8YKD": [

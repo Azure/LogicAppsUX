@@ -3009,6 +3009,12 @@
       "value": "Il contenuto dinamico non è supportato come proprietà nell'autenticazione."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6725,6 +6731,12 @@
       "value": "Aggiungi prima uno schema di origine, quindi seleziona gli elementi per compilare la mappa"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6891,7 +6903,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Nessuna azione"
     }
   ],
   "iB8YKD": [

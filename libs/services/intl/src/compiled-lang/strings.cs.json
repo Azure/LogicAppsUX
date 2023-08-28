@@ -3055,6 +3055,12 @@
       "value": "Při ověřování se využití dynamického obsahu jako vlastností nepodporuje."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6777,6 +6783,12 @@
       "value": "Nejprve přidejte zdrojové schéma a pak vyberte prvky pro sestavení mapy"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6958,7 +6970,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Žádné akce"
     }
   ],
   "iB8YKD": [
