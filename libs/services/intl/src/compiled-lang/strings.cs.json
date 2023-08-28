@@ -1047,12 +1047,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Ikona konektoru "
     },
     {
-      "type": 0,
-      "value": " connector icon"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Vybrat funkci z"
     }
   ],
   "73iM9+": [
@@ -3053,6 +3053,12 @@
     {
       "type": 0,
       "value": "Při ověřování se využití dynamického obsahu jako vlastností nepodporuje."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6777,6 +6783,12 @@
       "value": "Nejprve přidejte zdrojové schéma a pak vyberte prvky pro sestavení mapy"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6953,6 +6965,12 @@
     {
       "type": 0,
       "value": "Obsahuje neplatnou hodnotu"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Žádné akce"
     }
   ],
   "iB8YKD": [
@@ -7520,7 +7538,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Rozevírací seznam pro výběr cesty k souboru"
     }
   ],
   "lhL/KL": [
@@ -8468,7 +8486,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "V cestě "
     },
     {
       "type": 1,
@@ -8476,7 +8494,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": " nebyly nalezeny žádné soubory. Chcete-li tuto funkci použít, uložte soubor XSLT do zadané cesty."
     }
   ],
   "raBiud": [

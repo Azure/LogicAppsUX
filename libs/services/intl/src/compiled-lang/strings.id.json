@@ -1039,12 +1039,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Ikon konektor "
     },
     {
-      "type": 0,
-      "value": " connector icon"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1290,7 +1290,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Pilih fungsi dari"
     }
   ],
   "73iM9+": [
@@ -2971,6 +2971,12 @@
     {
       "type": 0,
       "value": "Konten dinamis tidak didukung sebagai properti dalam autentikasi."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6637,6 +6643,12 @@
       "value": "Tambahkan skema sumber terlebih dahulu, lalu pilih elemen untuk membuat peta Anda"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6776,6 +6788,12 @@
     {
       "type": 0,
       "value": "Berisi nilai yang tidak valid"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Tidak ada tindakan"
     }
   ],
   "iB8YKD": [
@@ -7310,7 +7328,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Daftar menurun untuk memilih jalur file"
     }
   ],
   "lhL/KL": [
@@ -8225,7 +8243,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Tidak ada file yang ditemukan di "
     },
     {
       "type": 1,
@@ -8233,7 +8251,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": ", simpan XSLT ke jalur yang ditentukan untuk menggunakan fungsi ini"
     }
   ],
   "raBiud": [

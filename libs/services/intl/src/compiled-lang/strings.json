@@ -3007,6 +3007,12 @@
       "value": "Dynamic content not supported as properties in authentication."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6693,6 +6699,12 @@
       "value": "Add a source schema first, then select elements to build your map"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6843,6 +6855,12 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
     }
   ],
   "iB8YKD": [

@@ -1056,7 +1056,7 @@
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": " 连接器图标"
     }
   ],
   "5SAQOb": [
@@ -1302,7 +1302,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "选择函数来源"
     }
   ],
   "73iM9+": [
@@ -2987,6 +2987,12 @@
     {
       "type": 0,
       "value": "不支持将动态内容作为身份验证中的属性。"
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6677,6 +6683,12 @@
       "value": "先添加源架构，然后选择元素以生成映射"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6816,6 +6828,12 @@
     {
       "type": 0,
       "value": "此项包含无效值"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "无操作"
     }
   ],
   "iB8YKD": [
@@ -7358,7 +7376,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "用于选择文件路径的下拉列表"
     }
   ],
   "lhL/KL": [
@@ -8281,7 +8299,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "在 "
     },
     {
       "type": 1,
@@ -8289,7 +8307,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": " 中找不到文件，请将 XSLT 保存到指定路径以使用此函数"
     }
   ],
   "raBiud": [

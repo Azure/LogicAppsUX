@@ -1044,7 +1044,7 @@
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": " コネクタ アイコン"
     }
   ],
   "5SAQOb": [
@@ -1290,7 +1290,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "関数の選択元"
     }
   ],
   "73iM9+": [
@@ -2967,6 +2967,12 @@
     {
       "type": 0,
       "value": "動的コンテンツは認証のプロパティとしてサポートされていません。"
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6621,6 +6627,12 @@
       "value": "最初にソース スキーマを追加してから、マップを作成する要素を選択します"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6760,6 +6772,12 @@
     {
       "type": 0,
       "value": "無効な値が含まれています"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "アクションなし"
     }
   ],
   "iB8YKD": [
@@ -7282,7 +7300,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "ファイルパスを選択するためのドロップダウン"
     }
   ],
   "lhL/KL": [
@@ -8196,16 +8214,12 @@
   ],
   "rSa1Id": [
     {
-      "type": 0,
-      "value": "No files found in "
-    },
-    {
       "type": 1,
       "value": "filePath"
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": " でファイルが見つかりません。この関数を使用するには、指定されたパスに XSLT を保存してください。"
     }
   ],
   "raBiud": [

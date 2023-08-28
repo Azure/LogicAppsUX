@@ -1052,7 +1052,7 @@
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": " 連接器圖示"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "從以下路徑選取函式:"
     }
   ],
   "73iM9+": [
@@ -2967,6 +2967,12 @@
     {
       "type": 0,
       "value": "不支援在驗證中的屬性使用動態內容。"
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6637,6 +6643,12 @@
       "value": "請先新增來源結構描述，然後選取要建立對應的項目"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6776,6 +6788,12 @@
     {
       "type": 0,
       "value": "這包含無效值"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "無動作"
     }
   ],
   "iB8YKD": [
@@ -7302,7 +7320,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "用於選取檔案路徑的下拉式清單"
     }
   ],
   "lhL/KL": [
@@ -8217,7 +8235,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "在 "
     },
     {
       "type": 1,
@@ -8225,7 +8243,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": " 中找不到檔案，請將 XSLT 儲存到指定的路徑以使用此函式"
     }
   ],
   "raBiud": [

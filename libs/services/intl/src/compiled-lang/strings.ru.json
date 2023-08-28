@@ -1047,12 +1047,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Значок соединителя "
     },
     {
-      "type": 0,
-      "value": " connector icon"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Выберите функцию из"
     }
   ],
   "73iM9+": [
@@ -3053,6 +3053,12 @@
     {
       "type": 0,
       "value": "Динамическое содержимое не поддерживается в качестве свойств при проверке подлинности."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6789,6 +6795,12 @@
       "value": "Сначала добавьте исходную схему, а затем выберите элементы для построения карты"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6961,6 +6973,12 @@
     {
       "type": 0,
       "value": "Содержится недопустимое значение"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Нет действий"
     }
   ],
   "iB8YKD": [
@@ -7532,7 +7550,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Раскрывающийся список для выбора пути к файлу"
     }
   ],
   "lhL/KL": [
@@ -8480,7 +8498,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Не найдены файлы в "
     },
     {
       "type": 1,
@@ -8488,7 +8506,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": ". Сохраните XSLT в указанном пути, чтобы использовать эту функцию"
     }
   ],
   "raBiud": [

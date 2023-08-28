@@ -1044,7 +1044,7 @@
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": " bağlayıcı simgesi"
     }
   ],
   "5SAQOb": [
@@ -1290,7 +1290,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "İşlev seçin"
     }
   ],
   "73iM9+": [
@@ -2989,6 +2989,12 @@
     {
       "type": 0,
       "value": "Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6669,6 +6675,12 @@
       "value": "Önce bir kaynak şema ekleyin, ardından haritanızı oluşturmak için öğeleri seçin"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6819,6 +6831,12 @@
     {
       "type": 0,
       "value": "Bu geçersiz bir değer içeriyor"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Eylem yok"
     }
   ],
   "iB8YKD": [
@@ -7360,7 +7378,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Dosya yolu seçmek için açılan liste"
     }
   ],
   "lhL/KL": [
@@ -8285,16 +8303,12 @@
   ],
   "rSa1Id": [
     {
-      "type": 0,
-      "value": "No files found in "
-    },
-    {
       "type": 1,
       "value": "filePath"
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": " içinde dosya bulunamadı, bu işlevi kullanmak için lütfen XSLT'yi belirtilen yola kaydedin"
     }
   ],
   "raBiud": [

@@ -1047,12 +1047,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Ikona łącznika "
     },
     {
-      "type": 0,
-      "value": " connector icon"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Wybierz funkcję z"
     }
   ],
   "73iM9+": [
@@ -3053,6 +3053,12 @@
     {
       "type": 0,
       "value": "Zawartość dynamiczna nie jest obsługiwana jako właściwości w uwierzytelnianiu."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6793,6 +6799,12 @@
       "value": "Najpierw dodaj schemat źródłowy, a następnie wybierz elementy do utworzenia mapy"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6965,6 +6977,12 @@
     {
       "type": 0,
       "value": "To zawiera nieprawidłową wartość"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Brak akcji"
     }
   ],
   "iB8YKD": [
@@ -7548,7 +7566,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Lista rozwijana umożliwiająca wybranie ścieżki pliku"
     }
   ],
   "lhL/KL": [
@@ -8496,7 +8514,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Nie znaleziono plików w ścieżce "
     },
     {
       "type": 1,
@@ -8504,7 +8522,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": ". Zapisz plik XSLT w określonej ścieżce, aby użyć tej funkcji"
     }
   ],
   "raBiud": [

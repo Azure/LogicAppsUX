@@ -1060,7 +1060,7 @@
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": " összekötő ikonja"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Függvény kiválasztása innen:"
     }
   ],
   "73iM9+": [
@@ -3009,6 +3009,12 @@
     {
       "type": 0,
       "value": "A dinamikus tartalom hitelesítési tulajdonságokként való használata nem támogatott."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6689,6 +6695,12 @@
       "value": "Először adjon hozzá egy forrássémát, majd jelöljön ki elemeket a leképezés létrehozásához"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6839,6 +6851,12 @@
     {
       "type": 0,
       "value": "Ez érvénytelen értéket tartalmaz"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Nincsenek műveletek"
     }
   ],
   "iB8YKD": [
@@ -7384,7 +7402,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Legördülő lista a fájlelérési út kiválasztásához"
     }
   ],
   "lhL/KL": [
@@ -8314,7 +8332,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Nem találhatók fájlok a megadott "
     },
     {
       "type": 1,
@@ -8322,7 +8340,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": " elérési úton, a függvény használatához mentsen XSLT-fájlt a megadott elérési útra"
     }
   ],
   "raBiud": [

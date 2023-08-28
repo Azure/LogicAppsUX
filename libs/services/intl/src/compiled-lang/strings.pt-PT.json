@@ -1047,12 +1047,12 @@
   ],
   "5Ow9mX": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "ícone do conector de "
     },
     {
-      "type": 0,
-      "value": " connector icon"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1298,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Selecionar função a partir de"
     }
   ],
   "73iM9+": [
@@ -3031,6 +3031,12 @@
     {
       "type": 0,
       "value": "O conteúdo dinâmico não é suportado como propriedades na autenticação."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6749,6 +6755,12 @@
       "value": "Adicione primeiro um esquema de origem e, em seguida, selecione elementos para criar o seu mapa"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6910,6 +6922,12 @@
     {
       "type": 0,
       "value": "Contém um valor inválido"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Nenhuma ação"
     }
   ],
   "iB8YKD": [
@@ -7466,7 +7484,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Lista pendente para selecionar caminho de ficheiro"
     }
   ],
   "lhL/KL": [
@@ -8403,7 +8421,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Não foram encontrados ficheiros no caminho "
     },
     {
       "type": 1,
@@ -8411,7 +8429,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": ". Guarde o ficheiro XSLT no caminho especificado para utilizar esta função"
     }
   ],
   "raBiud": [

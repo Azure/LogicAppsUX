@@ -1064,7 +1064,7 @@
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": "-Connectorsymbol"
     }
   ],
   "5SAQOb": [
@@ -1310,7 +1310,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Funktion auswählen aus"
     }
   ],
   "73iM9+": [
@@ -3033,6 +3033,12 @@
     {
       "type": 0,
       "value": "Dynamische Inhalte werden als Eigenschaften in der Authentifizierung nicht unterstützt."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6745,6 +6751,12 @@
       "value": "Fügen Sie zuerst ein Quellschema hinzu, und wählen Sie dann Elemente aus, um Ihre Zuordnung zu erstellen."
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6895,6 +6907,12 @@
     {
       "type": 0,
       "value": "Dies einen ungültigen Wert auf."
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Keine Aktionen"
     }
   ],
   "iB8YKD": [
@@ -7440,7 +7458,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Dropdown zum Auswählen des Dateipfads"
     }
   ],
   "lhL/KL": [
@@ -8370,7 +8388,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "In "
     },
     {
       "type": 1,
@@ -8378,7 +8396,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": " wurden keine Dateien gefunden. Speichern Sie XSLT im angegebenen Pfad, um diese Funktion zu verwenden."
     }
   ],
   "raBiud": [

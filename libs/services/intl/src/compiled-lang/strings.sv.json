@@ -1047,12 +1047,16 @@
   ],
   "5Ow9mX": [
     {
+      "type": 0,
+      "value": "Ikon för "
+    },
+    {
       "type": 1,
       "value": "connectorName"
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": " anslutning"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1302,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Välj funktion från"
     }
   ],
   "73iM9+": [
@@ -3001,6 +3005,12 @@
     {
       "type": 0,
       "value": "Dynamiskt innehåll stöds inte som egenskaper i autentisering."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6677,6 +6687,12 @@
       "value": "Lägg till ett källschema först och välj sedan element för att skapa kartan"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6827,6 +6843,12 @@
     {
       "type": 0,
       "value": "Det här innehåller ett ogiltigt värde"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Inga åtgärder"
     }
   ],
   "iB8YKD": [
@@ -7372,7 +7394,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Listruta för att välja filsökväg"
     }
   ],
   "lhL/KL": [
@@ -8294,7 +8316,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Inga filer hittades i "
     },
     {
       "type": 1,
@@ -8302,7 +8324,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": ". Spara XSLT på den angivna sökvägen om du vill använda den här funktionen"
     }
   ],
   "raBiud": [

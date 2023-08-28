@@ -1047,12 +1047,16 @@
   ],
   "5Ow9mX": [
     {
+      "type": 0,
+      "value": "pictogram "
+    },
+    {
       "type": 1,
       "value": "connectorName"
     },
     {
       "type": 0,
-      "value": " connector icon"
+      "value": "-connector"
     }
   ],
   "5SAQOb": [
@@ -1298,7 +1302,7 @@
   "70eoQu": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Functie selecteren uit"
     }
   ],
   "73iM9+": [
@@ -3005,6 +3009,12 @@
     {
       "type": 0,
       "value": "Dynamische inhoud wordt niet ondersteund voor eigenschappen bij de verificatie."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
     }
   ],
   "I3mifR": [
@@ -6685,6 +6695,12 @@
       "value": "Voeg eerst een bronschema toe en selecteer vervolgens elementen om uw toewijzing samen te stellen"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6835,6 +6851,12 @@
     {
       "type": 0,
       "value": "Deze bevat een ongeldige waarde"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Geen acties"
     }
   ],
   "iB8YKD": [
@@ -7380,7 +7402,7 @@
   "lh0TuF": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Vervolgkeuzelijst om bestandspad te selecteren"
     }
   ],
   "lhL/KL": [
@@ -8302,7 +8324,7 @@
   "rSa1Id": [
     {
       "type": 0,
-      "value": "No files found in "
+      "value": "Er zijn geen bestanden gevonden in "
     },
     {
       "type": 1,
@@ -8310,7 +8332,7 @@
     },
     {
       "type": 0,
-      "value": ", please save XSLT to specified path to use this function"
+      "value": ". Sla XSLT op in het opgegeven pad om deze functie te gebruiken"
     }
   ],
   "raBiud": [
