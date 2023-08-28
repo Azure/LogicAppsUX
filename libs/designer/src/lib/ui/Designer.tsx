@@ -1,6 +1,6 @@
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
-import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
@@ -186,6 +186,8 @@ export const Designer = (props: DesignerProps) => {
     event.preventDefault();
     dispatch(switchToNodeSearchPanel());
   });
+
+  const isMonitoringView = useMonitoringView();
   const DND_OPTIONS: any = {
     backends: [
       {
@@ -205,7 +207,7 @@ export const Designer = (props: DesignerProps) => {
 
   return (
     <DndProvider options={DND_OPTIONS}>
-      <SearchPreloader />
+      {isMonitoringView || isReadOnly ? null : <SearchPreloader />}
       <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
