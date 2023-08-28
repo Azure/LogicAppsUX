@@ -159,7 +159,6 @@ const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    console.log('charlie add', initData);
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
@@ -337,7 +336,6 @@ export const addTokensAndVariables = (
       tokensAndVariables.variables[nodeId] = variables;
     }
   }
-  console.log('charlie add token', tokensAndVariables);
   dispatch(initializeTokensAndVariables(tokensAndVariables));
 };
 
