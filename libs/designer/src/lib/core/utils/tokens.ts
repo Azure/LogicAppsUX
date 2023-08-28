@@ -1,4 +1,3 @@
-import constants from '../../common/constants';
 import Constants from '../../common/constants';
 import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../actions/bjsworkflow/settings';
@@ -347,7 +346,7 @@ const getTokenValueSegmentTokenType = (token: OutputToken, nodeType: string): To
 
   if (nodeType.toLowerCase() === Constants.NODE.TYPE.FOREACH) {
     return TokenType.ITEM;
-  } else if (key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY) {
+  } else if (key === Constants.UNTIL_CURRENT_ITERATION_INDEX_KEY) {
     return TokenType.ITERATIONINDEX;
   } else if (token.outputInfo?.functionName) {
     return equals(token.outputInfo.functionName, Constants.FUNCTION_NAME.PARAMETERS) ? TokenType.PARAMETER : TokenType.VARIABLE;

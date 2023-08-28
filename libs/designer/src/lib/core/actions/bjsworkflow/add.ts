@@ -120,7 +120,8 @@ const initializeOperationDetails = async (
       manifest,
       isTrigger,
       nodeInputs,
-      /* splitOnValue */ undefined
+      /* splitOnValue */ undefined,
+      operationInfo
     );
     let updatedOutputs = nodeOutputs;
     parsedManifest = new ManifestParser(manifest);
@@ -138,7 +139,13 @@ const initializeOperationDetails = async (
 
     // We should update the outputs when splitOn is enabled.
     if (isTrigger && settings.splitOn?.value?.value) {
-      updatedOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value).outputs;
+      updatedOutputs = getOutputParametersFromManifest(
+        manifest,
+        isTrigger,
+        nodeInputs,
+        settings.splitOn?.value?.value,
+        operationInfo
+      ).outputs;
     }
 
     initData = {
@@ -243,7 +250,8 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     manifest,
     false,
     nodeInputs,
-    /* splitOnValue */ undefined
+    /* splitOnValue */ undefined,
+    /* operationInfo */ undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {
