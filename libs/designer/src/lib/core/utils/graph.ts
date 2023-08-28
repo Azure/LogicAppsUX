@@ -79,11 +79,10 @@ export const getUpstreamNodeIds = (
   for (const parentNodeId of allParentNodeIds) {
     const graphContainingNode = getGraphNode(parentNodeId, rootGraph, nodesMetadata);
     if (graphContainingNode) {
-      sourceNodeIds.push(...getAllSourceNodeIds(graphContainingNode, parentNodeId, operationMap));
+      sourceNodeIds.push(...getAllSourceNodeIds(graphContainingNode, parentNodeId, operationMap), parentNodeId);
     }
   }
-
-  return sourceNodeIds;
+  return Array.from(new Set(sourceNodeIds));
 };
 
 export const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
@@ -109,11 +108,7 @@ export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: 
 };
 
 export const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
-  return (graph?.edges ?? [])
-    .filter((edge) => edge.target === nodeId)
-    .map((edge) => {
-      return edge.source.includes('#') ? edge.source.split('-#')?.[0] : edge.source;
-    });
+  return (graph.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
 };
 
 export const getNewNodeId = (state: WorkflowState, nodeId: string): string => {
