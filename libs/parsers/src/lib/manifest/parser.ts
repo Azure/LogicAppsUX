@@ -131,15 +131,7 @@ export class ManifestParser {
       OutputsProcessor.convertSchemaPropertyToOutputParameter(item, SwaggerConstants.OutputSource.Outputs, 'outputs')
     );
 
-    /*
-     * Note: Filtering the object output parameter representing outputs because it is not currently handled properly during serialization, etc.
-     * If we decide in the future we want to support an "outputs" token for open api, we can remove this and add handling for it.
-     */
-    const filteredOutputParameters = !this._operationManifest.properties.includeRootOutputs
-      ? outputParameters.filter((parameter) => parameter.key !== 'outputs.$')
-      : outputParameters;
-
-    return map(filteredOutputParameters, SwaggerConstants.OutputMapKey);
+    return map(outputParameters, SwaggerConstants.OutputMapKey);
   }
 
   /**
