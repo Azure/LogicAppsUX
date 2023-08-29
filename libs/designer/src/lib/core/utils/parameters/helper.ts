@@ -60,6 +60,7 @@ import type {
   AuthProps,
   ComboboxItem,
   DictionaryEditorItemProps,
+  FloatingActionMenuOutputViewModel,
   GroupItemProps,
   OutputToken,
   ParameterInfo,
@@ -71,6 +72,7 @@ import type {
 import {
   removeQuotes,
   ArrayType,
+  FloatingActionMenuKind,
   getOuterMostCommaIndex,
   RowDropdownOptions,
   GroupDropdownOptions,
@@ -431,6 +433,8 @@ export function getParameterEditorProps(
     if (parameterValue.some(isTokenValueSegment)) {
       editor = undefined;
     }
+  } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
+    editorViewModel = toFloatingActionMenuOutputsViewModel(value);
   }
 
   return { editor, editorOptions, editorViewModel, schema };
@@ -753,6 +757,27 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
 const loadOauthType = (value: any): AuthenticationOAuthType => {
   return value.pfx ? AuthenticationOAuthType.CERTIFICATE : AuthenticationOAuthType.SECRET;
 };
+
+// Create FloatingActionMenuOutputs Editor View Model
+function toFloatingActionMenuOutputsViewModel(value: any) {
+  const clonedValue = clone(value);
+
+  const outputValueSegmentsMap: Record<string, ValueSegment[]> = {};
+  const outputValueMap = clonedValue?.additionalProperties?.outputValueMap;
+  if (outputValueMap) {
+    Object.entries(outputValueMap).forEach(([key, outputValue]) => {
+      outputValueSegmentsMap[key] = loadParameterValue(convertStringToInputParameter(outputValue as string));
+    });
+
+    // So editor does not need to worry about keeping this in sync with outputValueSegmentsMap
+    delete clonedValue.additionalProperties.outputValueMap;
+  }
+
+  return {
+    schema: clonedValue,
+    outputValueSegmentsMap,
+  };
+}
 
 interface ParameterEditorProps {
   editor?: string;
@@ -2174,10 +2199,53 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       return editorOptions?.isOldFormat
         ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat)
         : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
+    case constants.EDITOR.FLOATINGACTIONMENU:
+      if (!editorViewModel || editorOptions?.menuKind !== FloatingActionMenuKind.outputs) {
+        return undefined;
+      }
+
+      return getStringifiedValueFromFloatingActionMenuOutputsViewModel(parameter, editorViewModel);
     default:
       return undefined;
   }
 }
+
+const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
+  parameter: ParameterInfo,
+  editorViewModel: FloatingActionMenuOutputViewModel
+): string | undefined => {
+  const value: typeof editorViewModel.schema & { additionalProperties?: { outputValueMap?: Record<string, unknown> } } = clone(
+    editorViewModel.schema
+  );
+  const schemaProperties: typeof editorViewModel.schema.properties = {};
+  const outputValueMap: Record<string, unknown> = {};
+
+  // commonProperties is inspired from behavior for Table Editor and Condition Editor.
+  // This may need to change if for example we need proper parameter.info.format value per added parameter (instead of re-using parameter.info).
+  const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
+  Object.entries(value.properties).forEach(([key, config]) => {
+    if (!config?.['x-ms-dynamically-added']) {
+      schemaProperties[key] = config;
+      return;
+    }
+
+    if (config.title) {
+      const keyFromTitle = config.title.replace(' ', '_');
+      schemaProperties[keyFromTitle] = config;
+
+      const valueSegments = editorViewModel.outputValueSegmentsMap?.[key];
+      if (valueSegments?.length) {
+        outputValueMap[keyFromTitle] =
+          // We want to transform (for example) "1" to 1, "false" to false, if the dynamically added parameter type is not 'String'
+          parameterValueWithoutCasting({ type: config.type, value: valueSegments, ...commonProperties } as any);
+      }
+    }
+  });
+
+  value.properties = schemaProperties;
+  (value.additionalProperties ??= {}).outputValueMap = outputValueMap;
+  return JSON.stringify(value);
+};
 
 const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat: boolean): string | undefined => {
   // if it is in advanced mode, we use loadParameterValue to get the value

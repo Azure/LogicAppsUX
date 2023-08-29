@@ -180,6 +180,7 @@ export default {
     DICTIONARY: 'dictionary',
     DROPDOWN: 'dropdown',
     FILEPICKER: 'filepicker',
+    FLOATINGACTIONMENU: 'floatingactionmenu',
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
