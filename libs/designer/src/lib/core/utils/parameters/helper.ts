@@ -2419,20 +2419,7 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
   let finalValue = clone(inputsValue);
   let propertiesToRetain: string[] = [];
   for (const { source, target } of swapMap) {
-    const propertyValue = getObjectPropertyValue(finalValue, target);
-    deleteObjectProperty(finalValue, target);
-
-    // Don't want to use clone on a non-object
-    if (typeof propertyValue !== 'object') {
-      if (!source.length || !target.length) {
-        throw new UnsupportedException(`Neither 'source' or 'target' can be empty for a non-object value.`);
-      }
-
-      finalValue = safeSetObjectPropertyValue(finalValue, source, propertyValue);
-      continue;
-    }
-
-    const value = clone(propertyValue);
+    const value = clone(getObjectPropertyValue(finalValue, target));
     if (!target.length) {
       propertiesToRetain = Object.keys(manifest.properties.inputs.properties);
       deleteObjectProperties(
@@ -2447,6 +2434,7 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
       }
     }
 
+    deleteObjectProperty(finalValue, target);
     finalValue = !source.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, source, value);
   }
   return finalValue;

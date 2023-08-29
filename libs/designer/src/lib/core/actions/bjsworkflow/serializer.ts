@@ -571,15 +571,8 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
   }
   let finalValue = clone(parametersValue);
   for (const { source, target } of swapMap) {
-    const propertyValue = getObjectPropertyValue(parametersValue, source);
-    deleteObjectProperty(finalValue, source);
-
-    if (typeof propertyValue !== 'object') {
-      finalValue = safeSetObjectPropertyValue(finalValue, target, propertyValue);
-      continue;
-    }
-
     const value = { ...excludePathValueFromTarget(parametersValue, source, target), ...getObjectPropertyValue(parametersValue, source) };
+    deleteObjectProperty(finalValue, source);
     finalValue = !target.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, target, value);
   }
 
