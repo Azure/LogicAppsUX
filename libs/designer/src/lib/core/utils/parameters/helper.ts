@@ -1835,8 +1835,8 @@ async function loadDynamicContentForInputsInNode(
           // avoid pushing a parameter for it as it is already being
           // handled in the settings store.
           // NOTE: this could be expanded to more settings that are treated as inputs.
-          const newOperationDefinition = clone(operationDefinition);
-          if (newOperationDefinition.inputs?.[PropertyName.RETRYPOLICY]) {
+          const newOperationDefinition = operationDefinition ? clone(operationDefinition) : operationDefinition;
+          if (newOperationDefinition?.inputs?.[PropertyName.RETRYPOLICY]) {
             delete newOperationDefinition.inputs.retryPolicy;
           }
 
