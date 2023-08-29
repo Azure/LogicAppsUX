@@ -82,7 +82,7 @@ export const getTokenNodeIds = (
     }
   }
 
-  return tokenNodes;
+  return Array.from(new Set(tokenNodes));
 };
 
 export const getBuiltInTokens = (manifest?: OperationManifest): OutputToken[] => {

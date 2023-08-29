@@ -82,7 +82,7 @@ export const getUpstreamNodeIds = (
       sourceNodeIds.push(...getAllSourceNodeIds(graphContainingNode, parentNodeId, operationMap), parentNodeId);
     }
   }
-  return Array.from(new Set(sourceNodeIds));
+  return sourceNodeIds;
 };
 
 export const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
