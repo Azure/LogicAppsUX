@@ -8,6 +8,11 @@ import type {
 } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
+export type OperationRuntimeCategory = {
+  key: string;
+  text: string;
+};
+
 export interface ISearchService {
   getAllConnectors(): Promise<Connector[]>;
   getAzureConnectorsByPage(page: number): Promise<Connector[]>;
@@ -20,6 +25,9 @@ export interface ISearchService {
   getAzureOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getBuiltInOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  searchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getRuntimeCategories?(): OperationRuntimeCategory[];
+  filterConnector?(connector: Connector, runtimeFilter: string): boolean;
 }
 
 let service: ISearchService;

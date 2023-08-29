@@ -197,6 +197,7 @@ export interface ConnectorProperty {
   integrationServiceEnvironment?: {
     id: string;
   };
+  tier?: string;
   isCustomApi?: boolean;
   testConnectionUrl?: string;
   testConnectionOperationName?: string;

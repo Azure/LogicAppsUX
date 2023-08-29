@@ -2,6 +2,9 @@ import { DesignerSearchBox } from '../../../searchbox';
 import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { Dropdown } from '@fluentui/react/lib/Dropdown';
+import type { OperationRuntimeCategory } from '@microsoft/designer-client-services-logic-apps';
+import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 
 interface OperationSearchHeaderProps {
@@ -14,6 +17,23 @@ interface OperationSearchHeaderProps {
   setFilters?: (filters: Record<string, string>) => void;
   isTriggerNode: boolean;
 }
+
+const getDefaultRuntimeCategories = (intl: IntlShape): OperationRuntimeCategory[] => {
+  return [
+    {
+      key: 'inapp',
+      text: intl.formatMessage({ defaultMessage: 'In-App', description: 'Filter by In App category of connectors' }),
+    },
+    {
+      key: 'shared',
+      text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
+    },
+    {
+      key: 'custom',
+      text: intl.formatMessage({ defaultMessage: 'Custom', description: 'Filter by Custom category of connectors' }),
+    },
+  ];
+};
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   const {
@@ -29,20 +49,10 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
 
   const intl = useIntl();
 
-  const runtimeFilters = [
-    {
-      key: 'runtime-inapp',
-      text: intl.formatMessage({ defaultMessage: 'In-App', description: 'Filter by In App category of connectors' }),
-    },
-    {
-      key: 'runtime-shared',
-      text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
-    },
-    {
-      key: 'runtime-custom',
-      text: intl.formatMessage({ defaultMessage: 'Custom', description: 'Filter by Custom category of connectors' }),
-    },
-  ];
+  const runtimeFilters = (SearchService().getRuntimeCategories?.() ?? getDefaultRuntimeCategories(intl)).map((category) => ({
+    key: `runtime-${category.key}`,
+    text: category.text,
+  }));
 
   const actionTypeFilters = isTriggerNode
     ? [
@@ -84,7 +94,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     <div className="msla-sub-heading-container">
       <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
       <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
-        {displayRuntimeInfo ? (
+        {displayRuntimeInfo && runtimeFilters.length > 0 ? (
           <Dropdown
             label={intl.formatMessage({ defaultMessage: 'Runtime', description: 'Filter by label' })}
             placeholder={intl.formatMessage({ defaultMessage: 'Select a runtime', description: 'Select a runtime placeholder' })}
