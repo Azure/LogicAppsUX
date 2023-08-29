@@ -2991,6 +2991,12 @@
       "value": "Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submit from this action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -6669,6 +6675,12 @@
       "value": "Önce bir kaynak şema ekleyin, ardından haritanızı oluşturmak için öğeleri seçin"
     }
   ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Resubmit a workflow run from this action"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6824,7 +6836,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Eylem yok"
     }
   ],
   "iB8YKD": [
