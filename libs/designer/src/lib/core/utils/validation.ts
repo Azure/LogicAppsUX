@@ -335,6 +335,7 @@ const validateFloatingActionMenuOutputsEditor = (editorViewModel: FloatingAction
         description: 'Invalid output names',
       })
     );
+    return;
   }
 
   const schemaKeysSet = new Set(schemaKeys);

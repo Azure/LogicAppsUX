@@ -297,7 +297,7 @@ export const TokenField = ({
         />
       );
     case 'floatingactionmenu': {
-      return editorOptions.menuKind === FloatingActionMenuKind.outputs ? (
+      return editorOptions?.menuKind === FloatingActionMenuKind.outputs ? (
         <FloatingActionMenuOutputs
           supportedTypes={editorOptions?.supportedTypes}
           initialValue={value}
