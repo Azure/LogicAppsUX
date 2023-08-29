@@ -12,14 +12,18 @@
     margin-left: 5pt;
 
     .msla-floating-action-menu-plus-icon {
-      font-size: 21pt;
+      margin-top: 2px;
+      font-size: 13px;
       color: @menu-add-button-color;
-      margin-bottom: 6px;
     }
 
     .msla-floating-action-menu-title {
       font-size: 12pt;
       margin-left: 5pt;
+    }
+
+    &:hover {
+      cursor: pointer;
     }
   }
 
@@ -35,13 +39,18 @@
 
     .msla-floating-action-menu-items-close {
       float: right;
-      width: 10%;
-      text-align: center;
-      font-size: 16pt;
-      color: @menu-secondary-text-color;
+
+      .msla-floating-action-menu-x-icon {
+        margin-top: 5px;
+        font-size: 15px;
+        color: @menu-secondary-text-color;
+        &:hover {
+          color: @floating-action-menu-items-close-hover-color;
+        }
+      }
+
       &:hover {
         cursor: pointer;
-        color: @floating-action-menu-items-close-hover-color;
       }
     }
 
@@ -92,6 +101,10 @@
         width: 35pt;
         height: 35pt;
         border-radius: 50%;
+
+        &:hover {
+          cursor: pointer;
+        }
       }
     }
   }
@@ -99,8 +112,8 @@
 
 .msla-dynamic-added-params-container {
   flex: 1;
-}
 
-.msla-dynamic-added-param-value-TextField {
-  height: 100%;
+  .msla-dynamic-added-param-value-TextField {
+    height: 100%;
+  }
 }

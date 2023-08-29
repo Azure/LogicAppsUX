@@ -1,6 +1,6 @@
 import type { DynamicallyAddedParameterTypeType } from '../../dynamicallyaddedparameter';
 import { getMenuItemsForDynamicAddedParameters } from './helper';
-import { KeyCodes } from '@fluentui/react';
+import { Icon, KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { ValidationErrorCode, ValidationException } from '@microsoft/utils-logic-apps';
 import type { PropsWithChildren } from 'react';
@@ -43,7 +43,7 @@ export const FloatingActionMenuBase = (props: PropsWithChildren<FloatingActionMe
   const renderMenuButton = (): JSX.Element => {
     return (
       <div role="button" className="msla-floating-action-menu" onClick={toggleExpanded} onKeyDown={toggleExpandedOnKeyDown} tabIndex={0}>
-        <span className="msla-floating-action-menu-plus-icon">{'+'}</span>
+        <Icon className="msla-floating-action-menu-plus-icon" iconName={'Add'} />
         <span className="msla-floating-action-menu-title">{props.collapsedTitle}</span>
       </div>
     );
@@ -66,7 +66,7 @@ export const FloatingActionMenuBase = (props: PropsWithChildren<FloatingActionMe
           onKeyDown={toggleExpandedOnKeyDown}
           tabIndex={0}
         >
-          {'x'}
+          <Icon className="msla-floating-action-menu-x-icon" iconName={'Cancel'} />
         </span>
       </div>
     );

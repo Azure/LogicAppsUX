@@ -74,7 +74,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
 
   const onRenderValueField = (schemaKey: string): JSX.Element => {
     const placeholder = intl.formatMessage({
-      defaultMessage: 'Enter a value to respond',
+      defaultMessage: 'Enter a value to respond with',
       description: 'Placeholder for output value field',
     });
     const onDynamicallyAddedParameterValueChange = (schemaKey: string, newValue: ValueSegment[]) => {
