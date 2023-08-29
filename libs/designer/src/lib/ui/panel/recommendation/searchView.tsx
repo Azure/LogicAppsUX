@@ -32,8 +32,13 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   useDebouncedEffect(
     () => {
-      const searchOperations = SearchService().searchOperations ?? new DefaultSearchOperationsService(allOperations).searchOperations;
-      searchOperations(searchTerm, filters['actionType'], filters['runtime']).then((results) => {
+      const searchService = SearchService && SearchService().searchOperations;
+
+      const searchResultsPromise = searchService
+        ? searchService(searchTerm, filters['actionType'], filters['runtime'])
+        : new DefaultSearchOperationsService(allOperations).searchOperations(searchTerm, filters['actionType'], filters['runtime']);
+
+      searchResultsPromise.then((results) => {
         setSearchResults(results);
         setIsLoadingSearchResults(false);
       });
