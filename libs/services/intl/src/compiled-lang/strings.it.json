@@ -965,6 +965,12 @@
       "value": "Il flusso è stato aggiornato."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -4609,6 +4615,12 @@
       "value": "ID di traccia personalizzato"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Enter a name"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5657,6 +5669,12 @@
       "value": "Elenco numerato"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6695,6 +6713,12 @@
       "value": "Quando usata all'interno di un ciclo until, questa funzione restituisce l'indice dell'iterazione corrente del ciclo specificato."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6916,6 +6940,12 @@
     {
       "type": 0,
       "value": "Converte una stringa in lettere maiuscole usando le regole per l'utilizzo di maiuscole e minuscole delle impostazioni cultura inglese non dipendenti da paese/area geografica"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Choose the type of output"
     }
   ],
   "iEy9pT": [
@@ -7339,6 +7369,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Add an output"
     }
   ],
   "kuFK3E": [

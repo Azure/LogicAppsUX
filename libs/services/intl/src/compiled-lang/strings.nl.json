@@ -973,6 +973,12 @@
       "value": "Uw stroom is bijgewerkt."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3014,7 +3020,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "Verzenden vanuit deze actie"
     }
   ],
   "I3mifR": [
@@ -4569,6 +4575,12 @@
       "value": "Aangepaste tracerings-id"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Enter a name"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5617,6 +5629,12 @@
       "value": "Genummerde lijst"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6659,6 +6677,12 @@
       "value": "Bij gebruik in de Until-lus retourneert deze functie de huidige iteratie-index van de opgegeven lus."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6698,7 +6722,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Een werkstroomuitvoering opnieuw verzenden vanuit deze actie"
     }
   ],
   "hN7iBP": [
@@ -6869,6 +6893,12 @@
     {
       "type": 0,
       "value": "Een tekenreeks wordt aan de hand van de regels voor hoofdlettergebruik van de cultuur geconverteerd naar hoofdletters"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Choose the type of output"
     }
   ],
   "iEy9pT": [
@@ -7281,6 +7311,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Add an output"
     }
   ],
   "kuFK3E": [
