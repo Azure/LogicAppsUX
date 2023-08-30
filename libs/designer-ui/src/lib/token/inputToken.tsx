@@ -84,7 +84,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
     if (nodeKey) {
       editor.focus();
       editor.dispatchCommand(DELETE_TOKEN_NODE, nodeKey);
-      setSelected(false);
     }
   };
 
