@@ -4194,6 +4194,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";I+85NV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Submit from this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Отправить из этого действия]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";I3mifR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Is skipped]]></Val>
@@ -9266,6 +9275,15 @@
           <Val><![CDATA[Add a source schema first, then select elements to build your map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Сначала добавьте исходную схему, а затем выберите элементы для построения карты]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";hH/wAd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Resubmit a workflow run from this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Повторно отправить выполнение рабочего процесса из этого действия]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
