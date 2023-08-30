@@ -126,7 +126,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
         "tasks": [
           {
             "label": "generateDebugSymbols",
-            "command": "dotnet",
+            "command": '\${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
             "args": [
               "\${input:getDebugSymbolDll}"
             ],
@@ -136,7 +136,12 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
           {
             "type": "${funcBinariesExist ? 'shell' : func}",
             "command": ${funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand},
-            "args" : ${funcBinariesExist ? ['host', 'start'] : undefined}
+            "args" : ${funcBinariesExist ? ['host', 'start'] : undefined},
+            "options": {
+              "env": {
+                "PATH": "\${config:azureLogicAppsStandard.dependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.dependenciesPath}\\\\DotNetSDK\\\\.dotnet;%PATH%"
+              }
+            },
             "problemMatcher": "$func-watch",
             "isBackground": true,
             "label": "func: host start",

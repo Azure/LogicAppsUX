@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DotnetVersion,
+  Platform,
   dependenciesPathSettingKey,
   dotNetBinaryPathSettingKey,
   dotnetDependencyName,
@@ -22,6 +23,7 @@ import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
+import * as vscode from 'vscode';
 
 export class ProjectFile {
   public name: string;
@@ -183,6 +185,19 @@ export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string
 }
 
 export async function getLocalDotNetVersion(): Promise<string> {
+  const dotNetBinariesPath = getGlobalSetting<string>(dotNetBinaryPathSettingKey).replace('dotnet.exe', '');
+  const sdkVersionFolder = path.join(dotNetBinariesPath, 'sdk');
+
+  // First try to get sdk from Binary installation folder
+  const files = fs.readdirSync(sdkVersionFolder, { withFileTypes: true });
+  for (const file of files) {
+    if (file.isDirectory()) {
+      const version = file.name;
+      await executeCommand(ext.outputChannel, undefined, 'echo', 'local binary .net sdk version', version);
+      return version;
+    }
+  }
+
   try {
     const output: string = await executeCommand(ext.outputChannel, undefined, `${getDotNetCommand()}`, '--version');
     const version: string | null = semver.clean(output);
@@ -205,13 +220,35 @@ export function getDotNetCommand(): string {
   return command;
 }
 
-export function setDotNetCommand(): void {
+export async function setDotNetCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
+  const dotNetSDKPath = path.join(dotNetBinariesPath, '.dotnet');
   const binariesExist = fs.existsSync(dotNetBinariesPath);
   let command = ext.dotNetCliPath;
   if (binariesExist) {
-    command = `${dotNetBinariesPath}\\.dotnet\\${ext.dotNetCliPath}`;
+    command = `${dotNetSDKPath}\\${ext.dotNetCliPath}.exe`;
+    const currentPath = process.env.PATH;
+    const newPath = `${command}${path.delimiter}${currentPath}`;
+    process.env.PATH = newPath;
+    await executeCommand(ext.outputChannel, undefined, 'echo', `Updating PATH to ${newPath}`);
+    try {
+      switch (process.platform) {
+        case Platform.windows: {
+          // Known Issue: "WARNING: The data being saved is truncated to 1024 characters.""
+          await executeCommand(ext.outputChannel, undefined, 'SETX', `DOTNET_BINARY_ROOT`, `"${dotNetSDKPath}"`);
+          await executeCommand(ext.outputChannel, undefined, 'SETX', `PATH`, `"%PATH%;%%DOTNET_BINARY_ROOT%%"`);
+          break;
+        }
+        default: {
+          await executeCommand(ext.outputChannel, undefined, 'echo', `PATH`, `export PATH="$PATH:${dotNetSDKPath}"`, '>>', '~/.bashrc');
+        }
+      }
+      // Reload so that Environment Variables changes can be picked up
+      vscode.commands.executeCommand('workbench.action.reloadWindow');
+    } catch (error) {
+      console.log(error);
+    }
   }
   executeCommand(ext.outputChannel, undefined, 'echo', `setDotNetCommand = ${command}`);
   updateGlobalSetting<string>(dotNetBinaryPathSettingKey, command);

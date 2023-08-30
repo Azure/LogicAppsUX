@@ -18,7 +18,7 @@ export class WorkflowInitCodeProject extends ScriptInit {
     return [
       {
         label: 'generateDebugSymbols',
-        command: 'dotnet',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
         args: ['${input:getDebugSymbolDll}'],
         type: 'process',
         problemMatcher: '$msCompile',
@@ -27,6 +27,11 @@ export class WorkflowInitCodeProject extends ScriptInit {
         type: funcBinariesExist ? 'shell' : func,
         command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
         args: funcBinariesExist ? ['host', 'start'] : undefined,
+        options: {
+          env: {
+            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK\\.dotnet;%PATH%",',
+          },
+        },
         problemMatcher: funcWatchProblemMatcher,
         isBackground: true,
         label: 'func: host start',
