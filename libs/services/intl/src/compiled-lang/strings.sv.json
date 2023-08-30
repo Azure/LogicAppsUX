@@ -973,6 +973,12 @@
       "value": "Ditt flöde har uppdaterats."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3010,7 +3016,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "Skicka från den här åtgärden"
     }
   ],
   "I3mifR": [
@@ -4565,6 +4571,12 @@
       "value": "Anpassat spårnings-ID"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Enter a name"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5609,6 +5621,12 @@
       "value": "Numrerad lista"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6651,6 +6669,12 @@
       "value": "När den här funktionen används inuti fram till loopen returnerar den det aktuella iterationsindexet för den angivna loopen."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6690,7 +6714,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Skicka en arbetsflödeskörning på nytt från den här åtgärden"
     }
   ],
   "hN7iBP": [
@@ -6861,6 +6885,12 @@
     {
       "type": 0,
       "value": "Konverterar en sträng till versala bokstäver med skiftlägesregler för den invarianta kulturen"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Choose the type of output"
     }
   ],
   "iEy9pT": [
@@ -7273,6 +7303,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Add an output"
     }
   ],
   "kuFK3E": [

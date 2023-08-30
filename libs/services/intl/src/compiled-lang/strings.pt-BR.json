@@ -957,6 +957,12 @@
       "value": "Seu fluxo foi atualizado."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3000,7 +3006,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "Enviar desta ação"
     }
   ],
   "I3mifR": [
@@ -4585,6 +4591,12 @@
       "value": "ID de Rastreamento Personalizada"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Enter a name"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5633,6 +5645,12 @@
       "value": "Lista Numerada"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6679,6 +6697,12 @@
       "value": "Quando usada dentro do loop, esta função retorna o índice de iteração atual do loop especificado."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6718,7 +6742,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Reenviar uma execução de fluxo de trabalho desta ação"
     }
   ],
   "hN7iBP": [
@@ -6900,6 +6924,12 @@
     {
       "type": 0,
       "value": "Converte uma cadeia de caracteres em maiúsculas usando as regras de uso de maiúsculas da cultura invariável"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Choose the type of output"
     }
   ],
   "iEy9pT": [
@@ -7323,6 +7353,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Add an output"
     }
   ],
   "kuFK3E": [

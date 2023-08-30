@@ -977,6 +977,12 @@
       "value": "你的流已更新。"
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -2992,7 +2998,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "通过此操作提交"
     }
   ],
   "I3mifR": [
@@ -4541,6 +4547,12 @@
       "value": "自定义跟踪 ID"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Enter a name"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5601,6 +5613,12 @@
       "value": "编号列表"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6647,6 +6665,12 @@
       "value": "在内部使用 until 循环时，此函数返回指定循环的当前迭代索引。"
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6686,7 +6710,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "通过此操作重新提交工作流运行"
     }
   ],
   "hN7iBP": [
@@ -6846,6 +6870,12 @@
     {
       "type": 0,
       "value": "使用固定区域性的大小写规则将字符串转换为大写"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Choose the type of output"
     }
   ],
   "iEy9pT": [
@@ -7255,6 +7285,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Add an output"
     }
   ],
   "kuFK3E": [

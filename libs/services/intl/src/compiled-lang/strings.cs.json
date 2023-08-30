@@ -973,6 +973,12 @@
       "value": "Váš tok se aktualizoval."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -4657,6 +4663,12 @@
       "value": "Vlastní ID sledování"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Enter a name"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5705,6 +5717,12 @@
       "value": "Číslovaný seznam"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6747,6 +6765,12 @@
       "value": "Když se tato funkce použije v rámci smyčky until, vrátí aktuální index iterace zadané smyčky."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6983,6 +7007,12 @@
     {
       "type": 0,
       "value": "Převede řetězec na velká písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Choose the type of output"
     }
   ],
   "iEy9pT": [
@@ -7417,6 +7447,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Add an output"
     }
   ],
   "kuFK3E": [
