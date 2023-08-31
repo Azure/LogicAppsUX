@@ -19,6 +19,7 @@ import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { getDependenciesVersion } from './bundleFeed';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
+import { runWithDurationTelemetry } from './telemetry';
 import { getGlobalSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
@@ -62,14 +63,22 @@ export async function validateOrInstallBinaries(context: IActionContext) {
       }
 
       context.telemetry.properties.lastStep = 'validateNodeJsIsLatest';
-      progress.report({ increment: 20, message: `Node Js` });
-      await validateNodeJsIsLatest(dependenciesVersions?.nodejs);
+      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
+        progress.report({ increment: 20, message: `Node Js` });
+        await validateNodeJsIsLatest(dependenciesVersions?.nodejs);
+      });
+
       context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
-      progress.report({ increment: 20, message: `Azure Function Core Tools` });
-      await validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
+      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
+        progress.report({ increment: 20, message: `Azure Function Core Tools` });
+        await validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
+      });
+
       context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
-      progress.report({ increment: 20, message: `.NET SDK` });
-      await validateDotNetIsLatest(dependenciesVersions?.dotnet);
+      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
+        progress.report({ increment: 20, message: `.NET SDK` });
+        await validateDotNetIsLatest(dependenciesVersions?.dotnet);
+      });
     }
   );
 }
