@@ -2978,7 +2978,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "このアクションから送信する"
     }
   ],
   "I3mifR": [
@@ -6654,7 +6654,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "このアクションからワークフローの実行を再送信する"
     }
   ],
   "hN7iBP": [
