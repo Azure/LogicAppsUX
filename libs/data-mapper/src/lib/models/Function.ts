@@ -626,5 +626,43 @@ export const functionMock: FunctionData[] = [
     description: 'Returns the values that appear in a collection, with duplicates eliminated.',
     tooltip: 'Returns the values that appear in a collection, with duplicates eliminated.',
   },
+  {
+    key: 'Subsequence',
+    maxNumberOfInputs: 3,
+    functionName: 'sub-sequence',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'Collection',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: false,
+        tooltip: 'Sequence or collection of items to extract the sub sequence from.',
+        placeHolder: 'Input Collection',
+      },
+      {
+        name: 'Starting Index',
+        allowedTypes: [NormalizedDataType.Integer],
+        isOptional: false,
+        allowCustomInput: true,
+        tooltip: '1 based index in input sequence where the desired sub sequence starts.',
+        placeHolder: 'A Number',
+      },
+      {
+        name: 'Length',
+        allowedTypes: [NormalizedDataType.Integer],
+        isOptional: true,
+        allowCustomInput: true,
+        tooltip: 'Length of the desired sub sequence.',
+        placeHolder: 'A Number',
+      },
+    ],
+    displayName: 'Sub Sequence',
+    category: FunctionCategory.Collection,
+    description:
+      'Returns the contiguous sequence of items in the input collection beginning at the position indicated by the value of starting index and continuing for the number of items indicated by the value of length.',
+    tooltip:
+      'Returns the contiguous sequence of items in the input collection beginning at the position indicated by the value of starting index and continuing for the number of items indicated by the value of length.',
+  },
   ...pseudoFunctions,
 ];

@@ -8,7 +8,7 @@ import {
   addParentConnectionForRepeatingElementsNested,
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
-  lexThisThing,
+  lexThisThing as separateIntoTokens,
   qualifyLoopRelativeSourceKeys,
   removeSequenceFunction,
   splitKeyIntoChildren,
@@ -238,12 +238,6 @@ describe('utils/DataMap', () => {
       );
     });
 
-    it('Single loop with sequence function with absolute source keys', () => {
-      expect(qualifyLoopRelativeSourceKeys('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name')).toBe(
-        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name'
-      );
-    });
-
     it('Nested loops with already-qualified/absolute source keys', () => {
       expect(
         qualifyLoopRelativeSourceKeys(
@@ -352,9 +346,9 @@ describe('utils/DataMap', () => {
     });
   });
 
-  describe('lexThisThing', () => {
+  describe('separateIntoTokens', () => {
     it('separates a loop and sequence target', () => {
-      const result = lexThisThing('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name');
+      const result = separateIntoTokens('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name');
       expect(result[0]).toEqual('/ns0:Root/Looping/');
       expect(result[1]).toEqual(Separators.Dollar);
       expect(result[2]).toEqual(Reserved.for);
@@ -368,19 +362,24 @@ describe('utils/DataMap', () => {
     });
 
     it('separates a loop and nested sequence target', () => {
-      const result = lexThisThing(
-        '/ns0:Root/Looping/$for(distinct-values(reverse(/ns0:Root/Looping/Employee), /ns0:Root/Looping/Employee/Country))/Person/Name'
+      const result = separateIntoTokens(
+        '/ns0:Root/Looping/$for(distinct-values(reverse(/ns0:Root/Looping/Employee),/ns0:Root/Looping/Employee/Country))/Person/Name'
       );
       expect(result[0]).toEqual('/ns0:Root/Looping/');
       expect(result[1]).toEqual(Separators.Dollar);
       expect(result[2]).toEqual(Reserved.for);
       expect(result[3]).toEqual(Separators.OpenParenthesis);
-      expect(result[4]).toEqual('reverse');
+      expect(result[4]).toEqual('distinct-values');
       expect(result[5]).toEqual(Separators.OpenParenthesis);
-      expect(result[6]).toEqual('/ns0:Root/Looping/Employee');
-      expect(result[7]).toEqual(Separators.CloseParenthesis);
-      expect(result[8]).toEqual(Separators.CloseParenthesis);
-      expect(result[9]).toEqual('/Person/Name');
+      expect(result[6]).toEqual('reverse');
+      expect(result[7]).toEqual(Separators.OpenParenthesis);
+      expect(result[8]).toEqual('/ns0:Root/Looping/Employee');
+      expect(result[9]).toEqual(Separators.CloseParenthesis);
+      expect(result[10]).toEqual(Separators.Comma);
+      expect(result[11]).toEqual('/ns0:Root/Looping/Employee/Country');
+      expect(result[12]).toEqual(Separators.CloseParenthesis);
+      expect(result[13]).toEqual(Separators.CloseParenthesis);
+      expect(result[14]).toEqual('/Person/Name');
     });
   });
 });

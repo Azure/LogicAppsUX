@@ -390,7 +390,6 @@ export class MapDefinitionDeserializer {
 
         // Make the connection between loop nodes
         if (srcLoopNode && tgtLoopNode && !conditionalLoopKey) {
-          // danielle conditional for sequences
           if (!connections[addSourceReactFlowPrefix(srcLoopNode.key)]) {
             addParentConnectionForRepeatingElements(
               tgtLoopNode,

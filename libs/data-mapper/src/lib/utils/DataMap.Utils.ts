@@ -513,6 +513,12 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   let qualifiedTargetKey = targetKey;
 
   const srcKeys: string[] = [];
+  const splitLoops = qualifiedTargetKey.split(')');
+  splitLoops.forEach((splitLoop) => {
+    if (splitLoop.includes(mapNodeParams.for)) {
+      srcKeys.push(getSourceKeyOfLastLoop(`${splitLoop})`));
+    }
+  });
 
   let curSrcParentKey = srcKeys[0];
   srcKeys.forEach((srcKey) => {
