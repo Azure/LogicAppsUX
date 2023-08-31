@@ -5,7 +5,7 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand, wrapArgInQuotes } from '../funcCoreTools/cpUtils';
-import { getDotNetCommand } from './dotnet';
+import { getDotNetCommand, getLocalDotNetVersion } from './dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension';
 import * as path from 'path';
@@ -87,6 +87,8 @@ export async function getFramework(context: IActionContext, workingDirectory: st
   if (!cachedFramework) {
     let versions = '';
     const dotnetBinariesLocation = getDotNetCommand();
+
+    versions += await getLocalDotNetVersion();
 
     try {
       versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--version');
