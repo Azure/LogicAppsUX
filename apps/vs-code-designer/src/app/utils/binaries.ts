@@ -29,7 +29,6 @@ import * as os from 'os';
 import * as path from 'path';
 import * as request from 'request';
 import * as semver from 'semver';
-import * as tar from 'tar';
 import * as vscode from 'vscode';
 import type { MessageItem } from 'vscode';
 
@@ -88,7 +87,12 @@ export async function downloadAndExtractBinaries(binariesUrl: string, targetFold
   fs.mkdirSync(targetFolder, { recursive: true });
 
   // Read and write permissions
-  fs.chmod(targetFolder, 0o666, (chmodError) => {
+  fs.chmod(targetFolder, 0o700, (chmodError) => {
+    if (chmodError) {
+      throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
+    }
+  });
+  fs.chmod(tempFolderPath, 0o700, (chmodError) => {
     if (chmodError) {
       throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
     }
@@ -105,29 +109,30 @@ export async function downloadAndExtractBinaries(binariesUrl: string, targetFold
     await new Promise<void>((resolve, reject) => {
       executeCommand(ext.outputChannel, undefined, 'echo', `Downloading binaries from: ${binariesUrl}`);
       const downloadStream = request(binariesUrl).pipe(fs.createWriteStream(binariesFilePath));
-      downloadStream.on('finish', () => {
-        executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName}.`);
+      downloadStream.on('finish', async () => {
+        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName}.`);
+
+        // Extract to targetFolder
+        await extractBinaries(binariesFilePath, targetFolder, dependencyName);
+
+        // Build dotnet source code
+        if (dependencyName == dotnetDependencyName) {
+          await dotNetBuild(targetFolder, dependencyName);
+        } else {
+          vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+        }
         resolve();
       });
       downloadStream.on('error', reject);
     });
-
-    // Extract to targetFolder
-    extractBinaries(binariesFilePath, targetFolder, dependencyName);
-
-    // Build dotnet source code
-    if (dependencyName == dotnetDependencyName) {
-      await dotNetBuild(targetFolder, dependencyName);
-    } else {
-      vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-    }
   } catch (error) {
     vscode.window.showErrorMessage(`Error downloading and extracting the ${dependencyName} zip: ${error.message}`);
+    await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Remove ${targetFolder}`);
     fs.rmSync(targetFolder, { recursive: true });
     throw error;
   } finally {
     fs.rmSync(tempFolderPath, { recursive: true });
-    executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
+    await executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
   }
 }
 
@@ -281,19 +286,16 @@ function getCompressionFileExtension(binariesUrl: string): string {
   throw new Error(localize('UnsupportedCompressionFileExtension', `Unsupported compression file extension: ${binariesUrl}`));
 }
 
-function extractBinaries(binariesFilePath: string, targetFolder: string, dependencyName: string): void {
-  executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${binariesFilePath}`);
+async function extractBinaries(binariesFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
+  await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${binariesFilePath}`);
   if (binariesFilePath.endsWith('.zip')) {
     const zip = new AdmZip(binariesFilePath);
-    zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
+    await zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
   } else {
-    tar.x({
-      file: binariesFilePath,
-      cwd: targetFolder,
-    });
+    await executeCommand(ext.outputChannel, undefined, 'tar', `-xzvf`, binariesFilePath, '-C', targetFolder);
   }
   cleanupContainerFolder(targetFolder);
-  executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} completed successfully.`);
+  await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} completed successfully.`);
 }
 
 function checkMajorVersion(version: string, majorVersion: string): boolean {
@@ -313,7 +315,7 @@ async function dotNetBuild(targetFolder: string, dependencyName: string) {
         break;
 
       default:
-        await executeCommand(ext.outputChannel, targetFolder, 'build.sh');
+        await executeCommand(ext.outputChannel, targetFolder, './build.sh');
     }
   } catch (error) {
     // Output shows errors but .dotnet sdk exe runs - need to test
@@ -332,7 +334,7 @@ async function dotNetBuild(targetFolder: string, dependencyName: string) {
     await executeCommand(ext.outputChannel, undefined, 'echo', 'Ignoring build errors...');
   } finally {
     // Build task creates .NET Host processes, cleaning up the processes here ...
-    await executeCommand(undefined, targetFolder, 'taskkill /f /im dotnet.exe');
+    // await executeCommand(undefined, targetFolder, 'taskkill /f /im dotnet.exe');
   }
 }
 
@@ -346,11 +348,9 @@ function cleanupContainerFolder(targetFolder: string) {
   if (extractedContents.length === 1 && fs.statSync(path.join(targetFolder, extractedContents[0])).isDirectory()) {
     const containerFolderPath = path.join(targetFolder, extractedContents[0]);
     const containerContents = fs.readdirSync(containerFolderPath);
-
     containerContents.forEach((content) => {
       const contentPath = path.join(containerFolderPath, content);
       const destinationPath = path.join(targetFolder, content);
-
       fs.renameSync(contentPath, destinationPath);
     });
 

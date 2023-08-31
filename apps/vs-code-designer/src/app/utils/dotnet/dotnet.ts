@@ -227,7 +227,8 @@ export async function setDotNetCommand(): Promise<void> {
   const binariesExist = fs.existsSync(dotNetBinariesPath);
   let command = ext.dotNetCliPath;
   if (binariesExist) {
-    command = `${dotNetSDKPath}\\${ext.dotNetCliPath}.exe`;
+    // Explicit executable for tasks.json
+    command = path.join(dotNetSDKPath, `${ext.dotNetCliPath}.exe`);
     const currentPath = process.env.PATH;
     const newPath = `${command}${path.delimiter}${currentPath}`;
     process.env.PATH = newPath;
@@ -238,14 +239,11 @@ export async function setDotNetCommand(): Promise<void> {
           // Known Issue: "WARNING: The data being saved is truncated to 1024 characters.""
           await executeCommand(ext.outputChannel, undefined, 'SETX', `DOTNET_BINARY_ROOT`, `"${dotNetSDKPath}"`);
           await executeCommand(ext.outputChannel, undefined, 'SETX', `PATH`, `"%PATH%;%%DOTNET_BINARY_ROOT%%"`);
+          // Reload so that Environment Variables changes can be picked up
+          vscode.commands.executeCommand('workbench.action.reloadWindow');
           break;
         }
-        default: {
-          await executeCommand(ext.outputChannel, undefined, 'echo', `PATH`, `export PATH="$PATH:${dotNetSDKPath}"`, '>>', '~/.bashrc');
-        }
       }
-      // Reload so that Environment Variables changes can be picked up
-      vscode.commands.executeCommand('workbench.action.reloadWindow');
     } catch (error) {
       console.log(error);
     }

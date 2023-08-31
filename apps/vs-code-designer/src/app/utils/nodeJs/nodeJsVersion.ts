@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
+import { Platform, dependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
@@ -49,15 +49,39 @@ export function getNodeJsCommand(): string {
   return command;
 }
 
-export function setNodeJsCommand(): void {
+export async function setNodeJsCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
   const binariesExist = fs.existsSync(nodeJsBinariesPath);
   let command = ext.nodeJsCliPath;
   if (binariesExist) {
     // windows the executable is at root folder, linux & macos its in the bin
-    command = `${nodeJsBinariesPath}\\${ext.nodeJsCliPath}`;
+    command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
+    if (process.platform != Platform.windows) {
+      const nodeSubFolder = getNodeSubFolder(command);
+      command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
+    }
   }
-  executeCommand(ext.outputChannel, undefined, 'echo', `setNodeJsCommand = ${command}`);
+  await executeCommand(ext.outputChannel, undefined, 'echo', `setNodeJsCommand = ${command}`);
   updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
+}
+
+function getNodeSubFolder(directoryPath: string): string | null {
+  try {
+    const items = fs.readdirSync(directoryPath);
+
+    for (const item of items) {
+      const itemPath = path.join(directoryPath, item);
+      const stats = fs.statSync(itemPath);
+
+      if (stats.isDirectory() && item.includes('node')) {
+        executeCommand(ext.outputChannel, undefined, 'echo', `NodeSubFolder = ${item}`);
+        return item;
+      }
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+
+  return ''; // No 'node' subfolders found
 }

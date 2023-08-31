@@ -157,7 +157,7 @@ export function setFunctionsCommand(): void {
   let command = ext.funcCliPath;
   if (binariesExist) {
     // windows the executable is at root folder, linux & macos its in the bin
-    command = `${funcBinariesPath}\\${ext.funcCliPath}`;
+    command = path.join(funcBinariesPath, ext.funcCliPath);
   }
   executeCommand(ext.outputChannel, undefined, 'echo', `setFunctionsCommand = ${command}`);
   updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
