@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.63.2](https://github.com/Azure/LogicAppsUX/compare/v2.63.1...v2.63.2) (2023-08-31)
+
+
+### Bug Fixes
+
+* **designer:** Add property check for content in inputs/outputs object ([#3226](https://github.com/Azure/LogicAppsUX/issues/3226)) ([4aa4edf](https://github.com/Azure/LogicAppsUX/commit/4aa4edfc9a7a6f875646e200ac60d36b7e770d15)), closes [#3225](https://github.com/Azure/LogicAppsUX/issues/3225)
+* **designer:** SimpleQueryBuilder Negatory Operators Serialization/Deserializing Properly ([#3234](https://github.com/Azure/LogicAppsUX/issues/3234)) ([e4f7506](https://github.com/Azure/LogicAppsUX/commit/e4f7506178eba2a844f986ac92b89543183b8653))
+
 ### [2.63.1](https://github.com/Azure/LogicAppsUX/compare/v2.63.0...v2.63.1) (2023-08-29)
 
 
