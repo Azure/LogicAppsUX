@@ -377,12 +377,9 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
     relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
         // Replace './' to deal with relative attribute paths
-        let removedFunc = srcKeyWithinFor.replace('reverse(', '');
-        removedFunc = removedFunc.replace(')', '');
 
-        const fullyQualifiedSourceKey = `${removedFunc}/${relativeKeyMatch.replace('./', '')}`;
+        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
         const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
-        // danielle could remove function here
 
         constructedSourceKey = isValidSrcNode
           ? constructedSourceKey.replace(relativeKeyMatch, fullyQualifiedSourceKey)
@@ -398,7 +395,7 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
 };
 
 export enum Separators {
-  OpenParenthesis = '(', // this is at the beginning of each function tho?
+  OpenParenthesis = '(',
   CloseParenthesis = ')',
   Comma = ',',
   Dollar = '$',
@@ -406,7 +403,7 @@ export enum Separators {
 export const separators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma, Separators.Dollar];
 
 export enum Reserved {
-  for = 'for', // or do we not include the '('?
+  for = 'for',
   if = 'if',
 }
 export const reserved: string[] = [Reserved.for, Reserved.if];
@@ -449,11 +446,6 @@ export const lexThisThing = (targetKey: string): string[] => {
   return tokens;
 };
 
-// danielle make this function kinda context dependent like if "for" what are all possible options
-// what should the output of this be? function could be the name, and all of the inputs; this doesn't really help us here
-// /ns0:TargetSchemaRoot/Looping/ManyToMany/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)/
-// Simple/$for(SourceSimpleChild)/SimpleChild/$for(SourceSimpleChildChild)/SimpleChildChild/Direct
-
 interface ParseFunc {
   name: string;
   inputs: FunctionInput[];
@@ -462,11 +454,10 @@ interface ParseFunc {
 type FunctionInput = string | ParseFunc;
 
 const createTargetOrFunction = (tokens: string[]): { term: FunctionInput; nextIndex: number } => {
-  // determine if token is a
+  // determine if token is a function
   if (tokens[1] === Separators.OpenParenthesis) {
-    // this is a function
-    const func: ParseFunc = { name: tokens[0], inputs: [] }; // 'func1'  '('  'func2'  '('  'path1'  ')'  ','  'path2' ')'
-    let i = 2; // start of the inputs
+    const func: ParseFunc = { name: tokens[0], inputs: [] };
+    let i = 2; // start of the function inputs
     let parenCount = 1;
     while (i < tokens.length && parenCount !== 0) {
       if (tokens[i] === Separators.OpenParenthesis) {
@@ -523,7 +514,6 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   let curSrcParentKey = srcKeys[0];
   srcKeys.forEach((srcKey) => {
     if (!srcKey.includes(curSrcParentKey) && srcKey !== '*') {
-      // why does this happen?
       const fullyQualifiedSrcKey = `${curSrcParentKey}/${srcKey}`;
       qualifiedTargetKey = qualifiedTargetKey.replace(srcKey, fullyQualifiedSrcKey);
 
