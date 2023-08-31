@@ -1,4 +1,24 @@
 # Logic Apps Designer
+## [2.64.0](https://github.com/Azure/LogicAppsUX/compare/v2.63.0...v2.64.0) (2023-08-31)
+
+
+### Features
+
+* **designer:** Adding search service 2 to allow for custom search results ([#3201](https://github.com/Azure/LogicAppsUX/issues/3201)) ([0b8150a](https://github.com/Azure/LogicAppsUX/commit/0b8150af2e69bb26491a0194b8a7b95512e5914d))
+* **designer:** inputsLocationSwapMap manifest property to support non-objects ([#3218](https://github.com/Azure/LogicAppsUX/issues/3218)) ([a670436](https://github.com/Azure/LogicAppsUX/commit/a670436fb78e9ec86c5e71a77a0b61d71a4718cc))
+* **designer:** Split/Refactor FloatingActionMenu, adding FloatingActionMenuOutputs editor ([#3197](https://github.com/Azure/LogicAppsUX/issues/3197)) ([8c782a6](https://github.com/Azure/LogicAppsUX/commit/8c782a6dadaa8d76ed8a87807b438f66ad819bb7))
+
+
+### Bug Fixes
+
+* **designer:** Add property check for content in inputs/outputs object ([#3225](https://github.com/Azure/LogicAppsUX/issues/3225)) ([263b8f0](https://github.com/Azure/LogicAppsUX/commit/263b8f06042c98febb481e7bec27274d67972905))
+* **designer:** Disable Browse preloading when in monitoring or readOnly view ([#3207](https://github.com/Azure/LogicAppsUX/issues/3207)) ([3bda939](https://github.com/Azure/LogicAppsUX/commit/3bda939a4cfe8a1c78cf1a99334af6529ef210e8))
+* **designer:** Fix issue where deleting a token without focusing the editor would not update the property value ([#3220](https://github.com/Azure/LogicAppsUX/issues/3220)) ([b3504e0](https://github.com/Azure/LogicAppsUX/commit/b3504e0e3c72e93ef818cc9b6640a721a0efcb5f))
+* **designer:** Fix search service operations ([#3212](https://github.com/Azure/LogicAppsUX/issues/3212)) ([56dd467](https://github.com/Azure/LogicAppsUX/commit/56dd4670318e0e23c29a55bf5f60541932d4f1ae))
+* **Designer:** Fixed issue on the initialize variable action ([#3211](https://github.com/Azure/LogicAppsUX/issues/3211)) ([f679171](https://github.com/Azure/LogicAppsUX/commit/f679171bdef42a155746f4d1e2905c718fec862e))
+* **Designer:** OAuth - Passed redirect url value from oauth setting in connection parameters ([#3224](https://github.com/Azure/LogicAppsUX/issues/3224)) ([47526fe](https://github.com/Azure/LogicAppsUX/commit/47526fe7a1223552113223e716dd06fdb9e95bf8))
+* **designer:** Show Item token picker for loops ([#3208](https://github.com/Azure/LogicAppsUX/issues/3208)) ([a3c4360](https://github.com/Azure/LogicAppsUX/commit/a3c4360cf0bd3de66ee8e0eee309f46c4b261a81))
+
 ## [2.63.0](https://github.com/Azure/LogicAppsUX/compare/v2.62.2...v2.63.0) (2023-08-25)
 
 ## [2.62.0](https://github.com/Azure/LogicAppsUX/compare/v2.61.0...v2.62.0) (2023-08-25)
