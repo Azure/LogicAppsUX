@@ -4,6 +4,7 @@ import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
 import { RowDropdownOptions } from './RowDropdown';
+import { checkHeights, getGroupedItems } from './helper';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
@@ -89,24 +90,4 @@ export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onCha
       />
     </div>
   );
-};
-
-const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], height: number): number[] => {
-  if (item.checked) {
-    returnVal.push(height);
-  }
-  if (item.type === GroupType.GROUP) {
-    item.items.map((childItem) => checkHeights(childItem, returnVal, height + 1));
-  }
-  return returnVal;
-};
-
-const getGroupedItems = (item: GroupItemProps | RowItemProps, returnVal: GroupedItems[], index: number): GroupedItems[] => {
-  if (item.checked) {
-    returnVal.push({ item: { ...item, checked: false }, index: index });
-  }
-  if (item.type === GroupType.GROUP) {
-    item.items.map((childItem, index) => getGroupedItems(childItem, returnVal, index));
-  }
-  return returnVal;
 };
