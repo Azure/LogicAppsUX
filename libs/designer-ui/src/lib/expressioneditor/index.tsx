@@ -106,6 +106,7 @@ export function ExpressionEditor({
         wordWrapColumn={200}
         automaticLayout={true}
         data-automation-id="msla-expression-editor"
+        height={`${currentHeight}px`}
       />
       <div
         className="msla-expression-editor-expand"
