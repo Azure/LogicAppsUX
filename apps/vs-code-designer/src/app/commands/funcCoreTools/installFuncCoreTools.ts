@@ -18,10 +18,11 @@ export async function installFuncCoreTools(context: IActionContext, majorVersion
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
   const targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
-
+  context.telemetry.properties.lastStep = 'getLatestFunctionCoreToolsVersion';
   const version = await getLatestFunctionCoreToolsVersion(context, majorVersion);
   let azureFunctionCoreToolsReleasesUrl;
 
+  context.telemetry.properties.lastStep = 'getFunctionCoreToolsBinariesReleaseUrl';
   switch (process.platform) {
     case Platform.windows:
       azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'win', arch);
@@ -35,7 +36,8 @@ export async function installFuncCoreTools(context: IActionContext, majorVersion
       azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'osx', arch);
       break;
   }
-
+  context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
   await downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
+  context.telemetry.properties.lastStep = 'setFunctionsCommand';
   await setFunctionsCommand();
 }

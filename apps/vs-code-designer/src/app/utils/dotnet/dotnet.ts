@@ -232,6 +232,13 @@ export async function setDotNetCommand(): Promise<void> {
     const currentPath = process.env.PATH;
     const newPath = `${command}${path.delimiter}${currentPath}`;
     process.env.PATH = newPath;
+
+    fs.chmod(command, 0o700, (chmodError) => {
+      if (chmodError) {
+        throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
+      }
+    });
+
     await executeCommand(ext.outputChannel, undefined, 'echo', `Updating PATH to ${newPath}`);
     try {
       switch (process.platform) {

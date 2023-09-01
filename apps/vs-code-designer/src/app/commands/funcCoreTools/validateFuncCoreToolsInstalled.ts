@@ -66,8 +66,9 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
  * @returns {Promise<boolean>} Returns true if installed, otherwise returns false.
  */
 export async function isFuncToolsInstalled(): Promise<boolean> {
+  const funcCommand = getFunctionsCommand();
   try {
-    await executeCommand(undefined, undefined, getFunctionsCommand(), '--version');
+    await executeCommand(undefined, undefined, funcCommand, '--version');
     return true;
   } catch (error) {
     return false;

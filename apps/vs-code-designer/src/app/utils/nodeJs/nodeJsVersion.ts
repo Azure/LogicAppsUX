@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Platform, dependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import * as fs from 'fs';
@@ -35,8 +36,16 @@ export function getNpmCommand(): string {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
   const binariesExist = fs.existsSync(nodeJsBinariesPath);
-  const command = binariesExist ? `${nodeJsBinariesPath}\\${ext.npmCliPath}` : ext.npmCliPath;
-  executeCommand(ext.outputChannel, undefined, 'echo', `${command}`);
+  let command = ext.npmCliPath;
+  if (binariesExist) {
+    // windows the executable is at root folder, linux & macos its in the bin
+    command = path.join(nodeJsBinariesPath, ext.npmCliPath);
+    if (process.platform != Platform.windows) {
+      const nodeSubFolder = getNodeSubFolder(command);
+      command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
+    }
+  }
+  executeCommand(ext.outputChannel, undefined, 'echo', `NPM ${command}`);
   return command;
 }
 
@@ -60,6 +69,12 @@ export async function setNodeJsCommand(): Promise<void> {
     if (process.platform != Platform.windows) {
       const nodeSubFolder = getNodeSubFolder(command);
       command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
+
+      fs.chmod(command, 0o700, (chmodError) => {
+        if (chmodError) {
+          throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
+        }
+      });
     }
   }
   await executeCommand(ext.outputChannel, undefined, 'echo', `setNodeJsCommand = ${command}`);

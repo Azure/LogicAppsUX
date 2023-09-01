@@ -156,8 +156,12 @@ export function setFunctionsCommand(): void {
   const binariesExist = fs.existsSync(funcBinariesPath);
   let command = ext.funcCliPath;
   if (binariesExist) {
-    // windows the executable is at root folder, linux & macos its in the bin
     command = path.join(funcBinariesPath, ext.funcCliPath);
+    fs.chmod(command, 0o700, (chmodError) => {
+      if (chmodError) {
+        throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
+      }
+    });
   }
   executeCommand(ext.outputChannel, undefined, 'echo', `setFunctionsCommand = ${command}`);
   updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);

@@ -96,23 +96,15 @@ export async function downloadAndExtractBinaries(binariesUrl: string, targetFold
   fs.mkdirSync(targetFolder, { recursive: true });
 
   // Read and write permissions
-  fs.chmod(targetFolder, 0o700, (chmodError) => {
-    if (chmodError) {
-      throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
-    }
-  });
-  fs.chmod(tempFolderPath, 0o700, (chmodError) => {
-    if (chmodError) {
-      throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
-    }
-  });
+  fs.chmodSync(targetFolder, 0o700);
 
   const binariesFileExtension = getCompressionFileExtension(binariesUrl);
   const binariesFilePath = path.join(tempFolderPath, `${dependencyName}.${binariesFileExtension}`);
 
   try {
-    executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
+    await executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
+    fs.chmodSync(tempFolderPath, 0o700);
 
     // Download the compressed binaries
     await new Promise<void>((resolve, reject) => {
@@ -145,31 +137,36 @@ export async function downloadAndExtractBinaries(binariesUrl: string, targetFold
   }
 }
 
-export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
+export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion: string): Promise<string> {
   context.telemetry.properties.funcCoreTools = majorVersion;
 
   // Use npm to find newest func core tools version
   const hasNodeJs = await isNodeJsInstalled();
   let latestVersion: string | null;
-  if (hasNodeJs) {
-    context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'node';
-    latestVersion = (await executeCommand(undefined, undefined, `${getNpmCommand()}`, 'view', funcPackageName, 'version'))?.trim();
-    if (checkMajorVersion(latestVersion, majorVersion)) {
-      return latestVersion;
-    }
-  }
-
-  // fallback to github api to look for latest version
-  await readJsonFromUrl('https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest').then(
-    (response: IGitHubReleaseInfo) => {
-      latestVersion = semver.valid(semver.coerce(response.tag_name));
-      context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'github';
-      context.telemetry.properties.latestGithubVersion = response.tag_name;
+  if (majorVersion && hasNodeJs) {
+    context.telemetry.properties.latestVersionSource = 'node';
+    const npmCommand = getNpmCommand();
+    try {
+      latestVersion = (await executeCommand(undefined, undefined, `${npmCommand}`, 'view', funcPackageName, 'version'))?.trim();
       if (checkMajorVersion(latestVersion, majorVersion)) {
         return latestVersion;
       }
+    } catch (error) {
+      console.log(error);
     }
-  );
+  } else if (majorVersion) {
+    // fallback to github api to look for latest version
+    await readJsonFromUrl('https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest').then(
+      (response: IGitHubReleaseInfo) => {
+        latestVersion = semver.valid(semver.coerce(response.tag_name));
+        context.telemetry.properties.latestVersionSource = 'github';
+        context.telemetry.properties.latestGithubVersion = response.tag_name;
+        if (checkMajorVersion(latestVersion, majorVersion)) {
+          return latestVersion;
+        }
+      }
+    );
+  }
 
   // Fall back to hardcoded version
   context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'fallback';
@@ -182,7 +179,7 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
   if (majorVersion) {
     await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
       .then((response: IGitHubReleaseInfo[]) => {
-        context.telemetry.properties.getLatestDotNetVersion = 'github';
+        context.telemetry.properties.latestVersionSource = 'github';
         response.forEach((releaseInfo: IGitHubReleaseInfo) => {
           const releaseVersion: string | null = semver.valid(semver.coerce(releaseInfo.tag_name));
           context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
@@ -196,7 +193,7 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
       });
   }
 
-  context.telemetry.properties.getLatestDotNetVersion = 'fallback';
+  context.telemetry.properties.latestVersionSource = 'fallback';
   return DependencyVersion.dotnet6;
 }
 
@@ -206,7 +203,7 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
   if (majorVersion) {
     await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
       .then((response: IGitHubReleaseInfo[]) => {
-        context.telemetry.properties.getLatestNodeJsVersion = 'github';
+        context.telemetry.properties.latestVersionSource = 'github';
         response.forEach((releaseInfo: IGitHubReleaseInfo) => {
           const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
           context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
@@ -220,7 +217,7 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
       });
   }
 
-  context.telemetry.properties.getLatestNodeJsVersion = 'fallback';
+  context.telemetry.properties.latestVersionSource = 'fallback';
   return DependencyVersion.nodeJs;
 }
 
@@ -308,7 +305,7 @@ async function extractBinaries(binariesFilePath: string, targetFolder: string, d
 }
 
 function checkMajorVersion(version: string, majorVersion: string): boolean {
-  return semver.satisfies(version, `^${majorVersion}.x`);
+  return semver.major(version) === semver.major(majorVersion);
 }
 
 /**
