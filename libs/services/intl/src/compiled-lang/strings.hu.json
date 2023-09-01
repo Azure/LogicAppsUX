@@ -984,7 +984,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "Adjon meg válaszként használandó értéket"
     }
   ],
   "4j2MEv": [
@@ -4594,7 +4594,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "Adjon meg egy nevet"
     }
   ],
   "Sr8PcK": [
@@ -5628,7 +5628,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "A kimenetek nevei nem lehetnek üresek."
     }
   ],
   "YZ5Kwe": [
@@ -6680,7 +6680,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "A kimenetek neveinek egyedinek kell lenniük."
     }
   ],
   "gvDMuq": [
@@ -6898,7 +6898,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "Válassza ki a kimenet típusát"
     }
   ],
   "iEy9pT": [
@@ -7316,7 +7316,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "Kimenet hozzáadása"
     }
   ],
   "kuFK3E": [

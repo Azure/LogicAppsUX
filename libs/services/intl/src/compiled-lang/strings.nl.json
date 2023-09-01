@@ -976,7 +976,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "Voer een waarde in om op te reageren"
     }
   ],
   "4j2MEv": [
@@ -4578,7 +4578,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "Een naam invoeren"
     }
   ],
   "Sr8PcK": [
@@ -5632,7 +5632,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "Uitvoernamen mogen niet leeg zijn."
     }
   ],
   "YZ5Kwe": [
@@ -6680,7 +6680,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "Uitvoernamen moeten uniek zijn."
     }
   ],
   "gvDMuq": [
@@ -6898,7 +6898,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "Het type uitvoer kiezen"
     }
   ],
   "iEy9pT": [
@@ -7316,7 +7316,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "Uitvoer toevoegen"
     }
   ],
   "kuFK3E": [

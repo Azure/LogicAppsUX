@@ -4682,7 +4682,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "Wpisz nazwę"
     }
   ],
   "Sr8PcK": [
@@ -7024,7 +7024,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "Wybierz typ danych wyjściowych"
     }
   ],
   "iEy9pT": [
@@ -7480,7 +7480,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "Dodaj dane wyjściowe"
     }
   ],
   "kuFK3E": [

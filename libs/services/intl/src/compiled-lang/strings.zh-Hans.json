@@ -980,7 +980,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "输入用于回复的值"
     }
   ],
   "4j2MEv": [
@@ -4550,7 +4550,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "输入名称"
     }
   ],
   "Sr8PcK": [
@@ -5616,7 +5616,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "输出名称不应为空。"
     }
   ],
   "YZ5Kwe": [
@@ -6668,7 +6668,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "输出名称应是唯一的。"
     }
   ],
   "gvDMuq": [
@@ -6875,7 +6875,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "选择输出的类型"
     }
   ],
   "iEy9pT": [
@@ -7290,7 +7290,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "添加输出"
     }
   ],
   "kuFK3E": [
