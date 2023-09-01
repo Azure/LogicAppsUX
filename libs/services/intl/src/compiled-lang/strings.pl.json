@@ -973,6 +973,12 @@
       "value": "Przepływ został zaktualizowany."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3058,7 +3064,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "Prześlij z tej akcji"
     }
   ],
   "I3mifR": [
@@ -4673,6 +4679,12 @@
       "value": "Niestandardowy identyfikator śledzenia"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Wpisz nazwę"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5721,6 +5733,12 @@
       "value": "Lista numerowana"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6763,6 +6781,12 @@
       "value": "W przypadku użycia wewnątrz pętli until ta funkcja zwraca bieżący indeks iteracji określonej pętli."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6802,7 +6826,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Ponownie prześlij przebieg przepływu pracy z tej akcji"
     }
   ],
   "hN7iBP": [
@@ -6995,6 +7019,12 @@
     {
       "type": 0,
       "value": "Konwertuje ciąg na wielkie litery, używając reguł stosowania wielkości liter kultury niezmiennej"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Wybierz typ danych wyjściowych"
     }
   ],
   "iEy9pT": [
@@ -7445,6 +7475,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Dodaj dane wyjściowe"
     }
   ],
   "kuFK3E": [

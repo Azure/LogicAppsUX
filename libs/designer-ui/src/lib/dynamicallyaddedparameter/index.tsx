@@ -1,4 +1,4 @@
-import type { IContextualMenuItem, IContextualMenuProps } from '@fluentui/react';
+import type { IContextualMenuProps } from '@fluentui/react';
 import { DirectionalHint, IconButton, TextField, TooltipHost } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -13,48 +13,25 @@ export const DynamicallyAddedParameterType = {
 } as const;
 export type DynamicallyAddedParameterTypeType = (typeof DynamicallyAddedParameterType)[keyof typeof DynamicallyAddedParameterType];
 
-export interface IDynamicallyAddedParameterProperties {
-  title: string;
-  type: string;
-  description: string;
-  'x-ms-content-hint': string;
-  'x-ms-dynamically-added'?: boolean;
-  format?: string;
-  properties?: {
-    name?: {
-      type: string;
-    };
-    contentBytes?: {
-      type: string;
-      format: string;
-    };
-  };
-  items?: {
-    enum: string[];
-    type: string;
-  };
-}
-
-export type TextFieldOnChangeHandler = (schemaKey: string, propertyName: string, newPropertyValue?: string) => void;
-export type DeleteDynamicallyAddedParameterHandler = (schemaKey: string) => void;
-
 export interface DynamicallyAddedParameterProps {
-  icon: string;
   schemaKey: string;
-  properties: IDynamicallyAddedParameterProperties;
-  required: boolean;
-  onChange?: TextFieldOnChangeHandler;
-  onDelete?: DeleteDynamicallyAddedParameterHandler;
+  icon: string;
+  title: string;
+  titlePlaceholder?: string;
+  onTitleChange: (schemaKey: string, newValue: string | undefined) => void;
+  onDelete: (schemaKey: string) => void;
+  onRenderValueField: (schemaKey: string) => JSX.Element;
 }
 
 export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps): JSX.Element => {
   const intl = useIntl();
-  const menuButtonTitle = intl.formatMessage({
-    defaultMessage: 'Menu',
-    description: 'Open dynamically added parameter options menu',
-  });
 
   const renderMenuButton = (): JSX.Element => {
+    const menuButtonTitle = intl.formatMessage({
+      defaultMessage: 'Menu',
+      description: 'Open dynamically added parameter options menu',
+    });
+
     const deleteText = intl.formatMessage({
       defaultMessage: 'Delete',
       description: 'Delete dynamic parameter corresponding to this row',
@@ -67,10 +44,9 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
           iconProps: { iconName: 'Delete' },
           key: 'dynamicallyaddedparameter_menu_delete',
           text: deleteText,
-          onClick: (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, _item?: IContextualMenuItem) => {
+          onClick: (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => {
             ev?.preventDefault();
-            const { onDelete } = props;
-            if (onDelete) onDelete(props.schemaKey);
+            props.onDelete(props.schemaKey);
             return true;
           },
         },
@@ -92,30 +68,28 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
     );
   };
 
-  const onTitleChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newPropertyValue?: string) => {
-    e.preventDefault();
-    const { onChange } = props;
-    if (onChange) onChange(props.schemaKey, /* propertyName */ 'title', newPropertyValue);
-  };
-
-  const onDescriptionChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newPropertyValue?: string) => {
-    e.preventDefault();
-    const { onChange } = props;
-    if (onChange) onChange(props.schemaKey, /* propertyName */ 'description', newPropertyValue);
-  };
-
   const renderDynamicParameterContainer = (): JSX.Element => {
     const iconStyle = {
       background: `url('${props.icon}') no-repeat center`,
       backgroundSize: 'contain',
     };
 
+    const onTitleChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+      e.preventDefault();
+      props.onTitleChange(props.schemaKey, newValue);
+    };
+
     return (
       <div className="msla-dynamic-added-param-header">
         <div className="msla-dynamic-added-param-icon" style={iconStyle}></div>
         <div className="msla-dynamic-added-param-inputs-container">
-          <TextField className="msla-dynamic-added-param-title" value={props.properties.title} onChange={onTitleChange} />
-          <TextField className="msla-dynamic-added-param-description" value={props.properties.description} onChange={onDescriptionChange} />
+          <TextField
+            className="msla-dynamic-added-param-title"
+            placeholder={props.titlePlaceholder}
+            value={props.title}
+            onChange={onTitleChange}
+          />
+          <div className="msla-dynamic-added-param-value">{props.onRenderValueField(props.schemaKey)}</div>
         </div>
         <div className="msla-dynamic-add-param-menu-container">{renderMenuButton()}</div>
       </div>

@@ -965,6 +965,12 @@
       "value": "フローが更新されました。"
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -2972,7 +2978,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "このアクションから送信する"
     }
   ],
   "I3mifR": [
@@ -4517,6 +4523,12 @@
       "value": "カスタムの追跡 ID"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "名前を入力してください"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5557,6 +5569,12 @@
       "value": "番号付きリスト"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6591,6 +6609,12 @@
       "value": "until ループ内で使用すると、この関数は指定されたループの現在のイテレーション インデックスを返します。"
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6630,7 +6654,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "このアクションからワークフローの実行を再送信する"
     }
   ],
   "hN7iBP": [
@@ -6790,6 +6814,12 @@
     {
       "type": 0,
       "value": "インバリアント カルチャの大文字小文字の規則を使用して文字列を大文字に変換します"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "出力の種類を選択"
     }
   ],
   "iEy9pT": [
@@ -7187,6 +7217,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "出力追加"
     }
   ],
   "kuFK3E": [

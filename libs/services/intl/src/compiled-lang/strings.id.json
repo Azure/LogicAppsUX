@@ -965,6 +965,12 @@
       "value": "Alur Anda telah diperbarui."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Masukkan nilai untuk merespons"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -2976,7 +2982,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "Kirim dari tindakan ini"
     }
   ],
   "I3mifR": [
@@ -4521,6 +4527,12 @@
       "value": "Id Pelacakan Kustom"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Masukkan nama"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5569,6 +5581,12 @@
       "value": "Daftar Bernomor"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Nama output tidak boleh kosong."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6607,6 +6625,12 @@
       "value": "Ketika digunakan di dalam until loop, fungsi ini menghasilkan indeks perulangan saat ini dari perulangan yang ditentukan."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Nama output harus unik."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6646,7 +6670,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Kirim ulang eksekusi alur kerja dari tindakan ini"
     }
   ],
   "hN7iBP": [
@@ -6806,6 +6830,12 @@
     {
       "type": 0,
       "value": "Mengonversi string ke huruf besar menggunakan aturan huruf besar/kecil kultur invarian"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Pilih jenis output"
     }
   ],
   "iEy9pT": [
@@ -7207,6 +7237,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Tambahkan output"
     }
   ],
   "kuFK3E": [

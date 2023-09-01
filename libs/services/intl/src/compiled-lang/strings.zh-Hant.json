@@ -973,6 +973,12 @@
       "value": "您的流程已更新。"
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -2972,7 +2978,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "從此動作提交"
     }
   ],
   "I3mifR": [
@@ -4509,6 +4515,12 @@
       "value": "自訂追蹤 ID"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "輸入名稱"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5569,6 +5581,12 @@
       "value": "編號清單"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6607,6 +6625,12 @@
       "value": "若用於 until 迴圈中，此函式會傳回指定迴圈目前的反覆運算索引。"
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6646,7 +6670,7 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "重新提交此動作執行的工作流程"
     }
   ],
   "hN7iBP": [
@@ -6806,6 +6830,12 @@
     {
       "type": 0,
       "value": "使用不因文化特性而異的大小寫規則，將字串轉換為大寫字串"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "選擇輸出類型"
     }
   ],
   "iEy9pT": [
@@ -7207,6 +7237,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "加入輸出"
     }
   ],
   "kuFK3E": [

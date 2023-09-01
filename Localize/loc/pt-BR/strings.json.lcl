@@ -1368,6 +1368,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";4izAMi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a value to respond with]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Insira um valor para responder]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";4j2MEv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Toggle Minimap]]></Val>
@@ -4188,6 +4197,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";I+85NV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Submit from this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Enviar desta ação]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";I3mifR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Is skipped]]></Val>
@@ -6351,6 +6369,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Smo/VO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a name]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Insira um nome]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Sr8PcK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No operations found]]></Val>
@@ -7697,6 +7724,15 @@
           <Val><![CDATA[Numbered List]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Lista Numerada]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";YWws/r" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Output names should not be empty.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Os nomes de saída não devem estar vazios.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9204,6 +9240,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";gusZw5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Output names should be unique.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Os nomes de saída devem ser exclusivos.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";gvDMuq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select a Batch Workflow resource]]></Val>
@@ -9254,6 +9299,15 @@
           <Val><![CDATA[Add a source schema first, then select elements to build your map]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Adicione um esquema de origem primeiro e, em seguida, selecione os elementos para criar o mapa]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";hH/wAd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Resubmit a workflow run from this action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Reenviar uma execução de fluxo de trabalho desta ação]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9494,6 +9548,15 @@
           <Val><![CDATA[Converts a string to uppercase using the casing rules of the invariant culture]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Converte uma cadeia de caracteres em maiúsculas usando as regras de uso de maiúsculas da cultura invariável]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";iE2+sy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Choose the type of output]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Selecionar o tipo de saída]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10059,6 +10122,15 @@
       <Item ItemId=";klY9UN.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";kq+I5o" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add an output]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Adicionar uma saída]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
