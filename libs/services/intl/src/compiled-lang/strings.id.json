@@ -968,7 +968,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "Masukkan nilai untuk merespons"
     }
   ],
   "4j2MEv": [
@@ -4530,7 +4530,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "Masukkan nama"
     }
   ],
   "Sr8PcK": [
@@ -5584,7 +5584,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "Nama output tidak boleh kosong."
     }
   ],
   "YZ5Kwe": [
@@ -6628,7 +6628,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "Nama output harus unik."
     }
   ],
   "gvDMuq": [
@@ -6835,7 +6835,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "Pilih jenis output"
     }
   ],
   "iEy9pT": [
@@ -7242,7 +7242,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "Tambahkan output"
     }
   ],
   "kuFK3E": [

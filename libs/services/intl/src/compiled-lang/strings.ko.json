@@ -968,7 +968,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "응답할 값 입력"
     }
   ],
   "4j2MEv": [
@@ -4518,7 +4518,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "이름 입력"
     }
   ],
   "Sr8PcK": [
@@ -5568,7 +5568,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "출력 이름은 비워 둘 수 없습니다."
     }
   ],
   "YZ5Kwe": [
@@ -6608,7 +6608,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "출력 이름은 고유해야 합니다."
     }
   ],
   "gvDMuq": [
@@ -6815,7 +6815,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "출력 형식 선택"
     }
   ],
   "iEy9pT": [
@@ -7218,7 +7218,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "출력 추가"
     }
   ],
   "kuFK3E": [

@@ -976,7 +976,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "Ange ett värde att svara med"
     }
   ],
   "4j2MEv": [
@@ -4574,7 +4574,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "Ange ett namn"
     }
   ],
   "Sr8PcK": [
@@ -5624,7 +5624,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "Utdatanamn måste anges."
     }
   ],
   "YZ5Kwe": [
@@ -6672,7 +6672,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "Taggnamnen måste vara unika."
     }
   ],
   "gvDMuq": [
@@ -6890,7 +6890,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "Väl utdatatypen"
     }
   ],
   "iEy9pT": [
@@ -7308,7 +7308,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "Lägg till utdata"
     }
   ],
   "kuFK3E": [

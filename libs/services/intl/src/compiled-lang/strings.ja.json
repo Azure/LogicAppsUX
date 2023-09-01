@@ -4526,7 +4526,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "名前を入力してください"
     }
   ],
   "Sr8PcK": [
@@ -6819,7 +6819,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "出力の種類を選択"
     }
   ],
   "iEy9pT": [
@@ -7222,7 +7222,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "出力追加"
     }
   ],
   "kuFK3E": [

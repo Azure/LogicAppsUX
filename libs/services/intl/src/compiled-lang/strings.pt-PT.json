@@ -976,7 +976,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "Introduzir um valor para responder com"
     }
   ],
   "4j2MEv": [
@@ -4634,7 +4634,7 @@
   "Smo/VO": [
     {
       "type": 0,
-      "value": "Enter a name"
+      "value": "Introduzir um nome"
     }
   ],
   "Sr8PcK": [
@@ -5688,7 +5688,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "Os nomes de saída não devem estar vazios."
     }
   ],
   "YZ5Kwe": [
@@ -6740,7 +6740,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "Os nomes de saída devem ser exclusivos."
     }
   ],
   "gvDMuq": [
@@ -6969,7 +6969,7 @@
   "iE2+sy": [
     {
       "type": 0,
-      "value": "Choose the type of output"
+      "value": "Escolher o tipo de saída"
     }
   ],
   "iEy9pT": [
@@ -7398,7 +7398,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Add an output"
+      "value": "Adicionar uma saída"
     }
   ],
   "kuFK3E": [
