@@ -147,6 +147,7 @@ import {
   UnsupportedException,
   ValidationErrorCode,
   ValidationException,
+  nthLastIndexOf,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -511,8 +512,6 @@ const toSimpleQueryBuilderViewModel = (
 ): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
   const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
   let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
-  const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
-  const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
   // default value
   if (!input || input.length === 0) {
     return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
@@ -522,21 +521,41 @@ const toSimpleQueryBuilderViewModel = (
     return advancedModeResult;
   }
 
+  let stringValue = input;
+
   try {
-    operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: input.substring(input.indexOf('@'), input.indexOf('(') + 1) };
-    const operandSubstring = input.substring(input.indexOf('(') + 1, input.lastIndexOf(')'));
-    const operand1String = operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring));
-    const operand2String = operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1);
+    let operator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+    const negatory = operator === 'not';
+    let endingLiteral: ValueSegment;
+    if (negatory) {
+      stringValue = stringValue.replace('@not(', '@');
+      const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+      operator = 'not' + baseOperator;
+      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
+      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+    } else {
+      operationLiteral = operator;
+      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
+    }
+
+    // if operator is not of the dropdownlist, it cannot be converted into row format
+    if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
+      return advancedModeResult;
+    }
+    const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
+    const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
+    const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
     operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true))[0];
     operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true))[0];
-  } catch (e) {
+    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+    return {
+      isOldFormat: true,
+      isRowFormat: true,
+      itemValue: [operationLiteral, operand1, separatorLiteral, operand2, endingLiteral],
+    };
+  } catch {
     return advancedModeResult;
   }
-  return {
-    isOldFormat: true,
-    isRowFormat: true,
-    itemValue: [operationLiteral, operand1, separatorLiteral, operand2, endingLiteral],
-  };
 };
 
 export const canConvertToComplexCondition = (input: any): boolean => {
