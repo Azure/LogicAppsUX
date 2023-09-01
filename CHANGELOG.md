@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.63.3](https://github.com/Azure/LogicAppsUX/compare/v2.63.2...v2.63.3) (2023-09-01)
+
+
+### Bug Fixes
+
+* **designer:** SimpleQueryBuilder Negatory Operators Deserializing Properly ([#3242](https://github.com/Azure/LogicAppsUX/issues/3242)) ([d010336](https://github.com/Azure/LogicAppsUX/commit/d01033670ee05d64d43af8420e3a8402d823e18c))
+
 ### [2.63.2](https://github.com/Azure/LogicAppsUX/compare/v2.63.1...v2.63.2) (2023-08-31)
 
 
