@@ -183,7 +183,6 @@ export class MapDefinitionDeserializer {
       } else {
         let childTargetKey = targetKey;
         if (childKey !== mapNodeParams.value && !(childTargetKey.indexOf(mapNodeParams.if) > -1 && childTargetKey.endsWith(')'))) {
-          // danielle refactor this
           const trimmedChildKey = childKey.startsWith('$@') ? childKey.substring(1) : childKey;
           if (!targetKey.endsWith(trimmedChildKey) || this._targetSchemaFlattened[`${targetPrefix}${targetKey}/${trimmedChildKey}`]) {
             childTargetKey = `${targetKey}/${trimmedChildKey}`;
