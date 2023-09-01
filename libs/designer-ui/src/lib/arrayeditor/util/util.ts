@@ -158,8 +158,8 @@ export const validationAndSerializeSimpleArray = (
       for (const [, value] of Object.entries(jsonEditor)) {
         returnItems.push({
           value: convertStringToSegments(
-            valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value),
-            true,
+            valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value, undefined, 4),
+            /*tokensEnabled*/ true,
             nodeMap
           ),
           key: guid(),
@@ -232,7 +232,7 @@ const convertObjectToComplexArrayItemArray = (
         key: itemSchema.key,
         title: handleTitle(itemSchema.key, itemSchema.title),
         description: itemSchema.description ?? '',
-        value: convertStringToSegments(obj, true, nodeMap),
+        value: convertStringToSegments(obj, /*tokensEnabled*/ true, nodeMap),
       },
     ];
   }
