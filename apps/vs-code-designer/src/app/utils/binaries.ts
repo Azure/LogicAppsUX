@@ -338,9 +338,6 @@ async function dotNetBuild(targetFolder: string, dependencyName: string) {
       } while (result === DialogResponses.learnMore);
     }
     await executeCommand(ext.outputChannel, undefined, 'echo', 'Ignoring build errors...');
-  } finally {
-    // Build task creates .NET Host processes, cleaning up the processes here ...
-    // await executeCommand(undefined, targetFolder, 'taskkill /f /im dotnet.exe');
   }
 }
 

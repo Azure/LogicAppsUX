@@ -216,7 +216,6 @@ export async function getLocalDotNetVersion(): Promise<string> {
  */
 export function getDotNetCommand(): string {
   const command = getGlobalSetting<string>(dotNetBinaryPathSettingKey);
-  executeCommand(ext.outputChannel, undefined, 'echo', `getDotNetCommand = ${command}`);
   return command;
 }
 
@@ -233,11 +232,7 @@ export async function setDotNetCommand(): Promise<void> {
     const newPath = `${command}${path.delimiter}${currentPath}`;
     process.env.PATH = newPath;
 
-    fs.chmod(command, 0o700, (chmodError) => {
-      if (chmodError) {
-        throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
-      }
-    });
+    fs.chmodSync(command, 0o700);
 
     await executeCommand(ext.outputChannel, undefined, 'echo', `Updating PATH to ${newPath}`);
     try {
@@ -255,6 +250,6 @@ export async function setDotNetCommand(): Promise<void> {
       console.log(error);
     }
   }
-  executeCommand(ext.outputChannel, undefined, 'echo', `setDotNetCommand = ${command}`);
+
   updateGlobalSetting<string>(dotNetBinaryPathSettingKey, command);
 }

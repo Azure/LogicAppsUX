@@ -146,7 +146,6 @@ export function checkSupportedFuncVersion(version: FuncVersion) {
  */
 export function getFunctionsCommand(): string {
   const command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
-  executeCommand(ext.outputChannel, undefined, 'echo', `getFunctionsCommand = ${command}`);
   return command;
 }
 
@@ -157,12 +156,8 @@ export function setFunctionsCommand(): void {
   let command = ext.funcCliPath;
   if (binariesExist) {
     command = path.join(funcBinariesPath, ext.funcCliPath);
-    fs.chmod(command, 0o700, (chmodError) => {
-      if (chmodError) {
-        throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
-      }
-    });
+    fs.chmodSync(command, 0o700);
   }
-  executeCommand(ext.outputChannel, undefined, 'echo', `setFunctionsCommand = ${command}`);
+
   updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
 }

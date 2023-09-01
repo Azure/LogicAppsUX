@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { Platform, dependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import * as fs from 'fs';
@@ -45,7 +44,6 @@ export function getNpmCommand(): string {
       command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
     }
   }
-  executeCommand(ext.outputChannel, undefined, 'echo', `NPM ${command}`);
   return command;
 }
 
@@ -54,7 +52,6 @@ export function getNpmCommand(): string {
  */
 export function getNodeJsCommand(): string {
   const command = getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
-  executeCommand(ext.outputChannel, undefined, 'echo', `getNodeJsCommand = ${command}`);
   return command;
 }
 
@@ -70,14 +67,9 @@ export async function setNodeJsCommand(): Promise<void> {
       const nodeSubFolder = getNodeSubFolder(command);
       command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
 
-      fs.chmod(command, 0o700, (chmodError) => {
-        if (chmodError) {
-          throw new Error(localize('ErrorChangingPermissions', `Error changing permissions: ${chmodError.message}`));
-        }
-      });
+      fs.chmodSync(command, 0o700);
     }
   }
-  await executeCommand(ext.outputChannel, undefined, 'echo', `setNodeJsCommand = ${command}`);
   updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
 }
 
@@ -90,7 +82,6 @@ function getNodeSubFolder(directoryPath: string): string | null {
       const stats = fs.statSync(itemPath);
 
       if (stats.isDirectory() && item.includes('node')) {
-        executeCommand(ext.outputChannel, undefined, 'echo', `NodeSubFolder = ${item}`);
         return item;
       }
     }

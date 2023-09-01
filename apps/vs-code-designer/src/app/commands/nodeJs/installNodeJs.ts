@@ -13,24 +13,27 @@ export async function installNodeJs(context: IActionContext, majorVersion?: stri
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
   const targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
-
+  context.telemetry.properties.lastStep = 'getLatestNodeJsVersion';
   const version = await getLatestNodeJsVersion(context, majorVersion);
-  let azureFunctionCoreToolsReleasesUrl;
+  let nodeJsReleaseUrl;
 
+  context.telemetry.properties.lastStep = 'getNodeJsBinariesReleaseUrl';
   switch (process.platform) {
     case Platform.windows:
-      azureFunctionCoreToolsReleasesUrl = getNodeJsBinariesReleaseUrl(version, 'win', arch);
+      nodeJsReleaseUrl = getNodeJsBinariesReleaseUrl(version, 'win', arch);
       break;
 
     case Platform.linux:
-      azureFunctionCoreToolsReleasesUrl = getNodeJsBinariesReleaseUrl(version, 'linux', arch);
+      nodeJsReleaseUrl = getNodeJsBinariesReleaseUrl(version, 'linux', arch);
       break;
 
     case Platform.mac:
-      azureFunctionCoreToolsReleasesUrl = getNodeJsBinariesReleaseUrl(version, 'darwin', arch);
+      nodeJsReleaseUrl = getNodeJsBinariesReleaseUrl(version, 'darwin', arch);
       break;
   }
 
-  await downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, nodeJsDependencyName);
+  context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
+  await downloadAndExtractBinaries(nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
+  context.telemetry.properties.lastStep = 'setNodeJsCommand';
   await setNodeJsCommand();
 }

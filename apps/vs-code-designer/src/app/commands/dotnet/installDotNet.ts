@@ -13,9 +13,13 @@ export async function installDotNet(context: IActionContext, majorVersion?: stri
   ext.outputChannel.show();
 
   const targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
+  context.telemetry.properties.lastStep = 'getLatestDotNetVersion';
   const version = await getLatestDotNetVersion(context, majorVersion);
-  const azureFunctionCoreToolsReleasesUrl = getDotNetBinariesReleaseUrl(version);
+  context.telemetry.properties.lastStep = 'getDotNetBinariesReleaseUrl';
+  const dotNetReleasesUrl = getDotNetBinariesReleaseUrl(version);
 
-  await downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, dotnetDependencyName);
+  context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
+  await downloadAndExtractBinaries(dotNetReleasesUrl, targetDirectory, dotnetDependencyName);
+  context.telemetry.properties.lastStep = 'setDotNetCommand';
   await setDotNetCommand();
 }
