@@ -4,23 +4,24 @@ import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
-import { setTabError } from '../../core/state/panel/panelSlice';
-import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/setting/settingSlice';
+import { useExpandedSections } from '../../core/state/setting/settingSelector';
+import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
-import type { RootState } from '../../core/store';
+import type { AppDispatch, RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
-import { DataHandling, type DataHandlingSectionProps } from './sections/datahandling';
-import { General, type GeneralSectionProps } from './sections/general';
-import { Networking, type NetworkingSectionProps } from './sections/networking';
+import { DataHandling } from './sections/datahandling';
+import { General } from './sections/general';
+import { Networking } from './sections/networking';
 import { RunAfter } from './sections/runafter';
-import { Security, type SecuritySectionProps } from './sections/security';
-import { Tracking, type TrackingSectionProps } from './sections/tracking';
-import { useValidate } from './validation/validation';
+import { Security } from './sections/security';
+import { Tracking } from './sections/tracking';
+import type { ValidationError } from './validation/validation';
+import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals, isObject } from '@microsoft/utils-logic-apps';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -36,80 +37,186 @@ export interface SectionProps extends Settings {
   validationErrors?: ValidationError[];
 }
 
-export type HeaderClickHandler = (sectionName: string) => void;
+interface SettingSectionProps {
+  nodeId: string;
+  isExpanded: boolean;
+  readOnly?: boolean;
+  nodeSettings: Settings;
+  validationErrors: ValidationError[];
+  dispatch: AppDispatch;
+  updateSettings: (settings: Settings, validateSetting?: boolean) => void;
+  expandSettingSection: (sectionName: SettingSectionName) => void;
+}
+
+export enum SettingSectionName {
+  DATAHANDLING = 'datahandling',
+  GENERAL = 'general',
+  NETWORKING = 'networking',
+  RUNAFTER = 'runafter',
+  SECURITY = 'security',
+  TRACKING = 'tracking',
+}
+
+export type HeaderClickHandler = (sectionName: SettingSectionName) => void;
 
 export const SettingsPanel = (): JSX.Element => {
+  const dispatch = useDispatch();
   const selectedNode = useSelectedNodeId();
   const readOnly = useReadOnly();
+  const expandedSections = useExpandedSections();
+
+  const { nodeSettings, nodeSettingValidationErrors } = useSelector((state: RootState) => {
+    return {
+      nodeSettings: state.operations.settings?.[selectedNode] ?? {},
+      nodeSettingValidationErrors: state.settings.validationErrors?.[selectedNode] ?? [],
+    };
+  });
+
+  const handleUpdateSettings = (settings: Settings, settingSection: SettingSectionName, shouldValidateSetting?: boolean) => {
+    dispatch(
+      updateNodeSettings({
+        id: selectedNode,
+        settings,
+      })
+    );
+    if (shouldValidateSetting) {
+      validateNodeSettings(selectedNode, settings, settingSection, dispatch);
+    }
+  };
+
+  const expandSettingSection = (sectionName: SettingSectionName): void => {
+    dispatch(setExpandedSections(sectionName));
+  };
+
+  const getPropsBasedOnSection = (settingSection: SettingSectionName): { isExpanded: boolean; validationErrors: ValidationError[] } => {
+    const validationErrors: ValidationError[] = [];
+    switch (settingSection) {
+      case SettingSectionName.GENERAL:
+        validationErrors.push(
+          ...nodeSettingValidationErrors.filter(({ key }) => {
+            return (
+              key === ValidationErrorKeys.TRIGGER_CONDITION_EMPTY ||
+              key === ValidationErrorKeys.CHUNK_SIZE_INVALID ||
+              key === ValidationErrorKeys.SINGLE_INSTANCE_SPLITON
+            );
+          })
+        );
+        break;
+      case SettingSectionName.NETWORKING:
+        validationErrors.push(
+          ...nodeSettingValidationErrors.filter(({ key }) => {
+            return (
+              key === ValidationErrorKeys.PAGING_COUNT ||
+              key === ValidationErrorKeys.RETRY_COUNT_INVALID ||
+              key === ValidationErrorKeys.RETRY_INTERVAL_INVALID ||
+              key === ValidationErrorKeys.TIMEOUT_VALUE_INVALID
+            );
+          })
+        );
+        break;
+      default:
+        break;
+    }
+    return { isExpanded: expandedSections.includes(settingSection), validationErrors };
+  };
+
+  const baseSettingProps = { nodeId: selectedNode, readOnly, nodeSettings, expandSettingSection, dispatch };
+
   return (
     <div key={`${selectedNode} settings`}>
-      <DataHandlingSettings nodeId={selectedNode} readOnly={readOnly} />
-      <GeneralSettings nodeId={selectedNode} readOnly={readOnly} />
-      <NetworkingSettings nodeId={selectedNode} readOnly={readOnly} />
-      <RunAfterSettings nodeId={selectedNode} readOnly={readOnly} />
-      <SecuritySettings nodeId={selectedNode} readOnly={readOnly} />
-      <TrackingSettings nodeId={selectedNode} readOnly={readOnly} />
+      <DataHandlingSettings
+        {...baseSettingProps}
+        updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.DATAHANDLING, validateSetting)}
+        {...getPropsBasedOnSection(SettingSectionName.DATAHANDLING)}
+      />
+      <GeneralSettings
+        {...baseSettingProps}
+        updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.GENERAL, validateSetting)}
+        {...getPropsBasedOnSection(SettingSectionName.GENERAL)}
+      />
+      <NetworkingSettings
+        {...baseSettingProps}
+        updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.NETWORKING, validateSetting)}
+        {...getPropsBasedOnSection(SettingSectionName.NETWORKING)}
+      />
+      <RunAfterSettings
+        {...baseSettingProps}
+        updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.RUNAFTER, validateSetting)}
+        {...getPropsBasedOnSection(SettingSectionName.RUNAFTER)}
+      />
+      <SecuritySettings
+        {...baseSettingProps}
+        updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.SECURITY, validateSetting)}
+        {...getPropsBasedOnSection(SettingSectionName.SECURITY)}
+      />
+      <TrackingSettings
+        {...baseSettingProps}
+        updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.TRACKING, validateSetting)}
+        {...getPropsBasedOnSection(SettingSectionName.TRACKING)}
+      />
     </div>
   );
 };
 
-function DataHandlingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
-  const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    { disableAutomaticDecompression, requestSchemaValidation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+function DataHandlingSettings({
+  nodeId,
+  readOnly,
+  isExpanded,
+  nodeSettings,
+  updateSettings,
+  expandSettingSection,
+}: SettingSectionProps): JSX.Element {
+  const { disableAutomaticDecompression, requestSchemaValidation } = nodeSettings;
 
   const onAutomaticDecompressionChange = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          disableAutomaticDecompression: {
-            isSupported: !!disableAutomaticDecompression?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      disableAutomaticDecompression: {
+        isSupported: !!disableAutomaticDecompression?.isSupported,
+        value: checked,
+      },
+    });
   };
   const onSchemaValidationChange = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          requestSchemaValidation: {
-            isSupported: !!requestSchemaValidation?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      requestSchemaValidation: {
+        isSupported: !!requestSchemaValidation?.isSupported,
+        value: checked,
+      },
+    });
   };
 
-  const dataHandlingProps: DataHandlingSectionProps = {
-    requestSchemaValidation,
-    disableAutomaticDecompression,
-    readOnly,
-    expanded: expandedSections.includes(constants.SETTINGSECTIONS.DATAHANDLING),
-    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
-    nodeId,
-    onAutomaticDecompressionChange,
-    onSchemaValidationChange,
-  };
-  if (requestSchemaValidation?.isSupported || disableAutomaticDecompression?.isSupported) {
-    return <DataHandling {...dataHandlingProps} />;
-  } else return null;
+  return (
+    <>
+      {requestSchemaValidation?.isSupported || disableAutomaticDecompression?.isSupported ? (
+        <DataHandling
+          nodeId={nodeId}
+          readOnly={readOnly}
+          expanded={isExpanded}
+          requestSchemaValidation={requestSchemaValidation}
+          disableAutomaticDecompression={disableAutomaticDecompression}
+          onHeaderClick={expandSettingSection}
+          onAutomaticDecompressionChange={onAutomaticDecompressionChange}
+          onSchemaValidationChange={onSchemaValidationChange}
+        />
+      ) : null}
+    </>
+  );
 }
 
-function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
-  const dispatch = useDispatch();
-  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
-  const { expandedSections, isTrigger, nodeInputs, operationInfo, settings, operations } = useSelector((state: RootState) => {
+function GeneralSettings({
+  nodeId,
+  readOnly,
+  nodeSettings,
+  isExpanded,
+  validationErrors,
+  dispatch,
+  updateSettings,
+}: SettingSectionProps): JSX.Element | null {
+  const { isTrigger, nodeInputs, operationInfo } = useSelector((state: RootState) => {
     return {
-      expandedSections: state.settings.expandedSections,
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
       nodeInputs: state.operations.inputParameters[nodeId],
       operationInfo: state.operations.operationInfo[nodeId],
-      settings: state.operations.settings[nodeId],
       operations: state.operations,
     };
   });
@@ -118,38 +225,24 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
     (state: RootState) => state.operations.settings?.[nodeId] ?? {}
   );
 
-  useEffect(() => {
-    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
-    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
-  }, [dispatch, nodeId, operations, triggerValidation]);
-
   const onConcurrencyToggle = (checked: boolean): void => {
     const value = checked ? concurrency?.value?.value ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT : undefined;
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          concurrency: {
-            isSupported: !!concurrency?.isSupported,
-            value: { value, enabled: checked },
-          },
-        },
-      })
-    );
+
+    updateSettings({
+      concurrency: {
+        isSupported: !!concurrency?.isSupported,
+        value: { value, enabled: checked },
+      },
+    });
   };
 
   const onConcurrencyValueChange = (value: number): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          concurrency: {
-            isSupported: !!concurrency?.isSupported,
-            value: { enabled: true, value },
-          },
-        },
-      })
-    );
+    updateSettings({
+      concurrency: {
+        isSupported: !!concurrency?.isSupported,
+        value: { enabled: true, value },
+      },
+    });
   };
 
   const onSplitOnToggle = (checked: boolean): void => {
@@ -161,58 +254,37 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
       },
     };
 
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          splitOn: splitOnSetting,
-        },
-      })
-    );
-
-    updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, { ...settings, splitOn: splitOnSetting });
+    updateSettings({ splitOn: splitOnSetting });
+    updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, { ...nodeSettings, splitOn: splitOnSetting });
   };
 
   const onTimeoutValueChange = (newVal: string): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          timeout: {
-            isSupported: !!timeout?.isSupported,
-            value: newVal,
-          },
-        },
-      })
-    );
+    updateSettings({
+      timeout: {
+        isSupported: !!timeout?.isSupported,
+        value: newVal,
+      },
+    });
   };
 
   const onTriggerConditionsChange = (newExpressions: string[]): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          conditionExpressions: {
-            isSupported: !!conditionExpressions?.isSupported,
-            value: newExpressions,
-          },
+    updateSettings(
+      {
+        conditionExpressions: {
+          isSupported: !!conditionExpressions?.isSupported,
+          value: newExpressions,
         },
-      })
+      },
+      true
     );
   };
 
   const onClientTrackingIdChange = (newVal: string): void => {
-    // TODO (14427339): Setting Validation
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          splitOnConfiguration: {
-            correlation: { clientTrackingId: newVal },
-          },
-        },
-      })
-    );
+    updateSettings({
+      splitOnConfiguration: {
+        correlation: { clientTrackingId: newVal },
+      },
+    });
   };
 
   const onSplitOnSelectionChanged = (selectedOption: IDropdownOption): void => {
@@ -224,16 +296,8 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
       },
     };
 
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          splitOn: splitOnSetting,
-        },
-      })
-    );
-
-    updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, { ...settings, splitOn: splitOnSetting });
+    updateSettings({ splitOn: splitOnSetting });
+    updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, { ...nodeSettings, splitOn: splitOnSetting });
   };
 
   const onInvokerConnectionToggle = (checked: boolean): void => {
@@ -250,34 +314,6 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
     );
   };
 
-  const generalSectionProps: GeneralSectionProps = {
-    splitOn,
-    timeout,
-    concurrency,
-    invokerConnection,
-    conditionExpressions,
-    splitOnConfiguration,
-    readOnly,
-    nodeId,
-    onConcurrencyToggle,
-    onConcurrencyValueChange,
-    onInvokerConnectionToggle,
-    onSplitOnToggle,
-    onSplitOnSelectionChanged,
-    onTimeoutValueChange,
-    onTriggerConditionsChange,
-    onClientTrackingIdChange,
-    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
-    expanded: expandedSections.includes(constants.SETTINGSECTIONS.GENERAL),
-    validationErrors: validationErrors.filter(({ key }) => {
-      return (
-        key === ValidationErrorKeys.TRIGGER_CONDITION_EMPTY ||
-        key === ValidationErrorKeys.CHUNK_SIZE_INVALID ||
-        key === ValidationErrorKeys.SINGLE_INSTANCE_SPLITON
-      );
-    }),
-  };
-
   if (
     splitOn?.isSupported ||
     timeout?.isSupported ||
@@ -285,14 +321,41 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
     conditionExpressions?.isSupported ||
     invokerConnection?.isSupported
   ) {
-    return <General {...generalSectionProps} />;
+    return (
+      <General
+        nodeId={nodeId}
+        readOnly={readOnly}
+        expanded={isExpanded}
+        validationErrors={validationErrors}
+        splitOn={splitOn}
+        timeout={timeout}
+        concurrency={concurrency}
+        invokerConnection={invokerConnection}
+        conditionExpressions={conditionExpressions}
+        splitOnConfiguration={splitOnConfiguration}
+        onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
+        onConcurrencyToggle={onConcurrencyToggle}
+        onConcurrencyValueChange={onConcurrencyValueChange}
+        onInvokerConnectionToggle={onInvokerConnectionToggle}
+        onSplitOnToggle={onSplitOnToggle}
+        onSplitOnSelectionChanged={onSplitOnSelectionChanged}
+        onTimeoutValueChange={onTimeoutValueChange}
+        onTriggerConditionsChange={onTriggerConditionsChange}
+        onClientTrackingIdChange={onClientTrackingIdChange}
+      />
+    );
   } else return null;
 }
 
-function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
-  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
-  const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
+function NetworkingSettings({
+  nodeId,
+  readOnly,
+  nodeSettings,
+  isExpanded,
+  validationErrors,
+  updateSettings,
+  dispatch,
+}: SettingSectionProps): JSX.Element | null {
   const {
     asynchronous,
     disableAsyncPattern,
@@ -303,45 +366,7 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     uploadChunk,
     paging,
     downloadChunkSize,
-    operations,
-  } = useSelector((state: RootState) => {
-    const { operations, workflow } = state;
-    const { workflowKind } = workflow;
-    const operationSettings = operations.settings?.[nodeId];
-    const {
-      asynchronous,
-      disableAsyncPattern,
-      suppressWorkflowHeaders,
-      suppressWorkflowHeadersOnResponse,
-      requestOptions,
-      retryPolicy,
-      uploadChunk,
-      paging,
-      downloadChunkSize,
-    } = operationSettings ?? {};
-    return {
-      asynchronous,
-      disableAsyncPattern,
-      suppressWorkflowHeaders,
-      suppressWorkflowHeadersOnResponse,
-      requestOptions,
-      retryPolicy,
-      uploadChunk,
-      paging,
-      downloadChunkSize,
-      operations,
-      workflowKind,
-    };
-  });
-
-  useEffect(() => {
-    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
-    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
-  }, [dispatch, nodeId, operations, triggerValidation]);
-
-  const updateSettings = (settings: Settings): void => {
-    dispatch(updateNodeSettings({ id: nodeId, settings }));
-  };
+  } = nodeSettings;
 
   const onAsyncPatternToggle = (checked: boolean): void => {
     updateSettings({
@@ -362,12 +387,15 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
   };
 
   const onRequestOptionsChange = (newVal: string): void => {
-    updateSettings({
-      requestOptions: {
-        isSupported: !!requestOptions?.isSupported,
-        value: { timeout: newVal },
+    updateSettings(
+      {
+        requestOptions: {
+          isSupported: !!requestOptions?.isSupported,
+          value: { timeout: newVal },
+        },
       },
-    });
+      true
+    );
   };
 
   const onSuppressHeadersToggle = (checked: boolean): void => {
@@ -380,24 +408,30 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
   };
 
   const onPaginationToggle = (checked: boolean): void => {
-    updateSettings({
-      paging: {
-        isSupported: !!paging?.isSupported,
-        value: { ...paging?.value, enabled: checked },
+    updateSettings(
+      {
+        paging: {
+          isSupported: !!paging?.isSupported,
+          value: { ...paging?.value, enabled: checked },
+        },
       },
-    });
+      true
+    );
   };
 
   const onPaginationValueChange = (newVal: string): void => {
-    updateSettings({
-      paging: {
-        isSupported: !!paging?.isSupported,
-        value: {
-          enabled: !!paging?.value?.enabled,
-          value: Number(newVal),
+    updateSettings(
+      {
+        paging: {
+          isSupported: !!paging?.isSupported,
+          value: {
+            enabled: !!paging?.value?.enabled,
+            value: Number(newVal),
+          },
         },
       },
-    });
+      true
+    );
   };
 
   const onHeadersOnResponseToggle = (checked: boolean): void => {
@@ -422,99 +456,81 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
   };
 
   const onRetryPolicyChange = (selectedOption: IDropdownOption): void => {
-    updateSettings({
-      retryPolicy: {
-        isSupported: !!retryPolicy?.isSupported,
-        value: {
-          type: selectedOption.key.toString(),
+    updateSettings(
+      {
+        retryPolicy: {
+          isSupported: !!retryPolicy?.isSupported,
+          value: {
+            type: selectedOption.key.toString(),
+            count: retryPolicy?.value?.count,
+            interval: retryPolicy?.value?.interval,
+          },
         },
       },
-    });
+      true
+    );
   };
 
   const onRetryCountChange = (newVal: string): void => {
-    updateSettings({
-      retryPolicy: {
-        isSupported: !!retryPolicy?.isSupported,
-        value: {
-          ...(retryPolicy?.value as any),
-          count: Number(newVal),
+    updateSettings(
+      {
+        retryPolicy: {
+          isSupported: !!retryPolicy?.isSupported,
+          value: {
+            ...(retryPolicy?.value as any),
+            count: !isNaN(Number(newVal)) ? Number(newVal) : newVal,
+          },
         },
       },
-    });
+      true
+    );
   };
 
   const onRetryIntervalChange = (newVal: string): void => {
-    updateSettings({
-      retryPolicy: {
-        isSupported: !!retryPolicy?.isSupported,
-        value: {
-          ...(retryPolicy?.value as any),
-          interval: newVal,
+    updateSettings(
+      {
+        retryPolicy: {
+          isSupported: !!retryPolicy?.isSupported,
+          value: {
+            ...(retryPolicy?.value as any),
+            interval: newVal,
+          },
         },
       },
-    });
+      true
+    );
   };
 
   const onRetryMinIntervalChange = (newVal: string): void => {
-    updateSettings({
-      retryPolicy: {
-        isSupported: !!retryPolicy?.isSupported,
-        value: {
-          ...(retryPolicy?.value as any),
-          minimumInterval: newVal,
+    updateSettings(
+      {
+        retryPolicy: {
+          isSupported: !!retryPolicy?.isSupported,
+          value: {
+            ...(retryPolicy?.value as any),
+            minimumInterval: newVal,
+          },
         },
       },
-    });
+      true
+    );
   };
 
   const onRetryMaxIntervalChange = (newVal: string): void => {
-    updateSettings({
-      retryPolicy: {
-        isSupported: !!retryPolicy?.isSupported,
-        value: {
-          ...(retryPolicy?.value as any),
-          maximumInterval: newVal,
+    updateSettings(
+      {
+        retryPolicy: {
+          isSupported: !!retryPolicy?.isSupported,
+          value: {
+            ...(retryPolicy?.value as any),
+            maximumInterval: newVal,
+          },
         },
       },
-    });
+      true
+    );
   };
 
-  const networkingProps: NetworkingSectionProps = {
-    suppressWorkflowHeaders,
-    suppressWorkflowHeadersOnResponse,
-    paging,
-    asynchronous,
-    readOnly,
-    expanded: expandedSections.includes(constants.SETTINGSECTIONS.NETWORKING),
-    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
-    requestOptions,
-    disableAsyncPattern,
-    chunkedTransferMode: equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED),
-    nodeId,
-    retryPolicy,
-    uploadChunk,
-    downloadChunkSize,
-    onAsyncPatternToggle,
-    onAsyncResponseToggle,
-    onContentTransferToggle,
-    onPaginationToggle,
-    onPaginationValueChange,
-    onRequestOptionsChange,
-    onHeadersOnResponseToggle,
-    onSuppressHeadersToggle,
-    validationErrors: validationErrors.filter(
-      ({ key }) =>
-        key === ValidationErrorKeys.PAGING_COUNT ||
-        key === ValidationErrorKeys.RETRY_COUNT_INVALID ||
-        key === ValidationErrorKeys.RETRY_INTERVAL_INVALID
-    ),
-    onRetryPolicyChange,
-    onRetryCountChange,
-    onRetryIntervalChange,
-    onRetryMinIntervalChange,
-    onRetryMaxIntervalChange,
-  };
   if (
     retryPolicy?.isSupported ||
     suppressWorkflowHeaders?.isSupported ||
@@ -526,106 +542,111 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     disableAsyncPattern?.isSupported ||
     requestOptions?.isSupported
   ) {
-    return <Networking {...networkingProps} />;
+    return (
+      <Networking
+        nodeId={nodeId}
+        readOnly={readOnly}
+        expanded={isExpanded}
+        validationErrors={validationErrors}
+        suppressWorkflowHeaders={suppressWorkflowHeaders}
+        suppressWorkflowHeadersOnResponse={suppressWorkflowHeadersOnResponse}
+        paging={paging}
+        asynchronous={asynchronous}
+        requestOptions={requestOptions}
+        disableAsyncPattern={disableAsyncPattern}
+        chunkedTransferMode={equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED)}
+        retryPolicy={retryPolicy}
+        uploadChunk={uploadChunk}
+        downloadChunkSize={downloadChunkSize}
+        onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
+        onAsyncPatternToggle={onAsyncPatternToggle}
+        onAsyncResponseToggle={onAsyncResponseToggle}
+        onContentTransferToggle={onContentTransferToggle}
+        onPaginationToggle={onPaginationToggle}
+        onPaginationValueChange={onPaginationValueChange}
+        onRequestOptionsChange={onRequestOptionsChange}
+        onHeadersOnResponseToggle={onHeadersOnResponseToggle}
+        onSuppressHeadersToggle={onSuppressHeadersToggle}
+        onRetryPolicyChange={onRetryPolicyChange}
+        onRetryCountChange={onRetryCountChange}
+        onRetryIntervalChange={onRetryIntervalChange}
+        onRetryMinIntervalChange={onRetryMinIntervalChange}
+        onRetryMaxIntervalChange={onRetryMaxIntervalChange}
+      />
+    );
   } else return null;
 }
 
-function RunAfterSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
-  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
-  const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
-  const operations = useSelector((state: RootState) => state.operations);
+function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, dispatch }: SettingSectionProps): JSX.Element | null {
   const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
   const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
 
-  useEffect(() => {
-    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
-    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
-  }, [dispatch, nodeId, operations, triggerValidation]);
-
-  const runAfterProps: SectionProps = {
-    readOnly,
-    nodeId,
-    expanded: expandedSections.includes(constants.SETTINGSECTIONS.RUNAFTER),
-    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
-    validationErrors,
-  };
-
-  return showRunAfterSettings ? <RunAfter {...runAfterProps} /> : null;
+  return showRunAfterSettings ? (
+    <RunAfter
+      nodeId={nodeId}
+      readOnly={readOnly}
+      expanded={isExpanded}
+      validationErrors={validationErrors}
+      onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
+    />
+  ) : null;
 }
 
-function SecuritySettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
-  const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
-  const {
-    settings: { secureInputs, secureOutputs },
-    operationInfo,
-  } = useSelector((state: RootState) => ({
-    settings: state.operations.settings?.[nodeId] ?? {},
-    operationInfo: state.operations.operationInfo[nodeId],
-  }));
+function SecuritySettings({
+  nodeId,
+  readOnly,
+  nodeSettings,
+  isExpanded,
+  dispatch,
+  updateSettings,
+}: SettingSectionProps): JSX.Element | null {
+  const { secureInputs, secureOutputs } = nodeSettings;
+  const operationInfo = useSelector((state: RootState) => state.operations.operationInfo[nodeId]);
   const onSecureInputsChange = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          secureInputs: { isSupported: !!secureInputs?.isSupported, value: checked },
-        },
-      })
-    );
-
+    updateSettings({ secureInputs: { isSupported: !!secureInputs?.isSupported, value: checked } });
     if (isSecureOutputsLinkedToInputs(operationInfo.type)) {
       dispatch(updateTokenSecureStatus({ id: nodeId, isSecure: checked }));
     }
   };
 
   const onSecureOutputsChange = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          secureOutputs: { isSupported: !!secureOutputs?.isSupported, value: checked },
-        },
-      })
-    );
+    updateSettings({ secureOutputs: { isSupported: !!secureOutputs?.isSupported, value: checked } });
     dispatch(updateTokenSecureStatus({ id: nodeId, isSecure: checked }));
   };
 
-  const securitySectionProps: SecuritySectionProps = {
-    secureInputs,
-    secureOutputs,
-    readOnly,
-    nodeId,
-    onSecureInputsChange,
-    onSecureOutputsChange,
-    expanded: expandedSections.includes(constants.SETTINGSECTIONS.SECURITY),
-    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
-  };
-
-  return secureInputs?.isSupported || secureOutputs?.isSupported ? <Security {...securitySectionProps} /> : null;
+  return secureInputs?.isSupported || secureOutputs?.isSupported ? (
+    <Security
+      nodeId={nodeId}
+      readOnly={readOnly}
+      expanded={isExpanded}
+      secureInputs={secureInputs}
+      secureOutputs={secureOutputs}
+      onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
+      onSecureInputsChange={onSecureInputsChange}
+      onSecureOutputsChange={onSecureOutputsChange}
+    />
+  ) : null;
 }
 
-function TrackingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
-  const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => {
-      return state.settings.expandedSections;
-    }),
-    { trackedProperties, correlation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+function TrackingSettings({
+  nodeId,
+  readOnly,
+  nodeSettings,
+  isExpanded,
+  dispatch,
+  updateSettings,
+}: SettingSectionProps): JSX.Element | null {
+  const { trackedProperties, correlation } = nodeSettings;
 
   const onClientTrackingIdChange = (newValue: string): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          correlation: {
-            isSupported: !!correlation?.isSupported,
-            value: {
-              clientTrackingId: newValue,
-            },
-          },
+    updateSettings({
+      correlation: {
+        isSupported: !!correlation?.isSupported,
+        value: {
+          clientTrackingId: newValue,
         },
-      })
-    );
+      },
+    });
   };
 
   const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
@@ -647,18 +668,12 @@ function TrackingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boo
     if (Object.keys(trackedPropertiesInput).length === 0) {
       trackedPropertiesInput = undefined;
     }
-
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          trackedProperties: {
-            isSupported: !!trackedProperties?.isSupported,
-            value: trackedPropertiesInput,
-          },
-        },
-      })
-    );
+    updateSettings({
+      trackedProperties: {
+        isSupported: !!trackedProperties?.isSupported,
+        value: trackedPropertiesInput,
+      },
+    });
   };
 
   const onTrackedPropertiesStringValueChange = (newValue: string): void => {
@@ -674,33 +689,27 @@ function TrackingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boo
     if (trackedPropertiesInput === '') {
       trackedPropertiesInput = undefined;
     }
-
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          trackedProperties: {
-            isSupported: !!trackedProperties?.isSupported,
-            value: trackedPropertiesInput,
-          },
-        },
-      })
-    );
-  };
-
-  const trackingProps: TrackingSectionProps = {
-    trackedProperties,
-    correlation,
-    readOnly,
-    expanded: expandedSections.includes(constants.SETTINGSECTIONS.TRACKING),
-    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
-    nodeId,
-    onClientTrackingIdChange,
-    onTrackedPropertiesDictionaryValueChanged,
-    onTrackedPropertiesStringValueChange,
+    updateSettings({
+      trackedProperties: {
+        isSupported: !!trackedProperties?.isSupported,
+        value: trackedPropertiesInput,
+      },
+    });
   };
 
   if (trackedProperties?.isSupported || correlation?.isSupported) {
-    return <Tracking {...trackingProps} />;
+    return (
+      <Tracking
+        nodeId={nodeId}
+        readOnly={readOnly}
+        expanded={isExpanded}
+        trackedProperties={trackedProperties}
+        correlation={correlation}
+        onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
+        onClientTrackingIdChange={onClientTrackingIdChange}
+        onTrackedPropertiesDictionaryValueChanged={onTrackedPropertiesDictionaryValueChanged}
+        onTrackedPropertiesStringValueChange={onTrackedPropertiesStringValueChange}
+      />
+    );
   } else return null;
 }
