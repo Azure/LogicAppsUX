@@ -21,7 +21,7 @@ export function getMonitoringError(
   statusRun: string | undefined,
   codeRun: string | undefined
 ): ErrorProps {
-  if (!codeRun || statusRun === constants.FLOW_STATUS.SUCCEEDED) {
+  if (!codeRun || statusRun === constants.FLOW_STATUS.SUCCEEDED || statusRun === constants.FLOW_STATUS.RUNNING) {
     return {
       errorLevel: undefined,
       errorMessage: undefined,
