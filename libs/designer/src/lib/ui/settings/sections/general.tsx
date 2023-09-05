@@ -1,4 +1,5 @@
-import { type SectionProps, type ToggleHandler, type TextChangeHandler, type NumberChangeHandler, SettingSectionName } from '..';
+import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
+import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
