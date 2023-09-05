@@ -14,16 +14,16 @@ import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension';
 
 export async function updateFuncCoreTools(context: IActionContext, packageManager: PackageManager, version: FuncVersion): Promise<void> {
   ext.outputChannel.show();
-
   const distTag: INpmDistTag = await getNpmDistTag(context, version);
-  const brewPackageName: string = getBrewPackageName(version);
-  const installedBrewPackageName: string = nonNullValue(await tryGetInstalledBrewPackageName(version), 'brewPackageName');
 
   switch (packageManager) {
-    case PackageManager.npm:
+    case PackageManager.npm: {
       await executeCommand(ext.outputChannel, undefined, 'npm', 'install', '-g', `${funcPackageName}@${distTag.tag}`);
       break;
-    case PackageManager.brew:
+    }
+    case PackageManager.brew: {
+      const brewPackageName: string = getBrewPackageName(version);
+      const installedBrewPackageName: string = nonNullValue(await tryGetInstalledBrewPackageName(version), 'brewPackageName');
       if (brewPackageName !== installedBrewPackageName) {
         await executeCommand(ext.outputChannel, undefined, 'brew', 'uninstall', installedBrewPackageName);
         await executeCommand(ext.outputChannel, undefined, 'brew', 'install', brewPackageName);
@@ -31,7 +31,10 @@ export async function updateFuncCoreTools(context: IActionContext, packageManage
         await executeCommand(ext.outputChannel, undefined, 'brew', 'upgrade', brewPackageName);
       }
       break;
-    default:
+    }
+
+    default: {
       throw new RangeError(localize('invalidPackageManager', 'Invalid package manager "{0}".', packageManager));
+    }
   }
 }
