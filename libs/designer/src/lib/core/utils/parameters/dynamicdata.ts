@@ -391,7 +391,12 @@ function getParameterValuesForLegacyDynamicOperation(
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Record<string, any> {
-  const { method, path } = swagger.getOperationByOperationId(operationId as string);
+  const operation = swagger.getOperationByOperationId(operationId);
+  if (!operation) {
+    throw new Error('APIM Operation not found');
+  }
+
+  const { method, path } = operation;
   const operationInputs = map(
     toParameterInfoMap(
       unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false, excludeInternalOperations: false }).byId)
@@ -613,7 +618,12 @@ function getSwaggerBasedInputParameters(
   operationInfo: NodeOperation,
   operationDefinition: any
 ): InputParameter[] {
-  const operationPath = removeConnectionPrefix(swagger.getOperationByOperationId(operationInfo.operationId).path);
+  const operation = swagger.getOperationByOperationId(operationInfo.operationId);
+  if (!operation) {
+    throw new Error('APIM Operation not found');
+  }
+
+  const operationPath = removeConnectionPrefix(operation.path);
   const basePath = swagger.api.basePath;
   const { key, isNested } = dynamicParameter;
   const parameterKey =

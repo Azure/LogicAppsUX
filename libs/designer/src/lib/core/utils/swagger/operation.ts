@@ -173,7 +173,7 @@ export const getInputParametersFromSwagger = (
 
         inputParametersByKey = map(loadedInputParameters, 'key');
       } else {
-        const operationPath = removeConnectionPrefix(operation.path);
+        const operationPath = removeConnectionPrefix(operation?.path || '');
         const basePath = swagger.api.basePath;
         const loadedInputParameters = loadInputValuesFromDefinition(
           stepDefinition.inputs,
