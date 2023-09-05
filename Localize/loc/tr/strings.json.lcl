@@ -1371,6 +1371,9 @@
       <Item ItemId=";4izAMi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a value to respond with]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Yanıt vermek için bir değer girin]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7716,6 +7719,9 @@
       <Item ItemId=";YWws/r" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Output names should not be empty.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Çıkış adları boş olmamalıdır.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9225,6 +9231,9 @@
       <Item ItemId=";gusZw5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Output names should be unique.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Çıkış adları benzersiz olmalıdır.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10102,7 +10111,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add an output]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Çıkış ekle]]></Val>
+            <Val><![CDATA[Çıkış ekleyin]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
