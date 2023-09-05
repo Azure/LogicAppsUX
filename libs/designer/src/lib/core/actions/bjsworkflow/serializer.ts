@@ -548,7 +548,13 @@ const serializeParametersFromSwagger = async (
 ): Promise<Record<string, any>> => {
   const { operationId, connectorId, type } = operationInfo;
   const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
-  const { method, path } = parsedSwagger.getOperationByOperationId(operationId);
+
+  const operation = parsedSwagger.getOperationByOperationId(operationId);
+  if (!operation) {
+    throw new Error('APIM Operation not found');
+  }
+
+  const { method, path } = operation;
   const operationPath = removeConnectionPrefix(path);
   const operationMethod = equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ? undefined : method;
   const parameterInputs = equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
