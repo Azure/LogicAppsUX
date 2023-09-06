@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.63.4](https://github.com/Azure/LogicAppsUX/compare/v2.63.3...v2.63.4) (2023-09-06)
+
+
+### Bug Fixes
+
+* **designer:** Show skipped status for actions inside skipped scopes ([#3266](https://github.com/Azure/LogicAppsUX/issues/3266)) ([6302253](https://github.com/Azure/LogicAppsUX/commit/6302253a956dc320c41896540e547612450e2b84)), closes [#3264](https://github.com/Azure/LogicAppsUX/issues/3264)
+
 ### [2.63.3](https://github.com/Azure/LogicAppsUX/compare/v2.63.2...v2.63.3) (2023-09-01)
 
 
