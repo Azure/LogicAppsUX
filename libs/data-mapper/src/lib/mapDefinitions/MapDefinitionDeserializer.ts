@@ -6,7 +6,7 @@ import { SchemaType, ifPseudoFunction, ifPseudoFunctionKey, indexPseudoFunction,
 import type { ConnectionDictionary } from '../models/Connection';
 import { applyConnectionValue, isConnectionUnit } from '../utils/Connection.Utils';
 import {
-  Reserved,
+  ReservedToken,
   amendSourceKeyForDirectAccessIfNeeded,
   flattenMapDefinitionValues,
   getDestinationNode,
@@ -366,7 +366,7 @@ export class MapDefinitionDeserializer {
         const targetTokens = lexThisThing(targetKey);
         let lookForSequence = false;
         for (let i = 0; i < targetTokens.length; i++) {
-          if (targetTokens[i] === Reserved.for) {
+          if (targetTokens[i] === ReservedToken.for) {
             lookForSequence = true;
           }
           if (lookForSequence && targetKey !== sequencesRemovedTargetKey) {

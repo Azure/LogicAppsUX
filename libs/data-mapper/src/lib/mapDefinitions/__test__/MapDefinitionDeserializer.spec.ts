@@ -1077,7 +1077,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        // expect(resultEntries.length).toEqual(8);
+        expect(resultEntries.length).toEqual(8);
 
         const isGreaterId = resultEntries[0][0];
         const directAccessId = resultEntries[1][0];
@@ -1109,12 +1109,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[3][0]).toEqual(indexId);
         expect(resultEntries[3][1]).toBeTruthy();
-        // expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-        //   'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
-        // ); // danielle this fails missing connection from StressTest to index
+        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
+        );
         expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
         expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(directAccessId);
-        // expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
+        expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest');
         expect(resultEntries[4][1]).toBeTruthy();

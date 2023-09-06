@@ -2,7 +2,7 @@ import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { FunctionCategory, NormalizedDataType, SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
-  Reserved,
+  ReservedToken,
   Separators,
   addAncestorNodesToCanvas,
   addParentConnectionForRepeatingElementsNested,
@@ -351,7 +351,7 @@ describe('utils/DataMap', () => {
       const result = separateIntoTokens('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name');
       expect(result[0]).toEqual('/ns0:Root/Looping/');
       expect(result[1]).toEqual(Separators.Dollar);
-      expect(result[2]).toEqual(Reserved.for);
+      expect(result[2]).toEqual(ReservedToken.for);
       expect(result[3]).toEqual(Separators.OpenParenthesis);
       expect(result[4]).toEqual('reverse');
       expect(result[5]).toEqual(Separators.OpenParenthesis);
@@ -367,7 +367,7 @@ describe('utils/DataMap', () => {
       );
       expect(result[0]).toEqual('/ns0:Root/Looping/');
       expect(result[1]).toEqual(Separators.Dollar);
-      expect(result[2]).toEqual(Reserved.for);
+      expect(result[2]).toEqual(ReservedToken.for);
       expect(result[3]).toEqual(Separators.OpenParenthesis);
       expect(result[4]).toEqual('distinct-values');
       expect(result[5]).toEqual(Separators.OpenParenthesis);

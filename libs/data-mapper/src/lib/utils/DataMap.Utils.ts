@@ -402,11 +402,11 @@ export enum Separators {
 }
 export const separators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma, Separators.Dollar];
 
-export enum Reserved {
+export enum ReservedToken {
   for = 'for',
   if = 'if',
 }
-export const reserved: string[] = [Reserved.for, Reserved.if];
+export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if];
 
 export const lexThisThing = (targetKey: string): string[] => {
   const tokens: string[] = [];
@@ -432,7 +432,7 @@ export const lexThisThing = (targetKey: string): string[] => {
     }
 
     currentToken = currentToken + currentChar;
-    if (reserved.includes(currentToken)) {
+    if (reservedToken.includes(currentToken)) {
       tokens.push(currentToken);
       currentToken = '';
       i++;
@@ -479,7 +479,7 @@ export const removeSequenceFunction = (tokens: string[]): string => {
   const length = tokens.length;
   let result = '';
   while (i < length) {
-    if (tokens[i] === Reserved.for) {
+    if (tokens[i] === ReservedToken.for) {
       const idk = createTargetOrFunction(tokens.slice(i + 2));
       const src = getInput(idk.term);
       result += 'for(' + src;
