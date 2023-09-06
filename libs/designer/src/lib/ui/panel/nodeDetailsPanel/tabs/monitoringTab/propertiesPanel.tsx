@@ -52,11 +52,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ properties, br
     const { correlation, endTime, startTime, status } = properties;
 
     return {
-      startTime: {
-        displayName: intlText.startTime,
-        format: constants.SWAGGER.FORMAT.DATETIME,
-        value: startTime,
-      },
+      ...(startTime && {
+        startTime: {
+          displayName: intlText.startTime,
+          format: constants.SWAGGER.FORMAT.DATETIME,
+          value: startTime,
+        },
+      }),
       ...(endTime && {
         endTime: {
           displayName: intlText.endTime,
