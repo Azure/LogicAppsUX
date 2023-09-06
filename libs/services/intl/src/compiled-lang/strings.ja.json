@@ -968,7 +968,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "応答する値を入力してください"
     }
   ],
   "4j2MEv": [
@@ -5572,7 +5572,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "出力名を空にすることはできません。"
     }
   ],
   "YZ5Kwe": [
@@ -6612,7 +6612,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "出力名は一意である必要があります。"
     }
   ],
   "gvDMuq": [
@@ -7222,7 +7222,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "出力追加"
+      "value": "出力の追加"
     }
   ],
   "kuFK3E": [

@@ -976,7 +976,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "輸入值以回應"
     }
   ],
   "4j2MEv": [
@@ -5584,7 +5584,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "輸出名稱不可為空白。"
     }
   ],
   "YZ5Kwe": [
@@ -6628,7 +6628,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "輸出名稱必須是唯一的。"
     }
   ],
   "gvDMuq": [
@@ -7242,7 +7242,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "加入輸出"
+      "value": "新增輸出"
     }
   ],
   "kuFK3E": [

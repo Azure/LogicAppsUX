@@ -968,7 +968,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "Yanıt vermek için bir değer girin"
     }
   ],
   "4j2MEv": [
@@ -5620,7 +5620,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "Çıkış adları boş olmamalıdır."
     }
   ],
   "YZ5Kwe": [
@@ -6660,7 +6660,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "Çıkış adları benzersiz olmalıdır."
     }
   ],
   "gvDMuq": [
@@ -7292,7 +7292,7 @@
   "kq+I5o": [
     {
       "type": 0,
-      "value": "Çıkış ekle"
+      "value": "Çıkış ekleyin"
     }
   ],
   "kuFK3E": [

@@ -976,7 +976,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "Zadejte hodnotu, se kterou chcete odpovědět"
     }
   ],
   "4j2MEv": [
@@ -5720,7 +5720,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "Názvy výstupů by neměly být prázdné."
     }
   ],
   "YZ5Kwe": [
@@ -6768,7 +6768,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "Názvy výstupů by měly být jedinečné."
     }
   ],
   "gvDMuq": [
