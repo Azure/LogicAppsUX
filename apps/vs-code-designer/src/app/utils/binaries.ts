@@ -121,6 +121,8 @@ export async function downloadAndExtractBinaries(
       downloadStream.on('finish', async () => {
         await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} binaries.`);
 
+        fs.chmodSync(binariesFilePath, 0o777);
+
         // Extract to targetFolder
         if (dependencyName == dotnetDependencyName) {
           const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
