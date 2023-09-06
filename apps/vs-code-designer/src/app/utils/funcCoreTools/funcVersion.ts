@@ -156,7 +156,7 @@ export function setFunctionsCommand(): void {
   let command = ext.funcCliPath;
   if (binariesExist) {
     command = path.join(funcBinariesPath, ext.funcCliPath);
-    fs.chmodSync(command, 0o700);
+    fs.chmodSync(command, 0o777);
   }
 
   updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);

@@ -17,11 +17,12 @@ import { validateFuncCoreToolsIsLatest } from '../commands/funcCoreTools/validat
 import { validateNodeJsIsLatest } from '../commands/nodeJs/validateNodeIsLatest';
 import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { getDependenciesVersion } from './bundleFeed';
+import { setDotNetCommand } from './dotnet/dotnet';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { runWithDurationTelemetry } from './telemetry';
 import { getGlobalSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import * as AdmZip from 'adm-zip';
 import axios from 'axios';
@@ -31,7 +32,6 @@ import * as path from 'path';
 import * as request from 'request';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
-import type { MessageItem } from 'vscode';
 
 export async function validateOrInstallBinaries(context: IActionContext) {
   await vscode.window.withProgress(
@@ -78,6 +78,8 @@ export async function validateOrInstallBinaries(context: IActionContext) {
       await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
         progress.report({ increment: 20, message: `.NET SDK` });
         await validateDotNetIsLatest(dependenciesVersions?.dotnet);
+        context.telemetry.properties.lastStep = 'setDotNetCommand';
+        setDotNetCommand();
       });
     }
   );
@@ -85,41 +87,57 @@ export async function validateOrInstallBinaries(context: IActionContext) {
 
 /**
  * Download and Extracts Binaries zip.
- * @param {IActionContext} context - The context.
  * @param {string} binariesUrl - Binaries release url.
  * @param {string} targetFolder - Module name to check.
+ * @param {string} dependencyName - The Dedepency name.
+ * @param {string} dotNetVersion - The .NET Major Version from CDN.
  */
 
-export async function downloadAndExtractBinaries(binariesUrl: string, targetFolder: string, dependencyName: string): Promise<void> {
+export async function downloadAndExtractBinaries(
+  binariesUrl: string,
+  targetFolder: string,
+  dependencyName: string,
+  dotNetVersion?: string
+): Promise<void> {
   const tempFolderPath = path.join(os.tmpdir(), '.azurelogicapps', dependencyName);
   targetFolder = path.join(targetFolder, dependencyName);
   fs.mkdirSync(targetFolder, { recursive: true });
 
   // Read and write permissions
-  fs.chmodSync(targetFolder, 0o700);
+  fs.chmodSync(targetFolder, 0o777);
 
   const binariesFileExtension = getCompressionFileExtension(binariesUrl);
-  const binariesFilePath = path.join(tempFolderPath, `${dependencyName}.${binariesFileExtension}`);
+  const binariesFilePath = path.join(tempFolderPath, `${dependencyName}${binariesFileExtension}`);
 
   try {
     await executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
-    fs.chmodSync(tempFolderPath, 0o700);
+    fs.chmodSync(tempFolderPath, 0o777);
 
     // Download the compressed binaries
     await new Promise<void>((resolve, reject) => {
       executeCommand(ext.outputChannel, undefined, 'echo', `Downloading binaries from: ${binariesUrl}`);
       const downloadStream = request(binariesUrl).pipe(fs.createWriteStream(binariesFilePath));
       downloadStream.on('finish', async () => {
-        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName}.`);
+        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} binaries.`);
 
         // Extract to targetFolder
-        await extractBinaries(binariesFilePath, targetFolder, dependencyName);
-
-        // Build dotnet source code
         if (dependencyName == dotnetDependencyName) {
-          await dotNetBuild(targetFolder, dependencyName);
+          const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
+          process.platform == Platform.windows
+            ? await executeCommand(
+                ext.outputChannel,
+                undefined,
+                'powershell -ExecutionPolicy Bypass -File',
+                binariesFilePath,
+                '-InstallDir',
+                targetFolder,
+                '-Channel',
+                `${version}.0`
+              )
+            : await executeCommand(ext.outputChannel, undefined, binariesFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
         } else {
+          await extractBinaries(binariesFilePath, targetFolder, dependencyName);
           vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
         }
         resolve();
@@ -233,8 +251,8 @@ export function getFunctionCoreToolsBinariesReleaseUrl(version: string, osPlatfo
   return `https://github.com/Azure/azure-functions-core-tools/releases/download/${version}/Azure.Functions.Cli.${osPlatform}-${arch}.${version}.zip`;
 }
 
-export function getDotNetBinariesReleaseUrl(version: string): string {
-  return `https://github.com/dotnet/sdk/archive/refs/tags/v${version}.zip`;
+export function getDotNetBinariesReleaseUrl(): string {
+  return process.platform == Platform.windows ? 'https://dot.net/v1/dotnet-install.ps1' : 'https://dot.net/v1/dotnet-install.sh';
 }
 
 export function getCpuArchitecture() {
@@ -278,15 +296,23 @@ async function readJsonFromUrl(url: string): Promise<any> {
 
 function getCompressionFileExtension(binariesUrl: string): string {
   if (binariesUrl.endsWith('.zip')) {
-    return 'zip';
+    return '.zip';
   }
 
   if (binariesUrl.endsWith('.tar.gz')) {
-    return 'tar.gz';
+    return '.tar.gz';
   }
 
   if (binariesUrl.endsWith('.tar.xz')) {
-    return 'tar.xz';
+    return '.tar.xz';
+  }
+
+  if (binariesUrl.endsWith('.ps1')) {
+    return '.ps1';
+  }
+
+  if (binariesUrl.endsWith('.sh')) {
+    return '.sh';
   }
 
   throw new Error(localize('UnsupportedCompressionFileExtension', `Unsupported compression file extension: ${binariesUrl}`));
@@ -306,39 +332,6 @@ async function extractBinaries(binariesFilePath: string, targetFolder: string, d
 
 function checkMajorVersion(version: string, majorVersion: string): boolean {
   return semver.major(version) === semver.major(majorVersion);
-}
-
-/**
- * Runs the build script.
- * @param targetFolder
- * @param dependencyName
- */
-async function dotNetBuild(targetFolder: string, dependencyName: string) {
-  try {
-    switch (process.platform) {
-      case Platform.windows:
-        await executeCommand(ext.outputChannel, targetFolder, 'build.cmd');
-        break;
-
-      default:
-        await executeCommand(ext.outputChannel, targetFolder, './build.sh');
-    }
-  } catch (error) {
-    // Output shows errors but .dotnet sdk exe runs - need to test
-    // Seems comparable to the manual binary installation. Maybe clean up the folder...
-    if (!fs.existsSync(path.join(targetFolder, '.dotnet'))) {
-      const errorMessage: string = localize('buildErrorDotNet', `Error building ${dependencyName}: ${error}`);
-      fs.rmSync(targetFolder, { recursive: true });
-      let result: MessageItem;
-      do {
-        result = await vscode.window.showWarningMessage(errorMessage, DialogResponses.learnMore);
-        if (result == DialogResponses.learnMore) {
-          await openUrl('https://dotnet.microsoft.com/download/dotnet/6.0');
-        }
-      } while (result === DialogResponses.learnMore);
-    }
-    await executeCommand(ext.outputChannel, undefined, 'echo', 'Ignoring build errors...');
-  }
 }
 
 /**

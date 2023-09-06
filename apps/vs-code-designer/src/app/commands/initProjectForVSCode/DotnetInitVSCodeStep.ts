@@ -150,7 +150,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
         options: {
           cwd: this.debugSubpath,
           env: {
-            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK\\.dotnet;%PATH%",',
+            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;%PATH%",',
           },
         },
         command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,

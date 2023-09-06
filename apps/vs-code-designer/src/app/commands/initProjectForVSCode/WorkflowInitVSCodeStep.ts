@@ -29,7 +29,7 @@ export class WorkflowInitVSCodeStep extends ScriptInitVSCodeStep {
         args: funcBinariesExist ? ['host', 'start'] : undefined,
         options: {
           env: {
-            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK\\.dotnet;%PATH%",',
+            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;%PATH%",',
           },
         },
         problemMatcher: funcWatchProblemMatcher,

@@ -185,11 +185,12 @@ export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string
 }
 
 export async function getLocalDotNetVersion(): Promise<string> {
-  const dotNetBinariesPath = getGlobalSetting<string>(dotNetBinaryPathSettingKey).replace('dotnet.exe', '');
+  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const sdkVersionFolder = path.join(dotNetBinariesPath, 'sdk');
 
   // First try to get sdk from Binary installation folder
-  const files = fs.readdirSync(sdkVersionFolder, { withFileTypes: true });
+  const files = fs.existsSync(sdkVersionFolder) ? fs.readdirSync(sdkVersionFolder, { withFileTypes: true }) : null;
   for (const file of files) {
     if (file.isDirectory()) {
       const version = file.name;
@@ -222,27 +223,25 @@ export function getDotNetCommand(): string {
 export async function setDotNetCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
-  const dotNetSDKPath = path.join(dotNetBinariesPath, '.dotnet');
   const binariesExist = fs.existsSync(dotNetBinariesPath);
   let command = ext.dotNetCliPath;
   if (binariesExist) {
     // Explicit executable for tasks.json
-    command = path.join(dotNetSDKPath, `${ext.dotNetCliPath}.exe`);
+    command =
+      process.platform == Platform.windows
+        ? path.join(dotNetBinariesPath, `${ext.dotNetCliPath}.exe`)
+        : path.join(dotNetBinariesPath, `${ext.dotNetCliPath}`);
     const currentPath = process.env.PATH;
-    const newPath = `${command}${path.delimiter}${currentPath}`;
-    process.env.PATH = newPath;
-
-    fs.chmodSync(command, 0o700);
-
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Updating PATH to ${newPath}`);
+    const newPath = `${dotNetBinariesPath}${path.delimiter}${command}${path.delimiter}${currentPath}`;
+    fs.chmodSync(command, 0o777);
     try {
       switch (process.platform) {
         case Platform.windows: {
-          // Known Issue: "WARNING: The data being saved is truncated to 1024 characters.""
-          await executeCommand(ext.outputChannel, undefined, 'SETX', `DOTNET_BINARY_ROOT`, `"${dotNetSDKPath}"`);
-          await executeCommand(ext.outputChannel, undefined, 'SETX', `PATH`, `"%PATH%;%%DOTNET_BINARY_ROOT%%"`);
-          // Reload so that Environment Variables changes can be picked up
-          vscode.commands.executeCommand('workbench.action.reloadWindow');
+          const terminalConfig = vscode.workspace.getConfiguration();
+          const pathEnv = {
+            PATH: newPath,
+          };
+          terminalConfig.update('terminal.integrated.env.windows', pathEnv, vscode.ConfigurationTarget.Workspace);
           break;
         }
       }
