@@ -13,8 +13,8 @@ describe('ui/settings/settingreactiveinput', () => {
       textFieldLabel: 'text field label',
       textFieldValue: 'test',
       checked: false,
-      onToggleLabel: 'On',
-      offToggleLabel: 'Off',
+      onText: 'On',
+      offText: 'Off',
       onValueChange: () => null,
     };
     renderer = ReactShallowRenderer.createRenderer();
@@ -34,9 +34,11 @@ describe('ui/settings/settingreactiveinput', () => {
     renderer.render(<ReactiveToggle {...props} />);
 
     const reactiveToggle = renderer.getRenderOutput();
-    const [toggle, textField]: any[] = React.Children.toArray(reactiveToggle.props.children);
+    const [toggle, textFieldContainer]: any[] = React.Children.toArray(reactiveToggle.props.children);
 
     expect(toggle.props.checked).toBeTruthy();
+    console.log(textFieldContainer);
+    const [textField]: any[] = React.Children.toArray(textFieldContainer.props.children);
     expect(textField.props.id).toBe(minimal.textFieldId);
     expect(textField.props.value).toBe(minimal.textFieldValue);
   });

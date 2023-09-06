@@ -1,13 +1,8 @@
-import { SettingSectionName } from '../../../ui/settings';
 import type { ValidationError } from '../../../ui/settings/validation/validation';
 import { resetWorkflowState } from '../global';
+import { SettingSectionName, type SettingsState } from './settingInterface';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-
-export interface SettingsState {
-  validationErrors: Record<string, ValidationError[]>;
-  expandedSections: SettingSectionName[];
-}
 
 const initialState: SettingsState = {
   validationErrors: {},

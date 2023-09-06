@@ -29,6 +29,15 @@ export type TextChangeHandler = (newVal: string) => void;
 export type NumberChangeHandler = (newVal: number) => void;
 export type DropdownSelectionChangeHandler = (selectedOption: IDropdownOption) => void;
 
+export enum SettingSectionName {
+  DATAHANDLING = 'datahandling',
+  GENERAL = 'general',
+  NETWORKING = 'networking',
+  RUNAFTER = 'runafter',
+  SECURITY = 'security',
+  TRACKING = 'tracking',
+}
+
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;
   nodeId: string;
@@ -46,15 +55,6 @@ interface SettingSectionProps {
   dispatch: AppDispatch;
   updateSettings: (settings: Settings, validateSetting?: boolean) => void;
   expandSettingSection: (sectionName: SettingSectionName) => void;
-}
-
-export enum SettingSectionName {
-  DATAHANDLING = 'datahandling',
-  GENERAL = 'general',
-  NETWORKING = 'networking',
-  RUNAFTER = 'runafter',
-  SECURITY = 'security',
-  TRACKING = 'tracking',
 }
 
 export type HeaderClickHandler = (sectionName: SettingSectionName) => void;

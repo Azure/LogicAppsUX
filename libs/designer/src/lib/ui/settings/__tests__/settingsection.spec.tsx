@@ -90,6 +90,9 @@ describe('ui/settings/settingsection', () => {
           visible: true,
         },
       ],
+      onHeaderClick: () => {
+        jest.fn();
+      },
     };
     renderer = ReactShallowRenderer.createRenderer();
   });
