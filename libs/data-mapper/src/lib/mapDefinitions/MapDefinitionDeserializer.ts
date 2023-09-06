@@ -22,7 +22,7 @@ import {
 } from '../utils/DataMap.Utils';
 import { isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
-import { addSourceReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
+import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
@@ -389,16 +389,14 @@ export class MapDefinitionDeserializer {
 
         // Make the connection between loop nodes
         if (srcLoopNode && tgtLoopNode && !conditionalLoopKey) {
-          if (!connections[addSourceReactFlowPrefix(srcLoopNode.key)]) {
-            addParentConnectionForRepeatingElements(
-              tgtLoopNode,
-              srcLoopNode,
-              this._sourceSchemaFlattened,
-              this._targetSchemaFlattened,
-              connections,
-              indexFnRfKey
-            );
-          }
+          addParentConnectionForRepeatingElements(
+            tgtLoopNode,
+            srcLoopNode,
+            this._sourceSchemaFlattened,
+            this._targetSchemaFlattened,
+            connections,
+            indexFnRfKey
+          );
         }
 
         // This should handle cases where the index is being directly applied to the target property
