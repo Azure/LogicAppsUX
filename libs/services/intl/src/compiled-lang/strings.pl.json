@@ -976,7 +976,7 @@
   "4izAMi": [
     {
       "type": 0,
-      "value": "Enter a value to respond with"
+      "value": "Wprowadź wartość, do udzielenia odpowiedzi"
     }
   ],
   "4j2MEv": [
@@ -5736,7 +5736,7 @@
   "YWws/r": [
     {
       "type": 0,
-      "value": "Output names should not be empty."
+      "value": "Nazwy danych wyjściowych nie powinny być puste."
     }
   ],
   "YZ5Kwe": [
@@ -6784,7 +6784,7 @@
   "gusZw5": [
     {
       "type": 0,
-      "value": "Output names should be unique."
+      "value": "Nazwy danych wyjściowych powinny być unikatowe."
     }
   ],
   "gvDMuq": [
