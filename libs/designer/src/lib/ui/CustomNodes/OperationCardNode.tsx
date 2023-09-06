@@ -107,28 +107,27 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
   };
 
-  const onRunRepetitionError = async () => {
-    dispatch(setRepetitionRunData({ nodeId: id, runData: { status: constants.FLOW_STATUS.FAILED } as any }));
-  };
-
   const {
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName }], getRunRepetition, {
-    refetchOnWindowFocus: false,
-    initialData: null,
-    refetchIntervalInBackground: true,
-    onSuccess: onRunRepetitionSuccess,
-    onError: onRunRepetitionError,
-    enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
-  });
+  } = useQuery<any>(
+    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
+    getRunRepetition,
+    {
+      refetchOnWindowFocus: false,
+      initialData: null,
+      refetchIntervalInBackground: true,
+      onSuccess: onRunRepetitionSuccess,
+      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+    }
+  );
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData]);
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
 
   const dependencies = useTokenDependencies(id);
 
