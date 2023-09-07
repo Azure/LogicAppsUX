@@ -4,6 +4,7 @@ import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import type { OperationMetadataState } from '../../../core/state/operation/operationMetadataSlice';
 import { setValidationError, ValidationErrorKeys, type ValidationError } from '../../../core/state/setting/settingSlice';
 import { isISO8601 } from '../../../core/utils/validation';
+import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -68,15 +69,13 @@ export const useValidate = (nodeId: string) => {
         }
       }
 
-      if (retryPolicy?.isSupported) {
-        if (
-          retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.EXPONENTIAL ||
-          retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.FIXED
-        ) {
-          const retryCount = Number(retryPolicy?.value?.count);
+      if (retryPolicy?.isSupported && retryPolicy.value) {
+        const { count, type, interval } = retryPolicy.value;
+        if (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) {
+          const retryCount = Number(count);
           // Invalid retry count
           if (
-            isNaN(retryCount) ||
+            (!isTemplateExpression(count?.toString() ?? '') && isNaN(retryCount)) ||
             retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
             retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT
           ) {
@@ -86,7 +85,7 @@ export const useValidate = (nodeId: string) => {
             });
           }
           // Invalid retry interval
-          if (!isISO8601(retryPolicy?.value?.interval ?? '')) {
+          if (!isTemplateExpression(interval?.toString() ?? '') && !isISO8601(retryPolicy?.value?.interval ?? '')) {
             validationErrors.push({
               key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
               message: retryIntervalInvalidText,
