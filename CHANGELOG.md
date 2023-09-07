@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.63.6](https://github.com/Azure/LogicAppsUX/compare/v2.63.5...v2.63.6) (2023-09-07)
+
+
+### Bug Fixes
+
+* **designer:** Update 'about' tab to handle falsy property values ([#3244](https://github.com/Azure/LogicAppsUX/issues/3244)) ([d5c7577](https://github.com/Azure/LogicAppsUX/commit/d5c7577b9ba09d01d47d60ff82c6bf1b09d6496a))
+
 ### [2.63.5](https://github.com/Azure/LogicAppsUX/compare/v2.63.4...v2.63.5) (2023-09-07)
 
 
