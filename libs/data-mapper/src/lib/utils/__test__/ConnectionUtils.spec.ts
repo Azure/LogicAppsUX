@@ -9,6 +9,7 @@ import {
   applyConnectionValue,
   bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
+  inputFromHandleId,
   isCustomValue,
   isFunctionInputSlotAvailable,
   isValidConnectionByType,
@@ -576,6 +577,21 @@ describe('utils/Connections', () => {
 
     it('Falsy when both are different non-Any datatypes', () => {
       expect(isValidConnectionByType(NormalizedDataType.Integer, NormalizedDataType.String)).toBeFalsy();
+    });
+  });
+
+  describe('inputFromHandleId', () => {
+    it('returns undefined for no inputs', () => {
+      const input = {
+        allowCustomInput: true,
+        allowedTypes: [NormalizedDataType.String],
+        isOptional: false,
+        name: 'Source value',
+        placeHolder: 'The string or array to check the length.',
+      };
+      const funcData: Partial<FunctionData> = { inputs: [input], maxNumberOfInputs: -1 };
+      const inputKey = inputFromHandleId('Source value', funcData as FunctionData);
+      expect(inputKey).toBeUndefined();
     });
   });
 });
