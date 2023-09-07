@@ -438,7 +438,7 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
         isSupported: !!retryPolicy?.isSupported,
         value: {
           ...(retryPolicy?.value as any),
-          count: Number(newVal),
+          count: !isNaN(Number(newVal)) ? Number(newVal) : newVal,
         },
       },
     });
