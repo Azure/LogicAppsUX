@@ -377,6 +377,7 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
     relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
         // Replace './' to deal with relative attribute paths
+
         const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
         const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
 
@@ -393,10 +394,116 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   return constructedSourceKey;
 };
 
+export enum Separators {
+  OpenParenthesis = '(',
+  CloseParenthesis = ')',
+  Comma = ',',
+  Dollar = '$',
+}
+export const separators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma, Separators.Dollar];
+
+export enum ReservedToken {
+  for = 'for',
+  if = 'if',
+}
+export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if];
+
+export const lexThisThing = (targetKey: string): string[] => {
+  const tokens: string[] = [];
+
+  let i = 0;
+  let currentToken = '';
+  while (i < targetKey.length) {
+    const currentChar = targetKey[i];
+    if (separators.includes(currentChar)) {
+      if (!currentToken) {
+        // if it is a Separator
+        tokens.push(currentChar);
+        i++;
+        continue;
+      } else {
+        // if it is a function or identifier token
+        tokens.push(currentToken);
+        currentToken = '';
+        tokens.push(currentChar);
+        i++;
+        continue;
+      }
+    }
+
+    currentToken = currentToken + currentChar;
+    if (reservedToken.includes(currentToken)) {
+      tokens.push(currentToken);
+      currentToken = '';
+      i++;
+      continue;
+    }
+    if (i === targetKey.length - 1) {
+      tokens.push(currentToken);
+    }
+    i++;
+  }
+  return tokens;
+};
+
+interface ParseFunc {
+  name: string;
+  inputs: FunctionInput[];
+}
+
+type FunctionInput = string | ParseFunc;
+
+const createTargetOrFunction = (tokens: string[]): { term: FunctionInput; nextIndex: number } => {
+  // determine if token is a function
+  if (tokens[1] === Separators.OpenParenthesis) {
+    const func: ParseFunc = { name: tokens[0], inputs: [] };
+    let i = 2; // start of the function inputs
+    let parenCount = 1;
+    while (i < tokens.length && parenCount !== 0) {
+      if (tokens[i] === Separators.OpenParenthesis) {
+        parenCount++;
+      } else if (tokens[i] === Separators.CloseParenthesis) {
+        parenCount--;
+      } else if (tokens[i] !== Separators.Comma) {
+        func.inputs.push(createTargetOrFunction(tokens.slice(i)).term);
+      }
+      i++;
+    }
+    return { term: func, nextIndex: i + 1 };
+  }
+  return { term: tokens[0], nextIndex: 2 };
+};
+
+export const removeSequenceFunction = (tokens: string[]): string => {
+  let i = 0;
+  const length = tokens.length;
+  let result = '';
+  while (i < length) {
+    if (tokens[i] === ReservedToken.for) {
+      const idk = createTargetOrFunction(tokens.slice(i + 2));
+      const src = getInput(idk.term);
+      result += 'for(' + src;
+      i += idk.nextIndex;
+    } else {
+      result += tokens[i];
+    }
+    i++;
+  }
+  return result;
+};
+
+const getInput = (term: FunctionInput) => {
+  let currentTerm = term;
+  while (typeof currentTerm !== 'string') {
+    currentTerm = currentTerm.inputs[0];
+  }
+  return currentTerm;
+};
+
 export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   let qualifiedTargetKey = targetKey;
-  const srcKeys: string[] = [];
 
+  const srcKeys: string[] = [];
   const splitLoops = qualifiedTargetKey.split(')');
   splitLoops.forEach((splitLoop) => {
     if (splitLoop.includes(mapNodeParams.for)) {
