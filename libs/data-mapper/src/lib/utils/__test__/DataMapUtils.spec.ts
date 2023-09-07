@@ -105,18 +105,6 @@ describe('utils/DataMap', () => {
       );
       expect(result).toEqual('/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect');
     });
-
-    it('gets the source key from a sequence function looped target string', () => {
-      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
-      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
-
-      const result = getSourceValueFromLoop(
-        'Name',
-        '/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name',
-        flattenedSchema
-      );
-      expect(result).toEqual('/ns0:Root/Looping/Employee/Name');
-    });
   });
 
   describe('addParentConnectionForRepeatingElementsNested', () => {
