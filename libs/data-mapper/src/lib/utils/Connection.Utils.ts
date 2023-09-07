@@ -107,8 +107,6 @@ export const applyConnectionValue = (
     }
   }
 
-  connections[targetNodeReactFlowKey] = connection;
-
   createConnectionEntryIfNeeded(connections, targetNode, targetNodeReactFlowKey);
   connection = connections[targetNodeReactFlowKey];
 
@@ -187,6 +185,8 @@ export const applyConnectionValue = (
         }
       }
     }
+
+    connections[targetNodeReactFlowKey] = connection;
 
     // Only need to update/add value to source's outputs[] if it's a ConnectionUnit
     if (isConnectionUnit(input)) {
