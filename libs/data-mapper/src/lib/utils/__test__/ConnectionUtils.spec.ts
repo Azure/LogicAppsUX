@@ -581,16 +581,18 @@ describe('utils/Connections', () => {
   });
 
   describe('inputFromHandleId', () => {
-    const input = {
-      allowCustomInput: true,
-      allowedTypes: [NormalizedDataType.String],
-      isOptional: false,
-      name: 'Source value',
-      placeHolder: 'The string or array to check the length.',
-    };
-    const funcData: Partial<FunctionData> = { inputs: [input], maxNumberOfInputs: -1 };
-    const inputKey = inputFromHandleId('Source value', funcData as FunctionData);
-    expect(inputKey);
+    it('returns undefined for no inputs', () => {
+      const input = {
+        allowCustomInput: true,
+        allowedTypes: [NormalizedDataType.String],
+        isOptional: false,
+        name: 'Source value',
+        placeHolder: 'The string or array to check the length.',
+      };
+      const funcData: Partial<FunctionData> = { inputs: [input], maxNumberOfInputs: -1 };
+      const inputKey = inputFromHandleId('Source value', funcData as FunctionData);
+      expect(inputKey).toBeUndefined();
+    });
   });
 });
 
