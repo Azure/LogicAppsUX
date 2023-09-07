@@ -4,18 +4,22 @@ import { expect, test } from '@playwright/test';
 test('Sanity Check', async ({ page }) => {
   await page.goto(baseUrl);
 
-  await page.locator('text=Select an option').click();
-  await page.locator('button[role="option"]:has-text("Simple Big Workflow")').click();
-  await page.locator('div[role="button"]:has-text("🧰")').click();
-
-  await page.locator('[data-testid="card-Increment variable"] div[role="button"]:has-text("Increment variable")').click();
-  await page.locator('p:has-text("1")').click();
-  await page.getByRole('textbox', { name: 'Value' }).press('Escape');
-  await page.locator('button[role="tab"]:has-text("About")').click();
-  await page.locator('button[role="tab"]:has-text("Code View")').click();
-  await page.locator('button[role="tab"]:has-text("Settings")').click();
-  await page.locator('button[role="tab"]:has-text("Settings")').click();
-  await page.locator('text=Run After').click();
-
+  await page.getByText('Select an option').click();
+  await page.getByRole('option', { name: 'Simple Big Workflow' }).click();
+  await page.getByRole('button', { name: 'Toolbox' }).click();
+  await page.getByTestId('card-Increment variable').getByRole('button', { name: 'Variables connector icon Increment variable' }).click();
+  await page.getByLabel('Value').getByRole('paragraph').click();
+  await page.getByLabel('Value').press('Escape');
+  await page.getByRole('tab', { name: 'Code View Code View' }).click();
+  await page.getByRole('tab', { name: 'About About' }).click();
+  await page.getByRole('tab', { name: 'Settings Settings' }).click();
+  await page.getByRole('tab', { name: 'Parameters Parameters' }).click();
+  await page.getByRole('tab', { name: 'Settings Settings' }).click();
+  await page.getByRole('button', { name: 'Collapse Run After Run After' }).click();
+  await page.getByRole('button', { name: 'Expand Run After Run After' }).click();
+  await page.getByRole('button', { name: 'Collapse Tracking Tracking' }).click();
+  await page.getByRole('button', { name: 'Expand Tracking Tracking' }).click();
+  await page.getByRole('button', { name: 'Expand Initialize variable Initialize variable Initialize variable' }).click();
+  await page.getByRole('button', { name: 'Collapse Initialize variable Initialize variable Initialize variable' }).click();
   expect(true).toBeTruthy();
 });

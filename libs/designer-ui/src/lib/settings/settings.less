@@ -78,8 +78,6 @@
     .msla-setting-section-dropdown {
       display: block;
       width: 50%;
-      // margin-left: 45%;
-      // margin-bottom: 8px;
     }
 
     .msla-setting-section-settings {
@@ -99,23 +97,16 @@
     .msla-setting-section-row {
       display: flex;
 
-      .msla-setting-section-row-text {
+      .msla-setting-label-title {
         font-family: @font-family;
         padding-top: 3px;
       }
-
-      .msla-setting-section-row-text-input {
-        min-width: 200px;
-        width: 59%;
-      }
     }
-
-    .msla-setting-section-row-child {
-      margin-left: 50px;
+    .msla-setting-label-tooltip-icon {
+      height: 22px;
     }
-
-    .msla-setting-section-row-info-icon {
-      margin-top: -6px;
+    .msla-setting-label-tooltip {
+      margin-top: -5px;
     }
 
     .msla-setting-section-separator {
@@ -125,27 +116,28 @@
       color: #6b6b6b;
     }
 
-    .msla-setting-section-row-label {
+    .msla-setting-label-container {
       display: flex;
-      width: 80%;
-      justify-content: left;
+      width: 100%;
+    }
+    .msla-setting-label-description {
+      font-size: 10px;
+      line-height: 12px;
+      margin-bottom: 5px;
+      font-style: italic;
+    }
 
-      .msla-operation-setting {
-        min-width: 400px;
+    .msla-setting-label-subLabel {
+      font-weight: 600;
+      font-size: 10px;
+      &.isToggle {
+        margin-left: 5px;
+        margin-bottom: -5px;
       }
     }
 
     .msla-operation-setting {
       width: 81%;
-    }
-
-    .msla-setting-section-row-child-label {
-      margin-right: 6px;
-      margin-top: 4px;
-      margin-bottom: 4px;
-      display: flex;
-      font-size: 12px;
-      text-align: left;
     }
 
     .msla-setting-tracked-properties-dictionary {
@@ -159,7 +151,6 @@
 
     .msla-setting-section-toggle {
       margin-top: 6px;
-      padding-left: 35px;
       justify-content: right;
     }
 
@@ -200,14 +191,11 @@
   margin-left: 48px;
   margin-bottom: 5px;
 
-  .msla-setting-section-row-label {
+  .msla-setting-label-container {
     display: flex;
-    width: 80%;
+    width: 100%;
     justify-content: left;
     margin-top: 9px;
-  }
-  .ms-Button--action {
-    margin-left: 36px;
   }
 }
 

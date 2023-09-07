@@ -49,8 +49,8 @@ describe('ui/settings/settingsection', () => {
           settingProp: {
             textFieldValue: 'This is a test value',
             textFieldLabel: 'Test Label',
-            onToggleLabel: 'On',
-            offToggleLabel: 'Off',
+            onText: 'On',
+            offText: 'Off',
           },
           visible: true,
         },
@@ -90,6 +90,9 @@ describe('ui/settings/settingsection', () => {
           visible: true,
         },
       ],
+      onHeaderClick: () => {
+        jest.fn();
+      },
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

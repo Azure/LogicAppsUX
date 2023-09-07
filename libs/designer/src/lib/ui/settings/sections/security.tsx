@@ -1,8 +1,12 @@
 import type { SectionProps, ToggleHandler } from '..';
-import constants from '../../../common/constants';
+import { SettingSectionName } from '..';
+import type { RootState } from '../../../core';
+import { isSecureOutputsLinkedToInputs } from '../../../core/utils/setting';
 import type { SettingsSectionProps } from '../settingsection';
-import { SettingsSection, SettingLabel } from '../settingsection';
+import { SettingsSection } from '../settingsection';
+import { getSettingLabel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 export interface SecuritySectionProps extends SectionProps {
   onSecureInputsChange: ToggleHandler;
@@ -10,15 +14,17 @@ export interface SecuritySectionProps extends SectionProps {
 }
 
 export const Security = ({
+  nodeId,
+  expanded,
+  readOnly,
   secureInputs,
   secureOutputs,
-  readOnly,
   onSecureInputsChange,
   onSecureOutputsChange,
-  expanded,
   onHeaderClick,
 }: SecuritySectionProps): JSX.Element | null => {
   const intl = useIntl();
+  const operationInfo = useSelector((state: RootState) => state.operations.operationInfo[nodeId]);
   const onText = intl.formatMessage({
     defaultMessage: 'On',
     description: 'label when setting is on',
@@ -31,8 +37,12 @@ export const Security = ({
     defaultMessage: 'Secure Inputs',
     description: 'title for the secure inputs setting',
   });
+  const secureInputsDescription = intl.formatMessage({
+    defaultMessage: 'Enabling secure inputs will automatically secure outputs.',
+    description: 'description of the secure inputs setting',
+  });
   const secureInputsTooltipText = intl.formatMessage({
-    defaultMessage: 'Secure inputs of the operation.',
+    defaultMessage: 'Secure inputs of the operation',
     description: 'description of the secure inputs setting',
   });
   const secureOutputsTitle = intl.formatMessage({
@@ -40,7 +50,7 @@ export const Security = ({
     description: 'title for secure outputs setting',
   });
   const secureOutputsTooltipText = intl.formatMessage({
-    defaultMessage: 'Secure outputs of the operation and references of output properties.',
+    defaultMessage: 'Secure outputs of the operation and references of output properties',
     description: 'description of secure outputs setting',
   });
   const securityTitle = intl.formatMessage({
@@ -48,13 +58,10 @@ export const Security = ({
     description: 'title of security setting section',
   });
 
-  const secureInputsLabel = <SettingLabel labelText={secureInputsTitle} infoTooltipText={secureInputsTooltipText} isChild={false} />;
-  const secureOutputsLabel = <SettingLabel labelText={secureOutputsTitle} infoTooltipText={secureOutputsTooltipText} isChild={false} />;
-
   const securitySectionProps: SettingsSectionProps = {
     id: 'security',
     title: securityTitle,
-    sectionName: constants.SETTINGSECTIONS.SECURITY,
+    sectionName: SettingSectionName.SECURITY,
     isReadOnly: readOnly,
     expanded,
     onHeaderClick,
@@ -65,7 +72,11 @@ export const Security = ({
           readOnly,
           checked: secureInputs?.value,
           onToggleInputChange: (_, checked) => onSecureInputsChange(!!checked),
-          customLabel: () => secureInputsLabel,
+          customLabel: getSettingLabel(
+            secureInputsTitle,
+            secureInputsTooltipText,
+            isSecureOutputsLinkedToInputs(operationInfo?.type) ? secureInputsDescription : undefined
+          ),
           onText,
           offText,
           ariaLabel: secureInputsTitle,
@@ -78,7 +89,7 @@ export const Security = ({
           readOnly,
           checked: secureOutputs?.value,
           onToggleInputChange: (_, checked) => onSecureOutputsChange(!!checked),
-          customLabel: () => secureOutputsLabel,
+          customLabel: getSettingLabel(secureOutputsTitle, secureOutputsTooltipText),
           onText,
           offText,
           ariaLabel: secureOutputsTitle,

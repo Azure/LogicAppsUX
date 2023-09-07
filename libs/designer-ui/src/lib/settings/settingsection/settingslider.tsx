@@ -65,7 +65,7 @@ export const CustomValueSlider = ({
 
   return (
     <>
-      {customLabel && customLabel()}
+      {customLabel ? customLabel : null}
       <div style={{ width: '100%', display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
         <div style={{ flex: '1 1 auto' }}>
           <Slider
