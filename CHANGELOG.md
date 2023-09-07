@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.63.5](https://github.com/Azure/LogicAppsUX/compare/v2.63.4...v2.63.5) (2023-09-07)
+
+
+### Bug Fixes
+
+* **designer:** Support expressions in retry policy ([#3276](https://github.com/Azure/LogicAppsUX/issues/3276)) ([bcbd257](https://github.com/Azure/LogicAppsUX/commit/bcbd2575638f9a4b314294544cfc17ff620aef07))
+
 ### [2.63.4](https://github.com/Azure/LogicAppsUX/compare/v2.63.3...v2.63.4) (2023-09-06)
 
 
