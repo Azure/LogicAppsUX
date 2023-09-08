@@ -69,6 +69,12 @@
       "value": "Zona horaria"
     }
   ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Suppress Workflow Headers on Response"
+    }
+  ],
   "+xXHdp": [
     {
       "type": 0,
@@ -181,12 +187,6 @@
     {
       "type": 0,
       "value": "Faltan entradas necesarias"
-    }
-  ],
-  "/w/q/8": [
-    {
-      "type": 0,
-      "value": "Cuando se habilita, esta acción se ejecutará con el usuario desde la configuración \"Ejecutar como\" en el desencadenador Dataverse."
     }
   ],
   "/yYyOq": [
@@ -487,6 +487,12 @@
       "value": "(UTC-01:00) Azores"
     }
   ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "The number of times to retry the request"
+    }
+  ],
   "1htSs7": [
     {
       "type": 0,
@@ -565,12 +571,6 @@
       "value": "Seleccione el archivo que se debe cargar."
     }
   ],
-  "2Cdt4p": [
-    {
-      "type": 0,
-      "value": "Habilita una división para iniciar una instancia del flujo de trabajo por elemento en la matriz seleccionada. Cada instancia también puede tener un id de seguimiento distinto."
-    }
-  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -581,6 +581,12 @@
     {
       "type": 0,
       "value": "Hora de finalización"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Control how new runs are queued"
     }
   ],
   "2NXYYu": [
@@ -637,6 +643,12 @@
       "value": "Hora de inicio"
     }
   ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Paging count invalid. Value must be a number greater than 0"
+    }
+  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -657,6 +669,12 @@
     {
       "type": 0,
       "value": "Activado"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "2vnYre": [
@@ -1159,6 +1177,12 @@
       "value": "Obligatorio. El objeto que se comprobará si es mayor que el valor con el que se está comparando."
     }
   ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Secure inputs of the operation"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1181,6 +1205,12 @@
     {
       "type": 0,
       "value": "Cancelar"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "Timeout value is invalid, must match ISO 8601 duration format"
     }
   ],
   "6WmLx1": [
@@ -1429,6 +1459,12 @@
       "value": "Copiar URL"
     }
   ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Exponential Interval"
+    }
+  ],
   "7zsUT3": [
     {
       "type": 0,
@@ -1609,18 +1645,6 @@
     {
       "type": 1,
       "value": "invalidNodes"
-    }
-  ],
-  "8ubEPi": [
-    {
-      "type": 0,
-      "value": "Opciones de solicitud"
-    }
-  ],
-  "8wlfdo": [
-    {
-      "type": 0,
-      "value": "Suprimir encabezados de flujo de trabajo en la respuesta"
     }
   ],
   "8wr0zO": [
@@ -2098,12 +2122,6 @@
       "value": "Seleccionar una identidad administrada"
     }
   ],
-  "BrvZNn": [
-    {
-      "type": 0,
-      "value": "Especifique una o varias expresiones que deben ser \"true\" para que se active el desencadenador."
-    }
-  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2114,6 +2132,12 @@
     {
       "type": 0,
       "value": "Un especificador de formato único que indica cómo dar formato al valor de este GUID."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
     }
   ],
   "BxITRH": [
@@ -2304,6 +2328,12 @@
       "value": "Nodo"
     }
   ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+    }
+  ],
   "DEu7oK": [
     {
       "type": 0,
@@ -2384,6 +2414,12 @@
       "value": "Expandir resultado estático"
     }
   ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+    }
+  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2450,12 +2486,6 @@
     {
       "type": 0,
       "value": "Compruebe las acciones del flujo para ver si fuera necesario establecer algún parámetro. No se olvide de guardar cuando haya terminado."
-    }
-  ],
-  "EKtYQF": [
-    {
-      "type": 0,
-      "value": "Defina el id. de seguimiento de la ejecución. En caso de división, este id. de seguimiento se aplica a la solicitud inicial."
     }
   ],
   "ERAWZA": [
@@ -2568,6 +2598,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Número de una unidad de tiempo especificada que se sumará."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "F9dR1Q": [
@@ -3297,12 +3333,6 @@
       "value": "(UTC-09:00) Alaska"
     }
   ],
-  "JzqgNM": [
-    {
-      "type": 0,
-      "value": "Defina el id. de seguimiento de la ejecución. En caso de división, este id. de seguimiento se aplica a la solicitud inicial."
-    }
-  ],
   "K50znc": [
     {
       "type": 0,
@@ -3494,6 +3524,12 @@
       "value": "Configurar"
     }
   ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -3636,12 +3672,6 @@
     {
       "type": 0,
       "value": "Opcional. Nombre de la acción con ámbito donde desea que se muestren las entradas y salidas de las acciones de nivel superior dentro de ese ámbito."
-    }
-  ],
-  "MCQODe": [
-    {
-      "type": 0,
-      "value": "Salidas seguras de la operación y referencias de las propiedades de salida."
     }
   ],
   "MCzWDc": [
@@ -4110,12 +4140,6 @@
       "value": "Obligatorio. Este valor es el número de enteros que se encuentran en esta matriz."
     }
   ],
-  "P3Zpc4": [
-    {
-      "type": 0,
-      "value": "Id. de seguimiento personalizado"
-    }
-  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4204,10 +4228,22 @@
       "value": "Propiedades controladas"
     }
   ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "Split-On Tracking Id"
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) El Cairo"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
     }
   ],
   "PsmHyH": [
@@ -4352,6 +4388,16 @@
     {
       "type": 0,
       "value": "Parámetros de flujo de trabajo"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value of "
+    },
+    {
+      "type": 1,
+      "value": "max"
     }
   ],
   "Qn8qxn": [
@@ -4605,6 +4651,12 @@
       "value": "Obligatorio. El nombre de la acción con una respuesta form-data o form-encoded."
     }
   ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4689,22 +4741,10 @@
       "value": "Devuelve el inicio del mes de la marca de tiempo de una cadena."
     }
   ],
-  "TPV6j/": [
-    {
-      "type": 0,
-      "value": "Recuento de paginación no válido"
-    }
-  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Tipo de acción"
-    }
-  ],
-  "TUaunO": [
-    {
-      "type": 0,
-      "value": "Escriba un valor"
     }
   ],
   "TX4Kdr": [
@@ -4887,6 +4927,16 @@
       "value": "Nombre lógico"
     }
   ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
   "UR1CS5": [
     {
       "type": 0,
@@ -5029,6 +5079,12 @@
     {
       "type": 0,
       "value": "General"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5265,6 +5321,12 @@
       "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
     }
   ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5297,6 +5359,12 @@
     {
       "type": 0,
       "value": "Historial de solicitudes"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Fixed Interval"
     }
   ],
   "WcnIF8": [
@@ -5333,6 +5401,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Montevideo"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "X4gDhV": [
@@ -5393,6 +5467,18 @@
     {
       "type": 0,
       "value": "Asegúrese de que las palabras están escritas correctamente."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions that must be true for the trigger to fire"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Action Timeout"
     }
   ],
   "XLUs2P": [
@@ -5915,6 +6001,12 @@
       "value": "Pantalla completa"
     }
   ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "Distinct Tracking id for each split-on instance"
+    }
+  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -6117,12 +6209,6 @@
       "value": "Especifica un nombre válido."
     }
   ],
-  "c7tRg/": [
-    {
-      "type": 0,
-      "value": "Descomprima el cuerpo de la solicitud si se comprime mediante GZip o Deflate. Esta configuración solo es aplicable para el desencadenador HTTP."
-    }
-  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6135,16 +6221,16 @@
       "value": "(UTC+09:00) Seúl"
     }
   ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Retrieve more results up to the pagination limit"
+    }
+  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "Ver documentación"
-    }
-  ],
-  "cP4UkW": [
-    {
-      "type": 0,
-      "value": "El intervalo de la directiva de reintentos no es válido, debe coincidir con el formato de duración ISO 8601"
     }
   ],
   "cR9RtV": [
@@ -6303,22 +6389,10 @@
       "value": "Frecuencia"
     }
   ],
-  "dSTRb/": [
-    {
-      "type": 0,
-      "value": "Especifique el comportamiento y las funcionalidades de transferencia de contenido a través de HTTP. Los mensajes grandes pueden dividirse en solicitudes más pequeñas para el conector a fin de permitir la carga de mensajes grandes. Los detalles están disponibles en http://aka.ms/logicapps-chunk#upload-content-in-chunks"
-    }
-  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Omitir"
-    }
-  ],
-  "dWFyfN": [
-    {
-      "type": 0,
-      "value": "Entradas seguras de la operación."
     }
   ],
   "daoo3l": [
@@ -6467,6 +6541,12 @@
       "value": "Cursiva (⌘I)"
     }
   ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6491,6 +6571,12 @@
       "value": "Opcional. Índice de dónde se va a detener la extracción de la subcadena."
     }
   ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Example: PT1S"
+    }
+  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6513,12 +6599,6 @@
     {
       "type": 0,
       "value": "Selección de un recurso de API Management"
-    }
-  ],
-  "fGcSFd": [
-    {
-      "type": 0,
-      "value": "El recuento de paginación supera el valor máximo"
     }
   ],
   "fKYuwf": [
@@ -6607,6 +6687,12 @@
       "value": "Ejecución"
     }
   ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limit"
+    }
+  ],
   "g7my78": [
     {
       "type": 0,
@@ -6667,6 +6753,12 @@
     {
       "type": 0,
       "value": "Anterior con error"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "gQt/0f": [
@@ -6775,6 +6867,12 @@
     {
       "type": 0,
       "value": "Volver a enviar una ejecución de flujo de trabajo desde esta acción"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Allow chunking"
     }
   ],
   "hN7iBP": [
@@ -7014,6 +7112,12 @@
       "value": "Identidad administrada"
     }
   ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Secure outputs of the operation and references of output properties"
+    }
+  ],
   "iTKrs8": [
     {
       "type": 0,
@@ -7138,6 +7242,12 @@
       "value": "Indique a Microsoft cómo se podría mejorar esta característica"
     }
   ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Request Options - Timeout"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -7210,6 +7320,12 @@
       "value": "Editar en JSON"
     }
   ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Enabling secure inputs will automatically secure outputs."
+    }
+  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7220,12 +7336,6 @@
     {
       "type": 0,
       "value": "Describa algo que debería hacer el flujo. Agregue detalles siempre que sea posible, incluyendo el conector que se vaya a usar y si se debería incluir algún contenido."
-    }
-  ],
-  "juR40n": [
-    {
-      "type": 0,
-      "value": "Duración"
     }
   ],
   "juvF+0": [
@@ -7539,6 +7649,12 @@
       "value": "Insertar expresión (también puede agregar escribiendo / en el editor)"
     }
   ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7575,6 +7691,12 @@
       "value": "Nombre"
     }
   ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Threshold of items to return"
+    }
+  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7599,16 +7721,6 @@
       "value": "Función eliminada."
     }
   ],
-  "mGPqAg": [
-    {
-      "type": 0,
-      "value": "Eliminar "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7619,12 +7731,6 @@
     {
       "type": 0,
       "value": "Devuelve una representación de cadena de un URI de datos."
-    }
-  ],
-  "mOr9ll": [
-    {
-      "type": 0,
-      "value": "Duración máxima en una única solicitud de salida de esta acción. Si la solicitud no finaliza dentro de este límite después de ejecutar reintentos, se produce un error en la acción."
     }
   ],
   "mPakaD": [
@@ -8173,12 +8279,6 @@
       "value": "Agrega un número entero de segundos a la marca de tiempo de una cadena pasada."
     }
   ],
-  "q8vnZQ": [
-    {
-      "type": 0,
-      "value": "Valide el cuerpo de la solicitud con el esquema proporcionado. Si se produce un error de coincidencia, se devolverá el error HTTP 400."
-    }
-  ],
   "qAlTD5": [
     {
       "type": 0,
@@ -8364,6 +8464,12 @@
     {
       "type": 0,
       "value": "Sugerencia de flujo anterior"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
     }
   ],
   "r/n6/9": [
@@ -8600,12 +8706,6 @@
     {
       "type": 0,
       "value": "Obligatorio. La colección que se comprobará si está vacía."
-    }
-  ],
-  "scmyvO": [
-    {
-      "type": 0,
-      "value": "Tiempo de espera de la acción"
     }
   ],
   "sfJTHV": [
@@ -8922,12 +9022,6 @@
       "value": "Mostrar"
     }
   ],
-  "uZH8Qs": [
-    {
-      "type": 0,
-      "value": "Limite la duración máxima entre los reintentos y las respuestas asincrónicas para esta acción. Nota: esto no modifica el tiempo de espera de una sola solicitud."
-    }
-  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -9132,6 +9226,12 @@
     {
       "type": 0,
       "value": "Para crear y usar una conexión API, debe tener una identidad administrada configurada en esta aplicación lógica."
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "vlDynP": [
@@ -9648,6 +9748,12 @@
     {
       "type": 0,
       "value": "Escribir valor"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Expression Editor"
     }
   ],
   "zIDVd9": [

@@ -69,6 +69,12 @@
       "value": "Zona waktu"
     }
   ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Suppress Workflow Headers on Response"
+    }
+  ],
   "+xXHdp": [
     {
       "type": 0,
@@ -181,12 +187,6 @@
     {
       "type": 0,
       "value": "Input yang diperlukan tidak ada"
-    }
-  ],
-  "/w/q/8": [
-    {
-      "type": 0,
-      "value": "Ketika diaktifkan, tindakan ini akan dijalankan dengan pengguna dari pengaturan \"Jalankan sebagai\" di pemicu Dataverse."
     }
   ],
   "/yYyOq": [
@@ -487,6 +487,12 @@
       "value": "(UTC-01.00) Azores"
     }
   ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "The number of times to retry the request"
+    }
+  ],
   "1htSs7": [
     {
       "type": 0,
@@ -565,12 +571,6 @@
       "value": "Pilih file yang akan diunggah"
     }
   ],
-  "2Cdt4p": [
-    {
-      "type": 0,
-      "value": "Aktifkan pemisahan untuk memulai instans alur kerja setiap item dalam array yang dipilih. Setiap instans juga dapat memiliki id pelacakan yang berbeda."
-    }
-  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -581,6 +581,12 @@
     {
       "type": 0,
       "value": "Waktu berakhir"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Control how new runs are queued"
     }
   ],
   "2NXYYu": [
@@ -637,6 +643,12 @@
       "value": "Waktu Mulai"
     }
   ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Paging count invalid. Value must be a number greater than 0"
+    }
+  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -657,6 +669,12 @@
     {
       "type": 0,
       "value": "Aktif"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "2vnYre": [
@@ -1151,6 +1169,12 @@
       "value": "Harus diisi. Objek untuk diperiksa jika lebih besar dari nilai yang dibandingkan."
     }
   ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Secure inputs of the operation"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1173,6 +1197,12 @@
     {
       "type": 0,
       "value": "Batal"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "Timeout value is invalid, must match ISO 8601 duration format"
     }
   ],
   "6WmLx1": [
@@ -1421,6 +1451,12 @@
       "value": "Salin URL"
     }
   ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Exponential Interval"
+    }
+  ],
   "7zsUT3": [
     {
       "type": 0,
@@ -1601,18 +1637,6 @@
     {
       "type": 1,
       "value": "invalidNodes"
-    }
-  ],
-  "8ubEPi": [
-    {
-      "type": 0,
-      "value": "Opsi Permintaan"
-    }
-  ],
-  "8wlfdo": [
-    {
-      "type": 0,
-      "value": "Sembunyikan header alur kerja pada respons"
     }
   ],
   "8wr0zO": [
@@ -2068,12 +2092,6 @@
       "value": "Pilih identitas terkelola"
     }
   ],
-  "BrvZNn": [
-    {
-      "type": 0,
-      "value": "Tentukan satu atau beberapa ekspresi yang harus benar untuk diaktifkan oleh pemicu."
-    }
-  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2084,6 +2102,12 @@
     {
       "type": 0,
       "value": "Format tunggal penentu yang menunjukkan cara memformat nilai dari Guid ini."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
     }
   ],
   "BxITRH": [
@@ -2274,6 +2298,12 @@
       "value": "Node"
     }
   ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+    }
+  ],
   "DEu7oK": [
     {
       "type": 0,
@@ -2354,6 +2384,12 @@
       "value": "Luaskan Hasil Statik"
     }
   ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+    }
+  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2420,12 +2456,6 @@
     {
       "type": 0,
       "value": "Periksa tindakan alur untuk melihat apakah ada parameter yang perlu ditetapkan. Jangan lupa untuk menyimpan bila Anda sudah selesai!"
-    }
-  ],
-  "EKtYQF": [
-    {
-      "type": 0,
-      "value": "Atur id pelacakan untuk dijalankan. Untuk pemisahan, id pelacakan ini untuk memulai permintaan."
     }
   ],
   "ERAWZA": [
@@ -2538,6 +2568,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah unit waktu tertentu yang akan ditambahkan."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "F9dR1Q": [
@@ -3245,12 +3281,6 @@
       "value": "(UTC-09.00) Alaska"
     }
   ],
-  "JzqgNM": [
-    {
-      "type": 0,
-      "value": "Atur id pelacakan untuk dijalankan. Untuk pemisahan, id pelacakan ini untuk memulai permintaan."
-    }
-  ],
   "K50znc": [
     {
       "type": 0,
@@ -3420,6 +3450,12 @@
       "value": "Konfigurasikan"
     }
   ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -3562,12 +3598,6 @@
     {
       "type": 0,
       "value": "Opsional. Nama tindakan tercakup tempat Anda menginginkan input dan output dari tindakan tingkat atas dalam cakupan tersebut."
-    }
-  ],
-  "MCQODe": [
-    {
-      "type": 0,
-      "value": "Mengamankan output dari operasi dan referensi properti output."
     }
   ],
   "MCzWDc": [
@@ -4036,12 +4066,6 @@
       "value": "Wajib. Nilai ini adalah nomor bilangan bulat yang ada dalam array."
     }
   ],
-  "P3Zpc4": [
-    {
-      "type": 0,
-      "value": "ID Pelacakan Kustom"
-    }
-  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4130,10 +4154,22 @@
       "value": "Properti yang dilacak"
     }
   ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "Split-On Tracking Id"
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02.00) Kairo"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
     }
   ],
   "PsmHyH": [
@@ -4278,6 +4314,16 @@
     {
       "type": 0,
       "value": "Parameter Alur Kerja"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value of "
+    },
+    {
+      "type": 1,
+      "value": "max"
     }
   ],
   "Qn8qxn": [
@@ -4509,6 +4555,12 @@
       "value": "Wajib. Nama tindakan dengan data formulir atau respons dengan pengodean formulir."
     }
   ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4593,22 +4645,10 @@
       "value": "Menampilkan permulaan bulan pada tanda waktu string"
     }
   ],
-  "TPV6j/": [
-    {
-      "type": 0,
-      "value": "Jumlah halaman tidak valid"
-    }
-  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Tipe Tindakan"
-    }
-  ],
-  "TUaunO": [
-    {
-      "type": 0,
-      "value": "Masukkan nilai"
     }
   ],
   "TX4Kdr": [
@@ -4791,6 +4831,16 @@
       "value": "Nama Logis"
     }
   ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
   "UR1CS5": [
     {
       "type": 0,
@@ -4933,6 +4983,12 @@
     {
       "type": 0,
       "value": "Umum"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5169,6 +5225,12 @@
       "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
     }
   ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5201,6 +5263,12 @@
     {
       "type": 0,
       "value": "Riwayat Permintaan"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Fixed Interval"
     }
   ],
   "WcnIF8": [
@@ -5237,6 +5305,12 @@
     {
       "type": 0,
       "value": "(UTC-03.00) Montevideo"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "X4gDhV": [
@@ -5297,6 +5371,18 @@
     {
       "type": 0,
       "value": "Pastikan kata dieja dengan benar."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions that must be true for the trigger to fire"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Action Timeout"
     }
   ],
   "XLUs2P": [
@@ -5819,6 +5905,12 @@
       "value": "Layar Penuh"
     }
   ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "Distinct Tracking id for each split-on instance"
+    }
+  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -6021,12 +6113,6 @@
       "value": "Masukkan JSON yang valid."
     }
   ],
-  "c7tRg/": [
-    {
-      "type": 0,
-      "value": "Dekompresi isi permintaan jika dikompresi menggunakan GZip atau Deflate. Pengaturan ini hanya berlaku untuk pemicu HTTP."
-    }
-  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6039,16 +6125,16 @@
       "value": "(UTC+09.00) Seoul"
     }
   ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Retrieve more results up to the pagination limit"
+    }
+  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "Lihat Dokumentasi"
-    }
-  ],
-  "cP4UkW": [
-    {
-      "type": 0,
-      "value": "Interval Kebijakan Coba Ulang tidak valid, harus cocok dengan format durasi ISO 8601"
     }
   ],
   "cR9RtV": [
@@ -6207,22 +6293,10 @@
       "value": "Frekuensi"
     }
   ],
-  "dSTRb/": [
-    {
-      "type": 0,
-      "value": "Tentukan perilaku dan kemampuan untuk mentransfer konten melalui HTTP. Pesan berukuran besar dapat dibagi menjadi permintaan yang lebih kecil ke konektor untuk memungkinkan pengunggahan pesan berukuran besar. Detail dapat ditemukan di http://aka.ms/logicapps-chunk#upload-content-in-chunks"
-    }
-  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Lompati"
-    }
-  ],
-  "dWFyfN": [
-    {
-      "type": 0,
-      "value": "Mengamankan input operasi."
     }
   ],
   "daoo3l": [
@@ -6371,6 +6445,12 @@
       "value": "Miring (⌘I)"
     }
   ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6395,6 +6475,12 @@
       "value": "Opsional. Indeks tempat untuk berhenti mengekstrak substring."
     }
   ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Example: PT1S"
+    }
+  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6417,12 +6503,6 @@
     {
       "type": 0,
       "value": "Pilih sumber daya API Management"
-    }
-  ],
-  "fGcSFd": [
-    {
-      "type": 0,
-      "value": "Jumlah halaman melebihi nilai maksimum"
     }
   ],
   "fKYuwf": [
@@ -6511,6 +6591,12 @@
       "value": "Runtime"
     }
   ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limit"
+    }
+  ],
   "g7my78": [
     {
       "type": 0,
@@ -6563,6 +6649,12 @@
     {
       "type": 0,
       "value": "Sebelumnya gagal"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "gQt/0f": [
@@ -6671,6 +6763,12 @@
     {
       "type": 0,
       "value": "Kirim ulang eksekusi alur kerja dari tindakan ini"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Allow chunking"
     }
   ],
   "hN7iBP": [
@@ -6888,6 +6986,12 @@
       "value": "Identitas Terkelola"
     }
   ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Secure outputs of the operation and references of output properties"
+    }
+  ],
   "iTKrs8": [
     {
       "type": 0,
@@ -7012,6 +7116,12 @@
       "value": "Beri tahu Microsoft bagaimana fitur ini dapat ditingkatkan"
     }
   ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Request Options - Timeout"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -7084,6 +7194,12 @@
       "value": "Edit di JSON"
     }
   ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Enabling secure inputs will automatically secure outputs."
+    }
+  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7094,12 +7210,6 @@
     {
       "type": 0,
       "value": "Jelaskan hal yang harus dilakukan alur Anda. Tambahkan detail jika memungkinkan, termasuk konektor yang akan digunakan dan jika ada konten yang harus disertakan."
-    }
-  ],
-  "juR40n": [
-    {
-      "type": 0,
-      "value": "Durasi"
     }
   ],
   "juvF+0": [
@@ -7391,6 +7501,12 @@
       "value": "Sisipkan Ekspresi (Anda juga dapat menambahkannya dengan mengetik / di editor)"
     }
   ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7427,6 +7543,12 @@
       "value": "Nama"
     }
   ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Threshold of items to return"
+    }
+  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7451,16 +7573,6 @@
       "value": "Fungsi dihapus."
     }
   ],
-  "mGPqAg": [
-    {
-      "type": 0,
-      "value": "Hapus "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7471,12 +7583,6 @@
     {
       "type": 0,
       "value": "Menampilkan representasi string dari URI data"
-    }
-  ],
-  "mOr9ll": [
-    {
-      "type": 0,
-      "value": "Durasi maksimum untuk permintaan keluar tunggal dari tindakan ini. Jika permintaan tidak selesai dalam batas ini setelah menjalankan percobaan ulang, tindakan gagal."
     }
   ],
   "mPakaD": [
@@ -8033,12 +8139,6 @@
       "value": "Menambahkan jumlah bilangan bulat detik ke tanda waktu string yang diberikan"
     }
   ],
-  "q8vnZQ": [
-    {
-      "type": 0,
-      "value": "Validasikan isi permintaan dengan skema yang disediakan. Jika terdapat ketidakcocokan, HTTP 400 akan dikembalikan."
-    }
-  ],
   "qAlTD5": [
     {
       "type": 0,
@@ -8202,6 +8302,12 @@
     {
       "type": 0,
       "value": "Saran alur sebelumnya"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
     }
   ],
   "r/n6/9": [
@@ -8438,12 +8544,6 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk diperiksa jika kosong."
-    }
-  ],
-  "scmyvO": [
-    {
-      "type": 0,
-      "value": "Batas Waktu Tindakan"
     }
   ],
   "sfJTHV": [
@@ -8760,12 +8860,6 @@
       "value": "Tampilkan"
     }
   ],
-  "uZH8Qs": [
-    {
-      "type": 0,
-      "value": "Batasi durasi maksimum antara percobaan ulang dan respons asinkron untuk tindakan ini. Catatan: Ini tidak mengubah batas waktu permintaan dari permintaan tunggal."
-    }
-  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -8970,6 +9064,12 @@
     {
       "type": 0,
       "value": "Untuk membuat dan menggunakan koneksi API, Anda harus memiliki identitas terkelola yang dikonfigurasi di aplikasi logika ini."
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "vlDynP": [
@@ -9494,6 +9594,12 @@
     {
       "type": 0,
       "value": "Masukkan nilai"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Expression Editor"
     }
   ],
   "zIDVd9": [
