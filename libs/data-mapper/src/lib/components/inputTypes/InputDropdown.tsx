@@ -1,6 +1,7 @@
 import { setConnectionInput, showNotification } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { NormalizedDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
+import { NormalizedDataType, numericalDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isValidConnectionByType, isValidCustomValueByType, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
@@ -10,6 +11,7 @@ import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { NotificationTypes, errorNotificationAutoHideDuration } from '../notification/Notification';
+import { DMTooltip } from '../tooltip/tooltip';
 import { Stack } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
 import { Combobox, Option, Text, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
@@ -312,8 +314,23 @@ export const InputDropdown = (props: InputDropdownProps) => {
     nodeTypeAllowedTypesMismatchLoc,
   ]);
 
+  let inputType = '';
+  if (isFunctionData(currentNode)) {
+    const allowedInputTypes = currentNode.inputs[inputIndex].allowedTypes;
+    inputType = allowedInputTypes.toString();
+    if (
+      allowedInputTypes.length === 3 &&
+      allowedInputTypes.includes(NormalizedDataType.Number) &&
+      allowedInputTypes.includes(NormalizedDataType.Decimal) &&
+      allowedInputTypes.includes(NormalizedDataType.Integer)
+    ) {
+      inputType = 'Numerical';
+    }
+  }
+
   return (
     <Stack horizontal={false}>
+      {inputType.length && <DataTypeLabel inputType={inputType} comboboxId={id?.toString() || ''}></DataTypeLabel>}
       <Combobox
         id={id}
         aria-labelledby={labelId}
@@ -337,4 +354,42 @@ export const InputDropdown = (props: InputDropdownProps) => {
       {typeValidationMessage && <Text style={{ color: tokens.colorPaletteYellowForeground2 }}>{typeValidationMessage}</Text>}
     </Stack>
   );
+};
+
+interface DataTypeLabelProps {
+  inputType: string;
+  comboboxId: string;
+}
+
+const DataTypeLabel = (props: DataTypeLabelProps) => {
+  const intl = useIntl();
+  const numericalMessage = intl.formatMessage({
+    defaultMessage: "Accepts 'Number', 'Integer', and 'Decimal' types.",
+    description: `Explains that numerical type allows three different number types`,
+  });
+  const dataTypeMessage = intl.formatMessage(
+    {
+      defaultMessage: 'Accepted data types: {type}',
+      description: `Explains that numerical type allows three different number types`,
+    },
+    {
+      type: props.inputType,
+    }
+  );
+
+  const label = (
+    <Text style={{ paddingBottom: '4px' }} size={200} id={props.comboboxId}>
+      {dataTypeMessage}
+    </Text>
+  );
+  if (props.inputType === numericalDataType) {
+    return (
+      <div style={{ display: 'flex' }}>
+        {label}
+        <DMTooltip text={numericalMessage}></DMTooltip>
+      </div>
+    );
+  } else {
+    return label;
+  }
 };
