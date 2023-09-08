@@ -69,6 +69,12 @@
       "value": "Часовой пояс"
     }
   ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Suppress Workflow Headers on Response"
+    }
+  ],
   "+xXHdp": [
     {
       "type": 0,
@@ -181,12 +187,6 @@
     {
       "type": 0,
       "value": "Отсутствуют обязательные входные данные"
-    }
-  ],
-  "/w/q/8": [
-    {
-      "type": 0,
-      "value": "Если параметр включен, это действие будет запускаться с пользователем из параметра \"Запуск от имени\" в триггере Dataverse."
     }
   ],
   "/yYyOq": [
@@ -487,6 +487,12 @@
       "value": "(UTC-01:00) Азорские острова"
     }
   ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "The number of times to retry the request"
+    }
+  ],
   "1htSs7": [
     {
       "type": 0,
@@ -565,12 +571,6 @@
       "value": "Выберите файл для отправки"
     }
   ],
-  "2Cdt4p": [
-    {
-      "type": 0,
-      "value": "Позволяет splitOn запускать экземпляр рабочего процесса для каждого элемента в выбранном массиве. У каждого экземпляра также может быть отдельный ИД отслеживания."
-    }
-  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -581,6 +581,12 @@
     {
       "type": 0,
       "value": "Время окончания"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Control how new runs are queued"
     }
   ],
   "2NXYYu": [
@@ -637,6 +643,12 @@
       "value": "Время начала"
     }
   ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Paging count invalid. Value must be a number greater than 0"
+    }
+  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -657,6 +669,12 @@
     {
       "type": 0,
       "value": "Вкл"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "2vnYre": [
@@ -1159,6 +1177,12 @@
       "value": "Обязательное поле. Объект, который нужно сравнить со значением на отношение \"больше\"."
     }
   ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Secure inputs of the operation"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1181,6 +1205,12 @@
     {
       "type": 0,
       "value": "Отмена"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "Timeout value is invalid, must match ISO 8601 duration format"
     }
   ],
   "6WmLx1": [
@@ -1429,6 +1459,12 @@
       "value": "Копировать URL-адрес"
     }
   ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Exponential Interval"
+    }
+  ],
   "7zsUT3": [
     {
       "type": 0,
@@ -1609,18 +1645,6 @@
     {
       "type": 1,
       "value": "invalidNodes"
-    }
-  ],
-  "8ubEPi": [
-    {
-      "type": 0,
-      "value": "Параметры запроса"
-    }
-  ],
-  "8wlfdo": [
-    {
-      "type": 0,
-      "value": "Скрытие заголовков рабочего процесса при ответе"
     }
   ],
   "8wr0zO": [
@@ -2109,12 +2133,6 @@
       "value": "Выберите управляемое удостоверение"
     }
   ],
-  "BrvZNn": [
-    {
-      "type": 0,
-      "value": "Укажите выражения, которые должны быть истинными для срабатывания триггера."
-    }
-  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2125,6 +2143,12 @@
     {
       "type": 0,
       "value": "Одинарный описатель формата, указывающий формат значения этого идентификатора GUID."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
     }
   ],
   "BxITRH": [
@@ -2315,6 +2339,12 @@
       "value": "Узел"
     }
   ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+    }
+  ],
   "DEu7oK": [
     {
       "type": 0,
@@ -2395,6 +2425,12 @@
       "value": "Развернуть статический результат"
     }
   ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+    }
+  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2461,12 +2497,6 @@
     {
       "type": 0,
       "value": "Проверьте действия потока, чтобы узнать, нужно ли настроить какие-либо параметры. Не забудьте сохранить после завершения."
-    }
-  ],
-  "EKtYQF": [
-    {
-      "type": 0,
-      "value": "Задает ИД отслеживания для запуска. При использовании splitOn этот ИД будет использован для инициирующего запроса."
     }
   ],
   "ERAWZA": [
@@ -2579,6 +2609,12 @@
     {
       "type": 0,
       "value": "Обязательно. Количество единиц измерения времени для добавления."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "F9dR1Q": [
@@ -3327,12 +3363,6 @@
       "value": "(UTC-09:00) Аляска"
     }
   ],
-  "JzqgNM": [
-    {
-      "type": 0,
-      "value": "Задает ИД отслеживания для запуска. При использовании splitOn этот ИД будет использован для инициирующего запроса."
-    }
-  ],
   "K50znc": [
     {
       "type": 0,
@@ -3535,6 +3565,12 @@
       "value": "Настроить"
     }
   ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -3677,12 +3713,6 @@
     {
       "type": 0,
       "value": "Необязательно. Имя действия области, где вы хотите использовать входные и выходные данные из действий верхнего уровня этой области."
-    }
-  ],
-  "MCQODe": [
-    {
-      "type": 0,
-      "value": "Защита выходных данных операции и ссылок выходных свойств."
     }
   ],
   "MCzWDc": [
@@ -4151,12 +4181,6 @@
       "value": "Требуется. Это значение — число целых чисел в массиве."
     }
   ],
-  "P3Zpc4": [
-    {
-      "type": 0,
-      "value": "Настраиваемый ИД отслеживания"
-    }
-  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4245,10 +4269,22 @@
       "value": "Отслеживаемые свойства"
     }
   ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "Split-On Tracking Id"
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) Каир"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
     }
   ],
   "PsmHyH": [
@@ -4393,6 +4429,16 @@
     {
       "type": 0,
       "value": "Параметры рабочего процесса"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value of "
+    },
+    {
+      "type": 1,
+      "value": "max"
     }
   ],
   "Qn8qxn": [
@@ -4657,6 +4703,12 @@
       "value": "Требуется. Имя действия с ответом form-data или form-encoded."
     }
   ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4741,22 +4793,10 @@
       "value": "Возвращает начало месяца метки времени строки"
     }
   ],
-  "TPV6j/": [
-    {
-      "type": 0,
-      "value": "Недопустимое число подкачки"
-    }
-  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Тип действия"
-    }
-  ],
-  "TUaunO": [
-    {
-      "type": 0,
-      "value": "Введите значение"
     }
   ],
   "TX4Kdr": [
@@ -4939,6 +4979,16 @@
       "value": "Логическое имя"
     }
   ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
   "UR1CS5": [
     {
       "type": 0,
@@ -5081,6 +5131,12 @@
     {
       "type": 0,
       "value": "Общие"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5317,6 +5373,12 @@
       "value": "(UTC+04:00) Астрахань, Ульяновск"
     }
   ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5349,6 +5411,12 @@
     {
       "type": 0,
       "value": "Журнал запросов"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Fixed Interval"
     }
   ],
   "WcnIF8": [
@@ -5385,6 +5453,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Монтевидео"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "X4gDhV": [
@@ -5445,6 +5519,18 @@
     {
       "type": 0,
       "value": "Убедитесь, что слова написаны правильно."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions that must be true for the trigger to fire"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Action Timeout"
     }
   ],
   "XLUs2P": [
@@ -5967,6 +6053,12 @@
       "value": "Во весь экран"
     }
   ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "Distinct Tracking id for each split-on instance"
+    }
+  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -6169,12 +6261,6 @@
       "value": "Введите допустимый объект JSON."
     }
   ],
-  "c7tRg/": [
-    {
-      "type": 0,
-      "value": "Распаковка текста запроса, если он сжат с помощью GZip или Deflate. Этот параметр применим только к триггеру HTTP."
-    }
-  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6187,16 +6273,16 @@
       "value": "(UTC+09:00) Сеул"
     }
   ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Retrieve more results up to the pagination limit"
+    }
+  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "Просмотреть документацию"
-    }
-  ],
-  "cP4UkW": [
-    {
-      "type": 0,
-      "value": "Недопустимый интервал политики повтора. Необходимо указать длительность в формате ISO 8601"
     }
   ],
   "cR9RtV": [
@@ -6355,22 +6441,10 @@
       "value": "Периодичность"
     }
   ],
-  "dSTRb/": [
-    {
-      "type": 0,
-      "value": "Укажите поведение и возможности передачи содержимого по HTTP. При отправке больших сообщений они могут быть разделены на запросы меньшего размера к соединителю. Подробнее см. по адресу http://aka.ms/logicapps-chunk#upload-content-in-chunks"
-    }
-  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Пропустить"
-    }
-  ],
-  "dWFyfN": [
-    {
-      "type": 0,
-      "value": "Защита входных данных операции."
     }
   ],
   "daoo3l": [
@@ -6519,6 +6593,12 @@
       "value": "Курсив (⌘I)"
     }
   ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6543,6 +6623,12 @@
       "value": "Необязательно. Индекс места остановки извлечения substring."
     }
   ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Example: PT1S"
+    }
+  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6565,12 +6651,6 @@
     {
       "type": 0,
       "value": "Выберите ресурс Управления API Azure"
-    }
-  ],
-  "fGcSFd": [
-    {
-      "type": 0,
-      "value": "Число подкачки превышает максимальное значение"
     }
   ],
   "fKYuwf": [
@@ -6655,6 +6735,12 @@
       "value": "Среда выполнения"
     }
   ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limit"
+    }
+  ],
   "g7my78": [
     {
       "type": 0,
@@ -6715,6 +6801,12 @@
     {
       "type": 0,
       "value": "Предыдущее со сбоем"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "gQt/0f": [
@@ -6823,6 +6915,12 @@
     {
       "type": 0,
       "value": "Повторно отправить выполнение рабочего процесса из этого действия"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Allow chunking"
     }
   ],
   "hN7iBP": [
@@ -7073,6 +7171,12 @@
       "value": "Управляемое удостоверение"
     }
   ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Secure outputs of the operation and references of output properties"
+    }
+  ],
   "iTKrs8": [
     {
       "type": 0,
@@ -7197,6 +7301,12 @@
       "value": "Расскажите Майкрософт, как можно улучшить эту функцию"
     }
   ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Request Options - Timeout"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -7269,6 +7379,12 @@
       "value": "Изменить в JSON"
     }
   ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Enabling secure inputs will automatically secure outputs."
+    }
+  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7279,12 +7395,6 @@
     {
       "type": 0,
       "value": "Опишите, какое-либо действие, которое должен выполнять поток. Если возможно, добавьте сведения, в том числе используемый соединитель и нужно ли включать какой-либо контент."
-    }
-  ],
-  "juR40n": [
-    {
-      "type": 0,
-      "value": "Длительность"
     }
   ],
   "juvF+0": [
@@ -7613,6 +7723,12 @@
       "value": "Вставить выражение (для добавления также можно ввести \"/\" в редакторе)"
     }
   ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7649,6 +7765,12 @@
       "value": "Имя"
     }
   ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Threshold of items to return"
+    }
+  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7673,16 +7795,6 @@
       "value": "Функция удалена."
     }
   ],
-  "mGPqAg": [
-    {
-      "type": 0,
-      "value": "Удалить "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7693,12 +7805,6 @@
     {
       "type": 0,
       "value": "Возвращает строковое представление URI данных"
-    }
-  ],
-  "mOr9ll": [
-    {
-      "type": 0,
-      "value": "Максимальная длительность одного исходящего запроса от этого действия. Если запрос не завершится в течение этого предела после выполнения повторных попыток, выполнение действия завершится сбоем."
     }
   ],
   "mPakaD": [
@@ -8255,12 +8361,6 @@
       "value": "Добавляет целое число секунд в метку времени строки, переданной в функцию"
     }
   ],
-  "q8vnZQ": [
-    {
-      "type": 0,
-      "value": "Проверьте текст запроса по предоставленной схеме. В случае несоответствия будет возвращена ошибка HTTP 400."
-    }
-  ],
   "qAlTD5": [
     {
       "type": 0,
@@ -8457,6 +8557,12 @@
     {
       "type": 0,
       "value": "Предыдущее предложение потока"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
     }
   ],
   "r/n6/9": [
@@ -8693,12 +8799,6 @@
     {
       "type": 0,
       "value": "Обязательное поле. Коллекция, наличие элементов в которой нужно проверить."
-    }
-  ],
-  "scmyvO": [
-    {
-      "type": 0,
-      "value": "Время ожидания действия"
     }
   ],
   "sfJTHV": [
@@ -9015,12 +9115,6 @@
       "value": "Показать"
     }
   ],
-  "uZH8Qs": [
-    {
-      "type": 0,
-      "value": "Ограничение максимальной длительности между повторными попытками и асинхронными ответами для этого действия. Примечание. Это не изменяет время ожидания одного запроса."
-    }
-  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -9225,6 +9319,12 @@
     {
       "type": 0,
       "value": "Для создания и использования подключения к API в приложении логики должно быть настроено управляемое удостоверение."
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "vlDynP": [
@@ -9749,6 +9849,12 @@
     {
       "type": 0,
       "value": "Введите значение"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Expression Editor"
     }
   ],
   "zIDVd9": [

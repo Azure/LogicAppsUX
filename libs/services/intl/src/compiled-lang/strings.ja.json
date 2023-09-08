@@ -69,6 +69,12 @@
       "value": "タイム ゾーン"
     }
   ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Suppress Workflow Headers on Response"
+    }
+  ],
   "+xXHdp": [
     {
       "type": 0,
@@ -181,12 +187,6 @@
     {
       "type": 0,
       "value": "必要な入力がありません"
-    }
-  ],
-  "/w/q/8": [
-    {
-      "type": 0,
-      "value": "有効にすると、このアクションは Dataverse トリガーの [実行するアカウント名] 設定のユーザーによって実行されます。"
     }
   ],
   "/yYyOq": [
@@ -487,6 +487,12 @@
       "value": "(UTC-01:00) アゾレス諸島"
     }
   ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "The number of times to retry the request"
+    }
+  ],
   "1htSs7": [
     {
       "type": 0,
@@ -565,12 +571,6 @@
       "value": "アップロードするファイルを選択します"
     }
   ],
-  "2Cdt4p": [
-    {
-      "type": 0,
-      "value": "選択したアレイの各項目のワークフローのインスタンスを開始するために分割を有効にします。各インスタンスには、個別の追跡 ID がある場合もあります。"
-    }
-  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -581,6 +581,12 @@
     {
       "type": 0,
       "value": "終了時刻"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Control how new runs are queued"
     }
   ],
   "2NXYYu": [
@@ -637,6 +643,12 @@
       "value": "開始時刻"
     }
   ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Paging count invalid. Value must be a number greater than 0"
+    }
+  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -657,6 +669,12 @@
     {
       "type": 0,
       "value": "オン"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "2vnYre": [
@@ -1151,6 +1169,12 @@
       "value": "必須。比較される値より大きいかどうかを調べるオブジェクト。"
     }
   ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Secure inputs of the operation"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1173,6 +1197,12 @@
     {
       "type": 0,
       "value": "キャンセル"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "Timeout value is invalid, must match ISO 8601 duration format"
     }
   ],
   "6WmLx1": [
@@ -1421,6 +1451,12 @@
       "value": "URL のコピー"
     }
   ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Exponential Interval"
+    }
+  ],
   "7zsUT3": [
     {
       "type": 0,
@@ -1601,18 +1637,6 @@
     {
       "type": 1,
       "value": "invalidNodes"
-    }
-  ],
-  "8ubEPi": [
-    {
-      "type": 0,
-      "value": "要求のオプション"
-    }
-  ],
-  "8wlfdo": [
-    {
-      "type": 0,
-      "value": "応答時のワークフロー ヘッダーを抑制する"
     }
   ],
   "8wr0zO": [
@@ -2068,12 +2092,6 @@
       "value": "マネージド ID を選択してください"
     }
   ],
-  "BrvZNn": [
-    {
-      "type": 0,
-      "value": "トリガーを起動するために true になる必要のある 1 つまたは複数の式を指定します。"
-    }
-  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2084,6 +2102,12 @@
     {
       "type": 0,
       "value": "この GUID の値の書式設定方法を示す単一の書式指定子。"
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
     }
   ],
   "BxITRH": [
@@ -2274,6 +2298,12 @@
       "value": "ノード"
     }
   ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+    }
+  ],
   "DEu7oK": [
     {
       "type": 0,
@@ -2354,6 +2384,12 @@
       "value": "静的な結果の展開"
     }
   ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+    }
+  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2420,12 +2456,6 @@
     {
       "type": 0,
       "value": "フローのアクションをチェックして、パラメータを設定する必要があるかどうかを確認してください。完了したら、忘れずに保存してください。"
-    }
-  ],
-  "EKtYQF": [
-    {
-      "type": 0,
-      "value": "実行の追跡 ID を設定します。分割の場合、この追跡 ID は開始要求用です。"
     }
   ],
   "ERAWZA": [
@@ -2534,6 +2564,12 @@
     {
       "type": 0,
       "value": "必須。加算する、指定された時間単位の数です。"
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "F9dR1Q": [
@@ -3241,12 +3277,6 @@
       "value": "(UTC-09:00) アラスカ"
     }
   ],
-  "JzqgNM": [
-    {
-      "type": 0,
-      "value": "実行の追跡 ID を設定します。分割の場合、この追跡 ID は開始要求用です。"
-    }
-  ],
   "K50znc": [
     {
       "type": 0,
@@ -3416,6 +3446,12 @@
       "value": "構成"
     }
   ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -3558,12 +3594,6 @@
     {
       "type": 0,
       "value": "省略可能。スコープ アクションの名前です。トップレベルのアクションからの入力と出力がこのスコープに含まれます。"
-    }
-  ],
-  "MCQODe": [
-    {
-      "type": 0,
-      "value": "出力プロパティの操作と参照のセキュリティ保護された出力。"
     }
   ],
   "MCzWDc": [
@@ -4032,12 +4062,6 @@
       "value": "必須。この値は、アレイに含まれる整数の数です。"
     }
   ],
-  "P3Zpc4": [
-    {
-      "type": 0,
-      "value": "カスタムの追跡 ID"
-    }
-  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4126,10 +4150,22 @@
       "value": "追跡対象プロパティ"
     }
   ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "Split-On Tracking Id"
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) カイロ"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
     }
   ],
   "PsmHyH": [
@@ -4274,6 +4310,16 @@
     {
       "type": 0,
       "value": "ワークフロー パラメーター"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value of "
+    },
+    {
+      "type": 1,
+      "value": "max"
     }
   ],
   "Qn8qxn": [
@@ -4505,6 +4551,12 @@
       "value": "必須。form-data または form-encoded 応答を含むアクションの名前。"
     }
   ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4589,22 +4641,10 @@
       "value": "文字列のタイムスタンプの月の開始を返します"
     }
   ],
-  "TPV6j/": [
-    {
-      "type": 0,
-      "value": "ページング数が無効です"
-    }
-  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "アクションの種類"
-    }
-  ],
-  "TUaunO": [
-    {
-      "type": 0,
-      "value": "値を入力してください"
     }
   ],
   "TX4Kdr": [
@@ -4783,6 +4823,16 @@
       "value": "論理名"
     }
   ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
   "UR1CS5": [
     {
       "type": 0,
@@ -4921,6 +4971,12 @@
     {
       "type": 0,
       "value": "全般"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5157,6 +5213,12 @@
       "value": "(UTC+04:00) アストラハン、ウリヤノフスク"
     }
   ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5189,6 +5251,12 @@
     {
       "type": 0,
       "value": "要求の履歴"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Fixed Interval"
     }
   ],
   "WcnIF8": [
@@ -5225,6 +5293,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) モンテビデオ"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "X4gDhV": [
@@ -5285,6 +5359,18 @@
     {
       "type": 0,
       "value": "単語の入力ミスがないことを確認する。"
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions that must be true for the trigger to fire"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Action Timeout"
     }
   ],
   "XLUs2P": [
@@ -5807,6 +5893,12 @@
       "value": "全画面表示"
     }
   ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "Distinct Tracking id for each split-on instance"
+    }
+  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -6009,12 +6101,6 @@
       "value": "有効な JSON を入力してください。"
     }
   ],
-  "c7tRg/": [
-    {
-      "type": 0,
-      "value": "GZip または Deflate を使用して圧縮されている場合は、要求本文の圧縮を展開します。この設定は、HTTP トリガーにのみ適用されます。"
-    }
-  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6027,16 +6113,16 @@
       "value": "(UTC+09:00) ソウル"
     }
   ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Retrieve more results up to the pagination limit"
+    }
+  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "ドキュメントの表示"
-    }
-  ],
-  "cP4UkW": [
-    {
-      "type": 0,
-      "value": "再試行ポリシーの間隔が無効です。ISO 8601 の期間の形式と一致する必要があります"
     }
   ],
   "cR9RtV": [
@@ -6195,22 +6281,10 @@
       "value": "頻度"
     }
   ],
-  "dSTRb/": [
-    {
-      "type": 0,
-      "value": "HTTP 経由でコンテンツを転送するための動作と機能を指定します。大きなメッセージは、大きなメッセージのアップロードを許可するために、コネクタに対する小さな要求に分割される可能性があります。詳細については、http://aka.ms/logicapps-chunk#upload-content-in-chunks を参照してください"
-    }
-  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "スキップ"
-    }
-  ],
-  "dWFyfN": [
-    {
-      "type": 0,
-      "value": "操作のセキュリティで保護された入力。"
     }
   ],
   "daoo3l": [
@@ -6355,6 +6429,12 @@
       "value": "斜体 (⌘I)"
     }
   ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6379,6 +6459,12 @@
       "value": "オプション。部分文字列の抽出を停止する位置のインデックスです。"
     }
   ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Example: PT1S"
+    }
+  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6401,12 +6487,6 @@
     {
       "type": 0,
       "value": "Azure API Management リソースの選択"
-    }
-  ],
-  "fGcSFd": [
-    {
-      "type": 0,
-      "value": "ページング数が最大値を超えています"
     }
   ],
   "fKYuwf": [
@@ -6495,6 +6575,12 @@
       "value": "ランタイム"
     }
   ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limit"
+    }
+  ],
   "g7my78": [
     {
       "type": 0,
@@ -6547,6 +6633,12 @@
     {
       "type": 0,
       "value": "前の失敗"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "gQt/0f": [
@@ -6655,6 +6747,12 @@
     {
       "type": 0,
       "value": "このアクションからワークフローの実行を再送信する"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Allow chunking"
     }
   ],
   "hN7iBP": [
@@ -6868,6 +6966,12 @@
       "value": "マネージド ID"
     }
   ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Secure outputs of the operation and references of output properties"
+    }
+  ],
   "iTKrs8": [
     {
       "type": 0,
@@ -6992,6 +7096,12 @@
       "value": "この機能を改善する方法を Microsoft に伝える"
     }
   ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Request Options - Timeout"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -7064,6 +7174,12 @@
       "value": "JSON 内で編集"
     }
   ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Enabling secure inputs will automatically secure outputs."
+    }
+  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7074,12 +7190,6 @@
     {
       "type": 0,
       "value": "フローで実行される必要があることについて説明してください。使用するコネクタやコンテンツを含める必要があるかどうかなど、可能な場合は詳細情報を追加してください。"
-    }
-  ],
-  "juR40n": [
-    {
-      "type": 0,
-      "value": "期間"
     }
   ],
   "juvF+0": [
@@ -7363,6 +7473,12 @@
       "value": "式の挿入 (エディターで「/」を入力して追加することもできます)"
     }
   ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7399,6 +7515,12 @@
       "value": "名前"
     }
   ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Threshold of items to return"
+    }
+  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7423,16 +7545,6 @@
       "value": "関数が削除されました。"
     }
   ],
-  "mGPqAg": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": " の削除"
-    }
-  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7443,12 +7555,6 @@
     {
       "type": 0,
       "value": "データ URI の文字列表現を返します"
-    }
-  ],
-  "mOr9ll": [
-    {
-      "type": 0,
-      "value": "このアクションからの単一の送信要求での最長期間。再試行の実行後にこの制限内で要求が完了しない場合、アクションは失敗します。"
     }
   ],
   "mPakaD": [
@@ -8005,12 +8111,6 @@
       "value": "渡された文字列のタイムスタンプに秒数を表す整数を加算します"
     }
   ],
-  "q8vnZQ": [
-    {
-      "type": 0,
-      "value": "指定されたスキーマに照らして要求の本体を検証します。不一致がある場合、HTTP 400 が返されます。"
-    }
-  ],
   "qAlTD5": [
     {
       "type": 0,
@@ -8174,6 +8274,12 @@
     {
       "type": 0,
       "value": "前のフローの提案"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
     }
   ],
   "r/n6/9": [
@@ -8406,12 +8512,6 @@
     {
       "type": 0,
       "value": "必須。空かどうかを確認するコレクション。"
-    }
-  ],
-  "scmyvO": [
-    {
-      "type": 0,
-      "value": "アクションのタイムアウト"
     }
   ],
   "sfJTHV": [
@@ -8724,12 +8824,6 @@
       "value": "表示する"
     }
   ],
-  "uZH8Qs": [
-    {
-      "type": 0,
-      "value": "このアクションの再試行と非同期応答の間の最長期間を制限します。注: 単一の要求の要求タイムアウトは変更されません。"
-    }
-  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -8934,6 +9028,12 @@
     {
       "type": 0,
       "value": "API 接続を作成して使用するには、このロジック アプリ上で構成したマネージド ID が必要です。"
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "vlDynP": [
@@ -9454,6 +9554,12 @@
     {
       "type": 0,
       "value": "値の入力"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Expression Editor"
     }
   ],
   "zIDVd9": [
