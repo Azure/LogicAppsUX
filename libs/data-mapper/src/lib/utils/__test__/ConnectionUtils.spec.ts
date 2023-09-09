@@ -302,6 +302,18 @@ describe('utils/Connections', () => {
     });
   });
 
+  describe('isValidConnectionByType', () => {
+    it('returns true for direct type match', () => {
+      expect(isValidConnectionByType(NormalizedDataType.String, NormalizedDataType.String)).toBeTruthy();
+    });
+    it('returns true target type "any"', () => {
+      expect(isValidConnectionByType(NormalizedDataType.String, NormalizedDataType.Any)).toBeTruthy();
+    });
+    it('returns false for type mismatch', () => {
+      expect(isValidConnectionByType(NormalizedDataType.String, NormalizedDataType.Number)).toBeFalsy();
+    });
+  });
+
   describe('isFunctionInputSlotAvailable', () => {
     it('Test bounded input with NO available slot', () => {
       const mockConnection: Connection = {
