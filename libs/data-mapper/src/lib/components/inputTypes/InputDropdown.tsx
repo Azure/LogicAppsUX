@@ -1,7 +1,7 @@
 import { setConnectionInput, showNotification } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { NormalizedDataType, numericalDataType } from '../../models';
+import { FunctionCategory, NormalizedDataType, numericalDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isValidConnectionByType, isValidCustomValueByType, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
@@ -72,6 +72,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const functions = useSelector((state: RootState) => state.function.availableFunctions);
 
   const [matchingOptions, setMatchingOptions] = useState<InputOptionProps[]>([]);
   const [customValue, setCustomValue] = useState<string | undefined>(inputName === inputValue ? inputName : undefined); // if the name and value are the same, that's a custom value
@@ -94,7 +95,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   });
 
   const nodeTypeAllowedTypesMismatchLoc = intl.formatMessage({
-    defaultMessage: `Warning: input node type does not match one of the allowed types for this input`,
+    defaultMessage: `Warning: input node type does not match one of the allowed types for this input.`,
     description: `Warning message for when input node type does not match one of the function node input's allowed types`,
   });
 
@@ -285,14 +286,32 @@ export const InputDropdown = (props: InputDropdownProps) => {
             }
           } else {
             let someTypesMatched = false;
+            let possibleConversionFunctions = '';
             currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach((type) => {
+              const conversion = functions.find((func) => func.category === FunctionCategory.Conversion && func.outputValueType === type);
+              if (conversion) {
+                possibleConversionFunctions += conversion?.displayName + ', ';
+              }
               if (isValidConnectionByType(selectedOption.type, type)) {
                 someTypesMatched = true;
               }
             });
+            possibleConversionFunctions = possibleConversionFunctions.substring(0, possibleConversionFunctions.length - 2);
 
             if (!someTypesMatched) {
-              return nodeTypeAllowedTypesMismatchLoc;
+              let conversionMessage = '';
+              if (possibleConversionFunctions !== '') {
+                conversionMessage = intl.formatMessage(
+                  {
+                    defaultMessage: ' Try using a Conversion function such as: {conversionFunctions}',
+                    description: `Suggest to the user to try a conversion function instead`,
+                  },
+                  {
+                    conversionFunctions: possibleConversionFunctions,
+                  }
+                );
+              }
+              return nodeTypeAllowedTypesMismatchLoc + ' ' + conversionMessage;
             }
           }
         }
@@ -312,6 +331,8 @@ export const InputDropdown = (props: InputDropdownProps) => {
     selectedOptions,
     nodeTypeSchemaNodeTypeMismatchLoc,
     nodeTypeAllowedTypesMismatchLoc,
+    functions,
+    intl,
   ]);
 
   let inputType = '';
