@@ -108,6 +108,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+v1RlQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Suppress Workflow Headers on Response]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+xXHdp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No outputs]]></Val>
@@ -275,15 +281,6 @@
           <Val><![CDATA[Missing required inputs]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Fehlende erforderliche Eingaben]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";/w/q/8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Wenn diese Aktion aktiviert ist, wird sie mit dem Benutzer über die Einstellung „Ausführen als“ im Dataverse-Trigger ausgeführt.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -711,6 +708,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";1hPZqe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The number of times to retry the request]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";1htSs7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Off]]></Val>
@@ -828,15 +831,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";2Cdt4p" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Aktivieren Sie die aufgeteilte Ausführung, um für jedes Element im ausgewählten Array eine Instanz des Workflows zu starten. Jede Instanz kann auch eine eigene Nachverfolgungs-ID aufweisen.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";2JA3gY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Expand tree node]]></Val>
@@ -852,6 +846,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Endzeit]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";2MOA1x" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Control how new runs are queued]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -936,6 +936,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";2pCFsW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Paging count invalid. Value must be a number greater than 0]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";2pRsUf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid array.]]></Val>
@@ -959,6 +965,15 @@
           <Val><![CDATA[On]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Bezug]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";2uINs9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Default]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Standard]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1629,6 +1644,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";632t9E" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure inputs of the operation]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";63CC7M" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error loading inputs]]></Val>
@@ -1662,6 +1683,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Abbrechen]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";6VV7OY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Timeout value is invalid, must match ISO 8601 duration format]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1998,6 +2025,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7zDk9N" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Exponential Interval]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Exponentielles Intervall]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7zsUT3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported authentication type ''{authType}''.]]></Val>
@@ -2237,24 +2273,6 @@
           <Val><![CDATA[The workflow has parameter validation errors in the following operations: {invalidNodes}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Der Workflow weist Parametervalidierungsfehler in den folgenden Vorgängen auf: {invalidNodes}.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";8ubEPi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Request Options]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Anforderungsoptionen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";8wlfdo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Suppress workflow headers on response]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Unterdrücken von Workflowheadern bei der Antwort]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2928,15 +2946,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";BrvZNn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Specify one or more expressions that must be true for the trigger to fire.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie mindestens einen Ausdruck an, der zum Auslösen des Triggers den Wert "true" aufweisen muss.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";BtL7UI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No additional information is needed for this step. You will be able to use the outputs in subsequent steps.]]></Val>
@@ -2952,6 +2961,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Ein einzelner Formatspezifizierer, der angibt, wie der Wert dieser GUID formatiert werden soll.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BvCnOv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3189,6 +3204,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";DEKsll" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry Policy Interval is invalid, must match ISO 8601 duration format]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";DEu7oK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-07:00) Arizona]]></Val>
@@ -3297,6 +3318,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Dm0zAO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";DsPDVB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Trigger condition cannot be empty]]></Val>
@@ -3383,15 +3410,6 @@
           <Val><![CDATA[Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Überprüfen Sie die Flowaktionen, um festzustellen, ob Parameter festgelegt werden müssen. Vergessen Sie nicht, zu speichern, wenn Sie fertig sind!]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";EKtYQF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Legen Sie die Nachverfolgungs-ID für die Ausführung fest. Bei aufgeteilten Ausführungen gilt diese Nachverfolgungs-ID für die initiierende Anforderung.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3537,6 +3555,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erforderlich. Hiermit wird der Zahlenwert einer festgelegten Zeiteinheit angegeben, die hinzugefügt werden soll.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";F6+icQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4542,15 +4566,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";JzqgNM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Legen Sie die Nachverfolgungs-ID für die Ausführung fest. Bei aufgeteilten Ausführungen gilt diese Nachverfolgungs-ID für die initiierende Anforderung.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";K50znc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The object to add a new property to.]]></Val>
@@ -4806,6 +4821,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LRAhSA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";LS8rfZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the scheme from a URI]]></Val>
@@ -5018,15 +5039,6 @@
           <Val><![CDATA[Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(Optional) Der Name der bereichsbezogenen Aktion, in der die Eingaben und Ausgaben der Aktionen der obersten Ebene in diesem Bereich verwendet werden sollen.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";MCQODe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Secure outputs of the operation and references of output properties.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Hiermit werden die Ausgaben für den Vorgang und Verweise auf Ausgabeeigenschaften geschützt.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5670,15 +5682,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";P3Zpc4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Custom Tracking Id]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Benutzerdefinierte Nachverfolgungs-ID]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";P4rEwD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Collection functions]]></Val>
@@ -5805,12 +5808,27 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Pl/fcn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Split-On Tracking Id]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nachverfolgungs-ID für Aufteilung]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Pq+4a+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Cairo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02:00) Kairo]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PqUAbF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5991,6 +6009,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Workflowparameter]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";QhKk80" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Paging count exceeds maximum value of {max}]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6330,6 +6354,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SenWwt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SgiTAh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please enter your input]]></Val>
@@ -6456,29 +6486,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TPV6j/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Paging count invalid]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Auslagerungsanzahl ist ungültig]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";TRpSCQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Action Type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Aktionstyp]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";TUaunO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie einen Wert ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6717,6 +6729,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";UMPuUJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete {expressionValue}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";UR1CS5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Hide code]]></Val>
@@ -6876,6 +6894,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Allgemein]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";V+xi3c" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7176,6 +7200,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WS55UF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Specify the duration in ISO 8601 format]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WS9kXD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The first integer in the array.]]></Val>
@@ -7217,6 +7247,15 @@
           <Val><![CDATA[Request History]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Anforderungsverlauf]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Wb/cBR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Fixed Interval]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Festes Intervall]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7272,6 +7311,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-03:00) Montevideo]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";X4SuNU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7343,6 +7388,21 @@
           <Val><![CDATA[Ensure words are spelled correctly.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Stellen Sie sicher, dass die Wörter richtig geschrieben sind.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";XJkBrZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Specify one or more expressions that must be true for the trigger to fire]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";XKDZXi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Action Timeout]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aktionstimeout]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8049,6 +8109,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ahFd/S" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Distinct Tracking id for each split-on instance]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ahW8Iv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Copilot]]></Val>
@@ -8346,15 +8412,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";c7tRg/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dekomprimiert den Anforderungstext, wenn er mithilfe von GZip oder Deflate komprimiert wurde. Diese Einstellung gilt nur für HTTP-Trigger.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";c8UPLp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Dynamic content may also be added from other sources.]]></Val>
@@ -8373,20 +8430,17 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";cJkSrD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retrieve more results up to the pagination limit]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";cK2A/V" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[View Documentation]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Dokumentation anzeigen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";cP4UkW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Retry Policy interval is invalid, must match ISO 8601 duration format]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Das Intervall der Wiederholungsrichtlinie muss dem ISO 8601-Format für die Dauer entsprechen.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8625,29 +8679,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";dSTRb/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie das Verhalten und die Funktionen für die Übertragung von Inhalten über HTTP an. Große Nachrichten können in kleinere Anforderungen an den Connector aufgeteilt werden, um das Hochladen großer Nachrichten zu ermöglichen. Details finden Sie unter http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";dUbKuK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Skip]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Überspringen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";dWFyfN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Secure inputs of the operation.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Hiermit sorgen Sie für sichere Eingaben für den Vorgang.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8859,6 +8895,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";eo1YKX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";epOMnV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Shared]]></Val>
@@ -8895,6 +8937,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";f7Janv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Example: PT1S]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";f81ClO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Empty dynamic content icon]]></Val>
@@ -8927,15 +8975,6 @@
           <Val><![CDATA[Select an API Management resource]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[API Management-Ressource auswählen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";fGcSFd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Paging count exceeds maximum value]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Die Auslagerungsanzahl überschreitet den Maximalwert]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9057,6 +9096,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";g7/EKC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Limit]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Limit]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";g7my78" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Run test]]></Val>
@@ -9134,6 +9182,15 @@
           <Val><![CDATA[Previous failed]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vorheriger Fehler]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";gL4rVQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[None]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Keine]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9296,6 +9353,15 @@
           <Val><![CDATA[Resubmit a workflow run from this action]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Workflowausführung aus dieser Aktion erneut übermitteln]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";hMf2TA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Allow chunking]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Segmentierung zulassen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9609,6 +9675,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";iSiVB0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure outputs of the operation and references of output properties]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";iTKrs8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Pagination]]></Val>
@@ -9789,6 +9861,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";jO5Fet" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request Options - Timeout]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";jQ0Aqj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value that is converted to a string.]]></Val>
@@ -9879,6 +9957,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";jfU6pn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enabling secure inputs will automatically secure outputs.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Durch das Aktivieren sicherer Eingaben werden die Ausgaben automatisch geschützt.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";jgOaTX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unable to generate schema]]></Val>
@@ -9893,15 +9980,6 @@
           <Val><![CDATA[Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Beschreiben Sie, was Ihr Flow bewirken sollte. Fügen Sie nach Möglichkeit Details hinzu, einschließlich des zu verwendenden Connectors und ob Inhalte eingeschlossen werden sollen.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";juR40n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Duration]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dauer]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10305,6 +10383,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";lsH37F" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";lsKVU6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an action type]]></Val>
@@ -10359,6 +10443,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";m8z4Yr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Threshold of items to return]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Schwellenwert für die zurückzugebenden Elemente]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";mAuMD+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter an Array]]></Val>
@@ -10395,15 +10488,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";mGPqAg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Delete {name}]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{Name} löschen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";mGUdCO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a timestamp that is the current time minus the specified time interval.]]></Val>
@@ -10418,15 +10502,6 @@
           <Val><![CDATA[Returns a string representation of a data URI]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gibt eine Zeichenfolgendarstellung eines Daten-URI zurück.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";mOr9ll" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Die maximale Dauer für eine einzelne ausgehende Anforderung dieser Aktion. Wenn die Anforderung nach dem Ausführen von Wiederholungsversuchen nicht innerhalb dieses Limits abgeschlossen wird, schlägt die Aktion fehl.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11232,15 +11307,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";q8vnZQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Hiermit wird der Anforderungstext anhand des angegebenen Schemas überprüft. Falls ein Konflikt vorliegt, wird HTTP 400 zurückgegeben.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";qAlTD5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: ''{referenceKeyFormat}'']]></Val>
@@ -11448,6 +11514,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vorheriger Flowvorschlag]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";qzaoRR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11789,15 +11861,6 @@
           <Val><![CDATA[Required. The collection to check if it is empty.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erforderlich. Die Sammlung, bei der geprüft werden soll, ob sie leer ist.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";scmyvO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Action Timeout]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Aktionstimeout]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12225,15 +12288,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";uZH8Qs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Schränken Sie die maximale Dauer zwischen Wiederholungen und asynchronen Antworten für diese Aktion ein. Hinweis: Dadurch wird das Anforderungstimeout einer einzelnen Anforderung nicht geändert.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";uZpzqY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while.]]></Val>
@@ -12527,6 +12581,15 @@
           <Val><![CDATA[To create and use an API connection, you must have a managed identity configured on this logic app.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Zum Erstellen und Verwenden einer API-Verbindung muss eine verwaltete Identität für diese Logik-App konfiguriert sein.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";viee6C" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Duration]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dauer]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -13283,6 +13346,15 @@
           <Val><![CDATA[Enter value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wert eingeben]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";zEv8dd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Expression Editor]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ausdrucks-Editor]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
