@@ -103,19 +103,29 @@ export const TokenPickerOptions = ({
 
   const insertExpressionText = (text: string, caretOffset: number): void => {
     if (expressionEditorRef.current) {
+      // gets the original expression
       const oldExpression = expressionEditorRef.current.getValue();
-      const beforeSelection = oldExpression.substring(0, expression.selectionStart);
-      const afterSelection = oldExpression.substring(expression.selectionEnd);
-      const newExpression = `${beforeSelection}${text}${afterSelection}`;
+      // gets the line number of the current selection
+      const selectionLineNumber = expressionEditorRef.current.getPosition()?.lineNumber ?? 1;
+      // gets the line of the current selection and replaces the text with the new expression
+      const splitOldExpression = oldExpression.split('\r\n');
+      const oldExpressionLineNumber = splitOldExpression[selectionLineNumber - 1];
+      const beforeSelection = oldExpressionLineNumber.substring(0, expression.selectionStart);
+      const afterSelection = oldExpressionLineNumber.substring(expression.selectionEnd);
+      const newExpressionLineNumber = `${beforeSelection}${text}${afterSelection}`;
+      splitOldExpression[selectionLineNumber - 1] = newExpressionLineNumber;
+
+      // updates the split text and updates the new expression and selection
+      const newExpression = splitOldExpression.join('\r\n');
       const newSelection = newExpression.length - afterSelection.length + caretOffset;
       setExpression({ value: newExpression, selectionStart: newSelection, selectionEnd: newSelection });
 
       setTimeout(() => {
         expressionEditorRef.current?.setValue(newExpression);
         expressionEditorRef.current?.setSelection({
-          startLineNumber: 1,
+          startLineNumber: selectionLineNumber,
           startColumn: newSelection + 1,
-          endLineNumber: 1,
+          endLineNumber: selectionLineNumber,
           endColumn: newSelection + 1,
         });
         expressionEditorRef.current?.focus();
