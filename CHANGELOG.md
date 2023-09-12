@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [2.67.0](https://github.com/Azure/LogicAppsUX/compare/v2.66.0...v2.67.0) (2023-09-12)
+
+
+### Features
+
+* **Data Mapper:** deserialize sequence functions ([#3172](https://github.com/Azure/LogicAppsUX/issues/3172)) ([605dc39](https://github.com/Azure/LogicAppsUX/commit/605dc39e1ae0ecff812a827a2d01907ead17fd31))
+
+
+### Bug Fixes
+
+* **Data Mapper:**  formatting fix for tool bar ([#3294](https://github.com/Azure/LogicAppsUX/issues/3294)) ([4059389](https://github.com/Azure/LogicAppsUX/commit/4059389dc67f213fac6c34dafaa2aaff7970e7c1))
+* **data mapper:** able to add new connections to expanded cards ([#3278](https://github.com/Azure/LogicAppsUX/issues/3278)) ([dda2b0f](https://github.com/Azure/LogicAppsUX/commit/dda2b0f47288e7a650b213fe6b4a06dc7b0ff26c))
+* **designer:** bind the search operations methods ([#3285](https://github.com/Azure/LogicAppsUX/issues/3285)) ([d4bce5b](https://github.com/Azure/LogicAppsUX/commit/d4bce5b10371325f71291273ea64a5029f6d0bf1))
+* **designer:** Support Expression editor multiline ([#3290](https://github.com/Azure/LogicAppsUX/issues/3290)) ([7feeb17](https://github.com/Azure/LogicAppsUX/commit/7feeb1718cb20947a30e3030f943038f2600a01c))
+* **standalone:** Resolve connection references in designer ([#3279](https://github.com/Azure/LogicAppsUX/issues/3279)) ([b6763e8](https://github.com/Azure/LogicAppsUX/commit/b6763e8b86fee0fda10d113a2e34e5ff03110a21))
+
 ## [2.66.0](https://github.com/Azure/LogicAppsUX/compare/v2.65.0...v2.66.0) (2023-09-07)
 
 
