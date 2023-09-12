@@ -72,7 +72,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "回應時抑制工作流程標頭"
     }
   ],
   "+xXHdp": [
@@ -490,7 +490,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "重試要求的次數"
     }
   ],
   "1htSs7": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "控制新執行的佇列方式"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "分頁計數無效。值必須是大於 0 的數字。"
     }
   ],
   "2pRsUf": [
@@ -678,7 +678,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "預設"
     }
   ],
   "2vnYre": [
@@ -1180,7 +1180,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "保護作業的輸入"
     }
   ],
   "63CC7M": [
@@ -1210,7 +1210,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
+      "value": "時間值無效，必須符合 ISO 8601 持續時間格式"
     }
   ],
   "6WmLx1": [
@@ -1462,7 +1462,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "指數間隔"
     }
   ],
   "7zsUT3": [
@@ -2115,7 +2115,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "為執行設定追蹤識別碼。針對分割，此追蹤識別碼適用於起始要求"
     }
   ],
   "BxITRH": [
@@ -2297,7 +2297,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "重試原則間隔無效，必須符合 ISO 8601 持續時間格式"
     }
   ],
   "DEu7oK": [
@@ -2383,7 +2383,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "此動作單一輸出要求的持續時間上限。如果在執行重試後，未在此限制內完成要求，則動作會失敗"
     }
   ],
   "DsPDVB": [
@@ -2569,7 +2569,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "重試原則最大間隔無效，必須符合 ISO 8601 持續時間格式"
     }
   ],
   "F9dR1Q": [
@@ -3449,7 +3449,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "啟用時，此動作會從 Dataverse 觸發程序中的 [執行身分] 設定與使用者一起執行。"
     }
   ],
   "LS8rfZ": [
@@ -4149,7 +4149,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "分割追蹤識別碼"
     }
   ],
   "Pq+4a+": [
@@ -4161,7 +4161,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "如果要求本文是使用 GZip 或 Deflate 進行壓縮，則請將它解壓縮。此設定僅適用於 HTTP 觸發程序。"
     }
   ],
   "PsmHyH": [
@@ -4307,7 +4307,7 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "分頁計數超過最大值 "
     },
     {
       "type": 1,
@@ -4546,7 +4546,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "請指定經 HTTP 傳輸內容的行為及功能。大型訊息可能會分割成較小的連接器要求，以允許大型訊息上傳。"
     }
   ],
   "SgiTAh": [
@@ -4826,7 +4826,7 @@
   "UMPuUJ": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "刪除 "
     },
     {
       "type": 1,
@@ -4980,7 +4980,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "如需詳細資料，請參閱 http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5228,7 +5228,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "以 ISO 8601 格式指定持續時間"
     }
   ],
   "WS9kXD": [
@@ -5268,7 +5268,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "固定間隔"
     }
   ],
   "WcnIF8": [
@@ -5310,7 +5310,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "重試原則最小間隔無效，必須符合 ISO 8601 持續時間格式"
     }
   ],
   "X4gDhV": [
@@ -5376,13 +5376,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "指定一或多個必須為 true 的運算式，才可引發觸發程序"
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "動作逾時"
     }
   ],
   "XLUs2P": [
@@ -5908,7 +5908,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "每個分割執行個體的獨特追蹤識別碼"
     }
   ],
   "ahW8Iv": [
@@ -6128,7 +6128,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "擷取更多結果，最多可達分頁限制"
     }
   ],
   "cK2A/V": [
@@ -6448,7 +6448,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "啟用分割以啟動所選陣列中每個項目的工作流程執行個體。每個執行個體也可以有不同的追蹤識別碼"
     }
   ],
   "epOMnV": [
@@ -6478,7 +6478,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "範例: PT1S"
     }
   ],
   "f81ClO": [
@@ -6594,7 +6594,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "限制"
     }
   ],
   "g7my78": [
@@ -6654,7 +6654,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "無"
     }
   ],
   "gQt/0f": [
@@ -6768,7 +6768,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "允許區塊化"
     }
   ],
   "hN7iBP": [
@@ -6989,7 +6989,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "作業的安全輸出和輸出屬性的參考"
     }
   ],
   "iTKrs8": [
@@ -7119,7 +7119,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "要求選項 - 逾時"
     }
   ],
   "jQ0Aqj": [
@@ -7197,7 +7197,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "啟用安全輸入將會自動保護輸出。"
     }
   ],
   "jgOaTX": [
@@ -7496,7 +7496,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "對照提供的結構描述，驗證要求主體。若不相符，將會傳回 HTTP 400"
     }
   ],
   "lsKVU6": [
@@ -7538,7 +7538,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "要傳回的項目數閾值"
     }
   ],
   "mAuMD+": [
@@ -8299,7 +8299,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "限制此動作的重試與非同步回應之間的持續時間上限。注意: 這不會改變單一要求的要求逾時"
     }
   ],
   "r/n6/9": [
@@ -9061,7 +9061,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "持續時間"
     }
   ],
   "vlDynP": [
@@ -9595,7 +9595,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "運算式編輯器"
     }
   ],
   "zIDVd9": [

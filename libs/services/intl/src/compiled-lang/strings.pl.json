@@ -72,7 +72,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "Pomijanie nagłówków przepływu pracy w odpowiedzi"
     }
   ],
   "+xXHdp": [
@@ -490,7 +490,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "Liczba ponownych prób wysłania żądania"
     }
   ],
   "1htSs7": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "Kontroluj sposób kolejkowania nowych przebiegów"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "Nieprawidłowa liczba stronicowania. Wartość musi być liczbą większą niż 0"
     }
   ],
   "2pRsUf": [
@@ -674,7 +674,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Domyślny"
     }
   ],
   "2vnYre": [
@@ -1180,7 +1180,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "Zabezpiecz dane wejściowe operacji"
     }
   ],
   "63CC7M": [
@@ -1210,7 +1210,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
+      "value": "Wartość czasu jest nieprawidłowa, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "6WmLx1": [
@@ -1462,7 +1462,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "Interwał wykładniczy"
     }
   ],
   "7zsUT3": [
@@ -2148,7 +2148,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "Ustaw identyfikator śledzenia dla przebiegu. W przypadku podziału ten identyfikator śledzenia dotyczy żądania inicjującego"
     }
   ],
   "BxITRH": [
@@ -2342,7 +2342,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "Interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "DEu7oK": [
@@ -2428,7 +2428,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "Maksymalny czas trwania w przypadku pojedynczego żądania wychodzącego z tej akcji. Jeśli żądanie nie zakończy się w ramach tego limitu po wykonaniu ponownych prób, akcja zakończy się niepowodzeniem"
     }
   ],
   "DsPDVB": [
@@ -2614,7 +2614,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Maksymalny interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3568,7 +3568,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "Po włączeniu ta akcja zostanie uruchomiona z użytkownikiem z poziomu ustawienia „Uruchom jako” w wyzwalaczu Dataverse"
     }
   ],
   "LS8rfZ": [
@@ -4272,7 +4272,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "Identyfikator śledzenia dla podziału"
     }
   ],
   "Pq+4a+": [
@@ -4284,7 +4284,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "Dekompresuj treść żądania, jeśli jest skompresowana przy użyciu GZip lub Deflate. To ustawienie dotyczy tylko wyzwalacza HTTP"
     }
   ],
   "PsmHyH": [
@@ -4438,7 +4438,7 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "Liczba stronicowania przekracza wartość maksymalną równą "
     },
     {
       "type": 1,
@@ -4710,7 +4710,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "Określ zachowanie i możliwości przesyłania zawartości za pomocą protokołu HTTP. Duże wiadomości można podzielić na mniejsze żądania do łącznika, aby umożliwić przekazywanie dużych wiadomości."
     }
   ],
   "SgiTAh": [
@@ -4986,7 +4986,7 @@
   "UMPuUJ": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "Usuń "
     },
     {
       "type": 1,
@@ -5140,7 +5140,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Więcej szczegółów można znaleźć pod adresem http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5380,7 +5380,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Określ czas trwania w formacie zgodnym ze standardem ISO 8601."
     }
   ],
   "WS9kXD": [
@@ -5420,7 +5420,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "Stały interwał"
     }
   ],
   "WcnIF8": [
@@ -5462,7 +5462,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Minimalny interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5528,13 +5528,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony"
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Limit czasu akcji"
     }
   ],
   "XLUs2P": [
@@ -6060,7 +6060,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "Unikatowy identyfikator śledzenia dla każdego wystąpienia podziału"
     }
   ],
   "ahW8Iv": [
@@ -6280,7 +6280,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "Pobierz więcej wyników do limitu dzielenia na strony"
     }
   ],
   "cK2A/V": [
@@ -6600,7 +6600,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "Włącz podział, aby uruchomić wystąpienie przepływu pracy na element w wybranej tablicy. Każde wystąpienie może mieć również oddzielny identyfikator śledzenia"
     }
   ],
   "epOMnV": [
@@ -6630,7 +6630,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "Przykład: PT1S"
     }
   ],
   "f81ClO": [
@@ -6742,7 +6742,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "Ograniczenie"
     }
   ],
   "g7my78": [
@@ -6810,7 +6810,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "Brak"
     }
   ],
   "gQt/0f": [
@@ -6924,7 +6924,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "Zezwalanie na dzielenie na fragmenty"
     }
   ],
   "hN7iBP": [
@@ -7178,7 +7178,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "Zabezpiecz dane wyjściowe operacji i odwołania właściwości danych wyjściowych"
     }
   ],
   "iTKrs8": [
@@ -7308,7 +7308,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "Opcje żądania — limit czasu"
     }
   ],
   "jQ0Aqj": [
@@ -7386,7 +7386,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "Włączenie zabezpieczenia danych wejściowych spowoduje automatyczne zabezpieczenie danych wyjściowych."
     }
   ],
   "jgOaTX": [
@@ -7742,7 +7742,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "Weryfikuj treść żądania względem podanego schematu. W przypadku niezgodności zostanie zwrócony kod HTTP 400"
     }
   ],
   "lsKVU6": [
@@ -7784,7 +7784,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "Próg elementów do zwrócenia"
     }
   ],
   "mAuMD+": [
@@ -8578,7 +8578,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "Ogranicz maksymalny czas trwania między ponownymi próbami a odpowiedziami asynchronicznymi w przypadku tej akcji. Uwaga: nie powoduje to zmiany limitu czasu żądania pojedynczego żądania"
     }
   ],
   "r/n6/9": [
@@ -9340,7 +9340,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Czas trwania"
     }
   ],
   "vlDynP": [
@@ -9870,7 +9870,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "Edytor wyrażeń"
     }
   ],
   "zIDVd9": [

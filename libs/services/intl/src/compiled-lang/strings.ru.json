@@ -72,7 +72,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "Скрытие заголовков рабочего процесса при ответе"
     }
   ],
   "+xXHdp": [
@@ -490,7 +490,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "Число повторных попыток запроса"
     }
   ],
   "1htSs7": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "Управление очередями новых запусков"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "Неверное количество пролистываний. Значение должно быть числом больше 0"
     }
   ],
   "2pRsUf": [
@@ -674,7 +674,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "По умолчанию"
     }
   ],
   "2vnYre": [
@@ -1180,7 +1180,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "Защита входных данных операции"
     }
   ],
   "63CC7M": [
@@ -1210,7 +1210,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
+      "value": "Недопустимое значение времени. Необходимо указать длительность в формате ISO 8601"
     }
   ],
   "6WmLx1": [
@@ -1462,7 +1462,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "Экспоненциальный интервал"
     }
   ],
   "7zsUT3": [
@@ -2148,7 +2148,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "Задает ИД отслеживания для запуска. При использовании splitOn этот ИД будет использован для инициирующего запроса"
     }
   ],
   "BxITRH": [
@@ -2342,7 +2342,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "Недопустимый интервал политики повтора. Необходимо указать длительность в формате ISO 8601"
     }
   ],
   "DEu7oK": [
@@ -2428,7 +2428,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "Максимальная длительность одного исходящего запроса от этого действия. Если запрос не завершится в течение этого предела после выполнения повторных попыток, выполнение действия завершится сбоем"
     }
   ],
   "DsPDVB": [
@@ -2614,7 +2614,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Недопустимый максимальный интервал политики повтора. Необходимо указать длительность в формате ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3568,7 +3568,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "Если параметр включен, это действие будет запускаться с пользователем из параметра \"Запуск от имени\" в триггере Dataverse"
     }
   ],
   "LS8rfZ": [
@@ -4272,7 +4272,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "ИД отслеживания splitOn"
     }
   ],
   "Pq+4a+": [
@@ -4284,7 +4284,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "Распаковка текста запроса, если он сжат с помощью GZip или Deflate. Этот параметр применим только к триггеру HTTP"
     }
   ],
   "PsmHyH": [
@@ -4434,7 +4434,7 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "Число пролистываний превышает максимальное значение "
     },
     {
       "type": 1,
@@ -4706,7 +4706,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "Укажите поведение и возможности передачи содержимого по HTTP. При отправке больших сообщений они могут быть разделены на запросы меньшего размера к соединителю."
     }
   ],
   "SgiTAh": [
@@ -4982,7 +4982,7 @@
   "UMPuUJ": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "Удалить "
     },
     {
       "type": 1,
@@ -5136,7 +5136,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Дополнительные сведения см. по адресу http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5376,7 +5376,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Укажите длительность в формате ISO 8601"
     }
   ],
   "WS9kXD": [
@@ -5416,7 +5416,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "Фиксированный интервал"
     }
   ],
   "WcnIF8": [
@@ -5458,7 +5458,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Недопустимый минимальный интервал политики повтора. Необходимо указать длительность в формате ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5524,13 +5524,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "Укажите выражения, которые должны быть истинными для срабатывания триггера"
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Время ожидания действия"
     }
   ],
   "XLUs2P": [
@@ -6056,7 +6056,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "Идентификатор отслеживания различных элементов для каждого экземпляра splitOn"
     }
   ],
   "ahW8Iv": [
@@ -6276,7 +6276,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "Получить больше результатов до предела разбивки на страницы"
     }
   ],
   "cK2A/V": [
@@ -6596,7 +6596,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "Позволяет splitOn запускать экземпляр рабочего процесса для каждого элемента в выбранном массиве. У каждого экземпляра также может быть отдельный ИД отслеживания"
     }
   ],
   "epOMnV": [
@@ -6626,7 +6626,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "Пример: PT1S"
     }
   ],
   "f81ClO": [
@@ -6738,7 +6738,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "Предел"
     }
   ],
   "g7my78": [
@@ -6806,7 +6806,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "Нет"
     }
   ],
   "gQt/0f": [
@@ -6920,7 +6920,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "Разрешить разделение на блоки"
     }
   ],
   "hN7iBP": [
@@ -7174,7 +7174,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "Защита выходных данных операции и ссылок выходных свойств"
     }
   ],
   "iTKrs8": [
@@ -7304,7 +7304,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "Параметры запроса — время ожидания"
     }
   ],
   "jQ0Aqj": [
@@ -7382,7 +7382,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "Включение безопасных входных данных обеспечит автоматическую защиту выходных данных."
     }
   ],
   "jgOaTX": [
@@ -7726,7 +7726,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "Проверьте текст запроса по предоставленной схеме. В случае несоответствия будет возвращена ошибка HTTP 400"
     }
   ],
   "lsKVU6": [
@@ -7768,7 +7768,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "Пороговое значение числа возвращаемых элементов"
     }
   ],
   "mAuMD+": [
@@ -8562,7 +8562,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "Ограничение максимальной длительности между повторными попытками и асинхронными ответами для этого действия. Примечание. Это не изменяет время ожидания одного запроса"
     }
   ],
   "r/n6/9": [
@@ -9324,7 +9324,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Длительность"
     }
   ],
   "vlDynP": [
@@ -9854,7 +9854,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "Редактор выражений"
     }
   ],
   "zIDVd9": [

@@ -72,7 +72,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "응답에 워크플로 헤더를 표시하지 않습니다."
     }
   ],
   "+xXHdp": [
@@ -490,7 +490,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "요청을 다시 시도할 횟수"
     }
   ],
   "1htSs7": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "새 실행이 큐에 대기되는 방법 제어"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "페이징 수가 잘못되었습니다. 값은 0보다 큰 숫자여야 합니다."
     }
   ],
   "2pRsUf": [
@@ -674,7 +674,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "기본값"
     }
   ],
   "2vnYre": [
@@ -1172,7 +1172,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "작업의 입력을 보안 설정합니다."
     }
   ],
   "63CC7M": [
@@ -1202,7 +1202,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
+      "value": "시간 제한 값이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
   "6WmLx1": [
@@ -1454,7 +1454,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "지수 간격"
     }
   ],
   "7zsUT3": [
@@ -2099,7 +2099,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "실행에 대한 추적 ID를 설정합니다. 분할을 위해 이 추적 ID는 시작 요청에 해당합니다."
     }
   ],
   "BxITRH": [
@@ -2293,7 +2293,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "재시도 정책 간격이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
   "DEu7oK": [
@@ -2379,7 +2379,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "이 작업의 단일 아웃바운드 요청에 대한 최대 기간입니다. 재시도를 실행한 후 이 제한 내에서 요청이 완료되지 않으면 작업이 실패합니다."
     }
   ],
   "DsPDVB": [
@@ -2561,7 +2561,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "최대 재시도 정책 간격이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
   "F9dR1Q": [
@@ -3441,7 +3441,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "활성화하면 이 동작은 Dataverse 트리거의 \"실행\" 설정에서 사용자와 함께 실행됩니다."
     }
   ],
   "LS8rfZ": [
@@ -4145,7 +4145,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "분할 추적 ID"
     }
   ],
   "Pq+4a+": [
@@ -4157,7 +4157,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "GZip 또는 Deflate를 사용하여 압축된 경우 요청 본문을 압축 해제합니다. 이 설정은 HTTP 트리거에만 적용됩니다."
     }
   ],
   "PsmHyH": [
@@ -4307,11 +4307,15 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "페이징 수가 최대값인 "
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": "을(를) 초과합니다."
     }
   ],
   "Qn8qxn": [
@@ -4546,7 +4550,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "HTTP를 통해 콘텐츠를 전송하기 위한 동작 및 기능을 지정합니다. 큰 메시지는 큰 메시지 업로드를 허용하기 위해 커넥터에 대한 작은 요청으로 분할될 수 있습니다."
     }
   ],
   "SgiTAh": [
@@ -4821,12 +4825,12 @@
   ],
   "UMPuUJ": [
     {
-      "type": 0,
-      "value": "Delete "
-    },
-    {
       "type": 1,
       "value": "expressionValue"
+    },
+    {
+      "type": 0,
+      "value": " 삭제"
     }
   ],
   "UR1CS5": [
@@ -4972,7 +4976,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "자세한 내용은 http://aka.ms/logicapps-chunk#upload-content-in-chunks에서 확인할 수 있습니다."
     }
   ],
   "V0ZbQO": [
@@ -5212,7 +5216,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "ISO 8601 형식으로 기간을 지정합니다."
     }
   ],
   "WS9kXD": [
@@ -5252,7 +5256,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "고정 간격"
     }
   ],
   "WcnIF8": [
@@ -5294,7 +5298,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "최소 재시도 정책 간격이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
   "X4gDhV": [
@@ -5360,13 +5364,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "트리거가 실행되려면 true여야 하는 하나 이상의 식을 지정합니다."
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "작업 시간 제한"
     }
   ],
   "XLUs2P": [
@@ -5892,7 +5896,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "각 분할 인스턴스에 대한 고유 추적 ID"
     }
   ],
   "ahW8Iv": [
@@ -6112,7 +6116,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "페이지 매김 한도까지 더 많은 결과를 검색합니다."
     }
   ],
   "cK2A/V": [
@@ -6428,7 +6432,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "선택한 배열의 항목당 워크플로 인스턴스를 시작하려면 분할을 사용하도록 설정합니다. 각 인스턴스에 고유한 추적 ID가 있을 수도 있습니다."
     }
   ],
   "epOMnV": [
@@ -6458,7 +6462,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "예: PT1S"
     }
   ],
   "f81ClO": [
@@ -6574,7 +6578,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "제한"
     }
   ],
   "g7my78": [
@@ -6634,7 +6638,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "없음"
     }
   ],
   "gQt/0f": [
@@ -6748,7 +6752,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "청크 허용"
     }
   ],
   "hN7iBP": [
@@ -6965,7 +6969,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "작업의 출력과 출력 속성의 참조를 보안 설정합니다."
     }
   ],
   "iTKrs8": [
@@ -7095,7 +7099,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "요청 옵션 - 시간 제한"
     }
   ],
   "jQ0Aqj": [
@@ -7173,7 +7177,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "보안 입력을 사용하도록 설정하면 보안 출력이 자동으로 보호됩니다."
     }
   ],
   "jgOaTX": [
@@ -7472,7 +7476,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "제공된 스키마에 대해 요청 본문을 확인합니다. 불일치하는 경우 HTTP 400이 반환됩니다."
     }
   ],
   "lsKVU6": [
@@ -7514,7 +7518,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "반환할 항목의 임계값"
     }
   ],
   "mAuMD+": [
@@ -8275,7 +8279,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "이 작업에 대한 재시도와 비동기 응답 사이의 최대 기간을 제한합니다. 참고: 단일 요청의 요청 시간 제한은 변경되지 않습니다."
     }
   ],
   "r/n6/9": [
@@ -9029,7 +9033,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "기간"
     }
   ],
   "vlDynP": [
@@ -9555,7 +9559,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "식 편집기"
     }
   ],
   "zIDVd9": [
