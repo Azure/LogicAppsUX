@@ -111,6 +111,9 @@
       <Item ItemId=";+v1RlQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Suppress Workflow Headers on Response]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Elimina intestazioni del flusso di lavoro nella risposta]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -711,6 +714,9 @@
       <Item ItemId=";1hPZqe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The number of times to retry the request]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Numero di tentativi per la richiesta]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -852,6 +858,9 @@
       <Item ItemId=";2MOA1x" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Control how new runs are queued]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Controllare la modalità di accodamento delle nuove esecuzioni]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -939,6 +948,9 @@
       <Item ItemId=";2pCFsW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Paging count invalid. Value must be a number greater than 0]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Il conteggio delle pagine non è valido. Il valore deve essere un numero maggiore di 0]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1647,6 +1659,9 @@
       <Item ItemId=";632t9E" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure inputs of the operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Input sicuri dell'operazione]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1689,6 +1704,9 @@
       <Item ItemId=";6VV7OY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Timeout value is invalid, must match ISO 8601 duration format]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Il valore del timeout non è valido. Deve corrispondere al formato di durata ISO 8601]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2970,6 +2988,9 @@
       <Item ItemId=";BvCnOv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3210,6 +3231,9 @@
       <Item ItemId=";DEKsll" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy Interval is invalid, must match ISO 8601 duration format]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[L'intervallo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3324,6 +3348,9 @@
       <Item ItemId=";Dm0zAO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Durata massima di una singola richiesta in uscita da questa azione. Se la richiesta non termina entro questo limite dopo l'esecuzione di nuovi tentativi, l'azione non riesce]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3564,6 +3591,9 @@
       <Item ItemId=";F6+icQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[L'intervallo massimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4833,6 +4863,9 @@
       <Item ItemId=";LRAhSA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Se abilitata, questa azione viene eseguita con l'utente dall'impostazione "Esegui come" nel trigger Dataverse]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5838,6 +5871,9 @@
       <Item ItemId=";PqUAbF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Decomprimere il corpo della richiesta se è compresso tramite GZip o Deflate. Questa impostazione è applicabile solo per il trigger HTTP]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6024,6 +6060,9 @@
       <Item ItemId=";QhKk80" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Paging count exceeds maximum value of {max}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Il conteggio delle pagine supera il valore massimo di {max}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6369,6 +6408,9 @@
       <Item ItemId=";SenWwt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Specificare il comportamento e le funzionalità per il trasferimento del contenuto su HTTP. È possibile suddividere i messaggi in richieste più piccole al connettore per consentire il caricamento di messaggi di grandi dimensioni.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6744,6 +6786,9 @@
       <Item ItemId=";UMPuUJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Delete {expressionValue}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Elimina {expressionValue}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6912,6 +6957,9 @@
       <Item ItemId=";V+xi3c" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Per altri dettagli, vedere http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7215,6 +7263,9 @@
       <Item ItemId=";WS55UF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify the duration in ISO 8601 format]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Specificare la durata nel formato ISO 8601]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7329,6 +7380,9 @@
       <Item ItemId=";X4SuNU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[L'intervallo minimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7407,6 +7461,9 @@
       <Item ItemId=";XJkBrZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify one or more expressions that must be true for the trigger to fire]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Specificare una o più espressioni che devono essere vere per l'attivazione del trigger]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8124,6 +8181,9 @@
       <Item ItemId=";ahFd/S" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Distinct Tracking id for each split-on instance]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ID di rilevamento distinto per ogni istanza di suddivisione]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8445,6 +8505,9 @@
       <Item ItemId=";cJkSrD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Retrieve more results up to the pagination limit]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Recuperare altri risultati fino al limite di impaginazione]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8910,6 +8973,9 @@
       <Item ItemId=";eo1YKX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Abilita la suddivisione per avviare un'istanza del flusso di lavoro per ogni elemento nella matrice selezionata. Ogni istanza può anche avere un ID di traccia distinto]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8952,6 +9018,9 @@
       <Item ItemId=";f7Janv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Example: PT1S]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Esempio: PT1S]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9693,6 +9762,9 @@
       <Item ItemId=";iSiVB0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure outputs of the operation and references of output properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Output sicuri dell'operazione e riferimenti delle proprietà di output]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9879,6 +9951,9 @@
       <Item ItemId=";jO5Fet" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Request Options - Timeout]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Opzioni richiesta - Timeout]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10404,6 +10479,9 @@
       <Item ItemId=";lsH37F" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Convalidare il corpo della richiesta in base allo schema specificato. In caso di mancata corrispondenza, viene restituito il codice HTTP 400]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11541,6 +11619,9 @@
       <Item ItemId=";qzaoRR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Limitare la durata massima tra i tentativi e le risposte asincrone per questa azione. Nota: questo non modifica il timeout della richiesta di una singola richiesta]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
