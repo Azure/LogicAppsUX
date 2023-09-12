@@ -69,7 +69,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
           name: 'Attach to .NET Functions',
           type: 'clr',
           request: 'attach',
-          processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
+          processName: 'Microsoft.Azure.Workflows.Functions.NetFxWorker.exe',
         },
       ],
     };
