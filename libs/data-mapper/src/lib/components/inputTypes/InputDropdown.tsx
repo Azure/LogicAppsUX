@@ -345,7 +345,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       allowedInputTypes.includes(NormalizedDataType.Decimal) &&
       allowedInputTypes.includes(NormalizedDataType.Integer)
     ) {
-      inputType = 'Numerical';
+      inputType = numericalDataType;
     }
   }
 
