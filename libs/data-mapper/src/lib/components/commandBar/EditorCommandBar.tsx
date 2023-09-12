@@ -38,6 +38,13 @@ const useStyles = makeStyles({
     ...shorthands.padding('5px', '0px'),
     minWidth: '80px',
   },
+  divider: {
+    maxHeight: '25px',
+    marginTop: '4px',
+  },
+  toolbarGroup: {
+    display: 'flex',
+  },
 });
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
@@ -155,18 +162,18 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     [intl]
   );
 
-  const farGroupStyles = useStyles();
+  const toolbarStyles = useStyles();
   const bothSchemasDefined = sourceSchema && targetSchema;
 
   return (
-    <Toolbar size="medium" aria-label={Resources.COMMAND_BAR_ARIA} className={farGroupStyles.toolbar}>
-      <ToolbarGroup>
+    <Toolbar size="medium" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
+      <ToolbarGroup className={toolbarStyles.toolbarGroup}>
         <ToolbarButton
           aria-label={Resources.SAVE}
           icon={<Save20Regular />}
           disabled={!bothSchemasDefined || !isStateDirty}
           onClick={onSaveClick}
-          className={farGroupStyles.button}
+          className={toolbarStyles.button}
         >
           {Resources.SAVE}
         </ToolbarButton>
@@ -184,7 +191,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         >
           {Resources.DISCARD}
         </ToolbarButton>
-        <ToolbarDivider />
+        <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
           {Resources.RUN_TEST}
         </ToolbarButton>
@@ -210,7 +217,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         >
           {showGlobalView ? Resources.RETURN : Resources.GLOBAL_VIEW}
         </ToolbarButton>
-        <ToolbarDivider />
+        <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton
           aria-label={Resources.CONFIGURATION}
           icon={<Settings20Regular />}

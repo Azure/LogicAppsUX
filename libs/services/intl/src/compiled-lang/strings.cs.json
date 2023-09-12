@@ -69,6 +69,12 @@
       "value": "Časové pásmo"
     }
   ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Potlačit hlavičky pracovního postupu v odpovědi"
+    }
+  ],
   "+xXHdp": [
     {
       "type": 0,
@@ -181,12 +187,6 @@
     {
       "type": 0,
       "value": "Chybí požadované vstupy"
-    }
-  ],
-  "/w/q/8": [
-    {
-      "type": 0,
-      "value": "Pokud je tato akce povolena, bude spuštěna s uživatelem z nastavení „Spustit jako“ v aktivační události Dataverse."
     }
   ],
   "/yYyOq": [
@@ -487,6 +487,12 @@
       "value": "(UTC-01:00) Azory"
     }
   ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "Počet opakování žádosti"
+    }
+  ],
   "1htSs7": [
     {
       "type": 0,
@@ -565,12 +571,6 @@
       "value": "Vyberte soubor, který se má nahrát."
     }
   ],
-  "2Cdt4p": [
-    {
-      "type": 0,
-      "value": "Pokud chcete spustit instanci pracovního postupu pro jednotlivé položky ve vybraném poli, povolte dělení. Každá instance navíc může mít své vlastní ID pro sledování."
-    }
-  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -581,6 +581,12 @@
     {
       "type": 0,
       "value": "Koncový čas"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Řídit, jak se nová spuštění zařadí do fronty"
     }
   ],
   "2NXYYu": [
@@ -637,6 +643,12 @@
       "value": "Čas zahájení"
     }
   ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Neplatný počet stránkování. Hodnota musí být číslo větší než 0."
+    }
+  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -657,6 +669,12 @@
     {
       "type": 0,
       "value": "Zapnuto"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Výchozí"
     }
   ],
   "2vnYre": [
@@ -973,6 +991,12 @@
       "value": "Váš tok se aktualizoval."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Zadejte hodnotu, se kterou chcete odpovědět"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1153,6 +1177,12 @@
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší než porovnávaná hodnota."
     }
   ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Umožňuje zabezpečit vstupy operace."
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1175,6 +1205,12 @@
     {
       "type": 0,
       "value": "Zrušit"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "Hodnota časového limitu je neplatná. Musí odpovídat formátu doby trvání dle normy ISO 8601."
     }
   ],
   "6WmLx1": [
@@ -1423,6 +1459,12 @@
       "value": "Kopírovat adresu URL"
     }
   ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Exponenciální interval"
+    }
+  ],
   "7zsUT3": [
     {
       "type": 0,
@@ -1603,18 +1645,6 @@
     {
       "type": 1,
       "value": "invalidNodes"
-    }
-  ],
-  "8ubEPi": [
-    {
-      "type": 0,
-      "value": "Možnosti žádosti"
-    }
-  ],
-  "8wlfdo": [
-    {
-      "type": 0,
-      "value": "Potlačit hlavičky pracovního postupu v odpovědi"
     }
   ],
   "8wr0zO": [
@@ -2103,12 +2133,6 @@
       "value": "Vyberte spravovanou identitu"
     }
   ],
-  "BrvZNn": [
-    {
-      "type": 0,
-      "value": "Zadejte jeden nebo více výrazů, které musí být pravdivé, aby se trigger aktivoval."
-    }
-  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2119,6 +2143,12 @@
     {
       "type": 0,
       "value": "Jeden specifikátor formátu, který označuje, jak formátovat hodnotu tohoto GUID"
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení žádosti."
     }
   ],
   "BxITRH": [
@@ -2309,6 +2339,12 @@
       "value": "Uzel"
     }
   ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "Interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601"
+    }
+  ],
   "DEu7oK": [
     {
       "type": 0,
@@ -2389,6 +2425,12 @@
       "value": "Rozbalit statický výsledek"
     }
   ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "Maximální doba trvání jedné odchozí žádosti z této akce. Pokud se žádost nedokončí během této doby po spuštění opakovaných pokusů, akce se nezdaří."
+    }
+  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2455,12 +2497,6 @@
     {
       "type": 0,
       "value": "Zkontrolujte akce toku a zjistěte, jestli je potřeba nastavit nějaké parametry. Až to budete mít, nezapomeňte vše uložit."
-    }
-  ],
-  "EKtYQF": [
-    {
-      "type": 0,
-      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku."
     }
   ],
   "ERAWZA": [
@@ -2573,6 +2609,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Počet zadaných jednotek času, které se mají přičíst"
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "Maximální interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3058,7 +3100,7 @@
   "I+85NV": [
     {
       "type": 0,
-      "value": "Submit from this action"
+      "value": "Odeslat z této akce"
     }
   ],
   "I3mifR": [
@@ -3317,12 +3359,6 @@
       "value": "(UTC-09:00) Aljaška"
     }
   ],
-  "JzqgNM": [
-    {
-      "type": 0,
-      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku."
-    }
-  ],
   "K50znc": [
     {
       "type": 0,
@@ -3525,6 +3561,12 @@
       "value": "Nakonfigurovat"
     }
   ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "Pokud je tato akce povolena, bude spuštěna s uživatelem z nastavení „Spustit jako“ v aktivační události Dataverse."
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -3667,12 +3709,6 @@
     {
       "type": 0,
       "value": "Nepovinné. Název akce s určeným rozsahem, u níž požadujete vstupy a výstupy z akcí na nejvyšší úrovni v rámci daného rozsahu."
-    }
-  ],
-  "MCQODe": [
-    {
-      "type": 0,
-      "value": "Umožňuje zabezpečit výstupy operace a odkazy výstupních vlastností."
     }
   ],
   "MCzWDc": [
@@ -4141,12 +4177,6 @@
       "value": "Povinný parametr. Tato hodnota představuje počet celých čísel v poli."
     }
   ],
-  "P3Zpc4": [
-    {
-      "type": 0,
-      "value": "Vlastní ID sledování"
-    }
-  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4235,10 +4265,22 @@
       "value": "Sledované vlastnosti"
     }
   ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "ID sledování dělení"
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) Káhira"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Dekomprimuje text požadavku, pokud je komprimován pomocí GZip nebo Deflate. Toto nastavení se dá použít jenom pro aktivační událost HTTP."
     }
   ],
   "PsmHyH": [
@@ -4379,6 +4421,20 @@
     {
       "type": 0,
       "value": "Parametry pracovního postupu"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Počet stránkování překračuje maximální hodnotu "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "Qn8qxn": [
@@ -4639,6 +4695,12 @@
       "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
     }
   ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Zadejte chování a možnosti pro přenos obsahu přes protokol HTTP. Velké zprávy mohou být rozděleny na menší žádosti směřované na konektor, aby je bylo možné nahrát."
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4655,6 +4717,12 @@
     {
       "type": 0,
       "value": "Vlastní ID sledování"
+    }
+  ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Zadejte název"
     }
   ],
   "Sr8PcK": [
@@ -4717,22 +4785,10 @@
       "value": "Vrátí začátek měsíce řetězcového časového razítka."
     }
   ],
-  "TPV6j/": [
-    {
-      "type": 0,
-      "value": "Neplatný počet stránkování"
-    }
-  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Typ akce"
-    }
-  ],
-  "TUaunO": [
-    {
-      "type": 0,
-      "value": "Zadejte hodnotu."
     }
   ],
   "TX4Kdr": [
@@ -4915,6 +4971,16 @@
       "value": "Logický název"
     }
   ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Odstranit "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
   "UR1CS5": [
     {
       "type": 0,
@@ -5057,6 +5123,12 @@
     {
       "type": 0,
       "value": "Obecné"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "Další podrobnosti najdete na http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5293,6 +5365,12 @@
       "value": "(UTC+04:00) Astrachaň, Uljanovsk"
     }
   ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Uveďte dobu trvání ve formátu ISO 8601."
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5325,6 +5403,12 @@
     {
       "type": 0,
       "value": "Historie žádostí"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Pevný interval"
     }
   ],
   "WcnIF8": [
@@ -5361,6 +5445,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Montevideo"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "Minimální interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5421,6 +5511,18 @@
     {
       "type": 0,
       "value": "Ujistěte se, že ve slovech není překlep."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Zadejte jeden nebo více výrazů, které musí být pravdivé, aby se aktivační událost aktivovala."
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Časový limit akce"
     }
   ],
   "XLUs2P": [
@@ -5705,6 +5807,12 @@
       "value": "Číslovaný seznam"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Názvy výstupů by neměly být prázdné."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -5937,6 +6045,12 @@
       "value": "Celá obrazovka"
     }
   ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "Jedinečné ID sledování pro každou instanci dělení"
+    }
+  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -6139,12 +6253,6 @@
       "value": "Zadejte platný kód JSON."
     }
   ],
-  "c7tRg/": [
-    {
-      "type": 0,
-      "value": "Dekomprimuje text požadavku, pokud je komprimován pomocí GZip nebo Deflate. Toto nastavení se dá použít jenom pro aktivační událost HTTP."
-    }
-  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6157,16 +6265,16 @@
       "value": "(UTC+09:00) Soul"
     }
   ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Načíst další výsledky až do limitu stránkování"
+    }
+  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "Zobrazit dokumentaci"
-    }
-  ],
-  "cP4UkW": [
-    {
-      "type": 0,
-      "value": "Interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601"
     }
   ],
   "cR9RtV": [
@@ -6325,22 +6433,10 @@
       "value": "Frekvence"
     }
   ],
-  "dSTRb/": [
-    {
-      "type": 0,
-      "value": "Zadejte chování a možnosti pro přenos obsahu přes protokol HTTP. Velké zprávy mohou být rozděleny na menší žádosti směřované na konektor, aby je bylo možné nahrát. Podrobnosti najdete na http://aka.ms/logicapps-chunk#upload-content-in-chunks."
-    }
-  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Přeskočit"
-    }
-  ],
-  "dWFyfN": [
-    {
-      "type": 0,
-      "value": "Umožňuje zabezpečit vstupy operace."
     }
   ],
   "daoo3l": [
@@ -6489,6 +6585,12 @@
       "value": "Kurzíva (⌘I)"
     }
   ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Pokud chcete spustit instanci pracovního postupu pro jednotlivé položky ve vybraném poli, povolte dělení. Každá instance navíc může mít své vlastní ID sledování."
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6513,6 +6615,12 @@
       "value": "Nepovinné. Index, kde se má podřetězec přestat extrahovat"
     }
   ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Příklad: PT1S"
+    }
+  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6535,12 +6643,6 @@
     {
       "type": 0,
       "value": "Vybrat prostředek služby API Management"
-    }
-  ],
-  "fGcSFd": [
-    {
-      "type": 0,
-      "value": "Počet stránkování překračuje maximální hodnotu."
     }
   ],
   "fKYuwf": [
@@ -6625,6 +6727,12 @@
       "value": "Modul runtime"
     }
   ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limit"
+    }
+  ],
   "g7my78": [
     {
       "type": 0,
@@ -6687,6 +6795,12 @@
       "value": "Předchozí neúspěšné"
     }
   ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "Žádné"
+    }
+  ],
   "gQt/0f": [
     {
       "type": 0,
@@ -6747,6 +6861,12 @@
       "value": "Když se tato funkce použije v rámci smyčky until, vrátí aktuální index iterace zadané smyčky."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Názvy výstupů by měly být jedinečné."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6786,7 +6906,13 @@
   "hH/wAd": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Znovu odeslat spuštění pracovního postupu z této akce"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Povolit dělení do bloků"
     }
   ],
   "hN7iBP": [
@@ -6985,6 +7111,12 @@
       "value": "Převede řetězec na velká písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
     }
   ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Zvolte typ výstupu"
+    }
+  ],
   "iEy9pT": [
     {
       "type": 0,
@@ -7033,6 +7165,12 @@
     {
       "type": 0,
       "value": "Spravovaná identita"
+    }
+  ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Umožňuje zabezpečit výstupy operace a odkazy výstupních vlastností."
     }
   ],
   "iTKrs8": [
@@ -7159,6 +7297,12 @@
       "value": "Povězte Microsoftu, jak by se tato funkce mohla zlepšit."
     }
   ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Možnosti žádosti – časový limit"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -7231,6 +7375,12 @@
       "value": "Upravit ve formátu JSON"
     }
   ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Když se povolí zabezpečené vstupy, automaticky se zabezpečí i výstupy."
+    }
+  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7241,12 +7391,6 @@
     {
       "type": 0,
       "value": "Popište něco, co by měl váš tok udělat. Pokud je to možné, přidejte podrobnosti, včetně konektoru, který se má použít, a uveďte, jestli by měl být zahrnut nějaký obsah."
-    }
-  ],
-  "juR40n": [
-    {
-      "type": 0,
-      "value": "Doba trvání"
     }
   ],
   "juvF+0": [
@@ -7419,6 +7563,12 @@
       "value": "count"
     }
   ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Přidat výstup"
+    }
+  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -7565,6 +7715,12 @@
       "value": "Vložit výraz (můžete ho přidat i zadáním / v editoru)"
     }
   ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Ověřte text požadavku proti poskytnutému schématu. Pokud mu nebude odpovídat, vrátí se kód HTTP 400."
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7601,6 +7757,12 @@
       "value": "Název"
     }
   ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Prahová hodnota položek, které se mají vrátit"
+    }
+  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7625,16 +7787,6 @@
       "value": "Funkce se odstranila."
     }
   ],
-  "mGPqAg": [
-    {
-      "type": 0,
-      "value": "Odstranit hodnotu "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7645,12 +7797,6 @@
     {
       "type": 0,
       "value": "Vrátí řetězcovou reprezentaci identifikátoru URI dat."
-    }
-  ],
-  "mOr9ll": [
-    {
-      "type": 0,
-      "value": "Maximální doba trvání jedné odchozí žádosti z této akce. Pokud se žádost nedokončí během této doby po spuštění opakovaných pokusů, akce se nezdaří."
     }
   ],
   "mPakaD": [
@@ -8207,12 +8353,6 @@
       "value": "Přidá celočíselný počet sekund do předaného řetězcového časového razítka."
     }
   ],
-  "q8vnZQ": [
-    {
-      "type": 0,
-      "value": "Ověřte text požadavku proti poskytnutému schématu. Pokud mu nebude odpovídat, vrátí se kód HTTP 400."
-    }
-  ],
   "qAlTD5": [
     {
       "type": 0,
@@ -8409,6 +8549,12 @@
     {
       "type": 0,
       "value": "Předchozí návrh toku"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Omezte maximální dobu trvání mezi opakovanými pokusy a asynchronními odpověďmi na tuto akci. Poznámka: Časový limit jedné žádosti se nezmění."
     }
   ],
   "r/n6/9": [
@@ -8645,12 +8791,6 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, u které se má zkontrolovat, zda není prázdná."
-    }
-  ],
-  "scmyvO": [
-    {
-      "type": 0,
-      "value": "Časový limit akce"
     }
   ],
   "sfJTHV": [
@@ -8959,12 +9099,6 @@
       "value": "Zobrazit"
     }
   ],
-  "uZH8Qs": [
-    {
-      "type": 0,
-      "value": "Omezte maximální dobu trvání mezi opakovanými pokusy a asynchronními odpověďmi na tuto akci. Poznámka: Časový limit požadavku jedné žádosti se nezmění."
-    }
-  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -9169,6 +9303,12 @@
     {
       "type": 0,
       "value": "Pokud chcete vytvořit a použít připojení rozhraní API, musíte mít v této aplikaci logiky nakonfigurovanou spravovanou identitu."
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Doba trvání"
     }
   ],
   "vlDynP": [
@@ -9693,6 +9833,12 @@
     {
       "type": 0,
       "value": "Zadejte hodnotu"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Editor výrazů"
     }
   ],
   "zIDVd9": [
