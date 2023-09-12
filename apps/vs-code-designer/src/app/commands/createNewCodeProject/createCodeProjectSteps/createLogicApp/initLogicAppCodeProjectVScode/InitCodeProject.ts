@@ -139,7 +139,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
             "args" : ${funcBinariesExist ? ['host', 'start'] : undefined},
             "options": {
               "env": {
-                "PATH": "\${config:azureLogicAppsStandard.dependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.dependenciesPath}\\\\DotNetSDK;%PATH%"
+                "PATH": "\${config:azureLogicAppsStandard.dependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.dependenciesPath}\\\\DotNetSDK;$env:PATH"
               }
             },
             "problemMatcher": "$func-watch",
