@@ -6,7 +6,6 @@ import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } 
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
-//import { getFunctionsCommand } from './funcVersion';
 import { delay } from '@azure/ms-rest-js';
 import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
