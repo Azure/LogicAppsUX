@@ -2249,7 +2249,7 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
     }
 
     if (config.title) {
-      const keyFromTitle = config.title.replace(' ', '_');
+      const keyFromTitle = config.title.toLowerCase().replace(' ', '_');
       schemaProperties[keyFromTitle] = config;
 
       const valueSegments = editorViewModel.outputValueSegmentsMap?.[key];
