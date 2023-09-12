@@ -5,7 +5,7 @@ slug: /
 
 # Getting Started
 
-Welcome to the LogicApps UX documentation! This guide will help new engineers set up and navigate the project. Make sure to follow the steps below to ensure a smooth setup process.
+Welcome to the LogicApps UX documentation! This guide will help new engineers set up and navigate the project. Make sure to follow the steps below to ensure a smooth setup process. You can find the details about Power Automate Designer Community Contribution at the end of this doc. 
 
 ## Prerequisites
 
@@ -82,3 +82,28 @@ To run E2E tests, execute:
 ```bash
 nx run designer-e2e:e2e
 ```
+# Power Automate Designer Community Contribution
+We are excited to announce that the new Power Automate designer is open source on Github and is actually built on top of Logic Apps designer. We are accepting contributions to the core designer, the changes for which will show up in both Logic Apps and Power Automate. The contribution can fall into these categories:
+
+### Bugs- Choose from our Issues list Issues · [Azure/LogicAppsUX (github.com)](https://github.com/Azure/LogicAppsUX/issues) or introduce a new one that you personally relate to. 
+
+### Features- Choose one from our list for which we have provided designs.
+1. Copy and paste action to/from clipboard,
+2. Undo/Redo,
+3. Easy disabling of any action on the designer,
+4. Simplified OData editor for Filter query SharePoint Get items/Get files action.
+5. More will follow soon. Please reach out to kisubedi@microsoft.com for more information on this for e.g the design files, etc. We will add an entry for each of these features with specifications and requirements soon.
+
+# PnP Badge Program for contributions
+Power Platform PnP will provide you badges for accepted contributions. 
+
+For issues contribution:
+
+If 1 bug fix, Power Automate Issue Contributor badge.
+If >=5 bug fixes, Power Automate Designer Issue Specialist badge.
+If >= 8 bug fixes, Power Automate Designer Issue Expert badge.
+
+For feature contribution:
+
+If 1 feature, Power Automate Designer Specialist.
+If >=2 feature, Power Automate Designer Expert badge.
