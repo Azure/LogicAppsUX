@@ -10,6 +10,7 @@ import { notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
 import { RowDropdown, RowDropdownOptions } from './RowDropdown';
+import { operandNotEmpty } from './helper';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
@@ -293,8 +294,4 @@ export const Row = ({
       )}
     </div>
   );
-};
-
-const operandNotEmpty = (valSeg: ValueSegment[]): boolean => {
-  return valSeg.length > 0;
 };

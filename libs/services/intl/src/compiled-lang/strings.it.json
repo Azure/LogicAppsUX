@@ -69,6 +69,12 @@
       "value": "Fuso orario"
     }
   ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Elimina intestazioni del flusso di lavoro nella risposta"
+    }
+  ],
   "+xXHdp": [
     {
       "type": 0,
@@ -181,12 +187,6 @@
     {
       "type": 0,
       "value": "Input obbligatori mancanti"
-    }
-  ],
-  "/w/q/8": [
-    {
-      "type": 0,
-      "value": "Se abilitata, questa azione verrà eseguita con l'utente dall'impostazione \"Esegui come\" nel trigger Dataverse."
     }
   ],
   "/yYyOq": [
@@ -487,6 +487,12 @@
       "value": "(UTC-01:00) Azzorre"
     }
   ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "Numero di tentativi per la richiesta"
+    }
+  ],
   "1htSs7": [
     {
       "type": 0,
@@ -565,12 +571,6 @@
       "value": "Selezionare un file da caricare"
     }
   ],
-  "2Cdt4p": [
-    {
-      "type": 0,
-      "value": "Abilita la suddivisione per avviare un'istanza del flusso di lavoro per ogni elemento nella matrice selezionata. Ogni istanza può anche avere un ID di traccia distinto."
-    }
-  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -581,6 +581,12 @@
     {
       "type": 0,
       "value": "Ora di fine"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Controllare la modalità di accodamento delle nuove esecuzioni"
     }
   ],
   "2NXYYu": [
@@ -637,6 +643,12 @@
       "value": "Ora di inizio"
     }
   ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Il conteggio delle pagine non è valido. Il valore deve essere un numero maggiore di 0"
+    }
+  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -657,6 +669,12 @@
     {
       "type": 0,
       "value": "Sì"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Predefinito"
     }
   ],
   "2vnYre": [
@@ -965,6 +983,12 @@
       "value": "Il flusso è stato aggiornato."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Immettere un valore con cui rispondere"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1145,6 +1169,12 @@
       "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore del valore con cui è confrontato."
     }
   ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Input sicuri dell'operazione"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1167,6 +1197,12 @@
     {
       "type": 0,
       "value": "Annulla"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "Il valore del timeout non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "6WmLx1": [
@@ -1415,6 +1451,12 @@
       "value": "Copia URL"
     }
   ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Intervallo esponenziale"
+    }
+  ],
   "7zsUT3": [
     {
       "type": 0,
@@ -1595,18 +1637,6 @@
     {
       "type": 1,
       "value": "invalidNodes"
-    }
-  ],
-  "8ubEPi": [
-    {
-      "type": 0,
-      "value": "Opzioni richiesta"
-    }
-  ],
-  "8wlfdo": [
-    {
-      "type": 0,
-      "value": "Elimina intestazioni del flusso di lavoro nella risposta"
     }
   ],
   "8wr0zO": [
@@ -2084,12 +2114,6 @@
       "value": "Selezionare un'identità gestita"
     }
   ],
-  "BrvZNn": [
-    {
-      "type": 0,
-      "value": "Specificare una o più espressioni che devono essere true per l'attivazione del trigger."
-    }
-  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2100,6 +2124,12 @@
     {
       "type": 0,
       "value": "Identificatore di formato singolo che indica come formattare il valore di questo GUID."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio"
     }
   ],
   "BxITRH": [
@@ -2290,6 +2320,12 @@
       "value": "Nodo"
     }
   ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "L'intervallo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
+    }
+  ],
   "DEu7oK": [
     {
       "type": 0,
@@ -2362,6 +2398,12 @@
       "value": "Espandi risultato statico"
     }
   ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "Durata massima di una singola richiesta in uscita da questa azione. Se la richiesta non termina entro questo limite dopo l'esecuzione di nuovi tentativi, l'azione non riesce"
+    }
+  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2428,12 +2470,6 @@
     {
       "type": 0,
       "value": "Controllare le azioni del flusso per verificare se è necessario impostare parametri. Non dimenticare di salvare al termine."
-    }
-  ],
-  "EKtYQF": [
-    {
-      "type": 0,
-      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio."
     }
   ],
   "ERAWZA": [
@@ -2546,6 +2582,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero di un'unità di tempo specificata da aggiungere."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "L'intervallo massimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3009,6 +3051,12 @@
       "value": "Il contenuto dinamico non è supportato come proprietà nell'autenticazione."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Invia da questa azione"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -3269,12 +3317,6 @@
       "value": "(UTC-09:00) Alaska"
     }
   ],
-  "JzqgNM": [
-    {
-      "type": 0,
-      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio."
-    }
-  ],
   "K50znc": [
     {
       "type": 0,
@@ -3466,6 +3508,12 @@
       "value": "Configura"
     }
   ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "Se abilitata, questa azione viene eseguita con l'utente dall'impostazione \"Esegui come\" nel trigger Dataverse"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -3608,12 +3656,6 @@
     {
       "type": 0,
       "value": "Facoltativo. Nome dell'azione con ambito che dovrà contenere gli input e gli output delle azioni di primo livello all'interno di tale ambito."
-    }
-  ],
-  "MCQODe": [
-    {
-      "type": 0,
-      "value": "Output sicuri dell'operazione e riferimenti delle proprietà di output."
     }
   ],
   "MCzWDc": [
@@ -4090,12 +4132,6 @@
       "value": "Obbligatorio. Valore corrispondene al numero di integer nella matrice."
     }
   ],
-  "P3Zpc4": [
-    {
-      "type": 0,
-      "value": "ID di traccia personalizzato"
-    }
-  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4184,10 +4220,22 @@
       "value": "Proprietà rilevate"
     }
   ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "ID di traccia suddivisione"
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) Il Cairo"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Decomprimere il corpo della richiesta se è compresso tramite GZip o Deflate. Questa impostazione è applicabile solo per il trigger HTTP"
     }
   ],
   "PsmHyH": [
@@ -4332,6 +4380,16 @@
     {
       "type": 0,
       "value": "Parametri flusso di lavoro"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Il conteggio delle pagine supera il valore massimo di "
+    },
+    {
+      "type": 1,
+      "value": "max"
     }
   ],
   "Qn8qxn": [
@@ -4585,6 +4643,12 @@
       "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
     }
   ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Specificare il comportamento e le funzionalità per il trasferimento del contenuto su HTTP. È possibile suddividere i messaggi in richieste più piccole al connettore per consentire il caricamento di messaggi di grandi dimensioni."
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4601,6 +4665,12 @@
     {
       "type": 0,
       "value": "ID di traccia personalizzato"
+    }
+  ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Immettere un nome"
     }
   ],
   "Sr8PcK": [
@@ -4663,22 +4733,10 @@
       "value": "Restituisce l'inizio del mese di un timestamp in formato stringa"
     }
   ],
-  "TPV6j/": [
-    {
-      "type": 0,
-      "value": "Conteggio paging non valido"
-    }
-  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Tipo di azione"
-    }
-  ],
-  "TUaunO": [
-    {
-      "type": 0,
-      "value": "Immettere un valore"
     }
   ],
   "TX4Kdr": [
@@ -4861,6 +4919,16 @@
       "value": "Nome logico"
     }
   ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Elimina "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
   "UR1CS5": [
     {
       "type": 0,
@@ -5003,6 +5071,12 @@
     {
       "type": 0,
       "value": "Generale"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "Per altri dettagli, vedere http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5239,6 +5313,12 @@
       "value": "(UTC + 04.00) Astrakhan, Ulyanovsk"
     }
   ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Specificare la durata nel formato ISO 8601"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5271,6 +5351,12 @@
     {
       "type": 0,
       "value": "Cronologia richiesta"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Intervallo fisso"
     }
   ],
   "WcnIF8": [
@@ -5307,6 +5393,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Montevideo"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "L'intervallo minimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5367,6 +5459,18 @@
     {
       "type": 0,
       "value": "Verificare che le parole siano scritte correttamente."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Specificare una o più espressioni che devono essere vere per l'attivazione del trigger"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Timeout azione"
     }
   ],
   "XLUs2P": [
@@ -5651,6 +5755,12 @@
       "value": "Elenco numerato"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "I nomi di output non devono essere vuoti."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -5883,6 +5993,12 @@
       "value": "Schermo intero"
     }
   ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "ID di rilevamento distinto per ogni istanza di suddivisione"
+    }
+  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -6085,12 +6201,6 @@
       "value": "Immettere un oggetto JSON valido."
     }
   ],
-  "c7tRg/": [
-    {
-      "type": 0,
-      "value": "Decomprimi il corpo della richiesta se è compresso tramite GZip o Deflate. Questa impostazione è applicabile solo per il trigger HTTP."
-    }
-  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6103,16 +6213,16 @@
       "value": "(UTC+09:00) Seoul"
     }
   ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Recuperare altri risultati fino al limite di impaginazione"
+    }
+  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "Visualizza documentazione"
-    }
-  ],
-  "cP4UkW": [
-    {
-      "type": 0,
-      "value": "L'intervallo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "cR9RtV": [
@@ -6271,22 +6381,10 @@
       "value": "Frequenza"
     }
   ],
-  "dSTRb/": [
-    {
-      "type": 0,
-      "value": "Specificare il comportamento e le funzionalità per il trasferimento del contenuto su HTTP. I messaggi di grandi dimensioni possono essere suddivisi in richieste più piccole al connettore per consentire il caricamento di messaggi di grandi dimensioni. Per i dettagli, vedere http://aka.ms/logicapps-chunk#upload-content-in-chunks"
-    }
-  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Ignora"
-    }
-  ],
-  "dWFyfN": [
-    {
-      "type": 0,
-      "value": "Input sicuri dell'operazione."
     }
   ],
   "daoo3l": [
@@ -6435,6 +6533,12 @@
       "value": "Corsivo (⌘I)"
     }
   ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Abilita la suddivisione per avviare un'istanza del flusso di lavoro per ogni elemento nella matrice selezionata. Ogni istanza può anche avere un ID di traccia distinto"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6459,6 +6563,12 @@
       "value": "Facoltativo. Indice della posizione in cui interrompere l'estrazione della sottostringa."
     }
   ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Esempio: PT1S"
+    }
+  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6481,12 +6591,6 @@
     {
       "type": 0,
       "value": "Seleziona una risorsa API Management"
-    }
-  ],
-  "fGcSFd": [
-    {
-      "type": 0,
-      "value": "Il numero di paging supera il valore massimo"
     }
   ],
   "fKYuwf": [
@@ -6575,6 +6679,12 @@
       "value": "Runtime"
     }
   ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limite"
+    }
+  ],
   "g7my78": [
     {
       "type": 0,
@@ -6627,6 +6737,12 @@
     {
       "type": 0,
       "value": "Operazione precedente non riuscita"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "Nessuno"
     }
   ],
   "gQt/0f": [
@@ -6689,6 +6805,12 @@
       "value": "Quando usata all'interno di un ciclo until, questa funzione restituisce l'indice dell'iterazione corrente del ciclo specificato."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "I nomi di output devono essere univoci."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6723,6 +6845,18 @@
     {
       "type": 0,
       "value": "Aggiungi prima uno schema di origine, quindi seleziona gli elementi per compilare la mappa"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Invia di nuovo un flusso di lavoro eseguito da questa azione"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Consenti la divisione in blocchi"
     }
   ],
   "hN7iBP": [
@@ -6891,7 +7025,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Nessuna azione"
     }
   ],
   "iB8YKD": [
@@ -6904,6 +7038,12 @@
     {
       "type": 0,
       "value": "Converte una stringa in lettere maiuscole usando le regole per l'utilizzo di maiuscole e minuscole delle impostazioni cultura inglese non dipendenti da paese/area geografica"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Scegliere il tipo di output"
     }
   ],
   "iEy9pT": [
@@ -6954,6 +7094,12 @@
     {
       "type": 0,
       "value": "Identità gestita"
+    }
+  ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Output sicuri dell'operazione e riferimenti delle proprietà di output"
     }
   ],
   "iTKrs8": [
@@ -7080,6 +7226,12 @@
       "value": "Indicare a Microsoft come è possibile migliorare questa funzionalità"
     }
   ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Opzioni richiesta - Timeout"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -7152,6 +7304,12 @@
       "value": "Modificare in JSON"
     }
   ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "L'abilitazione degli input sicuri garantirà automaticamente la sicurezza degli output."
+    }
+  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7162,12 +7320,6 @@
     {
       "type": 0,
       "value": "Descrivere le operazioni che il flusso deve eseguire. Aggiungere i dettagli laddove possibile, come il connettore da usare e se deve essere incluso un eventuale contenuto."
-    }
-  ],
-  "juR40n": [
-    {
-      "type": 0,
-      "value": "Durata"
     }
   ],
   "juvF+0": [
@@ -7329,6 +7481,12 @@
       "value": "count"
     }
   ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Aggiungere un output"
+    }
+  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -7475,6 +7633,12 @@
       "value": "Inserisci espressione (è anche possibile aggiungere digitando /nell'editor)"
     }
   ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Convalidare il corpo della richiesta in base allo schema specificato. In caso di mancata corrispondenza, viene restituito il codice HTTP 400"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7511,6 +7675,12 @@
       "value": "Nome"
     }
   ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Soglia per gli elementi da restituire"
+    }
+  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7535,16 +7705,6 @@
       "value": "Funzione eliminata."
     }
   ],
-  "mGPqAg": [
-    {
-      "type": 0,
-      "value": "Elimina "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7555,12 +7715,6 @@
     {
       "type": 0,
       "value": "Restituisce una rappresentazione stringa di un URI di dati"
-    }
-  ],
-  "mOr9ll": [
-    {
-      "type": 0,
-      "value": "Durata massima di una singola richiesta in uscita da questa azione. Se la richiesta non termina entro questo limite dopo l'esecuzione di nuovi tentativi, l'azione non riesce."
     }
   ],
   "mPakaD": [
@@ -8113,12 +8267,6 @@
       "value": "Aggiunge un numero intero di secondi al timestamp in formato stringa passato"
     }
   ],
-  "q8vnZQ": [
-    {
-      "type": 0,
-      "value": "Convalida il corpo della richiesta in base allo schema specificato. In caso di mancata corrispondenza, verrà restituito il codice HTTP 400."
-    }
-  ],
   "qAlTD5": [
     {
       "type": 0,
@@ -8304,6 +8452,12 @@
     {
       "type": 0,
       "value": "Suggerimento flusso precedente"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Limitare la durata massima tra i tentativi e le risposte asincrone per questa azione. Nota: questo non modifica il timeout della richiesta di una singola richiesta"
     }
   ],
   "r/n6/9": [
@@ -8540,12 +8694,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Raccolta da controllare per verificare se è vuota."
-    }
-  ],
-  "scmyvO": [
-    {
-      "type": 0,
-      "value": "Timeout azione"
     }
   ],
   "sfJTHV": [
@@ -8862,12 +9010,6 @@
       "value": "Mostra"
     }
   ],
-  "uZH8Qs": [
-    {
-      "type": 0,
-      "value": "Limita la durata massima tra i tentativi e le risposte asincrone per questa azione. Nota: questo non modifica il timeout della richiesta di una singola richiesta."
-    }
-  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -9072,6 +9214,12 @@
     {
       "type": 0,
       "value": "Per creare e usare una connessione API, è necessario configurare un'identità gestita in questa app per la logica."
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Durata"
     }
   ],
   "vlDynP": [
@@ -9596,6 +9744,12 @@
     {
       "type": 0,
       "value": "Immetti il valore"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Editor espressioni"
     }
   ],
   "zIDVd9": [

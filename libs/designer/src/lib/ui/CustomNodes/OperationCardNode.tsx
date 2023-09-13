@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
@@ -47,7 +48,7 @@ import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService } from '@microsoft/designer-client-services-logic-apps';
+import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
@@ -75,6 +76,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
+  const parenRunData = useRunData(metadata?.parentNodeId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const runHistory = useRetryHistory(id);
@@ -85,6 +87,19 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
 
   const getRunRepetition = () => {
+    if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
+      return {
+        properties: {
+          status: constants.FLOW_STATUS.SKIPPED,
+          inputsLink: null,
+          outputsLink: null,
+          startTime: null,
+          endTime: null,
+          trackingId: null,
+          correlation: null,
+        },
+      };
+    }
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   };
 
@@ -96,19 +111,23 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName }], getRunRepetition, {
-    refetchOnWindowFocus: false,
-    initialData: null,
-    refetchIntervalInBackground: true,
-    onSuccess: onRunRepetitionSuccess,
-    enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
-  });
+  } = useQuery<any>(
+    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
+    getRunRepetition,
+    {
+      refetchOnWindowFocus: false,
+      initialData: null,
+      refetchIntervalInBackground: true,
+      onSuccess: onRunRepetitionSuccess,
+      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+    }
+  );
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName]);
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
 
   const dependencies = useTokenDependencies(id);
 
@@ -210,7 +229,33 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     };
   };
 
+  const getResubmitMenuItem = () => {
+    const resubmitDescription = intl.formatMessage({
+      defaultMessage: 'Resubmit a workflow run from this action',
+      description: 'accessability text for the resubmit button',
+    });
+
+    const resubmitButtonText = intl.formatMessage({
+      defaultMessage: 'Submit from this action',
+      description: 'Button label for submitting a workflow to rerun from this action',
+    });
+
+    const handleResubmitClick = () => {
+      WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
+    };
+    return {
+      key: resubmitDescription,
+      disabled: false,
+      iconName: 'PlaybackRate1x',
+      title: resubmitButtonText,
+      type: MenuItemType.Advanced,
+      onClick: handleResubmitClick,
+    };
+  };
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
+  if (runData?.canResubmit) {
+    contextMenuOptions.push(getResubmitMenuItem());
+  }
 
   const opQuery = useOperationQuery(id);
 

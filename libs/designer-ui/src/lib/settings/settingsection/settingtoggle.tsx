@@ -1,12 +1,13 @@
 import type { IToggleProps } from '@fluentui/react';
 import { Toggle } from '@fluentui/react';
+import { useIntl } from 'react-intl';
 
 export type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
 export interface SettingProps {
   readOnly?: boolean;
   ariaLabel?: string;
-  customLabel?: () => JSX.Element;
+  customLabel?: JSX.Element;
 }
 
 export interface SettingToggleProps extends IToggleProps, SettingProps {
@@ -23,34 +24,28 @@ export const SettingToggle = ({
   onText,
   offText,
 }: SettingToggleProps): JSX.Element | null => {
-  if (customLabel) {
-    return (
-      <>
-        {customLabel()}
-        <Toggle
-          className="msla-setting-section-toggle"
-          checked={checked}
-          disabled={readOnly}
-          onText={onText}
-          offText={offText}
-          onChange={onToggleInputChange}
-          label={label}
-          ariaLabel={ariaLabel}
-        />
-      </>
-    );
-  }
-
+  const intl = useIntl();
+  const defaultOnText = intl.formatMessage({
+    defaultMessage: 'On',
+    description: 'label when setting is on',
+  });
+  const defaultOffText = intl.formatMessage({
+    defaultMessage: 'Off',
+    description: 'label when setting is off',
+  });
   return (
-    <Toggle
-      className="msla-setting-section-toggle"
-      checked={checked}
-      disabled={readOnly}
-      onText={onText}
-      offText={offText}
-      onChange={onToggleInputChange}
-      label={label}
-      ariaLabel={ariaLabel}
-    />
+    <>
+      {customLabel ? customLabel : null}
+      <Toggle
+        className="msla-setting-section-toggle"
+        checked={checked}
+        disabled={readOnly}
+        onText={onText ?? defaultOnText}
+        offText={offText ?? defaultOffText}
+        onChange={onToggleInputChange}
+        label={label}
+        ariaLabel={ariaLabel}
+      />
+    </>
   );
 };

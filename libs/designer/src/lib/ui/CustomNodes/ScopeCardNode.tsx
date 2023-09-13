@@ -33,7 +33,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService } from '@microsoft/designer-client-services-logic-apps';
+import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
@@ -63,12 +63,26 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
+  const parenRunData = useRunData(metadata?.parentNodeId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
 
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
+    if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
+      return {
+        properties: {
+          status: constants.FLOW_STATUS.SKIPPED,
+          inputsLink: null,
+          outputsLink: null,
+          startTime: null,
+          endTime: null,
+          trackingId: null,
+          correlation: null,
+        },
+      };
+    }
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
   };
 
@@ -80,19 +94,23 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName }], getRunRepetition, {
-    refetchOnWindowFocus: false,
-    initialData: null,
-    refetchOnMount: true,
-    onSuccess: onRunRepetitionSuccess,
-    enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
-  });
+  } = useQuery<any>(
+    ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
+    getRunRepetition,
+    {
+      refetchOnWindowFocus: false,
+      initialData: null,
+      refetchOnMount: true,
+      onSuccess: onRunRepetitionSuccess,
+      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+    }
+  );
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName]);
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -241,8 +259,34 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     };
   };
 
-  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
+  const getResubmitMenuItem = () => {
+    const resubmitDescription = intl.formatMessage({
+      defaultMessage: 'Resubmit a workflow run from this action',
+      description: 'accessability text for the resubmit button',
+    });
 
+    const resubmitButtonText = intl.formatMessage({
+      defaultMessage: 'Submit from this action',
+      description: 'Button label for submitting a workflow to rerun from this action',
+    });
+
+    const handleResubmitClick = () => {
+      WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [scopeId]);
+    };
+    return {
+      key: resubmitDescription,
+      disabled: false,
+      iconName: 'PlaybackRate1x',
+      title: resubmitButtonText,
+      type: MenuItemType.Advanced,
+      onClick: handleResubmitClick,
+    };
+  };
+
+  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
+  if (runData?.canResubmit) {
+    contextMenuOptions.push(getResubmitMenuItem());
+  }
   const implementedGraphTypes = [
     constants.NODE.TYPE.IF,
     constants.NODE.TYPE.SWITCH,

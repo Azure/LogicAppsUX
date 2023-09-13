@@ -1,18 +1,19 @@
 import type { SectionProps } from '../';
-import constants from '../../../common/constants';
+import { SettingSectionName } from '../';
 import type { AppDispatch, RootState } from '../../../core';
 import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../core/actions/bjsworkflow/runafter';
-import { type ValidationError, ValidationWarningKeys } from '../../../core/state/setting/settingSlice';
 import { updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
+import type { ValidationError } from '../validation/validation';
+import { ValidationErrorKeys, ValidationErrorType } from '../validation/validation';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: SectionProps): JSX.Element | null => {
+export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: SectionProps): JSX.Element | null => {
   const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
   const dispatch = useDispatch<AppDispatch>();
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -27,12 +28,12 @@ export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: 
     description: 'title for run after setting section',
   });
   const lastActionErrorMessage = intl.formatMessage({
-    description: 'error message for deselection of last run after action',
     defaultMessage: 'Each action must have one or more run after configurations',
+    description: 'error message for deselection of last run after action',
   });
   const lastStatusErrorMessage = intl.formatMessage({
-    description: 'error message for deselection of last run after status',
     defaultMessage: 'Each run after configuration must have at least one status checked',
+    description: 'error message for deselection of last run after status',
   });
 
   const handleStatusChange = (predecessorId: string, status: string, checked?: boolean) => {
@@ -45,13 +46,20 @@ export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: 
       updatedStatus.push(status);
     }
 
-    if (!updatedStatus.length && !errors.some(({ key }) => key === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS)) {
-      setErrors([...errors, { key: ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS, message: lastStatusErrorMessage }]);
+    if (!updatedStatus.length && !errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS)) {
+      setErrors([
+        ...errors,
+        {
+          key: ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS,
+          errorType: ValidationErrorType.WARNING,
+          message: lastStatusErrorMessage,
+        },
+      ]);
       return;
     } else if (!updatedStatus.length) {
       return;
-    } else if (errors.some(({ key }) => key === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS)) {
-      setErrors(errors.filter(({ key }) => key !== ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS));
+    } else if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS)) {
+      setErrors(errors.filter(({ key }) => key !== ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS));
     }
 
     dispatch(
@@ -81,13 +89,20 @@ export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: 
           handleStatusChange(id, status, checked);
         },
         onDelete: () => {
-          if (arr.length < 2 && !errors.some(({ key }) => key === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION)) {
-            setErrors([...errors, { key: ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION, message: lastActionErrorMessage }]);
+          if (arr.length < 2 && !errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION)) {
+            setErrors([
+              ...errors,
+              {
+                key: ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION,
+                errorType: ValidationErrorType.WARNING,
+                message: lastActionErrorMessage,
+              },
+            ]);
             return;
           } else if (arr.length < 2) {
             return;
-          } else if (errors.some(({ key }) => key === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION)) {
-            setErrors(errors.filter(({ key }) => key !== ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION));
+          } else if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION)) {
+            setErrors(errors.filter(({ key }) => key !== ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION));
           }
 
           dispatch(
@@ -105,7 +120,7 @@ export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: 
   const runAfterSectionProps: SettingsSectionProps = {
     id: 'runAfter',
     title: runAfterTitle,
-    sectionName: constants.SETTINGSECTIONS.RUNAFTER,
+    sectionName: SettingSectionName.RUNAFTER,
     expanded,
     isReadOnly: readOnly,
     onHeaderClick,
@@ -128,7 +143,7 @@ export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: 
       },
     ],
     validationErrors: errors,
-    onWarningDismiss: handleWarningDismiss,
+    onDismiss: handleWarningDismiss,
   };
 
   return <SettingsSection {...runAfterSectionProps} />;

@@ -624,7 +624,7 @@ export interface ResponseInputs {
 /* Retryable action inputs types (authentication, operation options, retry policy) */
 
 export interface RetryPolicy {
-  count?: number;
+  count?: number | string;
   interval?: string /* TimeSpan, e.g., 1.02:03:04 */;
   type?: string; // None, Exponential or Fixed
   minimumInterval?: string;
@@ -926,6 +926,8 @@ export interface WorkflowRunAction {
   retryHistory: RetryHistory[];
   startTime: string;
   endTime: string;
+  canResubmit?: boolean;
+  executionMode?: 'ResubmittedResults' | 'StaticResults' | 'NotSpecified';
   correlation: {
     actionTrackingId: string;
     clientTrackingId: string;
