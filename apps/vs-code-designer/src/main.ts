@@ -3,8 +3,9 @@ import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodele
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { activateAzurite } from './app/utils/azurite/activateAzurite';
 import { validateOrInstallBinaries } from './app/utils/binaries';
-import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
+import { promptStartDesignTimeOption, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -50,18 +51,24 @@ export async function activate(context: vscode.ExtensionContext) {
       });
     });
 
+    activateContext.telemetry.properties.lastStep = 'promptStartDesignTimeOption';
+    await promptStartDesignTimeOption(activateContext);
+
+    activateContext.telemetry.properties.lastStep = 'activateAzurite';
+    await activateAzurite(activateContext);
+
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
-    activateContext.telemetry.properties.lastStep = 'registerEvent';
+    activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
     });
 
-    activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';
+    activateContext.telemetry.properties.lastStep = 'registerEvent';
     registerEvent(
       extensionCommand.validateLogicAppProjects,
       vscode.workspace.onDidChangeWorkspaceFolders,

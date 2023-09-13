@@ -5,6 +5,12 @@
       "value": "Tesztelés folyamatban"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Figyelmeztetés: a bemeneti csomópont típusa nem felel meg a sémacsomópont típusának"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -363,20 +369,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 0,
-      "value": "A(z) "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " már nem szerepel a műveleti sémában. Távolítsa el, mielőtt újból mentené a munkafolyamatot."
     }
   ],
   "0uj1Li": [
@@ -911,6 +903,20 @@
       "value": "Kötelező megadni. A legkisebb visszaadható egész szám."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "A(z) „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "” megadása kötelező."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -987,20 +993,6 @@
       "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker rejtett"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "A(z) "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " megadása kötelező."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1059,6 +1051,16 @@
     {
       "type": 0,
       "value": "Törzs"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " összekötő ikonja"
     }
   ],
   "5SAQOb": [
@@ -1183,6 +1185,12 @@
       "value": "Mégse"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Figyelmeztetés: a bemeneti csomóponttípus nem felel meg a bemenethez engedélyezett típusok egyikének"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1261,6 +1269,20 @@
       "value": "Kötelező megadni. Az az érték, amelyhez az indexet meg kell keresni."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes értéket a(z) „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "” paraméterhez."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1271,6 +1293,12 @@
     {
       "type": 0,
       "value": "Adattípus"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Függvény kiválasztása innen:"
     }
   ],
   "73iM9+": [
@@ -1933,10 +1961,10 @@
       "value": "Egyetlen formátummegadó karakter, vagy pedig egy egyéni formátumminta, mely az időbélyeg értékének formátumát határozza meg. Ha nincs megadva formátum, a rendszer az ISO 8601 formátumot („o”) használja."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Egyéni érték törlése"
+      "value": "Figyelmeztetés: az egyéni érték nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
   "BFTwRN": [
@@ -2323,12 +2351,6 @@
     {
       "type": 0,
       "value": "Időtartam"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Az egyéni érték nem felel meg a sémacsomópont típusának"
     }
   ],
   "Dhu3IS": [
@@ -2973,20 +2995,6 @@
       "value": "Adjon meg egy érvényes dátum/idő típusú értéket."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes értéket a(z) "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " paraméterhez."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2995,20 +3003,6 @@
     {
       "type": 0,
       "value": " Átjáró telepítése"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "A(z) „"
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "“ paraméter és értékének eltávolítása"
     }
   ],
   "HzS2gJ": [
@@ -3113,12 +3107,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutszk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Speciális beállítások"
     }
   ],
   "IsVhkH": [
@@ -3925,12 +3913,6 @@
       "value": "Kapcsolat neve"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy egyéni értéket"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4091,12 +4073,6 @@
       "value": "Kötelező megadni. Az érték a tömbben található egész számok száma."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Alapértelmezett érték"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4201,12 +4177,6 @@
     {
       "type": 0,
       "value": "Csatlakozási hibák"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Létrehozás mellőzése, ha nincs érték"
     }
   ],
   "Pudllg": [
@@ -4403,12 +4373,6 @@
       "value": "(UTC+12:00) Egyezményes világidő+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Adjon meg érvényes feltételt."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4561,12 +4525,6 @@
     {
       "type": 0,
       "value": "A paraméter átalakítása egész számmá."
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "A bemeneti csomópont típusa nem felel meg a sémacsomópont típusának."
     }
   ],
   "SLJkRn": [
@@ -5015,6 +4973,20 @@
       "value": "Érvényes JSON-t adjon meg."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "A(z) „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "” már nem szerepel a műveleti sémában. Távolítsa el, mielőtt újból mentené a munkafolyamatot."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5239,6 +5211,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes feltételutasítást."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5255,6 +5233,12 @@
     {
       "type": 0,
       "value": "Eltávolítás"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Egyéni érték)"
     }
   ],
   "WgoP7R": [
@@ -5659,12 +5643,6 @@
       "value": "(UTC+05:30) Csennai, Kolkata, Mumbai, Új-Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Az egyéni érték nem felel meg a bemenethez engedélyezett típusok egyikének"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -6057,6 +6035,12 @@
       "value": "panel"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Érvényes JSON-t adjon meg."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6127,12 +6111,6 @@
     {
       "type": 0,
       "value": "Félkövér (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "A bemeneti csomóponttípus nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
   "cmTCsW": [
@@ -6863,6 +6841,12 @@
       "value": "Ez érvénytelen értéket tartalmaz"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7401,6 +7385,12 @@
     {
       "type": 0,
       "value": "Állapot nélküli futtatási mód:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Legördülő lista a fájlelérési út kiválasztásához"
     }
   ],
   "lhL/KL": [
@@ -8327,6 +8317,20 @@
       "value": "Adja meg a parameter értékét."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Nem találhatók fájlok a megadott "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": " elérési úton, a függvény használatához mentsen XSLT-fájlt a megadott elérési útra"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8433,6 +8437,12 @@
     {
       "type": 0,
       "value": "Eset hozzáadása"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Figyelmeztetés: az egyéni érték nem felel meg a sémacsomópont típusának"
     }
   ],
   "sVQe34": [
@@ -8887,6 +8897,20 @@
     {
       "type": 0,
       "value": "Tegyen fel a munkafolyamattal vagy a Logic Apps szolgáltatással kapcsolatos kérdést."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "A(z) „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ paraméter és értékének eltávolítása"
     }
   ],
   "uzsleE": [

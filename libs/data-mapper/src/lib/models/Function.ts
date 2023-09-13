@@ -1,6 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
+import { InputFormat as InputEntryType, NormalizedDataType } from './Schema';
 import type { SchemaNodeExtended } from './Schema';
-import { NormalizedDataType } from './Schema';
 
 export interface FunctionManifest {
   version: string;
@@ -26,12 +26,13 @@ export interface FunctionInput {
   allowedTypes: NormalizedDataType[];
   isOptional: boolean;
   allowCustomInput: boolean;
+  inputEntryType?: InputEntryType;
 
   tooltip?: string;
   placeHolder: string;
 }
 
-// NOTE: These values must be in alphabetical order (used in sorting within FunctionsList)
+// NOTE: These values must be in alphabetical order (used in sorting within FunctionsList) with the exception of 'Custom' which goes at the bottom
 export enum FunctionCategory {
   Collection = 'Collection',
   Conversion = 'Conversion',
@@ -40,6 +41,7 @@ export enum FunctionCategory {
   Math = 'Math',
   String = 'String',
   Utility = 'Utilities',
+  Custom = 'Custom',
 }
 
 export interface CreatedFunction {
@@ -511,6 +513,69 @@ export const functionMock: FunctionData[] = [
     displayName: 'Sort',
     category: FunctionCategory.Collection,
     description: 'Sort the sequence by a given property',
+  },
+  {
+    key: 'sortcustom',
+    maxNumberOfInputs: 2,
+    functionName: 'sortcustom',
+    outputValueType: NormalizedDataType.Complex,
+    inputs: [
+      {
+        name: 'Scope',
+        allowedTypes: [NormalizedDataType.Complex, NormalizedDataType.Object],
+        isOptional: false,
+        allowCustomInput: false,
+        placeHolder: 'The source sequence',
+      },
+      {
+        name: 'Sort property',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: false,
+        placeHolder: 'The property to sort on',
+      },
+    ],
+    displayName: 'Sort Custom',
+    category: FunctionCategory.Custom,
+    description: 'Sort the sequence by a given property',
+  },
+  {
+    key: 'XPath',
+    maxNumberOfInputs: 1,
+    functionName: 'xpath',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'XPATH expression',
+        allowedTypes: [NormalizedDataType.String],
+        inputEntryType: InputEntryType.TextBox,
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'expression',
+      },
+    ],
+    displayName: 'Execute XPath',
+    category: FunctionCategory.Utility,
+    description: 'Evaluates user supplied XPATH expression.',
+  },
+  {
+    key: 'InlineXslt',
+    maxNumberOfInputs: 1,
+    functionName: 'inline-xslt',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'XSLT File',
+        allowedTypes: [NormalizedDataType.String],
+        inputEntryType: InputEntryType.FilePicker,
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'File name inside inlineXslt folder under artifacts',
+      },
+    ],
+    displayName: 'Execute XSLT',
+    category: FunctionCategory.Utility,
+    description: 'Inserts user supplied XSLT into map.',
   },
   ...pseudoFunctions,
 ];

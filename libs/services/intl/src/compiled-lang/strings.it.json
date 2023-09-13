@@ -5,6 +5,12 @@
       "value": "Test"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -359,16 +365,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa che può contenere il valore."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " non è più presente nello schema dell'operazione. Deve essere rimosso prima di salvare nuovamente il flusso di lavoro."
     }
   ],
   "0uj1Li": [
@@ -891,6 +887,20 @@
       "value": "Obbligatorio. Integer più basso che può essere restituito."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' è obbligatorio."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -967,16 +977,6 @@
       "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è nascosto"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " è obbligatorio."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1035,6 +1035,16 @@
     {
       "type": 0,
       "value": "Corpo"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "icona connettore "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1159,6 +1169,12 @@
       "value": "Annulla"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Avviso: il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1245,6 +1261,20 @@
       "value": "Obbligatorio. Valore per il quale trovare l'indice."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Immettere un valore valido per '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1255,6 +1285,12 @@
     {
       "type": 0,
       "value": "Tipo di dati"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Selezionare funzione da"
     }
   ],
   "73iM9+": [
@@ -1928,10 +1964,10 @@
       "value": "Singolo carattere identificatore del formato o modello di formato personalizzato che indica come formattare il valore di questo timestamp. Se il formato non viene specificato, verrà usato il formato ISO 8601 ('o')."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Cancella valore personalizzato"
+      "value": "Avviso: il valore personalizzato non corrisponde a uno dei tipi consentiti per questo input"
     }
   ],
   "BFTwRN": [
@@ -2306,12 +2342,6 @@
     {
       "type": 0,
       "value": "Durata"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Il valore personalizzato non corrisponde al tipo del nodo dello schema"
     }
   ],
   "Dhu3IS": [
@@ -2963,20 +2993,6 @@
       "value": "Immetti un valore datetime valido."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Immetti un valore valido per "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2985,20 +3001,6 @@
     {
       "type": 0,
       "value": " Installa gateway"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Rimuovi il parametro \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" e il relativo valore"
     }
   ],
   "HzS2gJ": [
@@ -3103,12 +3105,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Opzioni avanzate"
     }
   ],
   "IsVhkH": [
@@ -3926,12 +3922,6 @@
       "value": "Nome connessione"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Immetti valore personalizzato"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4100,12 +4090,6 @@
       "value": "Obbligatorio. Valore corrispondene al numero di integer nella matrice."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Valore predefinito"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4210,12 +4194,6 @@
     {
       "type": 0,
       "value": "Errori di connessione"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Non generare se non viene specificato alcun valore"
     }
   ],
   "Pudllg": [
@@ -4408,12 +4386,6 @@
       "value": "(UTC + 12.00 h) Coordinated Universal Time+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Immetti una condizione valida."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4577,12 +4549,6 @@
     {
       "type": 0,
       "value": "Converte il parametro nel tipo integer"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Il tipo di nodo di input non corrisponde al tipo del nodo dello schema."
     }
   ],
   "SLJkRn": [
@@ -5051,6 +5017,20 @@
       "value": "Immettere un oggetto JSON valido."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' non è più presente nello schema dell'operazione. Deve essere rimosso prima di salvare nuovamente il flusso di lavoro."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5275,6 +5255,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Immettere un'istruzione di condizione valida."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5291,6 +5277,12 @@
     {
       "type": 0,
       "value": "Rimuovi"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Valore personalizzato)"
     }
   ],
   "WgoP7R": [
@@ -5695,12 +5687,6 @@
       "value": "(UTC+05.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Il valore personalizzato non corrisponde a uno dei tipi consentiti per questo input"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -6093,6 +6079,12 @@
       "value": "pannello"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Immettere un oggetto JSON valido."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6163,12 +6155,6 @@
     {
       "type": 0,
       "value": "Grassetto (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input"
     }
   ],
   "cmTCsW": [
@@ -6902,6 +6888,12 @@
       "value": "Contiene un valore non valido"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7451,6 +7443,12 @@
     {
       "type": 0,
       "value": "Modalità di esecuzione senza stato:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Elenco a discesa per selezionare il percorso file"
     }
   ],
   "lhL/KL": [
@@ -8380,6 +8378,20 @@
       "value": "Immetti il valore per il parametro."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Non sono stati trovati file in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ". Salvare XSLT nel percorso specificato per usare questa funzione"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8486,6 +8498,12 @@
     {
       "type": 0,
       "value": "Aggiungi caso"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Avviso: il valore personalizzato non corrisponde al tipo del nodo dello schema"
     }
   ],
   "sVQe34": [
@@ -8944,6 +8962,20 @@
     {
       "type": 0,
       "value": "Porre una domanda relativa al flusso di lavoro o alle app per la logica."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Rimuovere il parametro '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' e il relativo valore"
     }
   ],
   "uzsleE": [

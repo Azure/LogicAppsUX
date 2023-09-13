@@ -5,6 +5,12 @@
       "value": "Pruebas"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Advertencia: el tipo de nodo de entrada no coincide con el tipo del nodo de esquema"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -359,16 +365,6 @@
     {
       "type": 0,
       "value": "Obligatorio. La cadena que debería contener el valor."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " ya no está presente en el esquema de la operación. Debe quitarse antes de que se vuelva a guardar el flujo de trabajo."
     }
   ],
   "0uj1Li": [
@@ -899,6 +895,20 @@
       "value": "Obligatorio. El entero menor que pudo devolverse."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "Se requiere \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -975,20 +985,6 @@
       "value": "Botón para agregar contenido dinámico si TokenPicker está oculto"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "Se requiere "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1047,6 +1043,16 @@
     {
       "type": 0,
       "value": "Cuerpo"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "Icono del conector "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1171,6 +1177,12 @@
       "value": "Cancelar"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Advertencia: el tipo de nodo de entrada no coincide con uno de los tipos permitidos para esta entrada"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1257,6 +1269,20 @@
       "value": "Obligatorio. Valor para el que se va a buscar el índice."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Escriba un valor válido para \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1267,6 +1293,12 @@
     {
       "type": 0,
       "value": "Tipo de datos"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Seleccionar función de"
     }
   ],
   "73iM9+": [
@@ -1940,10 +1972,10 @@
       "value": "Un carácter especificador de formato único o un patrón de formato personalizado que indica cómo debe ser el formato del valor de esta marca de tiempo. Si no se proporciona ningún formato, se usará el formato ISO 8601 (\"o\")."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Borrar valor personalizado"
+      "value": "Advertencia: el valor personalizado no coincide con uno de los tipos permitidos para esta entrada"
     }
   ],
   "BFTwRN": [
@@ -2326,12 +2358,6 @@
     {
       "type": 0,
       "value": "Duración"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "El valor personalizado no coincide con el tipo del nodo de esquema"
     }
   ],
   "Dhu3IS": [
@@ -2983,20 +3009,6 @@
       "value": "Escribir una fecha y hora válidas."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Escriba un valor válido para "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3005,20 +3017,6 @@
     {
       "type": 0,
       "value": " Instalar puerta de enlace"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Quitar el parámetro \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" y su valor"
     }
   ],
   "HzS2gJ": [
@@ -3123,12 +3121,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Yakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Opciones avanzadas"
     }
   ],
   "IsVhkH": [
@@ -3946,12 +3938,6 @@
       "value": "Nombre de conexión"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Escribir un valor personalizado"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4112,12 +4098,6 @@
       "value": "Obligatorio. Este valor es el número de enteros que se encuentran en esta matriz."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Valor predeterminado"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4222,12 +4202,6 @@
     {
       "type": 0,
       "value": "Errores de conexión"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "No generar si no hay ningún valor"
     }
   ],
   "Pudllg": [
@@ -4420,12 +4394,6 @@
       "value": "(UTC+12:00) Hora universal coordinada +12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Escribir una condición válida."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4589,12 +4557,6 @@
     {
       "type": 0,
       "value": "Convertir el parámetro en un entero"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "El tipo de nodo de entrada no coincide con el tipo del nodo de esquema."
     }
   ],
   "SLJkRn": [
@@ -5063,6 +5025,20 @@
       "value": "Especifica un nombre válido."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" ya no está presente en el esquema de la operación. Debe quitarse antes de que se vuelva a guardar el flujo de trabajo."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5287,6 +5263,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Escriba una instrucción de condición válida."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5303,6 +5285,12 @@
     {
       "type": 0,
       "value": "Quitar"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Valor personalizado)"
     }
   ],
   "WgoP7R": [
@@ -5707,12 +5695,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, Nueva Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "El valor personalizado no coincide con uno de los tipos permitidos para esta entrada"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -6105,6 +6087,12 @@
       "value": "panel"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Especifica un nombre válido."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6175,12 +6163,6 @@
     {
       "type": 0,
       "value": "Negrita (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "El tipo de nodo de entrada no coincide con uno de los tipos permitidos para esta entrada"
     }
   ],
   "cmTCsW": [
@@ -6922,6 +6904,12 @@
       "value": "Contiene un valor no válido"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7471,6 +7459,12 @@
     {
       "type": 0,
       "value": "Modo de ejecución sin estado:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Lista desplegable para seleccionar filepath"
     }
   ],
   "lhL/KL": [
@@ -8396,6 +8390,20 @@
       "value": "Escriba el valor del parámetro."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "No se encontraron archivos en "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ". Guarde XSLT en la ruta de acceso especificada para usar esta función."
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8502,6 +8510,12 @@
     {
       "type": 0,
       "value": "Agregar un caso"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Advertencia: el valor personalizado no coincide con el tipo del nodo de esquema"
     }
   ],
   "sVQe34": [
@@ -8960,6 +8974,20 @@
     {
       "type": 0,
       "value": "Haga una pregunta relacionada con su flujo de trabajo o Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Quitar el parámetro \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" y su valor"
     }
   ],
   "uzsleE": [

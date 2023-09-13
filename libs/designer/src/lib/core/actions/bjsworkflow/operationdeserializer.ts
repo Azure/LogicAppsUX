@@ -24,7 +24,7 @@ import {
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import type { NodesMetadata, Operations, WorkflowKind } from '../../state/workflow/workflowInterfaces';
+import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
@@ -89,7 +89,6 @@ export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
   workflowParameters: Record<string, WorkflowParameter>,
-  workflowKind: WorkflowKind,
   dispatch: Dispatch
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
@@ -228,14 +227,7 @@ export const initializeOperationDetailsForManifest = async (
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
-      const settings = getOperationSettings(
-        isTrigger,
-        nodeOperationInfo,
-        nodeOutputs,
-        manifest,
-        /* swagger */ undefined,
-        /* operation */ undefined
-      );
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, /* swagger */ undefined, operation);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
@@ -304,24 +296,6 @@ const processChildGraphAndItsInputs = (
             });
           }
         }
-
-        const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
-          subGraphKey,
-          subManifest,
-          /* presetParameterValues */ undefined,
-          /* customSwagger */ undefined,
-          subOperation
-        );
-        const nodeOutputs = { outputs: {} };
-        nodesData.push({
-          id: subGraphKey,
-          nodeInputs,
-          nodeOutputs,
-          nodeDependencies: { inputs: inputDependencies, outputs: {} },
-          operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
-          manifest: subManifest,
-          operationMetadata: { iconUri: '', brandColor: '' },
-        });
       }
     }
   }

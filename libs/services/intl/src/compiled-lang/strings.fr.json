@@ -5,6 +5,12 @@
       "value": "Test"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Avertissement : le type de nœud d’entrée ne correspond pas au type du nœud de schéma"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -359,16 +365,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne pouvant contenir la valeur."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " n’est plus présent dans le schéma d’opération. Vous devez le supprimer avant de réenregistrer le workflow."
     }
   ],
   "0uj1Li": [
@@ -899,6 +895,20 @@
       "value": "Obligatoire. Entier le plus bas qui peut être retourné."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "« "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " » est obligatoire."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -975,16 +985,6 @@
       "value": "Bouton permettant d’ajouter du contenu dynamique si TokenPicker est masqué"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " est obligatoire."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1043,6 +1043,16 @@
     {
       "type": 0,
       "value": "Corps"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "Icône de connecteur "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1167,6 +1177,12 @@
       "value": "Annuler"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Avertissement : le type de nœud d’entrée ne correspond pas aux types autorisés pour cette entrée"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1253,6 +1269,20 @@
       "value": "Obligatoire. Valeur pour laquelle trouver l’index."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Entrez une valeur valide pour « "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " »."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1263,6 +1293,12 @@
     {
       "type": 0,
       "value": "Type de données"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Sélectionner une fonction depuis"
     }
   ],
   "73iM9+": [
@@ -1936,10 +1972,10 @@
       "value": "Caractère de spécificateur de format unique ou modèle de format personnalisé qui indique comment mettre en forme la valeur de cet horodateur. Si aucun format n'est fourni, le format ISO 8601 (« o ») est utilisé."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Effacer la valeur par défaut"
+      "value": "Avertissement : la valeur personnalisée ne correspond pas à l’un des types autorisés pour cette entrée"
     }
   ],
   "BFTwRN": [
@@ -2322,12 +2358,6 @@
     {
       "type": 0,
       "value": "Durée"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "La valeur personnalisée ne correspond pas au type du nœud de schéma"
     }
   ],
   "Dhu3IS": [
@@ -2979,20 +3009,6 @@
       "value": "Entrez une date/heure valide."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Entrez une valeur valide pour "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3001,20 +3017,6 @@
     {
       "type": 0,
       "value": " Installer la passerelle"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Supprimer le paramètre « "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " » et sa valeur"
     }
   ],
   "HzS2gJ": [
@@ -3119,12 +3121,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Iakoutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Options avancées"
     }
   ],
   "IsVhkH": [
@@ -3942,12 +3938,6 @@
       "value": "Nom de la connexion"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Entrer une valeur personnalisée"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4108,12 +4098,6 @@
       "value": "Obligatoire. Cette valeur correspond au nombre d'entiers qui se trouvent dans le tableau."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Valeur par défaut"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4218,12 +4202,6 @@
     {
       "type": 0,
       "value": "Erreurs de connexion"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Ne pas générer si aucune valeur"
     }
   ],
   "Pudllg": [
@@ -4416,12 +4394,6 @@
       "value": "(UTC+12:00) Temps universel coordonné + 12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Entrez une condition valide."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4585,12 +4557,6 @@
     {
       "type": 0,
       "value": "Convertir le paramètre en entier"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Le type de nœud d’entrée ne correspond pas au type du nœud de schéma."
     }
   ],
   "SLJkRn": [
@@ -5059,6 +5025,20 @@
       "value": "Entrez un JSON valide."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "« "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " » n’est plus présent dans le schéma d’opération. Vous devez le supprimer avant de réenregistrer le workflow."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5283,6 +5263,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Entrez une instruction de condition valide."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5299,6 +5285,12 @@
     {
       "type": 0,
       "value": "Supprimer"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(valeur personnalisée}"
     }
   ],
   "WgoP7R": [
@@ -5703,12 +5695,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "La valeur personnalisée ne correspond pas à l’un des types autorisés pour cette entrée"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -6101,6 +6087,12 @@
       "value": "volet"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Entrez un JSON valide."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6171,12 +6163,6 @@
     {
       "type": 0,
       "value": "Gras (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Le type de nœud d’entrée ne correspond pas à l’un des types autorisés pour cette entrée"
     }
   ],
   "cmTCsW": [
@@ -6918,6 +6904,12 @@
       "value": "Cette valeur contient une valeur incorrecte"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7467,6 +7459,12 @@
     {
       "type": 0,
       "value": "Mode d’exécution sans état :"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Liste déroulante pour sélectionner le chemin d’accès au fichier"
     }
   ],
   "lhL/KL": [
@@ -8400,6 +8398,20 @@
       "value": "Entrez une valeur pour le paramètre."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Fichiers introuvables dans "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", enregistrez XSLT dans le chemin d’accès spécifié pour utiliser cette fonction"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8506,6 +8518,12 @@
     {
       "type": 0,
       "value": "Ajouter un cas"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Avertissement : la valeur personnalisée ne correspond pas au type du nœud de schéma"
     }
   ],
   "sVQe34": [
@@ -8964,6 +8982,20 @@
     {
       "type": 0,
       "value": "Posez une question relative à votre flux de travail ou à Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Supprimer le paramètre « "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " » et sa valeur"
     }
   ],
   "uzsleE": [

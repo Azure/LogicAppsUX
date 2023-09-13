@@ -5,6 +5,12 @@
       "value": "Testování"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Upozornění: Typ vstupního uzlu neodpovídá typu uzlu schématu."
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -359,20 +365,6 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 0,
-      "value": "Parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " se už v operačním schématu nenachází. Než se pracovní postup znovu uloží, měl by se tento parametr odebrat."
     }
   ],
   "0uj1Li": [
@@ -903,6 +895,20 @@
       "value": "Povinný parametr. Nejnižší celé číslo, které se může vrátit."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "Vyžaduje se parametr "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -979,20 +985,6 @@
       "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker skrytý"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "Vyžaduje se parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1051,6 +1043,16 @@
     {
       "type": 0,
       "value": "Obsah"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "Ikona konektoru "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1175,6 +1177,12 @@
       "value": "Zrušit"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Upozornění: Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup."
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1261,6 +1269,20 @@
       "value": "Požadované. Hodnota, pro kterou má být nalezen index."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Zadejte platnou hodnotu parametru "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1271,6 +1293,12 @@
     {
       "type": 0,
       "value": "Datový typ"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Vybrat funkci z"
     }
   ],
   "73iM9+": [
@@ -1955,10 +1983,10 @@
       "value": "Jednoznakový specifikátor formátu nebo vlastní formátovací vzor, který určuje, jak formátovat hodnotu tohoto časového razítka. Pokud není formát zadaný, použije se formát ISO 8601 (o)."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Vymazat vlastní hodnotu"
+      "value": "Upozornění: Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
   "BFTwRN": [
@@ -2341,12 +2369,6 @@
     {
       "type": 0,
       "value": "Doba trvání"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Vlastní hodnota neodpovídá typu uzlu schématu"
     }
   ],
   "Dhu3IS": [
@@ -3017,20 +3039,6 @@
       "value": "Zadejte platné datum a čas."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Zadejte platnou hodnotu parametru "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3039,20 +3047,6 @@
     {
       "type": 0,
       "value": " Nainstalovat bránu"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Odebrat parametr "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " a jeho hodnotu"
     }
   ],
   "HzS2gJ": [
@@ -3157,12 +3151,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Upřesnit možnosti"
     }
   ],
   "IsVhkH": [
@@ -3991,12 +3979,6 @@
       "value": "Název připojení"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Zadat vlastní hodnotu"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4153,12 +4135,6 @@
       "value": "Povinný parametr. Tato hodnota představuje počet celých čísel v poli."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Výchozí hodnota"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4263,12 +4239,6 @@
     {
       "type": 0,
       "value": "Chyby připojení"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Negenerovat, pokud žádná hodnota"
     }
   ],
   "Pudllg": [
@@ -4457,12 +4427,6 @@
       "value": "(UTC+12:00) Koordinovaný univerzální čas (UTC)+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Zadejte platnou podmínku."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4633,12 +4597,6 @@
     {
       "type": 0,
       "value": "Převede parametr na celé číslo."
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
   "SLJkRn": [
@@ -5107,6 +5065,20 @@
       "value": "Zadejte platný kód JSON."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "Parametr "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " se už v operačním schématu nenachází. Než se pracovní postup znovu uloží, měl by se tento parametr odebrat."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5331,6 +5303,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Zadejte platný příkaz podmínky."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5347,6 +5325,12 @@
     {
       "type": 0,
       "value": "Odebrat"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Vlastní hodnota)"
     }
   ],
   "WgoP7R": [
@@ -5751,12 +5735,6 @@
       "value": "(UTC+05:30) Čennaj, Kalkata, Bombaj, Dillí"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -6149,6 +6127,12 @@
       "value": "panel"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Zadejte platný kód JSON."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6219,12 +6203,6 @@
     {
       "type": 0,
       "value": "Tučné (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup"
     }
   ],
   "cmTCsW": [
@@ -6977,6 +6955,12 @@
       "value": "Obsahuje neplatnou hodnotu"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7537,6 +7521,12 @@
     {
       "type": 0,
       "value": "Bezstavový režim spuštění:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Rozevírací seznam pro výběr cesty k souboru"
     }
   ],
   "lhL/KL": [
@@ -8481,6 +8471,20 @@
       "value": "Zadejte hodnotu parametru."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "V cestě "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": " nebyly nalezeny žádné soubory. Chcete-li tuto funkci použít, uložte soubor XSLT do zadané cesty."
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8587,6 +8591,12 @@
     {
       "type": 0,
       "value": "Přidat případ"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Upozornění: Vlastní hodnota neodpovídá typu uzlu schématu."
     }
   ],
   "sVQe34": [
@@ -9037,6 +9047,20 @@
     {
       "type": 0,
       "value": "Položte otázku související s pracovním postupem nebo Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Odebrat parametr "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " a jeho hodnotu"
     }
   ],
   "uzsleE": [

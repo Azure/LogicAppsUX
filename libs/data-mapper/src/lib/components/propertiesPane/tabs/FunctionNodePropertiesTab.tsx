@@ -3,13 +3,12 @@ import { setConnectionInput } from '../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
-import { isCustomValue } from '../../../utils/Connection.Utils';
-import { functionDropDownItemText, getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
+import { functionDropDownItemText, getFunctionBrandingForCategory, getInputName, getInputValue } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { LogCategory, LogService } from '../../../utils/Logging.Utils';
-import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
-import { InputDropdown } from '../../inputDropdown/InputDropdown';
+import { InputDropdown } from '../../inputTypes/InputDropdown';
+import { BoundedInputEntry } from './BoundedInputEntry';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, Text, Tooltip, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
@@ -125,26 +124,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
   const connection = connectionDictionary[selectedItemKey ?? ''];
 
-  const getInputName = (inputConnection: InputConnection | undefined) => {
-    if (inputConnection) {
-      return isCustomValue(inputConnection)
-        ? inputConnection
-        : isSchemaNodeExtended(inputConnection.node)
-        ? inputConnection.node.name
-        : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
-    }
-
-    return undefined;
-  };
-
-  const getInputValue = (inputConnection: InputConnection | undefined) => {
-    if (inputConnection) {
-      return isCustomValue(inputConnection) ? inputConnection : inputConnection.reactFlowKey;
-    }
-
-    return undefined;
-  };
-
   return (
     <div style={{ height: '100%' }}>
       <div>
@@ -194,25 +173,15 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
           {functionData.maxNumberOfInputs > 0 && ( // Functions with bounded inputs
             <Stack>
               {functionData.inputs.map((input, index) => {
-                const inputConnection = !connection
-                  ? undefined
-                  : Object.values(connection.inputs).length > 1
-                  ? connection.inputs[index][0]
-                  : connection.inputs[0][index];
-
                 return (
-                  <div key={index} style={{ marginTop: 8 }}>
-                    <Tooltip relationship="label" content={input.tooltip || ''}>
-                      <InputDropdown
-                        currentNode={functionData}
-                        placeholder={input.placeHolder}
-                        inputName={getInputName(inputConnection)}
-                        inputValue={getInputValue(inputConnection)}
-                        inputIndex={index}
-                        inputAllowsCustomValues={input.allowCustomInput}
-                      />
-                    </Tooltip>
-                  </div>
+                  <BoundedInputEntry
+                    key={index}
+                    input={input}
+                    index={index}
+                    functionData={functionData}
+                    connection={connection}
+                    connectionDictionary={connectionDictionary}
+                  />
                 );
               })}
             </Stack>
@@ -228,7 +197,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                         <InputDropdown
                           currentNode={functionData}
                           placeholder={functionData.inputs[0].placeHolder}
-                          inputName={getInputName(input)}
+                          inputName={getInputName(input, connectionDictionary)}
                           inputValue={getInputValue(input)}
                           inputIndex={index}
                           inputAllowsCustomValues={functionData.inputs[0].allowCustomInput}

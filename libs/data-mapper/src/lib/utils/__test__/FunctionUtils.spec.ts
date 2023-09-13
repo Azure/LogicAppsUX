@@ -4,10 +4,12 @@ import { NormalizedDataType, SchemaNodeProperty, type Schema, type SchemaExtende
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import {
+  addQuotesToString,
   calculateIndexValue,
   functionInputHasInputs,
   getFunctionLocationsForAllFunctions,
   getFunctionOutputValue,
+  removeQuotesFromString,
 } from '../Function.Utils';
 import { convertSchemaToSchemaExtended } from '../Schema.Utils';
 
@@ -413,6 +415,34 @@ describe('utils/Functions', () => {
           return node.key === 'target-/ns0:Root/ConditionalMapping/ItemPrice' || node.key === 'target-/ns0:Root/ConditionalMapping';
         }) && locationsForFunction.length === 2
       );
+    });
+  });
+
+  describe('addQuotesToString', () => {
+    it('adds quotes to string with none', () => {
+      const noQuotesString = 'str';
+      const quotesString = addQuotesToString(noQuotesString);
+      expect(quotesString).toEqual('"str"');
+    });
+
+    it("doesn't add quotes to string with quotation marks", () => {
+      const quotesString = '"str"';
+      const modifiedQuotesString = addQuotesToString(quotesString);
+      expect(modifiedQuotesString).toEqual('"str"');
+    });
+  });
+
+  describe('removeQuotesFromString', () => {
+    it("returns same string if it doesn't have quotes", () => {
+      const noQuotesString = 'str';
+      const quotesString = removeQuotesFromString(noQuotesString);
+      expect(quotesString).toEqual('str');
+    });
+
+    it('removes quotes from string', () => {
+      const quotesString = '"str"';
+      const noQuotesString = removeQuotesFromString(quotesString);
+      expect(noQuotesString).toEqual('str');
     });
   });
 });

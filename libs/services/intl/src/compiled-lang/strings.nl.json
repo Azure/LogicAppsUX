@@ -5,6 +5,12 @@
       "value": "Testen..."
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -359,16 +365,6 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die de waarde mag bevatten."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is niet meer aanwezig in het bewerkingsschema. Deze moet worden verwijderd voordat de werkstroom opnieuw wordt opgeslagen."
     }
   ],
   "0uj1Li": [
@@ -899,6 +895,16 @@
       "value": "Vereist. Het laagste gehele getal dat kan worden geretourneerd."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is vereist."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -979,16 +985,6 @@
       "value": "Knop om dynamische inhoud toe te voegen als TokenPicker is verborgen"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is vereist."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1047,6 +1043,20 @@
     {
       "type": 0,
       "value": "Hoofdtekst"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 0,
+      "value": "pictogram "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-connector"
     }
   ],
   "5SAQOb": [
@@ -1171,6 +1181,12 @@
       "value": "Annuleren"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met een van de toegestane typen voor deze invoer"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1257,6 +1273,20 @@
       "value": "Vereist. De waarde waarvoor de index moet worden gevonden."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Voer een geldige waarde in voor "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1267,6 +1297,12 @@
     {
       "type": 0,
       "value": "Gegevenstype"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Functie selecteren uit"
     }
   ],
   "73iM9+": [
@@ -1925,10 +1961,10 @@
       "value": "Eén teken voor aanduiding van de indeling of een aangepast indelingspatroon waarmee de indeling van de waarde voor dit tijdstempel wordt aangegeven. Als de indeling niet is opgegeven, wordt de ISO 8601-indeling ('o') gebruikt."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Aangepaste waarde wissen"
+      "value": "Waarschuwing: De aangepaste waarde komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "BFTwRN": [
@@ -2311,12 +2347,6 @@
     {
       "type": 0,
       "value": "Duur"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "De aangepaste waarde komt niet overeen met het type van het schemaknooppunt"
     }
   ],
   "Dhu3IS": [
@@ -2965,20 +2995,6 @@
       "value": "Voer een geldige datum/tijd in."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Voer een geldige waarde in voor "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2987,20 +3003,6 @@
     {
       "type": 0,
       "value": " Gateway installeren"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "De parameter "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " en de bijbehorende waarde verwijderen"
     }
   ],
   "HzS2gJ": [
@@ -3105,12 +3107,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakoetsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Geavanceerde opties"
     }
   ],
   "IsVhkH": [
@@ -3913,12 +3909,6 @@
       "value": "Verbindingsnaam"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Aangepaste waarde invoeren"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4075,12 +4065,6 @@
       "value": "Vereist. Deze waarde is het aantal gehele getallen in de matrix."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Standaardwaarde"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4189,12 +4173,6 @@
     {
       "type": 0,
       "value": "Verbindingsfouten"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Niet genereren als er geen waarde is"
     }
   ],
   "Pudllg": [
@@ -4383,12 +4361,6 @@
       "value": "(UTC+12:00) Coordinated Universal Time+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Voer een geldige voorwaarde in."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4537,12 +4509,6 @@
     {
       "type": 0,
       "value": "De parameter naar een geheel getal converteren"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt."
     }
   ],
   "SLJkRn": [
@@ -5015,6 +4981,16 @@
       "value": "Voer een geldige JSON in."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is niet meer aanwezig in het bewerkingsschema. Deze moet worden verwijderd voordat de werkstroom opnieuw wordt opgeslagen."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5239,6 +5215,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Voer een geldige voorwaarde in."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5255,6 +5237,12 @@
     {
       "type": 0,
       "value": "Verwijderen"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(aangepaste waarde)"
     }
   ],
   "WgoP7R": [
@@ -5659,12 +5647,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "De aangepaste waarde komt niet overeen met een van de toegestane typen voor deze invoer"
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -6057,6 +6039,12 @@
       "value": "paneel"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Voer een geldige JSON in."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6127,12 +6115,6 @@
     {
       "type": 0,
       "value": "Vet (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Het invoerknooppunttype komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
   "cmTCsW": [
@@ -6859,6 +6841,12 @@
       "value": "Deze bevat een ongeldige waarde"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7397,6 +7385,12 @@
     {
       "type": 0,
       "value": "Statusloze uitvoeringsmodus:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Vervolgkeuzelijst om bestandspad te selecteren"
     }
   ],
   "lhL/KL": [
@@ -8315,6 +8309,20 @@
       "value": "Voer een waarde in voor de parameter."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Er zijn geen bestanden gevonden in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ". Sla XSLT op in het opgegeven pad om deze functie te gebruiken"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8421,6 +8429,12 @@
     {
       "type": 0,
       "value": "Case toevoegen"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Waarschuwing: De aangepaste waarde komt niet overeen met het type van het schemaknooppunt"
     }
   ],
   "sVQe34": [
@@ -8871,6 +8885,20 @@
     {
       "type": 0,
       "value": "Stel een vraag met betrekking tot uw werkstroom of Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "De parameter "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " en de bijbehorende waarde verwijderen"
     }
   ],
   "uzsleE": [

@@ -371,16 +371,6 @@
       "value": "Required. The string that may contain the value."
     }
   ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -909,6 +899,20 @@
       "value": "Required. The lowest integer that can be returned."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is required."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -985,16 +989,6 @@
       "value": "Button to add dynamic content if TokenPicker is hidden"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " is required."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1053,6 +1047,16 @@
     {
       "type": 0,
       "value": "Body"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector icon"
     }
   ],
   "5SAQOb": [
@@ -1269,6 +1273,20 @@
       "value": "Required. The value for which to find the index."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1279,6 +1297,12 @@
     {
       "type": 0,
       "value": "Data type"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -2967,20 +2991,6 @@
       "value": "Enter a valid datetime."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Enter a valid value for "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2989,20 +2999,6 @@
     {
       "type": 0,
       "value": " Install Gateway"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Remove parameter \""
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "\" and its value"
     }
   ],
   "HzS2gJ": [
@@ -4369,12 +4365,6 @@
       "value": "(UTC+12:00) Coordinated Universal Time+12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Enter a valid condition."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4995,6 +4985,20 @@
       "value": "Enter a valid JSON."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5217,6 +5221,12 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition statement."
     }
   ],
   "WUe3DY": [
@@ -6037,6 +6047,12 @@
       "value": "panel"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6829,6 +6845,12 @@
       "value": "This contains an invalid value"
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7367,6 +7389,12 @@
     {
       "type": 0,
       "value": "Stateless run mode:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8289,6 +8317,20 @@
       "value": "Enter value for parameter."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "No files found in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ", please save XSLT to specified path to use this function"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8859,6 +8901,20 @@
     {
       "type": 0,
       "value": "Ask question related to your workflow or Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remove parameter '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' and its value"
     }
   ],
   "uzsleE": [

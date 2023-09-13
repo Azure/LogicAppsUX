@@ -108,15 +108,20 @@ const getConnectionPropertiesIfRequired = (connection: Connection, connector: Co
 
 export const getConnectionProperties = (connector: Connector, userAssignedIdentity: string | undefined): Record<string, any> => {
   let audience: string | undefined;
+  let additionalAudiences: string[] | undefined;
   if (WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()) {
     const isMultiAuth = connector.properties.connectionParameterSets !== undefined;
     const parameterType = isMultiAuth
       ? ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]
       : ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting];
     const parameters = getConnectionParametersWithType(connector, parameterType);
-    audience = isMultiAuth
-      ? parameters?.[0]?.managedIdentitySettings?.resourceUri
-      : parameters?.[0]?.oAuthSettings?.properties?.AzureActiveDirectoryResourceId;
+
+    if (isMultiAuth) {
+      audience = parameters?.[0]?.managedIdentitySettings?.resourceUri;
+      additionalAudiences = parameters?.[0]?.managedIdentitySettings?.additionalResourceUris;
+    } else {
+      audience = parameters?.[0]?.oAuthSettings?.properties?.AzureActiveDirectoryResourceId;
+    }
   }
 
   return {
@@ -124,6 +129,7 @@ export const getConnectionProperties = (connector: Connector, userAssignedIdenti
       type: 'ManagedServiceIdentity',
       ...optional('identity', userAssignedIdentity),
       ...optional('audience', audience),
+      ...optional('additionalAudiences', additionalAudiences),
     },
   };
 };

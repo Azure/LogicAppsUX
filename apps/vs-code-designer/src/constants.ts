@@ -22,6 +22,11 @@ export const funcIgnoreFileName = '.funcignore';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
+// Azurite
+export const azuriteExtensionId = 'Azurite.azurite';
+export const azuriteExtensionPrefix = 'azurite';
+export const azuriteLocationSetting = 'location';
+
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
@@ -130,6 +135,7 @@ export enum extensionCommand {
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
   validateOrInstallBinaries = 'azureLogicAppsStandard.validateOrInstallBinaries',
+  azureAzuriteStart = 'azurite.start',
 }
 
 // Context
@@ -162,6 +168,8 @@ export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
+export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
+export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';

@@ -5,6 +5,12 @@
       "value": "Test"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -363,16 +369,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
-    }
-  ],
-  "0qcKzG": [
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " ist im Vorgangsschema nicht mehr vorhanden. Der Parameter muss entfernt werden, bevor der Workflow erneut gespeichert wird."
     }
   ],
   "0uj1Li": [
@@ -907,6 +903,20 @@
       "value": "Erforderlich. Die niedrigste ganze Zahl, die zurückgegeben werden kann."
     }
   ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "Der „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ist erforderlich."
+    }
+  ],
   "4BH9uU": [
     {
       "type": 0,
@@ -987,20 +997,6 @@
       "value": "Schaltfläche zum Hinzufügen dynamischer Inhalte, wenn TokenPicker ausgeblendet ist"
     }
   ],
-  "4sYR0J": [
-    {
-      "type": 0,
-      "value": "Der "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " ist erforderlich."
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1059,6 +1055,16 @@
     {
       "type": 0,
       "value": "Textkörper"
+    }
+  ],
+  "5Ow9mX": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-Connectorsymbol"
     }
   ],
   "5SAQOb": [
@@ -1183,6 +1189,12 @@
       "value": "Abbrechen"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1269,6 +1281,20 @@
       "value": "Erforderlich. Der Wert, für den der Index gesucht werden soll."
     }
   ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen Wert für „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ein."
+    }
+  ],
   "6ueRYm": [
     {
       "type": 0,
@@ -1279,6 +1305,12 @@
     {
       "type": 0,
       "value": "Datentyp"
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Funktion auswählen aus"
     }
   ],
   "73iM9+": [
@@ -1945,10 +1977,10 @@
       "value": "Hiermit wird entweder ein einzelnes Zeichen als Formatbezeichner oder ein benutzerdefiniertes Formatmuster angegeben, das festlegt, wie der Wert dieses Zeitstempels formatiert werden soll. Wenn kein Format angegeben wird, wird das ISO 8601-Format (\"o\") verwendet."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Benutzerdefinierten Wert löschen"
+      "value": "Warnung: Der benutzerdefinierte Wert stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
     }
   ],
   "BFTwRN": [
@@ -2335,12 +2367,6 @@
     {
       "type": 0,
       "value": "Dauer"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Der benutzerdefinierte Wert stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
   "Dhu3IS": [
@@ -2993,20 +3019,6 @@
       "value": "Geben Sie einen gültigen Wert für „Datum/Uhrzeit“ ein."
     }
   ],
-  "Hs5+Mk": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen Wert für "
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": " ein."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3015,20 +3027,6 @@
     {
       "type": 0,
       "value": " Gateway installieren"
-    }
-  ],
-  "Hyp0Ao": [
-    {
-      "type": 0,
-      "value": "Parameter „"
-    },
-    {
-      "type": 1,
-      "value": "parameterName"
-    },
-    {
-      "type": 0,
-      "value": "“ und seinen Wert entfernen"
     }
   ],
   "HzS2gJ": [
@@ -3133,12 +3131,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Jakutsk"
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Erweiterte Optionen"
     }
   ],
   "IsVhkH": [
@@ -3945,12 +3937,6 @@
       "value": "Verbindungsname"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Benutzerdefinierten Wert eingeben"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4111,12 +4097,6 @@
       "value": "Erforderlich. Dieser Wert entspricht der Anzahl von ganzen Zahlen im Array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Standardwert"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4225,12 +4205,6 @@
     {
       "type": 0,
       "value": "Verbindungsfehler"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Nicht generieren, wenn kein Wert vorhanden ist"
     }
   ],
   "Pudllg": [
@@ -4427,12 +4401,6 @@
       "value": "(UTC+12:00) Koordinierte Weltzeit +12"
     }
   ],
-  "R7X0wG": [
-    {
-      "type": 0,
-      "value": "Geben Sie eine gültige Bedingung ein."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4585,12 +4553,6 @@
     {
       "type": 0,
       "value": "Parameter in ganze Zahl konvertieren"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
   "SLJkRn": [
@@ -5059,6 +5021,20 @@
       "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "Der „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ist im Vorgangsschema nicht mehr vorhanden. Der Parameter muss entfernt werden, bevor der Workflow erneut gespeichert wird."
+    }
+  ],
   "V5f3ha": [
     {
       "type": 0,
@@ -5291,6 +5267,12 @@
       "value": "invalidNodes"
     }
   ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige Bedingungsanweisung ein."
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -5307,6 +5289,12 @@
     {
       "type": 0,
       "value": "Entfernen"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Benutzerdefinierter Wert)"
     }
   ],
   "WgoP7R": [
@@ -5711,12 +5699,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, Neu-Delhi"
     }
   ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Der benutzerdefinierte Wert stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
-    }
-  ],
   "YiOybp": [
     {
       "type": 0,
@@ -6109,6 +6091,12 @@
       "value": "Bereich"
     }
   ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
   "c7tRg/": [
     {
       "type": 0,
@@ -6179,12 +6167,6 @@
     {
       "type": 0,
       "value": "Fett (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Der Eingabeknotentyp stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
     }
   ],
   "cmTCsW": [
@@ -6915,6 +6897,12 @@
       "value": "Dies einen ungültigen Wert auf."
     }
   ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "No actions"
+    }
+  ],
   "iB8YKD": [
     {
       "type": 0,
@@ -7453,6 +7441,12 @@
     {
       "type": 0,
       "value": "Zustandsloser Ausführungsmodus:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Dropdown zum Auswählen des Dateipfads"
     }
   ],
   "lhL/KL": [
@@ -8379,6 +8373,20 @@
       "value": "Geben Sie einen Wert für den Parameter ein."
     }
   ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "In "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": " wurden keine Dateien gefunden. Speichern Sie XSLT im angegebenen Pfad, um diese Funktion zu verwenden."
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -8485,6 +8493,12 @@
     {
       "type": 0,
       "value": "Fall hinzufügen"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warnung: Der benutzerdefinierte Wert stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
   "sVQe34": [
@@ -8943,6 +8957,20 @@
     {
       "type": 0,
       "value": "Stellen Sie Fragen im Zusammenhang mit Ihrem Workflow oder Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Parameter „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ und seinen Wert entfernen"
     }
   ],
   "uzsleE": [
