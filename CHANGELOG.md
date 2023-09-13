@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.66.1](https://github.com/Azure/LogicAppsUX/compare/v2.66.0...v2.66.1) (2023-09-13)
+
+
+### Bug Fixes
+
+* **designer:** FloatingActionMenuOutputs editor to lowercase serializ… ([#3306](https://github.com/Azure/LogicAppsUX/issues/3306)) ([a5c000a](https://github.com/Azure/LogicAppsUX/commit/a5c000aacc76b4b1db0c2a017f70d31059d07895)), closes [#3286](https://github.com/Azure/LogicAppsUX/issues/3286)
+
 ## [2.66.0](https://github.com/Azure/LogicAppsUX/compare/v2.65.0...v2.66.0) (2023-09-07)
 
 
