@@ -3,9 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
+import { getContainingWorkspace } from '../../../utils/workspace';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { OpenBehavior } from '@microsoft/vscode-extension';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 
 export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {
@@ -16,8 +18,11 @@ export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContex
       placeHolder: localize('setWorkspaceName', 'Workspace name'),
       prompt: localize('workspaceNamePrompt', 'Provide a workspace name'),
     });
-
-    context.workspacePath = path.join(context.projectPath, context.workspaceName);
+    //save uri variable for open project folder command
+    context.workspaceCustomFilePath = path.join(context.projectPath, context.workspaceName);
+    await fs.ensureDir(context.workspacePath);
+    context.workspacePath = context.workspaceCustomFilePath;
+    context.workspaceFolder = getContainingWorkspace(context.workspacePath);
 
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;
