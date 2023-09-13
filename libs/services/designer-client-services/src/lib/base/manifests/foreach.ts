@@ -29,7 +29,11 @@ export default {
       loopParameter: 'foreach',
     },
 
-    outputs: {},
+    outputs: {
+      type: 'any',
+      title: 'Current item',
+      required: true,
+    },
     isOutputsOptional: false,
 
     connector: {

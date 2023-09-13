@@ -973,6 +973,12 @@
       "value": "El flujo se ha actualizado."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Escriba un valor para responder"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3025,6 +3031,12 @@
       "value": "El contenido dinámico no se admite como propiedades en la autenticación."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Enviar desde esta acción"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4611,6 +4623,12 @@
       "value": "Id. de seguimiento personalizado"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Escriba un nombre"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5659,6 +5677,12 @@
       "value": "Lista numerada"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Los nombres de salida no deben estar vacíos."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6705,6 +6729,12 @@
       "value": "Cuando se utiliza dentro de un bucle Hasta, esta función devuelve el índice de iteraciones del bucle especificado."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Los nombres de salida deben ser únicos."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6739,6 +6769,12 @@
     {
       "type": 0,
       "value": "Agregue primero un esquema de origen y, a continuación, seleccione los elementos para compilar el mapa."
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Volver a enviar una ejecución de flujo de trabajo desde esta acción"
     }
   ],
   "hN7iBP": [
@@ -6907,7 +6943,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "No hay acciones"
     }
   ],
   "iB8YKD": [
@@ -6920,6 +6956,12 @@
     {
       "type": 0,
       "value": "Convierte una cadena a mayúsculas mediante las reglas de mayúsculas y minúsculas de la referencia cultural invariable."
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Elegir el tipo de salida"
     }
   ],
   "iEy9pT": [
@@ -7343,6 +7385,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Agregar una salida"
     }
   ],
   "kuFK3E": [

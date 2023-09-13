@@ -957,6 +957,12 @@
       "value": "Seu fluxo foi atualizado."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Insira um valor para responder"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -2997,6 +3003,12 @@
       "value": "Não há suporte para conteúdo dinâmico como propriedades na autenticação."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Enviar desta ação"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4579,6 +4591,12 @@
       "value": "ID de Rastreamento Personalizada"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Insira um nome"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5627,6 +5645,12 @@
       "value": "Lista Numerada"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Os nomes de saída não devem estar vazios."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6673,6 +6697,12 @@
       "value": "Quando usada dentro do loop, esta função retorna o índice de iteração atual do loop especificado."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Os nomes de saída devem ser exclusivos."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6707,6 +6737,12 @@
     {
       "type": 0,
       "value": "Adicione um esquema de origem primeiro e, em seguida, selecione os elementos para criar o mapa"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Reenviar uma execução de fluxo de trabalho desta ação"
     }
   ],
   "hN7iBP": [
@@ -6875,7 +6911,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Nenhuma ação"
     }
   ],
   "iB8YKD": [
@@ -6888,6 +6924,12 @@
     {
       "type": 0,
       "value": "Converte uma cadeia de caracteres em maiúsculas usando as regras de uso de maiúsculas da cultura invariável"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Selecionar o tipo de saída"
     }
   ],
   "iEy9pT": [
@@ -7311,6 +7353,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Adicionar uma saída"
     }
   ],
   "kuFK3E": [

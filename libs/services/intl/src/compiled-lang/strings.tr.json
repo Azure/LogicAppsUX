@@ -965,6 +965,12 @@
       "value": "Akışınız güncelleştirildi."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -2991,6 +2997,12 @@
       "value": "Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Bu eylemden gönder"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4555,6 +4567,12 @@
       "value": "Özel İzleme Kimliği"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Ad girin"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5599,6 +5617,12 @@
       "value": "Numaralı Liste"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6633,6 +6657,12 @@
       "value": "Bir until döngüsünde kullanıldığında bu işlev belirtilen döngünün geçerli yineleme dizinini döndürür."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6667,6 +6697,12 @@
     {
       "type": 0,
       "value": "Önce bir kaynak şema ekleyin, ardından haritanızı oluşturmak için öğeleri seçin"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Bu eylemden bir iş akışı çalıştırmasını yeniden gönder"
     }
   ],
   "hN7iBP": [
@@ -6824,7 +6860,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Eylem yok"
     }
   ],
   "iB8YKD": [
@@ -6837,6 +6873,12 @@
     {
       "type": 0,
       "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi büyük harfe dönüştürür"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Çıktı türünü seçin"
     }
   ],
   "iEy9pT": [
@@ -7245,6 +7287,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Çıkış ekle"
     }
   ],
   "kuFK3E": [

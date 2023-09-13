@@ -973,6 +973,12 @@
       "value": "Przepływ został zaktualizowany."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3055,6 +3061,12 @@
       "value": "Zawartość dynamiczna nie jest obsługiwana jako właściwości w uwierzytelnianiu."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Prześlij z tej akcji"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4667,6 +4679,12 @@
       "value": "Niestandardowy identyfikator śledzenia"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Wpisz nazwę"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5715,6 +5733,12 @@
       "value": "Lista numerowana"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6757,6 +6781,12 @@
       "value": "W przypadku użycia wewnątrz pętli until ta funkcja zwraca bieżący indeks iteracji określonej pętli."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6791,6 +6821,12 @@
     {
       "type": 0,
       "value": "Najpierw dodaj schemat źródłowy, a następnie wybierz elementy do utworzenia mapy"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Ponownie prześlij przebieg przepływu pracy z tej akcji"
     }
   ],
   "hN7iBP": [
@@ -6970,7 +7006,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Brak akcji"
     }
   ],
   "iB8YKD": [
@@ -6983,6 +7019,12 @@
     {
       "type": 0,
       "value": "Konwertuje ciąg na wielkie litery, używając reguł stosowania wielkości liter kultury niezmiennej"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Wybierz typ danych wyjściowych"
     }
   ],
   "iEy9pT": [
@@ -7433,6 +7475,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Dodaj dane wyjściowe"
     }
   ],
   "kuFK3E": [

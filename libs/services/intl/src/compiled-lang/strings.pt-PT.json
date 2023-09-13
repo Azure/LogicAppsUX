@@ -973,6 +973,12 @@
       "value": "O seu fluxo foi atualizado."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Introduzir um valor para responder com"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3033,6 +3039,12 @@
       "value": "O conteúdo dinâmico não é suportado como propriedades na autenticação."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submeter a partir desta ação"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4619,6 +4631,12 @@
       "value": "ID de Rastreio Personalizado"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Introduzir um nome"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5667,6 +5685,12 @@
       "value": "Lista Numerada"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Os nomes de saída não devem estar vazios."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6713,6 +6737,12 @@
       "value": "Quando utilizada dentro até ao ciclo, esta função devolve o índex de iteração atual do ciclo especificado."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Os nomes de saída devem ser exclusivos."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6747,6 +6777,12 @@
     {
       "type": 0,
       "value": "Adicione primeiro um esquema de origem e, em seguida, selecione elementos para criar o seu mapa"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Submeter novamente uma execução de fluxo de trabalho a partir desta ação"
     }
   ],
   "hN7iBP": [
@@ -6915,7 +6951,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Nenhuma ação"
     }
   ],
   "iB8YKD": [
@@ -6928,6 +6964,12 @@
     {
       "type": 0,
       "value": "Converte uma cadeia em maiúsculas com as regras de sensível a maiúsculas/minúsculas da cultura invariante"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Escolher o tipo de saída"
     }
   ],
   "iEy9pT": [
@@ -7351,6 +7393,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Adicionar uma saída"
     }
   ],
   "kuFK3E": [

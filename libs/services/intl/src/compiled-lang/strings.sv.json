@@ -973,6 +973,12 @@
       "value": "Ditt flöde har uppdaterats."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Ange ett värde att svara med"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3007,6 +3013,12 @@
       "value": "Dynamiskt innehåll stöds inte som egenskaper i autentisering."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Skicka från den här åtgärden"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4559,6 +4571,12 @@
       "value": "Anpassat spårnings-ID"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Ange ett namn"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5603,6 +5621,12 @@
       "value": "Numrerad lista"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Utdatanamn måste anges."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6645,6 +6669,12 @@
       "value": "När den här funktionen används inuti fram till loopen returnerar den det aktuella iterationsindexet för den angivna loopen."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Taggnamnen måste vara unika."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6679,6 +6709,12 @@
     {
       "type": 0,
       "value": "Lägg till ett källschema först och välj sedan element för att skapa kartan"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Skicka en arbetsflödeskörning på nytt från den här åtgärden"
     }
   ],
   "hN7iBP": [
@@ -6836,7 +6872,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Inga åtgärder"
     }
   ],
   "iB8YKD": [
@@ -6849,6 +6885,12 @@
     {
       "type": 0,
       "value": "Konverterar en sträng till versala bokstäver med skiftlägesregler för den invarianta kulturen"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Väl utdatatypen"
     }
   ],
   "iEy9pT": [
@@ -7261,6 +7303,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Lägg till utdata"
     }
   ],
   "kuFK3E": [

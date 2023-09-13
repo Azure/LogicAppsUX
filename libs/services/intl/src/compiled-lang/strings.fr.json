@@ -973,6 +973,12 @@
       "value": "Votre flux a été mis à jour."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Entrer une valeur pour répondre avec"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3025,6 +3031,12 @@
       "value": "Contenu dynamique non pris en charge comme propriétés dans l'authentification."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Envoyer à partir de cette action"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4611,6 +4623,12 @@
       "value": "ID de suivi personnalisé"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Entrer un nom"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5659,6 +5677,12 @@
       "value": "Liste numérotée"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Les noms de sortie ne doivent pas être vides."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6705,6 +6729,12 @@
       "value": "Utilisée dans une boucle Until, cette fonction retourne l’index d’itération actuel de la boucle spécifiée."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Les noms de sortie doivent être uniques."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6739,6 +6769,12 @@
     {
       "type": 0,
       "value": "Commencez par ajouter un schéma source, puis sélectionnez des éléments pour générer votre carte"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Renvoyer une exécution de workflow à partir de cette action"
     }
   ],
   "hN7iBP": [
@@ -6907,7 +6943,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Aucune action"
     }
   ],
   "iB8YKD": [
@@ -6920,6 +6956,12 @@
     {
       "type": 0,
       "value": "Convertit une chaîne en majuscules à l'aide des règles de casse de la culture invariante"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Choisir le type de sortie"
     }
   ],
   "iEy9pT": [
@@ -7343,6 +7385,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Ajouter une sortie"
     }
   ],
   "kuFK3E": [

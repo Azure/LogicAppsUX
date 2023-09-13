@@ -981,6 +981,12 @@
       "value": "A folyamat frissítve lett."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Adjon meg válaszként használandó értéket"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3011,6 +3017,12 @@
       "value": "A dinamikus tartalom hitelesítési tulajdonságokként való használata nem támogatott."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Küldés ebből a műveletből"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4579,6 +4591,12 @@
       "value": "Egyéni követési azonosító"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy nevet"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5605,6 +5623,12 @@
     {
       "type": 0,
       "value": "Számozott lista"
+    }
+  ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "A kimenetek nevei nem lehetnek üresek."
     }
   ],
   "YZ5Kwe": [
@@ -6653,6 +6677,12 @@
       "value": "Until ciklusban való használat esetén ez a függvény a megadott ciklus aktuális iterációs indexét adja vissza."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "A kimenetek neveinek egyedinek kell lenniük."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6687,6 +6717,12 @@
     {
       "type": 0,
       "value": "Először adjon hozzá egy forrássémát, majd jelöljön ki elemeket a leképezés létrehozásához"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Munkafolyamat-futtatás újraküldése ebből a műveletből"
     }
   ],
   "hN7iBP": [
@@ -6844,7 +6880,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Nincsenek műveletek"
     }
   ],
   "iB8YKD": [
@@ -6857,6 +6893,12 @@
     {
       "type": 0,
       "value": "Sztring átalakítása nagybetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Válassza ki a kimenet típusát"
     }
   ],
   "iEy9pT": [
@@ -7269,6 +7311,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Kimenet hozzáadása"
     }
   ],
   "kuFK3E": [

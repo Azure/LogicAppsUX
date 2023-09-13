@@ -973,6 +973,12 @@
       "value": "Váš tok se aktualizoval."
     }
   ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Enter a value to respond with"
+    }
+  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3055,6 +3061,12 @@
       "value": "Při ověřování se využití dynamického obsahu jako vlastností nepodporuje."
     }
   ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Odeslat z této akce"
+    }
+  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4651,6 +4663,12 @@
       "value": "Vlastní ID sledování"
     }
   ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Zadejte název"
+    }
+  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5699,6 +5717,12 @@
       "value": "Číslovaný seznam"
     }
   ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Output names should not be empty."
+    }
+  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6741,6 +6765,12 @@
       "value": "Když se tato funkce použije v rámci smyčky until, vrátí aktuální index iterace zadané smyčky."
     }
   ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Output names should be unique."
+    }
+  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6775,6 +6805,12 @@
     {
       "type": 0,
       "value": "Nejprve přidejte zdrojové schéma a pak vyberte prvky pro sestavení mapy"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Znovu odeslat spuštění pracovního postupu z této akce"
     }
   ],
   "hN7iBP": [
@@ -6958,7 +6994,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "No actions"
+      "value": "Žádné akce"
     }
   ],
   "iB8YKD": [
@@ -6971,6 +7007,12 @@
     {
       "type": 0,
       "value": "Převede řetězec na velká písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Zvolte typ výstupu"
     }
   ],
   "iEy9pT": [
@@ -7405,6 +7447,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Přidat výstup"
     }
   ],
   "kuFK3E": [
