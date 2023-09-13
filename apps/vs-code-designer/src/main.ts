@@ -51,12 +51,6 @@ export async function activate(context: vscode.ExtensionContext) {
       });
     });
 
-    activateContext.telemetry.properties.lastStep = 'promptStartDesignTimeOption';
-    await promptStartDesignTimeOption(activateContext);
-
-    activateContext.telemetry.properties.lastStep = 'activateAzurite';
-    await activateAzurite(activateContext);
-
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -86,6 +80,12 @@ export async function activate(context: vscode.ExtensionContext) {
     registerCommands();
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
+
+    activateContext.telemetry.properties.lastStep = 'promptStartDesignTimeOption';
+    promptStartDesignTimeOption(activateContext);
+
+    activateContext.telemetry.properties.lastStep = 'activateAzurite';
+    activateAzurite(activateContext);
 
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 
