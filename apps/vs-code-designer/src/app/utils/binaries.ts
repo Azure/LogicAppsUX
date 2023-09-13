@@ -147,7 +147,7 @@ export async function downloadAndExtractBinaries(
       downloadStream.on('error', reject);
     });
   } catch (error) {
-    vscode.window.showErrorMessage(`Error downloading and extracting the ${dependencyName} zip: ${error.message}`);
+    vscode.window.showErrorMessage(`Error downloading and extracting the ${dependencyName} zip file: ${error.message}`);
     await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Remove ${targetFolder}`);
     fs.rmSync(targetFolder, { recursive: true });
     throw error;
@@ -329,7 +329,7 @@ async function extractBinaries(binariesFilePath: string, targetFolder: string, d
     await executeCommand(ext.outputChannel, undefined, 'tar', `-xzvf`, binariesFilePath, '-C', targetFolder);
   }
   cleanupContainerFolder(targetFolder);
-  await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} completed successfully.`);
+  await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
 }
 
 function checkMajorVersion(version: string, majorVersion: string): boolean {

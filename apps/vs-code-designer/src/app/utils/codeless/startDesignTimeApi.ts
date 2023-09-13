@@ -80,7 +80,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
     try {
       window.showInformationMessage(
-        localize('azureFunctions.designTimeApi', 'Starting workflow design time api. It might take a few seconds.'),
+        localize('azureFunctions.designTimeApi', 'Starting workflow design-time API, which might take a few seconds.'),
         'OK'
       );
 
@@ -97,7 +97,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         await waitForDesingTimeStartUp(url, new Date().getTime());
         actionContext.telemetry.properties.startDesignTimeApi = 'true';
       } else {
-        throw new Error(localize('DesignTimeDirectoryError', 'Design time directory could not be created.'));
+        throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
       }
     } catch (ex) {
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };

@@ -194,7 +194,7 @@ export async function getLocalDotNetVersion(): Promise<string> {
   for (const file of files) {
     if (file.isDirectory()) {
       const version = file.name;
-      await executeCommand(ext.outputChannel, undefined, 'echo', 'local binary .net sdk version', version);
+      await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
       return version;
     }
   }
