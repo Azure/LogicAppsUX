@@ -250,49 +250,15 @@ export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtData
     return true;
   }
 
-  switch (tgtDataType) {
-    case NormalizedDataType.String: {
-      return srcDataType === NormalizedDataType.String;
-    }
-
-    case NormalizedDataType.Integer: {
-      return srcDataType === NormalizedDataType.Integer;
-    }
-
-    case NormalizedDataType.Number:
-    case NormalizedDataType.Decimal: {
-      return (
-        srcDataType === NormalizedDataType.Decimal ||
-        srcDataType === NormalizedDataType.Integer ||
-        srcDataType === NormalizedDataType.Number
-      );
-    }
-
-    case NormalizedDataType.Boolean: {
-      return srcDataType === NormalizedDataType.Boolean;
-    }
-
-    case NormalizedDataType.Binary: {
-      return srcDataType === NormalizedDataType.Binary;
-    }
-
-    case NormalizedDataType.DateTime: {
-      return srcDataType === NormalizedDataType.DateTime;
-    }
-
-    case NormalizedDataType.Array: {
-      return srcDataType === NormalizedDataType.Array;
-    }
-
-    case NormalizedDataType.Complex:
-    case NormalizedDataType.Object: {
-      return srcDataType === NormalizedDataType.Object || srcDataType === NormalizedDataType.Complex;
-    }
-
-    default: {
-      return false;
-    }
+  if (tgtDataType === NormalizedDataType.Object && srcDataType === NormalizedDataType.Complex) {
+    return true;
   }
+
+  if (tgtDataType === srcDataType) {
+    return true;
+  }
+
+  return false;
 };
 
 export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | undefined, tgtMaxNumInputs: number) => {
