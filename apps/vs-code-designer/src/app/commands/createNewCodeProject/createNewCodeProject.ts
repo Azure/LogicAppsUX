@@ -9,11 +9,10 @@ import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } fr
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
+import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
-import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
-import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
-import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
-import { setNamespace } from './createCodeProjectSteps/createFunction/setNamepSpace';
+import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
+import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -73,8 +72,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
-      new setMethodName(),
-      new setNamespace(),
+      new SetLogicAppType(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
       new OpenBehaviorStep(),
     ],
@@ -85,6 +83,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   await wizard.execute();
 
   await createArtifactsFolder(context as IFunctionWizardContext);
+  await createLibFolder(context as IFunctionWizardContext);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
@@ -101,4 +100,9 @@ function showPreviewWarning() {
   if (createNewCodeProjectCommand.preview) {
     window.showInformationMessage('The "Create new logic app workspace" command is a preview feature and may be subject to change.');
   }
+}
+async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'custom', 'net472'), { recursive: true });
 }
