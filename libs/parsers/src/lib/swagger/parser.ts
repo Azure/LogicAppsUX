@@ -288,7 +288,7 @@ export class SwaggerParser {
     return map(operations, 'operationId');
   }
 
-  getOperationByOperationId(operationId: string): Operation | undefined {
+  getOperationByOperationId(operationId: string): Operation {
     const operations = this.getOperations({ unsorted: true, excludeInternalOperations: false });
     return getPropertyValue(operations, operationId);
   }

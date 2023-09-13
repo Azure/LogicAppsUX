@@ -22,6 +22,7 @@ const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Posit
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, addingTrigger: true }));
   }, [dispatch]);
 
+  console.log('charlie', isReadOnly);
   return (
     <div>
       <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />

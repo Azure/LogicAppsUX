@@ -11,14 +11,13 @@ import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParam
 import { WorkflowParametersPanelFooter } from './workflowParametersPanel/workflowParametersPanelFooter';
 import { Panel, PanelType } from '@fluentui/react';
 import { isUndefined } from '@microsoft/applicationinsights-core-js';
-import type { CommonPanelProps, CustomPanelLocation } from '@microsoft/designer-ui';
+import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { PanelLocation, PanelSize } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface PanelRootProps {
   panelLocation?: PanelLocation;
-  customPanelLocations?: CustomPanelLocation[];
   displayRuntimeInfo: boolean;
 }
 
@@ -28,7 +27,7 @@ const layerProps = {
 };
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
-  const { panelLocation, customPanelLocations, displayRuntimeInfo } = props;
+  const { panelLocation, displayRuntimeInfo } = props;
   const dispatch = useDispatch<AppDispatch>();
 
   const isDarkMode = useIsDarkMode();
@@ -46,16 +45,16 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const dismissPanel = useCallback(() => dispatch(clearPanel()), [dispatch]);
 
-  const commonPanelProps: CommonPanelProps = useMemo(() => {
-    const customLocation = customPanelLocations?.find((x) => currentPanelMode === x.panelMode)?.panelLocation;
-    return {
+  const commonPanelProps: CommonPanelProps = useMemo(
+    () => ({
       isCollapsed: collapsed,
       toggleCollapse: dismissPanel,
       width,
       layerProps,
-      panelLocation: customLocation ?? panelLocation ?? PanelLocation.Right,
-    };
-  }, [customPanelLocations, currentPanelMode, collapsed, dismissPanel, panelLocation, width]);
+      panelLocation: panelLocation ?? PanelLocation.Right,
+    }),
+    [collapsed, dismissPanel, panelLocation, width]
+  );
 
   const onRenderFooterContent = useCallback(
     () => (currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : null),

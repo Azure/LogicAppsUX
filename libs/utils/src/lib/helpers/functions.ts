@@ -136,20 +136,6 @@ export function includes(str: string, substring: string, caseInsensitive = true)
 }
 
 /**
- * Returns the nth last index of a substring.
- * @arg {string} str - A string to get nth last index of.
- * @arg {string} searchString - the substring to search for.
- * @arg {number} n - The nth last index.
- * @return {number} - The nth last index of the substring, -1 if not found.
- */
-export function nthLastIndexOf(str: string, searchString: string, n: number): number {
-  if (!str || str.length === 0) return -1;
-  if (!n || isNaN(n) || n <= 1) return str.lastIndexOf(searchString);
-  n--;
-  return str.lastIndexOf(searchString, nthLastIndexOf(str, searchString, n) - 1);
-}
-
-/**
  * Returns the first item in the array that meets the condition.
  * @arg {(x: T) => boolean} conditionFunction - A function used to test if an item meets the condition
  * @arg {T[]} array - An array to search

@@ -47,7 +47,7 @@ import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
@@ -210,33 +210,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     };
   };
 
-  const getResubmitMenuItem = () => {
-    const resubmitDescription = intl.formatMessage({
-      defaultMessage: 'Resubmit a workflow run from this action',
-      description: 'accessability text for the resubmit button',
-    });
-
-    const resubmitButtonText = intl.formatMessage({
-      defaultMessage: 'Submit from this action',
-      description: 'Button label for submitting a workflow to rerun from this action',
-    });
-
-    const handleResubmitClick = () => {
-      WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
-    };
-    return {
-      key: resubmitDescription,
-      disabled: false,
-      iconName: 'PlaybackRate1x',
-      title: resubmitButtonText,
-      type: MenuItemType.Advanced,
-      onClick: handleResubmitClick,
-    };
-  };
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
-  if (runData?.canResubmit) {
-    contextMenuOptions.push(getResubmitMenuItem());
-  }
 
   const opQuery = useOperationQuery(id);
 

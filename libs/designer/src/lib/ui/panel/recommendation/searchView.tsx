@@ -1,11 +1,11 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { SearchService, type ISearchService } from '@microsoft/designer-client-services-logic-apps';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
-import { isBuiltInConnector, type DiscoveryOperation, type DiscoveryResultTypes, isCustomConnector } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import { isCustomConnector, isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 type SearchViewProps = {
@@ -18,60 +18,42 @@ type SearchViewProps = {
   displayRuntimeInfo: boolean;
 };
 
+type SearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;
+type SearchResults = SearchResult[];
+
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick, displayRuntimeInfo } = props;
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [searchResults, setSearchResults] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResults>([]);
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (searchTerm !== '') setIsLoadingSearchResults(true);
-  }, [searchTerm]);
+  const filterItems = useCallback(
+    (searchResult: SearchResult): boolean => {
+      if (filters['runtime']) {
+        if (filters['runtime'] === 'inapp' && !isBuiltInConnector(searchResult.item.properties.api.id)) return false;
+        else if (filters['runtime'] === 'custom' && !isCustomConnector(searchResult.item.properties.api.id)) return false;
+        else if (filters['runtime'] === 'shared')
+          if (isBuiltInConnector(searchResult.item.properties.api.id) || isCustomConnector(searchResult.item.properties.api.id))
+            return false;
+      }
 
-  useDebouncedEffect(
-    () => {
-      const searchService = SearchService && SearchService().searchOperations;
+      if (filters['actionType']) {
+        const isTrigger = searchResult.item.properties?.trigger !== undefined;
+        if (filters['actionType'].toLowerCase() === 'actions' && isTrigger) return false;
+        else if (filters['actionType'].toLowerCase() === 'triggers' && !isTrigger) return false;
+      }
 
-      const searchResultsPromise = searchService
-        ? searchService(searchTerm, filters['actionType'], filters['runtime'])
-        : new DefaultSearchOperationsService(allOperations).searchOperations(searchTerm, filters['actionType'], filters['runtime']);
-
-      searchResultsPromise.then((results) => {
-        setSearchResults(results);
-        setIsLoadingSearchResults(false);
-      });
+      return true;
     },
-    [searchTerm, allOperations, filters],
-    300
+    [filters]
   );
 
-  const onConnectorClick = (connectorId: string) => {
-    dispatch(selectOperationGroupId(connectorId));
-  };
-
-  return (
-    <SearchResultsGrid
-      isLoadingSearch={isLoadingSearchResults}
-      isLoadingMore={isLoading}
-      searchTerm={searchTerm}
-      onConnectorClick={onConnectorClick}
-      onOperationClick={onOperationClick}
-      operationSearchResults={searchResults}
-      groupByConnector={groupByConnector}
-      displayRuntimeInfo={displayRuntimeInfo}
-    />
-  );
-};
-
-class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOperations'> {
-  constructor(private allOperations: DiscoveryOperation<DiscoveryResultTypes>[]) {}
-
-  private compareItems(
+  const compareItems = (
     a: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>,
     b: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>
-  ): number {
+  ): number => {
     // isCustomApi can be undefined since it is up to the host to pass it; when
     // undefined we default to false so that the custom checks are not true/executed
     const isACustom: boolean = a.item.properties.isCustomApi || false;
@@ -87,10 +69,10 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
     // If b has no score and a does, put a first
     if (a.score !== undefined && b.score === undefined) return -1;
     return 0;
-  }
+  };
 
-  private searchOptions() {
-    return {
+  const searchOptions = useMemo(
+    () => ({
       includeScore: true,
       threshold: 0.4,
       keys: [
@@ -113,45 +95,39 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
           weight: 1.9,
         },
       ],
-    };
-  }
+    }),
+    []
+  );
 
-  public searchOperations(
-    searchTerm: string,
-    actionType?: string | undefined,
-    runtimeFilter?: string | undefined
-  ): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
-    type FuseSearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;
+  useEffect(() => {
+    if (searchTerm !== '') setIsLoadingSearchResults(true);
+  }, [searchTerm]);
 
-    const filterItems = (searchResult: FuseSearchResult): boolean => {
-      if (runtimeFilter) {
-        if (runtimeFilter === 'inapp' && !isBuiltInConnector(searchResult.item.properties.api.id)) return false;
-        else if (runtimeFilter === 'custom' && !isCustomConnector(searchResult.item.properties.api.id)) return false;
-        else if (runtimeFilter === 'shared')
-          if (isBuiltInConnector(searchResult.item.properties.api.id) || isCustomConnector(searchResult.item.properties.api.id))
-            return false;
-      }
+  useDebouncedEffect(
+    () => {
+      if (!allOperations) return;
+      const fuse = new Fuse(allOperations, searchOptions);
+      setSearchResults(fuse.search(searchTerm, { limit: 200 }).filter(filterItems).sort(compareItems));
+      setIsLoadingSearchResults(false);
+    },
+    [searchTerm, allOperations, filterItems, searchOptions],
+    300
+  );
 
-      if (actionType) {
-        const isTrigger = searchResult.item.properties?.trigger !== undefined;
-        if (actionType.toLowerCase() === 'actions' && isTrigger) return false;
-        else if (actionType.toLowerCase() === 'triggers' && !isTrigger) return false;
-      }
+  const onConnectorClick = (connectorId: string) => {
+    dispatch(selectOperationGroupId(connectorId));
+  };
 
-      return true;
-    };
-
-    if (!this.allOperations) {
-      return Promise.resolve([]);
-    }
-
-    const fuse = new Fuse(this.allOperations, this.searchOptions());
-    return Promise.resolve(
-      fuse
-        .search(searchTerm, { limit: 200 })
-        .filter(filterItems)
-        .sort(this.compareItems)
-        .map((result) => result.item)
-    );
-  }
-}
+  return (
+    <SearchResultsGrid
+      isLoadingSearch={isLoadingSearchResults}
+      isLoadingMore={isLoading}
+      searchTerm={searchTerm}
+      onConnectorClick={onConnectorClick}
+      onOperationClick={onOperationClick}
+      operationSearchResults={searchResults.map((result) => result.item)}
+      groupByConnector={groupByConnector}
+      displayRuntimeInfo={displayRuntimeInfo}
+    />
+  );
+};

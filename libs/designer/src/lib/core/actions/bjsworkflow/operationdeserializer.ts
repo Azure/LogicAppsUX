@@ -223,9 +223,7 @@ export const initializeOperationDetailsForManifest = async (
         manifest,
         isTrigger,
         nodeInputs,
-        isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined,
-        operationInfo,
-        nodeId
+        isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 

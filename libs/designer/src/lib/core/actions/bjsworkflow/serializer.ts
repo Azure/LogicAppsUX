@@ -548,13 +548,7 @@ const serializeParametersFromSwagger = async (
 ): Promise<Record<string, any>> => {
   const { operationId, connectorId, type } = operationInfo;
   const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
-
-  const operation = parsedSwagger.getOperationByOperationId(operationId);
-  if (!operation) {
-    throw new Error('APIM Operation not found');
-  }
-
-  const { method, path } = operation;
+  const { method, path } = parsedSwagger.getOperationByOperationId(operationId);
   const operationPath = removeConnectionPrefix(path);
   const operationMethod = equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ? undefined : method;
   const parameterInputs = equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
@@ -577,15 +571,8 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
   }
   let finalValue = clone(parametersValue);
   for (const { source, target } of swapMap) {
-    const propertyValue = getObjectPropertyValue(parametersValue, source);
-    deleteObjectProperty(finalValue, source);
-
-    if (typeof propertyValue !== 'object') {
-      finalValue = safeSetObjectPropertyValue(finalValue, target, propertyValue);
-      continue;
-    }
-
     const value = { ...excludePathValueFromTarget(parametersValue, source, target), ...getObjectPropertyValue(parametersValue, source) };
+    deleteObjectProperty(finalValue, source);
     finalValue = !target.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, target, value);
   }
 

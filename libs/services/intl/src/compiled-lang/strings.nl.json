@@ -973,12 +973,6 @@
       "value": "Uw stroom is bijgewerkt."
     }
   ],
-  "4izAMi": [
-    {
-      "type": 0,
-      "value": "Voer een waarde in om op te reageren"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3017,12 +3011,6 @@
       "value": "Dynamische inhoud wordt niet ondersteund voor eigenschappen bij de verificatie."
     }
   ],
-  "I+85NV": [
-    {
-      "type": 0,
-      "value": "Verzenden vanuit deze actie"
-    }
-  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4575,12 +4563,6 @@
       "value": "Aangepaste tracerings-id"
     }
   ],
-  "Smo/VO": [
-    {
-      "type": 0,
-      "value": "Een naam invoeren"
-    }
-  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5629,12 +5611,6 @@
       "value": "Genummerde lijst"
     }
   ],
-  "YWws/r": [
-    {
-      "type": 0,
-      "value": "Uitvoernamen mogen niet leeg zijn."
-    }
-  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6677,12 +6653,6 @@
       "value": "Bij gebruik in de Until-lus retourneert deze functie de huidige iteratie-index van de opgegeven lus."
     }
   ],
-  "gusZw5": [
-    {
-      "type": 0,
-      "value": "Uitvoernamen moeten uniek zijn."
-    }
-  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6717,12 +6687,6 @@
     {
       "type": 0,
       "value": "Voeg eerst een bronschema toe en selecteer vervolgens elementen om uw toewijzing samen te stellen"
-    }
-  ],
-  "hH/wAd": [
-    {
-      "type": 0,
-      "value": "Een werkstroomuitvoering opnieuw verzenden vanuit deze actie"
     }
   ],
   "hN7iBP": [
@@ -6880,7 +6844,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "Geen acties"
+      "value": "No actions"
     }
   ],
   "iB8YKD": [
@@ -6893,12 +6857,6 @@
     {
       "type": 0,
       "value": "Een tekenreeks wordt aan de hand van de regels voor hoofdlettergebruik van de cultuur geconverteerd naar hoofdletters"
-    }
-  ],
-  "iE2+sy": [
-    {
-      "type": 0,
-      "value": "Het type uitvoer kiezen"
     }
   ],
   "iEy9pT": [
@@ -7311,12 +7269,6 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
-    }
-  ],
-  "kq+I5o": [
-    {
-      "type": 0,
-      "value": "Uitvoer toevoegen"
     }
   ],
   "kuFK3E": [

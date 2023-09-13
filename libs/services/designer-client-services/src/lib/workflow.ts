@@ -58,11 +58,6 @@ export interface IWorkflowService {
     serializedWorkflow: LogicAppsV2.WorkflowDefinition,
     outputParameters: Record<string, NodeOutputs>
   ): LogicAppsV2.WorkflowDefinition;
-
-  /**
-   * Resubmits workflow from a specific action
-   */
-  resubmitWorkflow?(runId: string, actionsToResubmit: string[]): void;
 }
 
 let service: IWorkflowService;

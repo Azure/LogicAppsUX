@@ -61,7 +61,6 @@ import {
   ParameterLocations,
   SchemaProcessor,
   WildIndexSegment,
-  replaceSubsegmentSeparator,
 } from '@microsoft/parsers-logic-apps';
 import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
@@ -391,12 +390,7 @@ function getParameterValuesForLegacyDynamicOperation(
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Record<string, any> {
-  const operation = swagger.getOperationByOperationId(operationId);
-  if (!operation) {
-    throw new Error('APIM Operation not found');
-  }
-
-  const { method, path } = operation;
+  const { method, path } = swagger.getOperationByOperationId(operationId as string);
   const operationInputs = map(
     toParameterInfoMap(
       unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false, excludeInternalOperations: false }).byId)
@@ -618,12 +612,7 @@ function getSwaggerBasedInputParameters(
   operationInfo: NodeOperation,
   operationDefinition: any
 ): InputParameter[] {
-  const operation = swagger.getOperationByOperationId(operationInfo.operationId);
-  if (!operation) {
-    throw new Error('APIM Operation not found');
-  }
-
-  const operationPath = removeConnectionPrefix(operation.path);
+  const operationPath = removeConnectionPrefix(swagger.getOperationByOperationId(operationInfo.operationId).path);
   const basePath = swagger.api.basePath;
   const { key, isNested } = dynamicParameter;
   const parameterKey =
@@ -646,22 +635,6 @@ function getSwaggerBasedInputParameters(
     operationPath,
     basePath as string
   );
-
-  // We are recieving some swagger parameters in the following format, ex:
-  //     body.$.body/content/appId
-  // We need to remove the extra `body` and convert the '/' to '.', ex:
-  //     body.$.content.appId
-  for (const inputParameter of dynamicInputParameters) {
-    if (isOpenApiParameter(inputParameter)) {
-      const { key: _key, in: _in } = inputParameter;
-      const key = replaceSubsegmentSeparator(_key)?.replace(`${_in}.$.${_in}.`, '') ?? '';
-      const name = key.split('.').pop() ?? '';
-
-      inputParameter.key = `${_in}.$.${key}`;
-      inputParameter.name = name;
-      inputParameter.title = name;
-    }
-  }
 
   if (isNested) {
     const parameter = first((inputParameter) => inputParameter.key === key, dynamicInputParameters);

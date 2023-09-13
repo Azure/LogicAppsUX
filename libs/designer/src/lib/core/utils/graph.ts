@@ -79,9 +79,10 @@ export const getUpstreamNodeIds = (
   for (const parentNodeId of allParentNodeIds) {
     const graphContainingNode = getGraphNode(parentNodeId, rootGraph, nodesMetadata);
     if (graphContainingNode) {
-      sourceNodeIds.push(...getAllSourceNodeIds(graphContainingNode, parentNodeId, operationMap), parentNodeId);
+      sourceNodeIds.push(...getAllSourceNodeIds(graphContainingNode, parentNodeId, operationMap));
     }
   }
+
   return sourceNodeIds;
 };
 

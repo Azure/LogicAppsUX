@@ -1,7 +1,4 @@
-import { environment } from '../../environments/environment';
-import type { AppDispatch } from '../../state/store';
-import { type RootState } from '../../state/store';
-import { changeRunId } from '../../state/workflowLoadingSlice';
+import type { RootState } from '../../state/store';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
@@ -9,7 +6,7 @@ import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
 import { FileSystemConnectionCreationClient } from './Services/FileSystemConnectionCreationClient';
-import { HttpClient, getExtraHeaders, getRequestUrl, isSuccessResponse } from './Services/HttpClient';
+import { HttpClient } from './Services/HttpClient';
 import {
   getConnectionStandard,
   listCallbackUrl,
@@ -35,16 +32,15 @@ import {
   StandardRunService,
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId } from '@microsoft/utils-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import * as React from 'react';
 import type { QueryClient } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -55,7 +51,6 @@ const DesignerEditor = () => {
     id: state.workflowLoader.resourcePath!,
   }));
 
-  const dispatch = useDispatch<AppDispatch>();
   const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language } = useSelector(
     (state: RootState) => state.workflowLoader
   );
@@ -130,11 +125,10 @@ const DesignerEditor = () => {
         getConnectionConfiguration,
         tenantId,
         canonicalLocation,
-        queryClient,
-        dispatch
+        queryClient
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
@@ -203,7 +197,7 @@ const DesignerEditor = () => {
   };
 
   return (
-    <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
+    <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
@@ -238,8 +232,7 @@ const getDesignerServices = (
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   location: string,
-  queryClient: QueryClient,
-  dispatch: AppDispatch
+  queryClient: QueryClient
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -373,34 +366,10 @@ const getDesignerServices = (
     location,
   });
 
-  const workflowService: IWorkflowService = {
+  const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAppIdentity: () => workflowApp.identity as any,
+    getAppIdentity: () => workflowApp.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
-    resubmitWorkflow: async (runId, actionsToResubmit) => {
-      const options = {
-        uri: `${workflowIdWithHostRuntime}/runs/${runId}/resubmit?api-version=2018-11-01`,
-        content: {
-          actionsToResubmit: actionsToResubmit.map((name) => ({
-            name,
-          })),
-        },
-      };
-      const response = await axios.post(getRequestUrl(options), options.content, {
-        headers: {
-          ...getExtraHeaders(),
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      });
-
-      if (!isSuccessResponse(response.status)) {
-        return Promise.reject(response);
-      }
-
-      const workflowId: string = response.headers['x-ms-workflow-run-id'];
-      dispatch(changeRunId(workflowId));
-    },
   };
 
   const hostService = {

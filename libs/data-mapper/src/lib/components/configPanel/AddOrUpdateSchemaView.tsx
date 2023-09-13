@@ -148,7 +148,6 @@ export const AddOrUpdateSchemaView = ({
           acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
           selectedSchemaFile={selectedSchemaFile}
           setSelectedSchemaFile={setSelectedSchemaFile}
-          schemaType={schemaType}
         />
       )}
 

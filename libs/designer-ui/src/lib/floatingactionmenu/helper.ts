@@ -1,13 +1,14 @@
 import type { FloatingActionMenuItem } from '.';
-import { DynamicallyAddedParameterType } from '../../dynamicallyaddedparameter';
-import { getIconForDynamicallyAddedParameterType } from '../../dynamicallyaddedparameter/helper';
+import { DynamicallyAddedParameterType } from '../dynamicallyaddedparameter';
+import { getIconForDynamicallyAddedParameterType } from '../dynamicallyaddedparameter/helper';
 import { getIntl } from '@microsoft/intl-logic-apps';
 
-export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]): FloatingActionMenuItem[] {
+export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): FloatingActionMenuItem[] {
   const intl = getIntl();
+  const supportedTypesArray = supportedTypes as Array<string>;
 
   const menuItems: FloatingActionMenuItem[] = [];
-  if (supportedTypes.includes('text')) {
+  if (supportedTypesArray.includes('text')) {
     const type = DynamicallyAddedParameterType.Text;
     menuItems.push({
       type,
@@ -16,7 +17,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
     });
   }
 
-  if (supportedTypes.includes('boolean')) {
+  if (supportedTypesArray.includes('boolean')) {
     const type = DynamicallyAddedParameterType.Boolean;
     menuItems.push({
       type,
@@ -25,7 +26,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
     });
   }
 
-  if (supportedTypes.includes('file')) {
+  if (supportedTypesArray.includes('file')) {
     const type = DynamicallyAddedParameterType.File;
     menuItems.push({
       type,
@@ -34,7 +35,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
     });
   }
 
-  if (supportedTypes.includes('email')) {
+  if (supportedTypesArray.includes('email')) {
     const type = DynamicallyAddedParameterType.Email;
     menuItems.push({
       type,
@@ -46,7 +47,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
     });
   }
 
-  if (supportedTypes.includes('number')) {
+  if (supportedTypesArray.includes('number')) {
     const type = DynamicallyAddedParameterType.Number;
     menuItems.push({
       type,
@@ -58,7 +59,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
     });
   }
 
-  if (supportedTypes.includes('date')) {
+  if (supportedTypesArray.includes('date')) {
     const type = DynamicallyAddedParameterType.Date;
     menuItems.push({
       type,

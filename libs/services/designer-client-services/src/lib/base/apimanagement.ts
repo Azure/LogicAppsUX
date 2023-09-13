@@ -1,5 +1,4 @@
 import type { IApiManagementService } from '../apimanagement';
-import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
@@ -35,22 +34,22 @@ export class BaseApiManagementService implements IApiManagementService {
 
   async fetchApiManagementInstances(): Promise<any> {
     const { apiVersion, subscriptionId, httpClient } = this.options;
+    const response = await httpClient.get<any>({
+      uri: `/subscriptions/${subscriptionId}/providers/Microsoft.ApiManagement/service`,
+      queryParameters: { 'api-version': apiVersion },
+    });
 
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.ApiManagement/service`;
-    const queryParameters = { 'api-version': apiVersion };
-    const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
-
-    return response.filter((instance: any) => !equals(instance.sku ? instance.sku.name : '', 'Consumption'));
+    return response.value.filter((instance: any) => !equals(instance.sku ? instance.sku.name : '', 'Consumption'));
   }
 
   async fetchApisInApiM(apiInstanceId: string): Promise<any> {
     const { apiVersion, httpClient } = this.options;
+    const response = await httpClient.get<any>({
+      uri: `${apiInstanceId}/apis`,
+      queryParameters: { 'api-version': apiVersion },
+    });
 
-    const uri = `${apiInstanceId}/apis`;
-    const queryParameters = { 'api-version': apiVersion };
-    const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
-
-    return response;
+    return response.value;
   }
 
   public async fetchApiMSwagger(apimApiId: string): Promise<SwaggerParser> {

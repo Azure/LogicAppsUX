@@ -134,10 +134,7 @@ export const useOperationDescription = (operationInfo: NodeOperation) => {
   const { swagger } = connectorData ?? {};
   if (swagger) {
     const swaggerParsed = new SwaggerParser(swagger);
-    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.description;
-    if (swaggerResult) {
-      return { isLoading, result: swaggerResult };
-    }
+    return { isLoading, result: swaggerParsed.getOperationByOperationId(operationInfo.operationId).description };
   }
 
   return { result, isLoading };
@@ -151,11 +148,8 @@ export const useOperationDocumentation = (operationInfo: NodeOperation) => {
   const { result, isLoading } = useNodeAttribute(operationInfo, ['connector', 'properties', 'externalDocs'], ['externalDocs']);
   const { swagger } = connectorData ?? {};
   if (swagger) {
-    const swaggerParsed = new SwaggerParser(swagger);
-    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.externalDocs;
-    if (swaggerResult) {
-      return { isLoading, result: swaggerResult };
-    }
+    const swaggerparsed = new SwaggerParser(swagger);
+    return { isLoading, result: swaggerparsed.getOperationByOperationId(operationInfo.operationId).externalDocs };
   }
   return { result, isLoading };
 };

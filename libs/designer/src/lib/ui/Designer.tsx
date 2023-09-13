@@ -1,6 +1,6 @@
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
-import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
@@ -21,7 +21,6 @@ import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelRoot';
 import { setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
-import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -36,7 +35,6 @@ import type { BackgroundProps, NodeChange } from 'reactflow';
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
   panelLocation?: PanelLocation;
-  customPanelLocations?: CustomPanelLocation[];
   displayRuntimeInfo?: boolean;
 }
 
@@ -128,7 +126,7 @@ export const SearchPreloader = () => {
 };
 
 export const Designer = (props: DesignerProps) => {
-  const { backgroundProps, panelLocation, customPanelLocations, displayRuntimeInfo } = props;
+  const { backgroundProps, panelLocation, displayRuntimeInfo } = props;
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
@@ -186,8 +184,6 @@ export const Designer = (props: DesignerProps) => {
     event.preventDefault();
     dispatch(switchToNodeSearchPanel());
   });
-
-  const isMonitoringView = useMonitoringView();
   const DND_OPTIONS: any = {
     backends: [
       {
@@ -207,7 +203,7 @@ export const Designer = (props: DesignerProps) => {
 
   return (
     <DndProvider options={DND_OPTIONS}>
-      {isMonitoringView || isReadOnly ? null : <SearchPreloader />}
+      <SearchPreloader />
       <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
@@ -229,11 +225,7 @@ export const Designer = (props: DesignerProps) => {
               hideAttribution: true,
             }}
           >
-            <PanelRoot
-              panelLocation={panelLocation}
-              customPanelLocations={customPanelLocations}
-              displayRuntimeInfo={displayRuntimeInfo ?? true}
-            />
+            <PanelRoot panelLocation={panelLocation} displayRuntimeInfo={displayRuntimeInfo ?? true} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
           </ReactFlow>
           <div className={`msla-designer-tools ${panelLocation === PanelLocation.Left ? 'msla-designer-tools-left-panel' : ''}`}>

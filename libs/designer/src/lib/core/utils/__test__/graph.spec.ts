@@ -159,16 +159,7 @@ describe('Graph Utilities', () => {
 
     it('should get all upstream nodes including predecessor chain for parent nodes for a node in nested graph', () => {
       const result = getUpstreamNodeIds('Compose_8', graph, nodesMetadata, operationMap);
-      expect(result).toEqual([
-        'Compose_7',
-        'Compose_5',
-        'Compose_3',
-        'Scope_2',
-        'Response',
-        'Execute_a_navigation_plan',
-        'manual',
-        'Scope',
-      ]);
+      expect(result).toEqual(['Compose_7', 'Compose_5', 'Compose_3', 'Response', 'Execute_a_navigation_plan', 'manual']);
     });
 
     it('should include all nodes inside nested graph when predecessor chain contains nested graphs for node in root graph', () => {

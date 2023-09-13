@@ -7,7 +7,6 @@ import { useFetchStandardApps } from '../Queries/FetchStandardApps';
 import type { IComboBoxOption, IDropdownOption, IStackProps, IComboBoxStyles } from '@fluentui/react';
 import { ComboBox, Dropdown, Spinner, Stack } from '@fluentui/react';
 import axios from 'axios';
-import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
@@ -39,11 +38,7 @@ export const AzureStandardLogicAppSelector = () => {
     return results.data;
   });
 
-  const {
-    data: runInstances,
-    isLoading: isRunInstancesLoading,
-    refetch: reloadRunIds,
-  } = useQuery(
+  const { data: runInstances, isLoading: isRunInstancesLoading } = useQuery(
     ['getListOfRunInstances', appId, workflowName],
     async () => {
       if (!validApp) return null;
@@ -59,12 +54,6 @@ export const AzureStandardLogicAppSelector = () => {
     },
     { enabled: !!workflowName && !!isMonitoringView }
   );
-
-  useEffect(() => {
-    if (runId && !runInstances?.value?.some((runInstance) => runInstance.name === runId)) {
-      reloadRunIds();
-    }
-  }, [reloadRunIds, runId, runInstances?.value]);
   const appOptions: IComboBoxOption[] =
     appList?.map((app) => {
       return {

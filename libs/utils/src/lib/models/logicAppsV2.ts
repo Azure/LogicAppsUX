@@ -926,8 +926,6 @@ export interface WorkflowRunAction {
   retryHistory: RetryHistory[];
   startTime: string;
   endTime: string;
-  canResubmit?: boolean;
-  executionMode?: 'ResubmittedResults' | 'StaticResults' | 'NotSpecified';
   correlation: {
     actionTrackingId: string;
     clientTrackingId: string;

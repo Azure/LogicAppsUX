@@ -985,12 +985,6 @@
       "value": "Ihr Flow wurde aktualisiert."
     }
   ],
-  "4izAMi": [
-    {
-      "type": 0,
-      "value": "Wert für Antwort eingeben"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3041,12 +3035,6 @@
       "value": "Dynamische Inhalte werden als Eigenschaften in der Authentifizierung nicht unterstützt."
     }
   ],
-  "I+85NV": [
-    {
-      "type": 0,
-      "value": "Von dieser Aktion übermitteln"
-    }
-  ],
   "I3mifR": [
     {
       "type": 0,
@@ -4619,12 +4607,6 @@
       "value": "Benutzerdefinierte Nachverfolgungs-ID"
     }
   ],
-  "Smo/VO": [
-    {
-      "type": 0,
-      "value": "Namen eingeben"
-    }
-  ],
   "Sr8PcK": [
     {
       "type": 0,
@@ -5681,12 +5663,6 @@
       "value": "Nummerierte Liste"
     }
   ],
-  "YWws/r": [
-    {
-      "type": 0,
-      "value": "Ausgabenamen dürfen nicht leer sein."
-    }
-  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6733,12 +6709,6 @@
       "value": "Bei Verwendung innerhalb einer until-Schleife gibt diese Funktion den aktuellen Iterationsindex der angegebenen Schleife zurück."
     }
   ],
-  "gusZw5": [
-    {
-      "type": 0,
-      "value": "Ausgabenamen müssen eindeutig sein."
-    }
-  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6773,12 +6743,6 @@
     {
       "type": 0,
       "value": "Fügen Sie zuerst ein Quellschema hinzu, und wählen Sie dann Elemente aus, um Ihre Zuordnung zu erstellen."
-    }
-  ],
-  "hH/wAd": [
-    {
-      "type": 0,
-      "value": "Workflowausführung aus dieser Aktion erneut übermitteln"
     }
   ],
   "hN7iBP": [
@@ -6936,7 +6900,7 @@
   "i8xPfO": [
     {
       "type": 0,
-      "value": "Keine Aktionen"
+      "value": "No actions"
     }
   ],
   "iB8YKD": [
@@ -6949,12 +6913,6 @@
     {
       "type": 0,
       "value": "Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Großbuchstaben."
-    }
-  ],
-  "iE2+sy": [
-    {
-      "type": 0,
-      "value": "Typ der Ausgabe auswählen"
     }
   ],
   "iEy9pT": [
@@ -7367,12 +7325,6 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
-    }
-  ],
-  "kq+I5o": [
-    {
-      "type": 0,
-      "value": "Ausgabe hinzufügen"
     }
   ],
   "kuFK3E": [

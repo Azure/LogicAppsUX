@@ -1,5 +1,4 @@
 import type { IAppServiceService } from '../appService';
-import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
@@ -26,16 +25,16 @@ export class BaseAppServiceService implements IAppServiceService {
   }
 
   async fetchAppServices(): Promise<any> {
-    const { apiVersion, subscriptionId, httpClient } = this.options;
+    const webAppsResponse = await this.options.httpClient.get<any>({
+      uri: `/subscriptions/${this.options.subscriptionId}/providers/Microsoft.Web/sites`,
+      queryParameters: {
+        'api-version': this.options.apiVersion,
+        propertiesToInclude: 'SiteConfig',
+      },
+    });
 
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/sites`;
-    const queryParameters = {
-      'api-version': apiVersion,
-      propertiesToInclude: 'SiteConfig',
-    };
-
-    const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
-    return response.filter(connectorIsAppService);
+    const apps = webAppsResponse.value.filter(connectorIsAppService);
+    return apps;
   }
 
   async getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any> {

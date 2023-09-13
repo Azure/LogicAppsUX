@@ -87,7 +87,8 @@ export class HttpClient implements IHttpClient {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   dispose(): void {}
 }
-export function getRequestUrl(options: HttpRequestOptions<unknown>): string {
+
+function getRequestUrl(options: HttpRequestOptions<unknown>): string {
   const { uri, queryParameters } = options;
   let queryString = '';
 
@@ -106,11 +107,11 @@ export function getRequestUrl(options: HttpRequestOptions<unknown>): string {
   }
 }
 
-export function isSuccessResponse(statusCode: number): boolean {
+function isSuccessResponse(statusCode: number): boolean {
   return statusCode >= 200 && statusCode <= 299;
 }
 
-export function getExtraHeaders(): Record<string, string> {
+function getExtraHeaders(): Record<string, string> {
   return {
     'x-ms-user-agent': `LogicAppsDesigner/(host localdesigner)`,
   };

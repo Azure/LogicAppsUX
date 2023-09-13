@@ -42,8 +42,6 @@ export * from './errorsPanel';
 export * from './eventhandler';
 // export * from './featurefeedback';
 // export * from './floatingactionmenu';
-export { FloatingActionMenuKind } from './floatingactionmenu/constants';
-export type { FloatingActionMenuOutputViewModel } from './floatingactionmenu/floatingactionmenuoutputs';
 export * from './flyout';
 export * from './flyout2';
 // export * from './formfield';

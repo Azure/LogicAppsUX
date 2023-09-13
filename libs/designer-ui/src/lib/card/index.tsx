@@ -40,7 +40,7 @@ export interface CardProps {
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
-  runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
+  runData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined;
   setFocus?: boolean;
   isSecureInputsOutputs?: boolean;
 }
@@ -80,7 +80,7 @@ export const Card: React.FC<CardProps> = ({
   staticResultsEnabled,
   title,
   onClick,
-  runData,
+  runData = {},
   setFocus,
   isSecureInputsOutputs,
 }) => {
@@ -153,11 +153,10 @@ export const Card: React.FC<CardProps> = ({
         {isMonitoringView ? (
           <StatusPill
             id={`${title}-status`}
-            status={runData?.status}
-            duration={runData?.duration}
-            startTime={runData?.startTime}
-            endTime={runData?.endTime}
-            resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
+            status={runData.status}
+            duration={runData.duration}
+            startTime={runData.startTime}
+            endTime={runData.endTime}
           />
         ) : null}
         <div className={css('msla-selection-box', selected && 'selected')} />

@@ -6,11 +6,6 @@ export enum PanelLocation {
   Right = 'RIGHT',
 }
 
-export interface CustomPanelLocation {
-  panelLocation: PanelLocation;
-  panelMode: string;
-}
-
 export enum PanelScope {
   AppLevel = 'APP_LEVEL',
   CardLevel = 'CARD_LEVEL',

@@ -96,10 +96,6 @@ export function expandAndEncodePropertySegment(segment: string): string {
   return expandedSegments.join(_separator);
 }
 
-export function replaceSubsegmentSeparator(key: string): string {
-  return key.replace(new RegExp(`\\${_subSegmentSeparator}`, 'g'), _separator);
-}
-
 export function isAncestorKey(key: string, testAncestorKey: string | undefined): boolean {
   const segments = parseEx(key);
   if (testAncestorKey !== undefined) {

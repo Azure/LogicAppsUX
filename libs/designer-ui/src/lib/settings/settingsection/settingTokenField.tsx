@@ -10,9 +10,7 @@ import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
-import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
-import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
-import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
+import { FloatingActionMenu } from '../../floatingactionmenu';
 import { HTMLEditor } from '../../html';
 import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
@@ -297,19 +295,8 @@ export const TokenField = ({
         />
       );
     case 'floatingactionmenu': {
-      return editorOptions?.menuKind === FloatingActionMenuKind.outputs ? (
-        <FloatingActionMenuOutputs
-          supportedTypes={editorOptions?.supportedTypes}
-          initialValue={value}
-          onChange={onValueChange}
-          editorViewModel={editorViewModel}
-          BasePlugins={{ tokens: showTokens }}
-          tokenPickerButtonProps={tokenpickerButtonProps}
-          getTokenPicker={getTokenPicker}
-          hideValidationErrors={hideValidationErrors}
-        />
-      ) : (
-        <FloatingActionMenuInputs
+      return (
+        <FloatingActionMenu
           supportedTypes={editorOptions?.supportedTypes}
           useStaticInputs={editorOptions?.useStaticInputs}
           initialValue={value}
