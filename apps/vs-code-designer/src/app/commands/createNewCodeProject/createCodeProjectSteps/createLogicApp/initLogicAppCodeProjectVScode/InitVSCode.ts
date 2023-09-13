@@ -28,12 +28,12 @@ export class InitVSCodeLanguageStep extends AzureWizardPromptStep<IProjectWizard
   public async getSubWizard(context: IProjectWizardContext): Promise<IWizardOptions<IProjectWizardContext>> {
     const executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[] = [];
     const promptSteps: AzureWizardPromptStep<IProjectWizardContext>[] = [];
-    await addInitVSCodeSteps(context, executeSteps);
+    await addInitVSCustomCodeSteps(context, executeSteps);
     return { promptSteps, executeSteps };
   }
 }
 
-export async function addInitVSCodeSteps(
+export async function addInitVSCustomCodeSteps(
   context: IProjectWizardContext,
   executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[]
 ): Promise<void> {
