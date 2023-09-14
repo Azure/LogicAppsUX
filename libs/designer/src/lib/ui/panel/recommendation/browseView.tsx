@@ -25,9 +25,8 @@ export const BrowseView = ({
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       if (filters['runtime']) {
-        if (filters['runtime'] === 'inapp' && !isBuiltInConnector(connector.id)) return false;
-        else if (filters['runtime'] === 'custom' && !isCustomConnector(connector.id)) return false;
-        else if (filters['runtime'] === 'shared') if (isBuiltInConnector(connector.id) || isCustomConnector(connector.id)) return false;
+        const filterMethod = SearchService().filterConnector?.bind(SearchService()) || defaultFilterConnector;
+        if (!filterMethod(connector, filters['runtime'])) return false;
       }
 
       if (filters['actionType']) {

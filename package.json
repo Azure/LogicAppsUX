@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.60.0",
+  "version": "2.68.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -158,7 +158,7 @@
     "@nrwl/web": "15.2.1",
     "@nrwl/workspace": "15.2.1",
     "@nx-plus/docusaurus": "^15.0.0-rc.0",
-    "@playwright/test": "1.27.0",
+    "@playwright/test": "^1.37.1",
     "@svgr/webpack": "6.3.1",
     "@swc-node/register": "^1.4.2",
     "@swc/cli": "~0.1.55",
@@ -200,7 +200,7 @@
     "jsonc-eslint-parser": "^2.1.0",
     "jsonc-parser": "^2.3.1",
     "less-loader": "11.0.0",
-    "playwright": "1.27.0",
+    "playwright": "^1.37.1",
     "prettier": "2.8.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",

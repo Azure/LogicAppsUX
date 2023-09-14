@@ -9,19 +9,24 @@ export interface ErrorProps {
   message?: string;
 }
 
+export interface ErrorRun {
+  code: string;
+  message: string;
+}
+
 /**
  * Translates a monitoring view `errors` prop into designer error props.
- * @arg {{ code: string; message: string }} errorRun - Operation error run object.
+ * @arg {{ error: ErrorRun} | ErrorRun  | undefined} errorRun - Operation error run object.
  * @arg {string} statusRun - The operation status, e.g., Failed, Succeeded.
  * @arg {string} codeRun - The operation code.
  * @return {ErrorProps | undefined}
  */
 export function getMonitoringError(
-  errorRun: { code: string; message: string } | undefined,
+  errorRun: { error: ErrorRun } | ErrorRun | undefined,
   statusRun: string | undefined,
   codeRun: string | undefined
 ): ErrorProps {
-  if (!codeRun || statusRun === constants.FLOW_STATUS.SUCCEEDED) {
+  if (!codeRun || statusRun === constants.FLOW_STATUS.SUCCEEDED || statusRun === constants.FLOW_STATUS.RUNNING) {
     return {
       errorLevel: undefined,
       errorMessage: undefined,
@@ -30,7 +35,7 @@ export function getMonitoringError(
     };
   }
 
-  const { code, message } = errorRun ?? { code: codeRun, message: '' };
+  const { code, message } = errorRun ? ('error' in errorRun ? errorRun.error : errorRun) : { code: codeRun, message: '' };
 
   let errorLevel: MessageBarType;
   if (statusRun === constants.FLOW_STATUS.SKIPPED) {

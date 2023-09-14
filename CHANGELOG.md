@@ -1,5 +1,102 @@
 # Logic Apps Designer
 
+## [2.68.0](https://github.com/Azure/LogicAppsUX/compare/v2.67.0...v2.68.0) (2023-09-14)
+
+### Features
+
+- **Data Mapper:** Adding messaging to make input types more clear ([#3287](https://github.com/Azure/LogicAppsUX/issues/3287)) ([5bae2bb](https://github.com/Azure/LogicAppsUX/commit/5bae2bb5f58eaf24e8054fd80d139c0e81e2d4f4))
+
+### Bug Fixes
+
+- **designer:** Catch scenario when error object has an error object ([#3313](https://github.com/Azure/LogicAppsUX/issues/3313)) ([72af48a](https://github.com/Azure/LogicAppsUX/commit/72af48a46a3fd15bea6cabd28eb797229d6fff03))
+- **designer:** FloatingActionMenuOutputs editor to lowercase serialized dynamically added property names (for consistency with V1) ([#3286](https://github.com/Azure/LogicAppsUX/issues/3286)) ([e30fd1e](https://github.com/Azure/LogicAppsUX/commit/e30fd1e7c3b317b546d0c22abb7f5ed7998c82af))
+
+## [2.67.0](https://github.com/Azure/LogicAppsUX/compare/v2.66.0...v2.67.0) (2023-09-12)
+
+## [2.67.0](https://github.com/Azure/LogicAppsUX/compare/v2.66.0...v2.67.0) (2023-09-12)
+
+### Features
+
+- **Data Mapper:** deserialize sequence functions ([#3172](https://github.com/Azure/LogicAppsUX/issues/3172)) ([605dc39](https://github.com/Azure/LogicAppsUX/commit/605dc39e1ae0ecff812a827a2d01907ead17fd31))
+
+### Bug Fixes
+
+- **Data Mapper:** formatting fix for tool bar ([#3294](https://github.com/Azure/LogicAppsUX/issues/3294)) ([4059389](https://github.com/Azure/LogicAppsUX/commit/4059389dc67f213fac6c34dafaa2aaff7970e7c1))
+- **data mapper:** able to add new connections to expanded cards ([#3278](https://github.com/Azure/LogicAppsUX/issues/3278)) ([dda2b0f](https://github.com/Azure/LogicAppsUX/commit/dda2b0f47288e7a650b213fe6b4a06dc7b0ff26c))
+- **designer:** bind the search operations methods ([#3285](https://github.com/Azure/LogicAppsUX/issues/3285)) ([d4bce5b](https://github.com/Azure/LogicAppsUX/commit/d4bce5b10371325f71291273ea64a5029f6d0bf1))
+- **designer:** Support Expression editor multiline ([#3290](https://github.com/Azure/LogicAppsUX/issues/3290)) ([7feeb17](https://github.com/Azure/LogicAppsUX/commit/7feeb1718cb20947a30e3030f943038f2600a01c))
+- **standalone:** Resolve connection references in designer ([#3279](https://github.com/Azure/LogicAppsUX/issues/3279)) ([b6763e8](https://github.com/Azure/LogicAppsUX/commit/b6763e8b86fee0fda10d113a2e34e5ff03110a21))
+
+## [2.66.0](https://github.com/Azure/LogicAppsUX/compare/v2.65.0...v2.66.0) (2023-09-07)
+
+### Bug Fixes
+
+- **Designer:** Add spaces in simple array editor to make more readable ([#3233](https://github.com/Azure/LogicAppsUX/issues/3233)) ([1907028](https://github.com/Azure/LogicAppsUX/commit/19070287a13a55badbe95efeb120a10551ceb0fa))
+- **designer:** ErrorHandling - Added case to flow run error handling for flowStatus Running ([#3254](https://github.com/Azure/LogicAppsUX/issues/3254)) ([1d740a7](https://github.com/Azure/LogicAppsUX/commit/1d740a7f0bc82a0bc1c322b5c801b0e3816d153d))
+- **designer:** Fixed Expression Editor have slow height change ([#3243](https://github.com/Azure/LogicAppsUX/issues/3243)) ([6cf6d29](https://github.com/Azure/LogicAppsUX/commit/6cf6d293ad409403641827a94d39853ece3a9655))
+- **designer:** Settings Rework ([#3253](https://github.com/Azure/LogicAppsUX/issues/3253)) ([0577d6f](https://github.com/Azure/LogicAppsUX/commit/0577d6fe687916b2f8e309b82e85bb22c322dcc3))
+- **designer:** Show skipped status for actions inside skipped scopes ([#3264](https://github.com/Azure/LogicAppsUX/issues/3264)) ([e1c49e1](https://github.com/Azure/LogicAppsUX/commit/e1c49e1e420fa9dbff856edcd8c4f9ce982b727f))
+- **designer:** SimpleQueryBuilder Negatory Operators Deserializing Properly ([#3241](https://github.com/Azure/LogicAppsUX/issues/3241)) ([14c957e](https://github.com/Azure/LogicAppsUX/commit/14c957e67e53bdfad11578e1a36aef082ce4bf8c))
+- **designer:** Update 'about' tab to handle falsy property values ([#3244](https://github.com/Azure/LogicAppsUX/issues/3244)) ([d538745](https://github.com/Azure/LogicAppsUX/commit/d53874573859295836b68d76d0610b1b3050ef0d))
+- **vscode:** Fix check brew also when npm is package manager ([#3247](https://github.com/Azure/LogicAppsUX/issues/3247)) ([87fc027](https://github.com/Azure/LogicAppsUX/commit/87fc027626e2d4cc38dcd082255970d41a943ef8))
+
+## [2.65.0](https://github.com/Azure/LogicAppsUX/compare/v2.64.0...v2.65.0) (2023-08-31)
+
+### Bug Fixes
+
+- **designer:** SimpleQueryBuilder Negatory Operators Serialization/Deserializing Properly ([#3232](https://github.com/Azure/LogicAppsUX/issues/3232)) ([3512b15](https://github.com/Azure/LogicAppsUX/commit/3512b1509b2f14b48e067354ccbc6ee18d97c075))
+
+## [2.64.0](https://github.com/Azure/LogicAppsUX/compare/v2.63.0...v2.64.0) (2023-08-31)
+
+### Features
+
+- **designer:** Adding search service 2 to allow for custom search results ([#3201](https://github.com/Azure/LogicAppsUX/issues/3201)) ([0b8150a](https://github.com/Azure/LogicAppsUX/commit/0b8150af2e69bb26491a0194b8a7b95512e5914d))
+- **designer:** inputsLocationSwapMap manifest property to support non-objects ([#3218](https://github.com/Azure/LogicAppsUX/issues/3218)) ([a670436](https://github.com/Azure/LogicAppsUX/commit/a670436fb78e9ec86c5e71a77a0b61d71a4718cc))
+- **designer:** Split/Refactor FloatingActionMenu, adding FloatingActionMenuOutputs editor ([#3197](https://github.com/Azure/LogicAppsUX/issues/3197)) ([8c782a6](https://github.com/Azure/LogicAppsUX/commit/8c782a6dadaa8d76ed8a87807b438f66ad819bb7))
+
+### Bug Fixes
+
+- **designer:** Add property check for content in inputs/outputs object ([#3225](https://github.com/Azure/LogicAppsUX/issues/3225)) ([263b8f0](https://github.com/Azure/LogicAppsUX/commit/263b8f06042c98febb481e7bec27274d67972905))
+- **designer:** Disable Browse preloading when in monitoring or readOnly view ([#3207](https://github.com/Azure/LogicAppsUX/issues/3207)) ([3bda939](https://github.com/Azure/LogicAppsUX/commit/3bda939a4cfe8a1c78cf1a99334af6529ef210e8))
+- **designer:** Fix issue where deleting a token without focusing the editor would not update the property value ([#3220](https://github.com/Azure/LogicAppsUX/issues/3220)) ([b3504e0](https://github.com/Azure/LogicAppsUX/commit/b3504e0e3c72e93ef818cc9b6640a721a0efcb5f))
+- **designer:** Fix search service operations ([#3212](https://github.com/Azure/LogicAppsUX/issues/3212)) ([56dd467](https://github.com/Azure/LogicAppsUX/commit/56dd4670318e0e23c29a55bf5f60541932d4f1ae))
+- **Designer:** Fixed issue on the initialize variable action ([#3211](https://github.com/Azure/LogicAppsUX/issues/3211)) ([f679171](https://github.com/Azure/LogicAppsUX/commit/f679171bdef42a155746f4d1e2905c718fec862e))
+- **Designer:** OAuth - Passed redirect url value from oauth setting in connection parameters ([#3224](https://github.com/Azure/LogicAppsUX/issues/3224)) ([47526fe](https://github.com/Azure/LogicAppsUX/commit/47526fe7a1223552113223e716dd06fdb9e95bf8))
+- **designer:** Show Item token picker for loops ([#3208](https://github.com/Azure/LogicAppsUX/issues/3208)) ([a3c4360](https://github.com/Azure/LogicAppsUX/commit/a3c4360cf0bd3de66ee8e0eee309f46c4b261a81))
+
+## [2.63.0](https://github.com/Azure/LogicAppsUX/compare/v2.62.2...v2.63.0) (2023-08-25)
+
+## [2.62.0](https://github.com/Azure/LogicAppsUX/compare/v2.61.0...v2.62.0) (2023-08-25)
+
+### Features
+
+- **designer:** Allow a workflow to be resubmitted from a specific action if supported by the flow ([#3198](https://github.com/Azure/LogicAppsUX/issues/3198)) ([55d857f](https://github.com/Azure/LogicAppsUX/commit/55d857f0ec3fcde6fd63ca2900c0f88047c46483))
+
+### Bug Fixes
+
+- **Designer:** Modified several azure resource requests to be recursive ([#3193](https://github.com/Azure/LogicAppsUX/issues/3193)) ([5fc8fe1](https://github.com/Azure/LogicAppsUX/commit/5fc8fe15bcc4faa3b2999b162bffbe4e09e5b45b))
+
+## [2.61.0](https://github.com/Azure/LogicAppsUX/compare/v2.60.0...v2.61.0) (2023-08-24)
+
+### Features
+
+- **designer:** Add no actions node for is read only mode ([#3173](https://github.com/Azure/LogicAppsUX/issues/3173)) ([252e12e](https://github.com/Azure/LogicAppsUX/commit/252e12e9aeca00268692173f8ff3130defe0430a))
+- **Designer:** Added support for additional audiences on Managed Identity connections ([#3156](https://github.com/Azure/LogicAppsUX/issues/3156)) ([68eb661](https://github.com/Azure/LogicAppsUX/commit/68eb661a4179649ae69b5eb7b0a1a33d91a90e6f))
+- **ia:** Support Premium IA in artifact service ([#3147](https://github.com/Azure/LogicAppsUX/issues/3147)) ([25ac33f](https://github.com/Azure/LogicAppsUX/commit/25ac33f2fe373e4542059198737286cf12f97d03))
+
+### Bug Fixes
+
+- **designer:** decode callback URL ([#3136](https://github.com/Azure/LogicAppsUX/issues/3136)) ([0e13f9b](https://github.com/Azure/LogicAppsUX/commit/0e13f9ba48644260ec830fb36b2a5a1ec2754f98))
+- **designer:** Enable isDirty When removing Optional Parameter ([#3182](https://github.com/Azure/LogicAppsUX/issues/3182)) ([b5a3728](https://github.com/Azure/LogicAppsUX/commit/b5a372835da0d1899008e2005526737e9b6176d3))
+- **Designer:** Ensure outputs merge only based on isRequestApiConnection FF ([#3180](https://github.com/Azure/LogicAppsUX/issues/3180)) ([add9d85](https://github.com/Azure/LogicAppsUX/commit/add9d85c2b49b6cfc3f2d573894b56917270752f))
+- **Designer:** Fixed broken horizontal scrolling with shift + mouse wheel ([#3171](https://github.com/Azure/LogicAppsUX/issues/3171)) ([8f52469](https://github.com/Azure/LogicAppsUX/commit/8f5246907cfb95736eca73706933fbb0cc510f18))
+- **Designer:** Fixed issue with some alternate swagger-based dynamic parameter formatting ([#3186](https://github.com/Azure/LogicAppsUX/issues/3186)) ([3b302a9](https://github.com/Azure/LogicAppsUX/commit/3b302a9f06baabd3bb7b89578a81d8dd3767757e))
+- **Designer:** Fixing the foatingActionMenu root object for HybridTriggers ([#3148](https://github.com/Azure/LogicAppsUX/issues/3148)) ([d3e8f6a](https://github.com/Azure/LogicAppsUX/commit/d3e8f6a92bcc2007132675cc5491d53ce8e4844b))
+- **designer:** Revert export function for deserialization of tokens ([#3160](https://github.com/Azure/LogicAppsUX/issues/3160)) ([2209bd0](https://github.com/Azure/LogicAppsUX/commit/2209bd0d6cd81ba543c1e13f53eb1f4558206843)), closes [#3137](https://github.com/Azure/LogicAppsUX/issues/3137)
+- **designer:** swapInputsLocation replacing whole input instead of only replacing source item ([#3155](https://github.com/Azure/LogicAppsUX/issues/3155)) ([96ff127](https://github.com/Azure/LogicAppsUX/commit/96ff127a392fccf3fcb62f08201427fdf2812e50))
+
+## [2.60.0](https://github.com/Azure/LogicAppsUX/compare/v2.59.0...v2.60.0) (2023-08-17)
+
 ## [2.60.0](https://github.com/Azure/LogicAppsUX/compare/v2.59.0...v2.60.0) (2023-08-17)
 
 ### Bug Fixes
