@@ -53,7 +53,7 @@ export const SettingDropdown = ({
   };
   return (
     <>
-      {customLabel ? customLabel : null}
+      {customLabel ? customLabel() : null}
       <Dropdown
         className="msla-setting-section-dropdown"
         id={id}

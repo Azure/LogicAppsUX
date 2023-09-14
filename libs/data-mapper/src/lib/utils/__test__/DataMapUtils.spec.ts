@@ -2,15 +2,11 @@ import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { FunctionCategory, NormalizedDataType, SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
-  ReservedToken,
-  Separators,
   addAncestorNodesToCanvas,
   addParentConnectionForRepeatingElementsNested,
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
-  lexThisThing as separateIntoTokens,
   qualifyLoopRelativeSourceKeys,
-  removeSequenceFunction,
   splitKeyIntoChildren,
 } from '../DataMap.Utils';
 import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
@@ -262,112 +258,6 @@ describe('utils/DataMap', () => {
           0
         )
       ).toBe('/ns0:TargetSchemaRoot/Looping/ManyToOne/RandomNode/Simple/Direct');
-    });
-  });
-
-  describe('removeSequenceFunction', () => {
-    it('returns unedited string if no sequence exists', () => {
-      const result = removeSequenceFunction(['/ns0:Root/Looping/', '$', 'for', '(', '/ns0:Root/Looping/Employee', ')', '/Person/Name']);
-      expect(result).toEqual('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
-    });
-    it('separates a loop and sequence target', () => {
-      const result = removeSequenceFunction([
-        '/ns0:Root/Looping/',
-        '$',
-        'for',
-        '(',
-        'reverse',
-        '(',
-        '/ns0:Root/Looping/Employee',
-        ')',
-        ')',
-        '/Person/Name',
-      ]);
-      expect(result).toEqual('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
-    });
-    it('separates a loop and nested sequence target', () => {
-      const result = removeSequenceFunction([
-        '/ns0:Root/Looping/',
-        '$',
-        'for',
-        '(',
-        'distinct-values',
-        '(',
-        'reverse',
-        '(',
-        '/ns0:Root/Looping/Employee',
-        ')',
-        ',',
-        '/ns0:Root/Looping/Employee/Country',
-        ')',
-        ')',
-        '/Person/Name',
-      ]);
-      expect(result).toEqual('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
-    });
-
-    it('returns unchanged string for multiple loops', () => {
-      const result = removeSequenceFunction([
-        '/ns0:TargetSchemaRoot/Looping/ManyToMany/',
-        '$',
-        'for',
-        '(',
-        '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple',
-        ')',
-        '/Simple/',
-        '$',
-        'for',
-        '(',
-        'SourceSimpleChild',
-        ')',
-        '/SimpleChild/',
-        '$',
-        'for',
-        '(',
-        'SourceSimpleChildChild',
-        ')',
-        '/SimpleChildChild/Direct',
-      ]);
-      expect(result).toEqual(
-        '/ns0:TargetSchemaRoot/Looping/ManyToMany/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)/Simple/$for(SourceSimpleChild)/SimpleChild/$for(SourceSimpleChildChild)/SimpleChildChild/Direct'
-      );
-    });
-  });
-
-  describe('separateIntoTokens', () => {
-    it('separates a loop and sequence target', () => {
-      const result = separateIntoTokens('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name');
-      expect(result[0]).toEqual('/ns0:Root/Looping/');
-      expect(result[1]).toEqual(Separators.Dollar);
-      expect(result[2]).toEqual(ReservedToken.for);
-      expect(result[3]).toEqual(Separators.OpenParenthesis);
-      expect(result[4]).toEqual('reverse');
-      expect(result[5]).toEqual(Separators.OpenParenthesis);
-      expect(result[6]).toEqual('/ns0:Root/Looping/Employee');
-      expect(result[7]).toEqual(Separators.CloseParenthesis);
-      expect(result[8]).toEqual(Separators.CloseParenthesis);
-      expect(result[9]).toEqual('/Person/Name');
-    });
-
-    it('separates a loop and nested sequence target', () => {
-      const result = separateIntoTokens(
-        '/ns0:Root/Looping/$for(distinct-values(reverse(/ns0:Root/Looping/Employee),/ns0:Root/Looping/Employee/Country))/Person/Name'
-      );
-      expect(result[0]).toEqual('/ns0:Root/Looping/');
-      expect(result[1]).toEqual(Separators.Dollar);
-      expect(result[2]).toEqual(ReservedToken.for);
-      expect(result[3]).toEqual(Separators.OpenParenthesis);
-      expect(result[4]).toEqual('distinct-values');
-      expect(result[5]).toEqual(Separators.OpenParenthesis);
-      expect(result[6]).toEqual('reverse');
-      expect(result[7]).toEqual(Separators.OpenParenthesis);
-      expect(result[8]).toEqual('/ns0:Root/Looping/Employee');
-      expect(result[9]).toEqual(Separators.CloseParenthesis);
-      expect(result[10]).toEqual(Separators.Comma);
-      expect(result[11]).toEqual('/ns0:Root/Looping/Employee/Country');
-      expect(result[12]).toEqual(Separators.CloseParenthesis);
-      expect(result[13]).toEqual(Separators.CloseParenthesis);
-      expect(result[14]).toEqual('/Person/Name');
     });
   });
 });

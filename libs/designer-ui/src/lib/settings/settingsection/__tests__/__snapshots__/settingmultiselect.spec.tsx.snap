@@ -11,7 +11,6 @@ exports[`ui/settings/multiselectsettings should construct 1`] = `
       checked={false}
       label="Sample Option 1"
       onChange={[Function]}
-      onRenderLabel={[Function]}
     />
   </div>
   <div
@@ -21,7 +20,6 @@ exports[`ui/settings/multiselectsettings should construct 1`] = `
       checked={false}
       label="Sample Option 2"
       onChange={[Function]}
-      onRenderLabel={[Function]}
     />
   </div>
   <div
@@ -31,7 +29,6 @@ exports[`ui/settings/multiselectsettings should construct 1`] = `
       checked={false}
       label="Sample Option 3"
       onChange={[Function]}
-      onRenderLabel={[Function]}
     />
   </div>
   <div
@@ -41,7 +38,6 @@ exports[`ui/settings/multiselectsettings should construct 1`] = `
       checked={false}
       label="Sample Option 4"
       onChange={[Function]}
-      onRenderLabel={[Function]}
     />
   </div>
 </div>

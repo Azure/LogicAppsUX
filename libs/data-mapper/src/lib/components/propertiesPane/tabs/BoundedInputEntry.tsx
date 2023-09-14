@@ -72,7 +72,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
 
       inputBox = (
         <FileDropdown
-          loadedSelection={removeQuotesFromString((connection?.inputs[0][0] as string) || '')}
+          loadedSelection={removeQuotesFromString((connection?.inputs[0][0] as string) || '')} // danielle is it possible to have a connection with no inputs?
           allPathOptions={pathOptions}
           placeholder={placeholder}
           setSelectedPath={(item: string | undefined) => {

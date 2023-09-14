@@ -69,7 +69,6 @@ export class WorkflowUtility {
       for (const parameterName of Object.keys(parameters)) {
         const parameterValue = parameters[parameterName].value !== undefined ? parameters[parameterName].value : '';
         result = replaceAllOccurrences(result, `@parameters('${parameterName}')`, parameterValue);
-        result = replaceAllOccurrences(result, `@{parameters('${parameterName}')}`, parameterValue);
       }
     }
 
@@ -77,7 +76,6 @@ export class WorkflowUtility {
       for (const settingName of Object.keys(appsettings)) {
         const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
         result = replaceAllOccurrences(result, `@appsetting('${settingName}')`, settingValue);
-        result = replaceAllOccurrences(result, `@{appsetting('${settingName}')}`, settingValue);
       }
     }
 

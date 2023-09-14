@@ -41,7 +41,7 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
               checked={userSelections.includes(option)}
               label={option.label}
               ariaLabel={ariaLabel}
-              onRenderLabel={() => customLabel ?? null}
+              onRenderLabel={customLabel}
               onChange={(_, checked) => handleSelectionChange(option, !!checked)}
             />
           </div>

@@ -69,12 +69,6 @@
       "value": "Strefa czasowa"
     }
   ],
-  "+v1RlQ": [
-    {
-      "type": 0,
-      "value": "Pomijanie nagłówków przepływu pracy w odpowiedzi"
-    }
-  ],
   "+xXHdp": [
     {
       "type": 0,
@@ -187,6 +181,12 @@
     {
       "type": 0,
       "value": "Brak wymaganych danych wejściowych"
+    }
+  ],
+  "/w/q/8": [
+    {
+      "type": 0,
+      "value": "Po włączeniu ta akcja zostanie uruchomiona z użytkownikiem z poziomu ustawienia „Uruchom jako” w wyzwalaczu Dataverse."
     }
   ],
   "/yYyOq": [
@@ -487,12 +487,6 @@
       "value": "(UTC-01:00) Azory"
     }
   ],
-  "1hPZqe": [
-    {
-      "type": 0,
-      "value": "Liczba ponownych prób wysłania żądania"
-    }
-  ],
   "1htSs7": [
     {
       "type": 0,
@@ -571,6 +565,12 @@
       "value": "Wybierz plik do przekazania"
     }
   ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Włącz podział, aby uruchomić wystąpienie przepływu pracy na element w wybranej tablicy. Każde wystąpienie może mieć również oddzielny identyfikator śledzenia."
+    }
+  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -581,12 +581,6 @@
     {
       "type": 0,
       "value": "Godzina zakończenia"
-    }
-  ],
-  "2MOA1x": [
-    {
-      "type": 0,
-      "value": "Kontroluj sposób kolejkowania nowych przebiegów"
     }
   ],
   "2NXYYu": [
@@ -643,12 +637,6 @@
       "value": "Czas rozpoczęcia"
     }
   ],
-  "2pCFsW": [
-    {
-      "type": 0,
-      "value": "Nieprawidłowa liczba stronicowania. Wartość musi być liczbą większą niż 0"
-    }
-  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -669,12 +657,6 @@
     {
       "type": 0,
       "value": "Włączone"
-    }
-  ],
-  "2uINs9": [
-    {
-      "type": 0,
-      "value": "Domyślny"
     }
   ],
   "2vnYre": [
@@ -991,12 +973,6 @@
       "value": "Przepływ został zaktualizowany."
     }
   ],
-  "4izAMi": [
-    {
-      "type": 0,
-      "value": "Wprowadź wartość, do udzielenia odpowiedzi"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1177,12 +1153,6 @@
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy niż wartość, z którą jest porównywany."
     }
   ],
-  "632t9E": [
-    {
-      "type": 0,
-      "value": "Zabezpiecz dane wejściowe operacji"
-    }
-  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1207,10 +1177,10 @@
       "value": "Anuluj"
     }
   ],
-  "6VV7OY": [
+  "6WmLx1": [
     {
       "type": 0,
-      "value": "Wartość czasu jest nieprawidłowa, musi być zgodny z formatem czasu trwania ISO 8601"
+      "value": "Ostrzeżenie: typ węzła danych wejściowych nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
   "6ZviI7": [
@@ -1453,12 +1423,6 @@
       "value": "Kopiuj adres URL"
     }
   ],
-  "7zDk9N": [
-    {
-      "type": 0,
-      "value": "Interwał wykładniczy"
-    }
-  ],
   "7zsUT3": [
     {
       "type": 0,
@@ -1639,6 +1603,18 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Opcje żądania"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Pomijanie nagłówków przepływu pracy w odpowiedzi"
     }
   ],
   "8wr0zO": [
@@ -2127,6 +2103,12 @@
       "value": "Wybierz tożsamość zarządzaną"
     }
   ],
+  "BrvZNn": [
+    {
+      "type": 0,
+      "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony."
+    }
+  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2137,12 +2119,6 @@
     {
       "type": 0,
       "value": "Pojedynczy specyfikator formatu, który wskazuje sposób formatowania wartości tego identyfikatora GUID."
-    }
-  ],
-  "BvCnOv": [
-    {
-      "type": 0,
-      "value": "Ustaw identyfikator śledzenia dla przebiegu. W przypadku podziału ten identyfikator śledzenia dotyczy żądania inicjującego"
     }
   ],
   "BxITRH": [
@@ -2275,12 +2251,6 @@
       "value": "(UTC+09:30) Adelajda"
     }
   ],
-  "CyT8H7": [
-    {
-      "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
-    }
-  ],
   "CypYLs": [
     {
       "type": 0,
@@ -2337,12 +2307,6 @@
     {
       "type": 0,
       "value": "Węzeł"
-    }
-  ],
-  "DEKsll": [
-    {
-      "type": 0,
-      "value": "Interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "DEu7oK": [
@@ -2425,12 +2389,6 @@
       "value": "Rozwiń wynik statyczny"
     }
   ],
-  "Dm0zAO": [
-    {
-      "type": 0,
-      "value": "Maksymalny czas trwania w przypadku pojedynczego żądania wychodzącego z tej akcji. Jeśli żądanie nie zakończy się w ramach tego limitu po wykonaniu ponownych prób, akcja zakończy się niepowodzeniem"
-    }
-  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2497,6 +2455,12 @@
     {
       "type": 0,
       "value": "Sprawdź akcje przepływu, aby sprawdzić, czy należy ustawić jakiekolwiek parametry. Pamiętaj o zapisaniu po zakończeniu!"
+    }
+  ],
+  "EKtYQF": [
+    {
+      "type": 0,
+      "value": "Ustaw identyfikator śledzenia dla przebiegu. W przypadku podziału ten identyfikator śledzenia dotyczy żądania inicjującego."
     }
   ],
   "ERAWZA": [
@@ -2609,12 +2573,6 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba określonych jednostek czasu do dodania."
-    }
-  ],
-  "F6+icQ": [
-    {
-      "type": 0,
-      "value": "Maksymalny interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3245,16 +3203,6 @@
       "value": "."
     }
   ],
-  "J5TTF6": [
-    {
-      "type": 0,
-      "value": "Accepted data types: "
-    },
-    {
-      "type": 1,
-      "value": "type"
-    }
-  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3365,6 +3313,12 @@
     {
       "type": 0,
       "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Ustaw identyfikator śledzenia dla przebiegu. W przypadku podziału ten identyfikator śledzenia dotyczy żądania inicjującego."
     }
   ],
   "K50znc": [
@@ -3569,12 +3523,6 @@
       "value": "Konfiguruj"
     }
   ],
-  "LRAhSA": [
-    {
-      "type": 0,
-      "value": "Po włączeniu ta akcja zostanie uruchomiona z użytkownikiem z poziomu ustawienia „Uruchom jako” w wyzwalaczu Dataverse"
-    }
-  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -3717,6 +3665,12 @@
     {
       "type": 0,
       "value": "Opcjonalnie. Nazwa akcji o określonym zakresie, w którym mają być umieszczane dane wejściowe i wyjściowe akcji najwyższego poziomu."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Zabezpiecz dane wyjściowe operacji i odwołania właściwości danych wyjściowych."
     }
   ],
   "MCzWDc": [
@@ -4185,6 +4139,12 @@
       "value": "Wymagane. Ta wartość określa ilość liczb całkowitych w tablicy."
     }
   ],
+  "P3Zpc4": [
+    {
+      "type": 0,
+      "value": "Niestandardowy identyfikator śledzenia"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4273,22 +4233,10 @@
       "value": "Śledzone właściwości"
     }
   ],
-  "Pl/fcn": [
-    {
-      "type": 0,
-      "value": "Identyfikator śledzenia dla podziału"
-    }
-  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) Kair"
-    }
-  ],
-  "PqUAbF": [
-    {
-      "type": 0,
-      "value": "Dekompresuj treść żądania, jeśli jest skompresowana przy użyciu GZip lub Deflate. To ustawienie dotyczy tylko wyzwalacza HTTP"
     }
   ],
   "PsmHyH": [
@@ -4437,16 +4385,6 @@
     {
       "type": 0,
       "value": "Parametry przepływu pracy"
-    }
-  ],
-  "QhKk80": [
-    {
-      "type": 0,
-      "value": "Liczba stronicowania przekracza wartość maksymalną równą "
-    },
-    {
-      "type": 1,
-      "value": "max"
     }
   ],
   "Qn8qxn": [
@@ -4711,12 +4649,6 @@
       "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
     }
   ],
-  "SenWwt": [
-    {
-      "type": 0,
-      "value": "Określ zachowanie i możliwości przesyłania zawartości za pomocą protokołu HTTP. Duże wiadomości można podzielić na mniejsze żądania do łącznika, aby umożliwić przekazywanie dużych wiadomości."
-    }
-  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4795,10 +4727,22 @@
       "value": "Zwraca początek miesiąca z sygnatury czasowej przekazanego ciągu"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowa liczba stronicowania"
+    }
+  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Typ akcji"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Wprowadź wartość"
     }
   ],
   "TX4Kdr": [
@@ -4969,16 +4913,6 @@
       "value": "Usuń akcję przepływu pracy"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Try using a Conversion function such as: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4989,16 +4923,6 @@
     {
       "type": 0,
       "value": "Nazwa logiczna"
-    }
-  ],
-  "UMPuUJ": [
-    {
-      "type": 0,
-      "value": "Usuń "
-    },
-    {
-      "type": 1,
-      "value": "expressionValue"
     }
   ],
   "UR1CS5": [
@@ -5143,12 +5067,6 @@
     {
       "type": 0,
       "value": "Ogólne"
-    }
-  ],
-  "V+xi3c": [
-    {
-      "type": 0,
-      "value": "Więcej szczegółów można znaleźć pod adresem http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5385,12 +5303,6 @@
       "value": "(UTC+04:00) Astrachań, Uljanowsk"
     }
   ],
-  "WS55UF": [
-    {
-      "type": 0,
-      "value": "Określ czas trwania w formacie zgodnym ze standardem ISO 8601."
-    }
-  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5423,12 +5335,6 @@
     {
       "type": 0,
       "value": "Zażądaj historii"
-    }
-  ],
-  "Wb/cBR": [
-    {
-      "type": 0,
-      "value": "Stały interwał"
     }
   ],
   "WcnIF8": [
@@ -5465,12 +5371,6 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Montevideo"
-    }
-  ],
-  "X4SuNU": [
-    {
-      "type": 0,
-      "value": "Minimalny interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5531,18 +5431,6 @@
     {
       "type": 0,
       "value": "Upewnij się, że pisownia wyrazów jest prawidłowa."
-    }
-  ],
-  "XJkBrZ": [
-    {
-      "type": 0,
-      "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony"
-    }
-  ],
-  "XKDZXi": [
-    {
-      "type": 0,
-      "value": "Limit czasu akcji"
     }
   ],
   "XLUs2P": [
@@ -5827,12 +5715,6 @@
       "value": "Lista numerowana"
     }
   ],
-  "YWws/r": [
-    {
-      "type": 0,
-      "value": "Nazwy danych wyjściowych nie powinny być puste."
-    }
-  ],
   "YZ5Kwe": [
     {
       "type": 0,
@@ -6065,12 +5947,6 @@
       "value": "Pełny ekran"
     }
   ],
-  "ahFd/S": [
-    {
-      "type": 0,
-      "value": "Unikatowy identyfikator śledzenia dla każdego wystąpienia podziału"
-    }
-  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -6273,6 +6149,12 @@
       "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Dekompresuj treść żądania, jeśli jest skompresowana przy użyciu GZip lub Deflate. To ustawienie dotyczy tylko wyzwalacza HTTP."
+    }
+  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6285,16 +6167,16 @@
       "value": "(UTC+09:00) Seul"
     }
   ],
-  "cJkSrD": [
-    {
-      "type": 0,
-      "value": "Pobierz więcej wyników do limitu dzielenia na strony"
-    }
-  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "Pokaż dokumentację"
+    }
+  ],
+  "cP4UkW": [
+    {
+      "type": 0,
+      "value": "Interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "cR9RtV": [
@@ -6453,10 +6335,22 @@
       "value": "Częstotliwość"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Określ zachowanie i możliwości przesyłania zawartości za pomocą protokołu HTTP. Duże wiadomości można podzielić na mniejsze żądania do łącznika, aby umożliwić przekazywanie dużych wiadomości. Szczegóły można znaleźć na stronie http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Pomiń"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Zabezpiecz dane wejściowe operacji."
     }
   ],
   "daoo3l": [
@@ -6605,12 +6499,6 @@
       "value": "Kursywa (⌘I)"
     }
   ],
-  "eo1YKX": [
-    {
-      "type": 0,
-      "value": "Włącz podział, aby uruchomić wystąpienie przepływu pracy na element w wybranej tablicy. Każde wystąpienie może mieć również oddzielny identyfikator śledzenia"
-    }
-  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6635,12 +6523,6 @@
       "value": "Opcjonalne. Indeks miejsca, w którym należy zakończyć wyodrębnianie podciągu."
     }
   ],
-  "f7Janv": [
-    {
-      "type": 0,
-      "value": "Przykład: PT1S"
-    }
-  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6663,6 +6545,12 @@
     {
       "type": 0,
       "value": "Wybierz zasób usługi API Management"
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Liczba stronicowania przekracza wartość maksymalną"
     }
   ],
   "fKYuwf": [
@@ -6747,12 +6635,6 @@
       "value": "Środowisko uruchomieniowe"
     }
   ],
-  "g7/EKC": [
-    {
-      "type": 0,
-      "value": "Ograniczenie"
-    }
-  ],
   "g7my78": [
     {
       "type": 0,
@@ -6815,12 +6697,6 @@
       "value": "Poprzednie z niepowodzeniem"
     }
   ],
-  "gL4rVQ": [
-    {
-      "type": 0,
-      "value": "Brak"
-    }
-  ],
   "gQt/0f": [
     {
       "type": 0,
@@ -6881,12 +6757,6 @@
       "value": "W przypadku użycia wewnątrz pętli until ta funkcja zwraca bieżący indeks iteracji określonej pętli."
     }
   ],
-  "gusZw5": [
-    {
-      "type": 0,
-      "value": "Nazwy danych wyjściowych powinny być unikatowe."
-    }
-  ],
   "gvDMuq": [
     {
       "type": 0,
@@ -6921,18 +6791,6 @@
     {
       "type": 0,
       "value": "Najpierw dodaj schemat źródłowy, a następnie wybierz elementy do utworzenia mapy"
-    }
-  ],
-  "hH/wAd": [
-    {
-      "type": 0,
-      "value": "Ponownie prześlij przebieg przepływu pracy z tej akcji"
-    }
-  ],
-  "hMf2TA": [
-    {
-      "type": 0,
-      "value": "Zezwalanie na dzielenie na fragmenty"
     }
   ],
   "hN7iBP": [
@@ -7177,12 +7035,6 @@
       "value": "Tożsamość zarządzana"
     }
   ],
-  "iSiVB0": [
-    {
-      "type": 0,
-      "value": "Zabezpiecz dane wyjściowe operacji i odwołania właściwości danych wyjściowych"
-    }
-  ],
   "iTKrs8": [
     {
       "type": 0,
@@ -7307,12 +7159,6 @@
       "value": "Poinformuj firmę Microsoft, jak można ulepszyć tę funkcję"
     }
   ],
-  "jO5Fet": [
-    {
-      "type": 0,
-      "value": "Opcje żądania — limit czasu"
-    }
-  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -7385,12 +7231,6 @@
       "value": "Edytuj w pliku JSON"
     }
   ],
-  "jfU6pn": [
-    {
-      "type": 0,
-      "value": "Włączenie zabezpieczenia danych wejściowych spowoduje automatyczne zabezpieczenie danych wyjściowych."
-    }
-  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7401,6 +7241,12 @@
     {
       "type": 0,
       "value": "Opisz, co powinien zrobić przepływ. Dodaj szczegóły tam, gdzie to możliwe, w tym łącznik do użycia i ewentualną zawartość."
+    }
+  ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Czas trwania"
     }
   ],
   "juvF+0": [
@@ -7735,12 +7581,6 @@
       "value": "Wstaw wyrażenie (możesz również dodać, wpisując / w edytorze)"
     }
   ],
-  "lsH37F": [
-    {
-      "type": 0,
-      "value": "Weryfikuj treść żądania względem podanego schematu. W przypadku niezgodności zostanie zwrócony kod HTTP 400"
-    }
-  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7777,12 +7617,6 @@
       "value": "Nazwa"
     }
   ],
-  "m8z4Yr": [
-    {
-      "type": 0,
-      "value": "Próg elementów do zwrócenia"
-    }
-  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7807,6 +7641,16 @@
       "value": "Usunięto funkcję."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Usuń element "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7817,6 +7661,12 @@
     {
       "type": 0,
       "value": "Zwraca ciągową reprezentację identyfikatora URI danych"
+    }
+  ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Maksymalny czas trwania w przypadku pojedynczego żądania wychodzącego z tej akcji. Jeśli żądanie nie zakończy się w ramach tego limitu po wykonaniu ponownych prób, akcja zakończy się niepowodzeniem."
     }
   ],
   "mPakaD": [
@@ -8373,6 +8223,12 @@
       "value": "Dodaje liczbę całkowitą sekund do przekazanej sygnatury czasowej ciągu"
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Weryfikuj treść żądania względem podanego schematu. W przypadku niezgodności zostanie zwrócony kod HTTP 400."
+    }
+  ],
   "qAlTD5": [
     {
       "type": 0,
@@ -8569,12 +8425,6 @@
     {
       "type": 0,
       "value": "Poprzednia sugestia dotycząca przepływu"
-    }
-  ],
-  "qzaoRR": [
-    {
-      "type": 0,
-      "value": "Ogranicz maksymalny czas trwania między ponownymi próbami a odpowiedziami asynchronicznymi w przypadku tej akcji. Uwaga: nie powoduje to zmiany limitu czasu żądania pojedynczego żądania"
     }
   ],
   "r/n6/9": [
@@ -8811,6 +8661,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja do sprawdzenia, czy jest pusta."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Limit czasu akcji"
     }
   ],
   "sfJTHV": [
@@ -9127,6 +8983,12 @@
       "value": "Pokaż mi"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Ogranicz maksymalny czas trwania między ponownymi próbami a odpowiedziami asynchronicznymi w przypadku tej akcji. Uwaga: nie powoduje to zmiany limitu czasu żądania pojedynczego żądania."
+    }
+  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -9331,12 +9193,6 @@
     {
       "type": 0,
       "value": "Aby utworzyć i użyć połączenia interfejsu API, musisz mieć skonfigurowaną tożsamość zarządzaną w tej aplikacji logiki."
-    }
-  ],
-  "viee6C": [
-    {
-      "type": 0,
-      "value": "Czas trwania"
     }
   ],
   "vlDynP": [
@@ -9725,12 +9581,6 @@
       "value": "Zwraca tablicę posortowane w kolejności rosnącej"
     }
   ],
-  "yNtBUV": [
-    {
-      "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
-    }
-  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9867,12 +9717,6 @@
     {
       "type": 0,
       "value": "Wprowadź wartość"
-    }
-  ],
-  "zEv8dd": [
-    {
-      "type": 0,
-      "value": "Edytor wyrażeń"
     }
   ],
   "zIDVd9": [

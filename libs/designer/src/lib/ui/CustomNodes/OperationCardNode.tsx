@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
@@ -76,7 +75,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
-  const parenRunData = useRunData(metadata?.parentNodeId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const runHistory = useRetryHistory(id);
@@ -87,19 +85,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
 
   const getRunRepetition = () => {
-    if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
-      return {
-        properties: {
-          status: constants.FLOW_STATUS.SKIPPED,
-          inputsLink: null,
-          outputsLink: null,
-          startTime: null,
-          endTime: null,
-          trackingId: null,
-          correlation: null,
-        },
-      };
-    }
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   };
 
@@ -111,23 +96,19 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(
-    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
-    getRunRepetition,
-    {
-      refetchOnWindowFocus: false,
-      initialData: null,
-      refetchIntervalInBackground: true,
-      onSuccess: onRunRepetitionSuccess,
-      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
-    }
-  );
+  } = useQuery<any>(['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName }], getRunRepetition, {
+    refetchOnWindowFocus: false,
+    initialData: null,
+    refetchIntervalInBackground: true,
+    onSuccess: onRunRepetitionSuccess,
+    enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+  });
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName]);
 
   const dependencies = useTokenDependencies(id);
 

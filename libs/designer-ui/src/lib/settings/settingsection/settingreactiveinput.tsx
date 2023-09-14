@@ -8,10 +8,9 @@ export interface ReactiveToggleProps extends SettingProps {
   textFieldLabel: string;
   textFieldId?: string;
   textFieldValue: string;
-  textFieldPlaceholder?: string;
   checked?: boolean;
-  onText?: string;
-  offText?: string;
+  onToggleLabel: string;
+  offToggleLabel: string;
   onToggleInputChange?: ToggleChangeHandler;
   onValueChange?: TextInputChangeHandler;
 }
@@ -19,13 +18,12 @@ export interface ReactiveToggleProps extends SettingProps {
 export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
   textFieldValue,
   textFieldLabel,
-  textFieldPlaceholder,
   textFieldId,
   readOnly = false,
   checked,
   customLabel,
-  onText,
-  offText,
+  onToggleLabel,
+  offToggleLabel,
   onToggleInputChange,
   onValueChange,
   ariaLabel,
@@ -38,30 +36,52 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
     onToggleInputChange?.(e, checked);
   };
 
-  return (
-    <>
-      {customLabel ? customLabel : null}
-      <SettingToggle
-        checked={checkedState}
-        readOnly={readOnly}
-        ariaLabel={ariaLabel}
-        onToggleInputChange={onToggleInput}
-        onText={onText}
-        offText={offText}
-      />
-      <div style={{ marginTop: '-10px', marginBottom: '10px' }}>
+  if (customLabel) {
+    return (
+      <>
+        {customLabel()}
+        <SettingToggle
+          checked={checkedState}
+          ariaLabel={ariaLabel}
+          readOnly={readOnly}
+          onToggleInputChange={onToggleInput}
+          onText={onToggleLabel}
+          offText={offToggleLabel}
+        />
         {checkedState ? (
           <SettingTextField
             id={textFieldId}
             ariaLabel={ariaLabel}
             value={textFieldValue}
             label={textFieldLabel}
-            placeholder={textFieldPlaceholder}
             readOnly={readOnly}
             onValueChange={onValueChange}
           />
         ) : null}
-      </div>
-    </>
-  );
+      </>
+    );
+  } else {
+    return (
+      <>
+        <SettingToggle
+          checked={checkedState}
+          readOnly={readOnly}
+          ariaLabel={ariaLabel}
+          onToggleInputChange={onToggleInput}
+          onText={onToggleLabel}
+          offText={offToggleLabel}
+        />
+        {checkedState ? (
+          <SettingTextField
+            id={textFieldId}
+            ariaLabel={ariaLabel}
+            value={textFieldValue}
+            label={textFieldLabel}
+            readOnly={readOnly}
+            onValueChange={onValueChange}
+          />
+        ) : null}
+      </>
+    );
+  }
 };

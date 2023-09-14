@@ -1,14 +1,13 @@
-import type { HeaderClickHandler, SettingSectionName } from '.';
+import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { type ValidationError, ValidationWarningKeys } from '../../core/state/setting/settingSlice';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
-import type { ValidationError } from './validation/validation';
-import { ValidationErrorType } from './validation/validation';
-import type { IDropdownOption } from '@fluentui/react';
+import type { IButtonStyles, IDropdownOption } from '@fluentui/react';
 import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
@@ -42,6 +41,7 @@ import type {
   SettingDropdownProps,
   ChangeState,
 } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -49,6 +49,16 @@ import { useDispatch } from 'react-redux';
 
 type SettingBase = {
   visible?: boolean;
+};
+
+const infoButtonStyles: IButtonStyles = {
+  root: { color: '#8d8686' },
+  rootHovered: {
+    backgroundColor: 'transparent',
+  },
+  rootPressed: {
+    backgroundColor: 'transparent',
+  },
 };
 
 export type Settings = SettingBase &
@@ -119,7 +129,7 @@ export interface SettingsSectionProps {
   isReadOnly?: boolean;
   onHeaderClick?: HeaderClickHandler;
   validationErrors?: ValidationError[];
-  onDismiss?: WarningDismissHandler;
+  onWarningDismiss?: WarningDismissHandler;
 }
 
 export const SettingsSection: FC<SettingsSectionProps> = ({
@@ -133,7 +143,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   settings,
   onHeaderClick,
   validationErrors,
-  onDismiss,
+  onWarningDismiss,
 }) => {
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -150,19 +160,26 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
     defaultMessage: 'Collapse',
     description: 'An accessible label for collapse toggle icon',
   });
+
   const internalSettings = (
     <>
       {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} settings={settings} /> : null}
       {expanded
-        ? (validationErrors ?? []).map(({ key: errorKey, errorType, message }, i) => {
-            return (
-              <CustomizableMessageBar
-                key={i}
-                type={matchErrorTypeToMessageBar(errorType)}
-                message={message}
-                onWarningDismiss={onDismiss ? () => onDismiss?.(errorKey) : undefined}
-              />
-            );
+        ? (validationErrors ?? []).map(({ key: errorKey, message }) => {
+            if (
+              errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION ||
+              errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS
+            ) {
+              return (
+                <CustomizableMessageBar
+                  key={guid()}
+                  type={MessageBarType.warning}
+                  message={message}
+                  onWarningDismiss={() => onWarningDismiss?.(errorKey)}
+                />
+              );
+            }
+            return <CustomizableMessageBar key={guid()} type={MessageBarType.error} message={message} />;
           })
         : null}
       {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
@@ -171,7 +188,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   if (!showHeading) {
     return internalSettings;
   }
-  const handleSectionClick = (sectionName?: SettingSectionName): void => {
+  const handleSectionClick = (sectionName: string | undefined): void => {
     if (onHeaderClick && sectionName) {
       onHeaderClick(sectionName);
     }
@@ -180,10 +197,10 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
-        <button className="msla-setting-section-header" onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}>
+        <button className="msla-setting-section-header" onClick={() => handleSectionClick(sectionName)}>
           <Icon
             className="msla-setting-section-header-icon"
-            aria-label={expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
+            ariaLabel={expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
             iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
             styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
@@ -339,9 +356,9 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
 
   return (
     <div className="msla-setting-section-settings">
-      {/* Render Required, Important, or Parameters with Values*/}
+      {/* Would first need to render the important parameters */}
       {settings?.filter((setting) => (setting.settingProp as any).conditionalVisibility === undefined).map(renderSetting)}
-      {/* Render the dropdown list of advanced parameters */}
+      {/* Now rendering the dropdown list of advanced parameters */}
       {allConditionalSettings.length > 0 && !readOnly ? (
         <div style={{ paddingTop: '32px' }}>
           <hr />
@@ -395,21 +412,30 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
           />
         </div>
       ) : null}
-      {/* Render all advanced parameters that are conditionally visible */}
+      {/* Now let's render all advanced parameters that are conditionally visible */}
       {settings?.filter((setting) => (setting.settingProp as any).conditionalVisibility === true).map(renderSetting)}
     </div>
   );
 };
 
-const matchErrorTypeToMessageBar = (errorType: ValidationErrorType): MessageBarType => {
-  switch (errorType) {
-    case ValidationErrorType.ERROR:
-      return MessageBarType.error;
-    case ValidationErrorType.WARNING:
-      return MessageBarType.warning;
-    case ValidationErrorType.INFO:
-      return MessageBarType.info;
-    default:
-      return MessageBarType.info;
+export interface SettingLabelProps {
+  labelText: string;
+  infoTooltipText?: string;
+  isChild: boolean;
+}
+
+export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLabelProps): JSX.Element {
+  const className = isChild ? 'msla-setting-section-row-child-label' : 'msla-setting-section-row-label';
+
+  if (infoTooltipText) {
+    return (
+      <div className={className}>
+        <div className="msla-setting-section-row-text">{labelText}</div>
+        <TooltipHost hostClassName="msla-setting-section-row-info" content={infoTooltipText}>
+          <IconButton className="msla-setting-section-row-info-icon" iconProps={{ iconName: 'Info' }} styles={infoButtonStyles} />
+        </TooltipHost>
+      </div>
+    );
   }
-};
+  return <div className={className}>{labelText}</div>;
+}

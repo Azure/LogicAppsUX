@@ -2179,43 +2179,6 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
   }
 }
 
-const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
-  parameter: ParameterInfo,
-  editorViewModel: FloatingActionMenuOutputViewModel
-): string | undefined => {
-  const value: typeof editorViewModel.schema & { additionalProperties?: { outputValueMap?: Record<string, unknown> } } = clone(
-    editorViewModel.schema
-  );
-  const schemaProperties: typeof editorViewModel.schema.properties = {};
-  const outputValueMap: Record<string, unknown> = {};
-
-  // commonProperties is inspired from behavior for Table Editor and Condition Editor.
-  // This may need to change if for example we need proper parameter.info.format value per added parameter (instead of re-using parameter.info).
-  const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
-  Object.entries(value.properties).forEach(([key, config]) => {
-    if (!config?.['x-ms-dynamically-added']) {
-      schemaProperties[key] = config;
-      return;
-    }
-
-    if (config.title) {
-      const keyFromTitle = config.title.toLowerCase().replace(' ', '_');
-      schemaProperties[keyFromTitle] = config;
-
-      const valueSegments = editorViewModel.outputValueSegmentsMap?.[key];
-      if (valueSegments?.length) {
-        outputValueMap[keyFromTitle] =
-          // We want to transform (for example) "1" to 1, "false" to false, if the dynamically added parameter type is not 'String'
-          parameterValueWithoutCasting({ type: config.type, value: valueSegments, ...commonProperties } as any);
-      }
-    }
-  });
-
-  value.properties = schemaProperties;
-  (value.additionalProperties ??= {}).outputValueMap = outputValueMap;
-  return JSON.stringify(value);
-};
-
 const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat: boolean): string | undefined => {
   // if it is in advanced mode, we use loadParameterValue to get the value
   if (!isRowFormat) {

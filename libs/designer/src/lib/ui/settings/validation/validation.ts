@@ -1,59 +1,30 @@
-import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
-import type { AppDispatch } from '../../../core';
+import type { RootState } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
-import { setTabError } from '../../../core/state/panel/panelSlice';
-import { setValidationError } from '../../../core/state/setting/settingSlice';
+import type { OperationMetadataState } from '../../../core/state/operation/operationMetadataSlice';
+import { setValidationError, ValidationErrorKeys, type ValidationError } from '../../../core/state/setting/settingSlice';
 import { isISO8601 } from '../../../core/utils/validation';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
+import { useCallback } from 'react';
+import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 
-export enum ValidationErrorKeys {
-  CHUNK_SIZE_INVALID = 'ChunkSizeInvalid',
-  PAGING_COUNT = 'PagingCount',
-  RETRY_COUNT_INVALID = 'RetryCountInvalid',
-  RETRY_INTERVAL_INVALID = 'RetryIntervalInvalid',
-  SINGLE_INSTANCE_SPLITON = 'SingleInstanceSplitOn',
-  TRIGGER_CONDITION_EMPTY = 'TriggerConditionEmpty',
-  TIMEOUT_VALUE_INVALID = 'TimeoutValueInvalid',
-  CANNOT_DELETE_LAST_ACTION = 'CannotDeleteLastAction',
-  CANNOT_DELETE_LAST_STATUS = 'CannotDeleteLastStatus',
-}
+export const useValidate = (nodeId: string) => {
+  const dispatch = useDispatch();
 
-export enum ValidationErrorType {
-  WARNING = 'Warning',
-  ERROR = 'Error',
-  INFO = 'Info',
-}
-export interface ValidationError {
-  key: ValidationErrorKeys;
-  errorType: ValidationErrorType;
-  message: string;
-}
-
-export const validateNodeSettings = (
-  selectedNode: string,
-  settingsToValidate: Settings,
-  settingSection: SettingSectionName,
-  dispatch: AppDispatch
-) => {
-  const intl = getIntl();
+  const intl = useIntl();
 
   const triggerConditionEmpty = intl.formatMessage({
     defaultMessage: 'Trigger condition cannot be empty',
     description: 'error message for empty trigger condition',
   });
   const pagingCount = intl.formatMessage({
-    defaultMessage: 'Paging count invalid. Value must be a number greater than 0',
+    defaultMessage: 'Paging count invalid',
     description: 'error message for invalid paging count',
   });
-  const pagingCountMax = intl.formatMessage(
-    {
-      defaultMessage: 'Paging count exceeds maximum value of {max}',
-      description: 'error message for max-exceeding paging count',
-    },
-    { max: constants.MAX_PAGING_COUNT }
-  );
+  const pagingCountMax = intl.formatMessage({
+    defaultMessage: 'Paging count exceeds maximum value',
+    description: 'error message for max-exceeding paging count',
+  });
 
   const retryCountInvalidText = intl.formatMessage(
     {
@@ -66,109 +37,88 @@ export const validateNodeSettings = (
     }
   );
   const retryIntervalInvalidText = intl.formatMessage({
-    defaultMessage: 'Retry Policy Interval is invalid, must match ISO 8601 duration format',
+    defaultMessage: 'Retry Policy interval is invalid, must match ISO 8601 duration format',
     description: 'error message for invalid retry interval',
   });
 
-  const retryMinIntervalInvalidText = intl.formatMessage({
-    defaultMessage: 'Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format',
-    description: 'error message for invalid minimum retry interval',
-  });
+  const validateOperationSettings = useCallback(
+    (settings?: Settings): ValidationError[] => {
+      const { conditionExpressions, paging, retryPolicy } = settings ?? {};
+      const validationErrors: ValidationError[] = [];
 
-  const retryMaxIntervalInvalidText = intl.formatMessage({
-    defaultMessage: 'Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format',
-    description: 'error message for maximum invalid retry interval',
-  });
+      if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
+        validationErrors.push({
+          key: ValidationErrorKeys.TRIGGER_CONDITION_EMPTY,
+          message: triggerConditionEmpty,
+        });
+      }
 
-  const requestOptionsInvalidText = intl.formatMessage({
-    defaultMessage: 'Timeout value is invalid, must match ISO 8601 duration format',
-    description: 'error message for invalid timeout value',
-  });
-
-  const validationErrors: ValidationError[] = [];
-
-  switch (settingSection) {
-    case SettingSectionName.GENERAL:
-      {
-        const { conditionExpressions } = settingsToValidate;
-        if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
+      if (paging?.value?.enabled) {
+        const { value } = paging.value;
+        if (isNaN(Number(value))) {
           validationErrors.push({
-            key: ValidationErrorKeys.TRIGGER_CONDITION_EMPTY,
-            errorType: ValidationErrorType.ERROR,
-            message: triggerConditionEmpty,
+            key: ValidationErrorKeys.PAGING_COUNT,
+            message: pagingCount,
+          });
+        } else if (!value || value <= 0 || value > constants.MAX_PAGING_COUNT) {
+          validationErrors.push({
+            key: ValidationErrorKeys.PAGING_COUNT,
+            message: pagingCountMax,
           });
         }
       }
-      break;
-    case SettingSectionName.NETWORKING:
-      {
-        const { paging, retryPolicy, requestOptions } = settingsToValidate;
-        if (paging?.value?.enabled) {
-          const { value } = paging.value;
-          if (isNaN(Number(value)) || !value || value <= 0) {
+
+      if (retryPolicy?.isSupported) {
+        if (
+          retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.EXPONENTIAL ||
+          retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.FIXED
+        ) {
+          const retryCount = Number(retryPolicy?.value?.count);
+          // Invalid retry count
+          if (
+            isNaN(retryCount) ||
+            retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
+            retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT
+          ) {
             validationErrors.push({
-              key: ValidationErrorKeys.PAGING_COUNT,
-              errorType: ValidationErrorType.ERROR,
-              message: pagingCount,
-            });
-          } else if (value > constants.MAX_PAGING_COUNT) {
-            validationErrors.push({
-              key: ValidationErrorKeys.PAGING_COUNT,
-              errorType: ValidationErrorType.ERROR,
-              message: pagingCountMax,
+              key: ValidationErrorKeys.RETRY_COUNT_INVALID,
+              message: retryCountInvalidText,
             });
           }
-        }
-        if (retryPolicy?.isSupported && retryPolicy.value) {
-          const { count, type, interval, minimumInterval, maximumInterval } = retryPolicy.value;
-          if (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) {
-            const retryCount = Number(count);
-            // Invalid retry count
-            if (
-              (!isTemplateExpression(count?.toString() ?? '') && isNaN(retryCount)) ||
-              retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
-              retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT
-            ) {
-              validationErrors.push({
-                key: ValidationErrorKeys.RETRY_COUNT_INVALID,
-                errorType: ValidationErrorType.ERROR,
-                message: retryCountInvalidText,
-              });
-            }
-            // Invalid retry interval
-            if (!isTemplateExpression(interval?.toString() ?? '') && !isISO8601(retryPolicy?.value?.interval ?? '')) {
-              validationErrors.push({
-                key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
-                errorType: ValidationErrorType.ERROR,
-                message: retryIntervalInvalidText,
-              });
-            }
-            if (minimumInterval && !isTemplateExpression(minimumInterval.toString()) && !isISO8601(minimumInterval)) {
-              validationErrors.push({
-                key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
-                errorType: ValidationErrorType.ERROR,
-                message: retryMinIntervalInvalidText,
-              });
-            }
-            if (maximumInterval && !isTemplateExpression(maximumInterval.toString()) && !isISO8601(maximumInterval)) {
-              validationErrors.push({
-                key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
-                errorType: ValidationErrorType.ERROR,
-                message: retryMaxIntervalInvalidText,
-              });
-            }
+          // Invalid retry interval
+          if (!isISO8601(retryPolicy?.value?.interval ?? '')) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
+              message: retryIntervalInvalidText,
+            });
           }
-        }
-        if (requestOptions?.isSupported && requestOptions.value?.timeout && !isISO8601(requestOptions.value.timeout)) {
-          validationErrors.push({
-            key: ValidationErrorKeys.TIMEOUT_VALUE_INVALID,
-            errorType: ValidationErrorType.ERROR,
-            message: requestOptionsInvalidText,
-          });
         }
       }
-      break;
-  }
-  dispatch(setValidationError({ nodeId: selectedNode, errors: validationErrors }));
-  dispatch(setTabError({ tabName: 'settings', hasErrors: validationErrors.length > 0, nodeId: selectedNode }));
+      return validationErrors;
+    },
+    [pagingCount, pagingCountMax, retryCountInvalidText, retryIntervalInvalidText, triggerConditionEmpty]
+  );
+
+  const validate = useCallback(
+    <K extends keyof RootState>(validationType: K, proposedState: RootState[K], nodeId: string): ValidationError[] => {
+      switch (validationType) {
+        case 'operations': {
+          const proposedOperationMetadataState = proposedState as OperationMetadataState;
+          const errors = validateOperationSettings(proposedOperationMetadataState.settings[nodeId]);
+          dispatch(setValidationError({ nodeId, errors }));
+          return errors;
+        }
+        default:
+          return [];
+      }
+    },
+    [dispatch, validateOperationSettings]
+  );
+
+  const validationErrors = useSelector((rootState: RootState) => rootState.settings.validationErrors?.[nodeId] ?? []);
+
+  return {
+    validate,
+    validationErrors,
+  };
 };

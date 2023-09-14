@@ -192,7 +192,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
               {connection &&
                 connection.inputs[0].map((input, index) => {
                   return (
-                    <Stack key={`${functionData.inputs[0].name}-${index}`} horizontal verticalAlign="start" style={{ marginTop: 4 }}>
+                    <Stack key={`${functionData.inputs[0].name}-${index}`} horizontal verticalAlign="start" style={{ marginTop: 8 }}>
                       <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
                         <InputDropdown
                           currentNode={functionData}

@@ -5,7 +5,7 @@ import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
 import { useDebouncedEffect } from '@react-hookz/web';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SimpleDictionaryProps {
@@ -35,19 +35,24 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   ]);
 
   const intl = useIntl();
-  useEffect(() => {
-    onChange?.(
-      values
-        .filter((x) => x.key && x.key !== '')
-        .reduce((acc, val) => {
-          return {
-            ...acc,
-            [val.key]: val.value,
-          };
-        }, {})
-    );
+  useDebouncedEffect(
+    () => {
+      onChange?.(
+        values
+          .filter((x) => x.key && x.key !== '')
+          .reduce((acc, val) => {
+            return {
+              ...acc,
+              [val.key]: val.value,
+            };
+          }, {})
+      );
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values]);
+    [values],
+    500,
+    1000
+  );
 
   const handleItemDelete = (e: SimpleDictionaryRowModel): void => {
     setValues((oldValues) => oldValues.filter((x) => x.index !== e.index).map((x, i) => ({ ...x, index: i })));

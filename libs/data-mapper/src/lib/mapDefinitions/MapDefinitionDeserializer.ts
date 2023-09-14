@@ -6,7 +6,6 @@ import { SchemaType, ifPseudoFunction, ifPseudoFunctionKey, indexPseudoFunction,
 import type { ConnectionDictionary } from '../models/Connection';
 import { applyConnectionValue, isConnectionUnit } from '../utils/Connection.Utils';
 import {
-  ReservedToken,
   amendSourceKeyForDirectAccessIfNeeded,
   flattenMapDefinitionValues,
   getDestinationNode,
@@ -15,9 +14,7 @@ import {
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
   getTargetValueWithoutLoopsSchemaSpecific,
-  lexThisThing,
   qualifyLoopRelativeSourceKeys,
-  removeSequenceFunction,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
 import { isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
@@ -244,12 +241,11 @@ export class MapDefinitionDeserializer {
   ) => {
     const isLoop: boolean = targetKey.includes(mapNodeParams.for);
     const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
-    const sequencesRemovedTargetKey: string = isLoop ? removeSequenceFunction(lexThisThing(targetKey)) : targetKey;
-    const amendedTargetKey = isLoop ? qualifyLoopRelativeSourceKeys(sequencesRemovedTargetKey) : targetKey;
+    const sourceEndOfFunctionName = sourceNodeString.indexOf('(');
+    const amendedTargetKey = isLoop ? qualifyLoopRelativeSourceKeys(targetKey) : targetKey;
     let amendedSourceKey = isLoop
       ? getSourceValueFromLoop(sourceNodeString, amendedTargetKey, this._sourceSchemaFlattened)
       : sourceNodeString;
-    const sourceEndOfFunctionName = amendedSourceKey.indexOf('(');
 
     let mockDirectAccessFnKey = '';
     [amendedSourceKey, mockDirectAccessFnKey] = amendSourceKeyForDirectAccessIfNeeded(amendedSourceKey);
@@ -360,30 +356,6 @@ export class MapDefinitionDeserializer {
 
           if (mockDirectAccessFnKey) {
             mockDirectAccessFnKey = mockDirectAccessFnKey.replaceAll(`$${idxVariable}`, indexFnRfKey);
-          }
-        }
-
-        const targetTokens = lexThisThing(targetKey);
-        let lookForSequence = false;
-        for (let i = 0; i < targetTokens.length; i++) {
-          if (targetTokens[i] === ReservedToken.for) {
-            lookForSequence = true;
-          }
-          if (lookForSequence && targetKey !== sequencesRemovedTargetKey) {
-            const remainingFn = splitKeyIntoChildren(targetKey);
-            if (!remainingFn[0].includes('(')) {
-              // no sequence functions
-              break;
-            }
-
-            const targetEnding = targetTokens[targetTokens.length - 1];
-            const loopTarget = targetEnding.split('/')[1];
-            const loopTargetKey = targetTokens[0] + loopTarget;
-
-            remainingFn.forEach((fnInputKey) => {
-              this._parseDefinitionToConnection(fnInputKey, loopTargetKey, targetArrayDepth, connections);
-            });
-            break;
           }
         }
 

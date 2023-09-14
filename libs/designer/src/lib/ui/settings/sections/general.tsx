@@ -1,13 +1,12 @@
 import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
-import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
-import { SettingsSection } from '../settingsection';
+import { SettingsSection, SettingLabel } from '../settingsection';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
+import type { DropdownSelectionChangeHandler, ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -23,14 +22,13 @@ export interface GeneralSectionProps extends SectionProps {
 }
 
 export const General = ({
-  readOnly,
-  expanded,
   splitOn,
   splitOnConfiguration,
   timeout,
   concurrency,
   conditionExpressions,
   invokerConnection,
+  readOnly,
   onConcurrencyToggle,
   onConcurrencyValueChange,
   onInvokerConnectionToggle,
@@ -39,6 +37,7 @@ export const General = ({
   onTimeoutValueChange,
   onTriggerConditionsChange,
   onClientTrackingIdChange,
+  expanded,
   onHeaderClick,
   validationErrors,
 }: GeneralSectionProps): JSX.Element => {
@@ -56,22 +55,30 @@ export const General = ({
     defaultMessage: 'Degree of Parallelism',
     description: 'label for slider indicating the degree of parallelism',
   });
+  const onText = intl.formatMessage({
+    defaultMessage: 'On',
+    description: 'label when setting is on',
+  });
+  const offText = intl.formatMessage({
+    defaultMessage: 'Off',
+    description: 'label when setting is off',
+  });
   const splitOnTitle = intl.formatMessage({
     defaultMessage: 'Split On',
     description: 'title for split on setting',
   });
   const splitOnTooltipText = intl.formatMessage({
     defaultMessage:
-      'Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id',
+      'Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id.',
     description: 'description of the split on setting',
   });
   const actionTimeoutTitle = intl.formatMessage({
     defaultMessage: 'Action Timeout',
-    description: 'title for action timeout setting',
+    description: 'tit;e for action timeout setting',
   });
   const actionTimeoutTooltipText = intl.formatMessage({
     defaultMessage:
-      'Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request',
+      'Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request.',
     description: 'description of action timeout setting',
   });
   const concurrencyTitle = intl.formatMessage({
@@ -80,32 +87,24 @@ export const General = ({
   });
 
   const concurrencyTooltipText = intl.formatMessage({
-    defaultMessage: 'Control how new runs are queued',
-    description: 'tooltip text of concurrency setting',
-  });
-  const concurrencyDescription = intl.formatMessage({
     defaultMessage:
       "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit.",
     description: 'description of concurrency setting',
-  });
-  const concurrencySubLabel = intl.formatMessage({
-    defaultMessage: 'Limit',
-    description: 'sublabel for concurrency limit toggle button',
   });
   const triggerConditionsTitle = intl.formatMessage({
     defaultMessage: 'Trigger conditions',
     description: 'Title for trigger conditions setting',
   });
   const triggerConditionsTooltipText = intl.formatMessage({
-    defaultMessage: 'Specify one or more expressions that must be true for the trigger to fire',
+    defaultMessage: 'Specify one or more expressions that must be true for the trigger to fire.',
     description: 'The description for the trigger condition expression setting.',
   });
-  const splitOnTrackingId = intl.formatMessage({
-    defaultMessage: 'Split-On Tracking Id',
-    description: 'Title for split on client tracking id setting',
+  const clientTrackingId = intl.formatMessage({
+    defaultMessage: 'Custom Tracking Id',
+    description: 'Title for client tracking id setting',
   });
-  const splitOnTrackingIdTooltipText = intl.formatMessage({
-    defaultMessage: 'Distinct Tracking id for each split-on instance',
+  const clientTrackingIdTooltipText = intl.formatMessage({
+    defaultMessage: 'Set the tracking id for the run. For split-on this tracking id is for the initiating request.',
     description: 'Description of tracking id input field of split on setting',
   });
   const arrayDropdownTitle = intl.formatMessage({
@@ -117,14 +116,26 @@ export const General = ({
     description: 'Title for invoker connection',
   });
   const invokerConnectionTooltipText = intl.formatMessage({
-    defaultMessage: 'When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger',
+    defaultMessage: 'When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.',
     description: 'Description of invoker connection setting',
   });
+
+  const splitOnLabel = <SettingLabel labelText={splitOnTitle} infoTooltipText={splitOnTooltipText} isChild={false} />;
+  const clientTrackingIdLabel = <SettingLabel labelText={clientTrackingId} infoTooltipText={clientTrackingIdTooltipText} isChild={true} />;
+  const timeoutLabel = <SettingLabel labelText={actionTimeoutTitle} infoTooltipText={actionTimeoutTooltipText} isChild={false} />;
+  const concurrencyLabel = <SettingLabel labelText={concurrencyTitle} infoTooltipText={concurrencyTooltipText} isChild={false} />;
+  const arrayDropdownLabel = <SettingLabel labelText={arrayDropdownTitle} isChild={true} />;
+  const invokerConnectionLabel = (
+    <SettingLabel labelText={invokerConnectionTitle} infoTooltipText={invokerConnectionTooltipText} isChild={false} />
+  );
+  const triggerConditionsLabel = (
+    <SettingLabel labelText={triggerConditionsTitle} infoTooltipText={triggerConditionsTooltipText} isChild={false} />
+  );
 
   const generalSectionProps: SettingsSectionProps = {
     id: 'general',
     title: generalTitle,
-    sectionName: SettingSectionName.GENERAL,
+    sectionName: constants.SETTINGSECTIONS.GENERAL,
     isReadOnly: readOnly,
     expanded,
     onHeaderClick,
@@ -135,7 +146,9 @@ export const General = ({
           readOnly,
           checked: splitOn?.value?.enabled ?? true,
           onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked),
-          customLabel: getSettingLabel(splitOnTitle, splitOnTooltipText),
+          customLabel: () => splitOnLabel,
+          onText,
+          offText,
           ariaLabel: splitOnTitle,
         },
         visible: splitOn?.isSupported,
@@ -150,10 +163,10 @@ export const General = ({
           ),
           selectedValue: splitOn?.value?.value,
           onSelectionChanged: onSplitOnSelectionChanged,
-          customLabel: getSettingLabel(arrayDropdownTitle),
+          customLabel: () => arrayDropdownLabel,
           ariaLabel: arrayDropdownTitle,
         },
-        visible: splitOn?.isSupported && splitOn?.value?.enabled,
+        visible: splitOn?.isSupported,
       },
       {
         settingType: 'SettingTextField',
@@ -161,18 +174,18 @@ export const General = ({
           id: 'splitOntrackingId',
           value: splitOnConfiguration?.correlation?.clientTrackingId ?? '',
           readOnly: readOnly || !splitOn?.value?.enabled,
-          customLabel: getSettingLabel(splitOnTrackingId, splitOnTrackingIdTooltipText),
+          customLabel: () => clientTrackingIdLabel,
           onValueChange: (_, newVal) => onClientTrackingIdChange(newVal as string),
-          ariaLabel: splitOnTrackingId,
+          ariaLabel: clientTrackingId,
         },
-        visible: splitOn?.isSupported && splitOn?.value?.enabled,
+        visible: splitOn?.isSupported,
       },
       {
         settingType: 'SettingTextField',
         settingProp: {
           id: 'timeoutDuration',
           value: timeout?.value ?? '',
-          customLabel: getSettingLabel(actionTimeoutTitle, actionTimeoutTooltipText),
+          customLabel: () => timeoutLabel,
           readOnly,
           onValueChange: (_, newValue) => onTimeoutValueChange(newValue as string),
           ariaLabel: actionTimeoutTitle,
@@ -185,13 +198,9 @@ export const General = ({
           readOnly,
           checked: concurrency?.value?.enabled,
           onToggleInputChange: (_, checked) => onConcurrencyToggle(!!checked),
-          customLabel: getSettingLabel(
-            concurrencyTitle,
-            concurrencyTooltipText,
-            concurrencyDescription,
-            concurrencySubLabel,
-            /* isSubLabelToggle*/ true
-          ),
+          customLabel: () => concurrencyLabel,
+          onText,
+          offText,
           ariaLabel: concurrencyTitle,
         },
         visible: concurrency?.isSupported,
@@ -207,14 +216,14 @@ export const General = ({
           readOnly,
           ariaLabel: concurrencyTitle,
         },
-        visible: concurrency?.isSupported && concurrency?.value?.enabled,
+        visible: concurrency?.value?.enabled === true,
       },
       {
         settingType: 'MultiAddExpressionEditor',
         settingProp: {
           initialExpressions: conditionExpressions?.value,
           readOnly,
-          customLabel: getSettingLabel(triggerConditionsTitle, triggerConditionsTooltipText),
+          customLabel: () => triggerConditionsLabel,
           onExpressionsChange: onTriggerConditionsChange,
           ariaLabel: triggerConditionsTitle,
         },
@@ -226,7 +235,9 @@ export const General = ({
           readOnly,
           checked: invokerConnection?.value?.enabled,
           onToggleInputChange: (_, checked) => onInvokerConnectionToggle(!!checked),
-          customLabel: getSettingLabel(invokerConnectionTitle, invokerConnectionTooltipText),
+          customLabel: () => invokerConnectionLabel,
+          onText,
+          offText,
           ariaLabel: invokerConnectionTitle,
         },
         visible: invokerConnection?.isSupported,

@@ -1,4 +1,5 @@
 import type { SettingProps } from './settingtoggle';
+import type { ITextFieldStyles } from '@fluentui/react';
 import { TextField } from '@fluentui/react';
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
@@ -28,23 +29,28 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
   defaultValue,
   ariaLabel,
 }): JSX.Element | null => {
-  const [textValue, setTextValue] = useState(value ?? '');
+  const [textVal, setVal] = useState(value ?? '');
   const handleTextInputChange = (_: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined): void => {
-    setTextValue(newValue ?? '');
+    setVal(newValue ?? '');
     onValueChange?.(_, newValue);
+  };
+  const textFieldStyles: Partial<ITextFieldStyles> = {
+    fieldGroup: { height: 24, width: '100%', display: 'inline', marginRight: 8 },
+    wrapper: { display: 'inline-flex', width: '100%', maxHeight: 40, alignItems: 'center', paddingLeft: 35 },
   };
 
   return (
     <>
-      {customLabel ? customLabel : null}
+      {customLabel && customLabel()}
       <TextField
         className="msla-setting-section-textField"
         id={id}
         label={!customLabel ? label : ''}
         ariaLabel={ariaLabel}
-        value={textValue}
+        value={textVal}
         defaultValue={defaultValue}
         placeholder={placeholder}
+        styles={textFieldStyles}
         readOnly={readOnly}
         required={required}
         onChange={handleTextInputChange}

@@ -63,7 +63,8 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const [designerID, setDesignerID] = React.useState(guid());
   const [workflow, setWorkflow] = React.useState(data?.properties.files[Artifact.WorkflowFile]);
-  const originalConnectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
+  const connectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
+  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const parameters = data?.properties.files[Artifact.ParametersFile] ?? {};
   const queryClient = getReactQueryClient();
 
@@ -77,16 +78,6 @@ const DesignerEditor = () => {
     }
   };
   const { data: runInstanceData } = useRunInstanceStandard(workflowName, onRunInstanceSuccess, appId, runId);
-
-  const connectionsData = React.useMemo(
-    () =>
-      WorkflowUtility.resolveConnectionsReferences(
-        JSON.stringify(clone(originalConnectionsData ?? {})),
-        parameters,
-        settingsData?.properties ?? {}
-      ),
-    [originalConnectionsData, parameters, settingsData?.properties]
-  );
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
@@ -118,8 +109,6 @@ const DesignerEditor = () => {
 
     return undefined;
   };
-
-  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
 
   const discardAllChanges = () => {
     setDesignerID(guid());
@@ -161,6 +150,7 @@ const DesignerEditor = () => {
   }
 
   const originalSettings: Record<string, string> = { ...(settingsData?.properties ?? {}) };
+  const originalConnectionsData: ConnectionsData = clone(connectionsData ?? {});
   const originalParametersData: ParametersData = clone(parameters ?? {});
 
   if (isError || settingsIsError) {

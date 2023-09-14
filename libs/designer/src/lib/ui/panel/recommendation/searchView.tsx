@@ -39,18 +39,13 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
             return false;
       }
 
-  useDebouncedEffect(
-    () => {
-      const searchOperations = SearchService().searchOperations?.bind(SearchService());
+      if (filters['actionType']) {
+        const isTrigger = searchResult.item.properties?.trigger !== undefined;
+        if (filters['actionType'].toLowerCase() === 'actions' && isTrigger) return false;
+        else if (filters['actionType'].toLowerCase() === 'triggers' && !isTrigger) return false;
+      }
 
-      const searchResultsPromise = searchOperations
-        ? searchOperations(searchTerm, filters['actionType'], filters['runtime'])
-        : new DefaultSearchOperationsService(allOperations).searchOperations(searchTerm, filters['actionType'], filters['runtime']);
-
-      searchResultsPromise.then((results) => {
-        setSearchResults(results);
-        setIsLoadingSearchResults(false);
-      });
+      return true;
     },
     [filters]
   );

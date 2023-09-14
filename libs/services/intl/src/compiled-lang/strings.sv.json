@@ -73,12 +73,6 @@
       "value": "Tidszon"
     }
   ],
-  "+v1RlQ": [
-    {
-      "type": 0,
-      "value": "Ignorera arbetsflödeshuvuden vid svar"
-    }
-  ],
   "+xXHdp": [
     {
       "type": 0,
@@ -191,6 +185,12 @@
     {
       "type": 0,
       "value": "Nödvändiga indata saknas"
+    }
+  ],
+  "/w/q/8": [
+    {
+      "type": 0,
+      "value": "När den här åtgärden är aktiverad körs den med användaren från inställningen Kör som, i Dataverse-utlösaren."
     }
   ],
   "/yYyOq": [
@@ -491,12 +491,6 @@
       "value": "(UTC-01:00) Azorerna"
     }
   ],
-  "1hPZqe": [
-    {
-      "type": 0,
-      "value": "Antal gånger som begäran ska försökas igen"
-    }
-  ],
   "1htSs7": [
     {
       "type": 0,
@@ -575,6 +569,12 @@
       "value": "Välj en fil att ladda upp"
     }
   ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Starta en instans av arbetsflödet per objekt i den markerade matrisen genom att aktivera delning. Varje instans kan också ha distinkta spårnings-ID:n."
+    }
+  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -585,12 +585,6 @@
     {
       "type": 0,
       "value": "Sluttid"
-    }
-  ],
-  "2MOA1x": [
-    {
-      "type": 0,
-      "value": "Styr hur nya körningar ska köas"
     }
   ],
   "2NXYYu": [
@@ -647,12 +641,6 @@
       "value": "Starttid"
     }
   ],
-  "2pCFsW": [
-    {
-      "type": 0,
-      "value": "Växlingsantalet är ogiltigt. Värdet måste vara större än 0"
-    }
-  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -673,12 +661,6 @@
     {
       "type": 0,
       "value": "På"
-    }
-  ],
-  "2uINs9": [
-    {
-      "type": 0,
-      "value": "Standard"
     }
   ],
   "2vnYre": [
@@ -1175,12 +1157,6 @@
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än det värde det jämförs med."
     }
   ],
-  "632t9E": [
-    {
-      "type": 0,
-      "value": "Säkra indata för åtgärden"
-    }
-  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1205,10 +1181,10 @@
       "value": "Avbryt"
     }
   ],
-  "6VV7OY": [
+  "6WmLx1": [
     {
       "type": 0,
-      "value": "Tidsgränsintervallet är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
+      "value": "Varning! Typ av indatanod matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
   "6ZviI7": [
@@ -1451,12 +1427,6 @@
       "value": "Kopiera webbadress"
     }
   ],
-  "7zDk9N": [
-    {
-      "type": 0,
-      "value": "Exponentiellt intervall"
-    }
-  ],
   "7zsUT3": [
     {
       "type": 0,
@@ -1637,6 +1607,18 @@
     {
       "type": 1,
       "value": "invalidNodes"
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Alternativ för begäran"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Ignorera arbetsflödeshuvuden vid svar"
     }
   ],
   "8wr0zO": [
@@ -2099,6 +2081,12 @@
       "value": "Välj en hanterad identitet"
     }
   ],
+  "BrvZNn": [
+    {
+      "type": 0,
+      "value": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska aktiveras."
+    }
+  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2109,12 +2097,6 @@
     {
       "type": 0,
       "value": "En enskild formatspecifierare som indikerar hur värdet för detta GUID ska formateras."
-    }
-  ],
-  "BvCnOv": [
-    {
-      "type": 0,
-      "value": "Ställ in körningens spårnings-id. För delning är det här spårnings-id:t för initieringsbegäran"
     }
   ],
   "BxITRH": [
@@ -2247,12 +2229,6 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
-  "CyT8H7": [
-    {
-      "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
-    }
-  ],
   "CypYLs": [
     {
       "type": 0,
@@ -2309,12 +2285,6 @@
     {
       "type": 0,
       "value": "Nod"
-    }
-  ],
-  "DEKsll": [
-    {
-      "type": 0,
-      "value": "Intervallet för återförsöksprincip är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
   "DEu7oK": [
@@ -2393,12 +2363,6 @@
       "value": "Visa statiskt resultat"
     }
   ],
-  "Dm0zAO": [
-    {
-      "type": 0,
-      "value": "Den maximala varaktigheten för en enskild utgående begäran från den här åtgärden. Om begäran inte slutförs inom den här gränsen efter att återförsök har körts, kommer åtgärden att misslyckas"
-    }
-  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2465,6 +2429,12 @@
     {
       "type": 0,
       "value": "Kontrollera flödets åtgärder för att se om några parametrar behöver konfigureras. Glöm inte att spara när du är klar!"
+    }
+  ],
+  "EKtYQF": [
+    {
+      "type": 0,
+      "value": "Konfigurera körningens spårnings-ID. Delning för det här spårnings-ID:t för att initiera begäran."
     }
   ],
   "ERAWZA": [
@@ -2577,12 +2547,6 @@
     {
       "type": 0,
       "value": "Krävs. Antalet angivna tidsenheter som ska läggas till."
-    }
-  ],
-  "F6+icQ": [
-    {
-      "type": 0,
-      "value": "Det högsta intervallet för återförsöksprincip är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3191,16 +3155,6 @@
       "value": "."
     }
   ],
-  "J5TTF6": [
-    {
-      "type": 0,
-      "value": "Accepted data types: "
-    },
-    {
-      "type": 1,
-      "value": "type"
-    }
-  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3311,6 +3265,12 @@
     {
       "type": 0,
       "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Konfigurera körningens spårnings-ID. Delning för det här spårnings-ID:t för att initiera begäran."
     }
   ],
   "K50znc": [
@@ -3493,12 +3453,6 @@
       "value": "Konfigurera"
     }
   ],
-  "LRAhSA": [
-    {
-      "type": 0,
-      "value": "När den här åtgärden är aktiverad körs den med användaren från inställningen Kör som, i Dataverse-utlösaren"
-    }
-  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -3641,6 +3595,12 @@
     {
       "type": 0,
       "value": "Valfritt. Namnet på den omfångsdefinierade åtgärd där du vill ha indata och utdata från åtgärderna på toppnivå i det omfånget."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Säkra utdata för åtgärden och referenser till utdataegenskaper."
     }
   ],
   "MCzWDc": [
@@ -4105,6 +4065,12 @@
       "value": "Krävs. Det här värdet är antalet heltal som finns i matrisen."
     }
   ],
+  "P3Zpc4": [
+    {
+      "type": 0,
+      "value": "Anpassat spårnings-id"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4193,22 +4159,10 @@
       "value": "Sparade egenskaper"
     }
   ],
-  "Pl/fcn": [
-    {
-      "type": 0,
-      "value": "Spårnings-id för delning"
-    }
-  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) Kairo"
-    }
-  ],
-  "PqUAbF": [
-    {
-      "type": 0,
-      "value": "Dekomprimera begärandetexten om den har komprimerats med GZip eller Deflate. Den här inställningen gäller bara för HTTP-utlösare"
     }
   ],
   "PsmHyH": [
@@ -4349,16 +4303,6 @@
     {
       "type": 0,
       "value": "Arbetsflödesparametrar"
-    }
-  ],
-  "QhKk80": [
-    {
-      "type": 0,
-      "value": "Växlingsantalet överskrider maxvärdet "
-    },
-    {
-      "type": 1,
-      "value": "max"
     }
   ],
   "Qn8qxn": [
@@ -4597,12 +4541,6 @@
       "value": "Krävs. Namnet på åtgärden med ett formulärdata- eller formulärkodat svar."
     }
   ],
-  "SenWwt": [
-    {
-      "type": 0,
-      "value": "Ange beteende och funktioner för överföring av innehåll via HTTP. Stora meddelanden kan delas upp i mindre begäranden till anslutningsprogrammet så att de kan laddas upp."
-    }
-  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4681,10 +4619,22 @@
       "value": "Returnerar månadens start för en strängtidsstämpel"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Växlingsantalet är ogiltigt"
+    }
+  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Typ av åtgärd"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Ange ett värde"
     }
   ],
   "TX4Kdr": [
@@ -4855,16 +4805,6 @@
       "value": "Ta bort arbetsflödesåtgärd"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Try using a Conversion function such as: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4875,16 +4815,6 @@
     {
       "type": 0,
       "value": "Logiskt namn"
-    }
-  ],
-  "UMPuUJ": [
-    {
-      "type": 0,
-      "value": "Ta bort "
-    },
-    {
-      "type": 1,
-      "value": "expressionValue"
     }
   ],
   "UR1CS5": [
@@ -5029,12 +4959,6 @@
     {
       "type": 0,
       "value": "Allmänt"
-    }
-  ],
-  "V+xi3c": [
-    {
-      "type": 0,
-      "value": "Du hittar mer information på http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5267,12 +5191,6 @@
       "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
     }
   ],
-  "WS55UF": [
-    {
-      "type": 0,
-      "value": "Ange varaktigheten i ISO 8601-format"
-    }
-  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5305,12 +5223,6 @@
     {
       "type": 0,
       "value": "Förfrågningshistorik"
-    }
-  ],
-  "Wb/cBR": [
-    {
-      "type": 0,
-      "value": "Fast intervall"
     }
   ],
   "WcnIF8": [
@@ -5347,12 +5259,6 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Montevideo"
-    }
-  ],
-  "X4SuNU": [
-    {
-      "type": 0,
-      "value": "Det minsta intervallet för återförsöksprincip är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5413,18 +5319,6 @@
     {
       "type": 0,
       "value": "Kontrollera att orden stavas korrekt."
-    }
-  ],
-  "XJkBrZ": [
-    {
-      "type": 0,
-      "value": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska aktiveras"
-    }
-  ],
-  "XKDZXi": [
-    {
-      "type": 0,
-      "value": "Tidsgräns för åtgärd"
     }
   ],
   "XLUs2P": [
@@ -5941,12 +5835,6 @@
       "value": "Helskärm"
     }
   ],
-  "ahFd/S": [
-    {
-      "type": 0,
-      "value": "Distinkt spårnings-id för varje delningsinstans"
-    }
-  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -6149,6 +6037,12 @@
       "value": "Ange en giltig JSON."
     }
   ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Dekomprimera begärandetexten om den har komprimerats med GZip eller Deflate. Den här inställningen gäller bara för HTTP-utlösare."
+    }
+  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6161,16 +6055,16 @@
       "value": "(UTC+09:00) Söul"
     }
   ],
-  "cJkSrD": [
-    {
-      "type": 0,
-      "value": "Hämta fler resultat upp till sidnumreringsgränsen"
-    }
-  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "Visa dokumentationen"
+    }
+  ],
+  "cP4UkW": [
+    {
+      "type": 0,
+      "value": "Intervallet för återförsök är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
   "cR9RtV": [
@@ -6329,10 +6223,22 @@
       "value": "Frekvens"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Ange beteende och funktioner för överföring av innehåll via HTTP. Stora meddelanden kan delas upp i mindre begäranden till anslutningen för att tillåta uppladdning av stora meddelanden. Information finns på http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Hoppa över"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Säkra indata för åtgärden."
     }
   ],
   "daoo3l": [
@@ -6481,12 +6387,6 @@
       "value": "Kursiv (⌘I)"
     }
   ],
-  "eo1YKX": [
-    {
-      "type": 0,
-      "value": "Starta en instans av arbetsflödet per objekt i den markerade matrisen genom att aktivera delning. Varje instans kan också ha ett distinkt spårnings-id."
-    }
-  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6511,12 +6411,6 @@
       "value": "Valfritt. Indexet för var understrängen ska sluta extraheras."
     }
   ],
-  "f7Janv": [
-    {
-      "type": 0,
-      "value": "Exempel: PT1S"
-    }
-  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6539,6 +6433,12 @@
     {
       "type": 0,
       "value": "Välj en API Management-resurs"
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Växlingsantalet överskrider maxvärdet"
     }
   ],
   "fKYuwf": [
@@ -6623,12 +6523,6 @@
       "value": "Körning"
     }
   ],
-  "g7/EKC": [
-    {
-      "type": 0,
-      "value": "Gräns"
-    }
-  ],
   "g7my78": [
     {
       "type": 0,
@@ -6689,12 +6583,6 @@
     {
       "type": 0,
       "value": "Föregående misslyckad"
-    }
-  ],
-  "gL4rVQ": [
-    {
-      "type": 0,
-      "value": "Inget"
     }
   ],
   "gQt/0f": [
@@ -6791,18 +6679,6 @@
     {
       "type": 0,
       "value": "Lägg till ett källschema först och välj sedan element för att skapa kartan"
-    }
-  ],
-  "hH/wAd": [
-    {
-      "type": 0,
-      "value": "Skicka en arbetsflödeskörning på nytt från den här åtgärden"
-    }
-  ],
-  "hMf2TA": [
-    {
-      "type": 0,
-      "value": "Tillåt segmentering"
     }
   ],
   "hN7iBP": [
@@ -7025,12 +6901,6 @@
       "value": "Hanterad identitet"
     }
   ],
-  "iSiVB0": [
-    {
-      "type": 0,
-      "value": "Säkra utdata för åtgärden och referenser till utdataegenskaper"
-    }
-  ],
   "iTKrs8": [
     {
       "type": 0,
@@ -7155,12 +7025,6 @@
       "value": "Berätta för Microsoft hur den här funktionen kan förbättras"
     }
   ],
-  "jO5Fet": [
-    {
-      "type": 0,
-      "value": "Alternativ för begäran – tidsgräns"
-    }
-  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -7233,12 +7097,6 @@
       "value": "Redigera i JSON"
     }
   ],
-  "jfU6pn": [
-    {
-      "type": 0,
-      "value": "Om du aktiverar säkra indata skyddas utdata automatiskt."
-    }
-  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7249,6 +7107,12 @@
     {
       "type": 0,
       "value": "Beskriv något som ditt flöde ska göra. Lägg till information där det är möjligt, även information om vilken anslutningsapp som ska användas och om något innehåll ska tas med."
+    }
+  ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Varaktighet"
     }
   ],
   "juvF+0": [
@@ -7545,12 +7409,6 @@
       "value": "Infoga uttryck (du kan också lägga till det genom att skriva / i redigeraren)"
     }
   ],
-  "lsH37F": [
-    {
-      "type": 0,
-      "value": "Verifiera frågetexten mot det tillhandahållna schemat. Om det finns ett matchningsfel returneras HTTP 400"
-    }
-  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7587,12 +7445,6 @@
       "value": "Namn"
     }
   ],
-  "m8z4Yr": [
-    {
-      "type": 0,
-      "value": "Tröskelvärde för objekt att returnera"
-    }
-  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7617,6 +7469,16 @@
       "value": "Funktionen har tagits bort."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Ta bort "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7627,6 +7489,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängrepresentation av ett data-URI"
+    }
+  ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Den maximala varaktigheten för en enskild utgående begäran från den här åtgärden. Om begäran inte slutförs inom den här gränsen efter att återförsök har körts kommer åtgärden att misslyckas."
     }
   ],
   "mPakaD": [
@@ -8183,6 +8051,12 @@
       "value": "Lägger till ett heltalsvärde för det antal sekunder för vilka en strängtidsstämpel skickas in"
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Verifiera frågetexten mot det tillhandahållna schemat. Om det finns ett matchningsfel returneras HTTP 400."
+    }
+  ],
   "qAlTD5": [
     {
       "type": 0,
@@ -8353,12 +8227,6 @@
     {
       "type": 0,
       "value": "Föregående flödesförslag"
-    }
-  ],
-  "qzaoRR": [
-    {
-      "type": 0,
-      "value": "Begränsa den maximala varaktigheten mellan återförsök och asynkrona svar för den här åtgärden. Obs! Det här ändrar inte tidsgränsen för begäran för en enskild begäran"
     }
   ],
   "r/n6/9": [
@@ -8595,6 +8463,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den samling som ska kontrolleras om den är tom."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Tidsgräns för åtgärd"
     }
   ],
   "sfJTHV": [
@@ -8907,6 +8781,12 @@
       "value": "Visa mig"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Begränsa den maximala varaktigheten mellan återförsök och asynkrona svar för den här åtgärden. Obs! Detta ändrar inte tidsgränsen för begäran för en enskild begäran."
+    }
+  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -9111,12 +8991,6 @@
     {
       "type": 0,
       "value": "Om du vill skapa och använda en API-anslutning måste du ha konfigurerat en hanterad identitet på den här logikappen."
-    }
-  ],
-  "viee6C": [
-    {
-      "type": 0,
-      "value": "Varaktighet"
     }
   ],
   "vlDynP": [
@@ -9505,12 +9379,6 @@
       "value": "Returnerar en matris sorterad i stigande ordning"
     }
   ],
-  "yNtBUV": [
-    {
-      "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
-    }
-  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9647,12 +9515,6 @@
     {
       "type": 0,
       "value": "Ange värde"
-    }
-  ],
-  "zEv8dd": [
-    {
-      "type": 0,
-      "value": "Uttrycksredigerare"
     }
   ],
   "zIDVd9": [

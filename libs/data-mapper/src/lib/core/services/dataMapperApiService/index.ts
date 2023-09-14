@@ -7,7 +7,7 @@ let service: IDataMapperApiService;
 
 export const defaultDataMapperApiServiceOptions = {
   baseUrl: 'http://localhost',
-  port: '8000',
+  port: '7071',
   accessToken: '',
 };
 

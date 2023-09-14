@@ -33,7 +33,7 @@ type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata 
  */
 interface RetryPolicy {
   type: string;
-  count?: number | string;
+  count?: number;
   interval?: string;
   minimumInterval?: string;
   maximumInterval?: string;

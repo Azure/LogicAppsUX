@@ -56,8 +56,35 @@ export function ExpressionEditor({
     }
   };
 
-  const handleChangeEvent = (): void => {
+  const handleChangeEvent = (e: editor.IModelContentChangedEvent): void => {
     setExpressionEditorError('');
+    const changedText = e.changes.length ? e.changes[0].text : '';
+    if (changedText === '\r\n' && editorRef?.current) {
+      const oldPosition = editorRef.current.getPosition();
+      const currentValue = editorRef.current.getValue();
+      const newValue = currentValue.replace(/\r\n/g, '');
+      editorRef.current.setValue(newValue);
+
+      if (oldPosition) {
+        const cursorPosition = oldPosition.column - 1;
+        setTimeout(() => setSelection(cursorPosition, cursorPosition));
+      }
+    }
+  };
+
+  const setSelection = (selectionStart: number, selectionEnd: number) => {
+    if (editorRef?.current) {
+      editorRef?.current.focus();
+
+      if (selectionStart !== undefined && selectionEnd !== undefined) {
+        editorRef?.current.setSelection({
+          startLineNumber: 1,
+          startColumn: selectionStart + 1,
+          endLineNumber: 1,
+          endColumn: selectionEnd + 1,
+        });
+      }
+    }
   };
 
   return (
