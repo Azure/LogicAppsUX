@@ -252,8 +252,10 @@ export function TokenPicker({
             />
             {initialMode === TokenPickerMode.EXPRESSION ? (
               <TokenPickerFooter
+                tokenGroup={tokenGroup ?? []}
                 expression={expression}
                 expressionToBeUpdated={expressionToBeUpdated}
+                getValueSegmentFromToken={getValueSegmentFromToken}
                 setExpressionEditorError={setExpressionEditorError}
               />
             ) : null}
