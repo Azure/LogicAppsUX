@@ -1213,12 +1213,6 @@
       "value": "La valeur de délai d’attente n’est pas valide. Elle doit correspondre au format de durée ISO 8601"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Avertissement : le type de nœud d’entrée ne correspond pas aux types autorisés pour cette entrée"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2270,6 +2264,12 @@
       "value": "(UTC+09:30) Adélaïde"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -3219,6 +3219,16 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4913,6 +4923,16 @@
     {
       "type": 0,
       "value": "Supprimer l’action de flux de travail"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9626,6 +9646,12 @@
     {
       "type": 0,
       "value": "Renvoie un tableau trié dans ordre croissant"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [
