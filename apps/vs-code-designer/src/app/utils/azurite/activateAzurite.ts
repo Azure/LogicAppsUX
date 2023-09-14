@@ -54,7 +54,7 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
         const defaultAzuriteDir = defaultAzuritePathValue;
         const azuriteDir = await context.ui.showInputBox({
           placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
-          prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite workspace location folder path'),
+          prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
           value: defaultAzuriteDir,
         });
 
