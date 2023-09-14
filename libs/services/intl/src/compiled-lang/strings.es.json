@@ -1213,12 +1213,6 @@
       "value": "El valor de tiempo de espera no es válido, debe coincidir con el formato de duración ISO 8601"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Advertencia: el tipo de nodo de entrada no coincide con uno de los tipos permitidos para esta entrada"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2270,6 +2264,12 @@
       "value": "(UTC+09:30) Adelaida"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -3219,6 +3219,16 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4913,6 +4923,16 @@
     {
       "type": 0,
       "value": "Eliminar acción de flujo de trabajo"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9618,6 +9638,12 @@
     {
       "type": 0,
       "value": "Devuelve una matriz ordenada en orden ascendente."
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [

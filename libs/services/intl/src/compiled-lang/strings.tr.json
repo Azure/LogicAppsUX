@@ -1205,12 +1205,6 @@
       "value": "Zaman aşımı değeri geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Uyarı: Giriş düğümü türü bu giriş için izin verilen türlerden biri ile eşleşmiyor"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2251,6 +2245,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 1,
@@ -3185,6 +3185,16 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4857,6 +4867,16 @@
     {
       "type": 0,
       "value": "İş Akışını Eylemini Sil"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9513,6 +9533,12 @@
     {
       "type": 0,
       "value": "Artan düzende sıralanan bir dizi döndürür"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [

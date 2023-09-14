@@ -1217,12 +1217,6 @@
       "value": "De time-outwaarde is ongeldig, deze moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met een van de toegestane typen voor deze invoer"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2259,6 +2253,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -3205,6 +3205,16 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4869,6 +4879,16 @@
     {
       "type": 0,
       "value": "Werkstroomactie verwijderen"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9529,6 +9549,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt een matrix geretourneerd die in oplopende volgorde is gesorteerd"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [

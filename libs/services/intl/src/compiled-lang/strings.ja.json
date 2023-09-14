@@ -1205,12 +1205,6 @@
       "value": "タイムアウト値が無効です。ISO 8601 の期間の形式と一致する必要があります"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "警告: 入力ノードの種類が、この入力に許可されている種類のいずれかと一致しません"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2240,6 +2234,12 @@
       "value": "(UTC+09:30) アデレード"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 1,
@@ -3163,6 +3163,16 @@
     {
       "type": 0,
       "value": "。"
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4813,6 +4823,16 @@
     {
       "type": 0,
       "value": "Workflowアクションの削除"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9420,6 +9440,12 @@
     {
       "type": 0,
       "value": "昇順に並べ替えられた配列を返します"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [

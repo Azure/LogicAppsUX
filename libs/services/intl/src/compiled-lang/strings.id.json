@@ -1205,12 +1205,6 @@
       "value": "Nilai batas waktu tidak valid, harus cocok dengan format durasi ISO 8601"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Peringatan: tipe node input tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2240,6 +2234,12 @@
       "value": "(UTC+09.30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -3167,6 +3167,16 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4817,6 +4827,16 @@
     {
       "type": 0,
       "value": "Hapus Tindakan Alur Kerja"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9456,6 +9476,12 @@
     {
       "type": 0,
       "value": "Menghasilkan array yang diurutkan dalam urutan naik"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [

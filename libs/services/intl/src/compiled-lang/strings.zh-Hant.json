@@ -1213,12 +1213,6 @@
       "value": "時間值無效，必須符合 ISO 8601 持續時間格式"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "警告: 輸入節點類型不符合此輸入允許的其中一種類型"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2232,6 +2226,12 @@
       "value": "(UTC+09:30) 阿得雷德"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -3163,6 +3163,16 @@
     {
       "type": 0,
       "value": "。"
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4809,6 +4819,16 @@
     {
       "type": 0,
       "value": "刪除工作流程動作"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9448,6 +9468,12 @@
     {
       "type": 0,
       "value": "傳回以遞增排序的陣列"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [

@@ -1205,12 +1205,6 @@
       "value": "Il valore del timeout non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Avviso: il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2262,6 +2256,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -3203,6 +3203,16 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4905,6 +4915,16 @@
     {
       "type": 0,
       "value": "Elimina azione flusso di lavoro"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9606,6 +9626,12 @@
     {
       "type": 0,
       "value": "Restituisce una matrice in ordine crescente"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [
