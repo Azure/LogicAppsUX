@@ -333,7 +333,7 @@ async function extractBinaries(binariesFilePath: string, targetFolder: string, d
 }
 
 function checkMajorVersion(version: string, majorVersion: string): boolean {
-  return semver.major(version) === semver.major(majorVersion);
+  return semver.major(version) === Number(majorVersion);
 }
 
 /**
