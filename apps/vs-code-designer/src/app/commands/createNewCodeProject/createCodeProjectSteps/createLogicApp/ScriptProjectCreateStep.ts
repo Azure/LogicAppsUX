@@ -29,6 +29,7 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
     'local.settings.json',
     'test',
     '.debug',
+    'global.json',
   ];
   protected gitignore = '';
   protected supportsManagedDependencies = false;

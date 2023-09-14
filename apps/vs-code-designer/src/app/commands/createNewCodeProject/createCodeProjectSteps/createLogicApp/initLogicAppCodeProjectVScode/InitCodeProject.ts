@@ -15,9 +15,12 @@ import {
   extensionsFileName,
   extensionCommand,
   functionsExtensionId,
+  funcDependencyName,
+  hostStartCommand,
 } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { localize } from '../../../../../../localize';
+import { binariesExist } from '../../../../../utils/binaries';
 import { isSubpath, confirmEditJsonFile, confirmOverwriteFile } from '../../../../../utils/fs';
 import {
   getDebugConfigs,
@@ -117,38 +120,45 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
    **/
   public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
     const tasksJsonPath: string = path.join(context.projectPath, '.vscode', 'Tasks.json');
+    const funcBinariesExist = binariesExist(funcDependencyName);
     const tasksJsonContent = `{
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "label": "generateDebugSymbols",
-        "command": "dotnet",
-        "args": [
-          "\${input:getDebugSymbolDll}"
+        "version": "2.0.0",
+        "tasks": [
+          {
+            "label": "generateDebugSymbols",
+            "command": '\${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
+            "args": [
+              "\${input:getDebugSymbolDll}"
+            ],
+            "type": "process",
+            "problemMatcher": "$msCompile"
+          },
+          {
+            "type": "${funcBinariesExist ? 'shell' : func}",
+            "command": ${funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand},
+            "args" : ${funcBinariesExist ? ['host', 'start'] : undefined},
+            "options": {
+              "env": {
+                "PATH": "\${config:azureLogicAppsStandard.dependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.dependenciesPath}\\\\DotNetSDK;$env:PATH"
+              }
+            },
+            "problemMatcher": "$func-watch",
+            "isBackground": true,
+            "label": "func: host start",
+            "group": {
+              "kind": "build",
+              "isDefault": true
+            }
+          }
         ],
-        "type": "process",
-        "problemMatcher": "$msCompile"
-      },
-      {
-        "type": "func",
-        "command": "host start",
-        "problemMatcher": "$func-watch",
-        "isBackground": true,
-        "label": "func: host start",
-        "group": {
-          "kind": "build",
-          "isDefault": true
-        }
-      }
-    ],
-    "inputs": [
-      {
-        "id": "getDebugSymbolDll",
-        "type": "command",
-        "command": "azureLogicAppsStandard.getDebugSymbolDll"
-      }
-    ]
-  }`;
+        "inputs": [
+          {
+            "id": "getDebugSymbolDll",
+            "type": "command",
+            "command": "azureLogicAppsStandard.getDebugSymbolDll"
+          }
+        ]
+      }`;
 
     if (await confirmOverwriteFile(context, tasksJsonPath)) {
       await fse.writeFile(tasksJsonPath, tasksJsonContent);

@@ -2,14 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { azuriteExtensionPrefix, azuriteLocationSetting, extensionCommand } from '../../../constants';
+import { azuriteExtensionPrefix, azuriteLocationSetting, defaultAzuritePathValue, extensionCommand } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
 import { getWorkspaceSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
-import * as os from 'os';
-import * as path from 'path';
 import type { MessageItem } from 'vscode';
 
 /**
@@ -53,7 +51,7 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
 
       // User has not configured workspace azurite.location.
       if (!azuriteLocationExtSetting) {
-        const defaultAzuriteDir = path.join(os.homedir(), '.logicapps', 'azurite');
+        const defaultAzuriteDir = defaultAzuritePathValue;
         const azuriteDir = await context.ui.showInputBox({
           placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
           prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),

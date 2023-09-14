@@ -37,7 +37,7 @@ export async function executeCommand(
       );
     }
   } else {
-    if (outputChannel) {
+    if (outputChannel && command != 'echo') {
       outputChannel.appendLog(localize('finishedRunningCommand', 'Finished running command: "{0} {1}".', command, result.formattedArgs));
     }
   }
@@ -62,7 +62,7 @@ export async function tryExecuteCommand(
     };
     const childProc: cp.ChildProcess = cp.spawn(command, args, options);
 
-    if (outputChannel) {
+    if (outputChannel && command != 'echo') {
       outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
     }
 

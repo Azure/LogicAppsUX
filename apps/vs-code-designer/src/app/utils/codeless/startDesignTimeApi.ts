@@ -18,6 +18,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
+import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
@@ -79,7 +80,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
     try {
       window.showInformationMessage(
-        localize('azureFunctions.designTimeApi', 'Starting the background design-time process, which might take a few seconds.'),
+        localize('azureFunctions.designTimeApi', 'Starting workflow design-time API, which might take a few seconds.'),
         'OK'
       );
 
@@ -92,11 +93,11 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.workflowDesignTimePort}`;
-        startDesignTimeProcess(ext.outputChannel, cwd, 'func', 'host', 'start', portArgs);
+        startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
         await waitForDesingTimeStartUp(url, new Date().getTime());
         actionContext.telemetry.properties.startDesignTimeApi = 'true';
       } else {
-        throw new Error(localize('DesignTimeDirectoryError', "Can't create the directory for the background design-time process."));
+        throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
       }
     } catch (ex) {
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
