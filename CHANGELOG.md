@@ -1,5 +1,18 @@
 # Logic Apps Designer
 
+## [2.68.0](https://github.com/Azure/LogicAppsUX/compare/v2.67.0...v2.68.0) (2023-09-14)
+
+### Features
+
+- **Data Mapper:** Adding messaging to make input types more clear ([#3287](https://github.com/Azure/LogicAppsUX/issues/3287)) ([5bae2bb](https://github.com/Azure/LogicAppsUX/commit/5bae2bb5f58eaf24e8054fd80d139c0e81e2d4f4))
+
+### Bug Fixes
+
+- **designer:** Catch scenario when error object has an error object ([#3313](https://github.com/Azure/LogicAppsUX/issues/3313)) ([72af48a](https://github.com/Azure/LogicAppsUX/commit/72af48a46a3fd15bea6cabd28eb797229d6fff03))
+- **designer:** FloatingActionMenuOutputs editor to lowercase serialized dynamically added property names (for consistency with V1) ([#3286](https://github.com/Azure/LogicAppsUX/issues/3286)) ([e30fd1e](https://github.com/Azure/LogicAppsUX/commit/e30fd1e7c3b317b546d0c22abb7f5ed7998c82af))
+
+## [2.67.0](https://github.com/Azure/LogicAppsUX/compare/v2.66.0...v2.67.0) (2023-09-12)
+
 ## [2.67.0](https://github.com/Azure/LogicAppsUX/compare/v2.66.0...v2.67.0) (2023-09-12)
 
 ### Features

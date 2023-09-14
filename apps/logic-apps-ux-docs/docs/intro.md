@@ -89,25 +89,23 @@ We are excited to announce that the new Power Automate designer is open source o
 
 ### Bugs- Choose from our Issues list Issues · [Azure/LogicAppsUX (github.com)](https://github.com/Azure/LogicAppsUX/issues) or introduce a new one that you personally relate to.
 
-### Features- Choose one from our list for which we have provided designs.
+### Features- Choose one from our list · [Features List (github.com)](https://github.com/Azure/LogicAppsUX/discussions/categories/feature-requests) for which the topic starts with (_PAuto + LA)_.
 
-1. Copy and paste action to/from clipboard,
-2. Undo/Redo,
-3. Easy disabling of any action on the designer,
-4. Simplified OData editor for Filter query SharePoint Get items/Get files action.
-5. More will follow soon. Please reach out to kisubedi@microsoft.com for more information on this for e.g the design files, etc. We will add an entry for each of these features with specifications and requirements soon.
+Please reach out to kisubedi@microsoft.com if you have any questions.
 
 # PnP Badge Program for contributions
 
 Power Platform PnP will provide you badges for accepted contributions.
 
-For issues contribution:
+**For issues contribution:**
 
-If 1 bug fix, Power Automate Issue Contributor badge.
-If >=5 bug fixes, Power Automate Designer Issue Specialist badge.
-If >= 8 bug fixes, Power Automate Designer Issue Expert badge.
+If 1 bug fix, you will be issued a Power Automate Issue Contributor badge.
+If >=5 bug fixes, you will be issued a Power Automate Designer Issue Specialist badge.
+If >= 8 bug fixes, you will be issued a Power Automate Designer Issue Expert badge.
 
-For feature contribution:
+**For feature contribution:**
 
-If 1 feature, Power Automate Designer Specialist.
-If >=2 feature, Power Automate Designer Expert badge.
+If 1 feature, you will be issued a Power Automate Designer Specialist.
+If >=2 feature, you will be issued a Power Automate Designer Expert badge.
+
+To apply for a badge, you need to fill a simple application with PnP and provide your github username along with requested badge name.

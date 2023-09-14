@@ -1217,12 +1217,6 @@
       "value": "超时值无效，必须与 ISO 8601 持续时间格式匹配"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "警告: 输入节点类型与此输入允许的类型之一不匹配"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2252,6 +2246,12 @@
       "value": "(UTC+09:30)阿德莱德"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -3183,6 +3183,16 @@
     {
       "type": 0,
       "value": "。"
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4837,6 +4847,16 @@
     {
       "type": 0,
       "value": "删除工作流操作"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9508,6 +9528,12 @@
     {
       "type": 0,
       "value": "返回按升序排序的数组"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [
