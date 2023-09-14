@@ -10,7 +10,9 @@ import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
-import { FloatingActionMenu } from '../../floatingactionmenu';
+import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
+import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
+import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
 import { HTMLEditor } from '../../html';
 import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
@@ -69,7 +71,9 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
           </Label>
         </div>
       )}
-      {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
+      <div key={props.id}>
+        {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
+      </div>
     </>
   );
 };
@@ -293,11 +297,23 @@ export const TokenField = ({
         />
       );
     case 'floatingactionmenu': {
-      return (
-        <FloatingActionMenu
+      return editorOptions?.menuKind === FloatingActionMenuKind.outputs ? (
+        <FloatingActionMenuOutputs
+          supportedTypes={editorOptions?.supportedTypes}
+          initialValue={value}
+          onChange={onValueChange}
+          editorViewModel={editorViewModel}
+          BasePlugins={{ tokens: showTokens }}
+          tokenPickerButtonProps={tokenpickerButtonProps}
+          getTokenPicker={getTokenPicker}
+          hideValidationErrors={hideValidationErrors}
+        />
+      ) : (
+        <FloatingActionMenuInputs
           supportedTypes={editorOptions?.supportedTypes}
           useStaticInputs={editorOptions?.useStaticInputs}
           initialValue={value}
+          isRequestApiConnectionTrigger={editorOptions?.isRequestApiConnectionTrigger}
           onChange={onValueChange}
         />
       );

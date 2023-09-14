@@ -138,6 +138,19 @@ const CreateConnectionTab = () => {
           outputParameterValues = { ...outputParameterValues, ...assistedParams };
         }
 
+        // If oauth, find the oauth parameter and assign the redirect url
+        if (isOAuthConnection && selectedParameterSet) {
+          const oAuthParameter = Object.entries(selectedParameterSet?.parameters).find(
+            ([_, parameter]) => !!parameter?.oAuthSettings?.redirectUrl
+          );
+          if (oAuthParameter) {
+            const oAuthParameterKey = oAuthParameter?.[0];
+            const oAuthParameterObj = oAuthParameter?.[1];
+            const redirectUrl = oAuthParameterObj?.oAuthSettings?.redirectUrl;
+            outputParameterValues[oAuthParameterKey] = redirectUrl;
+          }
+        }
+
         const connectionParameterSetValues: ConnectionParameterSetValues = {
           name: selectedParameterSet?.name ?? '',
           values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
@@ -226,6 +239,7 @@ const CreateConnectionTab = () => {
 
   return (
     <CreateConnection
+      connectorId={connector.id}
       connectorDisplayName={connector.properties.displayName}
       connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}

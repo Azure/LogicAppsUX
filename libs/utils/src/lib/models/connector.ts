@@ -102,6 +102,7 @@ export interface OAuthSetting {
 
 export interface ManagedIdentitySetting {
   resourceUri: string;
+  additionalResourceUris?: string[];
 }
 
 export interface GatewaySetting {
@@ -196,6 +197,7 @@ export interface ConnectorProperty {
   integrationServiceEnvironment?: {
     id: string;
   };
+  tier?: string;
   isCustomApi?: boolean;
   testConnectionUrl?: string;
   testConnectionOperationName?: string;

@@ -60,6 +60,7 @@ import type {
   AuthProps,
   ComboboxItem,
   DictionaryEditorItemProps,
+  FloatingActionMenuOutputViewModel,
   GroupItemProps,
   OutputToken,
   ParameterInfo,
@@ -71,6 +72,7 @@ import type {
 import {
   removeQuotes,
   ArrayType,
+  FloatingActionMenuKind,
   getOuterMostCommaIndex,
   RowDropdownOptions,
   GroupDropdownOptions,
@@ -80,6 +82,7 @@ import {
   DynamicCallStatus,
   ValueSegmentType,
   TokenType,
+  AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type {
@@ -119,6 +122,7 @@ import {
   SchemaProcessor,
   SegmentType,
   Visibility,
+  PropertyName,
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
@@ -145,6 +149,7 @@ import {
   UnsupportedException,
   ValidationErrorCode,
   ValidationException,
+  nthLastIndexOf,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -342,7 +347,7 @@ function shouldSoftHide(parameter: ResolvedParameter): boolean {
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
-  return !!parameter?.value;
+  return parameter?.value !== undefined;
 }
 
 export function getParameterEditorProps(
@@ -361,7 +366,10 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
+    } else if (
+      (schemaEnum || schema?.enum || (schemaEnum && schema?.[ExtensionProperties.CustomEnum])) &&
+      !equals(visibility, Visibility.Internal)
+    ) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
@@ -426,6 +434,8 @@ export function getParameterEditorProps(
     if (parameterValue.some(isTokenValueSegment)) {
       editor = undefined;
     }
+  } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
+    editorViewModel = toFloatingActionMenuOutputsViewModel(value);
   }
 
   return { editor, editorOptions, editorViewModel, schema };
@@ -468,6 +478,7 @@ const convertStringToInputParameter = (
     type: 'any',
     hideInUI: false,
     value: newValue,
+    suppressCasting: true,
   };
 };
 
@@ -505,8 +516,6 @@ const toSimpleQueryBuilderViewModel = (
 ): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
   const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
   let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
-  const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
-  const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
   // default value
   if (!input || input.length === 0) {
     return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
@@ -516,21 +525,41 @@ const toSimpleQueryBuilderViewModel = (
     return advancedModeResult;
   }
 
+  let stringValue = input;
+
   try {
-    operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: input.substring(input.indexOf('@'), input.indexOf('(') + 1) };
-    const operandSubstring = input.substring(input.indexOf('(') + 1, input.lastIndexOf(')'));
-    const operand1String = operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring));
-    const operand2String = operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1);
+    let operator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+    const negatory = operator === 'not';
+    let endingLiteral: ValueSegment;
+    if (negatory) {
+      stringValue = stringValue.replace('@not(', '@');
+      const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+      operator = 'not' + baseOperator;
+      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
+      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+    } else {
+      operationLiteral = operator;
+      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
+    }
+
+    // if operator is not of the dropdownlist, it cannot be converted into row format
+    if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
+      return advancedModeResult;
+    }
+    const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
+    const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
+    const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
     operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true))[0];
     operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true))[0];
-  } catch (e) {
+    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+    return {
+      isOldFormat: true,
+      isRowFormat: true,
+      itemValue: [operationLiteral, operand1, separatorLiteral, operand2, endingLiteral],
+    };
+  } catch {
     return advancedModeResult;
   }
-  return {
-    isOldFormat: true,
-    isRowFormat: true,
-    itemValue: [operationLiteral, operand1, separatorLiteral, operand2, endingLiteral],
-  };
 };
 
 export const canConvertToComplexCondition = (input: any): boolean => {
@@ -705,7 +734,9 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
             aadOAuth: {
               oauthTenant: loadParameterValue(convertStringToInputParameter(value.tenant)),
               oauthAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
+              oauthAuthority: loadParameterValue(convertStringToInputParameter(value.authority)),
               oauthClientId: loadParameterValue(convertStringToInputParameter(value.clientId)),
+              oauthType: loadOauthType(value),
               oauthTypeSecret: loadParameterValue(convertStringToInputParameter(value.secret)),
               oauthTypeCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
               oauthTypeCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
@@ -740,6 +771,31 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
   }
 
   return emptyValue;
+}
+
+const loadOauthType = (value: any): AuthenticationOAuthType => {
+  return value.pfx ? AuthenticationOAuthType.CERTIFICATE : AuthenticationOAuthType.SECRET;
+};
+
+// Create FloatingActionMenuOutputs Editor View Model
+function toFloatingActionMenuOutputsViewModel(value: any) {
+  const clonedValue = clone(value);
+
+  const outputValueSegmentsMap: Record<string, ValueSegment[]> = {};
+  const outputValueMap = clonedValue?.additionalProperties?.outputValueMap;
+  if (outputValueMap) {
+    Object.entries(outputValueMap).forEach(([key, outputValue]) => {
+      outputValueSegmentsMap[key] = loadParameterValue(convertStringToInputParameter(outputValue as string));
+    });
+
+    // So editor does not need to worry about keeping this in sync with outputValueSegmentsMap
+    delete clonedValue.additionalProperties.outputValueMap;
+  }
+
+  return {
+    schema: clonedValue,
+    outputValueSegmentsMap,
+  };
 }
 
 interface ParameterEditorProps {
@@ -1818,6 +1874,16 @@ async function loadDynamicContentForInputsInNode(
             dispatch
           );
           const allInputParameters = getAllInputParameters(allInputs);
+
+          // In the case of retry policy, it is treated as an input
+          // avoid pushing a parameter for it as it is already being
+          // handled in the settings store.
+          // NOTE: this could be expanded to more settings that are treated as inputs.
+          const newOperationDefinition = operationDefinition ? clone(operationDefinition) : operationDefinition;
+          if (newOperationDefinition?.inputs?.[PropertyName.RETRYPOLICY]) {
+            delete newOperationDefinition.inputs.retryPolicy;
+          }
+
           const allInputKeys = allInputParameters.map((param) => param.parameterKey);
           const schemaInputs = inputSchema
             ? await getDynamicInputsFromSchema(
@@ -1825,7 +1891,7 @@ async function loadDynamicContentForInputsInNode(
                 info.parameter as InputParameter,
                 operationInfo,
                 allInputKeys,
-                operationDefinition
+                newOperationDefinition
               )
             : [];
           const inputParameters = schemaInputs.map((input) => ({
@@ -1845,7 +1911,7 @@ async function loadDynamicContentForInputsInNode(
             addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
           );
         } catch (error: any) {
-          const message = error.message as string;
+          const message = error.message ?? (error.content.message as string);
           const errorMessage = getIntl().formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
@@ -2152,10 +2218,53 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       return editorOptions?.isOldFormat
         ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat)
         : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
+    case constants.EDITOR.FLOATINGACTIONMENU:
+      if (!editorViewModel || editorOptions?.menuKind !== FloatingActionMenuKind.outputs) {
+        return undefined;
+      }
+
+      return getStringifiedValueFromFloatingActionMenuOutputsViewModel(parameter, editorViewModel);
     default:
       return undefined;
   }
 }
+
+const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
+  parameter: ParameterInfo,
+  editorViewModel: FloatingActionMenuOutputViewModel
+): string | undefined => {
+  const value: typeof editorViewModel.schema & { additionalProperties?: { outputValueMap?: Record<string, unknown> } } = clone(
+    editorViewModel.schema
+  );
+  const schemaProperties: typeof editorViewModel.schema.properties = {};
+  const outputValueMap: Record<string, unknown> = {};
+
+  // commonProperties is inspired from behavior for Table Editor and Condition Editor.
+  // This may need to change if for example we need proper parameter.info.format value per added parameter (instead of re-using parameter.info).
+  const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
+  Object.entries(value.properties).forEach(([key, config]) => {
+    if (!config?.['x-ms-dynamically-added']) {
+      schemaProperties[key] = config;
+      return;
+    }
+
+    if (config.title) {
+      const keyFromTitle = config.title.toLowerCase().replace(' ', '_');
+      schemaProperties[keyFromTitle] = config;
+
+      const valueSegments = editorViewModel.outputValueSegmentsMap?.[key];
+      if (valueSegments?.length) {
+        outputValueMap[keyFromTitle] =
+          // We want to transform (for example) "1" to 1, "false" to false, if the dynamically added parameter type is not 'String'
+          parameterValueWithoutCasting({ type: config.type, value: valueSegments, ...commonProperties } as any);
+      }
+    }
+  });
+
+  value.properties = schemaProperties;
+  (value.additionalProperties ??= {}).outputValueMap = outputValueMap;
+  return JSON.stringify(value);
+};
 
 const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat: boolean): string | undefined => {
   // if it is in advanced mode, we use loadParameterValue to get the value
@@ -2170,7 +2279,12 @@ const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat:
   return stringValue;
 };
 
-export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
+export const recurseSerializeCondition = (
+  parameter: ParameterInfo,
+  editorViewModel: any,
+  isDefinitionValue: boolean,
+  errors?: string[]
+): any => {
   const returnVal: any = {};
   const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
   if (editorViewModel.type === GroupType.ROW) {
@@ -2185,21 +2299,25 @@ export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewMo
       operator = RowDropdownOptions.EQUALS;
     }
 
-    const stringifiedOperand1 =
-      getJSONValueFromString(
-        parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue),
-        'any'
-      ) ?? '';
-    const stringifiedOperand2 =
-      getJSONValueFromString(
-        parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue),
-        'any'
-      ) ?? '';
+    const operand1String = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
+    const operand2String = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
+    if (errors && errors.length === 0 && (operand1String || operand2String)) {
+      if (!operand1String || !operand2String) {
+        errors.push(
+          getIntl().formatMessage({
+            defaultMessage: 'Enter a valid condition statement.',
+            description: 'Error validation message for invalid condition statement',
+          })
+        );
+      }
+    }
+    const JSONOperand1 = getJSONValueFromString(operand1String, 'any') ?? '';
+    const JSONOperand2 = getJSONValueFromString(operand2String, 'any') ?? '';
     if (not) {
       returnVal.not = {};
-      returnVal['not'][operator] = [stringifiedOperand1, stringifiedOperand2];
+      returnVal['not'][operator] = [JSONOperand1, JSONOperand2];
     } else {
-      returnVal[operator] = [stringifiedOperand1, stringifiedOperand2];
+      returnVal[operator] = [JSONOperand1, JSONOperand2];
     }
   } else {
     let { condition, items } = editorViewModel;
@@ -2217,7 +2335,7 @@ export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewMo
       ];
     }
     returnVal[condition] = items.map((item: any) => {
-      return recurseSerializeCondition(parameter, item, isDefinitionValue);
+      return recurseSerializeCondition(parameter, item, isDefinitionValue, errors);
     });
   }
   return returnVal;
@@ -2320,7 +2438,16 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
   let finalValue = clone(inputsValue);
   let propertiesToRetain: string[] = [];
   for (const { source, target } of swapMap) {
-    const value = clone(getObjectPropertyValue(finalValue, target));
+    const propertyValue = getObjectPropertyValue(finalValue, target);
+    deleteObjectProperty(finalValue, target);
+
+    // Don't want to use clone on a non-object
+    if (typeof propertyValue !== 'object') {
+      finalValue = safeSetObjectPropertyValue(finalValue, source, propertyValue);
+      continue;
+    }
+
+    const value = clone(propertyValue);
     if (!target.length) {
       propertiesToRetain = Object.keys(manifest.properties.inputs.properties);
       deleteObjectProperties(
@@ -2335,7 +2462,6 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
       }
     }
 
-    deleteObjectProperty(finalValue, target);
     finalValue = !source.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, source, value);
   }
   return finalValue;

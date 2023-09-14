@@ -29,14 +29,6 @@ export function SettingDictionary({
 }
 
 function ValuesInDictionary({ values, readOnly, onDictionaryChange, label }: SettingDictionaryProps): JSX.Element {
-  let valuesInDictionary: Record<string, string> = {};
-  if (isObject(values)) {
-    valuesInDictionary = {};
-    for (const key of Object.keys(values)) {
-      valuesInDictionary[key] = JSON.stringify(values[key]);
-    }
-  }
-
   return (
     <div className="msla-operation-setting">
       <div className="msla-setting-row-dictionary-input">
@@ -59,20 +51,9 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
     }
   };
 
-  return customLabel ? (
+  return (
     <>
-      {customLabel()}
-      <TextField
-        className="msla-setting-row-text-input"
-        disabled={readOnly}
-        value={valuesInString}
-        onChange={onTextFieldChange}
-        styles={textFieldStyles}
-        ariaLabel={ariaLabel}
-      />
-    </>
-  ) : (
-    <div className="msla-setting-section-row">
+      {customLabel ? customLabel : null}
       <TextField
         label={label}
         className="msla-setting-row-text-input"
@@ -82,6 +63,6 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
         styles={textFieldStyles}
         ariaLabel={ariaLabel}
       />
-    </div>
+    </>
   );
 }

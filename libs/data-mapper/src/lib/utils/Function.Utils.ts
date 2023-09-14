@@ -8,11 +8,12 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import type { Connection, ConnectionDictionary } from '../models/Connection';
+import { InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '../models';
+import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
-import { FunctionCategory, ifPseudoFunctionKey } from '../models/Function';
+import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
@@ -159,3 +160,103 @@ export const getFunctionLocationsForAllFunctions = (
   }
   return functionNodes;
 };
+export const functionDropDownItemText = (key: string, node: FunctionData, connections: ConnectionDictionary) => {
+  let fnInputValues: string[] = [];
+  const connection = connections[key];
+
+  if (connection) {
+    fnInputValues = Object.values(connection.inputs)
+      .flat()
+      .map((input) => {
+        if (!input) {
+          return undefined;
+        }
+
+        if (isCustomValue(input)) {
+          return input;
+        }
+
+        if (isFunctionData(input.node)) {
+          if (input.node.key === indexPseudoFunctionKey) {
+            const sourceNode = connections[input.reactFlowKey].inputs[0][0];
+            return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
+          }
+
+          if (functionInputHasInputs(input.reactFlowKey, connections)) {
+            return `${input.node.functionName}(...)`;
+          } else {
+            return `${input.node.functionName}()`;
+          }
+        }
+
+        // Source schema node
+        return input.node.name;
+      })
+      .filter((value) => !!value) as string[];
+  }
+
+  const inputs = connections[key].inputs[0];
+  const sourceNode = inputs && inputs[0];
+  let nodeName: string;
+  if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+    nodeName = calculateIndexValue(sourceNode.node);
+  } else if (node.key === directAccessPseudoFunctionKey) {
+    const functionValues = getInputValues(connections[key], connections);
+    nodeName =
+      functionValues.length === 3
+        ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+        : getFunctionOutputValue(fnInputValues, node.functionName);
+  } else {
+    nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
+  }
+
+  return nodeName;
+};
+
+export const getInputName = (inputConnection: InputConnection | undefined, connectionDictionary: ConnectionDictionary) => {
+  if (inputConnection) {
+    return isCustomValue(inputConnection)
+      ? inputConnection
+      : isSchemaNodeExtended(inputConnection.node)
+      ? inputConnection.node.name
+      : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+  }
+
+  return undefined;
+};
+
+export const getInputValue = (inputConnection: InputConnection | undefined) => {
+  if (inputConnection) {
+    return isCustomValue(inputConnection) ? inputConnection : inputConnection.reactFlowKey;
+  }
+
+  return undefined;
+};
+
+export const addQuotesToString = (value: string) => {
+  let formattedValue = value;
+
+  const quote = '"';
+  if (!value.startsWith(quote)) {
+    formattedValue = quote.concat(value);
+  }
+  if (!value.endsWith(quote)) {
+    formattedValue = formattedValue.concat(quote);
+  }
+  return formattedValue;
+};
+
+export const removeQuotesFromString = (value: string) => {
+  let formattedValue = value;
+  const quote = '"';
+  if (formattedValue.endsWith(quote)) {
+    formattedValue = formattedValue.substring(0, value.length - 1);
+  }
+  if (formattedValue.startsWith(quote)) {
+    formattedValue = formattedValue.replace(quote, '');
+  }
+  return formattedValue;
+};
+
+export const hasOnlyCustomInputType = (functionData: FunctionData) =>
+  functionData.inputs[0]?.inputEntryType === InputFormat.FilePicker || functionData.inputs[0]?.inputEntryType === InputFormat.TextBox;

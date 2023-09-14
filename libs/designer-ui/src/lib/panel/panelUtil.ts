@@ -1,9 +1,13 @@
 import type { IntlShape } from 'react-intl';
 
-/* eslint-disable no-param-reassign */
 export enum PanelLocation {
   Left = 'LEFT',
   Right = 'RIGHT',
+}
+
+export interface CustomPanelLocation {
+  panelLocation: PanelLocation;
+  panelMode: string;
 }
 
 export enum PanelScope {
@@ -40,6 +44,7 @@ export interface CommonPanelProps {
 
 export function registerTabs(tabsInfo: PanelTab[], registeredTabs: Record<string, PanelTab>): Record<string, PanelTab> {
   tabsInfo.forEach((tabInfo) => {
+    // eslint-disable-next-line no-param-reassign
     registeredTabs[tabInfo.name.toLowerCase()] = tabInfo;
   });
 

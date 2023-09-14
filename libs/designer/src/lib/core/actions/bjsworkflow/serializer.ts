@@ -55,6 +55,7 @@ import {
   replaceTemplatePlaceholders,
   unmap,
   filterRecord,
+  excludePathValueFromTarget,
 } from '@microsoft/utils-logic-apps';
 import merge from 'lodash.merge';
 
@@ -547,7 +548,13 @@ const serializeParametersFromSwagger = async (
 ): Promise<Record<string, any>> => {
   const { operationId, connectorId, type } = operationInfo;
   const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
-  const { method, path } = parsedSwagger.getOperationByOperationId(operationId);
+
+  const operation = parsedSwagger.getOperationByOperationId(operationId);
+  if (!operation) {
+    throw new Error('APIM Operation not found');
+  }
+
+  const { method, path } = operation;
   const operationPath = removeConnectionPrefix(path);
   const operationMethod = equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ? undefined : method;
   const parameterInputs = equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
@@ -568,11 +575,17 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
   if (!swapMap?.length) {
     return parametersValue;
   }
-
   let finalValue = clone(parametersValue);
   for (const { source, target } of swapMap) {
-    const value = getObjectPropertyValue(parametersValue, source);
+    const propertyValue = getObjectPropertyValue(parametersValue, source);
     deleteObjectProperty(finalValue, source);
+
+    if (typeof propertyValue !== 'object') {
+      finalValue = safeSetObjectPropertyValue(finalValue, target, propertyValue);
+      continue;
+    }
+
+    const value = { ...excludePathValueFromTarget(parametersValue, source, target), ...getObjectPropertyValue(parametersValue, source) };
     finalValue = !target.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, target, value);
   }
 

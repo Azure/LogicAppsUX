@@ -70,7 +70,14 @@ const ApiNotificationConstants = {
 
 export class SwaggerParser {
   static parse = async (swagger: OpenAPIV2.Document): Promise<OpenAPIV2.Document> => {
-    return APIParser.validate(swagger, { dereference: { circular: 'ignore' } });
+    return APIParser.validate(swagger, {
+      dereference: {
+        circular: 'ignore',
+      },
+      validate: {
+        schema: false,
+      },
+    });
   };
 
   constructor(public api: OpenAPIV2.Document) {}
@@ -281,7 +288,7 @@ export class SwaggerParser {
     return map(operations, 'operationId');
   }
 
-  getOperationByOperationId(operationId: string): Operation {
+  getOperationByOperationId(operationId: string): Operation | undefined {
     const operations = this.getOperations({ unsorted: true, excludeInternalOperations: false });
     return getPropertyValue(operations, operationId);
   }

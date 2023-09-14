@@ -39,6 +39,8 @@ export enum SchemaNodeProperty {
   AnyOf = 'AnyOf',
 }
 
+export const numericalDataType = 'Numerical'; // used by the frontend to describe Number, Integer and Decimal types
+
 export enum NormalizedDataType {
   Any = 'Any',
   Array = 'Array',
@@ -51,6 +53,11 @@ export enum NormalizedDataType {
   Number = 'Number',
   Object = 'Object',
   String = 'String',
+}
+
+export enum InputFormat {
+  TextBox = 'TextBox',
+  FilePicker = 'FilePicker',
 }
 
 export interface SchemaExtended extends Schema {

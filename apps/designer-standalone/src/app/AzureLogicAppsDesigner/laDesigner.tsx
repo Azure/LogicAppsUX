@@ -1,4 +1,7 @@
-import type { RootState } from '../../state/store';
+import { environment } from '../../environments/environment';
+import type { AppDispatch } from '../../state/store';
+import { type RootState } from '../../state/store';
+import { changeRunId } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
@@ -6,7 +9,7 @@ import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
 import { FileSystemConnectionCreationClient } from './Services/FileSystemConnectionCreationClient';
-import { HttpClient } from './Services/HttpClient';
+import { HttpClient, getExtraHeaders, getRequestUrl, isSuccessResponse } from './Services/HttpClient';
 import {
   getConnectionStandard,
   listCallbackUrl,
@@ -32,14 +35,16 @@ import {
   StandardRunService,
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
+import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId } from '@microsoft/utils-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import * as React from 'react';
 import type { QueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -50,6 +55,7 @@ const DesignerEditor = () => {
     id: state.workflowLoader.resourcePath!,
   }));
 
+  const dispatch = useDispatch<AppDispatch>();
   const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language } = useSelector(
     (state: RootState) => state.workflowLoader
   );
@@ -62,8 +68,7 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const [designerID, setDesignerID] = React.useState(guid());
   const [workflow, setWorkflow] = React.useState(data?.properties.files[Artifact.WorkflowFile]);
-  const connectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
-  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
+  const originalConnectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
   const parameters = data?.properties.files[Artifact.ParametersFile] ?? {};
   const queryClient = getReactQueryClient();
 
@@ -77,6 +82,16 @@ const DesignerEditor = () => {
     }
   };
   const { data: runInstanceData } = useRunInstanceStandard(workflowName, onRunInstanceSuccess, appId, runId);
+
+  const connectionsData = React.useMemo(
+    () =>
+      WorkflowUtility.resolveConnectionsReferences(
+        JSON.stringify(clone(originalConnectionsData ?? {})),
+        parameters,
+        settingsData?.properties ?? {}
+      ),
+    [originalConnectionsData, parameters, settingsData?.properties]
+  );
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
@@ -109,6 +124,8 @@ const DesignerEditor = () => {
     return undefined;
   };
 
+  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
+
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
@@ -124,10 +141,11 @@ const DesignerEditor = () => {
         getConnectionConfiguration,
         tenantId,
         canonicalLocation,
-        queryClient
+        queryClient,
+        dispatch
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
@@ -149,7 +167,6 @@ const DesignerEditor = () => {
   }
 
   const originalSettings: Record<string, string> = { ...(settingsData?.properties ?? {}) };
-  const originalConnectionsData: ConnectionsData = clone(connectionsData ?? {});
   const originalParametersData: ParametersData = clone(parameters ?? {});
 
   if (isError || settingsIsError) {
@@ -196,7 +213,7 @@ const DesignerEditor = () => {
   };
 
   return (
-    <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
+    <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
@@ -231,7 +248,8 @@ const getDesignerServices = (
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   location: string,
-  queryClient: QueryClient
+  queryClient: QueryClient,
+  dispatch: AppDispatch
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -365,10 +383,39 @@ const getDesignerServices = (
     location,
   });
 
-  const workflowService = {
+  const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAppIdentity: () => workflowApp.identity,
+    getAppIdentity: () => workflowApp.identity as any,
     isExplicitAuthRequiredForManagedIdentity: () => true,
+    resubmitWorkflow: async (runId, actionsToResubmit) => {
+      const options = {
+        uri: `${workflowIdWithHostRuntime}/runs/${runId}/resubmit?api-version=2018-11-01`,
+        content: {
+          actionsToResubmit: actionsToResubmit.map((name) => ({
+            name,
+          })),
+        },
+      };
+      const response = await axios.post(getRequestUrl(options), options.content, {
+        headers: {
+          ...getExtraHeaders(),
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      });
+
+      if (!isSuccessResponse(response.status)) {
+        return Promise.reject(response);
+      }
+
+      const workflowId: string = response.headers['x-ms-workflow-run-id'];
+      dispatch(changeRunId(workflowId));
+    },
+  };
+
+  const hostService = {
+    fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
+    openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
   };
 
   const functionService = new BaseFunctionService({
@@ -398,6 +445,7 @@ const getDesignerServices = (
     apimService: apiManagementService,
     functionService,
     runService,
+    hostService,
   };
 };
 

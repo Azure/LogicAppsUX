@@ -47,7 +47,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { SchemaProperty, InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/parsers-logic-apps';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -59,7 +59,12 @@ import {
   ManifestParser,
   PropertyName,
 } from '@microsoft/parsers-logic-apps';
-import type { CustomSwaggerServiceDetails, OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
+import type {
+  CustomSwaggerServiceDetails,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
+} from '@microsoft/utils-logic-apps';
 import {
   CustomSwaggerServiceNames,
   UnsupportedException,
@@ -122,19 +127,11 @@ export const getInputParametersFromManifest = (
     // avoid pushing a parameter for it as it is already being
     // handled in the settings store.
     // NOTE: this could be expanded to more settings that are treated as inputs.
-    if (
-      manifest.properties.settings &&
-      manifest.properties.settings.retryPolicy &&
-      operationData.inputs &&
-      operationData.inputs[PropertyName.RETRYPOLICY]
-    ) {
+    if (manifest.properties.settings?.retryPolicy && operationData.inputs?.[PropertyName.RETRYPOLICY]) {
       delete operationData.inputs.retryPolicy;
     }
 
-    if (
-      manifest.properties.connectionReference &&
-      manifest.properties.connectionReference.referenceKeyFormat === ConnectionReferenceKeyFormat.Function
-    ) {
+    if (manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.Function) {
       delete operationData.inputs.function;
     }
 
@@ -191,7 +188,9 @@ export const getOutputParametersFromManifest = (
   manifest: OperationManifest,
   isTrigger: boolean,
   inputs: NodeInputs,
-  splitOnValue?: string
+  splitOnValue?: string,
+  operationInfo?: OperationInfo,
+  nodeId?: string
 ): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
   let originalOutputs: Record<string, OutputInfo> | undefined;
@@ -218,13 +217,27 @@ export const getOutputParametersFromManifest = (
     manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
   }
 
-  const operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
-    true /* includeParentObject */,
-    Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
-    false /* expandOneOf */,
-    undefined /* data */,
-    true /* selectAllOneOfSchemas */
-  );
+  let operationOutputs: Record<string, OutputParameter>;
+
+  if (operationInfo?.operationId === 'foreach') {
+    operationOutputs = {
+      'builtin.$.item': {
+        key: Constants.FOREACH_CURRENT_ITEM_KEY,
+        name: `${Constants.FOREACH_CURRENT_ITEM_EXPRESSION_NAME}('${nodeId}')`,
+        required: false,
+        title: manifest.properties.outputs.title,
+        type: Constants.SWAGGER.TYPE.ANY,
+      },
+    };
+  } else {
+    operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
+      true /* includeParentObject */,
+      Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
+      false /* expandOneOf */,
+      undefined /* data */,
+      true /* selectAllOneOfSchemas */
+    );
+  }
 
   const nodeOutputs: Record<string, OutputInfo> = {};
   let dynamicOutput: SchemaProperty | undefined;
@@ -290,7 +303,7 @@ export const updateOutputsAndTokens = async (
   let tokens: OutputToken[];
   if (supportsManifest) {
     const manifest = await getOperationManifest(operationInfo);
-    nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, splitOnValue).outputs;
+    nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, splitOnValue, operationInfo, nodeId).outputs;
     tokens = [
       ...getBuiltInTokens(manifest),
       ...convertOutputsToTokens(

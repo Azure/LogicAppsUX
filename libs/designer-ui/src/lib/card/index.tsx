@@ -12,6 +12,7 @@ import { Icon, Spinner, SpinnerSize, css } from '@fluentui/react';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
+import { useIntl } from 'react-intl';
 
 export interface CardProps {
   active?: boolean;
@@ -20,6 +21,7 @@ export interface CardProps {
   commentBox?: CommentBoxProps;
   connectionDisplayName?: string;
   connectionRequired?: boolean;
+  connectorName?: string;
   contextMenuOptions?: MenuItemOption[];
   describedBy?: string;
   drag: ConnectDragSource;
@@ -38,7 +40,7 @@ export interface CardProps {
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
-  runData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined;
+  runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   setFocus?: boolean;
   isSecureInputsOutputs?: boolean;
 }
@@ -62,6 +64,7 @@ export const Card: React.FC<CardProps> = ({
   commentBox,
   connectionDisplayName,
   connectionRequired,
+  connectorName,
   contextMenuOptions = [],
   describedBy,
   drag,
@@ -77,7 +80,7 @@ export const Card: React.FC<CardProps> = ({
   staticResultsEnabled,
   title,
   onClick,
-  runData = {},
+  runData,
   setFocus,
   isSecureInputsOutputs,
 }) => {
@@ -95,12 +98,24 @@ export const Card: React.FC<CardProps> = ({
     }
   }, [setFocus]);
 
+  const intl = useIntl();
+
+  const connectorIconAltText = intl.formatMessage(
+    {
+      defaultMessage: '{connectorName} connector icon',
+      description: 'Alt text for connector image',
+    },
+    {
+      connectorName,
+    }
+  );
+
   const cardIcon = useMemo(
     () =>
       isLoading ? (
         <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
       ) : icon ? (
-        <img className="panel-card-icon" src={icon} alt="" />
+        <img className="panel-card-icon" src={icon} alt={connectorIconAltText} />
       ) : errorMessage ? (
         <div className="panel-card-icon default">
           <Icon iconName="PlugDisconnected" style={{ fontSize: '16px', textAlign: 'center' }} />
@@ -108,7 +123,7 @@ export const Card: React.FC<CardProps> = ({
       ) : (
         <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
       ),
-    [icon, isLoading, errorMessage]
+    [icon, isLoading, errorMessage, connectorIconAltText]
   );
 
   return (
@@ -138,10 +153,11 @@ export const Card: React.FC<CardProps> = ({
         {isMonitoringView ? (
           <StatusPill
             id={`${title}-status`}
-            status={runData.status}
-            duration={runData.duration}
-            startTime={runData.startTime}
-            endTime={runData.endTime}
+            status={runData?.status}
+            duration={runData?.duration}
+            startTime={runData?.startTime}
+            endTime={runData?.endTime}
+            resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
           />
         ) : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
