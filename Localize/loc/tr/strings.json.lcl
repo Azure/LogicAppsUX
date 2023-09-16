@@ -1710,15 +1710,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";6WmLx1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Warning: input node type does not match one of the allowed types for this input]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Uyarı: Giriş düğümü türü bu giriş için izin verilen türlerden biri ile eşleşmiyor]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";6ZviI7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection reference]]></Val>
@@ -3162,6 +3153,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";CyT8H7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Accepts 'Number', 'Integer', and 'Decimal' types.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['Number', 'Integer' ve 'Decimal' türleri kabul edilir.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";CypYLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert a new step between {parentName} and {childName}]]></Val>
@@ -4448,6 +4448,15 @@
           <Val><![CDATA[Invalid operation. Number of items: {length}.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Geçersiz işlem. Öğe sayısı: {length}.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";J5TTF6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Accepted data types: {type}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kabul edilen veri türleri: {type}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6749,6 +6758,15 @@
           <Val><![CDATA[Delete Workflow Action]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[İş Akışını Eylemini Sil]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UF3KjL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Try using a Conversion function such as: {conversionFunctions}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dönüştürme işlevini kullanmayı deneyin, örneğin: {conversionFunctions}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -13238,6 +13256,15 @@
           <Val><![CDATA[Returns an array sorted in ascending order]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Artan düzende sıralanan bir dizi döndürür]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";yNtBUV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: input node type does not match one of the allowed types for this input.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Uyarı: Giriş düğüm türü bu giriş için izin verilen türlerden biri ile eşleşmiyor.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
