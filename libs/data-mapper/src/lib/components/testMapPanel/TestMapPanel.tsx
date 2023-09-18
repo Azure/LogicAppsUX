@@ -232,7 +232,8 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
         </StackItem>
       </Stack>
     );
-  }, [fileXslt, testMapInput, isMismatchedXslt, closeLoc, mismatchedXsltLoc, noXsltLoc, onClose, testLoc, testMap]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileXslt, testMapInput, isMismatchedXslt, closeLoc, mismatchedXsltLoc, noXsltLoc, onClose, testLoc]);
 
   return (
     <Panel
