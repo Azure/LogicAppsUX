@@ -10,7 +10,7 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
     functionMetadata.push({
       reactFlowGuid: functionKey,
       functionKey: functionValue.functionData.key,
-      locations: functionValue.functionData.positions || [],
+      positions: functionValue.functionData.positions || [],
       connections: generateFunctionConnectionMetadata(functionKey, connections),
     });
   });

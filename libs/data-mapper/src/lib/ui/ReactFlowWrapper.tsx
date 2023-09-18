@@ -245,7 +245,6 @@ export const ReactFlowWrapper = ({
       onNodesChange={onNodesChange}
       onEdgeClick={onEdgeClick}
       onNodeClick={onNodeSingleClick}
-      nodesDraggable={true}
       // When using custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{

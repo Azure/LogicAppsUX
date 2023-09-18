@@ -5,7 +5,14 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
-import type { FunctionPositionMetadata, MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
+import type {
+  FunctionMetadata,
+  FunctionPositionMetadata,
+  MapMetadata,
+  SchemaExtended,
+  SchemaNodeDictionary,
+  SchemaNodeExtended,
+} from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
@@ -188,7 +195,7 @@ export const dataMapSlice = createSlice({
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
       metadata?.functionNodes.forEach((node) => {
         const connection = dataMapConnections[node.reactFlowGuid].self.node as FunctionData;
-        connection.positions = node.locations;
+        connection.positions = node.positions;
       });
       const functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
 
@@ -536,12 +543,15 @@ export const dataMapSlice = createSlice({
     },
 
     updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: FunctionPositionMetadata }>) => {
-      let positions = state.curDataMapOperation.functionNodes[action.payload.id].functionData.positions;
+      const newOp = { ...state.curDataMapOperation };
+      let positions = newOp.functionNodes[action.payload.id].functionData.positions;
       if (positions) {
         positions.push(action.payload.positionMetadata);
       } else {
         positions = [action.payload.positionMetadata];
       }
+      newOp.functionNodes[action.payload.id].functionData.positions = positions;
+      state.curDataMapOperation = newOp;
     },
 
     // Will always be either [] or [inputKey, outputKey]
@@ -955,5 +965,36 @@ export const updateFunctionNodeLocations = (newState: DataMapOperationState, fun
     });
 
     functionNode.functionLocations = uniqueLocations;
+  });
+};
+
+export const assignFunctionNodePositionsFromMetadata = (
+  connections: ConnectionDictionary,
+  metadata: FunctionMetadata[],
+  functions: FunctionDictionary
+) => {
+  if (metadata === undefined) {
+    return;
+  }
+  metadata.forEach((positionData) => {
+    const func = Object.keys(functions).find((functionId) => {
+      const funcData = functions[functionId];
+      if (funcData.functionData.key === positionData.functionKey) {
+        const connectionForFunction = connections[functionId];
+        const doConnectionsMatch = positionData.connections.every((connection) => {
+          if (connectionForFunction.inputs[connection]) {
+            return true;
+          } else if (connectionForFunction.outputs.find((output) => output.reactFlowKey.includes(connection))) {
+            return true;
+          }
+          return false;
+        });
+        return doConnectionsMatch;
+      }
+      return false;
+    });
+    if (func) {
+      functions[func].functionData.positions = positionData.positions;
+    }
   });
 };

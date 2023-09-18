@@ -208,6 +208,7 @@ export const convertSchemaToReactFlowNodes = (
         disabled: false,
         disableContextMenu: schemaType === SchemaType.Target,
       },
+      draggable: false,
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: isSourceSchema ? Position.Right : Position.Left,
       position: {
