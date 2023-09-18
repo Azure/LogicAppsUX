@@ -28,8 +28,10 @@ import {
   setSelectedItem,
   setSourceNodeConnectionBeingDrawnFromId,
   undoDataMapOperation,
+  updateFunctionPosition,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
+import type { FunctionPositionMetadata } from '../models';
 import { SchemaType } from '../models';
 import { inputFromHandleId } from '../utils/Connection.Utils';
 import { isFunctionData } from '../utils/Function.Utils';
@@ -210,32 +212,18 @@ export const ReactFlowWrapper = ({
     ];
   }, [diagramSize, canvasBlockHeight, canvasBlockWidth, canvasZoom]);
 
-  const onDragOver: React.DragEventHandler = (event) => {
-    event.preventDefault();
-    // eslint-disable-next-line no-param-reassign
-    event.dataTransfer.dropEffect = 'move';
+  const onFunctionNodeDrag: NodeDragHandler = (_event, node, _nodes) => {
+    const unaffectedNodes = nodesState.filter((nodeFromState) => nodeFromState.id !== node.id);
+    nodes = [...unaffectedNodes, node];
+    setNodes(nodes);
   };
 
-  const onDrag: React.DragEventHandler = (event) => {
-    // eslint-disable-next-line no-param-reassign
-    event.dataTransfer.dropEffect = 'move';
-  };
-
-  // const onNodeChange = (nodeChanges: NodeChange[]) => {
-  //   const nodeChange = nodeChanges[0];
-  //   if (nodeChange.type === 'position') {
-  //     const draggedNode = nodes.find((node) => node.id === nodeChange.id);
-  //     console.log(draggedNode?.id);
-  //     if (draggedNode && nodeChange.position) {
-  //       draggedNode.position = nodeChange.position;
-  //     }
-  //   } // danielle does this trigger useLayout? No.
-  // };
-
-  const onDrag2: NodeDragHandler = (event, node, _nodes) => {
-    const newNodes = nodesState.filter((node2) => node2.id === node.id);
-    nodes = [...newNodes, node];
-    setNodes([...nodes]);
+  const onFunctionNodeDragStop: NodeDragHandler = (event, node, _nodes) => {
+    const positionMetadata: FunctionPositionMetadata = {
+      targetKey: currentTargetSchemaNode?.key || '',
+      position: node.position,
+    };
+    dispatch(updateFunctionPosition({ id: node.id, positionMetadata }));
   };
 
   return (
@@ -243,6 +231,7 @@ export const ReactFlowWrapper = ({
       ref={reactFlowRef}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
+      onNodeDragStop={onFunctionNodeDragStop}
       nodes={nodesState}
       edges={edges}
       onPaneClick={onPaneClick}
@@ -250,15 +239,13 @@ export const ReactFlowWrapper = ({
       // Not ideal, but it's this or useViewport that re-renders 3000 (due to x/y changes)
       onMove={(_e, viewport) => setCanvasZoom(viewport.zoom)}
       onConnect={onConnect}
-      onNodeDrag={onDrag2}
+      onNodeDrag={onFunctionNodeDrag}
       onConnectStart={onConnectStart}
       onConnectEnd={onConnectEnd}
       onNodesChange={onNodesChange}
       onEdgeClick={onEdgeClick}
       onNodeClick={onNodeSingleClick}
       nodesDraggable={true}
-      onDragOver={onDragOver}
-      onDrag={onDrag}
       // When using custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{

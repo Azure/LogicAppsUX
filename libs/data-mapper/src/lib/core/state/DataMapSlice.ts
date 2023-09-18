@@ -5,7 +5,7 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
-import type { MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
+import type { FunctionPositionMetadata, MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
@@ -186,11 +186,10 @@ export const dataMapSlice = createSlice({
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
-      // metadata?.functionNodes.forEach(node => {
-
-      //   const connection = dataMapConnections[node.reactFlowGuid].self.node as FunctionData;
-      //   connection.locations = node.locations;
-      // })
+      metadata?.functionNodes.forEach((node) => {
+        const connection = dataMapConnections[node.reactFlowGuid].self.node as FunctionData;
+        connection.positions = node.locations;
+      });
       const functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
 
       const newState: DataMapOperationState = {
@@ -536,6 +535,15 @@ export const dataMapSlice = createSlice({
       state.sourceNodeConnectionBeingDrawnFromId = action.payload;
     },
 
+    updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: FunctionPositionMetadata }>) => {
+      let positions = state.curDataMapOperation.functionNodes[action.payload.id].functionData.positions;
+      if (positions) {
+        positions.push(action.payload.positionMetadata);
+      } else {
+        positions = [action.payload.positionMetadata];
+      }
+    },
+
     // Will always be either [] or [inputKey, outputKey]
     setInlineFunctionInputOutputKeys: (
       state,
@@ -562,6 +570,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  updateFunctionPosition,
   deleteConnection,
   setXsltFilename,
   setXsltContent,

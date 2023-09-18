@@ -1,5 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import type { FunctionLocationMetadata } from './MapMetadata';
+import type { FunctionPositionMetadata } from './MapMetadata';
 import { InputFormat as InputEntryType, NormalizedDataType } from './Schema';
 import type { SchemaNodeExtended } from './Schema';
 
@@ -11,7 +11,7 @@ export interface FunctionManifest {
 export interface FunctionData {
   key: string;
   functionName: string;
-  locations?: FunctionLocationMetadata[];
+  positions?: FunctionPositionMetadata[];
 
   maxNumberOfInputs: number; // -1 for unlimited
   inputs: FunctionInput[];
