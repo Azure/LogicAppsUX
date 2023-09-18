@@ -359,8 +359,12 @@ export const applyCustomLayout = async (
     }
 
     // Final assignment
-    fnNode.x = fnNodeXPos;
-    fnNode.y = fnNodeYPos;
+    // fnNode.x = fnNodeXPos;
+    // fnNode.y = fnNodeYPos;
+    if (!fnNode.x) {
+      fnNode.x = 300;
+      fnNode.y = 300;
+    }
   };
 
   graph.children[1].children.forEach((fnNode) => {

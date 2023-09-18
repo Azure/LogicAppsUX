@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
 import { CanvasToolbox, ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
@@ -38,7 +39,13 @@ import { useBoolean } from '@fluentui/react-hooks';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { OnConnectStartParams, Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
+import type {
+  NodeDragHandler,
+  OnConnectStartParams,
+  Connection as ReactFlowConnection,
+  Edge as ReactFlowEdge,
+  Node as ReactFlowNode,
+} from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ConnectionLineType, useKeyPress, useNodesState } from 'reactflow';
 
@@ -159,7 +166,10 @@ export const ReactFlowWrapper = ({
     }
   }, [ctrlYPressed, dispatch]);
 
-  const [nodes, edges, diagramSize] = useLayout(
+  const [nodesState, setNodes, onNodesChange] = useNodesState([]);
+
+  // eslint-disable-next-line prefer-const
+  let [nodes, edges, diagramSize] = useLayout(
     currentSourceSchemaNodes,
     functionNodes,
     currentTargetSchemaNode,
@@ -169,9 +179,7 @@ export const ReactFlowWrapper = ({
     useExpandedFunctionCards
   );
 
-  const [nodesState, setNodes, onNodesChange] = useNodesState(nodes);
-
-  if (nodes !== nodesState) {
+  if (nodesState.length !== nodes.length) {
     setNodes(nodes);
   }
 
@@ -221,9 +229,14 @@ export const ReactFlowWrapper = ({
   //     if (draggedNode && nodeChange.position) {
   //       draggedNode.position = nodeChange.position;
   //     }
-  //     nodes = [...nodes]
   //   } // danielle does this trigger useLayout? No.
   // };
+
+  const onDrag2: NodeDragHandler = (event, node, _nodes) => {
+    const newNodes = nodesState.filter((node2) => node2.id === node.id);
+    nodes = [...newNodes, node];
+    setNodes([...nodes]);
+  };
 
   return (
     <ReactFlow
@@ -237,14 +250,15 @@ export const ReactFlowWrapper = ({
       // Not ideal, but it's this or useViewport that re-renders 3000 (due to x/y changes)
       onMove={(_e, viewport) => setCanvasZoom(viewport.zoom)}
       onConnect={onConnect}
+      onNodeDrag={onDrag2}
       onConnectStart={onConnectStart}
       onConnectEnd={onConnectEnd}
+      onNodesChange={onNodesChange}
       onEdgeClick={onEdgeClick}
       onNodeClick={onNodeSingleClick}
       nodesDraggable={true}
       onDragOver={onDragOver}
       onDrag={onDrag}
-      onNodesChange={onNodesChange}
       // When using custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{

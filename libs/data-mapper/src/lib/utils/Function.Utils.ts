@@ -24,6 +24,9 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
     case FunctionCategory.Collection: {
       return collectionBranding;
     }
+    case FunctionCategory.Custom: {
+      return collectionBranding;
+    }
     case FunctionCategory.DateTime: {
       return dateTimeBranding;
     }
