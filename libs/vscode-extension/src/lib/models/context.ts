@@ -1,5 +1,6 @@
 import type { StorageOptions } from './connection';
 import type { FuncVersion } from './functions';
+import type { ContainerApp } from '@azure/arm-appcontainers';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import type { ExecuteActivityContext, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 
@@ -22,6 +23,9 @@ export interface IFunctionAppWizardContext extends IAppServiceWizardContext, ICr
 
 export interface ICreateLogicAppContext extends ICreateChildImplContext {
   newResourceGroupName?: string;
+  useContainerApps: boolean;
+  containerApp?: ContainerApp;
+  containerRegistry?: string;
 }
 
 export interface IDebugModeContext extends IActionContext {

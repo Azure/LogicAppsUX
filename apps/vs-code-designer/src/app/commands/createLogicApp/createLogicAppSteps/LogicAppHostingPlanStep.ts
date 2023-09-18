@@ -4,24 +4,30 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
+import { ContainerAppsStep } from './ContainerAppsStep';
+import { ContainerRegistryStep } from './ContainerRegistryStep';
+import type { ContainerApp } from '@azure/arm-appcontainers';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import { AppServicePlanListStep } from '@microsoft/vscode-azext-azureappservice';
-import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
+import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
 
-interface AppServiceWizardContext extends IAppServiceWizardContext {
+export interface AppServiceWizardContext extends IAppServiceWizardContext {
   suppressCreate: boolean;
+  useContainerApps: boolean;
+  containerApp?: ContainerApp;
+  containerRegistry?: string;
 }
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<AppServiceWizardContext> {
   public async prompt(wizardContext: AppServiceWizardContext): Promise<void> {
     const placeHolder: string = localize('selectHostingPlan', 'Select a hosting plan.');
-    const picks: IAzureQuickPickItem<[boolean, boolean, RegExp | undefined]>[] = [
-      { label: localize('workflowstandard', 'Workflow Standard'), data: [false, false, /^WS$/i] },
-      { label: localize('dedicated', 'App Service Plan'), data: [false, true, /^IV2$/i] },
+    const picks: IAzureQuickPickItem<[boolean, boolean, RegExp | undefined, boolean]>[] = [
+      { label: localize('workflowstandard', 'Workflow Standard'), data: [false, false, /^WS$/i, false] },
+      { label: localize('dedicated', 'App Service Plan'), data: [false, true, /^IV2$/i, false] },
+      { label: localize('container apps', 'Container Apps Environment'), data: [false, true, /^IV2$/i, true] },
     ];
 
-    [wizardContext.useConsumptionPlan, wizardContext.suppressCreate, wizardContext.planSkuFamilyFilter] = (
+    [wizardContext.useConsumptionPlan, wizardContext.suppressCreate, wizardContext.planSkuFamilyFilter, wizardContext.useContainerApps] = (
       await wizardContext.ui.showQuickPick(picks, { placeHolder })
     ).data;
 
@@ -33,8 +39,11 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<AppServiceWiz
   }
 
   public async getSubWizard(wizardContext: AppServiceWizardContext): Promise<IWizardOptions<AppServiceWizardContext> | undefined> {
-    const { suppressCreate, useConsumptionPlan } = wizardContext;
-    if (!useConsumptionPlan) {
+    const { suppressCreate, useConsumptionPlan, useContainerApps } = wizardContext;
+
+    if (useContainerApps) {
+      return { promptSteps: [new ContainerAppsStep(), new ContainerRegistryStep()] };
+    } else if (!useConsumptionPlan) {
       return { promptSteps: [new AppServicePlanListStep(suppressCreate)] };
     } else {
       return undefined;
