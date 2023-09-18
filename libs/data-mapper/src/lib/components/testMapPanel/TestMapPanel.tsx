@@ -134,7 +134,26 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
 
   const inputDataOptions = useMemo(() => [{ key: 'pasteSample', text: pasteFromSampleLoc }], [pasteFromSampleLoc]);
 
-  const testMap = async () => {
+  useEffect(() => {
+    const generateXsltAsync = async () => {
+      let generatedXslt = '';
+      if (isOpen && !isNullOrEmpty(mapDefinition)) {
+        try {
+          generatedXslt = await generateDataMapXslt(mapDefinition);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      setCurrentXslt(generatedXslt);
+    };
+
+    generateXsltAsync();
+  }, [isOpen, mapDefinition]);
+
+  const isMismatchedXslt = currentXslt && fileXslt !== currentXslt;
+
+  const testMap = useCallback(async () => {
     if (!testMapInput) {
       return;
     }
@@ -187,26 +206,7 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
 
         setTestMapResponse(undefined);
       });
-  };
-
-  useEffect(() => {
-    const generateXsltAsync = async () => {
-      let generatedXslt = '';
-      if (isOpen && !isNullOrEmpty(mapDefinition)) {
-        try {
-          generatedXslt = await generateDataMapXslt(mapDefinition);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-
-      setCurrentXslt(generatedXslt);
-    };
-
-    generateXsltAsync();
-  }, [isOpen, mapDefinition]);
-
-  const isMismatchedXslt = currentXslt && fileXslt !== currentXslt;
+  }, [isMismatchedXslt, testMapInput, xsltFilename]);
 
   const getFooterContent = useCallback(() => {
     return (
@@ -232,8 +232,7 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
         </StackItem>
       </Stack>
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fileXslt, testMapInput, isMismatchedXslt, closeLoc, mismatchedXsltLoc, noXsltLoc, onClose, testLoc]);
+  }, [fileXslt, testMapInput, isMismatchedXslt, closeLoc, mismatchedXsltLoc, noXsltLoc, onClose, testLoc, testMap]);
 
   return (
     <Panel
