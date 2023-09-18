@@ -7,6 +7,7 @@ import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
 import { ContainerAppsStep } from './Containers/ContainerAppsStep';
 import { ContainerRegistryStep } from './Containers/ContainerRegistryStep';
 import type { ContainerApp } from '@azure/arm-appcontainers';
+import type { Registry } from '@azure/arm-containerregistry';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import { AppServicePlanListStep } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -16,7 +17,7 @@ export interface AppServiceWizardContext extends IAppServiceWizardContext {
   useContainerApps: boolean;
   containerApp?: ContainerApp;
   containerRegistry?: string;
-  newManagedEnvironmentName?: string;
+  registry?: Registry;
 }
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<AppServiceWizardContext> {

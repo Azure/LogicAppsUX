@@ -22,11 +22,8 @@ export class ContainerAppsStep extends AzureWizardPromptStep<AppServiceWizardCon
   private async getPicks(wizardContext: AppServiceWizardContext): Promise<IAzureQuickPickItem<ContainerApp>[]> {
     const client = await createContainerClient(wizardContext);
     const listOfSites = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-    const picks = listOfSites.map((site) => {
+    return listOfSites.map((site) => {
       return { label: site.name, data: site };
     });
-    picks.unshift({ label: localize('newContainerApp', '$(plus) Create new Container Apps environment'), data: undefined });
-
-    return picks;
   }
 }
