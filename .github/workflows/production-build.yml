@@ -1,5 +1,5 @@
 name: Production Build
-run-name: Production Build - [${{ github.event.inputs.branch }}][${{ github.event.inputs.release_type || 'no_type_specified' }}]
+run-name: Production Build - [ ${{ github.ref_name || 'branch'  }} ] - ${{ github.event.inputs.release_type || 'no_type_specified' }}
 on:
   workflow_dispatch:
     inputs:
