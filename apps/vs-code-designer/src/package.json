@@ -780,7 +780,8 @@
     "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",
-    "ms-dotnettools.csharp"
+    "ms-dotnettools.csharp",
+    "ms-azuretools.vscode-docker"
   ],
   "activationEvents": [
     "onCommand:azureLogicAppsStandard.openDesigner",

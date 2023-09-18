@@ -47,7 +47,7 @@ import {
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension';
+import type { ILogicAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension';
 import { FuncVersion } from '@microsoft/vscode-extension';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
@@ -102,7 +102,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     context.telemetry.properties.projectRuntime = version;
     context.telemetry.properties.projectLanguage = language;
 
-    const wizardContext: IFunctionAppWizardContext = Object.assign(context, subscription.subscription, {
+    const wizardContext: ILogicAppWizardContext = Object.assign(context, subscription.subscription, {
       newSiteKind: AppKind.workflowapp,
       resourceGroupDeferLocationStep: true,
       version,
@@ -125,6 +125,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
     promptSteps.push(new ResourceGroupListStep());
+
+    console.log(wizardContext.useContainerApps);
 
     const storageAccountCreateOptions: INewStorageAccountDefaults = {
       kind: StorageAccountKind.Storage,
@@ -225,7 +227,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
   }
 }
 
-async function setRegionsTask(context: IFunctionAppWizardContext): Promise<void> {
+async function setRegionsTask(context: ILogicAppWizardContext): Promise<void> {
   /* To filter out georegions which only support WorkflowStandard we have to use 'ElasticPremium' as orgDomain
   since no new orgDomain is added for WorkflowStandard we will overwrite here so it filters region correctly. */
   const originalPlan = context.newPlanSku ? { ...context.newPlanSku } : undefined;
@@ -242,7 +244,7 @@ export function setSiteOS(context: IAppServiceWizardContext): void {
   }
 }
 
-const generateRelatedName = async (wizardContext: IFunctionAppWizardContext, name: string): Promise<string | undefined> => {
+const generateRelatedName = async (wizardContext: ILogicAppWizardContext, name: string): Promise<string | undefined> => {
   const namingRules = [storageAccountNamingRules];
 
   let preferredName: string = namingRules.some((n: any) => !!n.lowercaseOnly) ? name.toLowerCase() : name;
@@ -274,7 +276,7 @@ const generateRelatedName = async (wizardContext: IFunctionAppWizardContext, nam
   return undefined;
 };
 
-const isRelatedNameAvailable = async (wizardContext: IFunctionAppWizardContext, name: string): Promise<boolean> => {
+const isRelatedNameAvailable = async (wizardContext: ILogicAppWizardContext, name: string): Promise<boolean> => {
   return await ResourceGroupListStep.isNameAvailable(wizardContext, name);
 };
 

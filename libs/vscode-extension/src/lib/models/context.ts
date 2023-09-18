@@ -12,20 +12,20 @@ export interface IIdentityWizardContext extends IActionContext {
   useAdvancedIdentity?: boolean;
 }
 
-export interface IFunctionAppWizardContext extends IAppServiceWizardContext, ICreateChildImplContext, ExecuteActivityContext {
+export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreateChildImplContext, ExecuteActivityContext {
   version: FuncVersion;
   language: string | undefined;
   newSiteRuntime?: string;
   runtimeFilter?: string;
   storageType?: StorageOptions;
   sqlConnectionString?: string;
+  useContainerApps?: boolean;
+  containerApp?: ContainerApp;
+  containerRegistry?: string;
 }
 
 export interface ICreateLogicAppContext extends ICreateChildImplContext {
   newResourceGroupName?: string;
-  useContainerApps: boolean;
-  containerApp?: ContainerApp;
-  containerRegistry?: string;
 }
 
 export interface IDebugModeContext extends IActionContext {

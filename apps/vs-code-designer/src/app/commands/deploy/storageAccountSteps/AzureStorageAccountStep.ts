@@ -7,11 +7,11 @@ import { SQLStringNameStep } from './SQLStringNameStep';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import type { IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext } from '@microsoft/vscode-extension';
+import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 import { StorageOptions } from '@microsoft/vscode-extension';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
-export class AzureStorageAccountStep extends AzureWizardPromptStep<IFunctionAppWizardContext> {
+export class AzureStorageAccountStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   private sqlStrorage: boolean;
 
   public async prompt(wizardContext: IAppServiceWizardContext): Promise<void> {
@@ -21,11 +21,11 @@ export class AzureStorageAccountStep extends AzureWizardPromptStep<IFunctionAppW
     this.sqlStrorage = (await wizardContext.ui.showQuickPick(storagePicks, options)).label === 'Yes';
   }
 
-  public shouldPrompt(wizardContext: IFunctionAppWizardContext): boolean {
+  public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
     return wizardContext.storageType === undefined;
   }
 
-  public async getSubWizard(wizardContext: IFunctionAppWizardContext): Promise<IWizardOptions<IFunctionAppWizardContext> | undefined> {
+  public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
     if (this.sqlStrorage) {
       wizardContext.storageType = StorageOptions.SQL;
       return {

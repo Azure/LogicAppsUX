@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext } from '@microsoft/vscode-extension';
+import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 
-export class SQLStringNameStep extends AzureWizardPromptStep<IFunctionAppWizardContext> {
-  public async prompt(wizardContext: IFunctionAppWizardContext): Promise<void> {
+export class SQLStringNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     wizardContext.sqlConnectionString = await wizardContext.ui.showInputBox({
       placeHolder: localize('sqlConnectionPlaceholder', 'SQL connection string'),
       prompt: localize('sqlConnectionPrompt', 'Provide your SQL connection string'),
@@ -15,7 +15,7 @@ export class SQLStringNameStep extends AzureWizardPromptStep<IFunctionAppWizardC
     });
   }
 
-  public shouldPrompt(context: IFunctionAppWizardContext): boolean {
+  public shouldPrompt(context: ILogicAppWizardContext): boolean {
     return !context.sqlConnectionString;
   }
 }

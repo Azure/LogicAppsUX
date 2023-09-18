@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import type { AppServiceWizardContext } from './LogicAppHostingPlanStep';
-import { AzureWizardPromptStep, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
+import { AzureWizardPromptStep, type IWizardOptions, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 
 export enum ContainerRegistryType {
   Azure = 'Azure container registry',
@@ -23,5 +23,17 @@ export class ContainerRegistryStep extends AzureWizardPromptStep<AppServiceWizar
 
   public shouldPrompt(): boolean {
     return true;
+  }
+
+  public async getSubWizard(wizardContext: AppServiceWizardContext): Promise<IWizardOptions<AppServiceWizardContext> | undefined> {
+    const { containerRegistry } = wizardContext;
+
+    if (containerRegistry === ContainerRegistryType.Azure) {
+      console.log('azure', containerRegistry);
+    } else {
+      console.log('docker', containerRegistry);
+    }
+
+    return undefined;
   }
 }
