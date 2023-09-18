@@ -126,8 +126,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     promptSteps.push(new LogicAppHostingPlanStep());
     promptSteps.push(new ResourceGroupListStep());
 
-    console.log(wizardContext.useContainerApps);
-
     const storageAccountCreateOptions: INewStorageAccountDefaults = {
       kind: StorageAccountKind.Storage,
       performance: StorageAccountPerformance.Standard,
