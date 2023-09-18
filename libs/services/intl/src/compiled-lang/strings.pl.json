@@ -1213,12 +1213,6 @@
       "value": "Wartość czasu jest nieprawidłowa, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Ostrzeżenie: typ węzła danych wejściowych nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych"
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2281,6 +2275,12 @@
       "value": "(UTC+09:30) Adelajda"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -3249,6 +3249,16 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4969,6 +4979,16 @@
     {
       "type": 0,
       "value": "Usuń akcję przepływu pracy"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9727,6 +9747,12 @@
     {
       "type": 0,
       "value": "Zwraca tablicę posortowane w kolejności rosnącej"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [

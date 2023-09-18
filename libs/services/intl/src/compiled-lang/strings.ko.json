@@ -1205,12 +1205,6 @@
       "value": "시간 제한 값이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "경고: 입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
-    }
-  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -2232,6 +2226,12 @@
       "value": "(UTC+09:30) 애들레이드"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 1,
@@ -3155,6 +3155,16 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "J62n9E": [
@@ -4809,6 +4819,16 @@
     {
       "type": 0,
       "value": "워크플로 작업 삭제"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "UHCVNK": [
@@ -9416,6 +9436,12 @@
     {
       "type": 0,
       "value": "오름차순으로 정렬된 배열을 반환합니다."
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
     }
   ],
   "yRDuqj": [
