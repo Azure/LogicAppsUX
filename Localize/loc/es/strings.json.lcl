@@ -7767,6 +7767,9 @@
       <Item ItemId=";YEHutH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Clear Editor]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Borrar editor]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
