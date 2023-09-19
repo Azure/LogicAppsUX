@@ -45,6 +45,8 @@ export class ContainerRegistryStep extends AzureWizardPromptStep<AppServiceWizar
         promptSteps: [
           new StorageAccountListStep(storageAccountCreateOptions, {
             kind: [StorageAccountKind.BlobStorage],
+            performance: [StorageAccountPerformance.Premium],
+            replication: [StorageAccountReplication.ZRS],
             learnMoreLink: 'https://aka.ms/Cfqnrc',
           }),
         ],
