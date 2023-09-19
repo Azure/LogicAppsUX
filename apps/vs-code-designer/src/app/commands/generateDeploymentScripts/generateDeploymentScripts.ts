@@ -27,7 +27,7 @@ import { window } from 'vscode';
 export async function generateDeploymentScripts(context: IActionContext, folder: vscode.Uri): Promise<void> {
   try {
     addLocalFuncTelemetry(context);
-    const scriptContext = await setupScriptContext(context, folder);
+    const scriptContext = await setupWizardScriptContext(context, folder);
     const inputs = await gatherAndValidateInputs(scriptContext, folder);
     const zipContent = await callApiForDeploymentArtifact(inputs);
     const sourceControlPath = scriptContext.sourceControlPath;
@@ -37,7 +37,13 @@ export async function generateDeploymentScripts(context: IActionContext, folder:
   }
 }
 
-async function setupScriptContext(context: IActionContext, folder: vscode.Uri): Promise<IAzureScriptWizard> {
+/**
+ * Initializes the wizard script context based on the action context and folder.
+ * @param context - IActionContext object providing the action context.
+ * @param folder - URI object indicating the folder path.
+ * @returns - Promise<IAzureScriptWizard> with the modified script context.
+ */
+async function setupWizardScriptContext(context: IActionContext, folder: vscode.Uri): Promise<IAzureScriptWizard> {
   const parentDirPath: string = path.normalize(path.dirname(folder.fsPath));
   const scriptContext = context as IAzureScriptWizard;
   scriptContext.folderPath = path.normalize(folder.fsPath);
@@ -46,6 +52,11 @@ async function setupScriptContext(context: IActionContext, folder: vscode.Uri): 
   return scriptContext;
 }
 
+/**
+ * Calls the deployment API to obtain the deployment artifact.
+ * @param inputs - Object containing required inputs like subscriptionId, resourceGroup etc.
+ * @returns - Promise<Buffer> containing the API response as a buffer.
+ */
 async function callApiForDeploymentArtifact(inputs: any): Promise<Buffer> {
   try {
     const { subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan } = inputs;
@@ -56,6 +67,13 @@ async function callApiForDeploymentArtifact(inputs: any): Promise<Buffer> {
   }
 }
 
+/**
+ * Handles the API response and exports the artifacts.
+ * @param zipContent - Buffer containing the API response.
+ * @param targetDirectory - String indicating the directory to export to.
+ * @param scriptContext - IAzureScriptWizard object for the script context.
+ * @returns - Promise<void> indicating success or failure.
+ */
 async function handleApiResponse(zipContent: Buffer, targetDirectory: string, scriptContext: IAzureScriptWizard): Promise<void> {
   if (!zipContent) {
     window.showErrorMessage('API response content not valid');
@@ -76,6 +94,16 @@ async function handleApiResponse(zipContent: Buffer, targetDirectory: string, sc
   vscode.window.showInformationMessage('artifacts exported successfully to:', targetDirectory);
 }
 
+/**
+ * Performs the API call.
+ * @param subscriptionId - Subscription ID for Azure services.
+ * @param resourceGroup - Azure resource group name.
+ * @param storageAccount - Azure storage account name.
+ * @param location - Azure location/region.
+ * @param logicAppName - Azure Logic App name.
+ * @param appServicePlan - Azure App Service Plan name.
+ * @returns - Promise<Buffer> containing the API response.
+ */
 async function callApi(
   subscriptionId: string,
   resourceGroup: string,
@@ -124,6 +152,12 @@ async function callApi(
   }
 }
 
+/**
+ * Gathers and validates the input required for API calls.
+ * @param scriptContext - IAzureScriptWizard object for the script context.
+ * @param folder - URI object indicating the folder path.
+ * @returns - Object containing validated inputs.
+ */
 async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder: vscode.Uri) {
   // Get initial values from local settings
   const localSettings = await getLocalSettings(scriptContext, folder);
@@ -155,6 +189,12 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   return { subscriptionId, resourceGroup, logicAppName, storageAccount, location, appServicePlan };
 }
 
+/**
+ * Reads local settings from a JSON file.
+ * @param context - IAzureScriptWizard object for the script context.
+ * @param folder - URI object indicating the folder path.
+ * @returns - Promise<ILocalSettingsJson> containing local settings.
+ */
 async function getLocalSettings(context: IAzureScriptWizard, folder: vscode.Uri): Promise<ILocalSettingsJson> {
   const targetFolderPath = folder.fsPath;
   const localSettingsFilePath = path.join(targetFolderPath, localSettingsFileName);
