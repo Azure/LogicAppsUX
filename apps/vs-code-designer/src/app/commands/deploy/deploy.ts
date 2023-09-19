@@ -18,7 +18,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
-import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
+import { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
@@ -26,6 +26,7 @@ import { isPathEqual, writeFormattedJson } from '../../utils/fs';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
+import { createLogicApp, createLogicAppAdvanced } from '../createLogicApp/createLogicApp';
 import {
   AdvancedIdentityObjectIdStep,
   AdvancedIdentityClientIdStep,
@@ -37,13 +38,7 @@ import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
 import type { SiteConfigResource, StringDictionary, Site } from '@azure/arm-appservice';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
-import {
-  deploy as innerDeploy,
-  getDeployFsPath,
-  runPreDeployTask,
-  getDeployNode,
-  ParsedSite,
-} from '@microsoft/vscode-azext-azureappservice';
+import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
@@ -192,16 +187,14 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
   const [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
   if (!site) {
     if (isAdvance) {
-      console.log('create new logic app advance');
+      return await createLogicAppAdvanced(context, sub);
     } else {
-      console.log('create new logic app');
+      return await createLogicApp(context, sub);
     }
   } else {
-    console.log('create new logic app');
+    const resourceTree = new LogicAppResourceTree(sub.subscription, site);
+    return new SlotTreeItem(sub, resourceTree);
   }
-  const parsedSite = new ParsedSite(site, sub.subscription);
-
-  return { site: parsedSite } as SlotTreeItem;
 }
 
 async function getLogicAppsPicks(
