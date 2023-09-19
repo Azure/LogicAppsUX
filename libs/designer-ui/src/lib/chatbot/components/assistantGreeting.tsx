@@ -1,11 +1,11 @@
+import { useFeedbackMessage } from '../feedbackHelper';
 import { ChatBubble } from './chatBubble';
 import type { AssistantGreetingItem } from './conversationItem';
 import { FlowOrigin } from './conversationItem';
-import { FeedbackMessage } from './feedbackMessage';
-import React from 'react';
 import { useIntl } from 'react-intl';
 
 export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => {
+  const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const intl = useIntl();
   const intlText = {
     greetingMessageFromNL2Flow: intl.formatMessage({
@@ -50,10 +50,11 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
         isUserMessage={false}
         isAIGenerated={true}
         date={item.date}
-        selectedReaction={item.reaction}
-        onThumbsReactionClicked={(reaction) => reaction} // TODO: add onMessageReactionClicked(item, reaction)}
+        selectedReaction={reaction}
+        onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         // TODO: add disabled={isBlockingOperationInProgress}
         isEmphasized={true}
+        hideFooter={true}
       >
         <div style={{ marginBottom: 12 }}>{getSpecificGreetingPart(item.origin)}</div>
         <li>{intlText.suggestedPromptItem1}</li>
@@ -61,7 +62,7 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
         <li>{intlText.suggestedPromptItem3}</li>
         <div style={{ marginTop: 12 }}>{intlText.saveYourFlow}</div>
       </ChatBubble>
-      <FeedbackMessage item={item} />
+      {feedbackMessage}
     </div>
   );
 };
