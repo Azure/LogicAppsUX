@@ -2278,7 +2278,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Akceptuje typy „Number”, „Integer” i „Decimal”."
     }
   ],
   "CypYLs": [
@@ -3254,7 +3254,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Akceptowane typy danych: "
     },
     {
       "type": 1,
@@ -4984,7 +4984,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Spróbuj użyć funkcji konwersji, takiej jak: "
     },
     {
       "type": 1,
@@ -5767,6 +5767,12 @@
     {
       "type": 0,
       "value": "Warunki wyzwalacza"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Wyczyść edytor"
     }
   ],
   "YF1yZk": [
@@ -9752,7 +9758,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Ostrzeżenie: typ węzła danych wejściowych nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych."
     }
   ],
   "yRDuqj": [

@@ -2249,7 +2249,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "接受 \"Number\"、\"Integer\" 和 \"Decimal\" 类型。"
     }
   ],
   "CypYLs": [
@@ -3188,7 +3188,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "接受的数据类型: "
     },
     {
       "type": 1,
@@ -4852,7 +4852,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "尝试使用转换函数，例如: "
     },
     {
       "type": 1,
@@ -5647,6 +5647,12 @@
     {
       "type": 0,
       "value": "触发器条件"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "清除编辑器"
     }
   ],
   "YF1yZk": [
@@ -9533,7 +9539,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "警告: 输入节点类型与此输入允许的类型之一不匹配。"
     }
   ],
   "yRDuqj": [

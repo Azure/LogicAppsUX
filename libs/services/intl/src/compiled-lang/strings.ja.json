@@ -2237,7 +2237,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "'Number'、'Integer'、および 'Decimal' 型を使用できます。"
     }
   ],
   "CypYLs": [
@@ -3168,7 +3168,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "使用可能なデータ型: "
     },
     {
       "type": 1,
@@ -4828,7 +4828,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "次のような変換関数を使用してみてください: "
     },
     {
       "type": 1,
@@ -5607,6 +5607,12 @@
     {
       "type": 0,
       "value": "トリガーの条件"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Clear Editor"
     }
   ],
   "YF1yZk": [
@@ -9445,7 +9451,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "警告: 入力ノードの型が、この入力に使用できる型のいずれかと一致しません。"
     }
   ],
   "yRDuqj": [

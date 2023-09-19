@@ -2278,7 +2278,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Допустимы типы \"Number\", \"Integer\" и \"Decimal\"."
     }
   ],
   "CypYLs": [
@@ -3254,7 +3254,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Допустимые типы данных: "
     },
     {
       "type": 1,
@@ -4980,7 +4980,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Попробуйте использовать функцию преобразования, например: "
     },
     {
       "type": 1,
@@ -5763,6 +5763,12 @@
     {
       "type": 0,
       "value": "Условия триггера"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Очистить редактор"
     }
   ],
   "YF1yZk": [
@@ -9736,7 +9742,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Предупреждение. Тип входного узла не совпадает с одним из разрешенных типов для этого входного значения."
     }
   ],
   "yRDuqj": [

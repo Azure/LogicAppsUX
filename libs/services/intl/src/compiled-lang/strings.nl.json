@@ -2256,7 +2256,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Accepteert de typen natuurlijk getal, geheel getal en decimaal."
     }
   ],
   "CypYLs": [
@@ -3210,7 +3210,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Geaccepteerde gegevenstypen: "
     },
     {
       "type": 1,
@@ -4884,7 +4884,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Probeer een conversiefunctie te gebruiken, zoals: "
     },
     {
       "type": 1,
@@ -5663,6 +5663,12 @@
     {
       "type": 0,
       "value": "Triggervoorwaarden"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Editor wissen"
     }
   ],
   "YF1yZk": [
@@ -9554,7 +9560,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Waarschuwing: het invoerknooppunttype komt niet overeen met een van de toegestane typen voor deze invoer."
     }
   ],
   "yRDuqj": [

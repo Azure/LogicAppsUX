@@ -2278,7 +2278,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Přijímá typy „number“, „integer“ a „decimal“."
     }
   ],
   "CypYLs": [
@@ -3250,7 +3250,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Přípustné datové typy: "
     },
     {
       "type": 1,
@@ -4972,7 +4972,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Zkuste použít funkci převodu, například: "
     },
     {
       "type": 1,
@@ -5755,6 +5755,12 @@
     {
       "type": 0,
       "value": "Podmínky aktivační události"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Vymazat historii editoru"
     }
   ],
   "YF1yZk": [
@@ -9720,7 +9726,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Upozornění: Typ vstupního uzlu neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
   "yRDuqj": [

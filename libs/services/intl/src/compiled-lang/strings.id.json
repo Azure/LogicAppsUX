@@ -2237,7 +2237,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Menerima tipe 'Angka', 'Bilangan Bulat', dan 'Desimal'."
     }
   ],
   "CypYLs": [
@@ -3172,7 +3172,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Tipe data yang diterima: "
     },
     {
       "type": 1,
@@ -4832,7 +4832,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Coba gunakan fungsi Konversi seperti: "
     },
     {
       "type": 1,
@@ -5615,6 +5615,12 @@
     {
       "type": 0,
       "value": "Kondisi pemicu"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Bersihkan Editor"
     }
   ],
   "YF1yZk": [
@@ -9481,7 +9487,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Peringatan: tipe node input tidak cocok dengan salah satu tipe yang diizinkan untuk input ini."
     }
   ],
   "yRDuqj": [

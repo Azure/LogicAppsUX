@@ -2248,7 +2248,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "'Number', 'Integer' ve 'Decimal' türleri kabul edilir."
     }
   ],
   "CypYLs": [
@@ -3190,7 +3190,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Kabul edilen veri türleri: "
     },
     {
       "type": 1,
@@ -4872,7 +4872,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Dönüştürme işlevini kullanmayı deneyin, örneğin: "
     },
     {
       "type": 1,
@@ -5655,6 +5655,12 @@
     {
       "type": 0,
       "value": "Tetikleyici koşulları"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Düzenleyiciyi Temizle"
     }
   ],
   "YF1yZk": [
@@ -9538,7 +9544,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Uyarı: Giriş düğüm türü bu giriş için izin verilen türlerden biri ile eşleşmiyor."
     }
   ],
   "yRDuqj": [
