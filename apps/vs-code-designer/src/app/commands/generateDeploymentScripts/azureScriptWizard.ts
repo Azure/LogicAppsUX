@@ -95,7 +95,10 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     const workspaceFileUri = vscode.workspace.workspaceFile;
     let rootDir = context.customWorkspaceFolderPath;
-    if (workspaceFileUri) {
+    //change the root directory if unable to locate workspace file
+    if (!workspaceFileUri) {
+      rootDir = context.folderPath;
+    } else {
       rootDir = path.dirname(workspaceFileUri.fsPath);
     }
 

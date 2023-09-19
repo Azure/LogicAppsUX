@@ -172,7 +172,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   let storageAccount = scriptContext.storageAccountName || '';
   let appServicePlan = scriptContext.appServicePlan || '';
 
-  if (!subscriptionId || !resourceGroup || !logicAppName || storageAccount || appServicePlan) {
+  if (!subscriptionId || !resourceGroup || !logicAppName || !storageAccount || !appServicePlan) {
     // Use Azure Wizard to get missing details
     const wizard = createAzureWizard(scriptContext, folder.fsPath);
     await wizard.prompt();
