@@ -1,14 +1,16 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { promptStartDesignTimeOption, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { activateAzurite } from './app/utils/azurite/activateAzurite';
+import { validateAndInstallBinaries } from './app/utils/binaries';
+import { promptStartDesignTimeOption, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
+import { runWithDurationTelemetry } from './app/utils/telemetry';
+import { validateTasksJson } from './app/utils/vsCodeConfig/tasks';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
@@ -42,8 +44,14 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
-    validateFuncCoreToolsIsLatest();
-    promptStartDesignTimeOption(activateContext);
+
+    activateContext.telemetry.properties.lastStep = 'validateAndInstallBinaries';
+    callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
+      await runWithDurationTelemetry(actionContext, 'azureLogicAppsStandard.validateAndInstallBinaries', async () => {
+        await validateAndInstallBinaries(actionContext);
+        await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
+      });
+    });
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
@@ -51,12 +59,12 @@ export async function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
+    activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
     });
 
-    await activateAzurite(activateContext);
-
+    activateContext.telemetry.properties.lastStep = 'registerEvent';
     registerEvent(
       extensionCommand.validateLogicAppProjects,
       vscode.workspace.onDidChangeWorkspaceFolders,
@@ -68,9 +76,18 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
 
+    activateContext.telemetry.properties.lastStep = 'registerReportIssueCommand';
     registerReportIssueCommand(extensionCommand.reportIssue);
+    activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
+    activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
+
+    activateContext.telemetry.properties.lastStep = 'promptStartDesignTimeOption';
+    promptStartDesignTimeOption(activateContext);
+
+    activateContext.telemetry.properties.lastStep = 'activateAzurite';
+    activateAzurite(activateContext);
 
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 

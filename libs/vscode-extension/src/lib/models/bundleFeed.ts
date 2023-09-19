@@ -13,3 +13,9 @@ export interface IBundleFeed {
     };
   };
 }
+
+export interface IBundleDependencyFeed {
+  dotnet?: string;
+  funcCoreTools?: string;
+  nodejs?: string;
+}

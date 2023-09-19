@@ -16,7 +16,7 @@ import {
   addFileToBuildPath,
   addLibToPublishPath,
 } from '../../utils/codeless/updateBuildFile';
-import { getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
+import { getLocalDotNetVersion, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { validateDotnetInstalled, getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -104,6 +104,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   const projectPath: string = target.fsPath;
   const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath);
+  const dotnetLocalVersion = await getLocalDotNetVersion();
 
   await deleteBundleProjectFiles(target);
   await renameBundleProjectFiles(target);
@@ -124,6 +125,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
 
   await copyBundleProjectFiles(target);
   await updateBuildFile(context, target, dotnetVersion);
+  await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
 
   const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(target.fsPath);
 
@@ -143,6 +145,18 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
     localize('moveToDotnetCompleted', 'Completed moving your Logic App project to a NuGet-based project.'),
     'OK'
   );
+}
+
+async function createGlobalJsonFile(sdkVersion: string, projectRoot: string) {
+  const globalJsonPath = path.join(projectRoot, 'global.json');
+  const globalJsonContent = {
+    sdk: {
+      version: sdkVersion,
+    },
+  };
+
+  const contentString = JSON.stringify(globalJsonContent, null, 4);
+  fse.writeFileSync(globalJsonPath, contentString, 'utf8');
 }
 
 async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotnetVersion: string) {
