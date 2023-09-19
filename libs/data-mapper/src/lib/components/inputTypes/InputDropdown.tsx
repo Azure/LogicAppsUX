@@ -335,23 +335,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
     intl,
   ]);
 
-  let inputType = '';
-  if (isFunctionData(currentNode)) {
-    const allowedInputTypes = currentNode.inputs[inputIndex].allowedTypes;
-    inputType = allowedInputTypes.toString();
-    if (
-      allowedInputTypes.length === 3 &&
-      allowedInputTypes.includes(NormalizedDataType.Number) &&
-      allowedInputTypes.includes(NormalizedDataType.Decimal) &&
-      allowedInputTypes.includes(NormalizedDataType.Integer)
-    ) {
-      inputType = numericalDataType;
-    }
-  }
-
   return (
     <Stack horizontal={false}>
-      {inputType.length && <DataTypeLabel inputType={inputType} comboboxId={id?.toString() || ''}></DataTypeLabel>}
+      <DataTypeLabel inputIndex={inputIndex} currentNode={currentNode} comboboxId={id?.toString() || ''}></DataTypeLabel>
       <Combobox
         id={id}
         aria-labelledby={labelId}
@@ -378,12 +364,34 @@ export const InputDropdown = (props: InputDropdownProps) => {
 };
 
 interface DataTypeLabelProps {
-  inputType: string;
+  currentNode: FunctionData | SchemaNodeExtended;
+  inputIndex: number;
   comboboxId: string;
 }
 
 const DataTypeLabel = (props: DataTypeLabelProps) => {
   const intl = useIntl();
+
+  let inputType = '';
+  if (isFunctionData(props.currentNode)) {
+    let allowedInputTypes = props.currentNode.inputs[props.inputIndex]?.allowedTypes;
+    if (!allowedInputTypes) {
+      allowedInputTypes = props.currentNode.inputs[0].allowedTypes;
+    }
+    inputType = allowedInputTypes.toString();
+    if (
+      allowedInputTypes.length === 3 &&
+      allowedInputTypes.includes(NormalizedDataType.Number) &&
+      allowedInputTypes.includes(NormalizedDataType.Decimal) &&
+      allowedInputTypes.includes(NormalizedDataType.Integer)
+    ) {
+      inputType = numericalDataType;
+    }
+  }
+  if (inputType.length === 0) {
+    return null;
+  }
+
   const numericalMessage = intl.formatMessage({
     defaultMessage: "Accepts 'Number', 'Integer', and 'Decimal' types.",
     description: `Explains that numerical type allows three different number types`,
@@ -394,7 +402,7 @@ const DataTypeLabel = (props: DataTypeLabelProps) => {
       description: `Explains that numerical type allows three different number types`,
     },
     {
-      type: props.inputType,
+      type: inputType,
     }
   );
 
@@ -403,7 +411,7 @@ const DataTypeLabel = (props: DataTypeLabelProps) => {
       {dataTypeMessage}
     </Text>
   );
-  if (props.inputType === numericalDataType) {
+  if (inputType === numericalDataType) {
     return (
       <div style={{ display: 'flex' }}>
         {label}
