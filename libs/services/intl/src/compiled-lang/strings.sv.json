@@ -2256,7 +2256,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Typerna Number, Integer och Decimal godkänns."
     }
   ],
   "CypYLs": [
@@ -3206,7 +3206,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Godkända datatyper: "
     },
     {
       "type": 1,
@@ -4876,7 +4876,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Prova att använda en konverteringsfunktion som: "
     },
     {
       "type": 1,
@@ -5660,7 +5660,7 @@
   "YEHutH": [
     {
       "type": 0,
-      "value": "Clear Editor"
+      "value": "Rensa redigeringsprogrammet"
     }
   ],
   "YF1yZk": [
@@ -9556,7 +9556,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Varning! Typen av indatanod matchar inte någon av de tillåtna typerna för indata."
     }
   ],
   "yRDuqj": [
