@@ -15,12 +15,9 @@ import {
   extensionsFileName,
   extensionCommand,
   functionsExtensionId,
-  funcDependencyName,
-  hostStartCommand,
 } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { localize } from '../../../../../../localize';
-import { binariesExist } from '../../../../../utils/binaries';
 import { isSubpath, confirmEditJsonFile, confirmOverwriteFile } from '../../../../../utils/fs';
 import {
   getDebugConfigs,
@@ -120,13 +117,12 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
    **/
   public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
     const tasksJsonPath: string = path.join(context.projectPath, '.vscode', 'Tasks.json');
-    const funcBinariesExist = binariesExist(funcDependencyName);
     const tasksJsonContent = `{
         "version": "2.0.0",
         "tasks": [
           {
             "label": "generateDebugSymbols",
-            "command": '\${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
+            "command": '\${config:azureLogicAppsStandard.dotnetBinaryPath}',
             "args": [
               "\${input:getDebugSymbolDll}"
             ],
@@ -134,9 +130,9 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
             "problemMatcher": "$msCompile"
           },
           {
-            "type": "${funcBinariesExist ? 'shell' : func}",
-            "command": ${funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand},
-            "args" : ${funcBinariesExist ? ['host', 'start'] : undefined},
+            "type": "shell",
+            "command":"\${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}",
+            "args" : ["host", "start"],
             "options": {
               "env": {
                 "PATH": "\${config:azureLogicAppsStandard.dependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.dependenciesPath}\\\\DotNetSDK;$env:PATH"

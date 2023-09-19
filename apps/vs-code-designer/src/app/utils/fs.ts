@@ -49,12 +49,13 @@ export function isSubpath(expectedParent: string, expectedChild: string, relativ
  * Displays warning message to select if desire to overwrite file.
  * @param {IActionContext} context - Command context.
  * @param {string} fsPath - File path.
+ * @param {string} message - Message.
  * @returns {Promise<boolean>} True if user wants to overwrite file.
  */
-export async function confirmOverwriteFile(context: IActionContext, fsPath: string): Promise<boolean> {
+export async function confirmOverwriteFile(context: IActionContext, fsPath: string, message?: string): Promise<boolean> {
   if (await fse.pathExists(fsPath)) {
     const result: MessageItem | undefined = await context.ui.showWarningMessage(
-      localize('fileAlreadyExists', 'File "{0}" already exists. Overwrite?', fsPath),
+      localize('fileAlreadyExists', message ?? 'File "{0}" already exists. Overwrite?', fsPath),
       { modal: true },
       DialogResponses.yes,
       DialogResponses.no,
