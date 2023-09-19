@@ -2229,7 +2229,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "'숫자', '정수' 및 '소수점' 형식을 허용합니다."
     }
   ],
   "CypYLs": [
@@ -3160,7 +3160,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "허용되는 데이터 형식: "
     },
     {
       "type": 1,
@@ -4823,12 +4823,12 @@
   ],
   "UF3KjL": [
     {
-      "type": 0,
-      "value": "Try using a Conversion function such as: "
-    },
-    {
       "type": 1,
       "value": "conversionFunctions"
+    },
+    {
+      "type": 0,
+      "value": " 등의 변환 함수를 사용해 보세요."
     }
   ],
   "UHCVNK": [
@@ -5608,7 +5608,7 @@
   "YEHutH": [
     {
       "type": 0,
-      "value": "Clear Editor"
+      "value": "편집기 지우기"
     }
   ],
   "YF1yZk": [
@@ -9447,7 +9447,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "경고: 입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
     }
   ],
   "yRDuqj": [

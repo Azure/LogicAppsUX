@@ -2256,7 +2256,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Szám, Egész szám és Decimális típusokat fogad el."
     }
   ],
   "CypYLs": [
@@ -3210,7 +3210,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Elfogadott adattípusok: "
     },
     {
       "type": 1,
@@ -4900,7 +4900,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Próbáljon konverziós függvényt használni, például a következőt: "
     },
     {
       "type": 1,
@@ -5668,7 +5668,7 @@
   "YEHutH": [
     {
       "type": 0,
-      "value": "Clear Editor"
+      "value": "Szerkesztő törlése"
     }
   ],
   "YF1yZk": [
@@ -9572,7 +9572,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Figyelmeztetés: a bemeneti csomóponttípus nem felel meg a bemenethez engedélyezett típusok egyikének."
     }
   ],
   "yRDuqj": [
