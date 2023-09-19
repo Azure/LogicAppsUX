@@ -307,8 +307,8 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.validateOrInstallBinaries",
-        "title": "Validate or install dependency binaries",
+        "command": "azureLogicAppsStandard.validateAndInstallBinaries",
+        "title": "Validate and install dependency binaries",
         "category": "Azure Logic Apps"
       }
     ],

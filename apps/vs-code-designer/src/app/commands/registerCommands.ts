@@ -6,7 +6,7 @@ import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
-import { validateOrInstallBinaries } from '../utils/binaries';
+import { validateAndInstallBinaries } from '../utils/binaries';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
 import { editAppSetting } from './appSettings/editAppSetting';
 import { renameAppSetting } from './appSettings/renameAppSetting';
@@ -126,7 +126,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
 
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.validateOrInstallBinaries, async (context: IActionContext) =>
-    validateOrInstallBinaries(context)
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, async (context: IActionContext) =>
+    validateAndInstallBinaries(context)
   );
 }

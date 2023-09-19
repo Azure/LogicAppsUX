@@ -134,7 +134,7 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
-  validateOrInstallBinaries = 'azureLogicAppsStandard.validateOrInstallBinaries',
+  validateAndInstallBinaries = 'azureLogicAppsStandard.validateAndInstallBinaries',
   azureAzuriteStart = 'azurite.start',
 }
 

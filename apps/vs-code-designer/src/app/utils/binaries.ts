@@ -33,7 +33,7 @@ import * as request from 'request';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 
-export async function validateOrInstallBinaries(context: IActionContext) {
+export async function validateAndInstallBinaries(context: IActionContext) {
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification, // Location of the progress indicator
@@ -43,7 +43,7 @@ export async function validateOrInstallBinaries(context: IActionContext) {
     async (progress, token) => {
       token.onCancellationRequested(() => {
         // Handle cancellation logic
-        executeCommand(ext.outputChannel, undefined, 'echo', 'validateOrInstallBinaries was canceled');
+        executeCommand(ext.outputChannel, undefined, 'echo', 'validateAndInstallBinaries was canceled');
       });
       context.telemetry.properties.lastStep = 'getGlobalSetting';
       progress.report({ increment: 10, message: `Get Settings` });

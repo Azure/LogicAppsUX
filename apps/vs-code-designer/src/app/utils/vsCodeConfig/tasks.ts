@@ -5,14 +5,13 @@
 import { localize } from '../../../localize';
 import type { ProjectFile } from '../dotnet/dotnet';
 import { getDotnetDebugSubpath, getProjFiles, getTargetFramework } from '../dotnet/dotnet';
-import { confirmOverwriteFile } from '../fs';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage, type ITask, type ITaskInputs } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { workspace } from 'vscode';
-import type { TaskDefinition, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
+import type { MessageItem, TaskDefinition, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 
 const tasksKey = 'tasks';
 const inputsKey = 'inputs';
@@ -126,9 +125,10 @@ export async function validateTasksJson(context: IActionContext, folders: Readon
  **/
 async function overwriteTasksJson(context: IActionContext, projectPath: string): Promise<void> {
   if (projectPath) {
-    // Need review from estfan
     const message =
-      'The tasks.json needs to be updated to use Logic Apps binary dependency installation. This will overwrite any custom defined tasks.\n\nWould you like to update tasks.json?';
+      'The Azure Logic Apps extension must update the tasks.json file to use the required and installed binary dependencies for Node JS, .NET Framework, and Azure Functions Core Tools. This update overwrites any custom-defined tasks you might have.' +
+      '\n\nSelecting "Cancel" leaves the file unchanged, but shows this message when you open this project again.' +
+      '\n\nContinue with the update?';
 
     const tasksJsonPath: string = path.join(projectPath, '.vscode', 'tasks.json');
     let tasksJsonContent;
@@ -282,5 +282,33 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
     if (await confirmOverwriteFile(context, tasksJsonPath, message)) {
       await fse.writeFile(tasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
     }
+  }
+}
+
+/**
+ * Displays warning message to select if desire to overwrite file.
+ * @param {IActionContext} context - Command context.
+ * @param {string} fsPath - File path.
+ * @param {string} message - Message.
+ * @returns {Promise<boolean>} True if user wants to overwrite file.
+ */
+async function confirmOverwriteFile(context: IActionContext, fsPath: string, message?: string): Promise<boolean> {
+  if (await fse.pathExists(fsPath)) {
+    let result: MessageItem;
+    do {
+      result = await context.ui.showWarningMessage(
+        localize('fileAlreadyExists', message),
+        { modal: true },
+        DialogResponses.yes,
+        DialogResponses.learnMore
+      );
+      if (result === DialogResponses.learnMore) {
+        await openUrl('https://learn.microsoft.com/en-us/azure/logic-apps/create-single-tenant-workflows-visual-studio-code');
+      } else if (result === DialogResponses.yes) {
+        return true;
+      } else {
+        return false;
+      }
+    } while (result === DialogResponses.learnMore);
   }
 }
