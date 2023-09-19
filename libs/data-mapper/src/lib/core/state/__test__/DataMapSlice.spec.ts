@@ -1,7 +1,7 @@
 import { simpleMockSchema } from '../../../__mocks__';
 import { concatFunction } from '../../../__mocks__/FunctionMock';
-import type { Schema, SchemaExtended } from '../../../models';
-import { SchemaType } from '../../../models';
+import type { FunctionData, FunctionDictionary, FunctionMetadata, FunctionPositionMetadata, Schema, SchemaExtended } from '../../../models';
+import { FunctionCategory, NormalizedDataType, SchemaNodeProperty, SchemaType, functionMock } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import { applyConnectionValue, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
@@ -12,7 +12,12 @@ import {
   indexedConnections,
   manyToManyConnectionSourceName,
 } from '../../../utils/__mocks__';
-import { deleteConnectionFromConnections, deleteNodeFromConnections, deleteParentRepeatingConnections } from '../DataMapSlice';
+import {
+  assignFunctionNodePositionsFromMetadata,
+  deleteConnectionFromConnections,
+  deleteNodeFromConnections,
+  deleteParentRepeatingConnections,
+} from '../DataMapSlice';
 
 // NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by default
 describe('DataMapSlice', () => {
@@ -335,4 +340,306 @@ describe('DataMapSlice', () => {
       expect(connections['source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'].outputs).toHaveLength(0);
     });
   });
+
+  describe('assignFunctionNodePositionsFromMetadata', () => {
+    it('matches correct function together', () => {
+      const expectedPosition: FunctionPositionMetadata = {
+        targetKey: '/ns0:Root/DirectTranslation/Employee/Name',
+        position: {
+          x: 600,
+          y: 700,
+        },
+      };
+      const mockManifest: FunctionMetadata = {
+        functionKey: 'ToLower',
+        reactFlowGuid: 'ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B',
+        positions: [expectedPosition],
+        connections: ['source-/ns0:Root/DirectTranslation/EmployeeName', '/ns0:Root/DirectTranslation/Employee/Name'],
+      };
+      assignFunctionNodePositionsFromMetadata(connectionDict, [mockManifest], functionDict);
+      expect(functionDict['ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B'].functionData.positions).toEqual([expectedPosition]);
+    });
+  });
 });
+
+const functionData = functionMock.find((func) => func.key === 'ToLower') as FunctionData;
+
+const functionDict: FunctionDictionary = {
+  'ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B': {
+    functionLocations: [],
+    functionData,
+  },
+};
+
+const connectionDict: ConnectionDictionary = {
+  'ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B': {
+    self: {
+      node: {
+        key: 'ToLower',
+        maxNumberOfInputs: 1,
+        functionName: 'lower-case',
+        outputValueType: NormalizedDataType.String,
+        inputs: [
+          {
+            name: 'Value',
+            allowedTypes: [NormalizedDataType.String],
+            isOptional: false,
+            allowCustomInput: true,
+            tooltip: 'The value to use',
+            placeHolder: 'The value',
+          },
+        ],
+        displayName: 'To Lower',
+        category: FunctionCategory.String,
+        description: 'Sets a string to be all lower case',
+        tooltip: 'Lower case',
+        children: [],
+      },
+      reactFlowKey: 'ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B',
+    },
+    inputs: {
+      '0': [
+        {
+          reactFlowKey: 'source-/ns0:Root/DirectTranslation/EmployeeName',
+          node: {
+            key: '/ns0:Root/DirectTranslation/EmployeeName',
+            name: 'EmployeeName',
+            type: NormalizedDataType.String,
+            properties: 'None',
+            qName: 'EmployeeName',
+            parentKey: '/ns0:Root/DirectTranslation',
+            nodeProperties: [],
+            children: [],
+            pathToRoot: [
+              {
+                key: '/ns0:Root',
+                name: 'Root',
+                qName: 'ns0:Root',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/DirectTranslation',
+                name: 'DirectTranslation',
+                qName: 'DirectTranslation',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/DirectTranslation/EmployeeName',
+                name: 'EmployeeName',
+                qName: 'EmployeeName',
+                repeating: false,
+              },
+            ],
+          },
+        },
+      ],
+    },
+    outputs: [
+      {
+        node: {
+          key: '/ns0:Root/DirectTranslation/Employee/Name',
+          name: 'Name',
+          type: NormalizedDataType.String,
+          properties: 'None',
+          qName: 'Name',
+          parentKey: '/ns0:Root/DirectTranslation/Employee',
+          nodeProperties: [],
+          children: [],
+          pathToRoot: [
+            {
+              key: '/ns0:Root',
+              name: 'Root',
+              qName: 'ns0:Root',
+              repeating: false,
+            },
+            {
+              key: '/ns0:Root/DirectTranslation',
+              name: 'DirectTranslation',
+              qName: 'DirectTranslation',
+              repeating: false,
+            },
+            {
+              key: '/ns0:Root/DirectTranslation/Employee',
+              name: 'Employee',
+              qName: 'Employee',
+              repeating: false,
+            },
+            {
+              key: '/ns0:Root/DirectTranslation/Employee/Name',
+              name: 'Name',
+              qName: 'Name',
+              repeating: false,
+            },
+          ],
+        },
+        reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee/Name',
+      },
+    ],
+  },
+  'source-/ns0:Root/DirectTranslation/EmployeeName': {
+    self: {
+      node: {
+        key: '/ns0:Root/DirectTranslation/EmployeeName',
+        name: 'EmployeeName',
+        type: NormalizedDataType.String,
+        properties: 'None',
+        qName: 'EmployeeName',
+        parentKey: '/ns0:Root/DirectTranslation',
+        nodeProperties: [SchemaNodeProperty.None],
+        children: [],
+        pathToRoot: [
+          {
+            key: '/ns0:Root',
+            name: 'Root',
+            qName: 'ns0:Root',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation',
+            name: 'DirectTranslation',
+            qName: 'DirectTranslation',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation/EmployeeName',
+            name: 'EmployeeName',
+            qName: 'EmployeeName',
+            repeating: false,
+          },
+        ],
+      },
+      reactFlowKey: 'source-/ns0:Root/DirectTranslation/EmployeeName',
+    },
+    inputs: {
+      '0': [],
+    },
+    outputs: [
+      {
+        node: {
+          key: 'ToLower',
+          maxNumberOfInputs: 1,
+          functionName: 'lower-case',
+          outputValueType: NormalizedDataType.String,
+          inputs: [
+            {
+              name: 'Value',
+              allowedTypes: [NormalizedDataType.String],
+              isOptional: false,
+              allowCustomInput: true,
+              tooltip: 'The value to use',
+              placeHolder: 'The value',
+            },
+          ],
+          displayName: 'To Lower',
+          category: FunctionCategory.String,
+          description: 'Sets a string to be all lower case',
+          tooltip: 'Lower case',
+          children: [],
+          positions: [
+            {
+              targetKey: '/ns0:Root/DirectTranslation/Employee',
+              position: {
+                x: 340.85643738977075,
+                y: 55.14426807760134,
+              },
+            },
+            {
+              targetKey: '/ns0:Root/DirectTranslation/Employee',
+              position: {
+                x: 311.7326278659612,
+                y: 40.905961199294495,
+              },
+            },
+          ],
+        },
+        reactFlowKey: 'ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B',
+      },
+    ],
+  },
+  'target-/ns0:Root/DirectTranslation/Employee/Name': {
+    self: {
+      node: {
+        key: '/ns0:Root/DirectTranslation/Employee/Name',
+        name: 'Name',
+        type: NormalizedDataType.String,
+        properties: 'None',
+        qName: 'Name',
+        parentKey: '/ns0:Root/DirectTranslation/Employee',
+        nodeProperties: [SchemaNodeProperty.None],
+        children: [],
+        pathToRoot: [
+          {
+            key: '/ns0:Root',
+            name: 'Root',
+            qName: 'ns0:Root',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation',
+            name: 'DirectTranslation',
+            qName: 'DirectTranslation',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation/Employee',
+            name: 'Employee',
+            qName: 'Employee',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation/Employee/Name',
+            name: 'Name',
+            qName: 'Name',
+            repeating: false,
+          },
+        ],
+      },
+      reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee/Name',
+    },
+    inputs: {
+      '0': [
+        {
+          reactFlowKey: 'ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B',
+          node: {
+            key: 'ToLower',
+            maxNumberOfInputs: 1,
+            functionName: 'lower-case',
+            outputValueType: NormalizedDataType.String,
+            inputs: [
+              {
+                name: 'Value',
+                allowedTypes: [NormalizedDataType.String],
+                isOptional: false,
+                allowCustomInput: true,
+                tooltip: 'The value to use',
+                placeHolder: 'The value',
+              },
+            ],
+            displayName: 'To Lower',
+            category: FunctionCategory.Collection,
+            description: 'Sets a string to be all lower case',
+            tooltip: 'Lower case',
+            children: [],
+            positions: [
+              {
+                targetKey: '/ns0:Root/DirectTranslation/Employee',
+                position: {
+                  x: 340.85643738977075,
+                  y: 55.14426807760134,
+                },
+              },
+              {
+                targetKey: '/ns0:Root/DirectTranslation/Employee',
+                position: {
+                  x: 311.7326278659612,
+                  y: 40.905961199294495,
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    outputs: [],
+  },
+};

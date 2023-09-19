@@ -982,7 +982,19 @@ export const assignFunctionNodePositionsFromMetadata = (
       if (funcData.functionData.key === positionData.functionKey) {
         const connectionForFunction = connections[functionId];
         const doConnectionsMatch = positionData.connections.every((connection) => {
-          if (connectionForFunction.inputs[connection]) {
+          if (
+            Object.values(connectionForFunction.inputs[0]).find((conn) => {
+              if (typeof conn === 'string') {
+                if (conn === connection) {
+                  return true;
+                }
+                return false;
+              } else if (conn?.reactFlowKey === connection) {
+                return true;
+              }
+              return false;
+            })
+          ) {
             return true;
           } else if (connectionForFunction.outputs.find((output) => output.reactFlowKey.includes(connection))) {
             return true;
