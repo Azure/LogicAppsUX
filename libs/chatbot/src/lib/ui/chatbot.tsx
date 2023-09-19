@@ -24,7 +24,7 @@ import {
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const inputIconButtonStyles = {
@@ -75,103 +75,109 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
   const signal = controller.signal;
   const [selectedOperation] = useState('');
 
-  const intlText = {
-    headerTitle: intl.formatMessage({
-      defaultMessage: 'Copilot',
-      description: 'Chatbot header title',
-    }),
-    pill: intl.formatMessage({
-      defaultMessage: 'In-Development',
-      description: 'Label in the chatbot header stating the chatbot feature is still in-development',
-    }),
-    chatInputPlaceholder: intl.formatMessage({
-      defaultMessage: 'Ask a question or describe how you want to change this flow',
-      description: 'Chabot input placeholder text',
-    }),
-    submitButtonTitle: intl.formatMessage({
-      defaultMessage: 'Submit',
-      description: 'Submit button',
-    }),
-    actionsButtonTitle: intl.formatMessage({
-      defaultMessage: 'Actions',
-      description: 'Actions button',
-    }),
-    closeButtonTitle: intl.formatMessage({
-      defaultMessage: 'Close',
-      description: 'Close button',
-    }),
-    queryTemplates: {
-      createFlow1SentenceStart: intl.formatMessage({
-        defaultMessage: 'Send me an email when ',
-        description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
+  const intlText = useMemo(() => {
+    return {
+      headerTitle: intl.formatMessage({
+        defaultMessage: 'Copilot',
+        description: 'Chatbot header title',
       }),
-      createFlow2SentenceStart: intl.formatMessage({
-        defaultMessage: 'Every week on Monday ',
-        description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
+      pill: intl.formatMessage({
+        defaultMessage: 'In-Development',
+        description: 'Label in the chatbot header stating the chatbot feature is still in-development',
       }),
-      createFlow3SentenceStart: intl.formatMessage({
-        defaultMessage: 'When a new item ',
-        description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
+      chatInputPlaceholder: intl.formatMessage({
+        defaultMessage: 'Ask a question or describe how you want to change this flow',
+        description: 'Chabot input placeholder text',
       }),
-      addActionSentenceStart: intl.formatMessage({
-        defaultMessage: 'Add an action ',
-        description: 'Chatbot input start of sentence for adding an action that the user should complete. Trailing space is intentional.',
+      submitButtonTitle: intl.formatMessage({
+        defaultMessage: 'Submit',
+        description: 'Submit button',
       }),
-      replaceActionSentenceStartFormat: intl.formatMessage(
-        {
-          defaultMessage: `Replace "{selectedOperation}" with `,
-          description:
-            'Chatbot input start of sentence for replacing an action that the user should complete. Trailing space is intentional.',
-        },
-        { selectedOperation }
-      ),
-      explainActionSentenceFormat: intl.formatMessage(
-        {
-          defaultMessage: `Explain what the "{selectedOperation}" action does in this flow`,
-          description: 'Chatbot input sentence asking to explain what the selected action does in the flow.',
-        },
-        { selectedOperation }
-      ),
-      explainFlowSentence: intl.formatMessage({
-        defaultMessage: 'Explain what this flow does',
-        description: 'Chatbot query sentence that asks to explain what the workflow does',
+      actionsButtonTitle: intl.formatMessage({
+        defaultMessage: 'Actions',
+        description: 'Actions button',
       }),
-      questionSentenceStart: intl.formatMessage({
-        defaultMessage: 'Tell me more about ',
-        description: 'Chatbot query start of sentence for asking for more explaination on an item that the user can should complete.',
+      closeButtonTitle: intl.formatMessage({
+        defaultMessage: 'Close',
+        description: 'Close button',
       }),
-      editFlowSentenceStart: intl.formatMessage({
-        defaultMessage: 'Edit this flow to ',
-        description: 'Chatbot query start of sentence for editing the workflow that the user can should complete.',
+      queryTemplates: {
+        createFlow1SentenceStart: intl.formatMessage({
+          defaultMessage: 'Send me an email when ',
+          description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
+        }),
+        createFlow2SentenceStart: intl.formatMessage({
+          defaultMessage: 'Every week on Monday ',
+          description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
+        }),
+        createFlow3SentenceStart: intl.formatMessage({
+          defaultMessage: 'When a new item ',
+          description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
+        }),
+        addActionSentenceStart: intl.formatMessage({
+          defaultMessage: 'Add an action ',
+          description: 'Chatbot input start of sentence for adding an action that the user should complete. Trailing space is intentional.',
+        }),
+        replaceActionSentenceStartFormat: intl.formatMessage(
+          {
+            defaultMessage: `Replace "{selectedOperation}" with `,
+            description:
+              'Chatbot input start of sentence for replacing an action that the user should complete. Trailing space is intentional.',
+          },
+          { selectedOperation }
+        ),
+        explainActionSentenceFormat: intl.formatMessage(
+          {
+            defaultMessage: `Explain what the "{selectedOperation}" action does in this flow`,
+            description: 'Chatbot input sentence asking to explain what the selected action does in the flow.',
+          },
+          { selectedOperation }
+        ),
+        explainFlowSentence: intl.formatMessage({
+          defaultMessage: 'Explain what this flow does',
+          description: 'Chatbot query sentence that asks to explain what the workflow does',
+        }),
+        questionSentenceStart: intl.formatMessage({
+          defaultMessage: 'Tell me more about ',
+          description: 'Chatbot query start of sentence for asking for more explaination on an item that the user can should complete.',
+        }),
+        editFlowSentenceStart: intl.formatMessage({
+          defaultMessage: 'Edit this flow to ',
+          description: 'Chatbot query start of sentence for editing the workflow that the user can should complete.',
+        }),
+      },
+      chatSuggestion: {
+        saveButton: intl.formatMessage({
+          defaultMessage: 'Save this workflow',
+          description: 'Chatbot suggestion button to save workflow',
+        }),
+        testButton: intl.formatMessage({
+          defaultMessage: 'Test this workflow',
+          description: 'Chatbot suggestion button to test this workflow',
+        }),
+      },
+      assistantErrorMessage: intl.formatMessage({
+        defaultMessage: 'Sorry, something went wrong. Please try again.',
+        description: 'Chatbot error message',
       }),
-    },
-    chatSuggestion: {
-      saveButton: intl.formatMessage({
-        defaultMessage: 'Save this workflow',
-        description: 'Chatbot suggestion button to save workflow',
+      progressCardText: intl.formatMessage({
+        defaultMessage: '🖊️ Working on it...',
+        description: 'Chatbot card telling user that the AI response is being generated',
       }),
-      testButton: intl.formatMessage({
-        defaultMessage: 'Test this workflow',
-        description: 'Chatbot suggestion button to test this workflow',
+      progressCardSaveText: intl.formatMessage({
+        defaultMessage: '💾 Saving this flow...',
+        description: 'Chatbot card telling user that the workflow is being saved',
       }),
-    },
-    assistantErrorMessage: intl.formatMessage({
-      defaultMessage: 'Sorry, something went wrong. Please try again.',
-      description: 'Chatbot error message',
-    }),
-    progressCardText: intl.formatMessage({
-      defaultMessage: '🖊️ Working on it...',
-      description: 'Chatbot card telling user that the AI response is being generated',
-    }),
-    progressCardSaveText: intl.formatMessage({
-      defaultMessage: '💾 Saving this flow...',
-      description: 'Chatbot card telling user that the workflow is being saved',
-    }),
-    progressCardStopButtonLabel: intl.formatMessage({
-      defaultMessage: 'Stop generating',
-      description: 'Label for the button on the progress card that stops AI response generation',
-    }),
-  };
+      progressCardStopButtonLabel: intl.formatMessage({
+        defaultMessage: 'Stop generating',
+        description: 'Label for the button on the progress card that stops AI response generation',
+      }),
+      cancelGenerationText: intl.formatMessage({
+        defaultMessage: 'Copilot chat canceled',
+        description: 'Chatbot card telling user that the AI response is being canceled',
+      }),
+    };
+  }, [intl, selectedOperation]);
 
   const onSubmitInputQuery = useCallback(
     async (input: string) => {
@@ -241,7 +247,7 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
               type: ConversationItemType.Reply,
               id: responseId,
               date: new Date(),
-              text: 'Generation cancelled',
+              text: intlText.cancelGenerationText,
               isMarkdownText: false,
               chatSessionId: chatSessionId.current,
               correlationId: guid(),
@@ -272,7 +278,7 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
         }
       }
     },
-    [endpoint, getUpdatedWorkflow, intlText.assistantErrorMessage, signal]
+    [endpoint, getUpdatedWorkflow, intlText, signal]
   );
 
   const onPromptGuideItemClicked = useCallback(

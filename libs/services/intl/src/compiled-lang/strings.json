@@ -3259,6 +3259,12 @@
       "value": "Action undone"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
