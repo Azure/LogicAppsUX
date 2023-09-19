@@ -21,9 +21,12 @@ export class ContainerAppsStep extends AzureWizardPromptStep<AppServiceWizardCon
 
   private async getPicks(wizardContext: AppServiceWizardContext): Promise<IAzureQuickPickItem<ContainerApp>[]> {
     const client = await createContainerClient(wizardContext);
-    const listOfSites = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-    return listOfSites.map((site) => {
+    const sitesList = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+    const picks = sitesList.map((site) => {
       return { label: site.name, data: site };
     });
+    picks.sort((a, b) => a.label.localeCompare(b.label));
+
+    return picks;
   }
 }

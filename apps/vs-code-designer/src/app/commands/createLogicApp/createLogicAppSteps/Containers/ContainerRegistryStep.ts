@@ -4,7 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../../localize';
 import type { AppServiceWizardContext } from '../LogicAppHostingPlanStep';
-import { RegistriesStep } from './RegistriesStep';
+import {
+  type INewStorageAccountDefaults,
+  StorageAccountKind,
+  StorageAccountListStep,
+  StorageAccountPerformance,
+  StorageAccountReplication,
+} from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardPromptStep, type IWizardOptions, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 
 export enum ContainerRegistryType {
@@ -30,11 +36,20 @@ export class ContainerRegistryStep extends AzureWizardPromptStep<AppServiceWizar
     const { containerRegistry } = wizardContext;
 
     if (containerRegistry === ContainerRegistryType.Azure) {
-      return { promptSteps: [new RegistriesStep()] };
-    } else {
-      console.log('docker', containerRegistry);
+      const storageAccountCreateOptions: INewStorageAccountDefaults = {
+        kind: StorageAccountKind.Storage,
+        performance: StorageAccountPerformance.Standard,
+        replication: StorageAccountReplication.LRS,
+      };
+      return {
+        promptSteps: [
+          new StorageAccountListStep(storageAccountCreateOptions, {
+            kind: [StorageAccountKind.BlobStorage],
+            learnMoreLink: 'https://aka.ms/Cfqnrc',
+          }),
+        ],
+      };
     }
-
     return undefined;
   }
 }
