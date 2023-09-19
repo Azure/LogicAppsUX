@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { LogicAppResolver } from '../../../LogicAppResolver';
 import {
   logicAppKind,
   deploySubpathSetting,
@@ -13,12 +14,12 @@ import {
   workflowAppAADTenantId,
   kubernetesKind,
   showDeployConfirmationSetting,
-  logicAppFilter,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
+import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
@@ -34,12 +35,18 @@ import {
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
-import type { SiteConfigResource, StringDictionary } from '@azure/arm-appservice';
+import type { SiteConfigResource, StringDictionary, Site } from '@azure/arm-appservice';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
-import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
+import {
+  deploy as innerDeploy,
+  getDeployFsPath,
+  runPreDeployTask,
+  getDeployNode,
+  ParsedSite,
+} from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
@@ -66,7 +73,7 @@ async function deploy(
   actionContext: IActionContext,
   target: Uri | string | SlotTreeItem | undefined,
   functionAppId: string | Record<string, any> | undefined,
-  expectedContextValue?: string | RegExp
+  _expectedContextValue?: string | RegExp
 ): Promise<void> {
   addLocalFuncTelemetry(actionContext);
 
@@ -79,13 +86,7 @@ async function deploy(
   ext.deploymentFolderPath = originalDeployFsPath;
 
   const node: SlotTreeItem = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
-    ext.rgApi.pickAppResource(
-      { ...context, suppressCreatePick: false },
-      {
-        filter: logicAppFilter,
-        expectedChildContextValue: expectedContextValue,
-      }
-    )
+    getDeployLogicAppNode(actionContext)
   );
 
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
@@ -182,6 +183,45 @@ async function deploy(
 
   await node.loadAllChildren(context);
   await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
+}
+
+async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeItem> {
+  const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
+  const sub = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
+
+  const [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
+  if (!site) {
+    if (isAdvance) {
+      console.log('create new logic app advance');
+    } else {
+      console.log('create new logic app');
+    }
+  } else {
+    console.log('create new logic app');
+  }
+  const parsedSite = new ParsedSite(site, sub.subscription);
+
+  return { site: parsedSite } as SlotTreeItem;
+}
+
+async function getLogicAppsPicks(
+  context: IActionContext,
+  subContext: ISubscriptionContext
+): Promise<IAzureQuickPickItem<[Site | undefined, boolean]>[]> {
+  const listOfLogicApps = await LogicAppResolver.getAppResourceSiteBySubscription(context, subContext);
+  const picks: { label: string; data: [Site, boolean]; description?: string }[] = Array.from(listOfLogicApps).map(([_id, site]) => {
+    return { label: site.name, data: [site, false] };
+  });
+
+  picks.sort((a, b) => a.label.localeCompare(b.label));
+  picks.unshift({
+    label: localize('selectLogicApp', '$(plus) Create new Logic App (Standard) in Azure...'),
+    data: [undefined, true],
+    description: localize('advanced', 'Advanced'),
+  });
+  picks.unshift({ label: localize('selectLogicApp', '$(plus) Create new Logic App (Standard) in Azure...'), data: [undefined, false] });
+
+  return picks;
 }
 
 /**
