@@ -12,13 +12,16 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
+import { isMultiRootWorkspace, selectWorkspaceFolder } from '../../utils/workspace';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import { OpenBehavior, type IProjectWizardContext } from '@microsoft/vscode-extension';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 import type { Progress } from 'vscode';
+import * as vscode from 'vscode';
 
-// Define the interface for the Azure Script Wizard
 export interface IAzureScriptWizard extends IProjectWizardContext, IActionContext {
   credentials: any;
   subscriptionId: any;
@@ -33,6 +36,7 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
   appServicePlan: string;
   isValidWorkspace: boolean;
   workspaceFilePath: string;
+  folderPath?: string;
 }
 
 /**
@@ -41,11 +45,101 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
  * @param projectPath - The path of the project.
  * @returns An instance of the Azure Wizard.
  */
+// Your existing function for creating the Azure Wizard
 export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath: string): AzureWizard<IAzureScriptWizard> {
+  // Existing prompt steps
+  const promptSteps = [
+    new ConfigureInitialLogicAppStep(),
+    new setLogicappName(),
+    new setStorageAccountName(),
+    new setAppPlantName(),
+    new SourceControlPathListStep(),
+  ];
+  const executeSteps: AzureWizardExecuteStep<IAzureScriptWizard>[] = [
+    new SaveAzureContext(projectPath),
+    // other steps
+  ];
+
+  if (!isMultiRootWorkspace) {
+    wizardContext.isValidWorkspace = false;
+  } else {
+    wizardContext.isValidWorkspace = true;
+  }
+
+  // Create the Azure Wizard with the modified steps
   return new AzureWizard(wizardContext, {
-    promptSteps: [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlantName()],
-    executeSteps: [new SaveAzureContext(projectPath)],
+    promptSteps,
+    executeSteps,
   });
+}
+
+export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScriptWizard> {
+  public hideStepCount = true;
+
+  private async createDeploymentFolder(rootDir: string): Promise<string> {
+    const deploymentsDir = path.join(rootDir, 'Deployment');
+    if (!fs.existsSync(deploymentsDir)) {
+      fs.mkdirSync(deploymentsDir);
+    }
+    return deploymentsDir;
+  }
+
+  public static setSourceControlPath(context: Partial<IAzureScriptWizard>, artifactsPath: string): void {
+    context.sourceControlPath = artifactsPath;
+    context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || context.customWorkspaceFolderPath;
+    if (context.workspaceFolder) {
+      context.openBehavior = OpenBehavior.alreadyOpen;
+    }
+  }
+
+  public async prompt(context: IAzureScriptWizard): Promise<void> {
+    const workspaceFileUri = vscode.workspace.workspaceFile;
+    let rootDir = context.customWorkspaceFolderPath;
+    if (workspaceFileUri) {
+      rootDir = path.dirname(workspaceFileUri.fsPath);
+    }
+
+    let deploymentFolderExists = false;
+    if (rootDir) {
+      deploymentFolderExists = fs.existsSync(path.join(rootDir, 'Deployment'));
+    }
+
+    const deploymentLabel = deploymentFolderExists ? 'Deployment Folder in current workspace' : 'New Deployment folder';
+
+    const placeHolder = 'Select the folder that will contain your deployment artifacts';
+    const options: vscode.QuickPickItem[] = [
+      {
+        label: deploymentLabel,
+        description: deploymentFolderExists
+          ? 'Uses existing Deployment folder in the current workspace'
+          : 'Creates a new Deployment folder in the current workspace',
+      },
+      {
+        label: 'Choose Different Folder',
+        description: 'Select a different folder within the current workspace',
+      },
+    ];
+
+    const userChoice = await vscode.window.showQuickPick(options, { placeHolder });
+
+    if (userChoice) {
+      let selectedPath: string | undefined;
+
+      if (userChoice.label === deploymentLabel && rootDir) {
+        selectedPath = await this.createDeploymentFolder(rootDir);
+      } else if (userChoice.label === 'Choose Different Folder') {
+        selectedPath = await selectWorkspaceFolder(context, placeHolder); // Assuming selectWorkspaceFolder is a function you have for folder selection
+      }
+
+      if (selectedPath) {
+        SourceControlPathListStep.setSourceControlPath(context, selectedPath);
+      }
+    }
+  }
+
+  public shouldPrompt(_context: IAzureScriptWizard): boolean {
+    return true;
+  }
 }
 
 // Define the ConfigureInitialLogicAppStep class
