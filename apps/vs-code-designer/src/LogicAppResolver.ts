@@ -11,7 +11,7 @@ import type { AppResource, AppResourceResolver } from '@microsoft/vscode-azext-u
 export class LogicAppResolver implements AppResourceResolver {
   public async resolveResource(subContext: ISubscriptionContext, resource: AppResource): Promise<LogicAppResourceTree | undefined> {
     return await callWithTelemetryAndErrorHandling('resolveResource', async (context: IActionContext) => {
-      const site: Site = await this.getAppResourceSite(context, subContext, resource);
+      const site: Site = await LogicAppResolver.getAppResourceSite(context, subContext, resource);
       if (!site) {
         return;
       }
@@ -23,24 +23,40 @@ export class LogicAppResolver implements AppResourceResolver {
     return resource.type.toLowerCase() === logicAppFilter.type && resource.kind?.toLowerCase() === logicAppFilter.kind;
   }
 
-  private async getAppResourceSite(context: IActionContext, subContext: ISubscriptionContext, resource: AppResource): Promise<Site> {
+  static async getSubscriptionSites(context: IActionContext, subContext: ISubscriptionContext): Promise<Map<string, Site>> {
+    const client = await createWebSiteClient({ ...context, ...subContext });
+
+    const listOfSites: Site[] = await uiUtils.listAllIterator(client.webApps.list());
+    const subscriptionSites = new Map<string, Site>();
+
+    listOfSites.forEach((item: Site) => {
+      subscriptionSites.set(item.id, item);
+    });
+
+    ext.logicAppSitesMap.set(subContext.subscriptionId, subscriptionSites);
+    return subscriptionSites;
+  }
+
+  static async getAppResourceSite(context: IActionContext, subContext: ISubscriptionContext, resource: AppResource): Promise<Site> {
     const logicAppsSites = ext.logicAppSitesMap.get(subContext.subscriptionId);
     let site: Site;
 
     if (!logicAppsSites) {
-      const client = await createWebSiteClient({ ...context, ...subContext });
+      const subscriptionSites = await LogicAppResolver.getSubscriptionSites(context, subContext);
 
-      const listOfSites: Site[] = await uiUtils.listAllIterator(client.webApps.list());
-      const subscriptionSites = new Map<string, Site>();
-      listOfSites.forEach((item: Site) => {
-        subscriptionSites.set(item.id, item);
-      });
-
-      ext.logicAppSitesMap.set(subContext.subscriptionId, subscriptionSites);
       site = subscriptionSites.get(resource.id);
     } else {
       site = ext.logicAppSitesMap.get(subContext.subscriptionId).get(resource.id);
     }
     return site;
+  }
+
+  static async getAppResourceSiteBySubscription(context: IActionContext, subContext: ISubscriptionContext): Promise<Map<string, Site>> {
+    const logicAppsSites = ext.logicAppSitesMap.get(subContext.subscriptionId);
+
+    if (!logicAppsSites) {
+      return await LogicAppResolver.getSubscriptionSites(context, subContext);
+    }
+    return ext.logicAppSitesMap.get(subContext.subscriptionId);
   }
 }
