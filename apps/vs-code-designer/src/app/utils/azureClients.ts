@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 import type { WebSiteManagementClient } from '@azure/arm-appservice';
-import type { ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
 import type { StorageManagementClient } from '@azure/arm-storage';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
@@ -19,8 +18,4 @@ export async function createWebSiteClient(context: AzExtClientContext): Promise<
 
 export async function createContainerClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
   return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient);
-}
-
-export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {
-  return createAzureClient(context, (await import('@azure/arm-containerregistry')).ContainerRegistryManagementClient);
 }
