@@ -1,8 +1,9 @@
+import Constants from '../constants';
 import Dislike from '../images/Dislike.svg';
 import DislikeFilled from '../images/DislikeFilled.svg';
 import Like from '../images/Like.svg';
 import LikeFilled from '../images/LikeFilled.svg';
-import { getTheme, IconButton } from '@fluentui/react';
+import { IconButton } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -35,18 +36,21 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
       disabled={disabled}
       toggle={true}
       checked={isVoted}
-    >
-      <img src={icon} alt={isDownvote ? intlText.downvote : intlText.upvote} />
-    </IconButton>
+      iconProps={{
+        imageProps: {
+          src: icon,
+          styles: getIconButtonStyles(isVoted),
+        },
+      }}
+    />
   );
 };
 
 const getIconButtonStyles = (isVoted?: boolean) => {
-  const theme = getTheme();
   return {
-    root: { color: theme.palette.neutralPrimary, backgroundColor: 'transparent' },
-    rootChecked: { color: theme.palette.themePrimary, backgroundColor: 'transparent' },
-    icon: { color: isVoted ? theme.palette.themePrimary : 'unset' },
-    rootDisabled: { color: theme.palette.neutralLighter, backgroundColor: 'transparent' },
+    root: { color: Constants.NEUTRAL_PRIMARY, backgroundColor: 'transparent' },
+    rootChecked: { color: Constants.THEME_PRIMARY, backgroundColor: 'transparent' },
+    icon: { color: isVoted ? Constants.THEME_PRIMARY : 'unset' },
+    rootDisabled: { color: Constants.NEUTRAL_LIGHTER, backgroundColor: 'transparent' },
   };
 };

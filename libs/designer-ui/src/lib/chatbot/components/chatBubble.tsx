@@ -1,6 +1,7 @@
+import constants from '../constants';
 import { animations } from './animations';
 import { ThumbsReactionButton } from './thumbsReactionButton';
-import { ActionButton, css, getTheme } from '@fluentui/react';
+import { ActionButton, css } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -16,11 +17,12 @@ type ChatBubbleProps = {
   children: any;
   date: Date;
   isAIGenerated?: boolean;
+  hideFooter?: boolean;
   isEmphasized?: boolean;
-  footerActions?: IButtonProps[];
+  additionalFooterActions?: IButtonProps[];
   className?: string;
-  selectedReaction?: string; // TODO: store as something else potentially?
-  onThumbsReactionClicked?: (reaction: string) => void;
+  selectedReaction?: ChatEntryReaction;
+  onThumbsReactionClicked?: (reaction: ChatEntryReaction) => void;
   disabled?: boolean;
 };
 
@@ -28,7 +30,8 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isUserMessage,
   children,
   isAIGenerated,
-  footerActions,
+  additionalFooterActions,
+  hideFooter,
   className,
   selectedReaction,
   onThumbsReactionClicked,
@@ -53,12 +56,12 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       )}
     >
       <div className={css('msla-bubble', isUserMessage && USER_MESSAGE_CLASS)}>{children}</div>
-      {(footerActions || isAIGenerated) && (
+      {(additionalFooterActions && additionalFooterActions.length > 0) || (isAIGenerated && !hideFooter) ? (
         <div className={'msla-bubble-footer'}>
-          {footerActions && (
+          {additionalFooterActions && (
             <div className={'msla-bubble-footer-actions'}>
-              {footerActions.map((action) => (
-                <div key={action.title} className={'msla-bubble-actions-footer'}>
+              {additionalFooterActions.map((action, i) => (
+                <div key={i} className={'msla-bubble-actions-footer'}>
                   <ActionButton {...action} disabled={disabled || action.disabled} styles={footerButtonStyles} />
                 </div>
               ))}
@@ -84,7 +87,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
             )}
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };
@@ -93,33 +96,33 @@ const USER_MESSAGE_CLASS = 'is-user-message';
 
 const footerButtonStyles: IButtonStyles = {
   root: {
-    color: getTheme().palette.neutralPrimary,
+    color: constants.NEUTRAL_PRIMARY,
     alignItems: 'center',
-    border: `1px solid ${getTheme().palette.neutralTertiary}`,
+    border: `1px solid ${constants.NEUTRAL_TERTIARY}`,
     borderRadius: 4,
     padding: '2px 8px',
     lineHeight: 16,
     height: '28px',
   },
   rootDisabled: {
-    backgroundColor: getTheme().palette.neutralLighter,
+    backgroundColor: constants.NEUTRAL_LIGHTER,
     color: '#BDBDBD',
   },
   rootHovered: {
-    backgroundColor: getTheme().palette.neutralLighter,
-    color: getTheme().palette.neutralPrimaryAlt,
+    backgroundColor: constants.NEUTRAL_LIGHTER,
+    color: constants.NEUTRAL_PRIMARY_ALT,
   },
   rootPressed: {
-    backgroundColor: getTheme().palette.neutralLighter,
-    color: getTheme().palette.neutralPrimary,
+    backgroundColor: constants.NEUTRAL_LIGHTER,
+    color: constants.NEUTRAL_PRIMARY,
   },
   icon: {
-    color: getTheme().palette.neutralPrimary,
+    color: constants.NEUTRAL_PRIMARY,
   },
   iconHovered: {
-    color: getTheme().palette.neutralPrimaryAlt,
+    color: constants.NEUTRAL_PRIMARY_ALT,
   },
   iconPressed: {
-    color: getTheme().palette.neutralPrimary,
+    color: constants.NEUTRAL_PRIMARY,
   },
 };

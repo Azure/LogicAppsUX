@@ -1,9 +1,10 @@
+import constants from '../constants';
 import StopGenerating from '../images/StopGenerating.svg';
 import { animations } from './animations';
 import type { IContainerWithProgressBarStyles } from './containerWithProgressBar';
 import { ContainerWithProgressBar } from './containerWithProgressBar';
 import type { IStyle } from '@fluentui/react';
-import { getTheme, keyframes, mergeStyleSets } from '@fluentui/react';
+import { keyframes, mergeStyleSets } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
 import React from 'react';
@@ -74,25 +75,24 @@ const getStyles = () => {
 };
 
 const getActionButtonStyles = () => {
-  const theme = getTheme();
   return {
     root: {
-      color: theme.palette.neutralPrimary,
+      color: constants.NEUTRAL_PRIMARY,
       backgroundColor: 'transparent',
     },
     icon: {
       paddingTop: 2,
-      color: theme.palette.neutralPrimary,
+      color: constants.NEUTRAL_PRIMARY,
     },
     iconPressed: {
-      color: theme.palette.neutralPrimary,
+      color: constants.NEUTRAL_PRIMARY,
     },
     rootHovered: {
-      color: theme.palette.neutralPrimaryAlt,
+      color: constants.NEUTRAL_PRIMARY_ALT,
       backgroundColor: 'transparent',
     },
     iconHovered: {
-      color: theme.palette.neutralPrimaryAlt,
+      color: constants.NEUTRAL_PRIMARY_ALT,
     },
     rootPressed: {
       backgroundColor: 'transparent',

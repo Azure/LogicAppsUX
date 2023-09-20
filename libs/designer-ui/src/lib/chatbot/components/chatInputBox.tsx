@@ -1,5 +1,5 @@
-import Sparkle from '../images/sparkle.svg';
-import { FontSizes, getTheme, IconButton, mergeStyles, mergeStyleSets, TextField } from '@fluentui/react';
+import constants from '../constants';
+import { FontSizes, IconButton, mergeStyles, mergeStyleSets, TextField } from '@fluentui/react';
 import type { IButtonProps, IStyle, ITextField, ITextFieldStyles } from '@fluentui/react';
 import React from 'react';
 import type { FormEvent } from 'react';
@@ -88,9 +88,7 @@ export const ChatInput: React.FC<IChatInputProps> = ({
       <div className={footerClassName}>
         <div>
           {footerActionsProps?.map((actionProps, index) => (
-            <IconButton key={index} {...actionProps} disabled={disabled || actionProps.disabled}>
-              <img src={Sparkle} alt="Actions" />
-            </IconButton>
+            <IconButton key={index} {...actionProps} disabled={disabled || actionProps.disabled} />
           ))}
         </div>
         <IconButton {...submitButtonProps} disabled={disabled || submitButtonProps.disabled} />
@@ -107,37 +105,36 @@ export interface IChatInputStyles {
 }
 
 const getChatInputStyles = (): IChatInputStyles => {
-  const theme = getTheme();
   return {
     root: {
       display: 'flex',
       flexDirection: 'column',
       borderWidth: 1,
       borderStyle: 'solid',
-      borderColor: theme.palette.neutralTertiary,
+      borderColor: constants.NEUTRAL_TERTIARY,
       borderRadius: 8,
       padding: 5,
-      backgroundColor: theme.palette.white,
+      backgroundColor: constants.WHITE,
     },
     textField: {
       fieldGroup: {
-        backgroundColor: theme.palette.white,
+        backgroundColor: constants.WHITE,
       },
       field: {
         paddingBottom: 16,
-        backgroundColor: theme.palette.white,
+        backgroundColor: constants.WHITE,
         ':disabled': {
-          backgroundColor: theme.palette.white,
+          backgroundColor: constants.WHITE,
         },
         '::placeholder, :-ms-input-placeholder, ::-ms-input-placeholder': {
-          color: theme.palette.neutralSecondaryAlt,
+          color: constants.NEUTRAL_SECONDARY_ALT,
           opacity: 1, // Firefox adds a lower opacity to the placeholder, so we use opacity: 1 to fix this.,
         },
       },
     },
     charCounter: {
       fontSize: FontSizes.small,
-      color: theme.palette.neutralSecondaryAlt,
+      color: constants.NEUTRAL_SECONDARY_ALT,
       textAlign: 'left',
       paddingLeft: 8,
     },

@@ -78,6 +78,7 @@ export type AssistantReplyItem = BaseConversationItem & {
   askFeedback: boolean;
   isMarkdownText: boolean;
   correlationId?: string;
+  hideFooter?: boolean;
   __rawRequest: any;
   __rawResponse: any;
 };

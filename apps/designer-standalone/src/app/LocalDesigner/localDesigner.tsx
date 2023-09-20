@@ -3,7 +3,6 @@ import { CustomConnectionParameterEditorService } from './customConnectionParame
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
-import { Chatbot } from '@microsoft/chatbot';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -144,7 +143,6 @@ export const LocalDesigner = () => {
     isConsumption,
     connections,
     runInstance,
-    showChatBot,
     workflowKind,
     language,
     areCustomEditorsEnabled,
@@ -186,7 +184,6 @@ export const LocalDesigner = () => {
         >
           <PseudoCommandBar />
           <Designer />
-          {showChatBot ? <Chatbot /> : null}
         </BJSWorkflowProvider>
       ) : null}
     </DesignerProvider>

@@ -11,5 +11,6 @@ export default {
   THEME_TERTIARY: '#94bfff',
   THEME_LIGHTER: '#e6f0ff',
   WHITE: '#FFFFFF',
+  BLACK: '#000000',
   ELEVATION4: 'rgba(0, 0, 0, 0.22) 0px 25.6px 57.6px 0px, rgba(0, 0, 0, 0.18) 0px 4.8px 14.4px 0px',
 };
