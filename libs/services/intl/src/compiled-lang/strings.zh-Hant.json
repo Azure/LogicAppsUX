@@ -2229,7 +2229,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "接受 'Number'、'Integer' 和 'Decimal' 類型。"
     }
   ],
   "CypYLs": [
@@ -3168,7 +3168,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "接受的資料類型: "
     },
     {
       "type": 1,
@@ -4824,7 +4824,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "嘗試使用轉換函式，例如: "
     },
     {
       "type": 1,
@@ -5620,7 +5620,7 @@
   "YEHutH": [
     {
       "type": 0,
-      "value": "Clear Editor"
+      "value": "清除編輯器"
     }
   ],
   "YF1yZk": [
@@ -9479,7 +9479,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "警告: 輸入節點類型不符合此輸入允許的其中一種類型。"
     }
   ],
   "yRDuqj": [
