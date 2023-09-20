@@ -265,7 +265,7 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
         });
       }
       if (!regex.url.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid uri.', description: 'Error validation message for URIs' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid URI.', description: 'Error validation message for URIs' });
       }
       break;
 

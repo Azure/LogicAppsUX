@@ -521,6 +521,12 @@
       "value": "Hide source schema"
     }
   ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -8575,12 +8581,6 @@
     {
       "type": 0,
       "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
-    }
-  ],
-  "rpst7w": [
-    {
-      "type": 0,
-      "value": "Enter a valid uri."
     }
   ],
   "rsdJcV": [
