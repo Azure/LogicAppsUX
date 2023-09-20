@@ -1,5 +1,5 @@
 import constants from '../../../../../common/constants';
-import { useShowIdentitySelector } from '../../../../../core/state/connection/connectionSelector';
+import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
 import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
@@ -64,7 +64,7 @@ export const ParametersTab = () => {
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
-  const showIdentitySelector = useShowIdentitySelector(selectedNodeId);
+  const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
 
   const replacedIds = useReplacedIds();
@@ -136,7 +136,7 @@ export const ParametersTab = () => {
           readOnly={!!readOnly}
         />
       ) : null}
-      {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
+      {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
   );
 };

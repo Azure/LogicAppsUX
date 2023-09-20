@@ -45,7 +45,7 @@ import {
   serializeBJSWorkflow,
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
-import { clone, equals, guid, isArmResourceId } from '@microsoft/utils-logic-apps';
+import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/utils-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -75,12 +75,8 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const [designerID, setDesignerID] = useState(guid());
   const [workflow, setWorkflow] = useState(data?.properties.files[Artifact.WorkflowFile]);
-  const originalConnectionsData = useMemo(() => {
-    return data?.properties.files[Artifact.ConnectionsFile] ?? {};
-  }, [data?.properties.files]);
-  const parameters = useMemo(() => {
-    return data?.properties.files[Artifact.ParametersFile] ?? {};
-  }, [data?.properties.files]);
+  const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
+  const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
@@ -203,10 +199,14 @@ const DesignerEditor = () => {
               connectionProperties,
             } = reference;
             const connection = await getConnectionStandard(connectionId);
+            const userIdentity = connectionProperties?.authentication?.identity;
             referencesToAdd[referenceKey] = {
               api: { id: apiId },
               connection: { id: connectionId },
-              authentication: { type: 'ManagedServiceIdentity' },
+              authentication: {
+                type: 'ManagedServiceIdentity',
+                ...optional('identity', userIdentity),
+              },
               connectionRuntimeUrl: connection?.properties?.connectionRuntimeUrl ?? '',
               connectionProperties,
             };
