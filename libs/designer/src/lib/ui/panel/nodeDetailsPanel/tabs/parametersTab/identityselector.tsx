@@ -1,5 +1,5 @@
 import constants from '../../../../../common/constants';
-import { updateIdentityChangeInConection } from '../../../../../core/actions/bjsworkflow/connections';
+import { updateIdentityChangeInConnection } from '../../../../../core/actions/bjsworkflow/connections';
 import { ErrorLevel, updateErrorDetails } from '../../../../../core/state/operation/operationMetadataSlice';
 import { setIsWorkflowDirty } from '../../../../../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
@@ -82,7 +82,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
     dispatch(setIsWorkflowDirty(true));
     if (option) {
       setSelectedKey(option.key);
-      dispatch(updateIdentityChangeInConection({ nodeId, identity: option.key as string }));
+      dispatch(updateIdentityChangeInConnection({ nodeId, identity: option.key as string }));
     }
   };
 
