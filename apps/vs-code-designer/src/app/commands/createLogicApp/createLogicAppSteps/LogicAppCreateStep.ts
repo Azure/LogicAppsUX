@@ -62,7 +62,8 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       siteConfig: await this.getNewSiteConfig(context),
       reserved: context.newSiteOS === WebsiteOS.linux,
       identity: context.customLocation ? undefined : { type: 'SystemAssigned' },
-    };
+      managedEnvironmentId: context.useContainerApps ? context.containerApp?.id : undefined,
+    } as Site;
 
     if (context.customLocation) {
       this.addCustomLocationProperties(site, context.customLocation);
@@ -111,6 +112,10 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       newSiteConfig.linuxFxVersion = linuxFxVersion;
     }
 
+    if (context.useContainerApps) {
+      newSiteConfig.linuxFxVersion = 'DOCKER|mcr.microsoft.com/azure-functions/dotnet:4-nightly';
+    }
+
     newSiteConfig.appSettings = await this.getAppSettings(context);
     return newSiteConfig;
   }
@@ -154,7 +159,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       });
     }
 
-    if (context.customLocation) {
+    if (context.customLocation || context.useContainerApps) {
       appSettings.push(
         {
           name: 'APP_KIND',

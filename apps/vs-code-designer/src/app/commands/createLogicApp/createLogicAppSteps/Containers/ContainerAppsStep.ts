@@ -15,8 +15,8 @@ export class ContainerAppsStep extends AzureWizardPromptStep<AppServiceWizardCon
     wizardContext.containerApp = (await wizardContext.ui.showQuickPick(this.getPicks(wizardContext), { placeHolder })).data;
   }
 
-  public shouldPrompt(): boolean {
-    return true;
+  public shouldPrompt(wizardContext: AppServiceWizardContext): boolean {
+    return wizardContext.useContainerApps;
   }
 
   private async getPicks(wizardContext: AppServiceWizardContext): Promise<IAzureQuickPickItem<ContainerApp>[]> {

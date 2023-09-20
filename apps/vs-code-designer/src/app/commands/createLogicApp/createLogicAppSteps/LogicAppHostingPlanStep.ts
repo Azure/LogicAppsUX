@@ -5,17 +5,22 @@
 import { localize } from '../../../../localize';
 import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
 import { ContainerAppsStep } from './Containers/ContainerAppsStep';
-import { ContainerRegistryStep } from './Containers/ContainerRegistryStep';
 import type { ContainerApp } from '@azure/arm-appcontainers';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import { AppServicePlanListStep } from '@microsoft/vscode-azext-azureappservice';
+import {
+  StorageAccountListStep,
+  StorageAccountKind,
+  StorageAccountPerformance,
+  StorageAccountReplication,
+  type INewStorageAccountDefaults,
+} from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
 
 export interface AppServiceWizardContext extends IAppServiceWizardContext {
   suppressCreate: boolean;
   useContainerApps: boolean;
   containerApp?: ContainerApp;
-  containerRegistry?: string;
 }
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<AppServiceWizardContext> {
@@ -42,7 +47,22 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<AppServiceWiz
     const { suppressCreate, useConsumptionPlan, useContainerApps } = wizardContext;
 
     if (useContainerApps) {
-      return { promptSteps: [new ContainerAppsStep(), new ContainerRegistryStep()] };
+      const storageAccountCreateOptions: INewStorageAccountDefaults = {
+        kind: StorageAccountKind.Storage,
+        performance: StorageAccountPerformance.Standard,
+        replication: StorageAccountReplication.LRS,
+      };
+      return {
+        promptSteps: [
+          new ContainerAppsStep(),
+          new StorageAccountListStep(storageAccountCreateOptions, {
+            kind: [StorageAccountKind.BlobStorage],
+            performance: [StorageAccountPerformance.Premium],
+            replication: [StorageAccountReplication.ZRS],
+            learnMoreLink: 'https://aka.ms/Cfqnrc',
+          }),
+        ],
+      };
     } else if (!useConsumptionPlan) {
       return { promptSteps: [new AppServicePlanListStep(suppressCreate)] };
     } else {
