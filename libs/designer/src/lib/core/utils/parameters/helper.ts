@@ -2302,7 +2302,7 @@ export const recurseSerializeCondition = (
     const operand1String = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
     const operand2String = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
-      if (!operand1String || !operand2String) {
+      if (!operand1String) {
         errors.push(
           getIntl().formatMessage({
             defaultMessage: 'Enter a valid condition statement.',

@@ -1,6 +1,7 @@
 import constants from '../../../../../common/constants';
-import { updateIdentityChangeInConection } from '../../../../../core/actions/bjsworkflow/connections';
+import { updateIdentityChangeInConnection } from '../../../../../core/actions/bjsworkflow/connections';
 import { ErrorLevel, updateErrorDetails } from '../../../../../core/state/operation/operationMetadataSlice';
+import { setIsWorkflowDirty } from '../../../../../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference, isIdentityPresentInLogicApp } from '../../../../../core/utils/connectors/connections';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
@@ -78,9 +79,10 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
   }, [identity, dispatch, selectedKey, nodeId, intl]);
 
   const handleUpdateIdentity = (_event: FormEvent, option?: IDropdownOption) => {
+    dispatch(setIsWorkflowDirty(true));
     if (option) {
       setSelectedKey(option.key);
-      dispatch(updateIdentityChangeInConection({ nodeId, identity: option.key as string }));
+      dispatch(updateIdentityChangeInConnection({ nodeId, identity: option.key as string }));
     }
   };
 

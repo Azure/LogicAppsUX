@@ -92,18 +92,19 @@ const updateNodeConnectionAndProperties = async (
     newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
   );
 };
-const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
-  if (isConnectionMultiAuthManagedIdentityType(connection, connector) || isConnectionSingleAuthManagedIdentityType(connection)) {
-    const identity = WorkflowService().getAppIdentity?.();
-    const userAssignedIdentity =
-      equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
-        ? Object.keys(identity?.userAssignedIdentities)[0]
-        : undefined;
 
-    return getConnectionProperties(connector, userAssignedIdentity);
+const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
+  if (!isConnectionMultiAuthManagedIdentityType(connection, connector) && !isConnectionSingleAuthManagedIdentityType(connection)) {
+    return undefined;
   }
 
-  return undefined;
+  const identity = WorkflowService().getAppIdentity?.();
+  const userAssignedIdentity =
+    equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
+      ? Object.keys(identity?.userAssignedIdentities)[0]
+      : undefined;
+
+  return getConnectionProperties(connector, userAssignedIdentity);
 };
 
 export const getConnectionProperties = (connector: Connector, userAssignedIdentity: string | undefined): Record<string, any> => {
@@ -149,7 +150,7 @@ export const getApiHubAuthentication = (userAssignedIdentity: string | undefined
     : undefined;
 };
 
-export const updateIdentityChangeInConection = createAsyncThunk(
+export const updateIdentityChangeInConnection = createAsyncThunk(
   'updateIdentityChangeInConection',
   async (payload: { nodeId: string; identity: string }, { dispatch, getState }): Promise<void> => {
     const { nodeId, identity } = payload;
