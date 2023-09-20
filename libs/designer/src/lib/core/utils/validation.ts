@@ -31,6 +31,7 @@ const regex = {
   url: /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))?)(?::\d{2,5})?(?:\/\S*)?$/i,
   zipcode: /^[0-9]{5}$/,
   zipcode4: /^[0-9]{5}(?:-[0-9]{4})$/,
+  whiteSpace: /\s/g,
 };
 
 /**
@@ -123,7 +124,7 @@ export function validateType(type: string, parameterFormat: string, parameterVal
       return;
     }
     if (!isValidJSONObjectFormat(parameterValue)) {
-      return intl.formatMessage({ defaultMessage: 'Enter a valid table.', description: 'Error validation message' });
+      return intl.formatMessage({ defaultMessage: 'Enter a valid table.', description: 'Error validation message for JSONs' });
     }
     return;
   }
@@ -133,7 +134,7 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (!regex.integer.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid integer.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid integer.', description: 'Error validation message for Integers' });
       }
       return validateIntegerFormat(parameterFormat, parameterValue);
 
@@ -142,7 +143,7 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (isNaN(Number(parameterValue))) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid number.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid number.', description: 'Error validation message for Numbers' });
       }
       return validateNumberFormat(parameterFormat, parameterValue);
 
@@ -151,7 +152,7 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (!(equals(parameterValue, 'true') || equals(parameterValue, 'false') || !parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message for Booleans' });
       }
       return;
 
@@ -160,7 +161,7 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (!isValidJSONObjectFormat(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message for Objects' });
       }
       return;
 
@@ -187,7 +188,7 @@ function validateIntegerFormat(parameterFormat: string, parameterValue: string):
 
   if (parameterFormat.toLowerCase() === 'int32') {
     if (Number(parameterValue) > Constants.INT_MAX || Number(parameterValue) < Constants.INT_MIN) {
-      return getIntl().formatMessage({ defaultMessage: 'The value is too large.', description: 'Error validation message' });
+      return getIntl().formatMessage({ defaultMessage: 'The value is too large.', description: 'Error validation message integers' });
     }
   }
 
@@ -203,13 +204,13 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
   switch (parameterFormat.toLowerCase()) {
     case Constants.SWAGGER.FORMAT.DOUBLE:
       if (!regex.double.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid Double number.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid Double number.', description: 'Error validation message for doubles' });
       }
       break;
 
     case Constants.SWAGGER.FORMAT.FLOAT:
       if (!regex.double.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid float.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid float.', description: 'Error validation message for floats' });
       }
       break;
 
@@ -234,7 +235,7 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
       }
       // RFC 3339
       if (isNaN(Date.parse(parameterValue)) || !regex.datetime.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid datetime.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid datetime.', description: 'Error validation message for date times' });
       }
       break;
 
@@ -257,9 +258,14 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
       if (isTemplateExpression) {
         return '';
       }
-
+      if (regex.whiteSpace.test(parameterValue)) {
+        return intl.formatMessage({
+          defaultMessage: 'Whitespaces must be encoded for URIs',
+          description: 'Error validation message for URIs with whitespace',
+        });
+      }
       if (!regex.url.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid uri.', description: 'Error validation message' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid uri.', description: 'Error validation message for URIs' });
       }
       break;
 
@@ -428,7 +434,10 @@ function validateStringEmails(parameterValue: string): string {
     .map((email) => email.trim())
     .filter((email) => email !== '');
 
-  const errorMessage = getIntl().formatMessage({ defaultMessage: 'Enter a valid email.', description: 'Error validation message' });
+  const errorMessage = getIntl().formatMessage({
+    defaultMessage: 'Enter a valid email.',
+    description: 'Error validation message for emails',
+  });
   if (emails.length > 0) {
     for (const email of emails) {
       if (!regex.email.test(email)) {
