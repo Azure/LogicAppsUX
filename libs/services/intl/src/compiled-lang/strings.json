@@ -29,6 +29,12 @@
       "value": "Faulted"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -413,12 +419,6 @@
       "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Enter a valid integer."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -453,12 +453,6 @@
     {
       "type": 0,
       "value": "Convert the parameter argument to a floating-point number"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Enter a valid email."
     }
   ],
   "1ZSzl6": [
@@ -525,6 +519,12 @@
     {
       "type": 0,
       "value": "Hide source schema"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
     }
   ],
   "1uGBLP": [
@@ -875,6 +875,12 @@
       "value": "Close code view"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -993,6 +999,12 @@
     {
       "type": 0,
       "value": "Your flow has been updated."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Saving this flow..."
     }
   ],
   "4izAMi": [
@@ -1421,16 +1433,16 @@
       "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Status code"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Report a bug"
     }
   ],
   "7lnElz": [
@@ -2569,6 +2581,12 @@
       "value": "View the request history for this operation"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3027,12 +3045,6 @@
       "value": "Error fetching manifest"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Enter a valid datetime."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3259,6 +3271,12 @@
       "value": "Action undone"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3355,12 +3373,6 @@
     {
       "type": 0,
       "value": "\" with"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Enter a valid Double number."
     }
   ],
   "KV4uky": [
@@ -3751,12 +3763,6 @@
       "value": "Edit in advanced mode"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Enter a valid number."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3901,6 +3907,12 @@
       "value": "Service Principal"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Working on it..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3989,6 +4001,12 @@
     {
       "type": 0,
       "value": "Enter the audience."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "OVvieE": [
@@ -4119,6 +4137,12 @@
     {
       "type": 0,
       "value": "Required. This value is the number of integers that is in the array."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Whitespaces must be encoded for URIs"
     }
   ],
   "P4rEwD": [
@@ -6005,12 +6029,6 @@
       "value": "Enter Pfx"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Enter a valid float."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6103,6 +6121,12 @@
     {
       "type": 0,
       "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
     }
   ],
   "ba9yGJ": [
@@ -6643,6 +6667,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6755,6 +6785,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Ashgabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "gc6v4X": [
@@ -6909,7 +6945,7 @@
       "value": "This isn't what I'm looking for"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "The value is too large."
@@ -7153,12 +7189,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Enter a valid table."
     }
   ],
   "iy8rNf": [
@@ -7511,6 +7541,12 @@
     {
       "type": 0,
       "value": "Managed Identity"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
     }
   ],
   "lM9qrG": [
@@ -7973,12 +8009,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Enter a valid uri."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8069,6 +8099,12 @@
       "value": "Add a note"
     }
   ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
+    }
+  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -8139,6 +8175,12 @@
     {
       "type": 0,
       "value": "Required. The values to combine into an array."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
     }
   ],
   "pXmFGf": [
@@ -9289,6 +9331,12 @@
     {
       "type": 0,
       "value": "Including dynamic content"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stop generating"
     }
   ],
   "wPlTDB": [

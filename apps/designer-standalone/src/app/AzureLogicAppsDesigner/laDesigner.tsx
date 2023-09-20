@@ -37,12 +37,19 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer, getReactQueryClient } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  getReactQueryClient,
+  serializeBJSWorkflow,
+  store as DesignerStore,
+} from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/utils-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
-import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { QueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -66,10 +73,10 @@ const DesignerEditor = () => {
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId);
   const { data: tenantId } = useCurrentTenantId();
-  const [designerID, setDesignerID] = React.useState(guid());
-  const [workflow, setWorkflow] = React.useState(data?.properties.files[Artifact.WorkflowFile]);
-  const originalConnectionsData = React.useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data]);
-  const parameters = React.useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data]);
+  const [designerID, setDesignerID] = useState(guid());
+  const [workflow, setWorkflow] = useState(data?.properties.files[Artifact.WorkflowFile]);
+  const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
+  const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
@@ -83,7 +90,7 @@ const DesignerEditor = () => {
   };
   const { data: runInstanceData } = useRunInstanceStandard(workflowName, onRunInstanceSuccess, appId, runId);
 
-  const connectionsData = React.useMemo(
+  const connectionsData = useMemo(
     () =>
       WorkflowUtility.resolveConnectionsReferences(
         JSON.stringify(clone(originalConnectionsData ?? {})),
@@ -130,7 +137,7 @@ const DesignerEditor = () => {
     setDesignerID(guid());
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
-  const services = React.useMemo(
+  const services = useMemo(
     () =>
       getDesignerServices(
         workflowId,
@@ -149,7 +156,7 @@ const DesignerEditor = () => {
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
-  React.useEffect(() => {
+  useEffect(() => {
     const root = document.getElementById('root');
     if (root) {
       root.style.padding = '0px';
@@ -157,7 +164,7 @@ const DesignerEditor = () => {
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
   }, [data?.properties.files]);
 
@@ -216,6 +223,15 @@ const DesignerEditor = () => {
     return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
   };
 
+  const getUpdatedWorkflow = async (): Promise<Workflow> => {
+    const designerState = DesignerStore.getState();
+    const serializedWorkflow = await serializeBJSWorkflow(designerState, {
+      skipValidation: false,
+      ignoreNonCriticalErrors: true,
+    });
+    return serializedWorkflow;
+  };
+
   return (
     <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
@@ -234,7 +250,7 @@ const DesignerEditor = () => {
                 isDarkMode={isDarkMode}
               />
               <Designer />
-              {showChatBot ? <Chatbot /> : null}
+              {showChatBot ? <Chatbot endpoint={environment.chatbotEndpoint} getUpdatedWorkflow={getUpdatedWorkflow} /> : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
