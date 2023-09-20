@@ -180,6 +180,11 @@ async function deploy(
   await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
 }
 
+/**
+ * Shows tree item picker to select Logic App or create a new one.
+ * @param {IActionContext} context - Command context.
+ * @returns {Promise<SlotTreeItem>} Logic App slot tree item.
+ */
 async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeItem> {
   const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
   const sub = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
