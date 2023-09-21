@@ -35,6 +35,9 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
   const onError = useCallback<OnIntlErrorFn>((err) => {
     if (err.code === 'MISSING_TRANSLATION') {
       return;
+    } else if (err.code === 'MISSING_DATA') {
+      console.log('IntlProvider MISSING_DATA error: ', err);
+      return;
     }
     throw err;
   }, []);
