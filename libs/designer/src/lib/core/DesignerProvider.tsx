@@ -8,6 +8,7 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import type { OnErrorFn as OnIntlErrorFn } from '@formatjs/intl';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { IntlProvider } from '@microsoft/intl-logic-apps';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
@@ -33,10 +34,12 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
   const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
   const themeName = useMemo(() => (!isDarkMode ? 'light' : 'dark'), [isDarkMode]);
   const onError = useCallback<OnIntlErrorFn>((err) => {
-    if (err.code === 'MISSING_TRANSLATION') {
-      return;
-    } else if (err.code === 'MISSING_DATA') {
-      console.log('IntlProvider MISSING_DATA error: ', err);
+    if (err.code === 'MISSING_TRANSLATION' || err.code === 'MISSING_DATA') {
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'DesignerProvider',
+        message: err.message,
+      });
       return;
     }
     throw err;
