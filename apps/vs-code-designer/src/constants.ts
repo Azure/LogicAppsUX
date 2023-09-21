@@ -190,3 +190,15 @@ export const logicAppFilter = {
   type: 'microsoft.web/sites',
   kind: 'functionapp,workflowapp',
 };
+
+// Container Apps
+export const containerAppsId = 'containerApps';
+export const managedEnvironmentsId = 'managedEnvironments';
+
+// Resources providers
+export const appProvider = 'Microsoft.App';
+export const webProvider = 'Microsoft.Web';
+export const operationalInsightsProvider = 'Microsoft.OperationalInsights';
+export const storageProvider = 'Microsoft.Storage';
+export const insightsProvider = 'Microsoft.Insights';
+export const managedEnvironmentsAppProvider = `${appProvider}/${managedEnvironmentsId}`;

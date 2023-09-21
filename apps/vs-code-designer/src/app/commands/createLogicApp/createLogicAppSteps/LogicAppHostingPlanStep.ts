@@ -6,7 +6,6 @@ import { localize } from '../../../../localize';
 import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
 import { ContainerAppsStep } from './Containers/ContainerAppsStep';
 import type { ContainerApp } from '@azure/arm-appcontainers';
-import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import { AppServicePlanListStep } from '@microsoft/vscode-azext-azureappservice';
 import {
   StorageAccountListStep,
@@ -16,8 +15,9 @@ import {
   type INewStorageAccountDefaults,
 } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
+import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 
-export interface AppServiceWizardContext extends IAppServiceWizardContext {
+export interface AppServiceWizardContext extends ILogicAppWizardContext {
   suppressCreate: boolean;
   useContainerApps: boolean;
   containerApp?: ContainerApp;
