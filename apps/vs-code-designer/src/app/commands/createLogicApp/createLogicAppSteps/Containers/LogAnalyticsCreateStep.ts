@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
-import type { IManagedEnvironmentContext } from './createManagedEnvironment';
+import type { IManagedEnvironmentContext } from './CreateManagedEnvironment';
 import { createOperationalInsightsManagementClient } from '@microsoft/vscode-azext-azureappservice';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardExecuteStep, nonNullProp, nonNullValue } from '@microsoft/vscode-azext-utils';

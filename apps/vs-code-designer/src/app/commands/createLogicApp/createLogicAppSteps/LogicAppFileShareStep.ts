@@ -10,6 +10,7 @@ import {
   workflowFileName,
   wwwrootDirectory,
 } from '../../../../constants';
+import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { createStorageClient } from '../../../utils/azureClients';
 import { getWorkflowsPathInLocalProject } from '../../../utils/codeless/common';
@@ -21,7 +22,6 @@ import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import type { Progress } from 'vscode';
 import * as vscode from 'vscode';
 
 type File = {
@@ -32,8 +32,17 @@ type File = {
 export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 140;
 
-  public async execute(context: ILogicAppWizardContext, _progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
+  public async execute(
+    context: ILogicAppWizardContext,
+    progress: vscode.Progress<{ message?: string; increment?: number }>
+  ): Promise<void> {
     try {
+      context.telemetry.properties.newFileShare = context.newSiteName;
+
+      const message: string = localize('creatingNewFileShare', 'Creating new File Share "{0}"...', context.newSiteName);
+      ext.outputChannel.appendLog(message);
+      progress.report({ message });
+
       const storageClient: StorageManagementClient = await createStorageClient(context);
       const storageShareClient = await this.createStorageClient(context, storageClient);
       const shareName = context.newSiteName;

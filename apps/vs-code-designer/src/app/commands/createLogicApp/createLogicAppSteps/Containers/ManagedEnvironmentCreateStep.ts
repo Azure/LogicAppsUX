@@ -6,7 +6,7 @@ import { managedEnvironmentsAppProvider } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { createContainerClient } from '../../../../utils/azureClients';
-import type { IManagedEnvironmentContext } from './createManagedEnvironment';
+import type { IManagedEnvironmentContext } from './CreateManagedEnvironment';
 import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 import { createOperationalInsightsManagementClient } from '@microsoft/vscode-azext-azureappservice';
 import { getResourceGroupFromId, LocationListStep } from '@microsoft/vscode-azext-azureutils';

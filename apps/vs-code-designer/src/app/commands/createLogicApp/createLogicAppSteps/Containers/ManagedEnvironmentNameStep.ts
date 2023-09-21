@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../../localize';
 import { createContainerClient } from '../../../../utils/azureClients';
-import type { IManagedEnvironmentContext } from './createManagedEnvironment';
+import type { IManagedEnvironmentContext } from './CreateManagedEnvironment';
 import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep, type ISubscriptionActionContext, nonNullValueAndProp } from '@microsoft/vscode-azext-utils';
 
