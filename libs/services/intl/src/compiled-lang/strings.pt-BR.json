@@ -2239,7 +2239,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Aceita os tipos \"Número\", \"Inteiro\" e \"Decimal\"."
     }
   ],
   "CypYLs": [
@@ -3196,7 +3196,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Tipos de dados aceitos: "
     },
     {
       "type": 1,
@@ -4896,7 +4896,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Tente usar uma função de conversão como: "
     },
     {
       "type": 1,
@@ -5684,7 +5684,7 @@
   "YEHutH": [
     {
       "type": 0,
-      "value": "Clear Editor"
+      "value": "Limpar editor"
     }
   ],
   "YF1yZk": [
@@ -9625,7 +9625,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Aviso: o tipo de nó de entrada não corresponde a um dos tipos permitidos para essa entrada."
     }
   ],
   "yRDuqj": [

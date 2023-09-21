@@ -1,5 +1,6 @@
+import constants from '../constants';
 import type { IStyle } from '@fluentui/react';
-import { getTheme, keyframes, mergeStyleSets } from '@fluentui/react';
+import { keyframes, mergeStyleSets } from '@fluentui/react';
 import React from 'react';
 
 type ContainerWithProgressBarProps = {
@@ -54,11 +55,10 @@ export interface IContainerWithProgressBarStyles {
 }
 
 const getContainerStyles = () => {
-  const theme = getTheme();
   return {
     root: {
-      background: theme.palette.white,
-      boxShadow: theme.effects.elevation4,
+      background: constants.WHITE,
+      boxShadow: constants.ELEVATION4,
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-end',
@@ -76,7 +76,6 @@ const getContainerStyles = () => {
 };
 
 const getProgressBarStyles = () => {
-  const theme = getTheme();
   return {
     root: {
       display: 'flex',
@@ -86,7 +85,7 @@ const getProgressBarStyles = () => {
     },
     emptyProgressBar: {
       width: '100%',
-      backgroundColor: theme.palette.neutralLighter,
+      backgroundColor: constants.NEUTRAL_LIGHTER,
       borderRadius: 8,
       height: 5,
       position: 'relative',

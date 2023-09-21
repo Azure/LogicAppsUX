@@ -15,7 +15,7 @@ export async function createLogicApp(
   context: IActionContext & Partial<ICreateLogicAppContext>,
   subscription?: AzExtParentTreeItem | string,
   nodesOrNewResourceGroupName?: string | (string | AzExtParentTreeItem)[]
-): Promise<string> {
+): Promise<SlotTreeItem> {
   const newResourceGroupName = Array.isArray(nodesOrNewResourceGroupName) ? undefined : nodesOrNewResourceGroupName;
   let node: AzExtParentTreeItem | undefined;
 
@@ -38,7 +38,7 @@ export async function createLogicApp(
       node as SubscriptionTreeItem
     );
     await notifyCreateLogicAppComplete(logicAppNode);
-    return logicAppNode.fullId;
+    return logicAppNode;
   } catch (error) {
     throw new Error(`Error in creating logic app. ${error}`);
   }
@@ -48,6 +48,6 @@ export async function createLogicAppAdvanced(
   context: IActionContext,
   subscription?: AzExtParentTreeItem | string,
   nodesOrNewResourceGroupName?: string | (string | AzExtParentTreeItem)[]
-): Promise<string> {
+): Promise<SlotTreeItem> {
   return await createLogicApp({ ...context, advancedCreation: true }, subscription, nodesOrNewResourceGroupName);
 }
