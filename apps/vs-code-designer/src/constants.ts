@@ -202,3 +202,9 @@ export const operationalInsightsProvider = 'Microsoft.OperationalInsights';
 export const storageProvider = 'Microsoft.Storage';
 export const insightsProvider = 'Microsoft.Insights';
 export const managedEnvironmentsAppProvider = `${appProvider}/${managedEnvironmentsId}`;
+
+// Directorires
+export const deploymentsDirectory = 'deployments';
+export const diagnosticsDirectory = 'diagnostics';
+export const locksDirectory = 'locks';
+export const wwwrootDirectory = 'wwwroot';

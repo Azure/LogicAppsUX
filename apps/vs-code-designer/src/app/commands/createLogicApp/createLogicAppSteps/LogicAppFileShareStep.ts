@@ -2,7 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { hostFileName } from '../../../../constants';
+import {
+  deploymentsDirectory,
+  diagnosticsDirectory,
+  hostFileName,
+  locksDirectory,
+  workflowFileName,
+  wwwrootDirectory,
+} from '../../../../constants';
+import { localize } from '../../../../localize';
 import { createStorageClient } from '../../../utils/azureClients';
 import { getWorkflowsPathInLocalProject } from '../../../utils/codeless/common';
 import { tryGetFunctionProjectRoot } from '../../../utils/verifyIsProject';
@@ -11,8 +19,10 @@ import type { StorageManagementClient, StorageAccountListKeysResult } from '@azu
 import { type ShareClient, ShareServiceClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
 import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
+import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Progress } from 'vscode';
+import * as vscode from 'vscode';
 
 type File = {
   path: string;
@@ -31,7 +41,7 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
 
       await this.createFileShare(shareClient);
 
-      const rootDirectories = ['deployments', 'diagnostics', 'locks', 'wwwroot'];
+      const rootDirectories = [deploymentsDirectory, diagnosticsDirectory, locksDirectory, wwwrootDirectory];
       await this.createDirectories(shareClient, rootDirectories);
 
       const workspaceFolder = await getWorkspaceFolderPath(context);
@@ -40,7 +50,7 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
 
       await this.uploadWorkflowsFiles(shareClient, projectPath);
     } catch (error) {
-      console.log(error);
+      vscode.window.showErrorMessage(`${localize('file share failure', 'Error while creating/uploading file share')} ${error.message}`);
       throw error;
     }
   }
@@ -59,13 +69,13 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
   }
 
   private async createFileShare(shareClient: ShareClient) {
-    await shareClient.create();
+    await shareClient.createIfNotExists();
   }
 
   private async createDirectories(shareClient: ShareClient, directories: string[]) {
     for (const directory of directories) {
       const directoryClient = shareClient.getDirectoryClient(directory);
-      await directoryClient.create();
+      await directoryClient.createIfNotExists();
     }
   }
 
@@ -79,16 +89,18 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
 
   private async uploadRootFiles(shareClient: ShareClient, projectPath: string | undefined) {
     const hostJsonPath: string = path.join(projectPath, hostFileName);
-    await this.uploadFiles(shareClient, [{ path: hostJsonPath, name: hostFileName }], 'wwwroot');
+    if (await fse.pathExists(hostJsonPath)) {
+      await this.uploadFiles(shareClient, [{ path: hostJsonPath, name: hostFileName }], wwwrootDirectory);
+    }
   }
 
   private async uploadWorkflowsFiles(shareClient: ShareClient, projectPath: string | undefined) {
     const workflowFiles = await getWorkflowsPathInLocalProject(projectPath);
 
     for (const workflowFile of workflowFiles) {
-      const directoryPath = path.join('wwwroot', workflowFile.name);
+      const directoryPath = path.join(wwwrootDirectory, workflowFile.name);
       await this.createDirectories(shareClient, [directoryPath]);
-      await this.uploadFiles(shareClient, [workflowFile], directoryPath);
+      await this.uploadFiles(shareClient, [{ ...workflowFile, name: workflowFileName }], directoryPath);
     }
   }
 }

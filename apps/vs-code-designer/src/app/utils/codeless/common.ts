@@ -252,7 +252,7 @@ export async function getWorkflowsPathInLocalProject(projectPath: string): Promi
         const workflowFilePath = path.join(fullPath, workflowFileName);
 
         if (await fse.pathExists(workflowFilePath)) {
-          worfklowFiles.push({ path: workflowFilePath, name: workflowFileName });
+          worfklowFiles.push({ path: workflowFilePath, name: subPath });
         }
       } catch {
         // If unable to load the workflow or read the definition we skip the workflow
