@@ -29,6 +29,7 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
   // Spacing values
   'elk.spacing.edgeNode': layerSpacing.edgeNode,
+  'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.default,
   'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.default,
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
