@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { appProvider, operationalInsightsProvider } from '../../../../../constants';
+import { appProvider, managedEnvironmentsId, operationalInsightsProvider } from '../../../../../constants';
 import { localize } from '../../../../../localize';
 import { createActivityContext } from '../../../../utils/activityUtils';
 import { LogAnalyticsCreateStep } from './LogAnalyticsCreateStep';
@@ -54,7 +54,7 @@ export async function createManagedEnvironment(context: IActionContext, subscrip
     new LogAnalyticsCreateStep(),
     new ManagedEnvironmentCreateStep()
   );
-  LocationListStep.addProviderForFiltering(wizardContext, appProvider, 'managedEnvironments');
+  LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
   LocationListStep.addStep(wizardContext, promptSteps);
 
   const wizard: AzureWizard<IManagedEnvironmentContext> = new AzureWizard(wizardContext, {

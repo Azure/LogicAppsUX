@@ -5,7 +5,7 @@
 import { localize } from '../../../../../localize';
 import { createContainerClient } from '../../../../utils/azureClients';
 import type { AppServiceWizardContext } from '../LogicAppHostingPlanStep';
-import { createManagedEnvironment } from './createManagedEnvironment';
+import { createManagedEnvironment } from './CreateManagedEnvironment';
 import type { ContainerApp, ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 import { uiUtils } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardPromptStep, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
