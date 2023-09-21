@@ -14,6 +14,7 @@ export const layerSpacing = {
   default: '64',
   readOnly: '48',
   onlyEdge: '16',
+  edgeNode: '180',
 };
 
 const defaultLayoutOptions: Record<string, string> = {
@@ -26,8 +27,8 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
   'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
-  'elk.layered.spacing.edgeEdgeBetweenLayers': '0',
-  'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.default,
+  // Spacing values
+  'elk.spacing.edgeNode': layerSpacing.edgeNode,
   'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.default,
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
