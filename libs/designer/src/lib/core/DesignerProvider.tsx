@@ -38,7 +38,7 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
       LoggerService().log({
         level: LogEntryLevel.Warning,
         area: 'DesignerProvider',
-        message: err.message,
+        message: `Error ${err.code} - ${err.message}`,
       });
       return;
     }
