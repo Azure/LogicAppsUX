@@ -14,7 +14,6 @@ export const layerSpacing = {
   default: '64',
   readOnly: '48',
   onlyEdge: '16',
-  edgeNode: '180',
 };
 
 const defaultLayoutOptions: Record<string, string> = {
@@ -28,7 +27,7 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
   // Spacing values
-  'elk.spacing.edgeNode': layerSpacing.edgeNode,
+  'elk.spacing.edgeNode': '180',
   'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.default,
   'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.default,
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
