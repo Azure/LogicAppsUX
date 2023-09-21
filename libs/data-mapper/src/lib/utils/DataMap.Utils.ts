@@ -298,7 +298,7 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
     } else {
       if (element === '"') {
         currentWord += element;
-        if (functionParams[index + 1] && functionParams[index + 1] === ',') {
+        if (openParenthesis === 0 && functionParams[index + 1] && functionParams[index + 1] === ',') {
           results.push(currentWord.trim());
           currentWord = '';
 
