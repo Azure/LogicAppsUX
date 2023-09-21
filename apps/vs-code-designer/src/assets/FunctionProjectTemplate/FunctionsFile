@@ -31,7 +31,7 @@ namespace <%= namespace %>
         [FunctionName("<%= methodName %>")]
         public Task<Weather> Run([WorkflowActionTrigger] int zipCode, string temperatureScale)
         {
-            this.logger.LogInformation("Starting <%= methodName %> with Zip Code: " + zipCode + " and Scale: " + temperatureScale);
+             this.logger.LogInformation("Starting <%= methodName %> with zip code: " + zipCode + " and Scale: " + temperatureScale);
             
             // Generate random temperature within a range based on the temperature scale
             Random rnd = new Random();

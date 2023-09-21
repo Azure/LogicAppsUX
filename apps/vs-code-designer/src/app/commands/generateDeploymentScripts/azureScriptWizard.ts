@@ -35,7 +35,6 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
   logicAppName: string;
   appServicePlan: string;
   isValidWorkspace: boolean;
-  workspaceFilePath: string;
   folderPath?: string;
 }
 
@@ -107,19 +106,19 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
       deploymentFolderExists = fs.existsSync(path.join(rootDir, 'Deployment'));
     }
 
-    const deploymentLabel = deploymentFolderExists ? 'Deployment Folder in current workspace' : 'New Deployment folder';
+    const deploymentLabel = deploymentFolderExists ? 'Deployment folder in current workspace' : 'New deployment folder';
 
-    const placeHolder = 'Select the folder that will contain your deployment artifacts';
+    const placeHolder = 'Select the folder to store your deployment artifacts';
     const options: vscode.QuickPickItem[] = [
       {
         label: deploymentLabel,
         description: deploymentFolderExists
-          ? 'Uses existing Deployment folder in the current workspace'
-          : 'Creates a new Deployment folder in the current workspace',
+          ? 'Uses the existing deployment folder in the current workspace.'
+          : 'Creates a new deployment folder in the current workspace.',
       },
       {
-        label: 'Choose Different Folder',
-        description: 'Select a different folder within the current workspace',
+        label: 'Choose a different Folder',
+        description: 'Select a different folder in the current workspace.',
       },
     ];
 
@@ -130,7 +129,7 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
 
       if (userChoice.label === deploymentLabel && rootDir) {
         selectedPath = await this.createDeploymentFolder(rootDir);
-      } else if (userChoice.label === 'Choose Different Folder') {
+      } else if (userChoice.label === 'Choose a different Folder') {
         selectedPath = await selectWorkspaceFolder(context, placeHolder); // Assuming selectWorkspaceFolder is a function you have for folder selection
       }
 
@@ -175,7 +174,7 @@ export class setLogicappName extends AzureWizardPromptStep<IAzureScriptWizard> {
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.logicAppName = await context.ui.showInputBox({
       placeHolder: localize('setLogicappName', 'logicappName'),
-      prompt: localize('logicappNamePrompt', 'Provide a unique name for the logic app'),
+      prompt: localize('logicappNamePrompt', 'Provide a unique name for the logic app.'),
     });
   }
 
@@ -191,7 +190,7 @@ export class setStorageAccountName extends AzureWizardPromptStep<IAzureScriptWiz
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.storageAccountName = await context.ui.showInputBox({
       placeHolder: localize('setStorageAccountName', 'storageAccountName'),
-      prompt: localize('storageAccountNamePrompt', 'Provide a unique name for the storage account'),
+      prompt: localize('storageAccountNamePrompt', 'Provide a unique name for the storage account.'),
     });
   }
 
@@ -207,7 +206,7 @@ export class setAppPlantName extends AzureWizardPromptStep<IAzureScriptWizard> {
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.appServicePlan = await context.ui.showInputBox({
       placeHolder: localize('setAppPlantName', 'appPlanName'),
-      prompt: localize('appPlanNamePrompt', 'Provide a unique name for the app service plan'),
+      prompt: localize('appPlanNamePrompt', 'Provide a unique name for the App Service plan.'),
     });
   }
 

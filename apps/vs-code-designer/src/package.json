@@ -95,8 +95,9 @@
       },
       {
         "command": "azureLogicAppsStandard.generateDeploymentScripts",
-        "title": "Generate Deployment Scripts...",
-        "category": "Azure Logic Apps"
+        "title": "Generate deployment scripts...",
+        "category": "Azure Logic Apps",
+        "preview": true
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
@@ -342,10 +343,6 @@
           "group": "2_deploy@1"
         },
         {
-          "command": "azureLogicAppsStandard.generateDeploymentScripts",
-          "group": "3_export@1"
-        },
-        {
           "command": "azureLogicAppsStandard.exportLogicApp",
           "group": "3_export@1"
         }
@@ -395,11 +392,6 @@
         },
         {
           "command": "azureLogicAppsStandard.deploySlot",
-          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot/",
-          "group": "3@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot/",
           "group": "3@2"
         },

@@ -8,11 +8,12 @@ import {
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
   localSettingsFileName,
+  extensionCommand,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { unzipLogicAppArtifacts } from '../../utils/taskUtils';
+import { showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
 import type { IAzureScriptWizard } from './azureScriptWizard';
 import { createAzureWizard } from './azureScriptWizard';
 import { FileManagement } from './iacGestureHelperFunctions';
@@ -27,13 +28,15 @@ import { window } from 'vscode';
 export async function generateDeploymentScripts(context: IActionContext, folder: vscode.Uri): Promise<void> {
   try {
     addLocalFuncTelemetry(context);
+    const commandIdentifier = extensionCommand.generateDeploymentScripts;
+    showPreviewWarning(commandIdentifier);
     const scriptContext = await setupWizardScriptContext(context, folder);
     const inputs = await gatherAndValidateInputs(scriptContext, folder);
     const zipContent = await callApiForDeploymentArtifact(inputs);
     const sourceControlPath = scriptContext.sourceControlPath;
     await handleApiResponse(zipContent, sourceControlPath, scriptContext);
   } catch (error) {
-    window.showErrorMessage('An error occurred:', error);
+    window.showErrorMessage('The following error occurred: ', error);
   }
 }
 
@@ -62,7 +65,7 @@ async function callApiForDeploymentArtifact(inputs: any): Promise<Buffer> {
     const { subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan } = inputs;
     return await callApi(subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan);
   } catch (error) {
-    window.showErrorMessage('API call failed due to error:', error);
+    window.showErrorMessage('The API call failed due to the following error: ', error);
     throw new Error(`API call failed: ${error}`);
   }
 }
@@ -77,7 +80,7 @@ async function callApiForDeploymentArtifact(inputs: any): Promise<Buffer> {
 async function handleApiResponse(zipContent: Buffer, targetDirectory: string, scriptContext: IAzureScriptWizard): Promise<void> {
   if (!zipContent) {
     window.showErrorMessage('API response content not valid');
-    throw new Error('No valid API response');
+    throw new Error('The API response is not valid.');
   }
   await unzipLogicAppArtifacts(zipContent, targetDirectory);
 
@@ -86,12 +89,7 @@ async function handleApiResponse(zipContent: Buffer, targetDirectory: string, sc
   } else {
     FileManagement.convertToValidWorkspace(targetDirectory);
   }
-  if (scriptContext.workspaceFilePath) {
-    const uri = vscode.Uri.file(scriptContext.workspaceFilePath);
-    await vscode.commands.executeCommand('vscode.openFolder', uri, true);
-  }
-
-  vscode.window.showInformationMessage('artifacts exported successfully to:', targetDirectory);
+  vscode.window.showInformationMessage('artifacts exported successfully to the following directory: ', targetDirectory);
 }
 
 /**
@@ -146,8 +144,7 @@ async function callApi(
     const response = await requestP(requestOptions);
     return Buffer.from(response, 'binary'); // Convert the response to a buffer
   } catch (error) {
-    window.showErrorMessage('An error occurred while calling the API:', error);
-    // Handle the error gracefully, display an error message, or perform any necessary cleanup
+    window.showErrorMessage('The following error occurred while calling the API: ', error);
     throw error;
   }
 }

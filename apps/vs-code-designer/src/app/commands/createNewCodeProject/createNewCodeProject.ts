@@ -2,10 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../constants';
+import {
+  extensionCommand,
+  funcVersionSetting,
+  projectLanguageSetting,
+  projectOpenBehaviorSetting,
+  projectTemplateKeySetting,
+} from '../../../constants';
 import { localize } from '../../../localize';
-import * as packageJson from '../../../package.json';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { showPreviewWarning } from '../../utils/taskUtils';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
@@ -45,8 +51,8 @@ export async function createNewCodeProjectFromCommand(
 
 export async function createNewCodeProjectInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
   addLocalFuncTelemetry(context);
-  showPreviewWarning(); //Show warning if command is set to preview
-
+  const commandIdentifier = extensionCommand.createNewCodeProject;
+  showPreviewWarning(commandIdentifier);
   const language: ProjectLanguage | undefined = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
   const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
@@ -93,14 +99,6 @@ async function createArtifactsFolder(context: IFunctionWizardContext): Promise<v
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
 }
 
-function showPreviewWarning() {
-  const createNewCodeProjectCommand = packageJson.contributes.commands.find(
-    (command) => command.command === 'azureLogicAppsStandard.createNewCodeProject'
-  );
-  if (createNewCodeProjectCommand.preview) {
-    window.showInformationMessage('The "Create new logic app workspace" command is a preview feature and may be subject to change.');
-  }
-}
 async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
