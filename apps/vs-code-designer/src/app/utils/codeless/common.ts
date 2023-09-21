@@ -6,6 +6,7 @@ import {
   workflowLocationKey,
   workflowManagementBaseURIKey,
   managementApiPrefix,
+  workflowFileName,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -215,7 +216,7 @@ export async function getManualWorkflowsInLocalProject(projectPath: string, work
 
     if (fileStats.isDirectory() && subPath !== workflowToExclude) {
       try {
-        const workflowFilePath = path.join(fullPath, 'workflow.json');
+        const workflowFilePath = path.join(fullPath, workflowFileName);
 
         if (await fse.pathExists(workflowFilePath)) {
           const schema = getRequestTriggerSchema(JSON.parse(readFileSync(workflowFilePath, 'utf8')));
