@@ -26,7 +26,8 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
   'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
-  'elk.layered.spacing.edgeEdgeBetweenLayers': '0',
+  // Spacing values
+  'elk.spacing.edgeNode': '180',
   'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.default,
   'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.default,
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
