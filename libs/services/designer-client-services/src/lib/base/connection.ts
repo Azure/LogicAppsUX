@@ -66,17 +66,21 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   async getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger> {
-    if (!isArmResourceId(connectorId)) {
-      return { connector: await this.getConnector(connectorId), swagger: null as any };
+    try {
+      if (!isArmResourceId(connectorId)) {
+        return { connector: await this.getConnector(connectorId), swagger: null as any };
+      }
+
+      const { apiVersion, httpClient } = this.options;
+      const [connector, swagger] = await Promise.all([
+        this.getConnector(connectorId),
+        httpClient.get<OpenAPIV2.Document>({ uri: connectorId, queryParameters: { 'api-version': apiVersion, export: 'true' } }),
+      ]);
+
+      return { connector, swagger };
+    } catch (error: any) {
+      throw error?.response?.data?.error?.message ?? error;
     }
-
-    const { apiVersion, httpClient } = this.options;
-    const [connector, swagger] = await Promise.all([
-      this.getConnector(connectorId),
-      httpClient.get<OpenAPIV2.Document>({ uri: connectorId, queryParameters: { 'api-version': apiVersion, export: 'true' } }),
-    ]);
-
-    return { connector, swagger };
   }
 
   async getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document> {
