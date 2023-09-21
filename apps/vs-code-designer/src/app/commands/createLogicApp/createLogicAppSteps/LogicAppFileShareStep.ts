@@ -2,8 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcIgnoreFileName, hostFileName } from '../../../../constants';
+import { hostFileName } from '../../../../constants';
 import { createStorageClient } from '../../../utils/azureClients';
+import { getWorkflowsPathInLocalProject } from '../../../utils/codeless/common';
 import { tryGetFunctionProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../../workflows/switchDebugMode/switchDebugMode';
 import type { StorageManagementClient, StorageAccountListKeysResult } from '@azure/arm-storage';
@@ -27,13 +28,17 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
       const storageShareClient = await this.createStorageClient(context, storageClient);
       const shareName = context.newSiteName;
       const shareClient = storageShareClient.getShareClient(shareName);
+
       await this.createFileShare(shareClient);
+
       const rootDirectories = ['deployments', 'diagnostics', 'locks', 'wwwroot'];
       await this.createDirectories(shareClient, rootDirectories);
+
       const workspaceFolder = await getWorkspaceFolderPath(context);
       const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
       await this.uploadRootFiles(shareClient, projectPath);
-      //await this.uploadWorkflowsFiles(shareClient);
+
+      await this.uploadWorkflowsFiles(shareClient, projectPath);
     } catch (error) {
       console.log(error);
       throw error;
@@ -74,27 +79,16 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
 
   private async uploadRootFiles(shareClient: ShareClient, projectPath: string | undefined) {
     const hostJsonPath: string = path.join(projectPath, hostFileName);
-    const funcIgnorePath: string = path.join(projectPath, funcIgnoreFileName);
-    await this.uploadFiles(
-      shareClient,
-      [
-        { path: hostJsonPath, name: hostFileName },
-        { path: funcIgnorePath, name: funcIgnorePath },
-      ],
-      'wwwroot'
-    );
+    await this.uploadFiles(shareClient, [{ path: hostJsonPath, name: hostFileName }], 'wwwroot');
   }
 
-  private async uploadWorkflowsFiles(shareClient: ShareClient) {
-    const hostJsonPath: string = path.join('context.projectPath', hostFileName);
-    const funcIgnorePath: string = path.join('context.projectPath', funcIgnoreFileName);
-    await this.uploadFiles(
-      shareClient,
-      [
-        { path: hostJsonPath, name: hostFileName },
-        { path: funcIgnorePath, name: funcIgnorePath },
-      ],
-      'wwwroot'
-    );
+  private async uploadWorkflowsFiles(shareClient: ShareClient, projectPath: string | undefined) {
+    const workflowFiles = await getWorkflowsPathInLocalProject(projectPath);
+
+    for (const workflowFile of workflowFiles) {
+      const directoryPath = path.join('wwwroot', workflowFile.name);
+      await this.createDirectories(shareClient, [directoryPath]);
+      await this.uploadFiles(shareClient, [workflowFile], directoryPath);
+    }
   }
 }

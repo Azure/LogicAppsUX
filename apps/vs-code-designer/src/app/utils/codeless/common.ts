@@ -235,6 +235,35 @@ export async function getManualWorkflowsInLocalProject(projectPath: string, work
   return workflowDetails;
 }
 
+export async function getWorkflowsPathInLocalProject(projectPath: string): Promise<Array<{ path: string; name: string }>> {
+  if (!(await fse.pathExists(projectPath))) {
+    return [];
+  }
+
+  const worfklowFiles = [];
+  const subPaths: string[] = await fse.readdir(projectPath);
+
+  for (const subPath of subPaths) {
+    const fullPath: string = path.join(projectPath, subPath);
+    const fileStats = await fse.lstat(fullPath);
+
+    if (fileStats.isDirectory()) {
+      try {
+        const workflowFilePath = path.join(fullPath, workflowFileName);
+
+        if (await fse.pathExists(workflowFilePath)) {
+          worfklowFiles.push({ path: workflowFilePath, name: workflowFileName });
+        }
+      } catch {
+        // If unable to load the workflow or read the definition we skip the workflow
+        // in child workflow list.
+      }
+    }
+  }
+
+  return worfklowFiles;
+}
+
 export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): any {
   const {
     definition: { triggers },
