@@ -1,4 +1,27 @@
 # Logic Apps Designer
+## [2.70.0](https://github.com/Azure/LogicAppsUX/compare/v2.69.0...v2.70.0) (2023-09-21)
+
+## [2.69.0](https://github.com/Azure/LogicAppsUX/compare/v2.68.0...v2.69.0) (2023-09-20)
+
+
+### Features
+
+* **copilot:** Integrating backend with copilot UI ([#3343](https://github.com/Azure/LogicAppsUX/issues/3343)) ([cee80be](https://github.com/Azure/LogicAppsUX/commit/cee80bea92e4a1344655fbe165c03d9f5eb5d8ff))
+* **vscode:** Improve Logic Apps sites API call ([#3338](https://github.com/Azure/LogicAppsUX/issues/3338)) ([abe421a](https://github.com/Azure/LogicAppsUX/commit/abe421a25d1b239fb6305e49a4b788d33271e317))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Browse dialog only includes .XSD and All files ([#3342](https://github.com/Azure/LogicAppsUX/issues/3342)) ([bece897](https://github.com/Azure/LogicAppsUX/commit/bece897d50c44e3ae0248622036ab5af096e70a2))
+* **Data Mapper:** Clicking on action (and deleting it) will cause data mapper to crash ([#3341](https://github.com/Azure/LogicAppsUX/issues/3341)) ([65d0d4a](https://github.com/Azure/LogicAppsUX/commit/65d0d4a78dd8a2ac75a1841713aa19a2a5f7f898))
+* **Data Mapper:** test button is disabled until you close and come back to test ([#3337](https://github.com/Azure/LogicAppsUX/issues/3337)) ([eaed46a](https://github.com/Azure/LogicAppsUX/commit/eaed46a67cbf0d758c6b725947a7fe168cf815e5))
+* **Data Mapper:** unlimited inputs now show data type ([#3321](https://github.com/Azure/LogicAppsUX/issues/3321)) ([1aa496f](https://github.com/Azure/LogicAppsUX/commit/1aa496f5e2ef90ceb1ca6dc56729835a8ebee151))
+* **designer:** Fixed a few Managed Identity bugs ([#3350](https://github.com/Azure/LogicAppsUX/issues/3350)) ([9a99ec8](https://github.com/Azure/LogicAppsUX/commit/9a99ec8b7419f3d1426e1d57113abbd1fc2a0422))
+* **designer:** If possible convert expression into output token ([#3316](https://github.com/Azure/LogicAppsUX/issues/3316)) ([ddeecde](https://github.com/Azure/LogicAppsUX/commit/ddeecde1a849bc12cc634d86ade33b2528b75a17))
+* **designer:** Update Validation Checks for URLs and Condition Editor ([#3346](https://github.com/Azure/LogicAppsUX/issues/3346)) ([d9b1eac](https://github.com/Azure/LogicAppsUX/commit/d9b1eac282bf09a7537a0b29bb4cc20d6d537872))
+* **meta:** Fixed branch name in production build action ([#3336](https://github.com/Azure/LogicAppsUX/issues/3336)) ([c045b2b](https://github.com/Azure/LogicAppsUX/commit/c045b2b2fa16c6fb4d8bd641f77d85695bdaecfe))
+* **vscode:** Add back feature to create logic apps when deploying ([#3352](https://github.com/Azure/LogicAppsUX/issues/3352)) ([6253ffe](https://github.com/Azure/LogicAppsUX/commit/6253ffe7dad274062c6524a65cbd2e52e03fe48a))
+
 ## [2.68.0](https://github.com/Azure/LogicAppsUX/compare/v2.67.0...v2.68.0) (2023-09-14)
 
 
