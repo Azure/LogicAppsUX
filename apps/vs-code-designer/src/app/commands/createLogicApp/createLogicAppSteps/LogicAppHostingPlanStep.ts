@@ -29,6 +29,10 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
       await wizardContext.ui.showQuickPick(picks, { placeHolder })
     ).data;
 
+    wizardContext.telemetry.properties.useConsumptionPlan = wizardContext.useConsumptionPlan ? 'true' : 'false';
+    wizardContext.telemetry.properties.planSkuFamilyFilter = wizardContext.useConsumptionPlan ? 'true' : 'false';
+    wizardContext.telemetry.properties.useContainerApps = wizardContext.useConsumptionPlan ? 'true' : 'false';
+
     setSiteOS(wizardContext);
   }
 

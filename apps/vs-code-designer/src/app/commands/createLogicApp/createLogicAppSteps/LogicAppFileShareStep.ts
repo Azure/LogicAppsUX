@@ -18,7 +18,7 @@ import { tryGetFunctionProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../../workflows/switchDebugMode/switchDebugMode';
 import type { StorageManagementClient, StorageAccountListKeysResult } from '@azure/arm-storage';
 import { type ShareClient, ShareServiceClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
-import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
+import { AzureWizardExecuteStep, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -33,30 +33,33 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
   public priority = 140;
 
   public async execute(
-    context: ILogicAppWizardContext,
+    wizardContext: ILogicAppWizardContext,
     progress: vscode.Progress<{ message?: string; increment?: number }>
   ): Promise<void> {
-    context.telemetry.properties.newFileShare = context.newSiteName;
+    await callWithTelemetryAndErrorHandling('uploadFileShareStep', async (context: IActionContext) => {
+      context.telemetry.properties.storage = wizardContext.storageAccount?.name;
+      context.telemetry.properties.fileShare = wizardContext.newSiteName;
 
-    const message: string = localize('uploadingFiles', 'Uploading files to File Share "{0}"...', context.newSiteName);
-    ext.outputChannel.appendLog(message);
-    progress.report({ message });
+      const message: string = localize('uploadingFiles', 'Uploading files to File Share "{0}"...', wizardContext.newSiteName);
+      ext.outputChannel.appendLog(message);
+      progress.report({ message });
 
-    const storageClient: StorageManagementClient = await createStorageClient(context);
-    const storageShareClient = await this.createStorageClient(context, storageClient);
-    const shareName = context.newSiteName.toLowerCase();
-    const shareClient = storageShareClient.getShareClient(shareName);
+      const storageClient: StorageManagementClient = await createStorageClient(wizardContext);
+      const storageShareClient = await this.createStorageClient(wizardContext, storageClient);
+      const shareName = wizardContext.newSiteName.toLowerCase();
+      const shareClient = storageShareClient.getShareClient(shareName);
 
-    await this.createFileShare(shareClient);
+      await this.createFileShare(shareClient);
 
-    const rootDirectories = [deploymentsDirectory, diagnosticsDirectory, locksDirectory, wwwrootDirectory];
-    await this.createDirectories(shareClient, rootDirectories);
+      const rootDirectories = [deploymentsDirectory, diagnosticsDirectory, locksDirectory, wwwrootDirectory];
+      await this.createDirectories(shareClient, rootDirectories);
 
-    const workspaceFolder = await getWorkspaceFolderPath(context);
-    const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-    await this.uploadRootFiles(shareClient, projectPath);
+      const workspaceFolder = await getWorkspaceFolderPath(wizardContext);
+      const projectPath: string | undefined = await tryGetFunctionProjectRoot(wizardContext, workspaceFolder, true /* suppressPrompt */);
+      await this.uploadRootFiles(shareClient, projectPath);
 
-    await this.uploadWorkflowsFiles(shareClient, projectPath);
+      await this.uploadWorkflowsFiles(shareClient, projectPath);
+    });
   }
 
   public shouldExecute(context: ILogicAppWizardContext): boolean {

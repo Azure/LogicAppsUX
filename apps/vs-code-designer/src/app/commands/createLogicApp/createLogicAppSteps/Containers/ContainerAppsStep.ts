@@ -24,7 +24,7 @@ export class ContainerAppsStep extends AzureWizardPromptStep<ILogicAppWizardCont
     } else {
       wizardContext.containerApp = containerEnvironment;
     }
-    wizardContext;
+    wizardContext.telemetry.properties.containerApp = wizardContext.containerApp?.name;
   }
 
   public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
