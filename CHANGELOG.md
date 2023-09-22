@@ -1,4 +1,22 @@
 # Logic Apps Designer
+### [2.70.1](https://github.com/Azure/LogicAppsUX/compare/v2.70.0...v2.70.1) (2023-09-22)
+
+
+### Features
+
+* **Designer:** Recommendation panel now autofocuses to search bar ([#3372](https://github.com/Azure/LogicAppsUX/issues/3372)) ([858a243](https://github.com/Azure/LogicAppsUX/commit/858a2433a211eb16f22b614f31f7c8d713a0dd37))
+
+
+### Bug Fixes
+
+* **Data Mapper:** map not loading on some instances ([#3359](https://github.com/Azure/LogicAppsUX/issues/3359)) ([c90f76f](https://github.com/Azure/LogicAppsUX/commit/c90f76f1abde3dd04f7738d50392650dc2a026cf))
+* **Data Mapper:** not showing initial source Schema with connections ([#3366](https://github.com/Azure/LogicAppsUX/issues/3366)) ([778cd46](https://github.com/Azure/LogicAppsUX/commit/778cd460f34e188d376c846c17af3a3b3ce1eaf3))
+* **designer:** Add z-index to Errors panel ([#3353](https://github.com/Azure/LogicAppsUX/issues/3353)) ([f5cfdca](https://github.com/Azure/LogicAppsUX/commit/f5cfdcab108b819bbf0b887d09aa796a8927bce1))
+* **designer:** Don't throw for MISSING_DATA error in IntlProvider ([#3362](https://github.com/Azure/LogicAppsUX/issues/3362)) ([c3a34a7](https://github.com/Azure/LogicAppsUX/commit/c3a34a7160602c3b402548bcbd28015e1508bb6f))
+* **designer:** Fix exception due to usage of LoggingService in DesignerProvider ([#3365](https://github.com/Azure/LogicAppsUX/issues/3365)) ([a534dff](https://github.com/Azure/LogicAppsUX/commit/a534dff0b02faf3ce5abc5a8f5847e098c2331e3))
+* **Designer:** Fixed an edge-node overlap bug ([#3360](https://github.com/Azure/LogicAppsUX/issues/3360)) ([a4eed91](https://github.com/Azure/LogicAppsUX/commit/a4eed914438e8f83dcb62a8128d0c522d5e8d3af))
+* **Designer:** Fixed error bubbling on managed connector request error ([#3363](https://github.com/Azure/LogicAppsUX/issues/3363)) ([1620e15](https://github.com/Azure/LogicAppsUX/commit/1620e15cb45684eed18243adceb7af0a5b3d3f71))
+
 ## [2.70.0](https://github.com/Azure/LogicAppsUX/compare/v2.69.0...v2.70.0) (2023-09-21)
 
 ## [2.69.0](https://github.com/Azure/LogicAppsUX/compare/v2.68.0...v2.69.0) (2023-09-20)
