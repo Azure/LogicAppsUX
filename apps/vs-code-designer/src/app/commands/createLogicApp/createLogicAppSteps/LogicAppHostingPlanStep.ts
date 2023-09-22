@@ -19,7 +19,7 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     const placeHolder: string = localize('selectHostingPlan', 'Select a hosting plan.');
-    const picks: IAzureQuickPickItem<[boolean, boolean, RegExp | undefined, boolean]>[] = [
+    const picks: IAzureQuickPickItem<[boolean, boolean, RegExp, boolean]>[] = [
       { label: localize('workflowstandard', 'Workflow Standard'), data: [false, false, /^WS$/i, false] },
       { label: localize('dedicated', 'App Service Plan'), data: [false, true, /^IV2$/i, false] },
       { label: localize('container apps', 'Container Apps Environment'), data: [false, true, /^IV2$/i, true] },
@@ -30,8 +30,8 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
     ).data;
 
     wizardContext.telemetry.properties.useConsumptionPlan = wizardContext.useConsumptionPlan ? 'true' : 'false';
-    wizardContext.telemetry.properties.planSkuFamilyFilter = wizardContext.useConsumptionPlan ? 'true' : 'false';
-    wizardContext.telemetry.properties.useContainerApps = wizardContext.useConsumptionPlan ? 'true' : 'false';
+    wizardContext.telemetry.properties.planSkuFamilyFilter = wizardContext.planSkuFamilyFilter.source;
+    wizardContext.telemetry.properties.useContainerApps = wizardContext.useContainerApps ? 'true' : 'false';
 
     setSiteOS(wizardContext);
   }
