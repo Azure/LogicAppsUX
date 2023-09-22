@@ -4,11 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
 import { showSiteCreated } from '../../commands/createLogicApp/showSiteCreated';
+import { createWebSiteClient } from '../../utils/azureClients';
 import { getIconPath } from '../../utils/tree/assets';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import { SlotTreeItem } from './SlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
-import { createSlot, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
+import { createSlot, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';

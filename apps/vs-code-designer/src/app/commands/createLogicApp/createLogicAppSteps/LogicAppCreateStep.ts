@@ -16,11 +16,12 @@ import {
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getStorageConnectionString } from '../../../utils/azure';
+import { createWebSiteClient } from '../../../utils/azureClients';
 import { getRandomHexString } from '../../../utils/fs';
 import { tryGetMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
-import type { NameValuePair, Site, SiteConfig, WebSiteManagementClient } from '@azure/arm-appservice';
+import type { NameValuePair, SiteConfig, WebSiteManagementClient } from '@azure/arm-appservice';
 import { Site as modelSite } from '@azure/arm-appservice/dist';
-import { createWebSiteClient, WebsiteOS } from '@microsoft/vscode-azext-azureappservice';
+import { WebsiteOS } from '@microsoft/vscode-azext-azureappservice';
 import type { CustomLocation } from '@microsoft/vscode-azext-azureappservice';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardExecuteStep, nonNullOrEmptyValue, nonNullProp } from '@microsoft/vscode-azext-utils';
@@ -51,9 +52,9 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     return !context.site;
   }
 
-  private async getNewSite(context: ILogicAppWizardContext): Promise<Site> {
+  private async getNewSite(context: ILogicAppWizardContext): Promise<modelSite> {
     const locationName: string = (await LocationListStep.getLocation(context))?.name;
-    const site: Site = {
+    const site: modelSite = {
       name: context.newSiteName,
       kind: getSiteKind(context),
       location: locationName,
@@ -63,7 +64,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       reserved: context.newSiteOS === WebsiteOS.linux,
       identity: context.customLocation ? undefined : { type: 'SystemAssigned' },
       managedEnvironmentId: context.useContainerApps ? context.containerApp?.id : undefined,
-    } as Site;
+    };
 
     if (context.customLocation) {
       this.addCustomLocationProperties(site, context.customLocation);
@@ -72,7 +73,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     return site;
   }
 
-  private addCustomLocationProperties(site: Site, customLocation: CustomLocation): void {
+  private addCustomLocationProperties(site: modelSite, customLocation: CustomLocation): void {
     modelSite.type.modelProperties.extendedLocation = {
       serializedName: 'extendedLocation',
       type: {
@@ -135,11 +136,14 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
         name: workerRuntimeKey,
         value: runtimeWithoutVersion,
       },
-      {
+    ];
+
+    if (!context.useContainerApps) {
+      appSettings.push({
         name: webhookRedirectHostUri,
         value: '',
-      },
-    ];
+      });
+    }
 
     if (context.storageType === StorageOptions.SQL) {
       appSettings.push(

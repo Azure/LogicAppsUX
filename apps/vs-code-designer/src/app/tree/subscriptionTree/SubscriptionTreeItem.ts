@@ -12,6 +12,7 @@ import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSte
 import { CustomLocationStorageAccountStep } from '../../commands/deploy/storageAccountSteps/CustomLocationStorageAccountStep';
 import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
 import { createActivityContext } from '../../utils/activityUtils';
+import { createWebSiteClient } from '../../utils/azureClients';
 import { verifyDeploymentResourceGroup } from '../../utils/codeless/common';
 import { getRandomHexString } from '../../utils/fs';
 import { getDefaultFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -26,7 +27,6 @@ import {
   AppInsightsListStep,
   AppKind,
   AppServicePlanCreateStep,
-  createWebSiteClient,
   CustomLocationListStep,
   ParsedSite,
   SiteNameStep,
