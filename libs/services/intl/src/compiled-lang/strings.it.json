@@ -29,6 +29,12 @@
       "value": "Con errori"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Restituisce la porta da un URI. Se la porta non è specificata, restituisce la porta predefinita per il protocollo"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Immetti un numero intero valido."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Converte l'argomento del parametro in un numero a virgola mobile"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Immetti un indirizzo Email valido."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Nascondi schema di origine"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
     }
   ],
   "1uGBLP": [
@@ -863,6 +863,12 @@
       "value": "Chiudi visualizzazione codice"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
     {
       "type": 0,
       "value": "Il flusso è stato aggiornato."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Saving this flow..."
     }
   ],
   "4izAMi": [
@@ -1409,16 +1421,16 @@
       "value": "Il flusso di lavoro verrà ripristinato allo stato in cui si trovava prima della modifica di Copilot. Se sono state apportate modifiche aggiuntive al flusso di lavoro dopo il copilot, queste saranno perdute. Questa azione non può essere annullata. Continuare?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Codice stato"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Segnala un bug"
     }
   ],
   "7lnElz": [
@@ -2560,6 +2572,12 @@
       "value": "Visualizzare la cronologia delle richieste per questa operazione"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3029,12 +3047,6 @@
       "value": "Errore durante il recupero del manifesto"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Immetti un valore datetime valido."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3261,6 +3273,12 @@
       "value": "Azione annullata"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3357,12 +3375,6 @@
     {
       "type": 0,
       "value": "\" con"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Immetti un numero double valido."
     }
   ],
   "KV4uky": [
@@ -3764,12 +3776,6 @@
       "value": "Modifica in modalità avanzata"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Immetti un numero valido."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3914,6 +3920,12 @@
       "value": "Entità servizio"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Working on it..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -4002,6 +4014,12 @@
     {
       "type": 0,
       "value": "Immetti il gruppo di destinatari."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "OVvieE": [
@@ -4140,6 +4158,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore corrispondene al numero di integer nella matrice."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Whitespaces must be encoded for URIs"
     }
   ],
   "P4rEwD": [
@@ -5708,7 +5732,7 @@
   "YEHutH": [
     {
       "type": 0,
-      "value": "Clear Editor"
+      "value": "Cancella editor"
     }
   ],
   "YF1yZk": [
@@ -6037,12 +6061,6 @@
       "value": "Immetti file PFX"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Immetti un valore float valido."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6135,6 +6153,12 @@
     {
       "type": 0,
       "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
     }
   ],
   "ba9yGJ": [
@@ -6675,6 +6699,12 @@
       "value": "(UTC + 8.00 h) Pechino, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6787,6 +6817,12 @@
     {
       "type": 0,
       "value": "(UTC+5.00) Ashkhabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "gc6v4X": [
@@ -6952,10 +6988,10 @@
       "value": "Non è quello che sto cercando"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
-      "value": "Il valore è troppo grande."
+      "value": "The value is too large."
     }
   ],
   "hq1mk6": [
@@ -7196,12 +7232,6 @@
     {
       "type": 0,
       "value": " s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Immettere una tabella valida."
     }
   ],
   "iy8rNf": [
@@ -7565,6 +7595,12 @@
     {
       "type": 0,
       "value": "Identità gestita"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
     }
   ],
   "lM9qrG": [
@@ -8023,12 +8059,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Immetti un URI valido."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8119,6 +8149,12 @@
       "value": "Aggiungi una nota"
     }
   ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
+    }
+  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -8189,6 +8225,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valori da combinare in una matrice."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
     }
   ],
   "pXmFGf": [
@@ -9350,6 +9392,12 @@
     {
       "type": 0,
       "value": "Inclusione di contenuto dinamico"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stop generating"
     }
   ],
   "wPlTDB": [

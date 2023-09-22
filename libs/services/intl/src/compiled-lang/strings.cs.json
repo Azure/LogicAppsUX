@@ -29,6 +29,12 @@
       "value": "S chybou"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Vrátí port z identifikátoru URI. Pokud se port nezadá, vrátí výchozí port protokolu."
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Zadejte platné celé číslo."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Převede argument parametru na číslo s plovoucí desetinnou čárkou."
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Zadejte platný e-mail."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Skrýt zdrojové schéma"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
     }
   ],
   "1uGBLP": [
@@ -871,6 +871,12 @@
       "value": "Zavřít zobrazení kódu"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "Váš tok se aktualizoval."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Saving this flow..."
     }
   ],
   "4izAMi": [
@@ -1417,16 +1429,16 @@
       "value": "Tím se pracovní postup vrátí do stavu, ve který byl před úpravami Copilotem. Pokud jste po úpravách Copilotem provedli další úpravy pracovního postupu, přijdete o ně. Tuto akci nelze vrátit zpět. Chcete pokračovat?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Stavový kód"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Nahlásit chybu"
     }
   ],
   "7lnElz": [
@@ -2587,6 +2599,12 @@
       "value": "Zobrazit historii žádostí pro tuto operaci"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3075,12 +3093,6 @@
       "value": "Chyba při načítání manifestu"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Zadejte platné datum a čas."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3303,6 +3315,12 @@
       "value": "Akce byla vrácena zpět."
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3399,12 +3417,6 @@
     {
       "type": 0,
       "value": " za"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Zadejte platné dvojčíslo."
     }
   ],
   "KV4uky": [
@@ -3817,12 +3829,6 @@
       "value": "Upravit v rozšířeném režimu"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Zadejte platné číslo."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3971,6 +3977,12 @@
       "value": "Objekt služby"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Working on it..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -4059,6 +4071,12 @@
     {
       "type": 0,
       "value": "Zadejte cílovou skupinu."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "OVvieE": [
@@ -4185,6 +4203,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Tato hodnota představuje počet celých čísel v poli."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Whitespaces must be encoded for URIs"
     }
   ],
   "P4rEwD": [
@@ -6089,12 +6113,6 @@
       "value": "Zadejte PFX."
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Zadejte platný float."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6187,6 +6205,12 @@
     {
       "type": 0,
       "value": "Informace"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
     }
   ],
   "ba9yGJ": [
@@ -6723,6 +6747,12 @@
       "value": "(UTC+08:00) Peking, Čchung-čching, Hongkong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6843,6 +6873,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Ašchabád, Taškent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "gc6v4X": [
@@ -7019,10 +7055,10 @@
       "value": "Toto nehledám"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
-      "value": "Hodnota je moc velká."
+      "value": "The value is too large."
     }
   ],
   "hq1mk6": [
@@ -7267,12 +7303,6 @@
     {
       "type": 0,
       "value": " s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Zadejte platnou tabulku."
     }
   ],
   "iy8rNf": [
@@ -7647,6 +7677,12 @@
     {
       "type": 0,
       "value": "Spravovaná identita"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
     }
   ],
   "lM9qrG": [
@@ -8109,12 +8145,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Zadejte platný identifikátor URI."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8205,6 +8235,12 @@
       "value": "Přidat poznámku"
     }
   ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
+    }
+  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -8275,6 +8311,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Hodnoty, které se mají sloučit do pole."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
     }
   ],
   "pXmFGf": [
@@ -9439,6 +9481,12 @@
     {
       "type": 0,
       "value": "Zahrnutí dynamického obsahu"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stop generating"
     }
   ],
   "wPlTDB": [

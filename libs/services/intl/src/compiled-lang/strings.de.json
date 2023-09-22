@@ -29,6 +29,12 @@
       "value": "Fehlerhaft"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -413,12 +419,6 @@
       "value": "Gibt den Port aus einem URI zurück. Falls der Port nicht angegeben ist, wird der Standardport für das Protokoll zurückgegeben."
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Geben Sie eine gültige ganze Zahl ein."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -453,12 +453,6 @@
     {
       "type": 0,
       "value": "Parameterargument in Gleitkommazahl konvertieren"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Geben Sie eine gültige E-Mail-Adresse an."
     }
   ],
   "1ZSzl6": [
@@ -525,6 +519,12 @@
     {
       "type": 0,
       "value": "Quellschema ausblenden"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
     }
   ],
   "1uGBLP": [
@@ -879,6 +879,12 @@
       "value": "Codeansicht schließen"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -1001,6 +1007,12 @@
     {
       "type": 0,
       "value": "Ihr Flow wurde aktualisiert."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Saving this flow..."
     }
   ],
   "4izAMi": [
@@ -1429,16 +1441,16 @@
       "value": "Dadurch wird Ihr Workflow auf den Zustand zurückgesetzt, in dem er sich vor der Bearbeitung von Copilot befand. Wenn Sie zusätzliche Änderungen am Workflow nach Copilot vorgenommen haben, verlieren Sie diese. Diese Aktion kann nicht rückgängig gemacht werden. Möchten Sie den Vorgang fortsetzen?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuscode"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Fehler melden"
     }
   ],
   "7lnElz": [
@@ -2585,6 +2597,12 @@
       "value": "Anforderungsverlauf für diesen Vorgang anzeigen"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3055,12 +3073,6 @@
       "value": "Fehler beim Abrufen des Manifests"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen Wert für „Datum/Uhrzeit“ ein."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3287,6 +3299,12 @@
       "value": "Aktion rückgängig gemacht"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3383,12 +3401,6 @@
     {
       "type": 0,
       "value": "\" ersetzen durch"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Geben Sie eine gültige Double-Zahl ein."
     }
   ],
   "KV4uky": [
@@ -3779,12 +3791,6 @@
       "value": "Im erweiterten Modus bearbeiten"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Geben Sie eine gültige Zahl ein."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3929,6 +3935,12 @@
       "value": "Dienstprinzipal"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Working on it..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -4017,6 +4029,12 @@
     {
       "type": 0,
       "value": "Geben Sie die Benutzergruppe ein."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "OVvieE": [
@@ -4147,6 +4165,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Dieser Wert entspricht der Anzahl von ganzen Zahlen im Array."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Whitespaces must be encoded for URIs"
     }
   ],
   "P4rEwD": [
@@ -6049,12 +6073,6 @@
       "value": "PFX eingeben"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen Gleitkommawert ein."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6147,6 +6165,12 @@
     {
       "type": 0,
       "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
     }
   ],
   "ba9yGJ": [
@@ -6687,6 +6711,12 @@
       "value": "(UTC+08:00) Beijing (Peking), Chongqing, Hongkong (SAR), Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6807,6 +6837,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Aschgabat, Taschkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "gc6v4X": [
@@ -6961,10 +6997,10 @@
       "value": "Dies ist nicht das, wonach ich suche"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
-      "value": "Der Wert ist zu groß."
+      "value": "The value is too large."
     }
   ],
   "hq1mk6": [
@@ -7205,12 +7241,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Geben Sie eine gültige Tabelle ein."
     }
   ],
   "iy8rNf": [
@@ -7563,6 +7593,12 @@
     {
       "type": 0,
       "value": "Verwaltete Identität"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
     }
   ],
   "lM9qrG": [
@@ -8029,12 +8065,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Geben Sie eine gültige URL ein."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8125,6 +8155,12 @@
       "value": "Notiz hinzufügen"
     }
   ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
+    }
+  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -8195,6 +8231,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Werte, die zu einem Array gruppiert werden sollen."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
     }
   ],
   "pXmFGf": [
@@ -9345,6 +9387,12 @@
     {
       "type": 0,
       "value": "Einschließlich dynamischer Inhalte"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stop generating"
     }
   ],
   "wPlTDB": [

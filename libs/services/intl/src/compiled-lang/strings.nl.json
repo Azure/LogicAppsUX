@@ -29,6 +29,12 @@
       "value": "Mislukt"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Hiermee wordt de poort van een URI geretourneerd. Als de poort niet is opgegeven, wordt de standaardpoort voor het protocol geretourneerd"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Voer een geldig geheel getal in."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Het parameterargument naar een drijvend-kommagetal converteren"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Voer een geldig e-mailadres in."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Bronschema verbergen"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
     }
   ],
   "1uGBLP": [
@@ -871,6 +871,12 @@
       "value": "Codeweergave sluiten"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "Uw stroom is bijgewerkt."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Saving this flow..."
     }
   ],
   "4izAMi": [
@@ -1421,16 +1433,16 @@
       "value": "Hiermee wordt uw werkstroom hersteld naar de status van vóór de bewerking van Copilot. Als u aanvullende bewerkingen in de werkstroom hebt aangebracht na die van Copilot, gaan deze verloren. Deze actie kan niet ongedaan worden gemaakt. Wilt u doorgaan?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuscode"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Een fout melden"
     }
   ],
   "7lnElz": [
@@ -2565,6 +2577,12 @@
       "value": "De aanvraaggeschiedenis voor deze bewerking weergeven"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3031,12 +3049,6 @@
       "value": "Fout bij het ophalen van het manifest"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Voer een geldige datum/tijd in."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3263,6 +3275,12 @@
       "value": "Actie ongedaan gemaakt"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3355,12 +3373,6 @@
     {
       "type": 0,
       "value": " vervangen door"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Voer een geldig dubbel getal in."
     }
   ],
   "KV4uky": [
@@ -3751,12 +3763,6 @@
       "value": "Bewerken in geavanceerde modus"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Voer een geldig getal in."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3901,6 +3907,12 @@
       "value": "Service-principal"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Working on it..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3989,6 +4001,12 @@
     {
       "type": 0,
       "value": "Voer de doelgroep in."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "OVvieE": [
@@ -4115,6 +4133,12 @@
     {
       "type": 0,
       "value": "Vereist. Deze waarde is het aantal gehele getallen in de matrix."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Whitespaces must be encoded for URIs"
     }
   ],
   "P4rEwD": [
@@ -5997,12 +6021,6 @@
       "value": "PFX invoeren"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Voer een geldige float in."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6095,6 +6113,12 @@
     {
       "type": 0,
       "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
     }
   ],
   "ba9yGJ": [
@@ -6631,6 +6655,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hongkong SAR, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6751,6 +6781,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Asjchabad, Tasjkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "gc6v4X": [
@@ -6905,10 +6941,10 @@
       "value": "Dit is niet wat ik zoek"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
-      "value": "De waarde is te hoog."
+      "value": "The value is too large."
     }
   ],
   "hq1mk6": [
@@ -7149,12 +7185,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Voer een geldige tabel in."
     }
   ],
   "iy8rNf": [
@@ -7507,6 +7537,12 @@
     {
       "type": 0,
       "value": "Beheerde identiteit"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
     }
   ],
   "lM9qrG": [
@@ -7969,12 +8005,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Voer een geldige URI in."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8065,6 +8095,12 @@
       "value": "Een notitie toevoegen"
     }
   ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
+    }
+  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -8135,6 +8171,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarden die moeten worden gecombineerd tot een matrix."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
     }
   ],
   "pXmFGf": [
@@ -9273,6 +9315,12 @@
     {
       "type": 0,
       "value": "Inclusief dynamische inhoud"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stop generating"
     }
   ],
   "wPlTDB": [
