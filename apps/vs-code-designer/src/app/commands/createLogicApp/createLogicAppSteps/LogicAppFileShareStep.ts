@@ -22,7 +22,7 @@ import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 
 type File = {
   path: string;
@@ -36,32 +36,27 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
     context: ILogicAppWizardContext,
     progress: vscode.Progress<{ message?: string; increment?: number }>
   ): Promise<void> {
-    try {
-      context.telemetry.properties.newFileShare = context.newSiteName;
+    context.telemetry.properties.newFileShare = context.newSiteName;
 
-      const message: string = localize('creatingNewFileShare', 'Creating new File Share "{0}"...', context.newSiteName);
-      ext.outputChannel.appendLog(message);
-      progress.report({ message });
+    const message: string = localize('uploadingFiles', 'Uploading files to File Share "{0}"...', context.newSiteName);
+    ext.outputChannel.appendLog(message);
+    progress.report({ message });
 
-      const storageClient: StorageManagementClient = await createStorageClient(context);
-      const storageShareClient = await this.createStorageClient(context, storageClient);
-      const shareName = context.newSiteName;
-      const shareClient = storageShareClient.getShareClient(shareName);
+    const storageClient: StorageManagementClient = await createStorageClient(context);
+    const storageShareClient = await this.createStorageClient(context, storageClient);
+    const shareName = context.newSiteName;
+    const shareClient = storageShareClient.getShareClient(shareName);
 
-      await this.createFileShare(shareClient);
+    await this.createFileShare(shareClient);
 
-      const rootDirectories = [deploymentsDirectory, diagnosticsDirectory, locksDirectory, wwwrootDirectory];
-      await this.createDirectories(shareClient, rootDirectories);
+    const rootDirectories = [deploymentsDirectory, diagnosticsDirectory, locksDirectory, wwwrootDirectory];
+    await this.createDirectories(shareClient, rootDirectories);
 
-      const workspaceFolder = await getWorkspaceFolderPath(context);
-      const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-      await this.uploadRootFiles(shareClient, projectPath);
+    const workspaceFolder = await getWorkspaceFolderPath(context);
+    const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+    await this.uploadRootFiles(shareClient, projectPath);
 
-      await this.uploadWorkflowsFiles(shareClient, projectPath);
-    } catch (error) {
-      vscode.window.showErrorMessage(`${localize('file share failure', 'Error while creating/uploading file share')} ${error.message}`);
-      throw error;
-    }
+    await this.uploadWorkflowsFiles(shareClient, projectPath);
   }
 
   public shouldExecute(context: ILogicAppWizardContext): boolean {
