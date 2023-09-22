@@ -17,6 +17,7 @@ export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
 
   return (
     <SearchBox
+      autoFocus
       ariaLabel={placeholder}
       placeholder={placeholder}
       className="msla-search-box"
