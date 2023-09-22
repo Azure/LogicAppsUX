@@ -246,7 +246,21 @@ const getDesignerServices = (
       },
       getSwaggerOperationSchema: (args: any) => {
         const { parameters, isInput } = args;
-        return appServiceService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
+        return appServiceService.getOperationSchema(
+          parameters.swaggerUrl,
+          parameters.operationId,
+          isInput,
+          true /* supportsAuthenticationParameter */
+        );
+      },
+      getAppserviceSwaggerOperationSchema: (args: any) => {
+        const { parameters, isInput } = args;
+        return appServiceService.getOperationSchema(
+          parameters.swaggerUrl,
+          parameters.operationId,
+          isInput,
+          false /* supportsAuthenticationParameter */
+        );
       },
       getMapSchema: (_args: any) => {
         throw new Error('getMapSchema not implemented for consumption standalone');
