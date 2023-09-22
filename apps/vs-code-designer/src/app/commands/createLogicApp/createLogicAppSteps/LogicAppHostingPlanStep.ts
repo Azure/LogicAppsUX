@@ -5,7 +5,6 @@
 import { localize } from '../../../../localize';
 import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
 import { ContainerAppsStep } from './Containers/ContainerAppsStep';
-import type { ContainerApp } from '@azure/arm-appcontainers';
 import { AppServicePlanListStep } from '@microsoft/vscode-azext-azureappservice';
 import {
   StorageAccountListStep,
@@ -17,14 +16,8 @@ import {
 import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 
-export interface AppServiceWizardContext extends ILogicAppWizardContext {
-  suppressCreate: boolean;
-  useContainerApps: boolean;
-  containerApp?: ContainerApp;
-}
-
-export class LogicAppHostingPlanStep extends AzureWizardPromptStep<AppServiceWizardContext> {
-  public async prompt(wizardContext: AppServiceWizardContext): Promise<void> {
+export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     const placeHolder: string = localize('selectHostingPlan', 'Select a hosting plan.');
     const picks: IAzureQuickPickItem<[boolean, boolean, RegExp | undefined, boolean]>[] = [
       { label: localize('workflowstandard', 'Workflow Standard'), data: [false, false, /^WS$/i, false] },
@@ -39,11 +32,11 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<AppServiceWiz
     setSiteOS(wizardContext);
   }
 
-  public shouldPrompt(wizardContext: AppServiceWizardContext): boolean {
+  public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
     return !wizardContext.customLocation && wizardContext.useConsumptionPlan === undefined;
   }
 
-  public async getSubWizard(wizardContext: AppServiceWizardContext): Promise<IWizardOptions<AppServiceWizardContext> | undefined> {
+  public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
     const { suppressCreate, useConsumptionPlan, useContainerApps } = wizardContext;
 
     if (useContainerApps) {

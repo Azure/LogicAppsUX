@@ -58,7 +58,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       name: context.newSiteName,
       kind: getSiteKind(context),
       location: locationName,
-      serverFarmId: context.plan?.id,
+      serverFarmId: context?.plan ? context.plan?.id : undefined,
       clientAffinityEnabled: false,
       siteConfig: await this.getNewSiteConfig(context),
       reserved: context.newSiteOS === WebsiteOS.linux,

@@ -21,6 +21,7 @@ export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreat
   sqlConnectionString?: string;
   useContainerApps?: boolean;
   containerApp?: ContainerApp;
+  suppressCreate?: boolean;
 }
 
 export interface ICreateLogicAppContext extends ICreateChildImplContext {

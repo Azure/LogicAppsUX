@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../../localize';
 import { createContainerClient } from '../../../../utils/azureClients';
-import type { AppServiceWizardContext } from '../LogicAppHostingPlanStep';
 import { createManagedEnvironment } from './CreateManagedEnvironment';
 import type { ContainerApp, ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 import { uiUtils } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardPromptStep, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import type { AzureSubscription } from '@microsoft/vscode-azureresources-api';
+import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 
-export class ContainerAppsStep extends AzureWizardPromptStep<AppServiceWizardContext> {
-  public async prompt(wizardContext: AppServiceWizardContext): Promise<void> {
+export class ContainerAppsStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
+  public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     const placeHolder: string = localize('selectNewProjectFolder', 'Select a Container Apps environment.');
     const client = await createContainerClient(wizardContext);
 
@@ -27,7 +27,7 @@ export class ContainerAppsStep extends AzureWizardPromptStep<AppServiceWizardCon
     wizardContext;
   }
 
-  public shouldPrompt(wizardContext: AppServiceWizardContext): boolean {
+  public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
     return !!wizardContext.useContainerApps;
   }
 
