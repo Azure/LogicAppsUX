@@ -29,6 +29,12 @@
       "value": "Błędne"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Zwraca port z identyfikatora URI. Jeśli port nie jest określony, zwraca domyślny port dla protokołu"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową liczbę całkowitą."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Konwertuj argument parametru na liczbę zmiennoprzecinkową"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy adres e-mail."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Ukryj schemat źródłowy"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
     }
   ],
   "1uGBLP": [
@@ -871,6 +871,12 @@
       "value": "Zamknij widok kodu"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "Przepływ został zaktualizowany."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Saving this flow..."
     }
   ],
   "4izAMi": [
@@ -1417,16 +1429,16 @@
       "value": "Spowoduje to przywrócenie przepływu pracy do stanu sprzed edycji przez funkcję Copilot. Jeśli wprowadzono dodatkowe zmiany w przepływie pracy po edycji przez funkcję Copilot, utracisz je. Tej akcji nie można cofnąć. Czy chcesz kontynuować?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Kod stanu"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Zgłoś usterkę"
     }
   ],
   "7lnElz": [
@@ -2587,6 +2599,12 @@
       "value": "Wyświetl historię żądań dla tej operacji"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3075,12 +3093,6 @@
       "value": "Błąd podczas pobierania manifestu"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową datę/godzinę."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3307,6 +3319,12 @@
       "value": "Akcja cofnięta"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3403,12 +3421,6 @@
     {
       "type": 0,
       "value": "” za pomocą"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową podwójną liczbę."
     }
   ],
   "KV4uky": [
@@ -3821,12 +3833,6 @@
       "value": "Edytuj w trybie zaawansowanym"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Wprowadź poprawną liczbę."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3971,6 +3977,12 @@
       "value": "Nazwa główna usługi"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Working on it..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -4059,6 +4071,12 @@
     {
       "type": 0,
       "value": "Wprowadź odbiorców."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "OVvieE": [
@@ -4189,6 +4207,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ta wartość określa ilość liczb całkowitych w tablicy."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Whitespaces must be encoded for URIs"
     }
   ],
   "P4rEwD": [
@@ -6101,12 +6125,6 @@
       "value": "Wprowadź certyfikat PFX"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy typ zmiennoprzecinkowy."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6199,6 +6217,12 @@
     {
       "type": 0,
       "value": "Informacje"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
     }
   ],
   "ba9yGJ": [
@@ -6735,6 +6759,12 @@
       "value": "(UTC+08:00) Pekin, Czungking, SRA Hongkong, Urumczi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6855,6 +6885,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Aszchabad, Taszkient"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "gc6v4X": [
@@ -7031,10 +7067,10 @@
       "value": "Tego nie szukam"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
-      "value": "Wartość jest zbyt duża."
+      "value": "The value is too large."
     }
   ],
   "hq1mk6": [
@@ -7275,12 +7311,6 @@
     {
       "type": 0,
       "value": " s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową tabeli."
     }
   ],
   "iy8rNf": [
@@ -7671,6 +7701,12 @@
     {
       "type": 0,
       "value": "Tożsamość zarządzana"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
     }
   ],
   "lM9qrG": [
@@ -8133,12 +8169,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy identyfikator URI."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8229,6 +8259,12 @@
       "value": "Dodaj notatkę"
     }
   ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
+    }
+  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -8299,6 +8335,12 @@
     {
       "type": 0,
       "value": "Wymagane. Wartości do połączenia jako tablica."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
     }
   ],
   "pXmFGf": [
@@ -9471,6 +9513,12 @@
     {
       "type": 0,
       "value": "Uwzględnianie zawartości dynamicznej"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stop generating"
     }
   ],
   "wPlTDB": [

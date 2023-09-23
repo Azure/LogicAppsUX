@@ -29,6 +29,12 @@
       "value": "Con errores"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Devuelve el puerto de un URI. Si no se especifica, devuelve el puerto predeterminado para el protocolo."
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Escriba un entero válido."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Convertir el argumento del parámetro en un número de punto flotante"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Escribir una dirección de correo electrónico válida."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Ocultar esquema de origen"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
     }
   ],
   "1uGBLP": [
@@ -871,6 +871,12 @@
       "value": "Cerrar vista de código"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "El flujo se ha actualizado."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Saving this flow..."
     }
   ],
   "4izAMi": [
@@ -1417,16 +1429,16 @@
       "value": "Esto revertirá el flujo de trabajo al estado en el que estaba antes de la edición de Copilot. Si realizó modificaciones adicionales en el flujo de trabajo después de Copilot, las perderá. Esta acción no se puede deshacer. ¿Desea continuar?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Código de estado"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Informar de un error"
     }
   ],
   "7lnElz": [
@@ -2576,6 +2588,12 @@
       "value": "Ver el historial de solicitudes de esta operación"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3045,12 +3063,6 @@
       "value": "Error al capturar el manifiesto"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Escribir una fecha y hora válidas."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3277,6 +3289,12 @@
       "value": "Acción deshecha"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3373,12 +3391,6 @@
     {
       "type": 0,
       "value": "\" por"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Escribir un número doble válido."
     }
   ],
   "KV4uky": [
@@ -3780,12 +3792,6 @@
       "value": "Editar en modo avanzado"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Escribir un número válido."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3930,6 +3936,12 @@
       "value": "Entidad de servicio"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Working on it..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -4018,6 +4030,12 @@
     {
       "type": 0,
       "value": "Escribir el público."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "OVvieE": [
@@ -4148,6 +4166,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Este valor es el número de enteros que se encuentran en esta matriz."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Whitespaces must be encoded for URIs"
     }
   ],
   "P4rEwD": [
@@ -6045,12 +6069,6 @@
       "value": "Especificar el archivo PFX"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Escriba un float válido."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6143,6 +6161,12 @@
     {
       "type": 0,
       "value": "Información"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
     }
   ],
   "ba9yGJ": [
@@ -6683,6 +6707,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6803,6 +6833,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Asjabad, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "gc6v4X": [
@@ -6968,10 +7004,10 @@
       "value": "Esto no es lo que estoy buscando"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
-      "value": "El valor es demasiado grande."
+      "value": "The value is too large."
     }
   ],
   "hq1mk6": [
@@ -7212,12 +7248,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Escriba una tabla válida."
     }
   ],
   "iy8rNf": [
@@ -7581,6 +7611,12 @@
     {
       "type": 0,
       "value": "Identidad administrada"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
     }
   ],
   "lM9qrG": [
@@ -8035,12 +8071,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Escriba un URI válido."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8131,6 +8161,12 @@
       "value": "Agregar una nota"
     }
   ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
+    }
+  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -8201,6 +8237,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Los valores que se combinarán en una matriz."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
     }
   ],
   "pXmFGf": [
@@ -9362,6 +9404,12 @@
     {
       "type": 0,
       "value": "Incluyendo contenido dinámico"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stop generating"
     }
   ],
   "wPlTDB": [
