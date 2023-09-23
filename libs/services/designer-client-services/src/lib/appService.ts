@@ -2,7 +2,7 @@ import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-a
 
 export interface IAppServiceService {
   fetchAppServices(): Promise<any>;
-  getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any>;
+  getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean, supportsAuthenticationParameter: boolean): Promise<any>;
   getOperations(swaggerUrl: string): Promise<any>;
 }
 

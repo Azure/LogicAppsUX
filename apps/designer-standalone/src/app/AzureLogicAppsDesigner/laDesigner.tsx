@@ -350,7 +350,12 @@ const getDesignerServices = (
       },
       getSwaggerOperationSchema: (args: any) => {
         const { parameters, isInput } = args;
-        return appService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
+        return appService.getOperationSchema(
+          parameters.swaggerUrl,
+          parameters.operationId,
+          isInput,
+          true /* supportsAuthenticationParameter */
+        );
       },
     },
     valuesClient: {
