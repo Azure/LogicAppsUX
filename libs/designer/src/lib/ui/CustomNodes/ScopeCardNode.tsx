@@ -26,6 +26,7 @@ import {
   useParentRunIndex,
   useRunInstance,
   useWorkflowNode,
+  useParentRunId,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
@@ -63,7 +64,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
-  const parenRunData = useRunData(metadata?.parentNodeId ?? '');
+  const parentRunId = useParentRunId(scopeId);
+  const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
 
