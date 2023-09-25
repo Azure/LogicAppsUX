@@ -43,6 +43,7 @@ import {
   useRunInstance,
   useShouldNodeFocus,
   useRetryHistory,
+  useParentRunId,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -76,7 +77,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
-  const parenRunData = useRunData(metadata?.parentNodeId ?? '');
+  const parentRunId = useParentRunId(id);
+  const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const runHistory = useRetryHistory(id);
