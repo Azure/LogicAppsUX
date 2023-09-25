@@ -7,7 +7,7 @@ const initialState: ClipboardState = {
   copiedNode: null,
 };
 
-interface CopyNodeInterface {
+interface CopyNodePayload {
   nodeId: string;
   operationInfo: NodeOperation;
 }
@@ -16,7 +16,7 @@ export const clipboardSlice = createSlice({
   name: 'clipboard',
   initialState,
   reducers: {
-    copyNode: (state: ClipboardState, action: PayloadAction<CopyNodeInterface>) => {
+    copyNode: (state: ClipboardState, action: PayloadAction<CopyNodePayload>) => {
       state.copiedNode = action.payload;
     },
   },
