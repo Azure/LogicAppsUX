@@ -2,6 +2,7 @@
 import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
+import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import {
@@ -48,10 +49,11 @@ import {
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import { MessageBarType } from '@fluentui/react';
+import type { ICalloutContentStyles } from '@fluentui/react';
+import { Callout, DirectionalHint, MessageBarType } from '@fluentui/react';
 import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
-import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
+import { Card, MenuItemType, DeleteNodeModal, useId } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -59,13 +61,18 @@ import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, useOnViewportChange } from 'reactflow';
 import type { NodeProps } from 'reactflow';
+
+const copyCalloutStyles: Partial<ICalloutContentStyles> = {
+  root: { padding: 10 },
+};
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
   const intl = useIntl();
+  const tooltipId = useId();
 
   const dispatch = useDispatch<AppDispatch>();
   const operationsInfo = useAllOperations();
@@ -206,29 +213,71 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const label = useNodeDisplayName(id);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCopyCallout, setShowCopyCallout] = useState(false);
+
+  useOnViewportChange({
+    onStart: useCallback(() => {
+      if (showCopyCallout) {
+        setShowCopyCallout(false);
+      }
+    }, [showCopyCallout]),
+  });
+
   const handleDeleteClick = () => setShowDeleteModal(true);
+  const handleCopyClick = () => {
+    setShowCopyCallout(true);
+    dispatch(copyOperation({ nodeId: id }));
+    setTimeout(() => {
+      setShowCopyCallout(false);
+    }, 3000);
+  };
   const handleDelete = () => dispatch(deleteOperation({ nodeId: id, isTrigger: !!isTrigger }));
 
-  const getDeleteMenuItem = () => {
+  const getMenuItems = (): MenuItemOption[] => {
     const deleteDescription = intl.formatMessage({
       defaultMessage: 'Delete',
       description: 'Delete text',
     });
-
     const disableTriggerDeleteText = intl.formatMessage({
       defaultMessage: 'Triggers cannot be deleted.',
       description: 'Text to explain that triggers cannot be deleted',
     });
 
-    return {
-      key: deleteDescription,
-      disabled: readOnly,
-      disabledReason: disableTriggerDeleteText,
-      iconName: 'Delete',
-      title: deleteDescription,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
+    const copyAction = intl.formatMessage({
+      defaultMessage: 'Copy Action',
+      description: 'Copy Action text',
+    });
+
+    const copyTrigger = intl.formatMessage({
+      defaultMessage: 'Copy Trigger',
+      description: 'Copy Trigger text',
+    });
+
+    const copyDisabledText = intl.formatMessage({
+      defaultMessage: 'This Action/Trigger cannot be copied.',
+      description: 'Text to explain this action/trigger cannot be copied',
+    });
+
+    return [
+      {
+        key: deleteDescription,
+        disabled: readOnly,
+        disabledReason: disableTriggerDeleteText,
+        iconName: 'Delete',
+        title: deleteDescription,
+        type: MenuItemType.Advanced,
+        onClick: handleDeleteClick,
+      },
+      {
+        key: isTrigger ? copyTrigger : copyAction,
+        disabled: readOnly,
+        disabledReason: copyDisabledText,
+        iconName: 'Copy',
+        title: isTrigger ? copyTrigger : copyAction,
+        type: MenuItemType.Advanced,
+        onClick: handleCopyClick,
+      },
+    ];
   };
 
   const getResubmitMenuItem = () => {
@@ -254,7 +303,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       onClick: handleResubmitClick,
     };
   };
-  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
+  const contextMenuOptions: MenuItemOption[] = getMenuItems();
   if (runData?.canResubmit) {
     contextMenuOptions.push(getResubmitMenuItem());
   }
@@ -326,9 +375,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
+
+  const copiedText = intl.formatMessage({
+    defaultMessage: 'Copied!',
+    description: 'Copied text',
+  });
+
   return (
     <>
-      <div className="nopan">
+      <div className="nopan" id={tooltipId}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
           title={label}
@@ -356,6 +411,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           staticResultsEnabled={!!staticResults}
           isSecureInputsOutputs={isSecureInputsOutputs}
         />
+        {showCopyCallout ? (
+          <Callout target={`#${tooltipId}`} styles={copyCalloutStyles} directionalHint={DirectionalHint.bottomRightEdge}>
+            {copiedText}
+          </Callout>
+        ) : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (
