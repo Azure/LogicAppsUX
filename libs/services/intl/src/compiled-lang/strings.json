@@ -3811,6 +3811,12 @@
       "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3935,6 +3941,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -4517,6 +4529,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5897,6 +5919,12 @@
       "value": "Collapse Static Result"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -7029,6 +7057,12 @@
       "value": "Redo"
     }
   ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
+    }
+  ],
   "i4C4aB": [
     {
       "type": 0,
@@ -8067,6 +8101,12 @@
     {
       "type": 0,
       "value": "Invalid integer value"
+    }
+  ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
     }
   ],
   "oTBkbU": [
