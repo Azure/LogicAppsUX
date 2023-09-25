@@ -64,9 +64,6 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     if (copiedNode) {
       dispatch(
         pasteOperation({
-          nodeId: copiedNode.nodeId,
-          operationInfo: copiedNode.operationInfo,
-          nodeData: copiedNode.nodeData,
           relationshipIds,
         })
       );

@@ -1,7 +1,7 @@
 import { setFocusNode, type RootState } from '../..';
 import { copyNode } from '../../state/clipboard/clipboardSlice';
 import type { NodeData } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo, type NodeOperation } from '../../state/operation/operationMetadataSlice';
+import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { pasteNode } from '../../state/workflow/workflowSlice';
 import { initializeOperationDetails } from './add';
@@ -38,22 +38,23 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
 });
 
 type PasteOperationPayload = {
-  nodeId: string;
-  operationInfo: NodeOperation;
   relationshipIds: RelationshipIds;
-  nodeData: NodeData;
 };
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
-  const { operationInfo, nodeId: actionId, relationshipIds, nodeData } = payload;
-  if (!operationInfo) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+  const { relationshipIds } = payload;
+  const state = getState() as RootState;
+  if (!state.clipboard.copiedNode) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+  const { operationInfo, nodeId: actionId, nodeData } = state.clipboard.copiedNode;
   let count = 1;
   let nodeId = actionId;
-  while ((getState() as RootState).workflow.nodesMetadata[nodeId]) {
+
+  while (state.workflow.nodesMetadata[nodeId]) {
     nodeId = `${actionId}_${count}`;
     count++;
   }
-  // paste the node
+
+  // update workflow
   dispatch(
     pasteNode({
       nodeId: nodeId,
@@ -67,8 +68,6 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
 
   // replace new nodeId if there exists a copy of the copied node
   dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
-
-  // // Update settings for children and parents
 
   dispatch(setFocusNode(nodeId));
 });
