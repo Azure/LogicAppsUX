@@ -37,37 +37,36 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
   });
 });
 
-type PasteOperationPayload = {
-  relationshipIds: RelationshipIds;
-};
+export const pasteOperation = createAsyncThunk(
+  'pasteOperation',
+  async (payload: { relationshipIds: RelationshipIds }, { dispatch, getState }) => {
+    const { relationshipIds } = payload;
+    const state = getState() as RootState;
+    if (!state.clipboard.copiedNode) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+    const { operationInfo, nodeId: actionId, nodeData } = state.clipboard.copiedNode;
+    let count = 1;
+    let nodeId = actionId;
 
-export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
-  const { relationshipIds } = payload;
-  const state = getState() as RootState;
-  if (!state.clipboard.copiedNode) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
-  const { operationInfo, nodeId: actionId, nodeData } = state.clipboard.copiedNode;
-  let count = 1;
-  let nodeId = actionId;
+    while (state.workflow.nodesMetadata[nodeId]) {
+      nodeId = `${actionId}_${count}`;
+      count++;
+    }
 
-  while (state.workflow.nodesMetadata[nodeId]) {
-    nodeId = `${actionId}_${count}`;
-    count++;
+    // update workflow
+    dispatch(
+      pasteNode({
+        nodeId: nodeId,
+        relationshipIds: relationshipIds,
+        operation: operationInfo,
+      })
+    );
+
+    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+    await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
+
+    // replace new nodeId if there exists a copy of the copied node
+    dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
+
+    dispatch(setFocusNode(nodeId));
   }
-
-  // update workflow
-  dispatch(
-    pasteNode({
-      nodeId: nodeId,
-      relationshipIds: relationshipIds,
-      operation: operationInfo,
-    })
-  );
-
-  dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
-  await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
-
-  // replace new nodeId if there exists a copy of the copied node
-  dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
-
-  dispatch(setFocusNode(nodeId));
-});
+);
