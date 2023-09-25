@@ -80,7 +80,7 @@ async function callApiForDeploymentArtifact(inputs: any): Promise<Buffer> {
 async function handleApiResponse(zipContent: Buffer, targetDirectory: string, scriptContext: IAzureScriptWizard): Promise<void> {
   if (!zipContent) {
     window.showErrorMessage('API response content not valid');
-    throw new Error('The API response is not valid.');
+    window.showErrorMessage("The API response content isn't valid.");
   }
   await unzipLogicAppArtifacts(zipContent, targetDirectory);
 
@@ -89,7 +89,7 @@ async function handleApiResponse(zipContent: Buffer, targetDirectory: string, sc
   } else {
     FileManagement.convertToValidWorkspace(targetDirectory);
   }
-  vscode.window.showInformationMessage('artifacts exported successfully to the following directory: ', targetDirectory);
+  vscode.window.showInformationMessage('artifacts successfully exported to the following directory: ', targetDirectory);
 }
 
 /**

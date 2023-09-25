@@ -117,7 +117,7 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
           : 'Creates a new deployment folder in the current workspace.',
       },
       {
-        label: 'Choose a different Folder',
+        label: 'Choose a different folder.',
         description: 'Select a different folder in the current workspace.',
       },
     ];
@@ -129,7 +129,7 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
 
       if (userChoice.label === deploymentLabel && rootDir) {
         selectedPath = await this.createDeploymentFolder(rootDir);
-      } else if (userChoice.label === 'Choose a different Folder') {
+      } else if (userChoice.label === 'Choose a different folder.') {
         selectedPath = await selectWorkspaceFolder(context, placeHolder); // Assuming selectWorkspaceFolder is a function you have for folder selection
       }
 

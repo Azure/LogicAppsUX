@@ -98,6 +98,6 @@ export function showPreviewWarning(commandIdentifier: string): void {
   // If the command is found and it is marked as a preview, show a warning using its title
   if (targetCommand?.preview) {
     const commandTitle = targetCommand.title;
-    window.showInformationMessage(`The "${commandTitle}" command is a preview feature and may be subject to change.`);
+    window.showInformationMessage(`The "${commandTitle}" command is a preview feature and might be subject to change.`);
   }
 }
