@@ -1,6 +1,7 @@
 import { setFocusNode, type RootState } from '../..';
 import { copyNode } from '../../state/clipboard/clipboardSlice';
-import { initializeOperationInfo, type NodeOperation } from '../../state/operation/operationMetadataSlice';
+import type { NodeData } from '../../state/operation/operationMetadataSlice';
+import { initializeNodes, initializeOperationInfo, type NodeOperation } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { pasteNode } from '../../state/workflow/workflowSlice';
 import { initializeOperationDetails } from './add';
@@ -20,7 +21,19 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
 
     const nodeOperationInfo = state.operations.operationInfo[nodeId];
 
-    dispatch(copyNode({ nodeId: newNodeId, operationInfo: nodeOperationInfo }));
+    const nodeData: NodeData = {
+      id: newNodeId,
+      nodeInputs: state.operations.inputParameters[nodeId],
+      nodeOutputs: state.operations.outputParameters[nodeId],
+      nodeDependencies: state.operations.dependencies[nodeId],
+      operationMetadata: state.operations.operationMetadata[nodeId],
+      settings: state.operations.settings[nodeId],
+      staticResult: state.operations.staticResults[nodeId],
+      actionMetadata: state.operations.actionMetadata[nodeId],
+      repetitionInfo: state.operations.repetitionInfos[nodeId],
+    };
+
+    dispatch(copyNode({ nodeId: newNodeId, operationInfo: nodeOperationInfo, nodeData: nodeData }));
   });
 });
 
@@ -28,32 +41,34 @@ type PasteOperationPayload = {
   nodeId: string;
   operationInfo: NodeOperation;
   relationshipIds: RelationshipIds;
+  nodeData: NodeData;
 };
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
-  batch(() => {
-    const { operationInfo, nodeId: actionId, relationshipIds } = payload;
-    if (!operationInfo) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
-    let count = 1;
-    let nodeId = actionId;
-    while ((getState() as RootState).workflow.nodesMetadata[nodeId]) {
-      nodeId = `${actionId}_${count}`;
-      count++;
-    }
-    // paste the node
-    dispatch(
-      pasteNode({
-        nodeId: nodeId,
-        relationshipIds: relationshipIds,
-        operation: operationInfo,
-      })
-    );
+  const { operationInfo, nodeId: actionId, relationshipIds, nodeData } = payload;
+  if (!operationInfo) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+  let count = 1;
+  let nodeId = actionId;
+  while ((getState() as RootState).workflow.nodesMetadata[nodeId]) {
+    nodeId = `${actionId}_${count}`;
+    count++;
+  }
+  // paste the node
+  dispatch(
+    pasteNode({
+      nodeId: nodeId,
+      relationshipIds: relationshipIds,
+      operation: operationInfo,
+    })
+  );
 
-    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
-    initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
+  dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+  await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
 
-    // Update settings for children and parents
+  // replace new nodeId if there exists a copy of the copied node
+  dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
 
-    dispatch(setFocusNode(nodeId));
-  });
+  // // Update settings for children and parents
+
+  dispatch(setFocusNode(nodeId));
 });

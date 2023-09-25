@@ -1,8 +1,9 @@
-import type { NodeOperation } from '../operation/operationMetadataSlice';
+import type { NodeData, NodeOperation } from '../operation/operationMetadataSlice';
 
 type CopiedNode = {
   nodeId: string;
   operationInfo: NodeOperation;
+  nodeData: NodeData;
 };
 
 export interface ClipboardState {

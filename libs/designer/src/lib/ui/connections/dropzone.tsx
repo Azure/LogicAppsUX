@@ -1,6 +1,5 @@
 import type { AppDispatch, RootState } from '../../core';
 import { pasteOperation } from '../../core/actions/bjsworkflow/copypaste';
-// import { pasteOperationFromClipboard } from '../../core/actions/bjsworkflow/add';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import { useNodeDisplayName, useGetAllOperationNodesWithin } from '../../core/state/workflow/workflowSelectors';
@@ -63,7 +62,14 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const handlePasteClicked = useCallback(() => {
     const relationshipIds = { graphId, childId, parentId };
     if (copiedNode) {
-      dispatch(pasteOperation({ nodeId: copiedNode.nodeId, operationInfo: copiedNode.operationInfo, relationshipIds }));
+      dispatch(
+        pasteOperation({
+          nodeId: copiedNode.nodeId,
+          operationInfo: copiedNode.operationInfo,
+          nodeData: copiedNode.nodeData,
+          relationshipIds,
+        })
+      );
     }
   }, [graphId, childId, parentId, dispatch, copiedNode]);
 

@@ -71,6 +71,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
   const intl = useIntl();
+  const tooltipId = useId();
 
   const dispatch = useDispatch<AppDispatch>();
   const operationsInfo = useAllOperations();
@@ -377,7 +378,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     defaultMessage: 'Copied!',
     description: 'Copied text',
   });
-  const tooltipId = useId(id);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import type { NodeOperation } from '../operation/operationMetadataSlice';
+import type { NodeData, NodeOperation } from '../operation/operationMetadataSlice';
 import type { ClipboardState } from './clipboardInterfaces';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -10,6 +10,7 @@ const initialState: ClipboardState = {
 interface CopyNodePayload {
   nodeId: string;
   operationInfo: NodeOperation;
+  nodeData: NodeData;
 }
 
 export const clipboardSlice = createSlice({
