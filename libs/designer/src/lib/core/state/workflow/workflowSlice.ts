@@ -12,12 +12,14 @@ import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
+import type { NodeOperation } from '../operation/operationMetadataSlice';
 import {
   updateNodeParameters,
   updateNodeSettings,
   updateParameterConditionalVisibility,
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
+import type { RelationshipIds } from '../panel/panelInterfaces';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { WorkflowKind } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
@@ -120,6 +122,24 @@ export const workflowSlice = createSlice({
         currentGraph,
         foreachNode,
         { graphId: foreachNode?.id, parentId: foreachNode.children?.[0].id },
+        state.nodesMetadata,
+        state
+      );
+    },
+    pasteNode: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation }>
+    ) => {
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
+      if (!graph) throw new Error('graph not set');
+
+      addNodeToWorkflow(
+        {
+          operation: action.payload.operation as any,
+          nodeId: action.payload.nodeId,
+          relationshipIds: action.payload.relationshipIds,
+        },
+        graph,
         state.nodesMetadata,
         state
       );
@@ -417,6 +437,8 @@ export const {
   initWorkflowKind,
   initRunInstance,
   addNode,
+  addImplicitForeachNode,
+  pasteNode,
   moveNode,
   deleteNode,
   deleteSwitchCase,
@@ -433,7 +455,6 @@ export const {
   clearFocusNode,
   setFocusNode,
   replaceId,
-  addImplicitForeachNode,
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,

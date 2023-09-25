@@ -22,15 +22,15 @@ export const addNodeToWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  const { nodeId: newNodeId, operation } = payload;
-  const { graphId, parentId, childId } = payload.relationshipIds;
+  const { nodeId: newNodeId, operation, isParallelBranch, relationshipIds } = payload;
+  const { graphId, parentId, childId } = relationshipIds;
 
   // Add Node Data
   const workflowNode: WorkflowNode = createWorkflowNode(newNodeId);
 
   // Handle Extra node addition if is a scope operation
-  if (isScopeOperation(payload.operation.type)) {
-    handleExtraScopeNodeSetup(payload.operation, workflowNode, nodesMetadata, state);
+  if (isScopeOperation(operation.type)) {
+    handleExtraScopeNodeSetup(operation, workflowNode, nodesMetadata, state);
   }
 
   if (workflowNode.id) workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
@@ -41,19 +41,18 @@ export const addNodeToWorkflow = (
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
 
-  state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
+  state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
   state.isDirty = true;
 
   const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
   const shouldAddRunAfters = !isRoot && !isAfterTrigger;
-
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
-  state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
+  state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 
   // Parallel Branch creation, just add the singular node
-  if (payload.isParallelBranch && parentId) {
+  if (isParallelBranch && parentId) {
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
   }
   // 1 parent, 1 child
@@ -83,7 +82,7 @@ export const addNodeToWorkflow = (
   }
 
   // If the added node is a do-until, we need to set the subgraphtype for the header
-  if (payload.operation.type.toLowerCase() === 'until') nodesMetadata[newNodeId].subgraphType = SUBGRAPH_TYPES.UNTIL_DO;
+  if (operation.type.toLowerCase() === 'until') nodesMetadata[newNodeId].subgraphType = SUBGRAPH_TYPES.UNTIL_DO;
 };
 
 export const addChildNode = (graph: WorkflowNode, node: WorkflowNode): void => {

@@ -1,5 +1,5 @@
 import type { PanelTab } from './panelUtil';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 export interface PanelContentProps {
   selectedTab?: string;

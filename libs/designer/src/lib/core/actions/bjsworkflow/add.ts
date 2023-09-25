@@ -85,7 +85,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   });
 });
 
-const initializeOperationDetails = async (
+export const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
   getState: () => RootState,
