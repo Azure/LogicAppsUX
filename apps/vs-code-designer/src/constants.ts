@@ -71,6 +71,7 @@ export enum extensionCommand {
   createLogicApp = 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced = 'azureLogicAppsStandard.createLogicAppAdvanced',
   deploy = 'azureLogicAppsStandard.deploy',
+  generateDeploymentScripts = 'azureLogicAppsStandard.generateDeploymentScripts',
   deploySlot = 'azureLogicAppsStandard.deploySlot',
   redeploy = 'azureLogicAppsStandard.redeploy',
   showOutputChannel = 'azureLogicAppsStandard.showOutputChannel',

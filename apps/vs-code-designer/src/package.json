@@ -94,6 +94,12 @@
         "enablement": "!virtualWorkspace"
       },
       {
+        "command": "azureLogicAppsStandard.generateDeploymentScripts",
+        "title": "Generate deployment scripts...",
+        "category": "Azure Logic Apps",
+        "preview": true
+      },
+      {
         "command": "azureLogicAppsStandard.deploySlot",
         "title": "Deploy to Slot...",
         "category": "Azure Logic Apps"
@@ -572,6 +578,11 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
+          "when": "explorerResourceIsFolder == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
@@ -789,6 +800,7 @@
     "onCommand:azureLogicAppsStandard.createNewCodeProject",
     "onCommand:azureLogicAppsStandard.createCodeless",
     "onCommand:azureLogicAppsStandard.deploy",
+    "onCommand: azureLogicAppsStandard.generateDeploymentScripts",
     "onCommand:azureLogicAppsStandard.deploySlot",
     "onCommand:azureLogicAppsStandard.createLogicApp",
     "onCommand:azureLogicAppsStandard.createLogicAppAdvanced",

@@ -2,9 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import * as packageJson from '../../package.json';
 import { isPathEqual } from './fs';
+import * as AdmZip from 'adm-zip';
 import type { Task, WorkspaceFolder } from 'vscode';
-import { tasks as codeTasks } from 'vscode';
+import { tasks as codeTasks, window } from 'vscode';
 
 /**
  * Gets task's file system path.
@@ -59,5 +61,43 @@ export function isTaskEqual(task1: Task, task2: Task): boolean {
 export async function executeIfNotActive(task: Task): Promise<void> {
   if (!codeTasks.taskExecutions.find((t) => isTaskEqual(t.task, task))) {
     await codeTasks.executeTask(task);
+  }
+}
+
+/**
+ * Unzips the contents of a Logic App project into a target directory.
+ * This function uses the AdmZip library to handle the unzipping operation.
+ *
+ * @param {Buffer} zipContent - The buffer containing the compressed Logic App project.
+ * @param {string} targetDirectory - The path of the directory where the unzipped files will be stored.
+ * @returns {Promise<void>} - A Promise that resolves when the unzipping process is complete, or rejects with an error.
+ *
+ * @throws Will throw an error if the unzipping process fails.
+ */
+export async function unzipLogicAppArtifacts(zipContent: Buffer, targetDirectory: string): Promise<void> {
+  try {
+    // Initialize a new AdmZip object with the provided zip content
+    const zip = new AdmZip(zipContent);
+
+    // Extract all the files from the zip content to the target directory
+    // The second parameter set to 'true' indicates that it will overwrite existing files in the target directory
+    zip.extractAllTo(targetDirectory, true);
+  } catch (error) {
+    window.showErrorMessage('Failed to unzip logic app: ', error);
+    throw error;
+  }
+}
+
+/**
+ * Displays a preview warning for any command that is marked as a preview feature in package.json.
+ * @param commandIdentifier - The identifier of the command to check for preview status.
+ */
+export function showPreviewWarning(commandIdentifier: string): void {
+  // Search for the command in the package.json "contributes.commands" array
+  const targetCommand = packageJson.contributes.commands.find((command) => command.command === commandIdentifier);
+  // If the command is found and it is marked as a preview, show a warning using its title
+  if (targetCommand?.preview) {
+    const commandTitle = targetCommand.title;
+    window.showInformationMessage(`The "${commandTitle}" command is a preview feature and might be subject to change.`);
   }
 }
