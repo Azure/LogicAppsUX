@@ -1,3 +1,6 @@
+import type { AppDispatch, RootState } from '../../core';
+import { pasteOperation } from '../../core/actions/bjsworkflow/copypaste';
+// import { pasteOperationFromClipboard } from '../../core/actions/bjsworkflow/add';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import { useNodeDisplayName, useGetAllOperationNodesWithin } from '../../core/state/workflow/workflowSelectors';
@@ -6,14 +9,14 @@ import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { ActionButton, Callout, DirectionalHint, FocusZone } from '@fluentui/react';
-import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
 import { containsIdTag, guid, removeIdTag } from '@microsoft/utils-logic-apps';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useOnViewportChange } from 'reactflow';
 
 export interface DropZoneProps {
   graphId: string;
@@ -24,8 +27,17 @@ export interface DropZoneProps {
 
 export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
-  const [showCallout, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const [showCallout, setShowCallout] = useState(false);
+  const copiedNode = useSelector((state: RootState) => state.clipboard.copiedNode);
+
+  useOnViewportChange({
+    onStart: useCallback(() => {
+      if (showCallout) {
+        setShowCallout(false);
+      }
+    }, [showCallout]),
+  });
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
@@ -37,11 +49,23 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     description: 'Text for button to add a parallel branch',
   });
 
+  const pasteFromClipboard = intl.formatMessage({
+    defaultMessage: 'Paste an action',
+    description: 'Text for button to paste an action from clipboard',
+  });
+
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId, parentId };
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
   }, [dispatch, graphId, childId, parentId]);
+
+  const handlePasteClicked = useCallback(() => {
+    const relationshipIds = { graphId, childId, parentId };
+    if (copiedNode) {
+      dispatch(pasteOperation({ nodeId: copiedNode.nodeId, operationInfo: copiedNode.operationInfo, relationshipIds }));
+    }
+  }, [graphId, childId, parentId, dispatch, copiedNode]);
 
   const addParallelBranch = useCallback(() => {
     const newId = guid();
@@ -78,6 +102,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
   const parentName = useNodeDisplayName(parentId);
   const childName = useNodeDisplayName(childId);
+  const parentSubgraphName = useNodeDisplayName(parentId && containsIdTag(parentId) ? removeIdTag(parentId) : '');
 
   const tooltipText = childId
     ? intl.formatMessage(
@@ -88,6 +113,16 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         {
           parentName,
           childName,
+        }
+      )
+    : parentSubgraphName
+    ? intl.formatMessage(
+        {
+          defaultMessage: 'Insert a new step in {parentSubgraphName}',
+          description: 'Tooltip for the button to add a new step under subgraph',
+        },
+        {
+          parentSubgraphName,
         }
       )
     : intl.formatMessage(
@@ -102,7 +137,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
   const actionButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    toggleIsCalloutVisible();
+    setShowCallout(!showCallout);
   };
 
   const buttonId = `msla-edge-button-${parentId}-${childId}`.replace(/\W/g, '-');
@@ -133,8 +168,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
               role="dialog"
               gapSpace={0}
               target={`#${buttonId}`}
-              onDismiss={toggleIsCalloutVisible}
-              onMouseLeave={toggleIsCalloutVisible}
+              onDismiss={() => setShowCallout(false)}
+              onMouseLeave={() => setShowCallout(false)}
               directionalHint={DirectionalHint.bottomCenter}
               setInitialFocus
             >
@@ -154,6 +189,11 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
                       data-automation-id={`msla-add-parallel-branch-${parentId}-${childId}`.replace(/\W/g, '-')}
                     >
                       {newBranchText}
+                    </ActionButton>
+                  ) : null}
+                  {copiedNode ? (
+                    <ActionButton iconProps={{ iconName: 'Paste' }} onClick={handlePasteClicked}>
+                      {pasteFromClipboard}
                     </ActionButton>
                   ) : null}
                 </div>

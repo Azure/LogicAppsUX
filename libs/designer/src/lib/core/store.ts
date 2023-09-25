@@ -1,3 +1,4 @@
+import clipboardReducer from './state/clipboard/clipboardSlice';
 import connectionsReducer from './state/connection/connectionSlice';
 import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
 import designerViewReducer from './state/designerView/designerViewSlice';
@@ -22,6 +23,7 @@ export const store = configureStore({
     tokens: tokens,
     workflowParameters: workflowParametersReducer,
     staticResults: staticResultsSchemasReducer,
+    clipboard: clipboardReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
