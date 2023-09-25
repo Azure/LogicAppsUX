@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [2.69.1](https://github.com/Azure/LogicAppsUX/compare/v2.69.0...v2.69.1) (2023-09-25)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed an edge-node overlap bug ([#3360](https://github.com/Azure/LogicAppsUX/issues/3360)) ([6ab8f09](https://github.com/Azure/LogicAppsUX/commit/6ab8f094ffdc9ae676e8b5b6f5cc00603c5cdd24))
+* **Designer:** Fixed error bubbling on managed connector request error ([#3363](https://github.com/Azure/LogicAppsUX/issues/3363)) ([237babb](https://github.com/Azure/LogicAppsUX/commit/237babbba94bddecf6ae70dd2804b55044e55f68))
+* **Designer:** Fixed OpenAPI formatted dynamic data naming ([#3379](https://github.com/Azure/LogicAppsUX/issues/3379)) ([08fbf1f](https://github.com/Azure/LogicAppsUX/commit/08fbf1f746fc203afcd78f3d557db90c79a1e461))
+
 ## [2.69.0](https://github.com/Azure/LogicAppsUX/compare/v2.68.0...v2.69.0) (2023-09-20)
 
 
