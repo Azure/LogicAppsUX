@@ -1,4 +1,4 @@
-import type { AppDispatch, RootState } from '../../core';
+import type { AppDispatch } from '../../core';
 import { pasteOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
@@ -14,7 +14,7 @@ import { containsIdTag, guid, removeIdTag } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useOnViewportChange } from 'reactflow';
 
 export interface DropZoneProps {
@@ -28,7 +28,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const [showCallout, setShowCallout] = useState(false);
-  const copiedNode = useSelector((state: RootState) => state.clipboard.copiedNode);
+  const localStorageClipboard = window.localStorage.getItem('msla-clipboard');
+  const copiedNode = localStorageClipboard ? JSON.parse(localStorageClipboard) : null;
 
   useOnViewportChange({
     onStart: useCallback(() => {
@@ -65,6 +66,9 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       dispatch(
         pasteOperation({
           relationshipIds,
+          nodeId: copiedNode.nodeId,
+          nodeData: copiedNode.nodeData,
+          operationInfo: copiedNode.operationInfo,
         })
       );
     }
