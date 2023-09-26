@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Введите допустимое логическое значение."
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Введите допустимый URI."
     }
   ],
   "1uGBLP": [
@@ -874,7 +874,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Введите допустимое значение даты и времени."
     }
   ],
   "3vCCY7": [
@@ -1000,7 +1000,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 Сохранение этого потока…"
     }
   ],
   "4izAMi": [
@@ -1432,7 +1432,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Введите допустимый адрес электронной почты."
     }
   ],
   "7k9jXx": [
@@ -2602,7 +2602,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Укажите допустимую таблицу."
     }
   ],
   "EqX3Mi": [
@@ -3322,7 +3322,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Чат Copilot отменен"
     }
   ],
   "JNQHws": [
@@ -3881,6 +3881,12 @@
       "value": "(UTC+02:00) Хельсинки, Киев, Рига, София, Таллинн, Вильнюс"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3980,7 +3986,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Действие выполняется…"
     }
   ],
   "O1tedM": [
@@ -4005,6 +4011,12 @@
     {
       "type": 0,
       "value": "ОК"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -4076,7 +4088,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Сообщить об ошибке"
     }
   ],
   "OVvieE": [
@@ -4212,7 +4224,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "Пробелы должны быть закодированы для URI"
     }
   ],
   "P4rEwD": [
@@ -4609,6 +4621,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5989,6 +6011,12 @@
       "value": "Свернуть статический результат"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6218,7 +6246,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Введите допустимый код JSON."
     }
   ],
   "ba9yGJ": [
@@ -6758,7 +6786,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Произошла ошибка. Повторите попытку."
     }
   ],
   "g/7QyT": [
@@ -6886,7 +6914,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Введите допустимое значение с плавающей точкой."
     }
   ],
   "gc6v4X": [
@@ -7066,7 +7094,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Значение слишком велико."
     }
   ],
   "hq1mk6": [
@@ -7145,6 +7173,12 @@
     {
       "type": 0,
       "value": "Повторить"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7690,7 +7724,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Введите допустимое число."
     }
   ],
   "lM9qrG": [
@@ -8213,6 +8247,12 @@
       "value": "Недопустимое целочисленное значение"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8246,7 +8286,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Введите допустимое двойное число."
     }
   ],
   "ox2Ou7": [
@@ -8324,7 +8364,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Введите допустимое целое число."
     }
   ],
   "pXmFGf": [
@@ -9502,7 +9542,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Остановить создание"
     }
   ],
   "wPlTDB": [

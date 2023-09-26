@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Ange ett giltigt booleskt värde."
     }
   ],
   "+Jryh+": [
@@ -524,7 +524,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Ange en giltig URI."
     }
   ],
   "1uGBLP": [
@@ -878,7 +878,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Ange giltigt datetime."
     }
   ],
   "3vCCY7": [
@@ -1000,7 +1000,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 Sparar det här flödet..."
     }
   ],
   "4izAMi": [
@@ -1436,7 +1436,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Ange en giltig e-postadress."
     }
   ],
   "7k9jXx": [
@@ -2576,7 +2576,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Ange en giltig tabell."
     }
   ],
   "EqX3Mi": [
@@ -3274,7 +3274,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Copilot-chatten avbröts"
     }
   ],
   "JNQHws": [
@@ -3811,6 +3811,12 @@
       "value": "(UTC+02:00) Helsingfors, Kyiv, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3910,7 +3916,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Vi jobbar på det..."
     }
   ],
   "O1tedM": [
@@ -3935,6 +3941,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -4006,7 +4018,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Rapportera en bugg"
     }
   ],
   "OVvieE": [
@@ -4138,7 +4150,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "Blanksteg måste kodas för URI:er"
     }
   ],
   "P4rEwD": [
@@ -4509,6 +4521,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5881,6 +5903,12 @@
       "value": "Dölj statiskt resultat"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6110,7 +6138,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Ange en giltig JSON."
     }
   ],
   "ba9yGJ": [
@@ -6650,7 +6678,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Någonting gick fel. Försök igen."
     }
   ],
   "g/7QyT": [
@@ -6778,7 +6806,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Ange ett giltigt flyttal."
     }
   ],
   "gc6v4X": [
@@ -6936,7 +6964,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Värdet är för högt."
     }
   ],
   "hq1mk6": [
@@ -7015,6 +7043,12 @@
     {
       "type": 0,
       "value": "Gör om"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7534,7 +7568,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Ange ett giltigt tal."
     }
   ],
   "lM9qrG": [
@@ -8057,6 +8091,12 @@
       "value": "Ogiltigt heltalsvärde"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8090,7 +8130,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Ange ett giltigt dubbelnummer."
     }
   ],
   "ox2Ou7": [
@@ -8168,7 +8208,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Ange ett giltigt heltalsvärde."
     }
   ],
   "pXmFGf": [
@@ -9316,7 +9356,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Sluta generera"
     }
   ],
   "wPlTDB": [

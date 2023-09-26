@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "유효한 부울을 입력하세요."
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "올바른 URI를 입력하세요."
     }
   ],
   "1uGBLP": [
@@ -866,7 +866,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "유효한 날짜를 입력하세요."
     }
   ],
   "3vCCY7": [
@@ -992,7 +992,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 이 흐름을 저장하는 중..."
     }
   ],
   "4izAMi": [
@@ -1424,7 +1424,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "유효한 전자 메일을 입력하세요."
     }
   ],
   "7k9jXx": [
@@ -2549,7 +2549,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "올바른 테이블을 입력하세요."
     }
   ],
   "EqX3Mi": [
@@ -3228,7 +3228,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Copilot 채팅을 취소함"
     }
   ],
   "JNQHws": [
@@ -3754,6 +3754,12 @@
       "value": "(UTC+02:00) 헬싱키, 키예프, 리가, 소피아, 탈린, 빌뉴스"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3853,7 +3859,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ 작업하는 중..."
     }
   ],
   "O1tedM": [
@@ -3878,6 +3884,12 @@
     {
       "type": 0,
       "value": "확인"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -3949,7 +3961,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "버그 보고"
     }
   ],
   "OVvieE": [
@@ -4085,7 +4097,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "공백은 URI에 대해 인코딩되어야 합니다."
     }
   ],
   "P4rEwD": [
@@ -4453,6 +4465,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5829,6 +5851,12 @@
       "value": "정적 결과 축소"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6058,7 +6086,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "ba9yGJ": [
@@ -6598,7 +6626,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "죄송합니다. 문제가 발생했습니다. 다시 시도하십시오."
     }
   ],
   "g/7QyT": [
@@ -6718,7 +6746,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "올바른 float를 입력하세요."
     }
   ],
   "gc6v4X": [
@@ -6865,7 +6893,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "값이 너무 큽니다."
     }
   ],
   "hq1mk6": [
@@ -6944,6 +6972,12 @@
     {
       "type": 0,
       "value": "다시 실행"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7448,7 +7482,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "유효한 숫자를 입력하세요."
     }
   ],
   "lM9qrG": [
@@ -7963,6 +7997,12 @@
       "value": "잘못된 정수 값"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -7996,7 +8036,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "유효한 이중 번호를 입력하세요."
     }
   ],
   "ox2Ou7": [
@@ -8074,7 +8114,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "유효한 정수를 입력하세요."
     }
   ],
   "pXmFGf": [
@@ -9207,7 +9247,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "생성 중지"
     }
   ],
   "wPlTDB": [

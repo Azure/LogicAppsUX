@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "有効なブール値を入力してください。"
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "有効な URI を入力してください。"
     }
   ],
   "1uGBLP": [
@@ -866,7 +866,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "有効な日時を入力してください。"
     }
   ],
   "3vCCY7": [
@@ -992,7 +992,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 このフローを保存しています..."
     }
   ],
   "4izAMi": [
@@ -1424,7 +1424,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "有効なメールを入力してください。"
     }
   ],
   "7k9jXx": [
@@ -2557,7 +2557,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "有効なテーブルを入力してください。"
     }
   ],
   "EqX3Mi": [
@@ -3236,7 +3236,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Copilot チャットがキャンセルされました"
     }
   ],
   "JNQHws": [
@@ -3762,6 +3762,12 @@
       "value": "(UTC+02:00) ヘルシンキ、キエフ、リガ、ソフィア、タリン、ビリニュス"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3861,7 +3867,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ 処理しています..."
     }
   ],
   "O1tedM": [
@@ -3886,6 +3892,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -3957,7 +3969,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "バグをレポートする"
     }
   ],
   "OVvieE": [
@@ -4093,7 +4105,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "URI には空白文字をエンコードする必要があります"
     }
   ],
   "P4rEwD": [
@@ -4461,6 +4473,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5833,6 +5855,12 @@
       "value": "静的な結果を折りたたむ"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6062,7 +6090,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "ba9yGJ": [
@@ -6602,7 +6630,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "問題が発生しました。もう一度やり直してください。"
     }
   ],
   "g/7QyT": [
@@ -6722,7 +6750,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "有効な float を入力してください。"
     }
   ],
   "gc6v4X": [
@@ -6869,7 +6897,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "値が大きすぎます。"
     }
   ],
   "hq1mk6": [
@@ -6948,6 +6976,12 @@
     {
       "type": 0,
       "value": "やり直し"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7452,7 +7486,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "有効な数値を入力してください。"
     }
   ],
   "lM9qrG": [
@@ -7967,6 +8001,12 @@
       "value": "整数値が無効です"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8000,7 +8040,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "有効な倍精度浮動小数点数を入力してください。"
     }
   ],
   "ox2Ou7": [
@@ -8078,7 +8118,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "有効な整数を入力してください。"
     }
   ],
   "pXmFGf": [
@@ -9211,7 +9251,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "生成の停止"
     }
   ],
   "wPlTDB": [
