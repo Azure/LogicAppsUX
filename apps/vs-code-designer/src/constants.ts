@@ -208,3 +208,6 @@ export const deploymentsDirectory = 'deployments';
 export const diagnosticsDirectory = 'diagnostics';
 export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
+
+export const serverFarmIdPlaceholder =
+  '/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Web/serverfarms/server_farm_name';
