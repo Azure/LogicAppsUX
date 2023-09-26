@@ -248,7 +248,7 @@ function getRuntimeVersion(runtime: string): string {
   return nonNullOrEmptyValue(runtime.split('|')[1].trim(), 'runtimeVersion');
 }
 
-function getNewFileShareName(siteName: string): string {
+export function getNewFileShareName(siteName: string): string {
   const randomLetters = 6;
   const maxFileShareNameLength = 63;
   return siteName.toLowerCase().substr(0, maxFileShareNameLength - randomLetters) + getRandomHexString(randomLetters);

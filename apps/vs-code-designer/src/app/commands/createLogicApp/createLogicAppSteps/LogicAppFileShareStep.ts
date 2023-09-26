@@ -16,9 +16,10 @@ import { createStorageClient } from '../../../utils/azureClients';
 import { getWorkflowsPathInLocalProject } from '../../../utils/codeless/common';
 import { tryGetFunctionProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../../workflows/switchDebugMode/switchDebugMode';
+import { getNewFileShareName } from './LogicAppCreateStep';
 import type { StorageManagementClient, StorageAccountListKeysResult } from '@azure/arm-storage';
 import { type ShareClient, ShareServiceClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
-import { AzureWizardExecuteStep, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import { AzureWizardExecuteStep, type IActionContext, callWithTelemetryAndErrorHandling, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -46,7 +47,7 @@ export class LogicAppFileShareStep extends AzureWizardExecuteStep<ILogicAppWizar
 
       const storageClient: StorageManagementClient = await createStorageClient(wizardContext);
       const storageShareClient = await this.createStorageClient(wizardContext, storageClient);
-      const shareName = wizardContext.newSiteName.toLowerCase();
+      const shareName = getNewFileShareName(nonNullProp(wizardContext, 'newSiteName'));
       const shareClient = storageShareClient.getShareClient(shareName);
 
       await this.createFileShare(shareClient);
