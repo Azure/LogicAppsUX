@@ -114,7 +114,7 @@ export const Combobox = ({
         ? [loadingOption]
         : errorDetails
         ? [errorOption]
-        : options.filter((option) => new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.value.toLowerCase()));
+        : options.filter((option) => new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.displayName.toLowerCase()));
 
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
