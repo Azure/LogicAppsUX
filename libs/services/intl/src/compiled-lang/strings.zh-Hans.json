@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "输入有效的布尔值。"
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "输入有效的 URI。"
     }
   ],
   "1uGBLP": [
@@ -878,7 +878,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "输入有效日期/时间。"
     }
   ],
   "3vCCY7": [
@@ -1004,7 +1004,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 正在保存此流..."
     }
   ],
   "4izAMi": [
@@ -1436,7 +1436,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "输入有效的电子邮件。"
     }
   ],
   "7k9jXx": [
@@ -2577,7 +2577,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "输入有效的表。"
     }
   ],
   "EqX3Mi": [
@@ -3256,7 +3256,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Copilot 聊天已取消"
     }
   ],
   "JNQHws": [
@@ -3782,6 +3782,12 @@
       "value": "(UTC+02:00)赫尔辛基，基辅，里加，索非亚，塔林，维尔纽斯"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3881,7 +3887,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ 正在处理..."
     }
   ],
   "O1tedM": [
@@ -3906,6 +3912,12 @@
     {
       "type": 0,
       "value": "确定"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -3977,7 +3989,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "报告 bug"
     }
   ],
   "OVvieE": [
@@ -4113,7 +4125,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "对于 URI，必须编码空格。"
     }
   ],
   "P4rEwD": [
@@ -4481,6 +4493,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5873,6 +5895,12 @@
       "value": "折叠静态结果"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6102,7 +6130,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "输入有效的 JSON。"
     }
   ],
   "ba9yGJ": [
@@ -6646,7 +6674,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "对不起，出现错误。请重试。"
     }
   ],
   "g/7QyT": [
@@ -6774,7 +6802,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "输入有效的浮点数。"
     }
   ],
   "gc6v4X": [
@@ -6921,7 +6949,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "值过大。"
     }
   ],
   "hq1mk6": [
@@ -7000,6 +7028,12 @@
     {
       "type": 0,
       "value": "重做"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7516,7 +7550,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "请输入有效的数字。"
     }
   ],
   "lM9qrG": [
@@ -8047,6 +8081,12 @@
       "value": "整数值无效"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8080,7 +8120,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "输入有效的双精度数字。"
     }
   ],
   "ox2Ou7": [
@@ -8158,7 +8198,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "输入有效的整数。"
     }
   ],
   "pXmFGf": [
@@ -9299,7 +9339,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "停止生成"
     }
   ],
   "wPlTDB": [

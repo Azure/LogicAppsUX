@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Wprowadź prawidłową wartość logiczną."
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Wprowadź prawidłowy identyfikator URI."
     }
   ],
   "1uGBLP": [
@@ -874,7 +874,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Wprowadź prawidłową datę/godzinę."
     }
   ],
   "3vCCY7": [
@@ -1000,7 +1000,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 Trwa zapisywanie tego przepływu..."
     }
   ],
   "4izAMi": [
@@ -1432,7 +1432,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Wprowadź prawidłowy adres e-mail."
     }
   ],
   "7k9jXx": [
@@ -2602,7 +2602,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Wprowadź prawidłową tabeli."
     }
   ],
   "EqX3Mi": [
@@ -3322,7 +3322,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Rozmowa na czacie funkcji Copilot została anulowana"
     }
   ],
   "JNQHws": [
@@ -3881,6 +3881,12 @@
       "value": "(UTC+02:00) Helsinki, Kijów, Ryga, Sofia, Tallin, Wilno"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3980,7 +3986,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Pracujemy nad tym..."
     }
   ],
   "O1tedM": [
@@ -4005,6 +4011,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -4076,7 +4088,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Zgłoś usterkę"
     }
   ],
   "OVvieE": [
@@ -4212,7 +4224,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "Białe znaki muszą być zakodowane dla identyfikatorów URI"
     }
   ],
   "P4rEwD": [
@@ -4613,6 +4625,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5993,6 +6015,12 @@
       "value": "Zwiń wynik statyczny"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6222,7 +6250,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "ba9yGJ": [
@@ -6762,7 +6790,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Niestety, coś poszło źle. Spróbuj ponownie."
     }
   ],
   "g/7QyT": [
@@ -6890,7 +6918,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Wprowadź prawidłowy typ zmiennoprzecinkowy."
     }
   ],
   "gc6v4X": [
@@ -7070,7 +7098,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Wartość jest zbyt duża."
     }
   ],
   "hq1mk6": [
@@ -7149,6 +7177,12 @@
     {
       "type": 0,
       "value": "Wykonaj ponownie"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7706,7 +7740,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Wprowadź poprawną liczbę."
     }
   ],
   "lM9qrG": [
@@ -8229,6 +8263,12 @@
       "value": "Nieprawidłowa wartość całkowita"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8262,7 +8302,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Wprowadź prawidłową podwójną liczbę."
     }
   ],
   "ox2Ou7": [
@@ -8340,7 +8380,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Wprowadź prawidłową liczbę całkowitą."
     }
   ],
   "pXmFGf": [
@@ -9518,7 +9558,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Zatrzymaj generowanie"
     }
   ],
   "wPlTDB": [
