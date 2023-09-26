@@ -102,7 +102,13 @@ export const convertDataMapNodesToLayoutTree = (
       },
       {
         id: LayoutContainer.Functions,
-        children: Object.keys(currentFunctionNodes).map((fnNodeKey) => ({ id: fnNodeKey })),
+        children: Object.keys(currentFunctionNodes).map((fnNodeKey) => {
+          const idk = currentFunctionNodes[fnNodeKey].functionData.positions?.find((pos) => pos.targetKey === currentTargetSchemaNode.key);
+          if (idk) {
+            return { id: fnNodeKey, x: idk.position.x, y: idk.position.y };
+          }
+          return { id: fnNodeKey };
+        }),
       },
       {
         id: LayoutContainer.TargetSchema,
@@ -201,7 +207,7 @@ export const applyCustomLayout = async (
 
   // Function node positioning
   const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth * 1.5 + (isOverview ? xInterval : 0);
-  let farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
+  const farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
   const nextAvailableToolbarSpot: GraphCoord = [0, 0]; // Grid representation (one node slot == 1x1)
   const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
 
@@ -362,20 +368,17 @@ export const applyCustomLayout = async (
     // fnNode.x = fnNodeXPos;
     // fnNode.y = fnNodeYPos;
     if (!fnNode.x) {
+      // danielle this is never true
       fnNode.x = 300;
       fnNode.y = 300;
     }
   };
 
-  graph.children[1].children.forEach((fnNode) => {
-    calculateFnNodePosition(fnNode);
+  const functionNodes = graph.children[1].children;
 
-    // Quick workaround to remove the extra spacing added, should be removed when we move to unlocked positions
-    if (fnNode.x) {
-      fnNode.x = fnNode.x >= fnStartX ? fnNode.x - fnStartX : fnNode.x;
-      if (fnNode.x > farthestRightFnNodeXPos) {
-        farthestRightFnNodeXPos = fnNode.x;
-      }
+  functionNodes.forEach((fnNode) => {
+    if (!fnNode.x) {
+      calculateFnNodePosition(fnNode);
     }
   });
 
@@ -389,7 +392,7 @@ export const applyCustomLayout = async (
   // Finally, position remaining function nodes that only output to the target schema
   // (and thus must wait until after its layout is computed)
   fnNodeIdsThatOnlyOutputToTargetSchema.forEach((fnNodeId) => {
-    const fnNode = graph.children[1].children.find((layoutFnNode) => layoutFnNode.id === fnNodeId);
+    const fnNode = functionNodes.find((layoutFnNode) => layoutFnNode.id === fnNodeId);
     const tgtSchemaOutputYPositions = graph.edges
       .filter((edge) => edge.sourceId === fnNodeId)
       .map((edge) => {

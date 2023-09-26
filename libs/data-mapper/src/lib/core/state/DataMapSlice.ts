@@ -193,11 +193,12 @@ export const dataMapSlice = createSlice({
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
-      metadata?.functionNodes.forEach((node) => {
-        const connection = dataMapConnections[node.reactFlowGuid].self.node as FunctionData;
-        connection.positions = node.positions;
-      });
-      const functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
+      // metadata?.functionNodes.forEach((node) => {
+      //   const connection = dataMapConnections[node.reactFlowGuid].self.node as FunctionData;
+      //   connection.positions = node.positions;
+      // });
+      let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
+      functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -546,6 +547,10 @@ export const dataMapSlice = createSlice({
       const newOp = { ...state.curDataMapOperation };
       let positions = newOp.functionNodes[action.payload.id].functionData.positions;
       if (positions) {
+        let positionToUpdate = positions.find((pos) => pos.targetKey === action.payload.positionMetadata.targetKey);
+        if (positionToUpdate) {
+          positionToUpdate = action.payload.positionMetadata;
+        }
         positions.push(action.payload.positionMetadata);
       } else {
         positions = [action.payload.positionMetadata];
@@ -976,8 +981,9 @@ export const assignFunctionNodePositionsFromMetadata = (
   if (metadata === undefined) {
     return;
   }
+  const functionsCopy = { ...functions };
   metadata.forEach((positionData) => {
-    const func = Object.keys(functions).find((functionId) => {
+    const func = Object.keys(functionsCopy).find((functionId) => {
       const funcData = functions[functionId];
       if (funcData.functionData.key === positionData.functionKey) {
         const connectionForFunction = connections[functionId];
@@ -1006,7 +1012,8 @@ export const assignFunctionNodePositionsFromMetadata = (
       return false;
     });
     if (func) {
-      functions[func].functionData.positions = positionData.positions;
+      functionsCopy[func].functionData = { ...functionsCopy[func].functionData, positions: positionData.positions };
     }
   });
+  return functionsCopy || {};
 };
