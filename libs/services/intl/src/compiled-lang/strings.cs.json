@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Zadejte platnou logickou hodnotu."
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Zadejte platný identifikátor URI."
     }
   ],
   "1uGBLP": [
@@ -874,7 +874,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Zadejte platné datum a čas."
     }
   ],
   "3vCCY7": [
@@ -1000,7 +1000,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 Tento tok se ukládá..."
     }
   ],
   "4izAMi": [
@@ -1432,7 +1432,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Zadejte platný e-mail."
     }
   ],
   "7k9jXx": [
@@ -2602,7 +2602,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Zadejte platnou tabulku."
     }
   ],
   "EqX3Mi": [
@@ -3318,7 +3318,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Chat Copilot byl zrušen"
     }
   ],
   "JNQHws": [
@@ -3877,6 +3877,12 @@
       "value": "(UTC+02:00) Helsinky, Kyjev, Riga, Sofie, Tallinn, Vilnius"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3980,7 +3986,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Pracujeme na tom..."
     }
   ],
   "O1tedM": [
@@ -4005,6 +4011,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -4076,7 +4088,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Nahlásit chybu"
     }
   ],
   "OVvieE": [
@@ -4208,7 +4220,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "Prázdné znaky musí být zakódované pro identifikátory URI"
     }
   ],
   "P4rEwD": [
@@ -4605,6 +4617,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5981,6 +6003,12 @@
       "value": "Sbalit statický výsledek"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6210,7 +6238,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Zadejte platný JSON."
     }
   ],
   "ba9yGJ": [
@@ -6750,7 +6778,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Bohužel došlo k chybě. Opakujte akci."
     }
   ],
   "g/7QyT": [
@@ -6878,7 +6906,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Zadejte platný float."
     }
   ],
   "gc6v4X": [
@@ -7058,7 +7086,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Hodnota je moc velká."
     }
   ],
   "hq1mk6": [
@@ -7141,6 +7169,12 @@
     {
       "type": 0,
       "value": "Znovu"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7682,7 +7716,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Zadejte platné číslo."
     }
   ],
   "lM9qrG": [
@@ -8205,6 +8239,12 @@
       "value": "Neplatná hodnota celého čísla"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8238,7 +8278,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Zadejte platné dvojčíslo."
     }
   ],
   "ox2Ou7": [
@@ -8316,7 +8356,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Zadejte platné celé číslo."
     }
   ],
   "pXmFGf": [
@@ -9486,7 +9526,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Zastavit generování"
     }
   ],
   "wPlTDB": [

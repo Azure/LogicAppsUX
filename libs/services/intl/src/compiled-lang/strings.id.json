@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Masukkan boolean yang valid."
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Masukkan URI yang valid."
     }
   ],
   "1uGBLP": [
@@ -866,7 +866,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Masukkan tanggalwaktu yang valid."
     }
   ],
   "3vCCY7": [
@@ -992,7 +992,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 Menyimpan alur ini..."
     }
   ],
   "4izAMi": [
@@ -1424,7 +1424,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Masukkan email yang valid."
     }
   ],
   "7k9jXx": [
@@ -2561,7 +2561,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Masukkan tabel yang valid."
     }
   ],
   "EqX3Mi": [
@@ -3240,7 +3240,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Obrolan copilot dibatalkan"
     }
   ],
   "JNQHws": [
@@ -3766,6 +3766,12 @@
       "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3865,7 +3871,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️Sedang dikerjakan..."
     }
   ],
   "O1tedM": [
@@ -3890,6 +3896,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -3961,7 +3973,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Laporkan bug"
     }
   ],
   "OVvieE": [
@@ -4097,7 +4109,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "Spasi kosong harus dikodekan untuk URI"
     }
   ],
   "P4rEwD": [
@@ -4461,6 +4473,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5841,6 +5863,12 @@
       "value": "Ciutkan Hasil Statik"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6070,7 +6098,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Masukkan json yang valid."
     }
   ],
   "ba9yGJ": [
@@ -6614,7 +6642,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Maaf, ada yang tidak beres. Coba lagi."
     }
   ],
   "g/7QyT": [
@@ -6734,7 +6762,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Masukkan float yang valid."
     }
   ],
   "gc6v4X": [
@@ -6881,7 +6909,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Nilai terlalu besar."
     }
   ],
   "hq1mk6": [
@@ -6960,6 +6988,12 @@
     {
       "type": 0,
       "value": "Ulangi"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7468,7 +7502,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Masukkan nomor yang valid."
     }
   ],
   "lM9qrG": [
@@ -7991,6 +8025,12 @@
       "value": "Nilai bilangan bulat tidak valid"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8024,7 +8064,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Masukkan Nomor ganda yang valid."
     }
   ],
   "ox2Ou7": [
@@ -8102,7 +8142,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Masukkan bilangan bulat yang valid."
     }
   ],
   "pXmFGf": [
@@ -9247,7 +9287,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Hentikan pembuatan"
     }
   ],
   "wPlTDB": [

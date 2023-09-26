@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Adjon meg egy érvényes logikai értéket."
     }
   ],
   "+Jryh+": [
@@ -524,7 +524,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Érvényes URI-t adjon meg."
     }
   ],
   "1uGBLP": [
@@ -882,7 +882,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Adjon meg egy érvényes dátum/idő típusú értéket."
     }
   ],
   "3vCCY7": [
@@ -1008,7 +1008,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 A folyamat mentése..."
     }
   ],
   "4izAMi": [
@@ -1432,7 +1432,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Érvényes e-mail-címet adjon meg."
     }
   ],
   "7k9jXx": [
@@ -2580,7 +2580,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Adjon meg egy érvényes táblát."
     }
   ],
   "EqX3Mi": [
@@ -3278,7 +3278,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Copilot-csevegés megszakítva"
     }
   ],
   "JNQHws": [
@@ -3815,6 +3815,12 @@
       "value": "(UTC+02:00) Helsinki, Kijev, Riga, Szófia, Tallinn, Vilnius"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3914,7 +3920,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Kis türelmet..."
     }
   ],
   "O1tedM": [
@@ -3939,6 +3945,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -4010,7 +4022,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Hiba jelentése"
     }
   ],
   "OVvieE": [
@@ -4146,7 +4158,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "A szóközöket URI azonosítókhoz kell kódolni"
     }
   ],
   "P4rEwD": [
@@ -4529,6 +4541,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5889,6 +5911,12 @@
       "value": "Statikus eredmény összecsukása"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6118,7 +6146,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "ba9yGJ": [
@@ -6662,7 +6690,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Hiba történt a művelet közben. Próbálja meg ismét."
     }
   ],
   "g/7QyT": [
@@ -6790,7 +6818,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Adjon meg egy érvényes lebegőpontot."
     }
   ],
   "gc6v4X": [
@@ -6948,7 +6976,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Az érték túl nagy."
     }
   ],
   "hq1mk6": [
@@ -7027,6 +7055,12 @@
     {
       "type": 0,
       "value": "Mégis"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7546,7 +7580,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Adjon meg egy érvényes számot."
     }
   ],
   "lM9qrG": [
@@ -8069,6 +8103,12 @@
       "value": "Érvénytelen egész szám"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8102,7 +8142,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Adjon meg egy érvényes duplaszó típusú számot."
     }
   ],
   "ox2Ou7": [
@@ -8180,7 +8220,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Adjon meg egy érvényes egész számot."
     }
   ],
   "pXmFGf": [
@@ -9332,7 +9372,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Létrehozás leállítása"
     }
   ],
   "wPlTDB": [

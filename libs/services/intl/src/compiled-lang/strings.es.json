@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Escribir un valor booleano válido."
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Escriba un URI válido."
     }
   ],
   "1uGBLP": [
@@ -874,7 +874,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Escribir una fecha y hora válidas."
     }
   ],
   "3vCCY7": [
@@ -1000,7 +1000,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 Guardando este flujo..."
     }
   ],
   "4izAMi": [
@@ -1432,7 +1432,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Escribir una dirección de correo electrónico válida."
     }
   ],
   "7k9jXx": [
@@ -2591,7 +2591,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Escriba una tabla válida."
     }
   ],
   "EqX3Mi": [
@@ -3292,7 +3292,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Chat de Copilot cancelado"
     }
   ],
   "JNQHws": [
@@ -3840,6 +3840,12 @@
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofía, Tallin, Vilna"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3939,7 +3945,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Trabajando en ello..."
     }
   ],
   "O1tedM": [
@@ -3964,6 +3970,12 @@
     {
       "type": 0,
       "value": "Aceptar"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -4035,7 +4047,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Informar de un error"
     }
   ],
   "OVvieE": [
@@ -4171,7 +4183,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "Los espacios en blanco deben codificarse para los URI."
     }
   ],
   "P4rEwD": [
@@ -4557,6 +4569,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5937,6 +5959,12 @@
       "value": "Contraer resultado estático"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6166,7 +6194,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Escriba un json válido."
     }
   ],
   "ba9yGJ": [
@@ -6710,7 +6738,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Lo sentimos, se produjo un error. Vuelva a intentarlo."
     }
   ],
   "g/7QyT": [
@@ -6838,7 +6866,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Escriba un float válido."
     }
   ],
   "gc6v4X": [
@@ -7007,7 +7035,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "El valor es demasiado grande."
     }
   ],
   "hq1mk6": [
@@ -7086,6 +7114,12 @@
     {
       "type": 0,
       "value": "Rehacer"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7616,7 +7650,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Escribir un número válido."
     }
   ],
   "lM9qrG": [
@@ -8131,6 +8165,12 @@
       "value": "Valor entero no válido"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8164,7 +8204,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Escribir un número doble válido."
     }
   ],
   "ox2Ou7": [
@@ -8242,7 +8282,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Escriba un entero válido."
     }
   ],
   "pXmFGf": [
@@ -9409,7 +9449,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Dejar de generar"
     }
   ],
   "wPlTDB": [

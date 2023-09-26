@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "輸入有效的布林值。"
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "請輸入有效的 URI。"
     }
   ],
   "1uGBLP": [
@@ -870,7 +870,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "輸入有效日期/時間。"
     }
   ],
   "3vCCY7": [
@@ -1000,7 +1000,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 正在儲存此流程..."
     }
   ],
   "4izAMi": [
@@ -1432,7 +1432,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "輸入有效的電子郵件。"
     }
   ],
   "7k9jXx": [
@@ -2557,7 +2557,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "輸入有效的資料表。"
     }
   ],
   "EqX3Mi": [
@@ -3236,7 +3236,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "已取消 Copilot 聊天"
     }
   ],
   "JNQHws": [
@@ -3762,6 +3762,12 @@
       "value": "(UTC+02:00) 赫爾辛基，基輔，里加，索菲亞，塔林，維爾紐斯"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3861,7 +3867,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ 正在處理中..."
     }
   ],
   "O1tedM": [
@@ -3886,6 +3892,12 @@
     {
       "type": 0,
       "value": "確定"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -3957,7 +3969,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "回報錯誤"
     }
   ],
   "OVvieE": [
@@ -4085,7 +4097,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "必須編碼 URI 的空白字元"
     }
   ],
   "P4rEwD": [
@@ -4449,6 +4461,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5841,6 +5863,12 @@
       "value": "摺疊靜態結果"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6070,7 +6098,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "ba9yGJ": [
@@ -6614,7 +6642,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "對不起，發生某些錯誤，請再試一次。"
     }
   ],
   "g/7QyT": [
@@ -6734,7 +6762,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "輸入有效的浮點數。"
     }
   ],
   "gc6v4X": [
@@ -6881,7 +6909,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "值過大。"
     }
   ],
   "hq1mk6": [
@@ -6960,6 +6988,12 @@
     {
       "type": 0,
       "value": "重做"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7468,7 +7502,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "輸入有效的數字。"
     }
   ],
   "lM9qrG": [
@@ -7983,6 +8017,12 @@
       "value": "整數值無效"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8016,7 +8056,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "輸入有效的雙數字。"
     }
   ],
   "ox2Ou7": [
@@ -8094,7 +8134,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "輸入有效的整數。"
     }
   ],
   "pXmFGf": [
@@ -9239,7 +9279,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "停止產生"
     }
   ],
   "wPlTDB": [

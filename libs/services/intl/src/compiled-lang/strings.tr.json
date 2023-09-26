@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Geçerli bir boole değeri girin."
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Geçerli bir URI girin."
     }
   ],
   "1uGBLP": [
@@ -866,7 +866,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Geçerli bir tarih saat girin."
     }
   ],
   "3vCCY7": [
@@ -992,7 +992,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 Bu akış kaydediliyor..."
     }
   ],
   "4izAMi": [
@@ -1424,7 +1424,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Geçerli bir e-posta adresi girin."
     }
   ],
   "7k9jXx": [
@@ -2568,7 +2568,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Geçerli bir tablo girin."
     }
   ],
   "EqX3Mi": [
@@ -3258,7 +3258,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "Copilot sohbeti iptal edildi"
     }
   ],
   "JNQHws": [
@@ -3795,6 +3795,12 @@
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3894,7 +3900,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Üzerinde çalışıyoruz..."
     }
   ],
   "O1tedM": [
@@ -3919,6 +3925,12 @@
     {
       "type": 0,
       "value": "Tamam"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -3990,7 +4002,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Hata bildirin"
     }
   ],
   "OVvieE": [
@@ -4126,7 +4138,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "Boşluklar URI’ler için kodlanmalıdır"
     }
   ],
   "P4rEwD": [
@@ -4505,6 +4517,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5881,6 +5903,12 @@
       "value": "Statik Sonucu Daralt"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6110,7 +6138,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Geçerli bir json girin."
     }
   ],
   "ba9yGJ": [
@@ -6650,7 +6678,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Ne yazık ki bir sorun oluştu. Lütfen yeniden deneyin."
     }
   ],
   "g/7QyT": [
@@ -6770,7 +6798,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Geçerli bir kayan girin."
     }
   ],
   "gc6v4X": [
@@ -6928,7 +6956,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "Değer çok büyük."
     }
   ],
   "hq1mk6": [
@@ -7007,6 +7035,12 @@
     {
       "type": 0,
       "value": "Yinele"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7522,7 +7556,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Geçerli bir sayı girin."
     }
   ],
   "lM9qrG": [
@@ -8045,6 +8079,12 @@
       "value": "Geçersiz Tamsayı değeri"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8078,7 +8118,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Geçerli bir Çift sayı girin."
     }
   ],
   "ox2Ou7": [
@@ -8156,7 +8196,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Geçerli bir tamsayı girin."
     }
   ],
   "pXmFGf": [
@@ -9304,7 +9344,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Oluşturmayı durdur"
     }
   ],
   "wPlTDB": [

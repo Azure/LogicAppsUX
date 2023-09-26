@@ -32,7 +32,7 @@
   "+HcevX": [
     {
       "type": 0,
-      "value": "Enter a valid boolean."
+      "value": "Voer een geldige booleaanse waarde in."
     }
   ],
   "+Jryh+": [
@@ -520,7 +520,7 @@
   "1r9ljA": [
     {
       "type": 0,
-      "value": "Enter a valid URI."
+      "value": "Voer een geldige URI in."
     }
   ],
   "1uGBLP": [
@@ -874,7 +874,7 @@
   "3uA4ml": [
     {
       "type": 0,
-      "value": "Enter a valid datetime."
+      "value": "Voer een geldige datum/tijd in."
     }
   ],
   "3vCCY7": [
@@ -1000,7 +1000,7 @@
   "4iyEAY": [
     {
       "type": 0,
-      "value": "💾 Saving this flow..."
+      "value": "💾 Deze stroom opslaan..."
     }
   ],
   "4izAMi": [
@@ -1436,7 +1436,7 @@
   "7jcTNd": [
     {
       "type": 0,
-      "value": "Enter a valid email."
+      "value": "Voer een geldig e-mailadres in."
     }
   ],
   "7k9jXx": [
@@ -2580,7 +2580,7 @@
   "EptZhD": [
     {
       "type": 0,
-      "value": "Enter a valid table."
+      "value": "Voer een geldige tabel in."
     }
   ],
   "EqX3Mi": [
@@ -3278,7 +3278,7 @@
   "JKZpcd": [
     {
       "type": 0,
-      "value": "Copilot chat canceled"
+      "value": "De Copilot-chat is geannuleerd"
     }
   ],
   "JNQHws": [
@@ -3811,6 +3811,12 @@
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3910,7 +3916,7 @@
   "O0tSvb": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Er wordt aan gewerkt..."
     }
   ],
   "O1tedM": [
@@ -3935,6 +3941,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -4006,7 +4018,7 @@
   "OVDEFP": [
     {
       "type": 0,
-      "value": "Report a bug"
+      "value": "Een fout melden"
     }
   ],
   "OVvieE": [
@@ -4138,7 +4150,7 @@
   "P4XUjW": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs"
+      "value": "Spaties moeten worden gecodeerd voor URI's"
     }
   ],
   "P4rEwD": [
@@ -4513,6 +4525,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5889,6 +5911,12 @@
       "value": "Statisch resultaat samenvouwen"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6118,7 +6146,7 @@
   "bYwqkV": [
     {
       "type": 0,
-      "value": "Enter a valid json."
+      "value": "Voer een geldige JSON in."
     }
   ],
   "ba9yGJ": [
@@ -6658,7 +6686,7 @@
   "fvGvnA": [
     {
       "type": 0,
-      "value": "Sorry, something went wrong. Please try again."
+      "value": "Er is iets verkeerd gegaan. Probeer het opnieuw."
     }
   ],
   "g/7QyT": [
@@ -6786,7 +6814,7 @@
   "gYaVvl": [
     {
       "type": 0,
-      "value": "Enter a valid float."
+      "value": "Voer een geldige float in."
     }
   ],
   "gc6v4X": [
@@ -6944,7 +6972,7 @@
   "hihfHd": [
     {
       "type": 0,
-      "value": "The value is too large."
+      "value": "De waarde is te hoog."
     }
   ],
   "hq1mk6": [
@@ -7023,6 +7051,12 @@
     {
       "type": 0,
       "value": "Opnieuw"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -7542,7 +7576,7 @@
   "lB56l2": [
     {
       "type": 0,
-      "value": "Enter a valid number."
+      "value": "Voer een geldig getal in."
     }
   ],
   "lM9qrG": [
@@ -8065,6 +8099,12 @@
       "value": "Ongeldig geheel getal"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8098,7 +8138,7 @@
   "osKNnl": [
     {
       "type": 0,
-      "value": "Enter a valid Double number."
+      "value": "Voer een geldig dubbel getal in."
     }
   ],
   "ox2Ou7": [
@@ -8176,7 +8216,7 @@
   "pOVDll": [
     {
       "type": 0,
-      "value": "Enter a valid integer."
+      "value": "Voer een geldig geheel getal in."
     }
   ],
   "pXmFGf": [
@@ -9320,7 +9360,7 @@
   "wP0/uB": [
     {
       "type": 0,
-      "value": "Stop generating"
+      "value": "Stoppen met genereren"
     }
   ],
   "wPlTDB": [
