@@ -201,7 +201,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     }
 
     const isWorkflowStandard: boolean = context.plan?.sku?.family?.toLowerCase() === 'ws';
-    if (context.newSiteOS === WebsiteOS.windows || isWorkflowStandard) {
+    if (context.newSiteOS === WebsiteOS.windows || isWorkflowStandard || context.useContainerApps) {
       // WEBSITE_CONTENT* settings only apply for the following scenarios:
       // Windows: https://github.com/Microsoft/vscode-azurefunctions/issues/625
       // Linux Elastic Premium: https://github.com/microsoft/vscode-azurefunctions/issues/1682
