@@ -3470,14 +3470,18 @@ export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
   return parameterInfo && parameterInfo.required && !(parameterInfo.info.parentProperty && parameterInfo.info.parentProperty.optional);
 }
 
-export function validateParameter(parameter: ParameterInfo, parameterValue: ValueSegment[]): string[] {
+export function validateParameter(
+  parameter: ParameterInfo,
+  parameterValue: ValueSegment[],
+  shouldValidateUnknownParameterAsError = false
+): string[] {
   const parameterType = getInferredParameterType(parameterValue, parameter.type);
   const parameterValueString = parameterValueToStringWithoutCasting(parameterValue, /* forValidation */ true);
   const isJsonObject = parameterType === constants.SWAGGER.TYPE.OBJECT;
 
   return isJsonObject
     ? validateJSONParameter(parameter, parameterValue)
-    : validateStaticParameterInfo(parameter, parameterValueString, true);
+    : validateStaticParameterInfo(parameter, parameterValueString, shouldValidateUnknownParameterAsError);
 }
 
 // Riley - This is a very specific case where the either of the limit properties can be filled, but they cannot both be empty
