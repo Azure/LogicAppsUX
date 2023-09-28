@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [2.71.0](https://github.com/Azure/LogicAppsUX/compare/v2.70.1...v2.71.0) (2023-09-28)
+
+
+### Features
+
+* **designer:** Added Node Copy/Paste Functionality ([#3378](https://github.com/Azure/LogicAppsUX/issues/3378)) ([5c35b0f](https://github.com/Azure/LogicAppsUX/commit/5c35b0f3c45aa2b2a2a59da597f00c50528a8e39))
+
+
+### Bug Fixes
+
+* **designer:** Do not throw error on unknown parameters during validation by default ([#3388](https://github.com/Azure/LogicAppsUX/issues/3388)) ([b3a91ea](https://github.com/Azure/LogicAppsUX/commit/b3a91eaf1c7892f23e96a0d7dbf0590fa87392a2))
+* **designer:** Fix combobox filtering to use display name instead of value ([#3380](https://github.com/Azure/LogicAppsUX/issues/3380)) ([cbc2206](https://github.com/Azure/LogicAppsUX/commit/cbc2206ad682300dd9652acae5dc77aff40f6bf7))
+* **Designer:** Fixed OpenAPI formatted dynamic data naming ([#3379](https://github.com/Azure/LogicAppsUX/issues/3379)) ([9441d74](https://github.com/Azure/LogicAppsUX/commit/9441d74287df79a9ebfef9a8d0290631fdf332e9))
+* **designer:** Fixing the swagger schema returned for http swagger operation ([#3375](https://github.com/Azure/LogicAppsUX/issues/3375)) ([232322a](https://github.com/Azure/LogicAppsUX/commit/232322ac83cb3837afa81f8ba8553ed98b81cbc5))
+* **designer:** Get the right parent id for scope actions inside conditionals ([#3381](https://github.com/Azure/LogicAppsUX/issues/3381)) ([ffd9df8](https://github.com/Azure/LogicAppsUX/commit/ffd9df833966ac52d2f77d50bd15388b2efc4994))
+
 ### [2.70.1](https://github.com/Azure/LogicAppsUX/compare/v2.70.0...v2.70.1) (2023-09-22)
 
 
