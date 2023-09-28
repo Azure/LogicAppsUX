@@ -13,7 +13,6 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
-import { LogicAppFileShareStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppFileShareStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
 import { CustomLocationStorageAccountStep } from '../../commands/deploy/storageAccountSteps/CustomLocationStorageAccountStep';
@@ -163,7 +162,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
     executeSteps.push(new LogicAppCreateStep());
-    executeSteps.push(new LogicAppFileShareStep());
 
     const title: string = localize('functionAppCreatingTitle', 'Create new Logic App (Standard) in Azure');
     const wizard: AzureWizard<IAppServiceWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
