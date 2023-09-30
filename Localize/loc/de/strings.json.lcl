@@ -5323,7 +5323,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copied!]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Der Inhalt wurde kopiert!]]></Val>
+            <Val><![CDATA[Kopiert!]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5502,6 +5502,9 @@
       <Item ItemId=";OBKhVi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This Action/Trigger cannot be copied.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Diese Aktion/dieser Trigger kann nicht kopiert werden.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6285,6 +6288,9 @@
       <Item ItemId=";RjvpD+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert a new step in {parentSubgraphName}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Neuen Schritt in "{parentSubgraphName}" einfügen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8082,6 +8088,9 @@
       <Item ItemId=";ZUCTVP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Paste an action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aktion einfügen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9738,6 +9747,9 @@
       <Item ItemId=";i1vHaT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Copy Action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kopieraktion]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11187,6 +11199,9 @@
       <Item ItemId=";oRxmXb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Copy Trigger]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Trigger kopieren]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
