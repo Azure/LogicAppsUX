@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { hostFileName } from '../../constants';
+import { hostFileName, localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { createNewProjectInternal } from '../commands/createNewProject/createNewProject';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
@@ -16,9 +16,11 @@ import type { MessageItem, WorkspaceFolder } from 'vscode';
 
 const projectSubpathKey = 'projectSubpath';
 
-// Use 'host.json' as an indicator that this is a functions project
+// Use 'host.json' and 'local.settings.json' as an indicator that this is a functions project
 export async function isFunctionProject(folderPath: string): Promise<boolean> {
-  return await fse.pathExists(path.join(folderPath, hostFileName));
+  return (
+    (await fse.pathExists(path.join(folderPath, hostFileName))) && (await fse.pathExists(path.join(folderPath, localSettingsFileName)))
+  );
 }
 
 /**

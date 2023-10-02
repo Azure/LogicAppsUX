@@ -67,7 +67,7 @@ export async function setNodeJsCommand(): Promise<void> {
       const nodeSubFolder = getNodeSubFolder(command);
       command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
 
-      fs.chmodSync(command, 0o777);
+      fs.chmodSync(nodeJsBinariesPath, 0o777);
     }
   }
   updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);

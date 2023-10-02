@@ -233,7 +233,7 @@ export async function setDotNetCommand(): Promise<void> {
         : path.join(dotNetBinariesPath, `${ext.dotNetCliPath}`);
     const currentPath = process.env.PATH;
     const newPath = `${dotNetBinariesPath}${path.delimiter}${command}${path.delimiter}${currentPath}`;
-    fs.chmodSync(command, 0o777);
+    fs.chmodSync(dotNetBinariesPath, 0o777);
     try {
       switch (process.platform) {
         case Platform.windows: {
