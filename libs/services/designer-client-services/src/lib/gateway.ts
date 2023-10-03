@@ -1,4 +1,4 @@
-import type { Gateway, Subscription } from '@microsoft/utils-logic-apps';
+import type { Gateway, GatewayServiceConfig, Subscription } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IGatewayService {
@@ -6,12 +6,17 @@ export interface IGatewayService {
    * Gets gateways for connectorId.
    * @arg {string} connectorName - The connector NAME to retrieve gateway options from.
    */
-  getGateways(subscriptionId: string, connectorName: string): Promise<Gateway[]>;
+  getGateways(subscriptionId: string | undefined, connectorName: string): Promise<Gateway[]>;
 
   /**
    * Gets subscriptions.
    */
-  getSubscriptions(): Promise<Subscription[]>;
+  getSubscriptions(): Promise<Subscription[] | undefined>;
+
+  /**
+   * Gets configuration values for GatewayService.
+   */
+  getConfig?(): Promise<Partial<GatewayServiceConfig>>;
 }
 
 let service: IGatewayService;

@@ -24,6 +24,7 @@ import type {
   ConnectionParameterSetParameter,
   ConnectionParameterSets,
   Gateway,
+  GatewayServiceConfig,
   ManagedIdentity,
   Subscription,
 } from '@microsoft/utils-logic-apps';
@@ -65,6 +66,7 @@ export interface CreateConnectionProps {
   selectedSubscriptionId?: string;
   availableSubscriptions?: Subscription[];
   availableGateways?: Gateway[];
+  gatewayServiceConfig?: Partial<GatewayServiceConfig>;
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
   resourceSelectedProps?: AzureResourcePickerProps;
 }
@@ -96,6 +98,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     selectedSubscriptionId,
     availableSubscriptions,
     availableGateways,
+    gatewayServiceConfig,
     checkOAuthCallback,
     resourceSelectedProps,
   } = props;
@@ -587,6 +590,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                 parameter,
                 value: parameterValues[key],
                 setValue: (val: any) => setParameterValues({ ...parameterValues, [key]: val }),
+                isSubscriptionDropdownDisabled: gatewayServiceConfig?.disableSubscriptionLookup,
                 isLoading,
                 selectedSubscriptionId,
                 selectSubscriptionCallback,

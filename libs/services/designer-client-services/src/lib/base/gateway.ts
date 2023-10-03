@@ -29,7 +29,7 @@ export class BaseGatewayService implements IGatewayService {
   }
 
   public getGateways(subscriptionId: string, connectorName: string): Promise<Gateway[]> {
-    if (!subscriptionId || !connectorName) return Promise.resolve([]);
+    if (!connectorName) return Promise.resolve([]);
     return this.fetchGatewaysList(subscriptionId, connectorName);
   }
 

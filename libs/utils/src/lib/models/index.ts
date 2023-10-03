@@ -7,6 +7,7 @@ export * from './operationDiscoveryResults';
 export * from './operationmanifest';
 export * from './workflowNode';
 export * from './gateway';
+export * from './gatewayServiceConfig';
 export * from './run';
 export * from './subscription';
 export * from './theme';

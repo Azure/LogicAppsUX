@@ -46,6 +46,8 @@ export const useGateways = (subscriptionId: string, connectorName: string) => {
 
 export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
 
+export const useGatewayServiceConfig = () => useQuery('gatewayServiceConfig', async () => GatewayService().getConfig?.() ?? {});
+
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
   const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
