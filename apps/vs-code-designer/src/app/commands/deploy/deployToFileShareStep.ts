@@ -40,6 +40,8 @@ export const deployToFileShare = async (context: IActionContext, site: ParsedSit
     if (shareClient.exists()) {
       const workspaceFolder = await getWorkspaceFolderPath(context);
       const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+      await shareClient.deleteDirectory(wwwrootDirectory);
+      await shareClient.createDirectory(wwwrootDirectory);
       await uploadRootFiles(shareClient, projectPath);
       await uploadWorkflowsFiles(shareClient, projectPath);
     }
@@ -47,7 +49,7 @@ export const deployToFileShare = async (context: IActionContext, site: ParsedSit
 };
 
 const createStorageShareClient = async (site: ParsedSite, client: StorageManagementClient): Promise<ShareServiceClient> => {
-  const storageAccountName = 'site.storageAccountName;';
+  const storageAccountName = 'testblues';
   const keys: StorageAccountListKeysResult = await client.storageAccounts.listKeys(site.resourceGroup, storageAccountName);
   const credential = new StorageSharedKeyCredential(storageAccountName, keys.keys[0].value);
   return new ShareServiceClient(`https://${storageAccountName}.file.core.windows.net`, credential);

@@ -187,7 +187,9 @@ async function deploy(
     }
   });
 
-  await node.loadAllChildren(context);
+  if (!isDeployingToContainers) {
+    await node.loadAllChildren(context);
+  }
   await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
 }
 

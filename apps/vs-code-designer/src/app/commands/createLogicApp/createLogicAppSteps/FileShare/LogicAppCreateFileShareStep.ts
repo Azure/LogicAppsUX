@@ -31,6 +31,7 @@ export class LogicAppCreateFileShareStep extends AzureWizardExecuteStep<ILogicAp
       const storageClient: StorageManagementClient = await createStorageClient(wizardContext);
       const storageShareClient = await this.createStorageShareClient(wizardContext, storageClient);
       const shareName = getNewFileShareName(nonNullProp(wizardContext, 'newSiteName'));
+      wizardContext.fileShareName = shareName;
       const shareClient = storageShareClient.getShareClient(shareName);
 
       await this.createFileShare(shareClient);

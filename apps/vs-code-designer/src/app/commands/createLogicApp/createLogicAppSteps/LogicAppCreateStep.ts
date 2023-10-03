@@ -212,7 +212,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       });
       appSettings.push({
         name: websiteContentShare,
-        value: getNewFileShareName(nonNullProp(context, 'newSiteName')),
+        value: context.fileShareName ?? getNewFileShareName(nonNullProp(context, 'newSiteName')),
       });
     }
 
