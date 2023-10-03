@@ -214,4 +214,5 @@ export const serverFarmIdPlaceholder =
   '/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Web/serverfarms/server_farm_name';
 
 // App settings
-export const websiteContentShare = 'WEBSITE_CONTENTSHARE';
+export const WebsiteContentShare = 'WEBSITE_CONTENTSHARE';
+export const AzureWebJobsStorage = 'AzureWebJobsStorage';

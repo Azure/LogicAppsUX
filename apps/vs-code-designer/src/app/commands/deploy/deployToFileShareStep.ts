@@ -2,16 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { hostFileName, websiteContentShare, workflowFileName, wwwrootDirectory } from '../../../constants';
+import { AzureWebJobsStorage, hostFileName, WebsiteContentShare, workflowFileName, wwwrootDirectory } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { createStorageClient } from '../../utils/azureClients';
 import { getWorkflowsPathInLocalProject } from '../../utils/codeless/common';
 import { tryGetFunctionProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../workflows/switchDebugMode/switchDebugMode';
 import type { StringDictionary } from '@azure/arm-appservice';
-import type { StorageManagementClient, StorageAccountListKeysResult } from '@azure/arm-storage';
-import { type ShareClient, ShareServiceClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
+import { type ShareClient, ShareServiceClient } from '@azure/storage-file-share';
 import type { ShareDirectoryClient } from '@azure/storage-file-share';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { type IActionContext } from '@microsoft/vscode-azext-utils';
@@ -28,14 +26,14 @@ export const deployToFileShare = async (context: IActionContext, site: ParsedSit
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     const logicAppClient = await site.createClient(context);
     const appSettings: StringDictionary = await logicAppClient.listApplicationSettings();
-    const shareName = appSettings.properties[websiteContentShare];
+    const shareName = appSettings.properties[WebsiteContentShare];
+    const connectionString = appSettings.properties[AzureWebJobsStorage];
 
     const message: string = localize('uploadingFileShare', 'Uploading files to File Share "{0}"...', shareName);
     ext.outputChannel.appendLog(message);
     progress.report({ message });
 
-    const storageClient: StorageManagementClient = await createStorageClient(context as any);
-    const storageShareClient = await createStorageShareClient(site, storageClient);
+    const storageShareClient = await createStorageShareClient(connectionString);
     const shareClient = storageShareClient.getShareClient(shareName);
 
     if (await shareClient.exists()) {
@@ -56,11 +54,8 @@ export const deployToFileShare = async (context: IActionContext, site: ParsedSit
   });
 };
 
-const createStorageShareClient = async (site: ParsedSite, client: StorageManagementClient): Promise<ShareServiceClient> => {
-  const storageAccountName = 'testblues';
-  const keys: StorageAccountListKeysResult = await client.storageAccounts.listKeys(site.resourceGroup, storageAccountName);
-  const credential = new StorageSharedKeyCredential(storageAccountName, keys.keys[0].value);
-  return new ShareServiceClient(`https://${storageAccountName}.file.core.windows.net`, credential);
+const createStorageShareClient = async (connectionString: string): Promise<ShareServiceClient> => {
+  return ShareServiceClient.fromConnectionString(connectionString);
 };
 
 const createDirectories = async (shareClient: ShareClient, directories: string[]) => {
