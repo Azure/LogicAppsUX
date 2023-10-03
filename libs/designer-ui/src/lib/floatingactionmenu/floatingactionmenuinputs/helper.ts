@@ -65,7 +65,7 @@ export function deserialize(value: ValueSegment[], isRequestApiConnectionTrigger
 
   itemsProperties = rootObject;
   if (isRequestApiConnectionTrigger) {
-    itemsProperties = rootObject.properties ? rootObject.properties.rows.items : rootObject.rows.items;
+    itemsProperties = rootObject.properties?.rows?.items || rootObject.rows?.items || itemsProperties;
   }
 
   for (const [schemaKey, propertiesUnknown] of Object.entries(itemsProperties?.properties)) {
