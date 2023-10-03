@@ -34,7 +34,7 @@ import {
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
 } from '../createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
-import { DeployToFileShareStep } from './deployToFileShareStep';
+import { deployToFileShare } from './deployToFileShareStep';
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
@@ -172,10 +172,7 @@ async function deploy(
 
     try {
       if (isDeployingToContainers) {
-        const wizard: AzureWizard<IIdentityWizardContext> = new AzureWizard(identityWizardContext, {
-          executeSteps: [new DeployToFileShareStep()],
-        });
-        await wizard.execute();
+        await deployToFileShare(context, node.site);
       } else {
         await innerDeploy(
           node.site,

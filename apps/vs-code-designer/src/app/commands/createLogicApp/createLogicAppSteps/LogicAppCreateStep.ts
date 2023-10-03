@@ -11,6 +11,7 @@ import {
   logicAppKind,
   logicAppKindAppSetting,
   webhookRedirectHostUri,
+  websiteContentShare,
   workerRuntimeKey,
 } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
@@ -210,7 +211,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
         value: storageConnectionString.websiteContentAzureFileValue,
       });
       appSettings.push({
-        name: 'WEBSITE_CONTENTSHARE',
+        name: websiteContentShare,
         value: getNewFileShareName(nonNullProp(context, 'newSiteName')),
       });
     }

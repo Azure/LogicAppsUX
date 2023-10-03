@@ -29,7 +29,7 @@ export class LogicAppCreateFileShareStep extends AzureWizardExecuteStep<ILogicAp
       progress.report({ message });
 
       const storageClient: StorageManagementClient = await createStorageClient(wizardContext);
-      const storageShareClient = await this.createStorageClient(wizardContext, storageClient);
+      const storageShareClient = await this.createStorageShareClient(wizardContext, storageClient);
       const shareName = getNewFileShareName(nonNullProp(wizardContext, 'newSiteName'));
       const shareClient = storageShareClient.getShareClient(shareName);
 
@@ -44,7 +44,7 @@ export class LogicAppCreateFileShareStep extends AzureWizardExecuteStep<ILogicAp
     return !!context.useContainerApps;
   }
 
-  private async createStorageClient(context: ILogicAppWizardContext, client: StorageManagementClient): Promise<ShareServiceClient> {
+  private async createStorageShareClient(context: ILogicAppWizardContext, client: StorageManagementClient): Promise<ShareServiceClient> {
     const keys: StorageAccountListKeysResult = await client.storageAccounts.listKeys(
       context.resourceGroup.name,
       context.storageAccount.name
