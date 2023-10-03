@@ -204,11 +204,16 @@ export const storageProvider = 'Microsoft.Storage';
 export const insightsProvider = 'Microsoft.Insights';
 export const managedEnvironmentsAppProvider = `${appProvider}/${managedEnvironmentsId}`;
 
-// Directorires
+// Directories
 export const deploymentsDirectory = 'deployments';
 export const diagnosticsDirectory = 'diagnostics';
 export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
+
+export const enum DirectoryKind {
+  directory = 'directory',
+  file = 'file',
+}
 
 export const serverFarmIdPlaceholder =
   '/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Web/serverfarms/server_farm_name';

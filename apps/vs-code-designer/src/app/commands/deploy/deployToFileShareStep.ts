@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { AzureWebJobsStorage, hostFileName, WebsiteContentShare, workflowFileName, wwwrootDirectory } from '../../../constants';
+import {
+  AzureWebJobsStorage,
+  DirectoryKind,
+  hostFileName,
+  WebsiteContentShare,
+  workflowFileName,
+  wwwrootDirectory,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWorkflowsPathInLocalProject } from '../../utils/codeless/common';
@@ -93,16 +100,16 @@ const deleteFilesAndSubdirectories = async (directoryClient: ShareDirectoryClien
   try {
     const filesAndDirectories = directoryClient.listFilesAndDirectories();
     for await (const fileOrDirectory of filesAndDirectories) {
-      if (fileOrDirectory.kind === 'directory') {
+      if (fileOrDirectory.kind === DirectoryKind.directory) {
         const subDirectoryClient = directoryClient.getDirectoryClient(fileOrDirectory.name);
         await deleteFilesAndSubdirectories(subDirectoryClient);
         subDirectoryClient.delete();
-      } else if (fileOrDirectory.kind === 'file') {
+      } else if (fileOrDirectory.kind === DirectoryKind.file) {
         const fileClient = directoryClient.getFileClient(fileOrDirectory.name);
         await fileClient.delete();
       }
     }
   } catch (error) {
-    console.error(`Error deleting files and subdirectories: ${error.message}`);
+    console.error(`Error deleting files and subdirectories from file share: ${error.message}`);
   }
 };
