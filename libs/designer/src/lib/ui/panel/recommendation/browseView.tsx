@@ -32,7 +32,7 @@ export const BrowseView = ({
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       if (filters['runtime']) {
-        const filterMethod = SearchService().filterConnector || defaultFilterConnector;
+        const filterMethod = SearchService().filterConnector?.bind(SearchService()) || defaultFilterConnector;
         if (!filterMethod(connector, filters['runtime'])) return false;
       }
 

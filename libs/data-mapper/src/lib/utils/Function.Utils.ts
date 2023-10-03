@@ -160,6 +160,22 @@ export const getFunctionLocationsForAllFunctions = (
   }
   return functionNodes;
 };
+
+export const getConnectedSourceSchema = (
+  dataMapConnections: ConnectionDictionary,
+  flattenedSourceSchema: SchemaNodeDictionary
+): SchemaNodeDictionary => {
+  const connectedSourceSchema: SchemaNodeDictionary = {};
+
+  for (const connectionKey in dataMapConnections) {
+    if (flattenedSourceSchema?.[connectionKey]) {
+      connectedSourceSchema[connectionKey] = flattenedSourceSchema?.[connectionKey];
+    }
+  }
+
+  return connectedSourceSchema;
+};
+
 export const functionDropDownItemText = (key: string, node: FunctionData, connections: ConnectionDictionary) => {
   let fnInputValues: string[] = [];
   const connection = connections[key];
@@ -195,7 +211,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
       .filter((value) => !!value) as string[];
   }
 
-  const inputs = connections[key].inputs[0];
+  const inputs = connections?.[key]?.inputs?.[0];
   const sourceNode = inputs && inputs[0];
   let nodeName: string;
   if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {

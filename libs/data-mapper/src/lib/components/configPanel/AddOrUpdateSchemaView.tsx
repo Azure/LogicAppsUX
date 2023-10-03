@@ -10,7 +10,7 @@ import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-const acceptedSchemaFileInputExtensions = '.xsd';
+const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
 export enum UploadSchemaTypes {
   UploadNew = 'upload-new',

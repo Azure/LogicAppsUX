@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { environment } from '../../environments/environment';
 import type { RootState } from '../../state/store';
 import { useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } from '../../state/workflowLoadingSelectors';
 import { DesignerCommandBar } from './DesignerCommandBar';
@@ -32,6 +33,8 @@ import {
   Designer,
   isOpenApiSchemaVersion,
   getReactQueryClient,
+  serializeBJSWorkflow,
+  store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
 import { guid, startsWith } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
@@ -144,6 +147,15 @@ const DesignerEditorConsumption = () => {
     }
   };
 
+  const getUpdatedWorkflow = async (): Promise<Workflow> => {
+    const designerState = DesignerStore.getState();
+    const serializedWorkflow = await serializeBJSWorkflow(designerState, {
+      skipValidation: false,
+      ignoreNonCriticalErrors: true,
+    });
+    return serializedWorkflow;
+  };
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, useLegacyWorkflowParameters: true }}>
@@ -160,7 +172,7 @@ const DesignerEditorConsumption = () => {
                 isConsumption
               />
               <Designer />
-              {showChatBot ? <Chatbot /> : null}
+              {showChatBot ? <Chatbot endpoint={environment.chatbotEndpoint} getUpdatedWorkflow={getUpdatedWorkflow} /> : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
@@ -234,7 +246,21 @@ const getDesignerServices = (
       },
       getSwaggerOperationSchema: (args: any) => {
         const { parameters, isInput } = args;
-        return appServiceService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
+        return appServiceService.getOperationSchema(
+          parameters.swaggerUrl,
+          parameters.operationId,
+          isInput,
+          true /* supportsAuthenticationParameter */
+        );
+      },
+      getAppserviceSwaggerOperationSchema: (args: any) => {
+        const { parameters, isInput } = args;
+        return appServiceService.getOperationSchema(
+          parameters.swaggerUrl,
+          parameters.operationId,
+          isInput,
+          false /* supportsAuthenticationParameter */
+        );
       },
       getMapSchema: (_args: any) => {
         throw new Error('getMapSchema not implemented for consumption standalone');

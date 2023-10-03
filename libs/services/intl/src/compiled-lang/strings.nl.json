@@ -29,6 +29,12 @@
       "value": "Mislukt"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Voer een geldige booleaanse waarde in."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -67,6 +73,12 @@
     {
       "type": 0,
       "value": "Tijdzone"
+    }
+  ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Werkstroomheaders onderdrukken bij antwoord"
     }
   ],
   "+xXHdp": [
@@ -181,12 +193,6 @@
     {
       "type": 0,
       "value": "Vereiste invoer ontbreekt"
-    }
-  ],
-  "/w/q/8": [
-    {
-      "type": 0,
-      "value": "Wanneer dit is ingeschakeld, wordt deze actie uitgevoerd met de gebruiker vanuit de instelling 'Uitvoeren als' in de Dataverse-trigger."
     }
   ],
   "/yYyOq": [
@@ -409,12 +415,6 @@
       "value": "Hiermee wordt de poort van een URI geretourneerd. Als de poort niet is opgegeven, wordt de standaardpoort voor het protocol geretourneerd"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Voer een geldig geheel getal in."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -451,12 +451,6 @@
       "value": "Het parameterargument naar een drijvend-kommagetal converteren"
     }
   ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Voer een geldig e-mailadres in."
-    }
-  ],
   "1ZSzl6": [
     {
       "type": 0,
@@ -487,6 +481,12 @@
       "value": "(UTC-01:00) Azoren"
     }
   ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "Het aantal keren dat de aanvraag opnieuw moet worden uitgevoerd"
+    }
+  ],
   "1htSs7": [
     {
       "type": 0,
@@ -515,6 +515,12 @@
     {
       "type": 0,
       "value": "Bronschema verbergen"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Voer een geldige URI in."
     }
   ],
   "1uGBLP": [
@@ -565,12 +571,6 @@
       "value": "Een bestand selecteren dat moeten worden geüpload"
     }
   ],
-  "2Cdt4p": [
-    {
-      "type": 0,
-      "value": "Schakel splitOn in om een exemplaar van de werkstroom per item te starten in de geselecteerde matrix. Elk exemplaar kan ook een afzonderlijke tracerings-id hebben."
-    }
-  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -581,6 +581,12 @@
     {
       "type": 0,
       "value": "Eindtijd"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Bepaal hoe nieuwe uitvoeringen in de wachtrij worden opgeslagen"
     }
   ],
   "2NXYYu": [
@@ -637,6 +643,12 @@
       "value": "Begintijd"
     }
   ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Ongeldig aantal pagineringen. Waarde moet een getal groter dan 0 zijn"
+    }
+  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -657,6 +669,12 @@
     {
       "type": 0,
       "value": "Aan"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Standaardinstelling"
     }
   ],
   "2vnYre": [
@@ -853,6 +871,12 @@
       "value": "Codeweergave sluiten"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Voer een geldige datum/tijd in."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -971,6 +995,12 @@
     {
       "type": 0,
       "value": "Uw stroom is bijgewerkt."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Deze stroom opslaan..."
     }
   ],
   "4izAMi": [
@@ -1163,6 +1193,12 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter is dan de vergelijkingswaarde."
     }
   ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Beveiligde invoerwaarden van de bewerking"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1187,10 +1223,10 @@
       "value": "Annuleren"
     }
   ],
-  "6WmLx1": [
+  "6VV7OY": [
     {
       "type": 0,
-      "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met een van de toegestane typen voor deze invoer"
+      "value": "De time-outwaarde is ongeldig, deze moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
   "6ZviI7": [
@@ -1397,16 +1433,16 @@
       "value": "Hiermee wordt uw werkstroom hersteld naar de status van vóór de bewerking van Copilot. Als u aanvullende bewerkingen in de werkstroom hebt aangebracht na die van Copilot, gaan deze verloren. Deze actie kan niet ongedaan worden gemaakt. Wilt u doorgaan?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Voer een geldig e-mailadres in."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuscode"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Een fout melden"
     }
   ],
   "7lnElz": [
@@ -1431,6 +1467,12 @@
     {
       "type": 0,
       "value": "URL kopiëren"
+    }
+  ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Exponentieel interval"
     }
   ],
   "7zsUT3": [
@@ -1613,18 +1655,6 @@
     {
       "type": 1,
       "value": "invalidNodes"
-    }
-  ],
-  "8ubEPi": [
-    {
-      "type": 0,
-      "value": "Aanvraagopties"
-    }
-  ],
-  "8wlfdo": [
-    {
-      "type": 0,
-      "value": "Werkstroomheaders onderdrukken bij antwoord"
     }
   ],
   "8wr0zO": [
@@ -2087,12 +2117,6 @@
       "value": "Een beheerde identiteit selecteren"
     }
   ],
-  "BrvZNn": [
-    {
-      "type": 0,
-      "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren."
-    }
-  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2103,6 +2127,12 @@
     {
       "type": 0,
       "value": "Eén teken voor aanduiding van de indeling waarmee de indeling van de waarde van deze GUID wordt aangegeven."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag"
     }
   ],
   "BxITRH": [
@@ -2235,6 +2265,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepteert de typen natuurlijk getal, geheel getal en decimaal."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -2291,6 +2327,12 @@
     {
       "type": 0,
       "value": "Knooppunt"
+    }
+  ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "Het interval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
   "DEu7oK": [
@@ -2373,6 +2415,12 @@
       "value": "Statisch resultaat uitvouwen"
     }
   ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "De maximale duur voor één uitgaande aanvraag van deze actie. Als de aanvraag na het uitvoeren van nieuwe pogingen niet binnen deze limiet is voltooid, mislukt de actie"
+    }
+  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2439,12 +2487,6 @@
     {
       "type": 0,
       "value": "Controleer de acties van de stroom om te bekijken of er parameters moeten worden ingesteld. Vergeet niet op te slaan wanneer u klaar bent."
-    }
-  ],
-  "EKtYQF": [
-    {
-      "type": 0,
-      "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag."
     }
   ],
   "ERAWZA": [
@@ -2535,6 +2577,12 @@
       "value": "De aanvraaggeschiedenis voor deze bewerking weergeven"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Voer een geldige tabel in."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -2557,6 +2605,12 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal van een opgegeven tijdseenheid dat moet worden opgeteld."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "Het maximuminterval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
   "F9dR1Q": [
@@ -2995,12 +3049,6 @@
       "value": "Fout bij het ophalen van het manifest"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Voer een geldige datum/tijd in."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3171,6 +3219,16 @@
       "value": "."
     }
   ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Geaccepteerde gegevenstypen: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3215,6 +3273,12 @@
     {
       "type": 0,
       "value": "Actie ongedaan gemaakt"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "De Copilot-chat is geannuleerd"
     }
   ],
   "JNQHws": [
@@ -3283,12 +3347,6 @@
       "value": "(UTC-09:00) Alaska"
     }
   ],
-  "JzqgNM": [
-    {
-      "type": 0,
-      "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag."
-    }
-  ],
   "K50znc": [
     {
       "type": 0,
@@ -3315,12 +3373,6 @@
     {
       "type": 0,
       "value": " vervangen door"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Voer een geldig dubbel getal in."
     }
   ],
   "KV4uky": [
@@ -3463,6 +3515,12 @@
     {
       "type": 0,
       "value": "Configureren"
+    }
+  ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "Wanneer dit is ingeschakeld, wordt deze actie uitgevoerd met de gebruiker vanuit de instelling 'Uitvoeren als' in de Dataverse-trigger"
     }
   ],
   "LS8rfZ": [
@@ -3609,12 +3667,6 @@
       "value": "Optioneel. De naam van de actie met bereik waarvoor u de invoer en uitvoer van de acties op het hoogste niveau binnen dat bereik wilt."
     }
   ],
-  "MCQODe": [
-    {
-      "type": 0,
-      "value": "Uitvoerwaarden van de bewerking en verwijzingen naar uitvoereigenschappen beveiligen."
-    }
-  ],
   "MCzWDc": [
     {
       "type": 0,
@@ -3711,12 +3763,6 @@
       "value": "Bewerken in geavanceerde modus"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Voer een geldig getal in."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3763,6 +3809,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
     }
   ],
   "NGJ00e": [
@@ -3861,6 +3913,12 @@
       "value": "Service-principal"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Er wordt aan gewerkt..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3883,6 +3941,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -3949,6 +4013,12 @@
     {
       "type": 0,
       "value": "Voer de doelgroep in."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Een fout melden"
     }
   ],
   "OVvieE": [
@@ -4077,10 +4147,10 @@
       "value": "Vereist. Deze waarde is het aantal gehele getallen in de matrix."
     }
   ],
-  "P3Zpc4": [
+  "P4XUjW": [
     {
       "type": 0,
-      "value": "Aangepaste tracerings-id"
+      "value": "Spaties moeten worden gecodeerd voor URI's"
     }
   ],
   "P4rEwD": [
@@ -4175,10 +4245,22 @@
       "value": "Bijgehouden eigenschappen"
     }
   ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "Tracerings-id voor splitOn"
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) Caïro"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Decomprimeer de hoofdtekst van de aanvraag als deze is gecomprimeerd met GZip of Deflate. Deze instelling is alleen van toepassing op HTTP-triggers"
     }
   ],
   "PsmHyH": [
@@ -4321,6 +4403,16 @@
       "value": "Werkstroomparameters"
     }
   ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Het aantal pagineringen overschrijdt de maximumwaarde van "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
   "Qn8qxn": [
     {
       "type": 0,
@@ -4433,6 +4525,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4557,6 +4659,12 @@
       "value": "Vereist. De naam van de actie met een antwoord met formuliergegevens of -codes."
     }
   ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Geef het gedrag en de mogelijkheden op voor het overbrengen van inhoud via HTTP. Grote berichten worden mogelijk opgesplitst in kleinere aanvragen aan de connector, om het uploaden van grote berichten toe te staan."
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4641,22 +4749,10 @@
       "value": "Het begin van de maand van een ingevoerd tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
-  "TPV6j/": [
-    {
-      "type": 0,
-      "value": "Ongeldig aantal pagineringen"
-    }
-  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Actietype"
-    }
-  ],
-  "TUaunO": [
-    {
-      "type": 0,
-      "value": "Een waarde invoeren"
     }
   ],
   "TX4Kdr": [
@@ -4831,6 +4927,16 @@
       "value": "Werkstroomactie verwijderen"
     }
   ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Probeer een conversiefunctie te gebruiken, zoals: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4841,6 +4947,16 @@
     {
       "type": 0,
       "value": "Logische naam"
+    }
+  ],
+  "UMPuUJ": [
+    {
+      "type": 1,
+      "value": "expressionValue"
+    },
+    {
+      "type": 0,
+      "value": " verwijderen"
     }
   ],
   "UR1CS5": [
@@ -4985,6 +5101,12 @@
     {
       "type": 0,
       "value": "Algemeen"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "Meer informatie vindt u op http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5217,6 +5339,12 @@
       "value": "(UTC+04:00) Astrachan, Oeljanovsk"
     }
   ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Geef de duur op in de ISO 8601-indeling"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5249,6 +5377,12 @@
     {
       "type": 0,
       "value": "Aanvraaggeschiedenis"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Vast interval"
     }
   ],
   "WcnIF8": [
@@ -5285,6 +5419,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Montevideo"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "Het minimuminterval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
   "X4gDhV": [
@@ -5345,6 +5485,18 @@
     {
       "type": 0,
       "value": "Controleer of woorden goed gespeld zijn."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Actietime-out"
     }
   ],
   "XLUs2P": [
@@ -5559,6 +5711,12 @@
       "value": "Triggervoorwaarden"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Editor wissen"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5753,6 +5911,12 @@
       "value": "Statisch resultaat samenvouwen"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5867,6 +6031,12 @@
       "value": "Volledig scherm"
     }
   ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "Afzonderlijke tracerings-id voor elk splitOn-exemplaar"
+    }
+  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -5877,12 +6047,6 @@
     {
       "type": 0,
       "value": "PFX invoeren"
-    }
-  ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Voer een geldige float in."
     }
   ],
   "aoUT/3": [
@@ -5979,6 +6143,12 @@
       "value": "Info"
     }
   ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Voer een geldige JSON in."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
@@ -6069,12 +6239,6 @@
       "value": "Voer een geldige JSON in."
     }
   ],
-  "c7tRg/": [
-    {
-      "type": 0,
-      "value": "Decomprimeer de hoofdtekst van de aanvraag als deze is gecomprimeerd met GZip of Deflate. Deze instelling is alleen van toepassing op HTTP-triggers."
-    }
-  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6087,16 +6251,16 @@
       "value": "(UTC+09:00) Seoul"
     }
   ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Meer resultaten ophalen tot de pagineringslimiet"
+    }
+  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "Documentatie weergeven"
-    }
-  ],
-  "cP4UkW": [
-    {
-      "type": 0,
-      "value": "Het interval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
   "cR9RtV": [
@@ -6255,22 +6419,10 @@
       "value": "Frequentie"
     }
   ],
-  "dSTRb/": [
-    {
-      "type": 0,
-      "value": "Geef het gedrag en de mogelijkheden op voor het overbrengen van inhoud via HTTP. Grote berichten worden mogelijk opgesplitst in kleinere aanvragen aan de connector, om het uploaden van grote berichten toe te staan. Meer informatie vindt u op http://aka.ms/logicapps-chunk#upload-content-in-chunks"
-    }
-  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Overslaan"
-    }
-  ],
-  "dWFyfN": [
-    {
-      "type": 0,
-      "value": "Beveiligde invoerwaarden van de bewerking."
     }
   ],
   "daoo3l": [
@@ -6419,6 +6571,12 @@
       "value": "Cursief (⌘I)"
     }
   ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Schakel splitOn in om een exemplaar van de werkstroom per item te starten in de geselecteerde matrix. Elk exemplaar kan ook een afzonderlijke tracerings-id hebben"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6443,6 +6601,12 @@
       "value": "Optioneel. De index van waar de subtekenreeks niet meer moet worden geëxtraheerd."
     }
   ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Voorbeeld: PT1S"
+    }
+  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6465,12 +6629,6 @@
     {
       "type": 0,
       "value": "Een API Management-resource selecteren"
-    }
-  ],
-  "fGcSFd": [
-    {
-      "type": 0,
-      "value": "Het aantal pagineringen overschrijdt de maximumwaarde"
     }
   ],
   "fKYuwf": [
@@ -6525,6 +6683,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hongkong SAR, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Er is iets verkeerd gegaan. Probeer het opnieuw."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6553,6 +6717,12 @@
     {
       "type": 0,
       "value": "Runtime"
+    }
+  ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limiet"
     }
   ],
   "g7my78": [
@@ -6617,6 +6787,12 @@
       "value": "Vorige mislukt"
     }
   ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "Geen"
+    }
+  ],
   "gQt/0f": [
     {
       "type": 0,
@@ -6633,6 +6809,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Asjchabad, Tasjkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Voer een geldige float in."
     }
   ],
   "gc6v4X": [
@@ -6725,6 +6907,12 @@
       "value": "Een werkstroomuitvoering opnieuw verzenden vanuit deze actie"
     }
   ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Verdeling in segmenten toestaan"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6781,7 +6969,7 @@
       "value": "Dit is niet wat ik zoek"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "De waarde is te hoog."
@@ -6863,6 +7051,12 @@
     {
       "type": 0,
       "value": "Opnieuw"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -6951,6 +7145,12 @@
       "value": "Beheerde identiteit"
     }
   ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Uitvoerwaarden van de bewerking en verwijzingen naar uitvoereigenschappen beveiligen"
+    }
+  ],
   "iTKrs8": [
     {
       "type": 0,
@@ -7021,12 +7221,6 @@
       "value": "s"
     }
   ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Voer een geldige tabel in."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -7073,6 +7267,12 @@
     {
       "type": 0,
       "value": "Microsoft laten weten hoe deze functie kan worden verbeterd"
+    }
+  ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Aanvraagopties - Time-out"
     }
   ],
   "jQ0Aqj": [
@@ -7147,6 +7347,12 @@
       "value": "In JSON bewerken"
     }
   ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Als u beveiligde invoerwaarden inschakelt, worden de uitvoerwaarden automatisch beveiligd."
+    }
+  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7157,12 +7363,6 @@
     {
       "type": 0,
       "value": "Beschrijf iets wat uw stroom moet doen. Voeg waar mogelijk details toe, inclusief de connector die moet worden gebruikt en of er inhoud moet worden opgenomen."
-    }
-  ],
-  "juR40n": [
-    {
-      "type": 0,
-      "value": "Duur"
     }
   ],
   "juvF+0": [
@@ -7373,6 +7573,12 @@
       "value": "Beheerde identiteit"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Voer een geldig getal in."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7465,6 +7671,12 @@
       "value": "Expressie invoegen (u kunt ook toevoegen door '/' te typen in de editor)"
     }
   ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "De aanvraagtekst valideren op basis van het opgegeven schema. Als de tekst niet overeenkomt, wordt HTTP-fout 400 geretourneerd"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7501,6 +7713,12 @@
       "value": "Naam"
     }
   ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Drempelwaarde voor het aantal te retourneren items"
+    }
+  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7525,16 +7743,6 @@
       "value": "Functie is verwijderd."
     }
   ],
-  "mGPqAg": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": " verwijderen"
-    }
-  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7545,12 +7753,6 @@
     {
       "type": 0,
       "value": "Er wordt een tekenreeksweergave van een gegevens-URI geretourneerd"
-    }
-  ],
-  "mOr9ll": [
-    {
-      "type": 0,
-      "value": "De maximale duur voor één uitgaande aanvraag van deze actie. Als de aanvraag na het uitvoeren van nieuwe pogingen niet binnen deze limiet is voltooid, mislukt de actie."
     }
   ],
   "mPakaD": [
@@ -7837,12 +8039,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Voer een geldige URI in."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -7903,6 +8099,12 @@
       "value": "Ongeldig geheel getal"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -7931,6 +8133,12 @@
     {
       "type": 0,
       "value": "Een notitie toevoegen"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Voer een geldig dubbel getal in."
     }
   ],
   "ox2Ou7": [
@@ -8003,6 +8211,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarden die moeten worden gecombineerd tot een matrix."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Voer een geldig geheel getal in."
     }
   ],
   "pXmFGf": [
@@ -8105,12 +8319,6 @@
     {
       "type": 0,
       "value": "Er wordt een geheel getal in seconden aan een ingevoerd tijdstempel als tekenreeks toegevoegd"
-    }
-  ],
-  "q8vnZQ": [
-    {
-      "type": 0,
-      "value": "De aanvraagtekst valideren op basis van het opgegeven schema. Als de tekst niet overeenkomt, wordt HTTP-fout 400 geretourneerd."
     }
   ],
   "qAlTD5": [
@@ -8283,6 +8491,12 @@
     {
       "type": 0,
       "value": "Vorige stroomsuggestie"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Beperk de maximale duur tussen de nieuwe pogingen en asynchrone antwoorden voor deze actie. Opmerking: Dit verandert de time-out voor aanvraag van één aanvraag niet"
     }
   ],
   "r/n6/9": [
@@ -8519,12 +8733,6 @@
     {
       "type": 0,
       "value": "Vereist. De verzameling waarvoor moet worden gecontroleerd of deze leeg is."
-    }
-  ],
-  "scmyvO": [
-    {
-      "type": 0,
-      "value": "Actietime-out"
     }
   ],
   "sfJTHV": [
@@ -8833,12 +9041,6 @@
       "value": "Weergeven"
     }
   ],
-  "uZH8Qs": [
-    {
-      "type": 0,
-      "value": "Beperk de maximale duur tussen herhaalde pogingen en asynchrone antwoorden voor deze actie. Opmerking: hiermee wordt de time-out van de aanvraag van één aanvraag niet gewijzigd."
-    }
-  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -9045,6 +9247,12 @@
       "value": "Als u een API-verbinding wilt maken en gebruiken, moet u een beheerde identiteit hebben geconfigureerd voor deze logische app."
     }
   ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Duur"
+    }
+  ],
   "vlDynP": [
     {
       "type": 0,
@@ -9147,6 +9355,12 @@
     {
       "type": 0,
       "value": "Inclusief dynamische inhoud"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stoppen met genereren"
     }
   ],
   "wPlTDB": [
@@ -9431,6 +9645,12 @@
       "value": "Hiermee wordt een matrix geretourneerd die in oplopende volgorde is gesorteerd"
     }
   ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Waarschuwing: het invoerknooppunttype komt niet overeen met een van de toegestane typen voor deze invoer."
+    }
+  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9567,6 +9787,12 @@
     {
       "type": 0,
       "value": "Waarde invoeren"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Expressie-editor"
     }
   ],
   "zIDVd9": [

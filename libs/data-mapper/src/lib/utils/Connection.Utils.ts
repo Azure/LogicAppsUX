@@ -78,7 +78,7 @@ export const applyConnectionValue = (
     console.warn('Invalid Connection Input Op: inputIndex was provided for a handle-drawn/deserialized connection');
   }
 
-  let connection = connections[targetNodeReactFlowKey];
+  let connection = { ...connections[targetNodeReactFlowKey] };
 
   let isFunctionUnboundedInputOrRepeatingSchemaNode = false;
 
@@ -163,7 +163,10 @@ export const applyConnectionValue = (
         connection.inputs[0].push(input);
       } else {
         // Function unbounded input
-        connection.inputs[0][confirmedInputIndex] = input;
+        const inputCopy: InputConnection[] = [...connection.inputs[0]]; // created to prevent issues with immutable state
+        inputCopy[confirmedInputIndex] = input;
+        connection.inputs[0] = inputCopy;
+        connections[targetNodeReactFlowKey] = connection;
       }
     } else {
       if (confirmedInputIndex !== -1) {
@@ -182,6 +185,8 @@ export const applyConnectionValue = (
         }
       }
     }
+
+    connections[targetNodeReactFlowKey] = connection;
 
     // Only need to update/add value to source's outputs[] if it's a ConnectionUnit
     if (isConnectionUnit(input)) {
@@ -245,49 +250,15 @@ export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtData
     return true;
   }
 
-  switch (tgtDataType) {
-    case NormalizedDataType.String: {
-      return srcDataType === NormalizedDataType.String;
-    }
-
-    case NormalizedDataType.Integer: {
-      return srcDataType === NormalizedDataType.Integer;
-    }
-
-    case NormalizedDataType.Number:
-    case NormalizedDataType.Decimal: {
-      return (
-        srcDataType === NormalizedDataType.Decimal ||
-        srcDataType === NormalizedDataType.Integer ||
-        srcDataType === NormalizedDataType.Number
-      );
-    }
-
-    case NormalizedDataType.Boolean: {
-      return srcDataType === NormalizedDataType.Boolean;
-    }
-
-    case NormalizedDataType.Binary: {
-      return srcDataType === NormalizedDataType.Binary;
-    }
-
-    case NormalizedDataType.DateTime: {
-      return srcDataType === NormalizedDataType.DateTime;
-    }
-
-    case NormalizedDataType.Array: {
-      return srcDataType === NormalizedDataType.Array;
-    }
-
-    case NormalizedDataType.Complex:
-    case NormalizedDataType.Object: {
-      return srcDataType === NormalizedDataType.Object || srcDataType === NormalizedDataType.Complex;
-    }
-
-    default: {
-      return false;
-    }
+  if (tgtDataType === NormalizedDataType.Object && srcDataType === NormalizedDataType.Complex) {
+    return true;
   }
+
+  if (tgtDataType === srcDataType) {
+    return true;
+  }
+
+  return false;
 };
 
 export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | undefined, tgtMaxNumInputs: number) => {
@@ -516,6 +487,7 @@ export const inputFromHandleId = (inputHandleId: string, functionNode: FunctionD
       return undefined;
     }
   } else {
-    return Number.parseInt(inputHandleId.split(functionNode.inputs[0].name)[1]);
+    const nameSplit = Number.parseInt(inputHandleId.split(functionNode.inputs[0].name)[1]);
+    return Number.isNaN(nameSplit) ? undefined : nameSplit;
   }
 };

@@ -29,6 +29,12 @@
       "value": "Faulted"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -71,6 +77,12 @@
     {
       "type": 0,
       "value": "Time zone"
+    }
+  ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Suppress Workflow Headers on Response"
     }
   ],
   "+xXHdp": [
@@ -185,12 +197,6 @@
     {
       "type": 0,
       "value": "Missing required inputs"
-    }
-  ],
-  "/w/q/8": [
-    {
-      "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "/yYyOq": [
@@ -413,12 +419,6 @@
       "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Enter a valid integer."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -455,12 +455,6 @@
       "value": "Convert the parameter argument to a floating-point number"
     }
   ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Enter a valid email."
-    }
-  ],
   "1ZSzl6": [
     {
       "type": 0,
@@ -491,6 +485,12 @@
       "value": "(UTC-01:00) Azores"
     }
   ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "The number of times to retry the request"
+    }
+  ],
   "1htSs7": [
     {
       "type": 0,
@@ -519,6 +519,12 @@
     {
       "type": 0,
       "value": "Hide source schema"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Enter a valid URI."
     }
   ],
   "1uGBLP": [
@@ -569,12 +575,6 @@
       "value": "Select a file to upload"
     }
   ],
-  "2Cdt4p": [
-    {
-      "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
-    }
-  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -585,6 +585,12 @@
     {
       "type": 0,
       "value": "End time"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Control how new runs are queued"
     }
   ],
   "2NXYYu": [
@@ -641,6 +647,12 @@
       "value": "Start Time"
     }
   ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Paging count invalid. Value must be a number greater than 0"
+    }
+  ],
   "2pRsUf": [
     {
       "type": 0,
@@ -661,6 +673,12 @@
     {
       "type": 0,
       "value": "On"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "2vnYre": [
@@ -857,6 +875,12 @@
       "value": "Close code view"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -975,6 +999,12 @@
     {
       "type": 0,
       "value": "Your flow has been updated."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Saving this flow..."
     }
   ],
   "4izAMi": [
@@ -1163,6 +1193,12 @@
       "value": "Required. The object to check if it is greater than value being compared to."
     }
   ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Secure inputs of the operation"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1187,10 +1223,10 @@
       "value": "Cancel"
     }
   ],
-  "6WmLx1": [
+  "6VV7OY": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input"
+      "value": "Timeout value is invalid, must match ISO 8601 duration format"
     }
   ],
   "6ZviI7": [
@@ -1397,16 +1433,16 @@
       "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Status code"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Report a bug"
     }
   ],
   "7lnElz": [
@@ -1431,6 +1467,12 @@
     {
       "type": 0,
       "value": "Copy URL"
+    }
+  ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Exponential Interval"
     }
   ],
   "7zsUT3": [
@@ -1613,18 +1655,6 @@
     {
       "type": 1,
       "value": "invalidNodes"
-    }
-  ],
-  "8ubEPi": [
-    {
-      "type": 0,
-      "value": "Request Options"
-    }
-  ],
-  "8wlfdo": [
-    {
-      "type": 0,
-      "value": "Suppress workflow headers on response"
     }
   ],
   "8wr0zO": [
@@ -2091,12 +2121,6 @@
       "value": "Select a managed identity"
     }
   ],
-  "BrvZNn": [
-    {
-      "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire."
-    }
-  ],
   "BtL7UI": [
     {
       "type": 0,
@@ -2107,6 +2131,12 @@
     {
       "type": 0,
       "value": "A single format specifier that indicates how to format the value of this Guid."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
     }
   ],
   "BxITRH": [
@@ -2239,6 +2269,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -2295,6 +2331,12 @@
     {
       "type": 0,
       "value": "Node"
+    }
+  ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "DEu7oK": [
@@ -2377,6 +2419,12 @@
       "value": "Expand Static Result"
     }
   ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+    }
+  ],
   "DsPDVB": [
     {
       "type": 0,
@@ -2443,12 +2491,6 @@
     {
       "type": 0,
       "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
-    }
-  ],
-  "EKtYQF": [
-    {
-      "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
     }
   ],
   "ERAWZA": [
@@ -2539,6 +2581,12 @@
       "value": "View the request history for this operation"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -2561,6 +2609,12 @@
     {
       "type": 0,
       "value": "Required. The number of a specified time unit to add."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "F9dR1Q": [
@@ -2991,12 +3045,6 @@
       "value": "Error fetching manifest"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Enter a valid datetime."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3167,6 +3215,16 @@
       "value": "."
     }
   ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Accepted data types: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3211,6 +3269,12 @@
     {
       "type": 0,
       "value": "Action undone"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot chat canceled"
     }
   ],
   "JNQHws": [
@@ -3279,12 +3343,6 @@
       "value": "(UTC-09:00) Alaska"
     }
   ],
-  "JzqgNM": [
-    {
-      "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
-    }
-  ],
   "K50znc": [
     {
       "type": 0,
@@ -3315,12 +3373,6 @@
     {
       "type": 0,
       "value": "\" with"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Enter a valid Double number."
     }
   ],
   "KV4uky": [
@@ -3463,6 +3515,12 @@
     {
       "type": 0,
       "value": "Configure"
+    }
+  ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
     }
   ],
   "LS8rfZ": [
@@ -3609,12 +3667,6 @@
       "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
     }
   ],
-  "MCQODe": [
-    {
-      "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
-    }
-  ],
   "MCzWDc": [
     {
       "type": 0,
@@ -3711,12 +3763,6 @@
       "value": "Edit in advanced mode"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Enter a valid number."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3763,6 +3809,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copied!"
     }
   ],
   "NGJ00e": [
@@ -3861,6 +3913,12 @@
       "value": "Service Principal"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Working on it..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3883,6 +3941,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "This Action/Trigger cannot be copied."
     }
   ],
   "ODQCKj": [
@@ -3949,6 +4013,12 @@
     {
       "type": 0,
       "value": "Enter the audience."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Report a bug"
     }
   ],
   "OVvieE": [
@@ -4081,10 +4151,10 @@
       "value": "Required. This value is the number of integers that is in the array."
     }
   ],
-  "P3Zpc4": [
+  "P4XUjW": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Whitespaces must be encoded for URIs"
     }
   ],
   "P4rEwD": [
@@ -4175,10 +4245,22 @@
       "value": "Tracked properties"
     }
   ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "Split-On Tracking Id"
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
       "value": "(UTC+02:00) Cairo"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
     }
   ],
   "PsmHyH": [
@@ -4325,6 +4407,16 @@
       "value": "Workflow Parameters"
     }
   ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value of "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
   "Qn8qxn": [
     {
       "type": 0,
@@ -4437,6 +4529,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insert a new step in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4565,6 +4667,12 @@
       "value": "Required. The name of the action with a form-data or form-encoded response."
     }
   ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -4649,22 +4757,10 @@
       "value": "Returns the start of the month of a string timestamp"
     }
   ],
-  "TPV6j/": [
-    {
-      "type": 0,
-      "value": "Paging count invalid"
-    }
-  ],
   "TRpSCQ": [
     {
       "type": 0,
       "value": "Action Type"
-    }
-  ],
-  "TUaunO": [
-    {
-      "type": 0,
-      "value": "Enter a value"
     }
   ],
   "TX4Kdr": [
@@ -4835,6 +4931,16 @@
       "value": "Delete Workflow Action"
     }
   ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4845,6 +4951,16 @@
     {
       "type": 0,
       "value": "Logical Name"
+    }
+  ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
     }
   ],
   "UR1CS5": [
@@ -4989,6 +5105,12 @@
     {
       "type": 0,
       "value": "General"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5225,6 +5347,12 @@
       "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
     }
   ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5257,6 +5385,12 @@
     {
       "type": 0,
       "value": "Request History"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Fixed Interval"
     }
   ],
   "WcnIF8": [
@@ -5293,6 +5427,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Montevideo"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "X4gDhV": [
@@ -5353,6 +5493,18 @@
     {
       "type": 0,
       "value": "Ensure words are spelled correctly."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions that must be true for the trigger to fire"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Action Timeout"
     }
   ],
   "XLUs2P": [
@@ -5567,6 +5719,12 @@
       "value": "Trigger conditions"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Clear Editor"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5761,6 +5919,12 @@
       "value": "Collapse Static Result"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Paste an action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5875,6 +6039,12 @@
       "value": "Full Screen"
     }
   ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "Distinct Tracking id for each split-on instance"
+    }
+  ],
   "ahW8Iv": [
     {
       "type": 0,
@@ -5885,12 +6055,6 @@
     {
       "type": 0,
       "value": "Enter Pfx"
-    }
-  ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Enter a valid float."
     }
   ],
   "aoUT/3": [
@@ -5987,6 +6151,12 @@
       "value": "Info"
     }
   ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
@@ -6077,12 +6247,6 @@
       "value": "Enter a valid JSON."
     }
   ],
-  "c7tRg/": [
-    {
-      "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
-    }
-  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -6095,16 +6259,16 @@
       "value": "(UTC+09:00) Seoul"
     }
   ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Retrieve more results up to the pagination limit"
+    }
+  ],
   "cK2A/V": [
     {
       "type": 0,
       "value": "View Documentation"
-    }
-  ],
-  "cP4UkW": [
-    {
-      "type": 0,
-      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
     }
   ],
   "cR9RtV": [
@@ -6263,22 +6427,10 @@
       "value": "Frequency"
     }
   ],
-  "dSTRb/": [
-    {
-      "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
-    }
-  ],
   "dUbKuK": [
     {
       "type": 0,
       "value": "Skip"
-    }
-  ],
-  "dWFyfN": [
-    {
-      "type": 0,
-      "value": "Secure inputs of the operation."
     }
   ],
   "daoo3l": [
@@ -6427,6 +6579,12 @@
       "value": "Italic (⌘I)"
     }
   ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6451,6 +6609,12 @@
       "value": "Optional. The index of where to stop extracting the substring."
     }
   ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Example: PT1S"
+    }
+  ],
   "f81ClO": [
     {
       "type": 0,
@@ -6473,12 +6637,6 @@
     {
       "type": 0,
       "value": "Select an API Management resource"
-    }
-  ],
-  "fGcSFd": [
-    {
-      "type": 0,
-      "value": "Paging count exceeds maximum value"
     }
   ],
   "fKYuwf": [
@@ -6537,6 +6695,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Sorry, something went wrong. Please try again."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6565,6 +6729,12 @@
     {
       "type": 0,
       "value": "Runtime"
+    }
+  ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limit"
     }
   ],
   "g7my78": [
@@ -6621,6 +6791,12 @@
       "value": "Previous failed"
     }
   ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "None"
+    }
+  ],
   "gQt/0f": [
     {
       "type": 0,
@@ -6637,6 +6813,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Ashgabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "gc6v4X": [
@@ -6729,6 +6911,12 @@
       "value": "Resubmit a workflow run from this action"
     }
   ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Allow chunking"
+    }
+  ],
   "hN7iBP": [
     {
       "offset": 0,
@@ -6785,7 +6973,7 @@
       "value": "This isn't what I'm looking for"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "The value is too large."
@@ -6867,6 +7055,12 @@
     {
       "type": 0,
       "value": "Redo"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copy Action"
     }
   ],
   "i4C4aB": [
@@ -6955,6 +7149,12 @@
       "value": "Managed Identity"
     }
   ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Secure outputs of the operation and references of output properties"
+    }
+  ],
   "iTKrs8": [
     {
       "type": 0,
@@ -7025,12 +7225,6 @@
       "value": "s"
     }
   ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Enter a valid table."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -7077,6 +7271,12 @@
     {
       "type": 0,
       "value": "Tell Microsoft how this feature could be improved"
+    }
+  ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Request Options - Timeout"
     }
   ],
   "jQ0Aqj": [
@@ -7151,6 +7351,12 @@
       "value": "Edit in JSON"
     }
   ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Enabling secure inputs will automatically secure outputs."
+    }
+  ],
   "jgOaTX": [
     {
       "type": 0,
@@ -7161,12 +7367,6 @@
     {
       "type": 0,
       "value": "Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included."
-    }
-  ],
-  "juR40n": [
-    {
-      "type": 0,
-      "value": "Duration"
     }
   ],
   "juvF+0": [
@@ -7377,6 +7577,12 @@
       "value": "Managed Identity"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7469,6 +7675,12 @@
       "value": "Insert Expression (You can also add by typing / in the editor)"
     }
   ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7505,6 +7717,12 @@
       "value": "Name"
     }
   ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Threshold of items to return"
+    }
+  ],
   "mAuMD+": [
     {
       "type": 0,
@@ -7529,16 +7747,6 @@
       "value": "Function deleted."
     }
   ],
-  "mGPqAg": [
-    {
-      "type": 0,
-      "value": "Delete "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -7549,12 +7757,6 @@
     {
       "type": 0,
       "value": "Returns a string representation of a data URI"
-    }
-  ],
-  "mOr9ll": [
-    {
-      "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
     }
   ],
   "mPakaD": [
@@ -7841,12 +8043,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Enter a valid uri."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -7907,6 +8103,12 @@
       "value": "Invalid integer value"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copy Trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -7935,6 +8137,12 @@
     {
       "type": 0,
       "value": "Add a note"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
     }
   ],
   "ox2Ou7": [
@@ -8007,6 +8215,12 @@
     {
       "type": 0,
       "value": "Required. The values to combine into an array."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
     }
   ],
   "pXmFGf": [
@@ -8109,12 +8323,6 @@
     {
       "type": 0,
       "value": "Adds an integer number of seconds to a string timestamp passed in"
-    }
-  ],
-  "q8vnZQ": [
-    {
-      "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
     }
   ],
   "qAlTD5": [
@@ -8291,6 +8499,12 @@
     {
       "type": 0,
       "value": "Previous flow suggestion"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
     }
   ],
   "r/n6/9": [
@@ -8527,12 +8741,6 @@
     {
       "type": 0,
       "value": "Required. The collection to check if it is empty."
-    }
-  ],
-  "scmyvO": [
-    {
-      "type": 0,
-      "value": "Action Timeout"
     }
   ],
   "sfJTHV": [
@@ -8849,12 +9057,6 @@
       "value": "Show me"
     }
   ],
-  "uZH8Qs": [
-    {
-      "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
-    }
-  ],
   "uZpzqY": [
     {
       "type": 0,
@@ -9061,6 +9263,12 @@
       "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Duration"
+    }
+  ],
   "vlDynP": [
     {
       "type": 0,
@@ -9163,6 +9371,12 @@
     {
       "type": 0,
       "value": "Including dynamic content"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stop generating"
     }
   ],
   "wPlTDB": [
@@ -9447,6 +9661,12 @@
       "value": "Returns an array sorted in ascending order"
     }
   ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input."
+    }
+  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9587,6 +9807,12 @@
     {
       "type": 0,
       "value": "Enter value"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Expression Editor"
     }
   ],
   "zIDVd9": [
