@@ -12,6 +12,7 @@ import { getWorkspaceFolderPath } from '../workflows/switchDebugMode/switchDebug
 import type { StringDictionary } from '@azure/arm-appservice';
 import type { StorageManagementClient, StorageAccountListKeysResult } from '@azure/arm-storage';
 import { type ShareClient, ShareServiceClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
+import type { ShareDirectoryClient } from '@azure/storage-file-share';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
@@ -37,11 +38,18 @@ export const deployToFileShare = async (context: IActionContext, site: ParsedSit
     const storageShareClient = await createStorageShareClient(site, storageClient);
     const shareClient = storageShareClient.getShareClient(shareName);
 
-    if (shareClient.exists()) {
+    if (await shareClient.exists()) {
       const workspaceFolder = await getWorkspaceFolderPath(context);
       const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-      await shareClient.deleteDirectory(wwwrootDirectory);
+
+      const directoryClient = shareClient.getDirectoryClient(wwwrootDirectory);
+      if (await directoryClient.exists()) {
+        await deleteFilesAndSubdirectories(directoryClient);
+        await directoryClient.delete();
+      }
+
       await shareClient.createDirectory(wwwrootDirectory);
+
       await uploadRootFiles(shareClient, projectPath);
       await uploadWorkflowsFiles(shareClient, projectPath);
     }
@@ -83,5 +91,23 @@ const uploadWorkflowsFiles = async (shareClient: ShareClient, projectPath: strin
     const directoryPath = path.join(wwwrootDirectory, workflowFile.name);
     await createDirectories(shareClient, [directoryPath]);
     await uploadFiles(shareClient, [{ ...workflowFile, name: workflowFileName }], directoryPath);
+  }
+};
+
+const deleteFilesAndSubdirectories = async (directoryClient: ShareDirectoryClient) => {
+  try {
+    const filesAndDirectories = directoryClient.listFilesAndDirectories();
+    for await (const fileOrDirectory of filesAndDirectories) {
+      if (fileOrDirectory.kind === 'directory') {
+        const subDirectoryClient = directoryClient.getDirectoryClient(fileOrDirectory.name);
+        await deleteFilesAndSubdirectories(subDirectoryClient);
+        subDirectoryClient.delete();
+      } else if (fileOrDirectory.kind === 'file') {
+        const fileClient = directoryClient.getFileClient(fileOrDirectory.name);
+        await fileClient.delete();
+      }
+    }
+  } catch (error) {
+    console.error(`Error deleting files and subdirectories: ${error.message}`);
   }
 };
