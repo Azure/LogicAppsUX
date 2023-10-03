@@ -14,6 +14,7 @@ import {
   workflowAppAADTenantId,
   kubernetesKind,
   showDeployConfirmationSetting,
+  containersKind,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -33,6 +34,7 @@ import {
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
 } from '../createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
+import { DeployToFileShareStep } from './deployToFileShareStep';
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
@@ -87,6 +89,7 @@ async function deploy(
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
   const isDeployingToKubernetes = nodeKind && nodeKind.indexOf(kubernetesKind) !== -1;
+  const isDeployingToContainers = nodeKind && nodeKind.indexOf(containersKind) !== -1;
   const [language, version]: [ProjectLanguage, FuncVersion] = await verifyInitForVSCode(context, effectiveDeployFsPath);
 
   context.telemetry.properties.projectLanguage = language;
@@ -168,7 +171,18 @@ async function deploy(
       : undefined;
 
     try {
-      await innerDeploy(node.site, deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath, context);
+      if (isDeployingToContainers) {
+        const wizard: AzureWizard<IIdentityWizardContext> = new AzureWizard(identityWizardContext, {
+          executeSteps: [new DeployToFileShareStep()],
+        });
+        await wizard.execute();
+      } else {
+        await innerDeploy(
+          node.site,
+          deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath,
+          context
+        );
+      }
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
@@ -197,6 +211,8 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
       return await createLogicApp(context, sub);
     }
   } else {
+    site.hostNameSslStates = site.hostNameSslStates ?? [];
+
     const resourceTree = new LogicAppResourceTree(sub.subscription, site);
     return new SlotTreeItem(sub, resourceTree);
   }

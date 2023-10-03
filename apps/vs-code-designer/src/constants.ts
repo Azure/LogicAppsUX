@@ -183,6 +183,7 @@ export const kubernetesKind = 'kubernetes';
 export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
+export const containersKind = 'azurecontainerapps';
 
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 

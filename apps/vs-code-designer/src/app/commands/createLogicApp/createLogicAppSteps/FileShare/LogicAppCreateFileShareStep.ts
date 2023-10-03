@@ -13,11 +13,6 @@ import { AzureWizardExecuteStep, type IActionContext, callWithTelemetryAndErrorH
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 import type * as vscode from 'vscode';
 
-// type File = {
-//   path: string;
-//   name: string;
-// };
-
 export class LogicAppCreateFileShareStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 140;
 
@@ -42,12 +37,6 @@ export class LogicAppCreateFileShareStep extends AzureWizardExecuteStep<ILogicAp
 
       const rootDirectories = [deploymentsDirectory, diagnosticsDirectory, locksDirectory, wwwrootDirectory];
       await this.createDirectories(shareClient, rootDirectories);
-
-      // const workspaceFolder = await getWorkspaceFolderPath(wizardContext);
-      // const projectPath: string | undefined = await tryGetFunctionProjectRoot(wizardContext, workspaceFolder, true /* suppressPrompt */);
-      // await this.uploadRootFiles(shareClient, projectPath);
-
-      // await this.uploadWorkflowsFiles(shareClient, projectPath);
     });
   }
 
@@ -74,29 +63,4 @@ export class LogicAppCreateFileShareStep extends AzureWizardExecuteStep<ILogicAp
       await directoryClient.createIfNotExists();
     }
   }
-
-  // private async uploadFiles(shareClient: ShareClient, files: File[], directoryPath: string) {
-  //   for (const file of files) {
-  //     const directoryClient = shareClient.getDirectoryClient(directoryPath);
-  //     const fileClient = directoryClient.getFileClient(file.name);
-  //     await fileClient.uploadFile(file.path);
-  //   }
-  // }
-
-  // private async uploadRootFiles(shareClient: ShareClient, projectPath: string | undefined) {
-  //   const hostJsonPath: string = path.join(projectPath, hostFileName);
-  //   if (await fse.pathExists(hostJsonPath)) {
-  //     await this.uploadFiles(shareClient, [{ path: hostJsonPath, name: hostFileName }], wwwrootDirectory);
-  //   }
-  // }
-
-  // private async uploadWorkflowsFiles(shareClient: ShareClient, projectPath: string | undefined) {
-  //   const workflowFiles = await getWorkflowsPathInLocalProject(projectPath);
-
-  //   for (const workflowFile of workflowFiles) {
-  //     const directoryPath = path.join(wwwrootDirectory, workflowFile.name);
-  //     await this.createDirectories(shareClient, [directoryPath]);
-  //     await this.uploadFiles(shareClient, [{ ...workflowFile, name: workflowFileName }], directoryPath);
-  //   }
-  // }
 }
