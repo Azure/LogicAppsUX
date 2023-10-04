@@ -3880,7 +3880,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "Zkopírováno!"
     }
   ],
   "NGJ00e": [
@@ -4016,7 +4016,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "Tuto akci nebo aktivační událost nelze zkopírovat."
     }
   ],
   "ODQCKj": [
@@ -4622,7 +4622,7 @@
   "RjvpD+": [
     {
       "type": 0,
-      "value": "Insert a new step in "
+      "value": "Vložit nový krok do "
     },
     {
       "type": 1,
@@ -6006,7 +6006,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "Vložit akci"
     }
   ],
   "ZUaz3Y": [
@@ -7174,7 +7174,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "Kopírovat akci"
     }
   ],
   "i4C4aB": [
@@ -8242,7 +8242,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "Aktivační událost kopírování"
     }
   ],
   "oTBkbU": [

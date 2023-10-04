@@ -3842,7 +3842,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "Kopiert!"
     }
   ],
   "NGJ00e": [
@@ -3974,7 +3974,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "Diese Aktion/dieser Trigger kann nicht kopiert werden."
     }
   ],
   "ODQCKj": [
@@ -4570,11 +4570,15 @@
   "RjvpD+": [
     {
       "type": 0,
-      "value": "Insert a new step in "
+      "value": "Neuen Schritt in \""
     },
     {
       "type": 1,
       "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": "\" einfügen"
     }
   ],
   "RkgScy": [
@@ -5966,7 +5970,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "Aktion einfügen"
     }
   ],
   "ZUaz3Y": [
@@ -7112,7 +7116,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "Kopieraktion"
     }
   ],
   "i4C4aB": [
@@ -8162,7 +8166,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "Trigger kopieren"
     }
   ],
   "oTBkbU": [

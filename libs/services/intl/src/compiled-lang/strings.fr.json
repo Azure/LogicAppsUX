@@ -3843,7 +3843,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "Copie effectuée."
     }
   ],
   "NGJ00e": [
@@ -3975,7 +3975,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "Impossible de copier cette action ou ce déclencheur."
     }
   ],
   "ODQCKj": [
@@ -4574,7 +4574,7 @@
   "RjvpD+": [
     {
       "type": 0,
-      "value": "Insert a new step in "
+      "value": "Insérer une nouvelle étape dans "
     },
     {
       "type": 1,
@@ -5962,7 +5962,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "Coller une action"
     }
   ],
   "ZUaz3Y": [
@@ -7119,7 +7119,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "Copier l’action"
     }
   ],
   "i4C4aB": [
@@ -8176,7 +8176,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "Copier le déclencheur"
     }
   ],
   "oTBkbU": [
