@@ -225,3 +225,4 @@ export const serverFarmIdPlaceholder =
 // App settings
 export const WebsiteContentShare = 'WEBSITE_CONTENTSHARE';
 export const AzureWebJobsStorage = 'AzureWebJobsStorage';
+export const WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING';

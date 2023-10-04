@@ -5,6 +5,7 @@
 import { deploymentsDirectory, diagnosticsDirectory, locksDirectory, wwwrootDirectory } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
+import { getResourceGroupFromId } from '../../../../utils/azure';
 import { createStorageClient } from '../../../../utils/azureClients';
 import { getNewFileShareName } from '../LogicAppCreateStep';
 import type { StorageManagementClient, StorageAccountListKeysResult } from '@azure/arm-storage';
@@ -46,10 +47,8 @@ export class LogicAppCreateFileShareStep extends AzureWizardExecuteStep<ILogicAp
   }
 
   private async createStorageShareClient(context: ILogicAppWizardContext, client: StorageManagementClient): Promise<ShareServiceClient> {
-    const keys: StorageAccountListKeysResult = await client.storageAccounts.listKeys(
-      context.resourceGroup.name,
-      context.storageAccount.name
-    );
+    const resourceGroup = getResourceGroupFromId(nonNullProp(context.storageAccount, 'id'));
+    const keys: StorageAccountListKeysResult = await client.storageAccounts.listKeys(resourceGroup, context.storageAccount.name);
     const credential = new StorageSharedKeyCredential(context.storageAccount.name, keys.keys[0].value);
     return new ShareServiceClient(`https://${context.storageAccount.name}.file.core.windows.net`, credential);
   }

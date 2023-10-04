@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   artifactsDirectory,
-  AzureWebJobsStorage,
   connectionsFileName,
   DirectoryKind,
   hostFileName,
   mapsDirectory,
   parametersFileName,
   schemasDirectory,
+  WEBSITE_CONTENTAZUREFILECONNECTIONSTRING,
   WebsiteContentShare,
   workflowFileName,
   wwwrootDirectory,
@@ -34,7 +34,7 @@ export const deployToFileShare = async (context: IActionContext, site: ParsedSit
     const logicAppClient = await site.createClient(context);
     const appSettings: StringDictionary = await logicAppClient.listApplicationSettings();
     const shareName = appSettings.properties[WebsiteContentShare];
-    const connectionString = appSettings.properties[AzureWebJobsStorage];
+    const connectionString = appSettings.properties[WEBSITE_CONTENTAZUREFILECONNECTIONSTRING] ?? '';
 
     const message: string = localize('uploadingFileShare', 'Uploading files to File Share "{0}"...', shareName);
     ext.outputChannel.appendLog(message);
