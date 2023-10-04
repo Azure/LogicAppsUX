@@ -3,16 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  artifactsDirectory,
   AzureWebJobsStorage,
+  connectionsFileName,
   DirectoryKind,
   hostFileName,
+  mapsDirectory,
+  parametersFileName,
+  schemasDirectory,
   WebsiteContentShare,
   workflowFileName,
   wwwrootDirectory,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getWorkflowsPathInLocalProject } from '../../utils/codeless/common';
+import { getArtifactsPathInLocalProject, getWorkflowsPathInLocalProject, type File } from '../../utils/codeless/common';
 import { tryGetFunctionProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../workflows/switchDebugMode/switchDebugMode';
 import type { StringDictionary } from '@azure/arm-appservice';
@@ -23,11 +28,6 @@ import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { ProgressLocation, window } from 'vscode';
-
-type File = {
-  path: string;
-  name: string;
-};
 
 export const deployToFileShare = async (context: IActionContext, site: ParsedSite) => {
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
@@ -57,6 +57,7 @@ export const deployToFileShare = async (context: IActionContext, site: ParsedSit
 
       await uploadRootFiles(shareClient, projectPath);
       await uploadWorkflowsFiles(shareClient, projectPath);
+      await uploadeArtifactsFiles(shareClient, projectPath);
     }
   });
 };
@@ -82,8 +83,17 @@ const uploadFiles = async (shareClient: ShareClient, files: File[], directoryPat
 
 const uploadRootFiles = async (shareClient: ShareClient, projectPath: string | undefined) => {
   const hostJsonPath: string = path.join(projectPath, hostFileName);
-  if (await fse.pathExists(hostJsonPath)) {
-    await uploadFiles(shareClient, [{ path: hostJsonPath, name: hostFileName }], wwwrootDirectory);
+  const parametersJsonPath: string = path.join(projectPath, parametersFileName);
+  const connectionsJsonPath: string = path.join(projectPath, connectionsFileName);
+  const rootFiles = [
+    { path: hostJsonPath, name: hostFileName },
+    { path: parametersJsonPath, name: parametersFileName },
+    { path: connectionsJsonPath, name: connectionsFileName },
+  ];
+  for (const rootFile of rootFiles) {
+    if (await fse.pathExists(rootFile.path)) {
+      await uploadFiles(shareClient, [{ path: rootFile.path, name: rootFile.name }], wwwrootDirectory);
+    }
   }
 };
 
@@ -93,6 +103,24 @@ const uploadWorkflowsFiles = async (shareClient: ShareClient, projectPath: strin
     const directoryPath = path.join(wwwrootDirectory, workflowFile.name);
     await createDirectories(shareClient, [directoryPath]);
     await uploadFiles(shareClient, [{ ...workflowFile, name: workflowFileName }], directoryPath);
+  }
+};
+
+const uploadeArtifactsFiles = async (shareClient: ShareClient, projectPath: string | undefined) => {
+  const artifactsFiles = await getArtifactsPathInLocalProject(projectPath);
+  const artifactsPathShare = path.join(wwwrootDirectory, artifactsDirectory);
+  await createDirectories(shareClient, [artifactsPathShare]);
+
+  if (artifactsFiles.maps.length > 0) {
+    const directoryPath = path.join(wwwrootDirectory, artifactsDirectory, mapsDirectory);
+    await createDirectories(shareClient, [directoryPath]);
+    await uploadFiles(shareClient, artifactsFiles.maps, directoryPath);
+  }
+
+  if (artifactsFiles.schemas.length > 0) {
+    const directoryPath = path.join(wwwrootDirectory, artifactsDirectory, schemasDirectory);
+    await createDirectories(shareClient, [directoryPath]);
+    await uploadFiles(shareClient, artifactsFiles.schemas, directoryPath);
   }
 };
 

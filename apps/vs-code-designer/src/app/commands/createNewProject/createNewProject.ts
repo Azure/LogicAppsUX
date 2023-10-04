@@ -2,7 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../constants';
+import {
+  artifactsDirectory,
+  funcVersionSetting,
+  mapsDirectory,
+  projectLanguageSetting,
+  projectOpenBehaviorSetting,
+  projectTemplateKeySetting,
+  schemasDirectory,
+} from '../../../constants';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
@@ -79,8 +87,8 @@ export async function createNewProjectInternal(context: IActionContext, options:
 }
 
 async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, artifactsDirectory, mapsDirectory), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, artifactsDirectory, schemasDirectory), { recursive: true });
 }
 
 async function createLibFolder(context: IFunctionWizardContext): Promise<void> {

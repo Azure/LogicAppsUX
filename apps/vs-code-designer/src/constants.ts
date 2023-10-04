@@ -18,6 +18,16 @@ export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 
+// Directories names
+export const deploymentsDirectory = 'deployments';
+export const diagnosticsDirectory = 'diagnostics';
+export const locksDirectory = 'locks';
+export const wwwrootDirectory = 'wwwroot';
+export const artifactsDirectory = 'Artifacts';
+export const mapsDirectory = 'Maps';
+export const schemasDirectory = 'Schemas';
+
+// Extension Id
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
 // Functions
@@ -203,12 +213,6 @@ export const operationalInsightsProvider = 'Microsoft.OperationalInsights';
 export const storageProvider = 'Microsoft.Storage';
 export const insightsProvider = 'Microsoft.Insights';
 export const managedEnvironmentsAppProvider = `${appProvider}/${managedEnvironmentsId}`;
-
-// Directories
-export const deploymentsDirectory = 'deployments';
-export const diagnosticsDirectory = 'diagnostics';
-export const locksDirectory = 'locks';
-export const wwwrootDirectory = 'wwwroot';
 
 export const enum DirectoryKind {
   directory = 'directory',

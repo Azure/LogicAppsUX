@@ -7,6 +7,9 @@ import {
   workflowManagementBaseURIKey,
   managementApiPrefix,
   workflowFileName,
+  artifactsDirectory,
+  mapsDirectory,
+  schemasDirectory,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -32,6 +35,11 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import type { MessageItem, WebviewPanel } from 'vscode';
+
+export type File = {
+  path: string;
+  name: string;
+};
 
 export function tryGetWebviewPanel(category: string, name: string): WebviewPanel | undefined {
   const currentPanels = ext.openWebviewPanels[category];
@@ -108,14 +116,65 @@ export async function updateFuncIgnore(projectPath: string, variables: string[])
   await fse.writeFile(funcIgnorePath, funcIgnoreContents);
 }
 
+export async function getArtifactsPathInLocalProject(projectPath: string): Promise<{ maps: Array<File>; schemas: Array<File> }> {
+  const artifacts = {
+    maps: [],
+    schemas: [],
+  };
+  const artifactsPath = path.join(projectPath, artifactsDirectory);
+  const mapsPath = path.join(projectPath, artifactsDirectory, mapsDirectory);
+  const schemasPath = path.join(projectPath, artifactsDirectory, schemasDirectory);
+
+  if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
+    return artifacts;
+  }
+
+  if (await fse.pathExists(mapsPath)) {
+    const mapsFiles = [];
+    const subPaths: string[] = await fse.readdir(mapsPath);
+
+    for (const subPath of subPaths) {
+      const fullPath: string = path.join(mapsPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+
+      if (fileStats.isFile()) {
+        if (await fse.pathExists(fullPath)) {
+          mapsFiles.push({ path: fullPath, name: subPath });
+        }
+      }
+    }
+    artifacts.maps = mapsFiles;
+  }
+
+  if (await fse.pathExists(schemasPath)) {
+    const schemasFiles = [];
+    const subPaths: string[] = await fse.readdir(schemasPath);
+
+    for (const subPath of subPaths) {
+      const fullPath: string = path.join(schemasPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+
+      if (fileStats.isFile()) {
+        if (await fse.pathExists(fullPath)) {
+          schemasFiles.push({ path: fullPath, name: subPath });
+        }
+      }
+    }
+    artifacts.schemas = schemasFiles;
+  }
+
+  return artifacts;
+}
+
 export async function getArtifactsInLocalProject(projectPath: string): Promise<Artifacts> {
   const artifacts: Artifacts = {
     maps: {},
     schemas: [],
   };
-  const artifactsPath = path.join(projectPath, 'Artifacts');
-  const mapsPath = path.join(projectPath, 'Artifacts', 'Maps');
-  const schemasPath = path.join(projectPath, 'Artifacts', 'Schemas');
+
+  const artifactsPath = path.join(projectPath, artifactsDirectory);
+  const mapsPath = path.join(projectPath, artifactsDirectory, mapsDirectory);
+  const schemasPath = path.join(projectPath, artifactsDirectory, schemasDirectory);
 
   if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
     return artifacts;
@@ -235,7 +294,7 @@ export async function getManualWorkflowsInLocalProject(projectPath: string, work
   return workflowDetails;
 }
 
-export async function getWorkflowsPathInLocalProject(projectPath: string): Promise<Array<{ path: string; name: string }>> {
+export async function getWorkflowsPathInLocalProject(projectPath: string): Promise<Array<File>> {
   if (!(await fse.pathExists(projectPath))) {
     return [];
   }
