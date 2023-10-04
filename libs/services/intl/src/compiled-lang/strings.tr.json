@@ -3798,7 +3798,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "Kopyalandı!"
     }
   ],
   "NGJ00e": [
@@ -3930,7 +3930,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "Bu Eylem/Tetikleyici kopyalanamıyor."
     }
   ],
   "ODQCKj": [
@@ -4521,12 +4521,12 @@
   ],
   "RjvpD+": [
     {
-      "type": 0,
-      "value": "Insert a new step in "
-    },
-    {
       "type": 1,
       "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": " alt grafiğine yeni bir adım ekleyin"
     }
   ],
   "RkgScy": [
@@ -5906,7 +5906,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "Eylemi yapıştır"
     }
   ],
   "ZUaz3Y": [
@@ -7040,7 +7040,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "Eylemi Kopyala"
     }
   ],
   "i4C4aB": [
@@ -8082,7 +8082,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "Tetikleyiciyi Kopyala"
     }
   ],
   "oTBkbU": [
