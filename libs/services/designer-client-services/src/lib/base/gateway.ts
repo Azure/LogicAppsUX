@@ -28,13 +28,20 @@ export class BaseGatewayService implements IGatewayService {
     return;
   }
 
-  public getGateways(subscriptionId: string, connectorName: string): Promise<Gateway[]> {
-    if (!connectorName) return Promise.resolve([]);
+  public async getGateways(subscriptionId: string | undefined, connectorName: string): Promise<Gateway[]> {
+    const config = await (this as IGatewayService).getConfig?.();
+    const isSubscriptionRequired = !config?.disableSubscriptionLookup;
+    if ((isSubscriptionRequired && !subscriptionId) || !connectorName) {
+      return [];
+    }
     return this.fetchGatewaysList(subscriptionId, connectorName);
   }
 
-  private async fetchGatewaysList(subscriptionId: string, apiName: string): Promise<Gateway[]> {
+  private async fetchGatewaysList(subscriptionId: string | undefined, apiName: string): Promise<Gateway[]> {
     try {
+      if (subscriptionId === undefined) {
+        throw new ArgumentException('subscriptionId required');
+      }
       const { baseUrl, apiVersions, httpClient } = this.options;
       const uri = `${baseUrl}${subscriptionId}/providers/Microsoft.Web/connectionGateways`;
       const queryParameters = {

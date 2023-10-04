@@ -16,7 +16,7 @@ export interface IGatewayService {
   /**
    * Gets configuration values for GatewayService.
    */
-  getConfig?(): Promise<Partial<GatewayServiceConfig>>;
+  getConfig?(): Promise<GatewayServiceConfig>;
 }
 
 let service: IGatewayService;
