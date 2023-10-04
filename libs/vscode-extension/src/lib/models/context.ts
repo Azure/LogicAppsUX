@@ -23,6 +23,7 @@ export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreat
   containerApp?: ContainerApp;
   suppressCreate?: boolean;
   fileShareName?: string;
+  _location?: Record<string, any>;
 }
 
 export interface ICreateLogicAppContext extends ICreateChildImplContext {

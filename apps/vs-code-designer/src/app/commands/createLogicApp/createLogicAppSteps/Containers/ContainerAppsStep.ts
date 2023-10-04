@@ -15,8 +15,9 @@ export class ContainerAppsStep extends AzureWizardPromptStep<ILogicAppWizardCont
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     const placeHolder: string = localize('selectNewProjectFolder', 'Select a Container Apps environment.');
     const client = await createContainerClient(wizardContext);
+    const locationName = wizardContext?._location?.displayName ?? undefined;
 
-    const containerEnvironment = (await wizardContext.ui.showQuickPick(this.getPicks(client), { placeHolder })).data;
+    const containerEnvironment = (await wizardContext.ui.showQuickPick(this.getPicks(client, locationName), { placeHolder })).data;
     if (!containerEnvironment) {
       wizardContext.containerApp = await createManagedEnvironment({ ...wizardContext }, {
         ...wizardContext,
@@ -31,11 +32,12 @@ export class ContainerAppsStep extends AzureWizardPromptStep<ILogicAppWizardCont
     return !!wizardContext.useContainerApps;
   }
 
-  private async getPicks(client: ContainerAppsAPIClient): Promise<IAzureQuickPickItem<ContainerApp>[]> {
+  private async getPicks(client: ContainerAppsAPIClient, locationName: string): Promise<IAzureQuickPickItem<ContainerApp>[]> {
     const sitesList = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-    const picks = sitesList.map((site) => {
+    let picks = sitesList.map((site) => {
       return { label: site.name, data: site };
     });
+    picks = locationName ? picks.filter((pick) => pick.data.location === locationName) : picks;
     picks.sort((a, b) => a.label.localeCompare(b.label));
     picks.unshift({ label: localize('newContainerApps', '$(plus) Create new Container Apps environment'), data: undefined });
 
