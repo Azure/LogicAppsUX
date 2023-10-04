@@ -3818,7 +3818,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "Másolva!"
     }
   ],
   "NGJ00e": [
@@ -3950,7 +3950,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "Ez a művelet/trigger nem másolható."
     }
   ],
   "ODQCKj": [
@@ -4546,7 +4546,7 @@
   "RjvpD+": [
     {
       "type": 0,
-      "value": "Insert a new step in "
+      "value": "Új lépés beszúrása a következőbe: "
     },
     {
       "type": 1,
@@ -5914,7 +5914,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "Művelet beillesztése"
     }
   ],
   "ZUaz3Y": [
@@ -7060,7 +7060,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "Művelet másolása"
     }
   ],
   "i4C4aB": [
@@ -8106,7 +8106,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "Trigger másolása"
     }
   ],
   "oTBkbU": [
