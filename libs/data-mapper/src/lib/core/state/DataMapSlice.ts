@@ -550,15 +550,17 @@ export const dataMapSlice = createSlice({
       const newOp = { ...state.curDataMapOperation };
       let positions = newOp.functionNodes[action.payload.id].functionData.positions;
       if (positions) {
-        let positionToUpdate = positions.find((pos) => pos.targetKey === action.payload.positionMetadata.targetKey);
-        if (positionToUpdate) {
-          positionToUpdate = action.payload.positionMetadata;
+        const positionToUpdate = positions.findIndex((pos) => pos.targetKey === action.payload.positionMetadata.targetKey);
+        if (positionToUpdate !== -1) {
+          positions[positionToUpdate] = action.payload.positionMetadata;
+        } else {
+          positions.push(action.payload.positionMetadata);
         }
-        positions.push(action.payload.positionMetadata);
       } else {
         positions = [action.payload.positionMetadata];
       }
       newOp.functionNodes[action.payload.id].functionData.positions = positions;
+
       state.curDataMapOperation = newOp;
     },
 

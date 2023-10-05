@@ -368,9 +368,8 @@ export const applyCustomLayout = async (
     // fnNode.x = fnNodeXPos;
     // fnNode.y = fnNodeYPos;
     if (!fnNode.x) {
-      // danielle this is never true
       fnNode.x = 300;
-      fnNode.y = 300;
+      fnNode.y = -80;
     }
   };
 
@@ -400,7 +399,7 @@ export const applyCustomLayout = async (
         return tgtSchemaNode?.y !== undefined ? tgtSchemaNode.y : 0;
       });
 
-    if (fnNode) {
+    if (fnNode && !fnNode.x) {
       fnNode.x = farthestRightFnNodeXPos;
       fnNode.y = tgtSchemaOutputYPositions.reduce((curYTotal, curYPos) => curYTotal + curYPos, 0) / tgtSchemaOutputYPositions.length;
     }

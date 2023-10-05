@@ -72,20 +72,12 @@ export const useLayout = (
 
   useEffect(() => {
     if (currentTargetSchemaNode) {
-      const visibleFunctionNodes = functionsForLocation(functionNodes, currentTargetSchemaNode.key);
-
       // Sort source schema nodes according to their order in the schema
       const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
         (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
       );
-
       // Build a nicely formatted tree for easier layouting
-      const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(
-        sortedSourceSchemaNodes,
-        visibleFunctionNodes,
-        currentTargetSchemaNode,
-        connections
-      );
+      const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(sortedSourceSchemaNodes, {}, currentTargetSchemaNode, connections);
 
       // Compute layout
       applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
@@ -93,7 +85,49 @@ export const useLayout = (
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
             placeholderReactFlowNode,
-            ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, visibleFunctionNodes, [
+            ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, {}, [
+              currentTargetSchemaNode,
+              ...currentTargetSchemaNode.children,
+            ]),
+          ]);
+
+          const simpleLayoutEdgeResults: SimplifiedLayoutEdge[] = [
+            ...computedLayout.edges.map((layoutEdge) => ({
+              srcRfId: layoutEdge.sourceId,
+              tgtRfId: layoutEdge.targetId,
+              tgtPort: layoutEdge.labels.length > 0 ? layoutEdge.labels[0] : undefined,
+            })),
+          ];
+          setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, selectedItemKey, true));
+
+          // Calculate diagram size
+          setDiagramSize({
+            width: computedLayout.width ?? 0,
+            height: computedLayout.height ?? 0,
+          });
+        })
+        .catch((error) => {
+          LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
+            message: `${error}`,
+          });
+        });
+    }
+  }, [currentTargetSchemaNode, currentSourceSchemaNodes, connections, sourceSchemaOrdering, selectedItemKey, useExpandedFunctionCards]);
+
+  useEffect(() => {
+    if (currentTargetSchemaNode) {
+      const visibleFunctionNodes = functionsForLocation(functionNodes, currentTargetSchemaNode.key);
+
+      // Build a nicely formatted tree for easier layouting
+      const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree([], visibleFunctionNodes, currentTargetSchemaNode, connections);
+
+      // Compute layout
+      applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
+        .then((computedLayout) => {
+          // Convert the calculated layout to ReactFlow nodes + edges
+          setReactFlowNodes([
+            placeholderReactFlowNode,
+            ...convertToReactFlowNodes(computedLayout, selectedItemKey, [], visibleFunctionNodes, [
               currentTargetSchemaNode,
               ...currentTargetSchemaNode.children,
             ]),
@@ -124,15 +158,71 @@ export const useLayout = (
       setReactFlowEdges([]);
       setDiagramSize({ width: 0, height: 0 });
     }
-  }, [
-    currentTargetSchemaNode,
-    currentSourceSchemaNodes,
-    functionNodes,
-    connections,
-    sourceSchemaOrdering,
-    selectedItemKey,
-    useExpandedFunctionCards,
-  ]);
+  }, [currentTargetSchemaNode, functionNodes, connections, sourceSchemaOrdering, selectedItemKey, useExpandedFunctionCards]);
+
+  // useEffect(() => {
+  //   if (currentTargetSchemaNode) {
+  //     const visibleFunctionNodes = functionsForLocation(functionNodes, currentTargetSchemaNode.key);
+
+  //     // Sort source schema nodes according to their order in the schema
+  //     const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
+  //       (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
+  //     );
+
+  //     // Build a nicely formatted tree for easier layouting
+  //     const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(
+  //       sortedSourceSchemaNodes,
+  //       visibleFunctionNodes,
+  //       currentTargetSchemaNode,
+  //       connections
+  //     );
+
+  //     // Compute layout
+  //     applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
+  //       .then((computedLayout) => {
+  //         // Convert the calculated layout to ReactFlow nodes + edges
+  //         setReactFlowNodes([
+  //           placeholderReactFlowNode,
+  //           ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, visibleFunctionNodes, [
+  //             currentTargetSchemaNode,
+  //             ...currentTargetSchemaNode.children,
+  //           ]),
+  //         ]);
+
+  //         const simpleLayoutEdgeResults: SimplifiedLayoutEdge[] = [
+  //           ...computedLayout.edges.map((layoutEdge) => ({
+  //             srcRfId: layoutEdge.sourceId,
+  //             tgtRfId: layoutEdge.targetId,
+  //             tgtPort: layoutEdge.labels.length > 0 ? layoutEdge.labels[0] : undefined,
+  //           })),
+  //         ];
+  //         setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, selectedItemKey, true));
+
+  //         // Calculate diagram size
+  //         setDiagramSize({
+  //           width: computedLayout.width ?? 0,
+  //           height: computedLayout.height ?? 0,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
+  //           message: `${error}`,
+  //         });
+  //       });
+  //   } else {
+  //     setReactFlowNodes([]);
+  //     setReactFlowEdges([]);
+  //     setDiagramSize({ width: 0, height: 0 });
+  //   }
+  // }, [
+  //   currentTargetSchemaNode,
+  //   currentSourceSchemaNodes,
+  //   functionNodes,
+  //   connections,
+  //   sourceSchemaOrdering,
+  //   selectedItemKey,
+  //   useExpandedFunctionCards,
+  // ]);
 
   return [reactFlowNodes, reactFlowEdges, diagramSize];
 };
