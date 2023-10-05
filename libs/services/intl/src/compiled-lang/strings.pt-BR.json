@@ -29,6 +29,12 @@
       "value": "Com falha"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Insira um booliano válido."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -393,12 +399,6 @@
       "value": "Retorna a porta de um URI. Se a porta não for especificada, retornará a porta padrão do protocolo"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Insira um inteiro válido."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -433,12 +433,6 @@
     {
       "type": 0,
       "value": "Converter o argumento do parâmetro em um número de ponto flutuante"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Insira um email válido."
     }
   ],
   "1ZSzl6": [
@@ -505,6 +499,12 @@
     {
       "type": 0,
       "value": "Ocultar esquema de origem"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Insira um URI válido."
     }
   ],
   "1uGBLP": [
@@ -855,6 +855,12 @@
       "value": "Fechar modo de exibição de código"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Insira um datetime válido."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -973,6 +979,12 @@
     {
       "type": 0,
       "value": "Seu fluxo foi atualizado."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Salvando este fluxo..."
     }
   ],
   "4izAMi": [
@@ -1393,16 +1405,16 @@
       "value": "Isso reverterá o fluxo de trabalho para o estado em que estava antes da edição do Copilot. Se você fez edições adicionais no fluxo de trabalho após as do Copilot, elas serão perdidas. Esta ação não pode ser desfeita. Deseja continuar?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Insira um email válido."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Código de status"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Relatar um bug"
     }
   ],
   "7lnElz": [
@@ -2548,6 +2560,12 @@
       "value": "Exibir o histórico de solicitações para essa operação"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Insira uma tabela válida."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3017,12 +3035,6 @@
       "value": "Erro ao buscar manifesto"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Insira um datetime válido."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3249,6 +3261,12 @@
       "value": "Ação desfeita"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Chat do Copilot cancelado"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3345,12 +3363,6 @@
     {
       "type": 0,
       "value": "\" por"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Insira um número Duplo válido."
     }
   ],
   "KV4uky": [
@@ -3752,12 +3764,6 @@
       "value": "Editar no modo avançado"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Insira um número válido."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3804,6 +3810,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinque, Kiev, Riga, Sófia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copiado!"
     }
   ],
   "NGJ00e": [
@@ -3902,6 +3914,12 @@
       "value": "Entidade de Serviço"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Trabalhando nisso..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3924,6 +3942,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Essa Ação/Gatilho não pode ser copiada."
     }
   ],
   "ODQCKj": [
@@ -3990,6 +4014,12 @@
     {
       "type": 0,
       "value": "Insira o público-alvo."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Relatar um bug"
     }
   ],
   "OVvieE": [
@@ -4120,6 +4150,12 @@
     {
       "type": 0,
       "value": "Necessário. Este valor é o número de inteiros que está na matriz."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Os espaços em branco devem ser codificados para URIs"
     }
   ],
   "P4rEwD": [
@@ -4501,6 +4537,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Inserir uma nova etapa em "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5881,6 +5927,12 @@
       "value": "Recolher Resultado Estático"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Colar uma ação"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6013,12 +6065,6 @@
       "value": "Inserir Pfx"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Insira um float válido."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6111,6 +6157,12 @@
     {
       "type": 0,
       "value": "Informações"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Insira um json válido."
     }
   ],
   "ba9yGJ": [
@@ -6651,6 +6703,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Desculpe, algo deu errado. Tente novamente."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6771,6 +6829,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Ashgabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Insira um float válido."
     }
   ],
   "gc6v4X": [
@@ -6936,7 +7000,7 @@
       "value": "Isso não é o que estou procurando"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "O valor é muito grande."
@@ -7018,6 +7082,12 @@
     {
       "type": 0,
       "value": "Refazer"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Ação de Cópia"
     }
   ],
   "i4C4aB": [
@@ -7180,12 +7250,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Insira uma tabela válida."
     }
   ],
   "iy8rNf": [
@@ -7549,6 +7613,12 @@
     {
       "type": 0,
       "value": "Identidade Gerenciada"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Insira um número válido."
     }
   ],
   "lM9qrG": [
@@ -8011,12 +8081,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Insira um URI válido."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8077,6 +8141,12 @@
       "value": "Valor inteiro inválido"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copiar o Gatilho"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8105,6 +8175,12 @@
     {
       "type": 0,
       "value": "Adicionar uma observação"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Insira um número Duplo válido."
     }
   ],
   "ox2Ou7": [
@@ -8177,6 +8253,12 @@
     {
       "type": 0,
       "value": "Necessário. Os valores a serem combinados em uma matriz."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Insira um inteiro válido."
     }
   ],
   "pXmFGf": [
@@ -9338,6 +9420,12 @@
     {
       "type": 0,
       "value": "Incluindo conteúdo dinâmico"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Parar de gerar"
     }
   ],
   "wPlTDB": [

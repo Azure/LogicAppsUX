@@ -29,6 +29,12 @@
       "value": "Hibás"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes logikai értéket."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -413,12 +419,6 @@
       "value": "A port visszaadása egy URI azonosítóból. Ha nincs megadva port, a protokoll alapértelmezett portjának visszaadása"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes egész számot."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -453,12 +453,6 @@
     {
       "type": 0,
       "value": "A paraméterargumentum átalakítása lebegőpontos számmá."
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Érvényes e-mail-címet adjon meg."
     }
   ],
   "1ZSzl6": [
@@ -525,6 +519,12 @@
     {
       "type": 0,
       "value": "Forrásséma elrejtése"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Érvényes URI-t adjon meg."
     }
   ],
   "1uGBLP": [
@@ -879,6 +879,12 @@
       "value": "Kódnézet bezárása"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes dátum/idő típusú értéket."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -997,6 +1003,12 @@
     {
       "type": 0,
       "value": "A folyamat frissítve lett."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 A folyamat mentése..."
     }
   ],
   "4izAMi": [
@@ -1417,16 +1429,16 @@
       "value": "Ezzel visszaállítja a munkafolyamatot arra az állapotra, amilyen az a Copilot által végzett szerkesztések előtt volt. Ha a Copilot szerkesztései után továbbiakat végzett a munkafolyamaton, azok elvesznek. Ez a művelet nem vonható vissza. Folytatja?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Érvényes e-mail-címet adjon meg."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Állapotkód"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Hiba jelentése"
     }
   ],
   "7lnElz": [
@@ -2565,6 +2577,12 @@
       "value": "A művelethez tartozó kérelmek előzményeinek megtekintése"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes táblát."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3031,12 +3049,6 @@
       "value": "Hiba történt a jegyzékfájl beolvasása közben"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes dátum/idő típusú értéket."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3263,6 +3275,12 @@
       "value": "Művelet visszavonva"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot-csevegés megszakítva"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3359,12 +3377,6 @@
     {
       "type": 0,
       "value": " lecserélése a következőre:"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes duplaszó típusú számot."
     }
   ],
   "KV4uky": [
@@ -3755,12 +3767,6 @@
       "value": "Szerkesztés speciális módban"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes számot."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3807,6 +3813,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kijev, Riga, Szófia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Másolva!"
     }
   ],
   "NGJ00e": [
@@ -3905,6 +3917,12 @@
       "value": "Egyszerű szolgáltatás"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Kis türelmet..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3927,6 +3945,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Ez a művelet/trigger nem másolható."
     }
   ],
   "ODQCKj": [
@@ -3993,6 +4017,12 @@
     {
       "type": 0,
       "value": "Adja meg a célközönséget."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Hiba jelentése"
     }
   ],
   "OVvieE": [
@@ -4123,6 +4153,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az érték a tömbben található egész számok száma."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "A szóközöket URI azonosítókhoz kell kódolni"
     }
   ],
   "P4rEwD": [
@@ -4505,6 +4541,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Új lépés beszúrása a következőbe: "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5865,6 +5911,12 @@
       "value": "Statikus eredmény összecsukása"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Művelet beillesztése"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5997,12 +6049,6 @@
       "value": "Adja meg a PFX-fájlt"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes lebegőpontot."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6095,6 +6141,12 @@
     {
       "type": 0,
       "value": "Információ"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "ba9yGJ": [
@@ -6635,6 +6687,12 @@
       "value": "(UTC+08:00) Peking, Csungking, Hongkong, Ürümcsi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Hiba történt a művelet közben. Próbálja meg ismét."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6755,6 +6813,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Asgabat, Taskent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes lebegőpontot."
     }
   ],
   "gc6v4X": [
@@ -6909,7 +6973,7 @@
       "value": "Nem ezt keresem"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Az érték túl nagy."
@@ -6991,6 +7055,12 @@
     {
       "type": 0,
       "value": "Mégis"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Művelet másolása"
     }
   ],
   "i4C4aB": [
@@ -7153,12 +7223,6 @@
     {
       "type": 0,
       "value": " mp"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes táblát."
     }
   ],
   "iy8rNf": [
@@ -7511,6 +7575,12 @@
     {
       "type": 0,
       "value": "Felügyelt identitás"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes számot."
     }
   ],
   "lM9qrG": [
@@ -7973,12 +8043,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Érvényes URI-t adjon meg."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8039,6 +8103,12 @@
       "value": "Érvénytelen egész szám"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Trigger másolása"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8067,6 +8137,12 @@
     {
       "type": 0,
       "value": "Megjegyzés hozzáadása"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes duplaszó típusú számot."
     }
   ],
   "ox2Ou7": [
@@ -8139,6 +8215,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A tömbben egyesítendő értékek."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes egész számot."
     }
   ],
   "pXmFGf": [
@@ -9285,6 +9367,12 @@
     {
       "type": 0,
       "value": "Dinamikus tartalom felvétele"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Létrehozás leállítása"
     }
   ],
   "wPlTDB": [

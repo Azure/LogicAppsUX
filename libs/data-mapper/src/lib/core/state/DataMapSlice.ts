@@ -38,7 +38,12 @@ import {
   addParentConnectionForRepeatingElementsNested,
   getParentId,
 } from '../../utils/DataMap.Utils';
-import { functionsForLocation, getFunctionLocationsForAllFunctions, isFunctionData } from '../../utils/Function.Utils';
+import {
+  functionsForLocation,
+  getConnectedSourceSchema,
+  getFunctionLocationsForAllFunctions,
+  isFunctionData,
+} from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
 import {
@@ -193,12 +198,10 @@ export const dataMapSlice = createSlice({
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
-      // metadata?.functionNodes.forEach((node) => {
-      //   const connection = dataMapConnections[node.reactFlowGuid].self.node as FunctionData;
-      //   connection.positions = node.positions;
-      // });
+
       let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
       functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
+      const connectedFlattenedSourceSchema = getConnectedSourceSchema(dataMapConnections, flattenedSourceSchema);
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -210,7 +213,7 @@ export const dataMapSlice = createSlice({
         functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
-        currentSourceSchemaNodes: [],
+        currentSourceSchemaNodes: Object.values(connectedFlattenedSourceSchema),
         currentTargetSchemaNode: targetSchema.schemaTreeRoot,
         loadedMapMetadata: metadata,
       };

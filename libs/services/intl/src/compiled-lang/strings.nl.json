@@ -29,6 +29,12 @@
       "value": "Mislukt"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Voer een geldige booleaanse waarde in."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Hiermee wordt de poort van een URI geretourneerd. Als de poort niet is opgegeven, wordt de standaardpoort voor het protocol geretourneerd"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Voer een geldig geheel getal in."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Het parameterargument naar een drijvend-kommagetal converteren"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Voer een geldig e-mailadres in."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Bronschema verbergen"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Voer een geldige URI in."
     }
   ],
   "1uGBLP": [
@@ -871,6 +871,12 @@
       "value": "Codeweergave sluiten"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Voer een geldige datum/tijd in."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "Uw stroom is bijgewerkt."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Deze stroom opslaan..."
     }
   ],
   "4izAMi": [
@@ -1421,16 +1433,16 @@
       "value": "Hiermee wordt uw werkstroom hersteld naar de status van vóór de bewerking van Copilot. Als u aanvullende bewerkingen in de werkstroom hebt aangebracht na die van Copilot, gaan deze verloren. Deze actie kan niet ongedaan worden gemaakt. Wilt u doorgaan?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Voer een geldig e-mailadres in."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuscode"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Een fout melden"
     }
   ],
   "7lnElz": [
@@ -2565,6 +2577,12 @@
       "value": "De aanvraaggeschiedenis voor deze bewerking weergeven"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Voer een geldige tabel in."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3031,12 +3049,6 @@
       "value": "Fout bij het ophalen van het manifest"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Voer een geldige datum/tijd in."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3263,6 +3275,12 @@
       "value": "Actie ongedaan gemaakt"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "De Copilot-chat is geannuleerd"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3355,12 +3373,6 @@
     {
       "type": 0,
       "value": " vervangen door"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Voer een geldig dubbel getal in."
     }
   ],
   "KV4uky": [
@@ -3751,12 +3763,6 @@
       "value": "Bewerken in geavanceerde modus"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Voer een geldig getal in."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3803,6 +3809,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Gekopieerd."
     }
   ],
   "NGJ00e": [
@@ -3901,6 +3913,12 @@
       "value": "Service-principal"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Er wordt aan gewerkt..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3923,6 +3941,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Deze actie/trigger kan niet worden gekopieerd."
     }
   ],
   "ODQCKj": [
@@ -3989,6 +4013,12 @@
     {
       "type": 0,
       "value": "Voer de doelgroep in."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Een fout melden"
     }
   ],
   "OVvieE": [
@@ -4115,6 +4145,12 @@
     {
       "type": 0,
       "value": "Vereist. Deze waarde is het aantal gehele getallen in de matrix."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Spaties moeten worden gecodeerd voor URI's"
     }
   ],
   "P4rEwD": [
@@ -4489,6 +4525,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Een nieuwe stap invoegen in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -5865,6 +5911,12 @@
       "value": "Statisch resultaat samenvouwen"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Een actie plakken"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5997,12 +6049,6 @@
       "value": "PFX invoeren"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Voer een geldige float in."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6095,6 +6141,12 @@
     {
       "type": 0,
       "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Voer een geldige JSON in."
     }
   ],
   "ba9yGJ": [
@@ -6631,6 +6683,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hongkong SAR, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Er is iets verkeerd gegaan. Probeer het opnieuw."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6751,6 +6809,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Asjchabad, Tasjkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Voer een geldige float in."
     }
   ],
   "gc6v4X": [
@@ -6905,7 +6969,7 @@
       "value": "Dit is niet wat ik zoek"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "De waarde is te hoog."
@@ -6987,6 +7051,12 @@
     {
       "type": 0,
       "value": "Opnieuw"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Actie kopiëren"
     }
   ],
   "i4C4aB": [
@@ -7149,12 +7219,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Voer een geldige tabel in."
     }
   ],
   "iy8rNf": [
@@ -7507,6 +7571,12 @@
     {
       "type": 0,
       "value": "Beheerde identiteit"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Voer een geldig getal in."
     }
   ],
   "lM9qrG": [
@@ -7969,12 +8039,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Voer een geldige URI in."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8035,6 +8099,12 @@
       "value": "Ongeldig geheel getal"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Trigger kopiëren"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8063,6 +8133,12 @@
     {
       "type": 0,
       "value": "Een notitie toevoegen"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Voer een geldig dubbel getal in."
     }
   ],
   "ox2Ou7": [
@@ -8135,6 +8211,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarden die moeten worden gecombineerd tot een matrix."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Voer een geldig geheel getal in."
     }
   ],
   "pXmFGf": [
@@ -9273,6 +9355,12 @@
     {
       "type": 0,
       "value": "Inclusief dynamische inhoud"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Stoppen met genereren"
     }
   ],
   "wPlTDB": [

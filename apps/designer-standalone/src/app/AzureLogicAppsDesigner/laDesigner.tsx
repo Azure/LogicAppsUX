@@ -1,6 +1,5 @@
 import { environment } from '../../environments/environment';
-import type { AppDispatch } from '../../state/store';
-import { type RootState } from '../../state/store';
+import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
@@ -350,7 +349,12 @@ const getDesignerServices = (
       },
       getSwaggerOperationSchema: (args: any) => {
         const { parameters, isInput } = args;
-        return appService.getOperationSchema(parameters.swaggerUrl, parameters.operationId, isInput);
+        return appService.getOperationSchema(
+          parameters.swaggerUrl,
+          parameters.operationId,
+          isInput,
+          true /* supportsAuthenticationParameter */
+        );
       },
     },
     valuesClient: {

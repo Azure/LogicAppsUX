@@ -1,5 +1,35 @@
 # Logic Apps Designer
 
+## [2.71.0](https://github.com/Azure/LogicAppsUX/compare/v2.70.1...v2.71.0) (2023-09-28)
+
+### Features
+
+- **designer:** Added Node Copy/Paste Functionality ([#3378](https://github.com/Azure/LogicAppsUX/issues/3378)) ([5c35b0f](https://github.com/Azure/LogicAppsUX/commit/5c35b0f3c45aa2b2a2a59da597f00c50528a8e39))
+
+### Bug Fixes
+
+- **designer:** Do not throw error on unknown parameters during validation by default ([#3388](https://github.com/Azure/LogicAppsUX/issues/3388)) ([b3a91ea](https://github.com/Azure/LogicAppsUX/commit/b3a91eaf1c7892f23e96a0d7dbf0590fa87392a2))
+- **designer:** Fix combobox filtering to use display name instead of value ([#3380](https://github.com/Azure/LogicAppsUX/issues/3380)) ([cbc2206](https://github.com/Azure/LogicAppsUX/commit/cbc2206ad682300dd9652acae5dc77aff40f6bf7))
+- **Designer:** Fixed OpenAPI formatted dynamic data naming ([#3379](https://github.com/Azure/LogicAppsUX/issues/3379)) ([9441d74](https://github.com/Azure/LogicAppsUX/commit/9441d74287df79a9ebfef9a8d0290631fdf332e9))
+- **designer:** Fixing the swagger schema returned for http swagger operation ([#3375](https://github.com/Azure/LogicAppsUX/issues/3375)) ([232322a](https://github.com/Azure/LogicAppsUX/commit/232322ac83cb3837afa81f8ba8553ed98b81cbc5))
+- **designer:** Get the right parent id for scope actions inside conditionals ([#3381](https://github.com/Azure/LogicAppsUX/issues/3381)) ([ffd9df8](https://github.com/Azure/LogicAppsUX/commit/ffd9df833966ac52d2f77d50bd15388b2efc4994))
+
+### [2.70.1](https://github.com/Azure/LogicAppsUX/compare/v2.70.0...v2.70.1) (2023-09-22)
+
+### Features
+
+- **Designer:** Recommendation panel now autofocuses to search bar ([#3372](https://github.com/Azure/LogicAppsUX/issues/3372)) ([858a243](https://github.com/Azure/LogicAppsUX/commit/858a2433a211eb16f22b614f31f7c8d713a0dd37))
+
+### Bug Fixes
+
+- **Data Mapper:** map not loading on some instances ([#3359](https://github.com/Azure/LogicAppsUX/issues/3359)) ([c90f76f](https://github.com/Azure/LogicAppsUX/commit/c90f76f1abde3dd04f7738d50392650dc2a026cf))
+- **Data Mapper:** not showing initial source Schema with connections ([#3366](https://github.com/Azure/LogicAppsUX/issues/3366)) ([778cd46](https://github.com/Azure/LogicAppsUX/commit/778cd460f34e188d376c846c17af3a3b3ce1eaf3))
+- **designer:** Add z-index to Errors panel ([#3353](https://github.com/Azure/LogicAppsUX/issues/3353)) ([f5cfdca](https://github.com/Azure/LogicAppsUX/commit/f5cfdcab108b819bbf0b887d09aa796a8927bce1))
+- **designer:** Don't throw for MISSING_DATA error in IntlProvider ([#3362](https://github.com/Azure/LogicAppsUX/issues/3362)) ([c3a34a7](https://github.com/Azure/LogicAppsUX/commit/c3a34a7160602c3b402548bcbd28015e1508bb6f))
+- **designer:** Fix exception due to usage of LoggingService in DesignerProvider ([#3365](https://github.com/Azure/LogicAppsUX/issues/3365)) ([a534dff](https://github.com/Azure/LogicAppsUX/commit/a534dff0b02faf3ce5abc5a8f5847e098c2331e3))
+- **Designer:** Fixed an edge-node overlap bug ([#3360](https://github.com/Azure/LogicAppsUX/issues/3360)) ([a4eed91](https://github.com/Azure/LogicAppsUX/commit/a4eed914438e8f83dcb62a8128d0c522d5e8d3af))
+- **Designer:** Fixed error bubbling on managed connector request error ([#3363](https://github.com/Azure/LogicAppsUX/issues/3363)) ([1620e15](https://github.com/Azure/LogicAppsUX/commit/1620e15cb45684eed18243adceb7af0a5b3d3f71))
+
 ## [2.70.0](https://github.com/Azure/LogicAppsUX/compare/v2.69.0...v2.70.0) (2023-09-21)
 
 ## [2.69.0](https://github.com/Azure/LogicAppsUX/compare/v2.68.0...v2.69.0) (2023-09-20)

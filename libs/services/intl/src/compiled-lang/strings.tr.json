@@ -29,6 +29,12 @@
       "value": "Hatalı"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Geçerli bir boole değeri girin."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Bir URI'den bağlantı noktasını döndürür. Bağlantı noktası belirtilmezse, iletişim kuralı için varsayılan bağlantı noktasını döndürür"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Geçerli bir tamsayı girin."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Parametre bağımsız değişkenini bir kayan noktalı sayıya dönüştürür"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Geçerli bir e-posta adresi girin."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Kaynak şemayı gizle"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Geçerli bir URI girin."
     }
   ],
   "1uGBLP": [
@@ -863,6 +863,12 @@
       "value": "Kod görünümünü kapat"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Geçerli bir tarih saat girin."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
     {
       "type": 0,
       "value": "Akışınız güncelleştirildi."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Bu akış kaydediliyor..."
     }
   ],
   "4izAMi": [
@@ -1409,16 +1421,16 @@
       "value": "Bu, iş akışınızı Copilot'ın düzenlemesinden önceki durumuna geri döndürür. Copilot'tan sonra iş akışında ek düzenlemeler yaptıysanız bunları kaybedersiniz. Bu eylem geri alınamaz. Devam etmek istiyor musunuz?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Geçerli bir e-posta adresi girin."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Durum kodu"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Hata bildirin"
     }
   ],
   "7lnElz": [
@@ -2553,6 +2565,12 @@
       "value": "Bu işlemle ilgili istek geçmişini görüntüleyin"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Geçerli bir tablo girin."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -3011,12 +3029,6 @@
       "value": "Bildirim getirilirken hata oluştu"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Geçerli bir tarih saat girin."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3243,6 +3255,12 @@
       "value": "Eylem geri alındı"
     }
   ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot sohbeti iptal edildi"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -3339,12 +3357,6 @@
     {
       "type": 0,
       "value": "\" öğesini şununla değiştir:"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Geçerli bir Çift sayı girin."
     }
   ],
   "KV4uky": [
@@ -3735,12 +3747,6 @@
       "value": "Gelişmiş modda düzenle"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Geçerli bir sayı girin."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3787,6 +3793,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Kopyalandı!"
     }
   ],
   "NGJ00e": [
@@ -3885,6 +3897,12 @@
       "value": "Hizmet Sorumlusu"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Üzerinde çalışıyoruz..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3907,6 +3925,12 @@
     {
       "type": 0,
       "value": "Tamam"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Bu Eylem/Tetikleyici kopyalanamıyor."
     }
   ],
   "ODQCKj": [
@@ -3973,6 +3997,12 @@
     {
       "type": 0,
       "value": "Hedef kitleyi girin."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Hata bildirin"
     }
   ],
   "OVvieE": [
@@ -4103,6 +4133,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bu değer, dizideki tamsayıların sayısıdır."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Boşluklar URI’ler için kodlanmalıdır"
     }
   ],
   "P4rEwD": [
@@ -4481,6 +4517,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": " alt grafiğine yeni bir adım ekleyin"
     }
   ],
   "RkgScy": [
@@ -5857,6 +5903,12 @@
       "value": "Statik Sonucu Daralt"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Eylemi yapıştır"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5989,12 +6041,6 @@
       "value": "PFX girin"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Geçerli bir kayan girin."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6087,6 +6133,12 @@
     {
       "type": 0,
       "value": "Bilgi"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Geçerli bir json girin."
     }
   ],
   "ba9yGJ": [
@@ -6623,6 +6675,12 @@
       "value": "(UTC+08:00) Pekin, Çongçing, Hong Kong, Urumçi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Ne yazık ki bir sorun oluştu. Lütfen yeniden deneyin."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6735,6 +6793,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Aşkabad, Taşkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Geçerli bir kayan girin."
     }
   ],
   "gc6v4X": [
@@ -6889,7 +6953,7 @@
       "value": "Aradığım şey bu değil"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Değer çok büyük."
@@ -6971,6 +7035,12 @@
     {
       "type": 0,
       "value": "Yinele"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Eylemi Kopyala"
     }
   ],
   "i4C4aB": [
@@ -7129,12 +7199,6 @@
     {
       "type": 0,
       "value": " sn"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Geçerli bir tablo girin."
     }
   ],
   "iy8rNf": [
@@ -7487,6 +7551,12 @@
     {
       "type": 0,
       "value": "Yönetilen Kimlik"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Geçerli bir sayı girin."
     }
   ],
   "lM9qrG": [
@@ -7949,12 +8019,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Geçerli bir URI girin."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8015,6 +8079,12 @@
       "value": "Geçersiz Tamsayı değeri"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Tetikleyiciyi Kopyala"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8043,6 +8113,12 @@
     {
       "type": 0,
       "value": "Not ekle"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Geçerli bir Çift sayı girin."
     }
   ],
   "ox2Ou7": [
@@ -8115,6 +8191,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bir dizi olarak birleştirilecek değerler."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Geçerli bir tamsayı girin."
     }
   ],
   "pXmFGf": [
@@ -9257,6 +9339,12 @@
     {
       "type": 0,
       "value": "Dinamik içerik ekleme"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Oluşturmayı durdur"
     }
   ],
   "wPlTDB": [

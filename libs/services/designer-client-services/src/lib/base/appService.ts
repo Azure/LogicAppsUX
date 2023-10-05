@@ -38,7 +38,12 @@ export class BaseAppServiceService implements IAppServiceService {
     return response.filter(connectorIsAppService);
   }
 
-  async getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any> {
+  async getOperationSchema(
+    swaggerUrl: string,
+    operationId: string,
+    isInput: boolean,
+    supportsAuthenticationParameter: boolean
+  ): Promise<any> {
     if (!swaggerUrl) return Promise.resolve();
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
     if (!operationId) return Promise.resolve();
@@ -67,6 +72,19 @@ export class BaseAppServiceService implements IAppServiceService {
       schema.required = ['method', 'uri'];
       for (const parameter of rawOperation.parameters ?? []) {
         this._addParameterInSchema(schema, parameter);
+      }
+
+      if (supportsAuthenticationParameter) {
+        schema.properties['authentication'] = {
+          type: 'object',
+          title: 'Authentication',
+          description: 'Enter JSON object of authentication parameter',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor': 'authentication',
+          'x-ms-editor-options': {
+            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+          },
+        };
       }
     } else {
       const { responses } = rawOperation;

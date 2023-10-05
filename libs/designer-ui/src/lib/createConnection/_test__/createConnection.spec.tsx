@@ -1,12 +1,12 @@
 import { CreateConnection, type CreateConnectionProps } from '..';
 import { UniversalConnectionParameter } from '../universalConnectionParameter';
-import { type IDropdownProps } from '@fluentui/react';
+import type { IDropdownProps } from '@fluentui/react';
 import {
   InitConnectionParameterEditorService,
   type IConnectionParameterEditorService,
   type IConnectionParameterInfo,
 } from '@microsoft/designer-client-services-logic-apps';
-import { type ConnectionParameter, type ConnectionParameterSets } from '@microsoft/utils-logic-apps';
+import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft/utils-logic-apps';
 import React, { type ReactElement } from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
