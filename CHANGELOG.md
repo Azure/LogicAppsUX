@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [2.72.0](https://github.com/Azure/LogicAppsUX/compare/v2.71.0...v2.72.0) (2023-10-05)
+
+
+### Bug Fixes
+
+* **designer:** Fix designer load for existing hybrid triggers ([#3398](https://github.com/Azure/LogicAppsUX/issues/3398)) ([9f1a289](https://github.com/Azure/LogicAppsUX/commit/9f1a28953ed221779ab5983e428036a0bb7a47ab))
+* **designer:** Fixing standalone test page to save workflow.json correctly ([#3397](https://github.com/Azure/LogicAppsUX/issues/3397)) ([69f866a](https://github.com/Azure/LogicAppsUX/commit/69f866a20fb5ad0aece432e12d08bd0b1e20ae01))
+* **vscode:** Removing storing parameters inside definition in standard app ([#3405](https://github.com/Azure/LogicAppsUX/issues/3405)) ([c516f99](https://github.com/Azure/LogicAppsUX/commit/c516f995123e884a791e42f169194d45a7459e65))
+
 ## [2.71.0](https://github.com/Azure/LogicAppsUX/compare/v2.70.1...v2.71.0) (2023-09-28)
 
 
