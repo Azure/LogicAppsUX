@@ -65,69 +65,35 @@ export const useLayout = (
   selectedItemKey: string | undefined,
   sourceSchemaOrdering: string[],
   useExpandedFunctionCards: boolean
-): [ReactFlowNode[], ReactFlowEdge[], Size2D] => {
+): [ReactFlowNode[], ReactFlowEdge[], Size2D, boolean] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<ReactFlowEdge[]>([]);
   const [diagramSize, setDiagramSize] = useState<Size2D>({ width: 0, height: 0 });
 
   useEffect(() => {
     if (currentTargetSchemaNode) {
+      const visibleFunctionNodes = functionsForLocation(functionNodes, currentTargetSchemaNode.key);
+
       // Sort source schema nodes according to their order in the schema
       const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
         (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
       );
+
       // Build a nicely formatted tree for easier layouting
-      const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(sortedSourceSchemaNodes, {}, currentTargetSchemaNode, connections);
+      const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(
+        sortedSourceSchemaNodes,
+        visibleFunctionNodes,
+        currentTargetSchemaNode,
+        connections
+      );
 
       // Compute layout
-      applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
+      applyCustomLayout(layoutTreeFromCanvasNodes, functionNodes, useExpandedFunctionCards, false)
         .then((computedLayout) => {
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
             placeholderReactFlowNode,
-            ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, {}, [
-              currentTargetSchemaNode,
-              ...currentTargetSchemaNode.children,
-            ]),
-          ]);
-
-          const simpleLayoutEdgeResults: SimplifiedLayoutEdge[] = [
-            ...computedLayout.edges.map((layoutEdge) => ({
-              srcRfId: layoutEdge.sourceId,
-              tgtRfId: layoutEdge.targetId,
-              tgtPort: layoutEdge.labels.length > 0 ? layoutEdge.labels[0] : undefined,
-            })),
-          ];
-          setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, selectedItemKey, true));
-
-          // Calculate diagram size
-          setDiagramSize({
-            width: computedLayout.width ?? 0,
-            height: computedLayout.height ?? 0,
-          });
-        })
-        .catch((error) => {
-          LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
-            message: `${error}`,
-          });
-        });
-    }
-  }, [currentTargetSchemaNode, currentSourceSchemaNodes, connections, sourceSchemaOrdering, selectedItemKey, useExpandedFunctionCards]);
-
-  useEffect(() => {
-    if (currentTargetSchemaNode) {
-      const visibleFunctionNodes = functionsForLocation(functionNodes, currentTargetSchemaNode.key);
-
-      // Build a nicely formatted tree for easier layouting
-      const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree([], visibleFunctionNodes, currentTargetSchemaNode, connections);
-
-      // Compute layout
-      applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
-        .then((computedLayout) => {
-          // Convert the calculated layout to ReactFlow nodes + edges
-          setReactFlowNodes([
-            placeholderReactFlowNode,
-            ...convertToReactFlowNodes(computedLayout, selectedItemKey, [], visibleFunctionNodes, [
+            ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, visibleFunctionNodes, [
               currentTargetSchemaNode,
               ...currentTargetSchemaNode.children,
             ]),
@@ -158,73 +124,17 @@ export const useLayout = (
       setReactFlowEdges([]);
       setDiagramSize({ width: 0, height: 0 });
     }
-  }, [currentTargetSchemaNode, functionNodes, connections, sourceSchemaOrdering, selectedItemKey, useExpandedFunctionCards]);
+  }, [
+    currentTargetSchemaNode,
+    currentSourceSchemaNodes,
+    functionNodes,
+    connections,
+    sourceSchemaOrdering,
+    selectedItemKey,
+    useExpandedFunctionCards,
+  ]);
 
-  // useEffect(() => {
-  //   if (currentTargetSchemaNode) {
-  //     const visibleFunctionNodes = functionsForLocation(functionNodes, currentTargetSchemaNode.key);
-
-  //     // Sort source schema nodes according to their order in the schema
-  //     const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
-  //       (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
-  //     );
-
-  //     // Build a nicely formatted tree for easier layouting
-  //     const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(
-  //       sortedSourceSchemaNodes,
-  //       visibleFunctionNodes,
-  //       currentTargetSchemaNode,
-  //       connections
-  //     );
-
-  //     // Compute layout
-  //     applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
-  //       .then((computedLayout) => {
-  //         // Convert the calculated layout to ReactFlow nodes + edges
-  //         setReactFlowNodes([
-  //           placeholderReactFlowNode,
-  //           ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, visibleFunctionNodes, [
-  //             currentTargetSchemaNode,
-  //             ...currentTargetSchemaNode.children,
-  //           ]),
-  //         ]);
-
-  //         const simpleLayoutEdgeResults: SimplifiedLayoutEdge[] = [
-  //           ...computedLayout.edges.map((layoutEdge) => ({
-  //             srcRfId: layoutEdge.sourceId,
-  //             tgtRfId: layoutEdge.targetId,
-  //             tgtPort: layoutEdge.labels.length > 0 ? layoutEdge.labels[0] : undefined,
-  //           })),
-  //         ];
-  //         setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, selectedItemKey, true));
-
-  //         // Calculate diagram size
-  //         setDiagramSize({
-  //           width: computedLayout.width ?? 0,
-  //           height: computedLayout.height ?? 0,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
-  //           message: `${error}`,
-  //         });
-  //       });
-  //   } else {
-  //     setReactFlowNodes([]);
-  //     setReactFlowEdges([]);
-  //     setDiagramSize({ width: 0, height: 0 });
-  //   }
-  // }, [
-  //   currentTargetSchemaNode,
-  //   currentSourceSchemaNodes,
-  //   functionNodes,
-  //   connections,
-  //   sourceSchemaOrdering,
-  //   selectedItemKey,
-  //   useExpandedFunctionCards,
-  // ]);
-
-  return [reactFlowNodes, reactFlowEdges, diagramSize];
+  return [reactFlowNodes, reactFlowEdges, diagramSize, false];
 };
 
 export const convertToReactFlowNodes = (
@@ -348,7 +258,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
       type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
       draggable: true,
-      dragHandle: '.custom-drag-handle',
+
       position: {
         x: layoutNode.x,
         y: layoutNode.y,
@@ -440,7 +350,7 @@ export const useGlobalViewLayout = (
     );
 
     // Compute layout
-    applyCustomLayout(layoutTreeFromCanvasNodes, false, true)
+    applyCustomLayout(layoutTreeFromCanvasNodes, {}, false, true)
       .then((computedLayoutTree) => {
         // Convert the calculated layout to ReactFlow nodes + edges
         setReactFlowNodes([

@@ -361,7 +361,7 @@ export const dataMapSlice = createSlice({
 
         // Default - just provide the FunctionData and the key will be handled under the hood
         if (!('newReactFlowKey' in action.payload)) {
-          fnData = action.payload;
+          fnData = { ...action.payload, isNewNode: true };
           fnReactFlowKey = createReactFlowFunctionKey(fnData);
           newState.functionNodes[fnReactFlowKey] = {
             functionData: fnData,
@@ -548,7 +548,11 @@ export const dataMapSlice = createSlice({
 
     updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: FunctionPositionMetadata }>) => {
       const newOp = { ...state.curDataMapOperation };
-      let positions = newOp.functionNodes[action.payload.id].functionData.positions;
+      const node = newOp.functionNodes[action.payload.id];
+      if (!node) {
+        return;
+      }
+      let positions = node.functionData.positions;
       if (positions) {
         const positionToUpdate = positions.findIndex((pos) => pos.targetKey === action.payload.positionMetadata.targetKey);
         if (positionToUpdate !== -1) {

@@ -21,6 +21,7 @@ export interface FunctionData {
   category: FunctionCategory;
   description: string;
   tooltip?: string;
+  isNewNode?: boolean;
 }
 
 export interface FunctionInput {

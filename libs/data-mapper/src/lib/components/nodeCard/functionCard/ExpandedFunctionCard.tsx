@@ -93,9 +93,6 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         justifyContent: 'flex-start',
       }}
     >
-      <div className="custom-drag-handle" style={{ width: '20px' }}>
-        handle
-      </div>
       {isExpanded ? null : handlesForCollapsedHeader}
       <FunctionIcon
         functionKey={functionData.key}

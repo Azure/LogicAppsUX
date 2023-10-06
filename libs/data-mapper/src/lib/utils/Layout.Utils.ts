@@ -185,6 +185,7 @@ export const convertWholeDataMapToLayoutTree = (
 /* eslint-disable no-param-reassign */
 export const applyCustomLayout = async (
   graph: RootLayoutNode,
+  functionDict: FunctionDictionary,
   useExpandedFunctionCards?: boolean,
   isOverview?: boolean
 ): Promise<RootLayoutNode> => {
@@ -375,8 +376,17 @@ export const applyCustomLayout = async (
 
   const functionNodes = graph.children[1].children;
 
+  let numNewNodes = 0;
   functionNodes.forEach((fnNode) => {
     if (!fnNode.x) {
+      const nodeDetails = functionDict[fnNode.id];
+      if (nodeDetails) {
+        if (nodeDetails.functionData.isNewNode) {
+          fnNode.x = 300;
+          fnNode.y = -80 + numNewNodes * 40;
+          numNewNodes++;
+        }
+      }
       calculateFnNodePosition(fnNode);
     }
   });
