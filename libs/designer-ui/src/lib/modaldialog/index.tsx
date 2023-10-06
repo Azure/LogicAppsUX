@@ -18,6 +18,9 @@ export interface ModalDialogProps {
 
 const modalProps: IModalProps = {
   className: 'msla-modal-dialog',
+  layerProps: {
+    eventBubblingEnabled: true,
+  },
 };
 const dialogContentProps: IDialogContentProps = {
   type: DialogType.close,
