@@ -9,7 +9,12 @@ import {
   updateNodeConnection,
 } from '../../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
-import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../../core/state/connection/connectionSelector';
+import {
+  useConnectorByNodeId,
+  useGatewayServiceConfig,
+  useGateways,
+  useSubscriptions,
+} from '../../../../core/state/connection/connectionSelector';
 import { useMonitoringView } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../../core/state/panel/panelSlice';
@@ -52,6 +57,7 @@ const CreateConnectionTab = () => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
+  const gatewayServiceConfig = useGatewayServiceConfig();
 
   const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
 
@@ -256,6 +262,7 @@ const CreateConnectionTab = () => {
       selectedSubscriptionId={selectedSubscriptionId}
       availableSubscriptions={subscriptions}
       availableGateways={availableGateways}
+      gatewayServiceConfig={gatewayServiceConfig}
       checkOAuthCallback={needsOAuth}
       resourceSelectedProps={resourceSelectorProps}
     />
