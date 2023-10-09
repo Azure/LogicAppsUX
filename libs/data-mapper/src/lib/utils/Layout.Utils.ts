@@ -382,8 +382,8 @@ export const applyCustomLayout = async (
       const nodeDetails = functionDict[fnNode.id];
       if (nodeDetails) {
         if (nodeDetails.functionData.isNewNode) {
-          fnNode.x = 300;
-          fnNode.y = -80 + numNewNodes * 40;
+          fnNode.x = -230;
+          fnNode.y = 50 + numNewNodes * 40;
           numNewNodes++;
         }
       }

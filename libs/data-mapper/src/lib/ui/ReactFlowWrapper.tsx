@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { AddedFunctionPlaceholder } from '../components/addedFunctionBox/addedFunctionBox';
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
 import { CanvasToolbox, ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
@@ -89,6 +90,7 @@ export const ReactFlowWrapper = ({
     () => ({
       [ReactFlowNodeType.SchemaNode]: SchemaCard,
       [ReactFlowNodeType.FunctionNode]: useExpandedFunctionCards ? ExpandedFunctionCard : SimpleFunctionCard,
+      [ReactFlowNodeType.FunctionPlaceholder]: AddedFunctionPlaceholder,
     }),
     [useExpandedFunctionCards]
   );
@@ -275,6 +277,8 @@ export const ReactFlowWrapper = ({
           onClose={() => dispatch(hideNotification())}
         />
       )}
+
+      {/* <AddedFunctionPlaceholder></AddedFunctionPlaceholder> */}
 
       {currentSourceSchemaNodes.length === 0 && (
         <SourceSchemaPlaceholder onClickSelectElement={() => dispatch(setCanvasToolboxTabToDisplay(ToolboxPanelTabs.sourceSchemaTree))} />

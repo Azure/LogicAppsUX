@@ -42,6 +42,25 @@ export interface ReactFlowIdParts {
   portId: string | undefined;
 }
 
+const placeholderNewFunctionSection: ReactFlowNode = {
+  id: 'new-function-section',
+  hidden: false,
+  data: null,
+  connectable: false,
+  type: ReactFlowNodeType.FunctionPlaceholder,
+  style: {
+    //border: `${tokens.strokeWidthThick} dashed ${tokens.colorNeutralStroke1}`,
+    // borderRadius: tokens.borderRadiusMedium,
+    height: '260px',
+    width: '200px',
+    background: 'transparent',
+  },
+  position: {
+    x: -250,
+    y: 15,
+  },
+};
+
 // Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
 // NOTE: Not documented, but hidden nodes need a width/height to properly affect fitView when includeHiddenNodes option is true
 const placeholderReactFlowNode: ReactFlowNode = {
@@ -92,6 +111,7 @@ export const useLayout = (
         .then((computedLayout) => {
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
+            placeholderNewFunctionSection,
             placeholderReactFlowNode,
             ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, visibleFunctionNodes, [
               currentTargetSchemaNode,
