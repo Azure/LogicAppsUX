@@ -278,8 +278,6 @@ export const ReactFlowWrapper = ({
         />
       )}
 
-      {/* <AddedFunctionPlaceholder></AddedFunctionPlaceholder> */}
-
       {currentSourceSchemaNodes.length === 0 && (
         <SourceSchemaPlaceholder onClickSelectElement={() => dispatch(setCanvasToolboxTabToDisplay(ToolboxPanelTabs.sourceSchemaTree))} />
       )}

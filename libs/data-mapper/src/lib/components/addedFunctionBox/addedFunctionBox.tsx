@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 
 const useStyles = makeStyles({
   placeholderContainer: {
-    width: `200px`,
+    width: `240px`,
     height: `300px`,
     ...shorthands.border(tokens.strokeWidthThick, 'dashed', tokens.colorNeutralStroke1),
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
@@ -40,8 +40,6 @@ export const AddedFunctionPlaceholder = () => {
         zIndex: 4,
         border: `${tokens.strokeWidthThick} dashed ${tokens.colorNeutralStroke1}`,
         borderRadius: tokens.borderRadiusMedium,
-        height: '260px',
-        width: '200px',
         background: 'transparent',
       }}
     >

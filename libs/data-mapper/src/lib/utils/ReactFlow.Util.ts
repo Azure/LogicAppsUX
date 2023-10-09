@@ -20,7 +20,7 @@ import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
-import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
+import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
 import { Position } from 'reactflow';
 
 export const overviewTgtSchemaX = 600;
@@ -42,23 +42,37 @@ export interface ReactFlowIdParts {
   portId: string | undefined;
 }
 
+export const functionPlaceholderPosition: XYPosition = {
+  x: -300,
+  y: 15,
+};
+
+const hiddenFunctionSection: ReactFlowNode = {
+  id: 'new-function-placeholder',
+  hidden: true,
+  data: null,
+  connectable: false,
+  position: {
+    x: functionPlaceholderPosition.x + 100,
+    y: functionPlaceholderPosition.y,
+  },
+};
+
 const placeholderNewFunctionSection: ReactFlowNode = {
   id: 'new-function-section',
   hidden: false,
   data: null,
   connectable: false,
+  draggable: false,
+  height: 10,
+  width: schemaNodeCardDefaultWidth,
   type: ReactFlowNodeType.FunctionPlaceholder,
   style: {
-    //border: `${tokens.strokeWidthThick} dashed ${tokens.colorNeutralStroke1}`,
-    // borderRadius: tokens.borderRadiusMedium,
     height: '260px',
     width: '200px',
     background: 'transparent',
   },
-  position: {
-    x: -250,
-    y: 15,
-  },
+  position: functionPlaceholderPosition,
 };
 
 // Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
@@ -111,6 +125,7 @@ export const useLayout = (
         .then((computedLayout) => {
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
+            hiddenFunctionSection,
             placeholderNewFunctionSection,
             placeholderReactFlowNode,
             ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, visibleFunctionNodes, [

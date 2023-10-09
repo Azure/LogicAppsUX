@@ -11,7 +11,7 @@ import type { FunctionDictionary } from '../models/Function';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
-import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
+import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, functionPlaceholderPosition } from './ReactFlow.Util';
 
 const rootLayoutNodeId = 'root';
 enum LayoutContainer {
@@ -382,8 +382,8 @@ export const applyCustomLayout = async (
       const nodeDetails = functionDict[fnNode.id];
       if (nodeDetails) {
         if (nodeDetails.functionData.isNewNode) {
-          fnNode.x = -230;
-          fnNode.y = 50 + numNewNodes * 40;
+          fnNode.x = functionPlaceholderPosition.x + 30;
+          fnNode.y = functionPlaceholderPosition.y + 35 + numNewNodes * 40;
           numNewNodes++;
         }
       }
@@ -392,7 +392,8 @@ export const applyCustomLayout = async (
   });
 
   // Target schema node positioning
-  const tgtSchemaStartX = farthestRightFnNodeXPos + schemaNodeCardDefaultWidth * 1.5;
+  const minWidth = 700;
+  const tgtSchemaStartX = Math.max(farthestRightFnNodeXPos + schemaNodeCardDefaultWidth * 1.5, minWidth); // min is 600, make this bigger
   graph.children[2].children.forEach((tgtSchemaNode, idx) => {
     tgtSchemaNode.x = tgtSchemaStartX;
     tgtSchemaNode.y = getSchemaNodeYPos(idx);
