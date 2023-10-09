@@ -156,12 +156,15 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
     .filter(([key, _connection]) => key.startsWith(targetPrefix))
     .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
 
-  const allRequiredInputsFilledOut = connectionsArray.every(([_key, targetConnection]) => {
-    const selfNode = targetConnection.self.node;
+  const allRequiredInputsFilledOut = connectionsArray.every(([_key, connection]) => {
+    const selfNode = connection.self.node;
     if (isFunctionData(selfNode)) {
-      return selfNode.inputs.every((nodeInput, index) => {
-        return nodeInput.isOptional || targetConnection.inputs[index].length > 0;
-      });
+      return (
+        !connection.outputs.length ||
+        selfNode.inputs.every((nodeInput, index) => {
+          return nodeInput.isOptional || connection.inputs[index].length > 0;
+        })
+      );
     }
 
     return true;
