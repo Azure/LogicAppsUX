@@ -57,8 +57,7 @@ const CreateConnectionTab = () => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
-  const gatewayServiceConfigQuery = useGatewayServiceConfig();
-  const gatewayServiceConfig = useMemo(() => gatewayServiceConfigQuery.data, [gatewayServiceConfigQuery]);
+  const gatewayServiceConfig = useGatewayServiceConfig();
 
   const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
 

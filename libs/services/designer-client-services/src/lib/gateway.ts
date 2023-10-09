@@ -1,4 +1,4 @@
-import type { Gateway, GatewayServiceConfig, Subscription } from '@microsoft/utils-logic-apps';
+import type { Gateway, Subscription } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IGatewayService {
@@ -17,6 +17,10 @@ export interface IGatewayService {
    * Gets configuration values for GatewayService.
    */
   getConfig?(): Promise<GatewayServiceConfig>;
+}
+
+export interface GatewayServiceConfig {
+  disableSubscriptionLookup?: boolean;
 }
 
 let service: IGatewayService;
