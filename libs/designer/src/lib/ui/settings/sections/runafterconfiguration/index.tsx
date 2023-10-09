@@ -13,7 +13,7 @@ export interface RunAfterProps {
 export const RunAfter = ({ items, readOnly = false }: RunAfterProps) => {
   return (
     <div>
-      <RunAfterActionSelector />
+      <RunAfterActionSelector readOnly={readOnly} />
       {items.map((item, key) => {
         return <RunAfterActionDetails {...item} key={key} readOnly={readOnly} />;
       })}

@@ -528,7 +528,7 @@ const toSimpleQueryBuilderViewModel = (
   let stringValue = input;
 
   try {
-    let operator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+    let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
     const negatory = operator === 'not';
     let endingLiteral: ValueSegment;
     if (negatory) {
@@ -538,7 +538,7 @@ const toSimpleQueryBuilderViewModel = (
       operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
       endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
     } else {
-      operationLiteral = operator;
+      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
       endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
     }
 
