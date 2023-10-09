@@ -152,6 +152,8 @@ export const collectConditionalValues = (currentConnection: Connection, connecti
 export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
   // All functions connections must eventually terminate into the source
   const connectionsArray = Object.entries(connections);
+  console.log('Elaina:', JSON.stringify(connections, null, 4));
+
   const allNodesTerminateIntoSource = connectionsArray
     .filter(([key, _connection]) => key.startsWith(targetPrefix))
     .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
