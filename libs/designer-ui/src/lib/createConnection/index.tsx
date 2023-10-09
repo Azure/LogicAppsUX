@@ -18,13 +18,13 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { ConnectionParameterEditorService } from '@microsoft/designer-client-services-logic-apps';
+import type { GatewayServiceConfig } from '@microsoft/designer-client-services-logic-apps';
 import type {
   ConnectionParameter,
   ConnectionParameterSet,
   ConnectionParameterSetParameter,
   ConnectionParameterSets,
   Gateway,
-  GatewayServiceConfig,
   ManagedIdentity,
   Subscription,
 } from '@microsoft/utils-logic-apps';
