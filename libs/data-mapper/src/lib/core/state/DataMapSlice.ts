@@ -571,7 +571,7 @@ export const dataMapSlice = createSlice({
     // Will always be either [] or [inputKey, outputKey]
     setInlineFunctionInputOutputKeys: (
       state,
-      action: PayloadAction<{ inputKey: string; outputKey: string; port?: string } | undefined>
+      action: PayloadAction<{ inputKey: string; outputKey: string; port?: string; x?: string; y?: string } | undefined>
     ) => {
       const newState: DataMapOperationState = { ...state.curDataMapOperation };
 
@@ -581,6 +581,12 @@ export const dataMapSlice = createSlice({
         newState.inlineFunctionInputOutputKeys = [action.payload.inputKey, action.payload.outputKey];
         if (action.payload.port) {
           newState.inlineFunctionInputOutputKeys.push(action.payload.port);
+        }
+        if (action.payload.x) {
+          newState.inlineFunctionInputOutputKeys.push(action.payload.x);
+        }
+        if (action.payload.y) {
+          newState.inlineFunctionInputOutputKeys.push(action.payload.y);
         }
       }
 

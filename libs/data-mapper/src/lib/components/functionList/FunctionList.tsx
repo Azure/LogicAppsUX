@@ -7,6 +7,7 @@ import {
   setInlineFunctionInputOutputKeys,
 } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
+import type { FunctionPositionMetadata } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { inputFromHandleId } from '../../utils/Connection.Utils';
@@ -44,6 +45,7 @@ export const FunctionList = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
   const functionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
@@ -56,6 +58,18 @@ export const FunctionList = () => {
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
     if (isAddingInlineFunction) {
       const newReactFlowKey = createReactFlowFunctionKey(selectedFunction);
+      if (currentTargetSchemaNode) {
+        const newPosition: FunctionPositionMetadata = {
+          targetKey: currentTargetSchemaNode.key,
+          position: {
+            x: parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 2]) - 30,
+            y: parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 1]),
+          },
+        };
+        // eslint-disable-next-line no-param-reassign
+        selectedFunction.positions = [newPosition];
+      }
+
       dispatch(addFunctionNode({ functionData: selectedFunction, newReactFlowKey }));
 
       const reactFlowSource = inlineFunctionInputOutputKeys[0];
