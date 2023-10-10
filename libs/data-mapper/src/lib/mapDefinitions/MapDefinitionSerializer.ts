@@ -100,7 +100,7 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
   });
 
   targetSchemaConnections.forEach(([_key, connection]) => {
-    const flattenedInputs = flattenInputs(connection.inputs);
+    const flattenedInputs = flattenInputs(connection?.inputs);
     flattenedInputs.forEach((input) => {
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {

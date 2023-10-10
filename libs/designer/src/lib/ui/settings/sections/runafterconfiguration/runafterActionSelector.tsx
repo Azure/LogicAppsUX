@@ -29,17 +29,23 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
   return [...new Set(successors)];
 };
 
-const ActionMenuItem = ({ id }: { id: string; value: LogicAppsV2.ActionDefinition }) => {
+const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => {
   const iconUri = useIconUri(id);
   const actionName = useNodeDisplayName(id);
   return (
-    <MenuItemCheckbox name="actions" value={id} icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />} tabIndex={1}>
+    <MenuItemCheckbox
+      name="actions"
+      value={id}
+      icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />}
+      tabIndex={1}
+      disabled={readOnly}
+    >
       <Label style={{ overflow: 'hidden' }}>{actionName}</Label>
     </MenuItemCheckbox>
   );
 };
 
-export const RunAfterActionSelector = () => {
+export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const intl = useIntl();
   const [searchText, setSearchText] = useState<string>('');
   const currentNodeId = useSelectedNodeId();
@@ -144,7 +150,7 @@ export const RunAfterActionSelector = () => {
 
           <div className="msla-run-after-action-menu-list">
             {(searchResults.length > 0 ? searchResults : actions).map((obj) => {
-              return <ActionMenuItem id={obj.id} key={obj.id} value={obj} />;
+              return <ActionMenuItem id={obj.id} key={obj.id} readOnly={readOnly} />;
             })}
           </div>
         </MenuList>
