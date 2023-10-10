@@ -365,8 +365,8 @@ export const applyCustomLayout = async (
 
     // Final assignment
     if (!fnNode.x) {
-      fnNode.x = 300;
-      fnNode.y = -80;
+      fnNode.x = fnNodeXPos;
+      fnNode.y = fnNodeYPos;
     }
   };
 
