@@ -11,6 +11,7 @@ import {
   isServiceProviderOperation,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
+import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -45,6 +46,8 @@ export const useGateways = (subscriptionId: string, connectorName: string) => {
 };
 
 export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
+
+export const useGatewayServiceConfig = () => useMemo(() => GatewayService().getConfig?.() ?? {}, []);
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
