@@ -235,9 +235,7 @@ export const applyCustomLayout = async (
         if (inputNode) {
           if (inputNode.x === undefined || inputNode.y === undefined) {
             // Should recursively make sure all input chains are or get calculated
-            //calculateFnNodePosition(inputNode);
-            inputNode.x = 60;
-            inputNode.y = 60;
+            calculateFnNodePosition(inputNode);
           }
 
           // Confirm that recursive call above actually calculated the inputNode's position
@@ -366,8 +364,6 @@ export const applyCustomLayout = async (
     }
 
     // Final assignment
-    // fnNode.x = fnNodeXPos;
-    // fnNode.y = fnNodeYPos;
     if (!fnNode.x) {
       fnNode.x = 300;
       fnNode.y = -80;
@@ -376,6 +372,7 @@ export const applyCustomLayout = async (
 
   const functionNodes = graph.children[1].children;
 
+  // places new nodes in placeholder section
   let numNewNodes = 0;
   functionNodes.forEach((fnNode) => {
     if (!fnNode.x) {

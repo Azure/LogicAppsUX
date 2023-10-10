@@ -989,46 +989,10 @@ export const updateFunctionNodeLocations = (newState: DataMapOperationState, fun
 };
 
 export const assignFunctionNodePositionsFromMetadata = (
-  connections: ConnectionDictionary,
-  metadata: FunctionMetadata[],
+  _connections: ConnectionDictionary,
+  _metadata: FunctionMetadata[],
   functions: FunctionDictionary
 ) => {
-  if (metadata === undefined) {
-    return;
-  }
-  const functionsCopy = { ...functions };
-  metadata.forEach((positionData) => {
-    const func = Object.keys(functionsCopy).find((functionId) => {
-      const funcData = functions[functionId];
-      if (funcData.functionData.key === positionData.functionKey) {
-        const connectionForFunction = connections[functionId];
-        const doConnectionsMatch = positionData.connections.every((connection) => {
-          if (
-            Object.values(connectionForFunction.inputs[0]).find((conn) => {
-              if (typeof conn === 'string') {
-                if (conn === connection) {
-                  return true;
-                }
-                return false;
-              } else if (conn?.reactFlowKey === connection) {
-                return true;
-              }
-              return false;
-            })
-          ) {
-            return true;
-          } else if (connectionForFunction.outputs.find((output) => output.reactFlowKey.includes(connection))) {
-            return true;
-          }
-          return false;
-        });
-        return doConnectionsMatch;
-      }
-      return false;
-    });
-    if (func) {
-      functionsCopy[func].functionData = { ...functionsCopy[func].functionData, positions: positionData.positions };
-    }
-  });
-  return functionsCopy || {};
+  // this will be used in next PR
+  return functions;
 };

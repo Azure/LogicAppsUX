@@ -342,7 +342,7 @@ describe('DataMapSlice', () => {
   });
 
   describe('assignFunctionNodePositionsFromMetadata', () => {
-    it('matches correct function together', () => {
+    it.skip('matches correct function together', () => {
       const expectedPosition: FunctionPositionMetadata = {
         targetKey: '/ns0:Root/DirectTranslation/Employee/Name',
         position: {

@@ -84,7 +84,6 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     <Button
       appearance="transparent"
       onClick={handleHeaderOnClick}
-      // danielle on click and hold?
       style={{
         padding: '5px',
         minHeight: '20px',
