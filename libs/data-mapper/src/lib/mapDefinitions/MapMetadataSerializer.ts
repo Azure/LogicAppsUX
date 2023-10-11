@@ -1,6 +1,6 @@
 import type { FunctionDictionary } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { FunctionLocationMetadata, FunctionMetadata, MapMetadata } from '../models/MapMetadata';
+import type { FunctionMetadata, MapMetadata } from '../models/MapMetadata';
 import { isFunctionData } from '../utils/Function.Utils';
 
 export const generateMapMetadata = (functionDictionary: FunctionDictionary, connections: ConnectionDictionary): MapMetadata => {
@@ -10,11 +10,7 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
     functionMetadata.push({
       reactFlowGuid: functionKey,
       functionKey: functionValue.functionData.key,
-      locations: functionValue.functionLocations.map<FunctionLocationMetadata>((location) => ({
-        targetKey: location.key,
-        xPos: 0,
-        yPos: 0,
-      })),
+      positions: functionValue.functionData.positions || [],
       connections: generateFunctionConnectionMetadata(functionKey, connections),
     });
   });

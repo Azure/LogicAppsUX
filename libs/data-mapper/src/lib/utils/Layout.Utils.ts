@@ -11,7 +11,7 @@ import type { FunctionDictionary } from '../models/Function';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
-import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
+import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, functionPlaceholderPosition } from './ReactFlow.Util';
 
 const rootLayoutNodeId = 'root';
 enum LayoutContainer {
@@ -102,7 +102,13 @@ export const convertDataMapNodesToLayoutTree = (
       },
       {
         id: LayoutContainer.Functions,
-        children: Object.keys(currentFunctionNodes).map((fnNodeKey) => ({ id: fnNodeKey })),
+        children: Object.keys(currentFunctionNodes).map((fnNodeKey) => {
+          const idk = currentFunctionNodes[fnNodeKey].functionData.positions?.find((pos) => pos.targetKey === currentTargetSchemaNode.key);
+          if (idk) {
+            return { id: fnNodeKey, x: idk.position.x, y: idk.position.y };
+          }
+          return { id: fnNodeKey };
+        }),
       },
       {
         id: LayoutContainer.TargetSchema,
@@ -179,6 +185,7 @@ export const convertWholeDataMapToLayoutTree = (
 /* eslint-disable no-param-reassign */
 export const applyCustomLayout = async (
   graph: RootLayoutNode,
+  functionDict: FunctionDictionary,
   useExpandedFunctionCards?: boolean,
   isOverview?: boolean
 ): Promise<RootLayoutNode> => {
@@ -201,7 +208,7 @@ export const applyCustomLayout = async (
 
   // Function node positioning
   const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth * 1.5 + (isOverview ? xInterval : 0);
-  let farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
+  const farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
   const nextAvailableToolbarSpot: GraphCoord = [0, 0]; // Grid representation (one node slot == 1x1)
   const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
 
@@ -357,24 +364,33 @@ export const applyCustomLayout = async (
     }
 
     // Final assignment
-    fnNode.x = fnNodeXPos;
-    fnNode.y = fnNodeYPos;
+    if (!fnNode.x) {
+      fnNode.x = fnNodeXPos;
+      fnNode.y = fnNodeYPos;
+    }
   };
 
-  graph.children[1].children.forEach((fnNode) => {
-    calculateFnNodePosition(fnNode);
+  const functionNodes = graph.children[1].children;
 
-    // Quick workaround to remove the extra spacing added, should be removed when we move to unlocked positions
-    if (fnNode.x) {
-      fnNode.x = fnNode.x >= fnStartX ? fnNode.x - fnStartX : fnNode.x;
-      if (fnNode.x > farthestRightFnNodeXPos) {
-        farthestRightFnNodeXPos = fnNode.x;
+  // places new nodes in placeholder section
+  let numNewNodes = 0;
+  functionNodes.forEach((fnNode) => {
+    if (!fnNode.x) {
+      const nodeDetails = functionDict[fnNode.id];
+      if (nodeDetails) {
+        if (nodeDetails.functionData.isNewNode) {
+          fnNode.x = functionPlaceholderPosition.x + 30;
+          fnNode.y = functionPlaceholderPosition.y + 35 + numNewNodes * 40;
+          numNewNodes++;
+        }
       }
+      calculateFnNodePosition(fnNode);
     }
   });
 
   // Target schema node positioning
-  const tgtSchemaStartX = farthestRightFnNodeXPos + schemaNodeCardDefaultWidth * 1.5;
+  const minWidth = 700;
+  const tgtSchemaStartX = Math.max(farthestRightFnNodeXPos + schemaNodeCardDefaultWidth * 1.5, minWidth); // min is 600, make this bigger
   graph.children[2].children.forEach((tgtSchemaNode, idx) => {
     tgtSchemaNode.x = tgtSchemaStartX;
     tgtSchemaNode.y = getSchemaNodeYPos(idx);
@@ -383,7 +399,7 @@ export const applyCustomLayout = async (
   // Finally, position remaining function nodes that only output to the target schema
   // (and thus must wait until after its layout is computed)
   fnNodeIdsThatOnlyOutputToTargetSchema.forEach((fnNodeId) => {
-    const fnNode = graph.children[1].children.find((layoutFnNode) => layoutFnNode.id === fnNodeId);
+    const fnNode = functionNodes.find((layoutFnNode) => layoutFnNode.id === fnNodeId);
     const tgtSchemaOutputYPositions = graph.edges
       .filter((edge) => edge.sourceId === fnNodeId)
       .map((edge) => {
@@ -391,7 +407,7 @@ export const applyCustomLayout = async (
         return tgtSchemaNode?.y !== undefined ? tgtSchemaNode.y : 0;
       });
 
-    if (fnNode) {
+    if (fnNode && !fnNode.x) {
       fnNode.x = farthestRightFnNodeXPos;
       fnNode.y = tgtSchemaOutputYPositions.reduce((curYTotal, curYPos) => curYTotal + curYPos, 0) / tgtSchemaOutputYPositions.length;
     }

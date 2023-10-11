@@ -1,13 +1,14 @@
-export interface FunctionLocationMetadata {
+import type { XYPosition } from 'reactflow';
+
+export interface FunctionPositionMetadata {
   targetKey: string;
-  xPos: number;
-  yPos: number;
+  position: XYPosition;
 }
 
 export interface FunctionMetadata {
   reactFlowGuid: string;
   functionKey: string;
-  locations: FunctionLocationMetadata[];
+  positions: FunctionPositionMetadata[];
   connections: string[];
 }
 
