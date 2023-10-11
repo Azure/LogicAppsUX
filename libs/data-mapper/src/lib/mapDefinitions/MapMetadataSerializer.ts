@@ -6,17 +6,28 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
   const functionMetadata: FunctionMetadata[] = [];
 
   Object.entries(functionDictionary).forEach(([functionKey, functionValue]) => {
+    // danielle maybe change to be indexable dict instead?
+    const connectionIdMetadata = generateFunctionConnectionMetadata(functionKey, connections);
     functionMetadata.push({
       reactFlowGuid: functionKey,
       functionKey: functionValue.functionData.key,
       positions: functionValue.functionData.positions || [],
-      connections: generateFunctionConnectionMetadata(functionKey, connections),
+      connections: connectionIdMetadata,
+      connectionShorthand: convertConnectionShorthandToId(connectionIdMetadata),
     });
   });
 
   return {
     functionNodes: functionMetadata,
   };
+};
+
+export const convertConnectionShorthandToId = (connectionArr: ConnectionAndOrder[]): string => {
+  let ans = '';
+  connectionArr.forEach((obj) => {
+    ans = ans + `${obj.inputOrder}-${obj.name},`;
+  });
+  return ans;
 };
 
 export const generateFunctionConnectionMetadata = (connectionKey: string, connections: ConnectionDictionary): ConnectionAndOrder[] => {

@@ -10,6 +10,7 @@ export interface FunctionMetadata {
   functionKey: string;
   positions: FunctionPositionMetadata[];
   connections: ConnectionAndOrder[];
+  connectionShorthand: string;
 }
 
 export interface ConnectionAndOrder {

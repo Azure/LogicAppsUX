@@ -24,6 +24,18 @@ export interface DataMapLoadingState {
   customXsltPaths: string[];
 }
 
+const mockMetadata: MapMetadata = {
+  functionNodes: [
+    {
+      reactFlowGuid: 'Ceiling-52B496E3-E270-4A8E-AFB2-414989219B15',
+      functionKey: 'Ceiling',
+      positions: [{ targetKey: '/ns0:Root/DirectTranslation/Employee', position: { x: 126, y: 201 } }],
+      connections: [{ name: 'target-/ns0:Root/DirectTranslation/Employee/ID', inputOrder: 0 }],
+      connectionShorthand: '0-target-/ns0:Root/DirectTranslation/Employee/ID,',
+    },
+  ],
+};
+
 const initialState: DataMapLoadingState = {
   theme: ThemeType.Light,
   loadingMethod: LoadingMethod.File,
@@ -32,6 +44,7 @@ const initialState: DataMapLoadingState = {
   xsltContent: '',
   fetchedFunctions: [...functionMock],
   customXsltPaths: ['folder/file.xslt', 'file2.xslt'],
+  mapMetadata: mockMetadata,
 };
 
 export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunkAPI) => {
@@ -62,7 +75,7 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeRawDefinition: (state, action: PayloadAction<MapDefDropdownOption>) => {
       state.rawDefinition = action.payload;
-      state.mapMetadata = JSON.parse(action.payload.data?.mapMetadataString || '');
+      // state.mapMetadata = JSON.parse(action.payload.data?.mapMetadataString || '');
     },
     changeLoadingMethod: (state, action: PayloadAction<LoadingMethod>) => {
       state.loadingMethod = action.payload;

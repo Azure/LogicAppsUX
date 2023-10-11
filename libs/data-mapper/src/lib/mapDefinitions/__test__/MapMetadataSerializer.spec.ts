@@ -1,5 +1,6 @@
+import type { ConnectionAndOrder } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
-import { generateFunctionConnectionMetadata } from '../MapMetadataSerializer';
+import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../MapMetadataSerializer';
 
 describe('mapMetadataSerializer', () => {
   describe('generateFunctionConnectionMetadata', () => {
@@ -19,9 +20,21 @@ describe('mapMetadataSerializer', () => {
       expect(ans[1].name).toEqual('target-/ns0:Root/DirectTranslation/Employee/ID');
     });
   });
-});
 
-// need node.functionName, node.key
+  describe('convertConnectionShorthandToId', () => {
+    it('converts simple ID', () => {
+      const mock: ConnectionAndOrder[] = [
+        { name: 'a', inputOrder: 0 },
+        {
+          name: 'b',
+          inputOrder: 7,
+        },
+      ];
+      const ans = convertConnectionShorthandToId(mock);
+      expect(ans).toEqual('0-a,7-b,');
+    });
+  });
+});
 
 const conn = {
   'ToLower-25': {
