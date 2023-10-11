@@ -86,6 +86,7 @@ export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownPro
         appearance="outline"
         value={typedInput}
         disabled={props.disabled === true}
+        onPaste={(e) => e.preventDefault()}
       >
         {formattedOptions}
       </Combobox>
