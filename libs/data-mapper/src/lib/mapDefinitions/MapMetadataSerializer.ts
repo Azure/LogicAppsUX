@@ -6,7 +6,6 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
   const functionMetadata: FunctionMetadata[] = [];
 
   Object.entries(functionDictionary).forEach(([functionKey, functionValue]) => {
-    // danielle maybe change to be indexable dict instead?
     const connectionIdMetadata = generateFunctionConnectionMetadata(functionKey, connections);
     functionMetadata.push({
       reactFlowGuid: functionKey,
@@ -43,8 +42,8 @@ export const generateFunctionConnectionMetadata = (connectionKey: string, connec
     const firstOutputObj = connections[firstOutputKey];
     const outputsInput = firstOutputObj.inputs;
     while (outputsInput[index.toString()]) {
-      const input2 = outputsInput[index.toString()][0];
-      if (input2 && typeof input2 !== 'string' && input2.reactFlowKey === connectionKey) {
+      const possibleMatchingInput = outputsInput[index.toString()][0];
+      if (possibleMatchingInput && typeof possibleMatchingInput !== 'string' && possibleMatchingInput.reactFlowKey === connectionKey) {
         const connAndOrder: ConnectionAndOrder = {
           name: firstOutputKey,
           inputOrder: index,

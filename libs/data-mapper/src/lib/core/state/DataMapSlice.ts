@@ -953,7 +953,6 @@ export const assignFunctionNodePositionsFromMetadata = (
   metadata: FunctionMetadata[],
   functions: FunctionDictionary
 ) => {
-  // for each function in the dictionary, generate the ID, then match the ID to the metadata
   Object.keys(functions).forEach((key) => {
     // find matching metadata
     const generatedMetadata = generateFunctionConnectionMetadata(key, connections);
