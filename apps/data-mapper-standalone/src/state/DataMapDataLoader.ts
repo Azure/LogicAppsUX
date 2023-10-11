@@ -75,7 +75,6 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeRawDefinition: (state, action: PayloadAction<MapDefDropdownOption>) => {
       state.rawDefinition = action.payload;
-      // state.mapMetadata = JSON.parse(action.payload.data?.mapMetadataString || '');
     },
     changeLoadingMethod: (state, action: PayloadAction<LoadingMethod>) => {
       state.loadingMethod = action.payload;
