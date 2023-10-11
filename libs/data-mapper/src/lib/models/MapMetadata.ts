@@ -9,7 +9,12 @@ export interface FunctionMetadata {
   reactFlowGuid: string;
   functionKey: string;
   positions: FunctionPositionMetadata[];
-  connections: string[];
+  connections: ConnectionAndOrder[];
+}
+
+export interface ConnectionAndOrder {
+  name: string;
+  inputOrder: number;
 }
 
 export interface MapMetadata {

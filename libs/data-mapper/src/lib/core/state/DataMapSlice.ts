@@ -5,6 +5,7 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
+import { generateFunctionConnectionMetadata } from '../../mapDefinitions';
 import type {
   FunctionMetadata,
   FunctionPositionMetadata,
@@ -948,10 +949,14 @@ export const updateFunctionNodeLocations = (newState: DataMapOperationState, fun
 };
 
 export const assignFunctionNodePositionsFromMetadata = (
-  _connections: ConnectionDictionary,
+  connections: ConnectionDictionary,
   _metadata: FunctionMetadata[],
   functions: FunctionDictionary
 ) => {
-  // this will be used in next PR
+  // for each function in the dictionary, generate the ID, then match the ID to the metadata
+  Object.keys(functions).forEach((key) => {
+    const metadata = generateFunctionConnectionMetadata(key, connections);
+    console.log(metadata);
+  });
   return functions;
 };

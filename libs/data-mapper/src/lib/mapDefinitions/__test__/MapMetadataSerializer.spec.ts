@@ -4,10 +4,95 @@ import { generateFunctionConnectionMetadata } from '../MapMetadataSerializer';
 describe('mapMetadataSerializer', () => {
   describe('generateFunctionConnectionMetadata', () => {
     it('generates simple identifier', () => {
-      const mockConnections: Partial<ConnectionDictionary> = {};
-      const ans = generateFunctionConnectionMetadata('abc', mockConnections as ConnectionDictionary);
-      console.log(ans);
-      // this will be used later- next PR to load and save position data
+      const ans = generateFunctionConnectionMetadata('Average-AC', conn as any as ConnectionDictionary);
+
+      expect(ans[0].inputOrder).toEqual(0);
+      expect(ans[0].name).toEqual('target-/ns0:Root/DirectTranslation/Employee/ID');
+    });
+
+    it('generates multiple identifier', () => {
+      const ans = generateFunctionConnectionMetadata('ToLower-25', conn as any as ConnectionDictionary);
+
+      expect(ans[0].inputOrder).toEqual(0);
+      expect(ans[0].name).toEqual('avg');
+      expect(ans[1].inputOrder).toEqual(0);
+      expect(ans[1].name).toEqual('target-/ns0:Root/DirectTranslation/Employee/ID');
     });
   });
 });
+
+// need node.functionName, node.key
+
+const conn = {
+  'ToLower-25': {
+    self: {
+      node: {
+        key: 'ToLower',
+        functionName: 'lower-case',
+      },
+      reactFlowKey: 'ToLower-25',
+    },
+    outputs: [
+      {
+        node: {
+          key: 'Average-AC',
+        },
+        reactFlowKey: 'Average-AC',
+      },
+    ],
+  },
+  'Average-AC': {
+    self: {
+      node: {
+        key: 'Average',
+        functionName: 'avg',
+      },
+      reactFlowKey: 'Average-AC',
+    },
+    inputs: {
+      '0': [
+        {
+          reactFlowKey: 'ToLower-25',
+          node: {
+            key: 'ToLower-25',
+          },
+        },
+      ],
+      '1': [],
+    },
+    outputs: [
+      {
+        node: {
+          key: '/ns0:Root/DirectTranslation/Employee/ID',
+        },
+        reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee/ID',
+      },
+    ],
+  },
+  'target-/ns0:Root/DirectTranslation/Employee/ID': {
+    self: {
+      node: {
+        key: '/ns0:Root/DirectTranslation/Employee/ID',
+      },
+      reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee/ID',
+    },
+    inputs: {
+      '0': [
+        {
+          reactFlowKey: 'Average-AC',
+          node: {},
+        },
+      ],
+      '1': [
+        {
+          reactFlowKey: 'Other-fn',
+          node: {
+            key: 'Average',
+            functionName: 'avg',
+          },
+        },
+      ],
+    },
+    outputs: [],
+  },
+};
