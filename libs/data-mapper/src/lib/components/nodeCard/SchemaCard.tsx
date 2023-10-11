@@ -166,10 +166,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const classes = useStyles();
   const intl = useIntl();
 
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
-  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
-  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
+  const selectedItemConnectedNodes = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes
+  );
+  const sourceNodeConnectionBeingDrawnFromId = useSelector(
+    (state: RootState) => state.dataMap.present.sourceNodeConnectionBeingDrawnFromId
+  );
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const schemaNameTextRef = useRef<HTMLDivElement>(null);
   const [isCardHovered, setIsCardHovered] = useState<boolean>(false);

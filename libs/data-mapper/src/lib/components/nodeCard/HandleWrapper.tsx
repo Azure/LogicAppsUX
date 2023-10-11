@@ -63,7 +63,9 @@ interface HandleWrapperProps {
 const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeReactFlowId }: HandleWrapperProps) => {
   useStaticStyles();
 
-  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
+  const sourceNodeConnectionBeingDrawnFromId = useSelector(
+    (state: RootState) => state.dataMap.present.sourceNodeConnectionBeingDrawnFromId
+  );
 
   const [isHandleHovered, setIsHandleHovered] = useState<boolean>(false);
 
@@ -110,10 +112,10 @@ const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeR
 export default HandleWrapper;
 
 const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boolean => {
-  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-  const functionDictionary = store.getState().dataMap.curDataMapOperation.functionNodes;
-  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
-  const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
+  const flattenedSourceSchema = store.getState().dataMap.present.curDataMapOperation.flattenedSourceSchema;
+  const functionDictionary = store.getState().dataMap.present.curDataMapOperation.functionNodes;
+  const flattenedTargetSchema = store.getState().dataMap.present.curDataMapOperation.flattenedTargetSchema;
+  const connectionDictionary = store.getState().dataMap.present.curDataMapOperation.dataMapConnections;
 
   if (
     connection.source &&
@@ -134,9 +136,9 @@ const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boole
 };
 
 const isValidConnectionFromFunctionNode = (connection: ReactFlowConnection) => {
-  const functionDictionary = store.getState().dataMap.curDataMapOperation.functionNodes;
-  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
-  const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
+  const functionDictionary = store.getState().dataMap.present.curDataMapOperation.functionNodes;
+  const flattenedTargetSchema = store.getState().dataMap.present.curDataMapOperation.flattenedTargetSchema;
+  const connectionDictionary = store.getState().dataMap.present.curDataMapOperation.dataMapConnections;
 
   if (connection.source && connection.target && flattenedTargetSchema && functionDictionary && connectionDictionary) {
     const targetFunctionNode = functionDictionary[connection.target]?.functionData;

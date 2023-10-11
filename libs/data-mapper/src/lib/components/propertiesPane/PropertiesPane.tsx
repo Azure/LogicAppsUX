@@ -69,9 +69,9 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const functionNodesDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const functionNodesDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
 
   const [currentNode, setCurrentNode] = useState<UnknownNode>(undefined);
   const [tabToDisplay, setTabToDisplay] = useState<PropertiesPaneTabs>(PropertiesPaneTabs.Properties);

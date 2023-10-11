@@ -1,4 +1,3 @@
-import { undoDataMapOperation } from '../../core/state/DataMapSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import { Stack, StackItem } from '@fluentui/react';
 import { Button, Text, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
@@ -6,6 +5,7 @@ import { Delete20Regular, Dismiss20Regular, DismissCircle20Filled, Info20Filled 
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { ActionCreators } from 'redux-undo';
 
 export enum NotificationTypes {
   GenerateFailed = 'generateFailed',
@@ -216,7 +216,7 @@ export const Notification = (props: NotificationProps) => {
       case NotificationTypes.ElementsAndMappingsRemoved:
         return (
           <StackItem>
-            <Button className={styles.actionButton} appearance="transparent" onClick={() => dispatch(undoDataMapOperation())}>
+            <Button className={styles.actionButton} appearance="transparent" onClick={() => dispatch(ActionCreators.undo())}>
               {undoLoc}
             </Button>
           </StackItem>

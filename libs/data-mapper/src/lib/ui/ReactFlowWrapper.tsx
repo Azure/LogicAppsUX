@@ -21,12 +21,10 @@ import {
   deleteCurrentlySelectedItem,
   hideNotification,
   makeConnection,
-  redoDataMapOperation,
   setCanvasToolboxTabToDisplay,
   setInlineFunctionInputOutputKeys,
   setSelectedItem,
   setSourceNodeConnectionBeingDrawnFromId,
-  undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { SchemaType } from '../models';
@@ -41,6 +39,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { OnConnectStartParams, Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ConnectionLineType, useKeyPress } from 'reactflow';
+import { ActionCreators } from 'redux-undo';
 
 type CanvasExtent = [[number, number], [number, number]];
 
@@ -60,18 +59,18 @@ export const ReactFlowWrapper = ({
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
-  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   // NOTE: Includes nodes added from toolbox, and nodes with connection chains to target schema nodes on the current target schema level
-  const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
-  const functionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const sourceSchemaOrdering = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchemaOrdering);
-  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
+  const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentSourceSchemaNodes);
+  const functionNodes = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const sourceSchemaOrdering = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchemaOrdering);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
+  const notificationData = useSelector((state: RootState) => state.dataMap.present.notificationData);
 
   const [canvasZoom, setCanvasZoom] = useState(defaultCanvasZoom);
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -148,14 +147,14 @@ export const ReactFlowWrapper = ({
   const ctrlZPressed = useKeyPress(['Meta+z', 'Control+z']);
   useEffect(() => {
     if (ctrlZPressed) {
-      dispatch(undoDataMapOperation());
+      dispatch(ActionCreators.undo());
     }
   }, [ctrlZPressed, dispatch]);
 
   const ctrlYPressed = useKeyPress(['Meta+y', 'Control+y']);
   useEffect(() => {
     if (ctrlYPressed) {
-      dispatch(redoDataMapOperation());
+      dispatch(ActionCreators.redo());
     }
   }, [ctrlYPressed, dispatch]);
 

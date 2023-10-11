@@ -55,8 +55,6 @@ export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
   isDirty: boolean;
-  undoStack: DataMapOperationState[];
-  redoStack: DataMapOperationState[];
   notificationData?: NotificationData;
   sourceNodeConnectionBeingDrawnFromId?: string;
   canvasToolboxTabToDisplay: ToolboxPanelTabs | '';
@@ -102,8 +100,6 @@ const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
   isDirty: false,
-  undoStack: [],
-  redoStack: [],
   canvasToolboxTabToDisplay: '',
 };
 
@@ -219,8 +215,6 @@ export const dataMapSlice = createSlice({
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
         state.isDirty = true;
-        state.undoStack = [];
-        state.redoStack = [];
       }
     },
 
@@ -229,8 +223,6 @@ export const dataMapSlice = createSlice({
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
         state.isDirty = true;
-        state.undoStack = [];
-        state.redoStack = [];
       }
     },
 
@@ -478,32 +470,6 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Set connection input value');
     },
 
-    undoDataMapOperation: (state) => {
-      const lastDataMap = state.undoStack.pop();
-      if (lastDataMap && state.curDataMapOperation) {
-        if (LogService.logToConsole) {
-          console.log(`Undo: ${state.curDataMapOperation.lastAction}`);
-        }
-
-        state.redoStack.push(state.curDataMapOperation);
-        state.curDataMapOperation = lastDataMap;
-        state.isDirty = true;
-      }
-    },
-
-    redoDataMapOperation: (state) => {
-      const lastDataMap = state.redoStack.pop();
-      if (lastDataMap && state.curDataMapOperation) {
-        if (LogService.logToConsole) {
-          console.log(`Redo: ${lastDataMap.lastAction}`);
-        }
-
-        state.undoStack.push(state.curDataMapOperation);
-        state.curDataMapOperation = lastDataMap;
-        state.isDirty = true;
-      }
-    },
-
     saveDataMap: (
       state,
       action: PayloadAction<{ sourceSchemaExtended: SchemaExtended | undefined; targetSchemaExtended: SchemaExtended | undefined }>
@@ -520,8 +486,6 @@ export const dataMapSlice = createSlice({
 
     discardDataMap: (state) => {
       state.curDataMapOperation = state.pristineDataMap;
-      state.undoStack = [];
-      state.redoStack = [];
       state.isDirty = false;
     },
 
@@ -578,8 +542,6 @@ export const {
   addFunctionNode,
   makeConnection,
   setConnectionInput,
-  undoDataMapOperation,
-  redoDataMapOperation,
   saveDataMap,
   discardDataMap,
   deleteCurrentlySelectedItem,
@@ -600,10 +562,7 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
     console.log(`Action: ${action}`);
   }
 
-  state.undoStack = state.undoStack.slice(-19);
-  state.undoStack.push(state.curDataMapOperation);
   state.curDataMapOperation = newCurrentState;
-  state.redoStack = [];
   state.isDirty = true;
 };
 

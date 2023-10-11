@@ -81,10 +81,12 @@ export const ConnectionEdge = (props: EdgeProps) => {
   const reactFlowNodes = useNodes();
 
   const [sourceReactFlowKey, destinationRectFlowKey, _destinationPortReactFlowKey] = useSelector(
-    (state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys
+    (state: RootState) => state.dataMap.present.curDataMapOperation.inlineFunctionInputOutputKeys
   );
-  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
-  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
+  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKeyParts);
+  const selectedItemConnectedNodes = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes
+  );
 
   const [isHovered, setIsHovered] = useState(false);
 

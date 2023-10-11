@@ -63,8 +63,8 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   const intl = useIntl();
   const styles = useStyles();
 
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',

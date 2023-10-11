@@ -25,7 +25,7 @@ interface TargetSchemaTreeItemProps {
 const TargetSchemaTreeItem = ({ node, status }: TargetSchemaTreeItemProps) => {
   const styles = useSchemaTreeItemStyles();
 
-  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
 
   const isItemCurrentNode = useMemo(() => currentTargetSchemaNode?.key === node.key, [currentTargetSchemaNode, node]);
 
@@ -69,8 +69,8 @@ export const TargetSchemaTreeHeader = ({ status }: TargetSchemaTreeHeaderProps) 
   const styles = useSchemaTreeItemStyles();
   const dispatch = useDispatch<AppDispatch>();
 
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
 
   const statusIcon = useMemo(() => {
     switch (status) {

@@ -64,10 +64,10 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
   const styles = useStyles();
 
   const currentTheme = useSelector((state: RootState) => state.app.theme);
-  const xsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
-  const fileXslt = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltContent);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+  const fileXslt = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltContent);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
 
   const [selectedInputOption, setSelectedInputOption] = useState<InputDataOptions>(InputDataOptions.PasteSample);
   const [selectedPivotItem, setSelectedPivotItem] = useState<PanelPivotItems>(PanelPivotItems.Input);

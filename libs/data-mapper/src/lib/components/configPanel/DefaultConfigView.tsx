@@ -18,8 +18,8 @@ export const DefaultConfigView = ({ setFunctionDisplayExpanded, useExpandedFunct
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
 
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
 
   const schemasSectionTitleLoc = intl.formatMessage({
     defaultMessage: 'Schemas',

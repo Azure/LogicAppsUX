@@ -15,7 +15,7 @@ export type InputTextboxProps = {
 };
 
 export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTextboxProps) => {
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
   const [inputTyped, setInputTyped] = useState<boolean>(false);
 
   const [inputText, setInputText] = useState<string>(loadedInputValue ? removeQuotesFromString(loadedInputValue) : '');

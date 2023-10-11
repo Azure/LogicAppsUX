@@ -44,10 +44,12 @@ export const FunctionList = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
-  const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
-  const functionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
-  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const inlineFunctionInputOutputKeys = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.inlineFunctionInputOutputKeys
+  );
+  const functionNodes = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
 
