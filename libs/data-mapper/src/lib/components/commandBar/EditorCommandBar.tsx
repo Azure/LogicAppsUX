@@ -62,12 +62,12 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const isStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
-  const undoStack = useSelector((state: RootState) => state.dataMap.undoStack);
-  const redoStack = useSelector((state: RootState) => state.dataMap.redoStack);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const xsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
+  const isStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const undoStack = useSelector((state: RootState) => state.dataMap.past);
+  const redoStack = useSelector((state: RootState) => state.dataMap.future);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
   const isDiscardConfirmed = useSelector(
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
   );

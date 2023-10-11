@@ -48,7 +48,7 @@ export const AddOrUpdateSchemaView = ({
 }: AddOrUpdateSchemaViewProps) => {
   const intl = useIntl();
   const { sourceSchema: curSourceSchema, targetSchema: curTargetSchema } = useSelector(
-    (state: RootState) => state.dataMap.curDataMapOperation
+    (state: RootState) => state.dataMap.present.curDataMapOperation
   );
   const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
 
