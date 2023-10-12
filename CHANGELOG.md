@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.69.2](https://github.com/Azure/LogicAppsUX/compare/v2.69.1...v2.69.2) (2023-10-12)
+
+
+### Bug Fixes
+
+* **Designer:** simple query builder not parsing correct data ([#3442](https://github.com/Azure/LogicAppsUX/issues/3442)) ([174acce](https://github.com/Azure/LogicAppsUX/commit/174acce89b15938c9eefeaef5853703eff028bcb))
+
 ### [2.69.1](https://github.com/Azure/LogicAppsUX/compare/v2.69.0...v2.69.1) (2023-09-25)
 
 
