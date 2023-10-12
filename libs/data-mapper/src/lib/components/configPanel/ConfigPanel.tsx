@@ -36,7 +36,7 @@ export const ConfigPanel = ({
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
 
-  const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
+  const curDataMapOperation = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
   const currentTheme = useSelector((state: RootState) => state.app.theme);

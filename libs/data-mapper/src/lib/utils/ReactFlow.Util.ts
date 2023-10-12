@@ -20,7 +20,7 @@ import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
-import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
+import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
 import { Position } from 'reactflow';
 
 export const overviewTgtSchemaX = 600;
@@ -41,6 +41,39 @@ export interface ReactFlowIdParts {
   destinationId: string | undefined;
   portId: string | undefined;
 }
+
+export const functionPlaceholderPosition: XYPosition = {
+  x: -300,
+  y: 15,
+};
+
+const hiddenFunctionSection: ReactFlowNode = {
+  id: 'new-function-placeholder',
+  hidden: true,
+  data: null,
+  connectable: false,
+  position: {
+    x: functionPlaceholderPosition.x + 100,
+    y: functionPlaceholderPosition.y,
+  },
+};
+
+const placeholderNewFunctionSection: ReactFlowNode = {
+  id: 'new-function-section',
+  hidden: false,
+  data: null,
+  connectable: false,
+  draggable: false,
+  height: 10,
+  width: schemaNodeCardDefaultWidth,
+  type: ReactFlowNodeType.FunctionPlaceholder,
+  style: {
+    height: '260px',
+    width: '200px',
+    background: 'transparent',
+  },
+  position: functionPlaceholderPosition,
+};
 
 // Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
 // NOTE: Not documented, but hidden nodes need a width/height to properly affect fitView when includeHiddenNodes option is true
@@ -65,7 +98,7 @@ export const useLayout = (
   selectedItemKey: string | undefined,
   sourceSchemaOrdering: string[],
   useExpandedFunctionCards: boolean
-): [ReactFlowNode[], ReactFlowEdge[], Size2D] => {
+): [ReactFlowNode[], ReactFlowEdge[], Size2D, boolean] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<ReactFlowEdge[]>([]);
   const [diagramSize, setDiagramSize] = useState<Size2D>({ width: 0, height: 0 });
@@ -88,10 +121,12 @@ export const useLayout = (
       );
 
       // Compute layout
-      applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
+      applyCustomLayout(layoutTreeFromCanvasNodes, functionNodes, useExpandedFunctionCards, false)
         .then((computedLayout) => {
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
+            hiddenFunctionSection,
+            placeholderNewFunctionSection,
             placeholderReactFlowNode,
             ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, visibleFunctionNodes, [
               currentTargetSchemaNode,
@@ -134,7 +169,7 @@ export const useLayout = (
     useExpandedFunctionCards,
   ]);
 
-  return [reactFlowNodes, reactFlowEdges, diagramSize];
+  return [reactFlowNodes, reactFlowEdges, diagramSize, false];
 };
 
 export const convertToReactFlowNodes = (
@@ -208,6 +243,7 @@ export const convertSchemaToReactFlowNodes = (
         disabled: false,
         disableContextMenu: schemaType === SchemaType.Target,
       },
+      draggable: false,
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: isSourceSchema ? Position.Right : Position.Left,
       position: {
@@ -256,6 +292,8 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
       },
       type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
+      draggable: true,
+
       position: {
         x: layoutNode.x,
         y: layoutNode.y,
@@ -347,7 +385,7 @@ export const useGlobalViewLayout = (
     );
 
     // Compute layout
-    applyCustomLayout(layoutTreeFromCanvasNodes, false, true)
+    applyCustomLayout(layoutTreeFromCanvasNodes, {}, false, true)
       .then((computedLayoutTree) => {
         // Convert the calculated layout to ReactFlow nodes + edges
         setReactFlowNodes([
