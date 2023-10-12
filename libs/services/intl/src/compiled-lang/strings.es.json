@@ -2384,6 +2384,12 @@
       "value": "\""
     }
   ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -3843,7 +3849,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "Copia realizada."
     }
   ],
   "NGJ00e": [
@@ -3975,7 +3981,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "No se puede copiar esta acción o desencadenador."
     }
   ],
   "ODQCKj": [
@@ -4574,7 +4580,7 @@
   "RjvpD+": [
     {
       "type": 0,
-      "value": "Insert a new step in "
+      "value": "Insertar un nuevo paso en "
     },
     {
       "type": 1,
@@ -5962,7 +5968,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "Pegar una acción"
     }
   ],
   "ZUaz3Y": [
@@ -7119,7 +7125,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "Copiar acción"
     }
   ],
   "i4C4aB": [
@@ -8168,7 +8174,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "Copiar desencadenador"
     }
   ],
   "oTBkbU": [

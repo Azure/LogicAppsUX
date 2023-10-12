@@ -2354,6 +2354,12 @@
       "value": "' をダウンロードします"
     }
   ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -3765,7 +3771,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "コピーされました。"
     }
   ],
   "NGJ00e": [
@@ -3897,7 +3903,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "このアクションまたはトリガーはコピーできません。"
     }
   ],
   "ODQCKj": [
@@ -4477,12 +4483,12 @@
   ],
   "RjvpD+": [
     {
-      "type": 0,
-      "value": "Insert a new step in "
-    },
-    {
       "type": 1,
       "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": " に新しいステップを挿入します"
     }
   ],
   "RkgScy": [
@@ -5858,7 +5864,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "アクションの貼り付け"
     }
   ],
   "ZUaz3Y": [
@@ -6981,7 +6987,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "アクションのコピー"
     }
   ],
   "i4C4aB": [
@@ -8004,7 +8010,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "トリガーのコピー"
     }
   ],
   "oTBkbU": [

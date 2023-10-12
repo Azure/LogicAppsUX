@@ -2370,6 +2370,12 @@
       "value": "\""
     }
   ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -3785,7 +3791,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "已复制!"
     }
   ],
   "NGJ00e": [
@@ -3917,7 +3923,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "无法复制此操作/触发器。"
     }
   ],
   "ODQCKj": [
@@ -4498,11 +4504,15 @@
   "RjvpD+": [
     {
       "type": 0,
-      "value": "Insert a new step in "
+      "value": "在 "
     },
     {
       "type": 1,
       "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": " 中插入新步骤"
     }
   ],
   "RkgScy": [
@@ -5898,7 +5908,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "粘贴操作"
     }
   ],
   "ZUaz3Y": [
@@ -7033,7 +7043,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "复制操作"
     }
   ],
   "i4C4aB": [
@@ -8084,7 +8094,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "复制触发器"
     }
   ],
   "oTBkbU": [

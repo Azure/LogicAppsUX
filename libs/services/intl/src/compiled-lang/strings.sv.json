@@ -2369,6 +2369,12 @@
       "value": "displayName"
     }
   ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -3814,7 +3820,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "Kopierat!"
     }
   ],
   "NGJ00e": [
@@ -3946,7 +3952,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "Det går inte att kopiera den här åtgärden/utlösaren."
     }
   ],
   "ODQCKj": [
@@ -4526,7 +4532,7 @@
   "RjvpD+": [
     {
       "type": 0,
-      "value": "Insert a new step in "
+      "value": "Infoga ett nytt steg i "
     },
     {
       "type": 1,
@@ -5906,7 +5912,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "Klistra in en åtgärd"
     }
   ],
   "ZUaz3Y": [
@@ -7048,7 +7054,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "Kopiera åtgärd"
     }
   ],
   "i4C4aB": [
@@ -8094,7 +8100,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "Kopiera utlösare"
     }
   ],
   "oTBkbU": [

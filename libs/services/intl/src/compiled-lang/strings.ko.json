@@ -2346,6 +2346,12 @@
       "value": "' 다운로드"
     }
   ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -3757,7 +3763,7 @@
   "NE54Uu": [
     {
       "type": 0,
-      "value": "Copied!"
+      "value": "복사됨!"
     }
   ],
   "NGJ00e": [
@@ -3889,7 +3895,7 @@
   "OBKhVi": [
     {
       "type": 0,
-      "value": "This Action/Trigger cannot be copied."
+      "value": "이 작업/트리거는 복사할 수 없습니다."
     }
   ],
   "ODQCKj": [
@@ -4469,12 +4475,12 @@
   ],
   "RjvpD+": [
     {
-      "type": 0,
-      "value": "Insert a new step in "
-    },
-    {
       "type": 1,
       "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": "에 새 단계 삽입"
     }
   ],
   "RkgScy": [
@@ -5854,7 +5860,7 @@
   "ZUCTVP": [
     {
       "type": 0,
-      "value": "Paste an action"
+      "value": "작업 붙여넣기"
     }
   ],
   "ZUaz3Y": [
@@ -6977,7 +6983,7 @@
   "i1vHaT": [
     {
       "type": 0,
-      "value": "Copy Action"
+      "value": "작업 복사"
     }
   ],
   "i4C4aB": [
@@ -8000,7 +8006,7 @@
   "oRxmXb": [
     {
       "type": 0,
-      "value": "Copy Trigger"
+      "value": "트리거 복사"
     }
   ],
   "oTBkbU": [

@@ -22,7 +22,7 @@ export interface BoundedInputEntryProps {
 export const BoundedInputEntry = ({ index, input, functionData, connection, connectionDictionary }: BoundedInputEntryProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
   const pathOptions = useSelector((state: RootState) => state.function.customXsltFilePaths);
   const inputConnection = !connection

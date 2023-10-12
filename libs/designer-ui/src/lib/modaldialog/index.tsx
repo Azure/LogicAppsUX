@@ -18,12 +18,16 @@ export interface ModalDialogProps {
 
 const modalProps: IModalProps = {
   className: 'msla-modal-dialog',
-};
-const dialogContentProps: IDialogContentProps = {
-  type: DialogType.close,
+  layerProps: {
+    eventBubblingEnabled: true,
+  },
 };
 
 export const ModalDialog = ({ confirmText, isOpen, title, children, getStyles, onConfirm, onDismiss }: ModalDialogProps): JSX.Element => {
+  const dialogContentProps: IDialogContentProps = {
+    type: DialogType.close,
+    title,
+  };
   const handleConfirm = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     onConfirm(e);
   };
@@ -35,14 +39,7 @@ export const ModalDialog = ({ confirmText, isOpen, title, children, getStyles, o
     e.stopPropagation();
   };
   return (
-    <Dialog
-      dialogContentProps={dialogContentProps}
-      hidden={!isOpen}
-      modalProps={modalProps}
-      styles={getStyles}
-      title={title}
-      onDismiss={handleDismiss}
-    >
+    <Dialog dialogContentProps={dialogContentProps} hidden={!isOpen} modalProps={modalProps} styles={getStyles} onDismiss={handleDismiss}>
       <div className="msla-modal-content" onClick={handleModalBodyClick}>
         <div className="msla-modal-body">{children}</div>
       </div>
