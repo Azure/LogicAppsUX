@@ -5,6 +5,7 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
+import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapDefinitions';
 import type {
   FunctionMetadata,
   FunctionPositionMetadata,
@@ -948,10 +949,18 @@ export const updateFunctionNodeLocations = (newState: DataMapOperationState, fun
 };
 
 export const assignFunctionNodePositionsFromMetadata = (
-  _connections: ConnectionDictionary,
-  _metadata: FunctionMetadata[],
+  connections: ConnectionDictionary,
+  metadata: FunctionMetadata[],
   functions: FunctionDictionary
 ) => {
-  // this will be used in next PR
+  Object.keys(functions).forEach((key) => {
+    // find matching metadata
+    const generatedMetadata = generateFunctionConnectionMetadata(key, connections);
+    const id = convertConnectionShorthandToId(generatedMetadata);
+    const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
+
+    // assign position data to function in store
+    functions[key].functionData = { ...functions[key].functionData, positions: matchingMetadata?.positions };
+  });
   return functions;
 };
