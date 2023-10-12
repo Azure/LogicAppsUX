@@ -2,6 +2,7 @@ import chevronDownDark from './../../icons/dark/chevron-down.svg';
 import chevronDownLight from './../../icons/light/chevron-down.svg';
 import { DropDownItems } from './DropdownItems';
 import { useTheme } from '@fluentui/react';
+import { useOutsideClick } from '@microsoft/utils-logic-apps';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import { COMMAND_PRIORITY_CRITICAL, createCommand } from 'lexical';
 import type { ReactNode } from 'react';
@@ -37,6 +38,12 @@ export const DropDown = ({
   const dropDownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [showDropDown, setShowDropDown] = useState(false);
+
+  useOutsideClick([dropDownRef, buttonRef], () => {
+    if (showDropDown) {
+      handleClose();
+    }
+  });
 
   const handleClose = () => {
     setShowDropDown(false);
