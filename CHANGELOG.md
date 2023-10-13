@@ -1,4 +1,15 @@
 # Logic Apps Designer
+### [2.69.3](https://github.com/Azure/LogicAppsUX/compare/v2.69.2...v2.69.3) (2023-10-13)
+
+
+### Bug Fixes
+
+* **designer:** Add z-index to Errors panel ([#3353](https://github.com/Azure/LogicAppsUX/issues/3353)) ([b3a0a23](https://github.com/Azure/LogicAppsUX/commit/b3a0a2349e27fdeb835445d5b7db735bfe423b37))
+* **designer:** Don't throw for MISSING_DATA error in IntlProvider ([#3362](https://github.com/Azure/LogicAppsUX/issues/3362)) ([1e10d2a](https://github.com/Azure/LogicAppsUX/commit/1e10d2a068035bb8467ee83a00a09958bee1b48b))
+* **designer:** Fix combobox filtering to use display name instead of value ([#3380](https://github.com/Azure/LogicAppsUX/issues/3380)) ([9acb73f](https://github.com/Azure/LogicAppsUX/commit/9acb73f2142435d404991f8d5b359979c241d328))
+* **designer:** Fix designer load for existing hybrid triggers ([#3398](https://github.com/Azure/LogicAppsUX/issues/3398)) ([309cec0](https://github.com/Azure/LogicAppsUX/commit/309cec06a54b8472b139f04f2ed4b9aa74f56b87))
+* **designer:** Fix exception due to usage of LoggingService in DesignerProvider ([#3365](https://github.com/Azure/LogicAppsUX/issues/3365)) ([27afce2](https://github.com/Azure/LogicAppsUX/commit/27afce2999ffbf87e47b2d69ae2ffb1366d999e1))
+
 ### [2.69.2](https://github.com/Azure/LogicAppsUX/compare/v2.69.1...v2.69.2) (2023-10-12)
 
 
