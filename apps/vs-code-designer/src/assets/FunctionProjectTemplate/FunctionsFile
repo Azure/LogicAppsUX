@@ -9,20 +9,30 @@ namespace <%= namespace %>
     using System.Threading.Tasks;
     using Microsoft.Azure.Functions.Extensions.Workflows;
     using Microsoft.Azure.WebJobs;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Represents the <%= methodName %> flow invoked function.
     /// </summary>
-    public static class <%= methodName %>
+    public class <%= methodName %>
     {
+        private readonly ILogger<<%= methodName %>> logger;
+
+        public <%= methodName %>(ILoggerFactory loggerFactory)
+        {
+            logger = loggerFactory.CreateLogger<<%= methodName %>>();
+        }
+
         /// <summary>
         /// Executes the logic app workflow.
         /// </summary>
         /// <param name="zipCode">The zip code.</param>
         /// <param name="temperatureScale">The temperature scale (e.g., Celsius or Fahrenheit).</param>
         [FunctionName("<%= methodName %>")]
-        public static Task<Weather> Run([WorkflowActionTrigger] int zipCode, string temperatureScale)
+        public Task<Weather> Run([WorkflowActionTrigger] int zipCode, string temperatureScale)
         {
+            this.logger.LogInformation("Starting <%= methodName %> with Zip Code: " + zipCode + " and Scale: " + temperatureScale);
+            
             // Generate random temperature within a range based on the temperature scale
             Random rnd = new Random();
             var currentTemp = temperatureScale == "Celsius" ? rnd.Next(1, 30) : rnd.Next(40, 90);
@@ -42,7 +52,7 @@ namespace <%= namespace %>
         }
 
         /// <summary>
-        /// Represents the weather information.
+        /// Represents the weather information for <%= methodName %>.
         /// </summary>
         public class Weather
         {

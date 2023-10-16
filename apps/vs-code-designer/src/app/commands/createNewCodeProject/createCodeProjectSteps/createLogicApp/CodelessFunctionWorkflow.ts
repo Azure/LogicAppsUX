@@ -66,7 +66,7 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
               functionName: '' + methodName + '',
               parameters: {
                 zipCode: 85396,
-                temperatureScale: 'Celcius',
+                temperatureScale: 'Celsius',
               },
             },
             runAfter: {},
@@ -106,7 +106,7 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
               functionName: '' + methodName + '',
               parameters: {
                 zipCode: 85396,
-                temperatureScale: 'Celcius',
+                temperatureScale: 'Celsius',
               },
             },
             runAfter: {},
