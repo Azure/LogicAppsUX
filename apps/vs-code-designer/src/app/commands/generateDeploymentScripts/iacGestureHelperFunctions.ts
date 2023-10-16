@@ -45,8 +45,6 @@ export class FileManagement {
 
       // Update the workspace folders with the new configuration
       const added = vscode.workspace.updateWorkspaceFolders(0, null, ...folderPaths.map((path) => ({ uri: vscode.Uri.file(path) })));
-
-      // Throw an error if the update failed
       if (!added) {
         throw new Error(workspaceFolders ? 'Failed to add folder to workspace' : 'Failed to create workspace');
       }

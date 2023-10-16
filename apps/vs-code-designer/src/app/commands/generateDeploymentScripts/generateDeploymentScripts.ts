@@ -47,11 +47,6 @@ export async function generateDeploymentScripts(context: IActionContext, project
     } else {
       FileManagement.convertToValidWorkspace(sourceControlPath);
     }
-
-    //TODO: Move to new function in the same code as Handle Api Response
-    // Update the workspace with the source control path, even if the API call fails
-    //const uri = vscode.Uri.file(sourceControlPath);
-    //vscode.workspace.updateWorkspaceFolders(0, vscode.workspace.workspaceFolders?.length, { uri });
   } catch (error) {
     vscode.window.showErrorMessage('The following error occurred: ', error);
   }
@@ -73,7 +68,7 @@ async function setupWizardScriptContext(context: IActionContext, projectRoot: vs
 }
 
 /**
- * Calls the deployment API to obtain the deployment artifact.
+ * Calls the iac API to obtain the deployment standard artifacts.
  * @param inputs - Object containing required inputs like subscriptionId, resourceGroup etc.
  * @returns - Promise<Buffer> containing the API response as a buffer.
  */
@@ -87,10 +82,16 @@ async function callStandardApi(scriptContext: IAzureScriptWizard, inputs: any): 
   }
 }
 
-//TODO: Add comments
+/**
+ * Calls the iac API to obtain the deployment consumption artifacts.
+ * @param scriptContext - The script context of type IAzureScriptWizard.
+ * @param inputs - The inputs object containing the necessary data for the API call.
+ * @returns A Promise that resolves to an array of Buffers.
+ */
 async function callConsumptionApi(scriptContext: IAzureScriptWizard, inputs: any): Promise<Buffer[]> {
   try {
     const { subscriptionId, resourceGroup, logicAppName } = inputs;
+    // Retrieve the managed connections
     const managedConnections: string[] = await getConnectionNames(scriptContext.folderPath);
     return await callManagedConnectionsApi(subscriptionId, resourceGroup, logicAppName, managedConnections);
   } catch (error) {
@@ -112,9 +113,6 @@ async function handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory:
     window.showErrorMessage("The API response content isn't valid.");
   }
   await unzipLogicAppArtifacts(zipContent, targetDirectory);
-
-  //TODO: Move code into a new helper function
-
   vscode.window.showInformationMessage('artifacts successfully exported to the following directory: ', targetDirectory);
 }
 
@@ -221,7 +219,7 @@ async function callManagedConnectionsApi(
         json: true,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `${accessToken}`, // Added Authorization header
+          Authorization: `${accessToken}`,
         },
         encoding: 'binary',
       };
