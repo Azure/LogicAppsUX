@@ -17,8 +17,11 @@ const getAccessToken = (): string | undefined => {
 export interface EnvironmentVars {
   production: boolean;
   armToken?: string;
+  chatbotEndpoint?: string;
 }
+
 export const environment: EnvironmentVars = {
   production: false,
   armToken: getAccessToken(),
+  chatbotEndpoint: 'https://localhost:64647',
 };

@@ -152,16 +152,20 @@ export const collectConditionalValues = (currentConnection: Connection, connecti
 export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
   // All functions connections must eventually terminate into the source
   const connectionsArray = Object.entries(connections);
+
   const allNodesTerminateIntoSource = connectionsArray
     .filter(([key, _connection]) => key.startsWith(targetPrefix))
     .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
 
-  const allRequiredInputsFilledOut = connectionsArray.every(([_key, targetConnection]) => {
-    const selfNode = targetConnection.self.node;
+  const allRequiredInputsFilledOut = connectionsArray.every(([_key, connection]) => {
+    const selfNode = connection.self.node;
     if (isFunctionData(selfNode)) {
-      return selfNode.inputs.every((nodeInput, index) => {
-        return nodeInput.isOptional || targetConnection.inputs[index].length > 0;
-      });
+      return (
+        !connection.outputs.length ||
+        selfNode.inputs.every((nodeInput, index) => {
+          return nodeInput.isOptional || connection.inputs[index].length > 0;
+        })
+      );
     }
 
     return true;
@@ -298,7 +302,7 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
     } else {
       if (element === '"') {
         currentWord += element;
-        if (functionParams[index + 1] && functionParams[index + 1] === ',') {
+        if (openParenthesis === 0 && functionParams[index + 1] && functionParams[index + 1] === ',') {
           results.push(currentWord.trim());
           currentWord = '';
 

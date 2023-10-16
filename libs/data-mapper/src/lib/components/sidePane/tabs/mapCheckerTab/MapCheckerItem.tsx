@@ -29,7 +29,7 @@ export interface MapCheckerItemProps extends MapCheckerEntry {
 
 export const MapCheckerItem = ({ title, description, severity, reactFlowId, onClick }: MapCheckerItemProps) => {
   const intl = useIntl();
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
 

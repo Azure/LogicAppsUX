@@ -19,11 +19,11 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowFileContent,
-  Parameter,
   StandardApp,
   Artifacts,
   AzureConnectorDetails,
   ILocalSettingsJson,
+  Parameter,
   WorkflowParameter,
 } from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
@@ -53,22 +53,14 @@ export function removeWebviewPanelFromCache(category: string, name: string): voi
   }
 }
 
-export function getStandardAppData(
-  workflowName: string,
-  workflow: IWorkflowFileContent,
-  parameters: Record<string, Parameter>
-): StandardApp {
+export function getStandardAppData(workflowName: string, workflow: IWorkflowFileContent): StandardApp {
   const { definition, kind, runtimeConfiguration } = workflow;
   const statelessRunMode = runtimeConfiguration && runtimeConfiguration.statelessRunMode ? runtimeConfiguration.statelessRunMode : '';
   const operationOptions = runtimeConfiguration && runtimeConfiguration.operationOptions ? runtimeConfiguration.operationOptions : '';
-  const workflowParameters = getWorkflowParameters(parameters);
 
   return {
     statelessRunMode,
-    definition: {
-      ...definition,
-      parameters: workflowParameters,
-    },
+    definition,
     name: workflowName,
     stateful: kind === 'Stateful',
     kind,

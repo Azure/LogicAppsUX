@@ -5,7 +5,15 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
-import type { MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
+import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapDefinitions';
+import type {
+  FunctionMetadata,
+  FunctionPositionMetadata,
+  MapMetadata,
+  SchemaExtended,
+  SchemaNodeDictionary,
+  SchemaNodeExtended,
+} from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
@@ -31,7 +39,12 @@ import {
   addParentConnectionForRepeatingElementsNested,
   getParentId,
 } from '../../utils/DataMap.Utils';
-import { functionsForLocation, getFunctionLocationsForAllFunctions, isFunctionData } from '../../utils/Function.Utils';
+import {
+  functionsForLocation,
+  getConnectedSourceSchema,
+  getFunctionLocationsForAllFunctions,
+  isFunctionData,
+} from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
 import {
@@ -50,8 +63,6 @@ export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
   isDirty: boolean;
-  undoStack: DataMapOperationState[];
-  redoStack: DataMapOperationState[];
   notificationData?: NotificationData;
   sourceNodeConnectionBeingDrawnFromId?: string;
   canvasToolboxTabToDisplay: ToolboxPanelTabs | '';
@@ -97,8 +108,6 @@ const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
   isDirty: false,
-  undoStack: [],
-  redoStack: [],
   canvasToolboxTabToDisplay: '',
 };
 
@@ -186,7 +195,10 @@ export const dataMapSlice = createSlice({
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
-      const functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
+
+      let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
+      functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
+      const connectedFlattenedSourceSchema = getConnectedSourceSchema(dataMapConnections, flattenedSourceSchema);
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -198,7 +210,7 @@ export const dataMapSlice = createSlice({
         functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
-        currentSourceSchemaNodes: [],
+        currentSourceSchemaNodes: Object.values(connectedFlattenedSourceSchema),
         currentTargetSchemaNode: targetSchema.schemaTreeRoot,
         loadedMapMetadata: metadata,
       };
@@ -213,8 +225,6 @@ export const dataMapSlice = createSlice({
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
         state.isDirty = true;
-        state.undoStack = [];
-        state.redoStack = [];
       }
     },
 
@@ -223,8 +233,6 @@ export const dataMapSlice = createSlice({
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
         state.isDirty = true;
-        state.undoStack = [];
-        state.redoStack = [];
       }
     },
 
@@ -346,7 +354,7 @@ export const dataMapSlice = createSlice({
 
         // Default - just provide the FunctionData and the key will be handled under the hood
         if (!('newReactFlowKey' in action.payload)) {
-          fnData = action.payload;
+          fnData = { ...action.payload, isNewNode: true };
           fnReactFlowKey = createReactFlowFunctionKey(fnData);
           newState.functionNodes[fnReactFlowKey] = {
             functionData: fnData,
@@ -472,32 +480,6 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Set connection input value');
     },
 
-    undoDataMapOperation: (state) => {
-      const lastDataMap = state.undoStack.pop();
-      if (lastDataMap && state.curDataMapOperation) {
-        if (LogService.logToConsole) {
-          console.log(`Undo: ${state.curDataMapOperation.lastAction}`);
-        }
-
-        state.redoStack.push(state.curDataMapOperation);
-        state.curDataMapOperation = lastDataMap;
-        state.isDirty = true;
-      }
-    },
-
-    redoDataMapOperation: (state) => {
-      const lastDataMap = state.redoStack.pop();
-      if (lastDataMap && state.curDataMapOperation) {
-        if (LogService.logToConsole) {
-          console.log(`Redo: ${lastDataMap.lastAction}`);
-        }
-
-        state.undoStack.push(state.curDataMapOperation);
-        state.curDataMapOperation = lastDataMap;
-        state.isDirty = true;
-      }
-    },
-
     saveDataMap: (
       state,
       action: PayloadAction<{ sourceSchemaExtended: SchemaExtended | undefined; targetSchemaExtended: SchemaExtended | undefined }>
@@ -514,8 +496,6 @@ export const dataMapSlice = createSlice({
 
     discardDataMap: (state) => {
       state.curDataMapOperation = state.pristineDataMap;
-      state.undoStack = [];
-      state.redoStack = [];
       state.isDirty = false;
     },
 
@@ -531,10 +511,32 @@ export const dataMapSlice = createSlice({
       state.sourceNodeConnectionBeingDrawnFromId = action.payload;
     },
 
+    updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: FunctionPositionMetadata }>) => {
+      const newOp = { ...state.curDataMapOperation };
+      const node = newOp.functionNodes[action.payload.id];
+      if (!node) {
+        return;
+      }
+      let positions = node.functionData.positions;
+      if (positions) {
+        const positionToUpdate = positions.findIndex((pos) => pos.targetKey === action.payload.positionMetadata.targetKey);
+        if (positionToUpdate !== -1) {
+          positions[positionToUpdate] = action.payload.positionMetadata;
+        } else {
+          positions.push(action.payload.positionMetadata);
+        }
+      } else {
+        positions = [action.payload.positionMetadata];
+      }
+      newOp.functionNodes[action.payload.id].functionData.positions = positions;
+
+      state.curDataMapOperation = newOp;
+    },
+
     // Will always be either [] or [inputKey, outputKey]
     setInlineFunctionInputOutputKeys: (
       state,
-      action: PayloadAction<{ inputKey: string; outputKey: string; port?: string } | undefined>
+      action: PayloadAction<{ inputKey: string; outputKey: string; port?: string; x?: string; y?: string } | undefined>
     ) => {
       const newState: DataMapOperationState = { ...state.curDataMapOperation };
 
@@ -544,6 +546,12 @@ export const dataMapSlice = createSlice({
         newState.inlineFunctionInputOutputKeys = [action.payload.inputKey, action.payload.outputKey];
         if (action.payload.port) {
           newState.inlineFunctionInputOutputKeys.push(action.payload.port);
+        }
+        if (action.payload.x) {
+          newState.inlineFunctionInputOutputKeys.push(action.payload.x);
+        }
+        if (action.payload.y) {
+          newState.inlineFunctionInputOutputKeys.push(action.payload.y);
         }
       }
 
@@ -557,6 +565,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  updateFunctionPosition,
   deleteConnection,
   setXsltFilename,
   setXsltContent,
@@ -572,8 +581,6 @@ export const {
   addFunctionNode,
   makeConnection,
   setConnectionInput,
-  undoDataMapOperation,
-  redoDataMapOperation,
   saveDataMap,
   discardDataMap,
   deleteCurrentlySelectedItem,
@@ -594,10 +601,7 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
     console.log(`Action: ${action}`);
   }
 
-  state.undoStack = state.undoStack.slice(-19);
-  state.undoStack.push(state.curDataMapOperation);
   state.curDataMapOperation = newCurrentState;
-  state.redoStack = [];
   state.isDirty = true;
 };
 
@@ -942,4 +946,21 @@ export const updateFunctionNodeLocations = (newState: DataMapOperationState, fun
 
     functionNode.functionLocations = uniqueLocations;
   });
+};
+
+export const assignFunctionNodePositionsFromMetadata = (
+  connections: ConnectionDictionary,
+  metadata: FunctionMetadata[],
+  functions: FunctionDictionary
+) => {
+  Object.keys(functions).forEach((key) => {
+    // find matching metadata
+    const generatedMetadata = generateFunctionConnectionMetadata(key, connections);
+    const id = convertConnectionShorthandToId(generatedMetadata);
+    const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
+
+    // assign position data to function in store
+    functions[key].functionData = { ...functions[key].functionData, positions: matchingMetadata?.positions };
+  });
+  return functions;
 };

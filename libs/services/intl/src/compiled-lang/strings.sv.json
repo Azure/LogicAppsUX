@@ -29,6 +29,12 @@
       "value": "Fel"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt booleskt värde."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -413,12 +419,6 @@
       "value": "Returnerar porten från en URI. Om port inte anges, returneras standardporten för protokollet"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt heltalsvärde."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -453,12 +453,6 @@
     {
       "type": 0,
       "value": "Konverterar parameterargumentet till ett flyttalsnummer"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Ange en giltig e-postadress."
     }
   ],
   "1ZSzl6": [
@@ -525,6 +519,12 @@
     {
       "type": 0,
       "value": "Dölj källschema"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Ange en giltig URI."
     }
   ],
   "1uGBLP": [
@@ -875,6 +875,12 @@
       "value": "Stäng kodvyn"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Ange giltigt datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "Ditt flöde har uppdaterats."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Sparar det här flödet..."
     }
   ],
   "4izAMi": [
@@ -1421,16 +1433,16 @@
       "value": "Detta återställer arbetsflödet till det tillstånd det innan Copilot redigerade det. Om du har gjort ytterligare ändringar i arbetsflödet efter Copilots ändringar kommer du att förlora dem. Det går inte att ångra den här åtgärden. Vill du fortsätta?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Ange en giltig e-postadress."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuskod"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Rapportera en bugg"
     }
   ],
   "7lnElz": [
@@ -2256,7 +2268,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Typerna Number, Integer och Decimal godkänns."
     }
   ],
   "CypYLs": [
@@ -2355,6 +2367,12 @@
     {
       "type": 1,
       "value": "displayName"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Tillagda funktioner"
     }
   ],
   "DWd9vy": [
@@ -2559,6 +2577,12 @@
     {
       "type": 0,
       "value": "Visa den här åtgärdens begäranshistorik"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Ange en giltig tabell."
     }
   ],
   "EqX3Mi": [
@@ -3027,12 +3051,6 @@
       "value": "Fel vid hämtning av manifest"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Ange giltigt datetime."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3206,7 +3224,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Godkända datatyper: "
     },
     {
       "type": 1,
@@ -3257,6 +3275,12 @@
     {
       "type": 0,
       "value": "Åtgärden har ångrats"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot-chatten avbröts"
     }
   ],
   "JNQHws": [
@@ -3355,12 +3379,6 @@
     {
       "type": 0,
       "value": " med"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt dubbelnummer."
     }
   ],
   "KV4uky": [
@@ -3751,12 +3769,6 @@
       "value": "Redigera i avancerat läge"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt tal."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3803,6 +3815,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsingfors, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Kopierat!"
     }
   ],
   "NGJ00e": [
@@ -3901,6 +3919,12 @@
       "value": "Tjänstens huvudnamn"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Vi jobbar på det..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3923,6 +3947,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Det går inte att kopiera den här åtgärden/utlösaren."
     }
   ],
   "ODQCKj": [
@@ -3989,6 +4019,12 @@
     {
       "type": 0,
       "value": "Ange målgruppen."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Rapportera en bugg"
     }
   ],
   "OVvieE": [
@@ -4115,6 +4151,12 @@
     {
       "type": 0,
       "value": "Krävs. Det här värdet är antalet heltal som finns i matrisen."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Blanksteg måste kodas för URI:er"
     }
   ],
   "P4rEwD": [
@@ -4485,6 +4527,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Infoga ett nytt steg i "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4876,7 +4928,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Prova att använda en konverteringsfunktion som: "
     },
     {
       "type": 1,
@@ -5657,6 +5709,12 @@
       "value": "Villkor för utlösare"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Rensa redigeringsprogrammet"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5851,6 +5909,12 @@
       "value": "Dölj statiskt resultat"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Klistra in en åtgärd"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5983,12 +6047,6 @@
       "value": "Ange PFX"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt flyttal."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6081,6 +6139,12 @@
     {
       "type": 0,
       "value": "Information"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Ange en giltig JSON."
     }
   ],
   "ba9yGJ": [
@@ -6617,6 +6681,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hongkong SAR, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Någonting gick fel. Försök igen."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6737,6 +6807,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Asjchabad, Tasjkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt flyttal."
     }
   ],
   "gc6v4X": [
@@ -6891,7 +6967,7 @@
       "value": "Det här är inte vad jag letar efter"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Värdet är för högt."
@@ -6973,6 +7049,12 @@
     {
       "type": 0,
       "value": "Gör om"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Kopiera åtgärd"
     }
   ],
   "i4C4aB": [
@@ -7135,12 +7217,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Ange en giltig tabell."
     }
   ],
   "iy8rNf": [
@@ -7493,6 +7569,12 @@
     {
       "type": 0,
       "value": "Hanterad identitet"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt tal."
     }
   ],
   "lM9qrG": [
@@ -7955,12 +8037,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Ange en giltig URI."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8021,6 +8097,12 @@
       "value": "Ogiltigt heltalsvärde"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Kopiera utlösare"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8049,6 +8131,12 @@
     {
       "type": 0,
       "value": "Lägg till en anteckning"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt dubbelnummer."
     }
   ],
   "ox2Ou7": [
@@ -8121,6 +8209,12 @@
     {
       "type": 0,
       "value": "Krävs. Värdena att kombinera till en matris."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt heltalsvärde."
     }
   ],
   "pXmFGf": [
@@ -9265,6 +9359,12 @@
       "value": "Inkludera dynamiskt innehåll"
     }
   ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Sluta generera"
+    }
+  ],
   "wPlTDB": [
     {
       "type": 0,
@@ -9550,7 +9650,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Varning! Typen av indatanod matchar inte någon av de tillåtna typerna för indata."
     }
   ],
   "yRDuqj": [

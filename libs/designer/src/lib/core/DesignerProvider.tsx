@@ -33,7 +33,8 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
   const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
   const themeName = useMemo(() => (!isDarkMode ? 'light' : 'dark'), [isDarkMode]);
   const onError = useCallback<OnIntlErrorFn>((err) => {
-    if (err.code === 'MISSING_TRANSLATION') {
+    if (err.code === 'MISSING_TRANSLATION' || err.code === 'MISSING_DATA') {
+      console.log(`IntlProvider error ${err.code} - ${err.message} - ${err.stack}`);
       return;
     }
     throw err;
