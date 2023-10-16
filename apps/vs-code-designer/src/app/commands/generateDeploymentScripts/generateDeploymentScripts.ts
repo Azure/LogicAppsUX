@@ -36,10 +36,10 @@ export async function generateDeploymentScripts(context: IActionContext, project
     showPreviewWarning(commandIdentifier);
     const scriptContext = await setupWizardScriptContext(context, projectRoot);
     const inputs = await gatherAndValidateInputs(scriptContext, projectRoot);
-    const consumptionArtifactsContent = await callConsumptionApi(scriptContext, inputs);
-    const standardArtifactsContent = await callStandardApi(scriptContext, inputs);
     const sourceControlPath = scriptContext.sourceControlPath;
+    const consumptionArtifactsContent = await callConsumptionApi(scriptContext, inputs);
     await handleApiResponse(consumptionArtifactsContent, sourceControlPath);
+    const standardArtifactsContent = await callStandardApi(scriptContext, inputs);
     await handleApiResponse(standardArtifactsContent, sourceControlPath);
 
     if (scriptContext.isValidWorkspace) {
