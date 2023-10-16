@@ -54,6 +54,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+HcevX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid boolean.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[유효한 부울을 입력하세요.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+Jryh+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Trigger]]></Val>
@@ -594,15 +603,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";11qu8f" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid integer.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[유효한 정수를 입력하세요.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";14lYtE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[18]]></Val>
@@ -653,15 +653,6 @@
           <Val><![CDATA[Convert the parameter argument to a floating-point number]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[매개 변수 인수를 부동 소수점 숫자로 변환합니다.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";1REk6u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid email.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[유효한 전자 메일을 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -761,6 +752,15 @@
           <Val><![CDATA[Hide source schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[원본 스키마 숨기기]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1r9ljA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid URI.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[올바른 URI를 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1233,6 +1233,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";3uA4ml" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid datetime.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[유효한 날짜를 입력하세요.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";3vCCY7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The number of a specified time unit to subtract.]]></Val>
@@ -1391,6 +1400,15 @@
           <Val><![CDATA[Your flow has been updated.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[흐름이 업데이트되었습니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";4iyEAY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[]D83D;]DCBE; Saving this flow...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[]D83D;]DCBE; 이 흐름을 저장하는 중...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1710,15 +1728,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";6WmLx1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Warning: input node type does not match one of the allowed types for this input]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[경고: 입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";6ZviI7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection reference]]></Val>
@@ -1989,20 +1998,20 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7jcTNd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid email.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[유효한 전자 메일을 입력하세요.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7k9jXx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status code]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[상태 코드]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";7ku9t+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Report a bug]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[버그 보고]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3159,6 +3168,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";CyT8H7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Accepts 'Number', 'Integer', and 'Decimal' types.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['숫자', '정수' 및 '소수점' 형식을 허용합니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";CypYLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert a new step between {parentName} and {childName}]]></Val>
@@ -3272,6 +3290,15 @@
           <Val><![CDATA[Alt/Option + click to download ''{displayName}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Alt/Option + 클릭하여 ''{displayName}'' 다운로드]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DS/WmZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Added Functions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[추가된 함수]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3542,6 +3569,15 @@
           <Val><![CDATA[View the request history for this operation]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[이 작업에 대한 요청 기록 보기]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EptZhD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid table.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[올바른 테이블을 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4212,15 +4248,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";HoQiVa" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid datetime.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[유효한 날짜를 입력하세요.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";HsO1Rd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{addIcon} Install Gateway]]></Val>
@@ -4446,6 +4473,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";J5TTF6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Accepted data types: {type}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[허용되는 데이터 형식: {type}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";J62n9E" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed]]></Val>
@@ -4487,6 +4523,15 @@
           <Val><![CDATA[Action undone]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[작업 실행 취소]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";JKZpcd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copilot chat canceled]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Copilot 채팅을 취소함]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4622,15 +4667,6 @@
           <Val><![CDATA[Replace "{selectedOperation}" with]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA["{selectedOperation}"을(를) (으)로 바꾸기]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";KP0Rr2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid Double number.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[유효한 이중 번호를 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5211,15 +5247,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Mgcs5s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid number.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[유효한 숫자를 입력하세요.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";MirIsS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show code]]></Val>
@@ -5288,6 +5315,15 @@
           <Val><![CDATA[(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02:00) 헬싱키, 키예프, 리가, 소피아, 탈린, 빌뉴스]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NE54Uu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copied!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[복사됨!]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5418,6 +5454,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";O0tSvb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[]D83D;]DD8A;️ Working on it...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[]D83D;]DD8A;️ 작업하는 중...]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";O1tedM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No errors found.]]></Val>
@@ -5450,6 +5495,15 @@
           <Val><![CDATA[OK]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[확인]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OBKhVi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This Action/Trigger cannot be copied.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[이 작업/트리거는 복사할 수 없습니다.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5549,6 +5603,15 @@
           <Val><![CDATA[Enter the audience.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[대상 그룹을 입력하세요.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OVDEFP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Report a bug]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[버그 보고]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5702,6 +5765,15 @@
           <Val><![CDATA[Required. This value is the number of integers that is in the array.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[필수 사항으로, 이 값은 배열에 있는 정수의 개수입니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";P4XUjW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Whitespaces must be encoded for URIs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[공백은 URI에 대해 인코딩되어야 합니다.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6207,6 +6279,15 @@
       <Item ItemId=";RhH4pF.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text" UsrLk="true">
           <Val><![CDATA[{minutes, plural, one {# minute} other {# minutes}}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RjvpD+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert a new step in {parentSubgraphName}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{parentSubgraphName}에 새 단계 삽입]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6737,6 +6818,15 @@
           <Val><![CDATA[Delete Workflow Action]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[워크플로 작업 삭제]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UF3KjL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Try using a Conversion function such as: {conversionFunctions}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{conversionFunctions} 등의 변환 함수를 사용해 보세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7722,6 +7812,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";YEHutH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Clear Editor]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[편집기 지우기]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";YF1yZk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[chat-session-id:]]></Val>
@@ -7983,6 +8082,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZUCTVP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Paste an action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[작업 붙여넣기]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZUaz3Y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Shorthand for trigger().outputs.body]]></Val>
@@ -8181,15 +8289,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";amRYtC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid float.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[유효한 float를 입력합니다.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";aoUT/3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading resources...]]></Val>
@@ -8321,6 +8420,15 @@
           <Val><![CDATA[Info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[정보]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";bYwqkV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[올바른 JSON을 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9108,6 +9216,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";fvGvnA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, something went wrong. Please try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[죄송합니다. 문제가 발생했습니다. 다시 시도하십시오.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";g/7QyT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection]]></Val>
@@ -9275,6 +9392,15 @@
           <Val><![CDATA[(UTC+05:00) Ashgabat, Tashkent]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+05:00) 아슈하바트, 타슈켄트]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";gYaVvl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid float.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[올바른 float를 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9504,7 +9630,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";hic23z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";hihfHd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The value is too large.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -9608,6 +9734,15 @@
           <Val><![CDATA[Redo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[다시 실행]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";i1vHaT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copy Action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[작업 복사]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9833,15 +9968,6 @@
           <Val><![CDATA[{seconds}s]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{seconds}초]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ixutP5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid table.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[올바른 테이블을 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10310,6 +10436,15 @@
           <Val><![CDATA[Managed Identity]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[관리 ID]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";lB56l2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[유효한 숫자를 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10962,15 +11097,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";o2Cmny" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid uri.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[유효한 URI를 입력합니다.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";o3SfI4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Zoom to fit]]></Val>
@@ -11061,6 +11187,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";oRxmXb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copy Trigger]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[트리거 복사]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";oTBkbU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Output]]></Val>
@@ -11102,6 +11237,15 @@
           <Val><![CDATA[Add a note]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[메모 추가]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";osKNnl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid Double number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[유효한 이중 번호를 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11210,6 +11354,15 @@
           <Val><![CDATA[Required. The values to combine into an array.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[필수 사항으로, 배열로 결합할 값입니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";pOVDll" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid integer.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[유효한 정수를 입력하세요.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12798,6 +12951,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";wP0/uB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Stop generating]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[생성 중지]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";wPlTDB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Full path]]></Val>
@@ -13217,6 +13379,15 @@
           <Val><![CDATA[Returns an array sorted in ascending order]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[오름차순으로 정렬된 배열을 반환합니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";yNtBUV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: input node type does not match one of the allowed types for this input.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[경고: 입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

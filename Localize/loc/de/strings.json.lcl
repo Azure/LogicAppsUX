@@ -54,6 +54,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+HcevX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid boolean.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie einen gültigen booleschen Wert ein.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+Jryh+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Trigger]]></Val>
@@ -594,15 +603,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";11qu8f" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid integer.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie eine gültige ganze Zahl ein.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";14lYtE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[18]]></Val>
@@ -653,15 +653,6 @@
           <Val><![CDATA[Convert the parameter argument to a floating-point number]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Parameterargument in Gleitkommazahl konvertieren]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";1REk6u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid email.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie eine gültige E-Mail-Adresse an.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -761,6 +752,15 @@
           <Val><![CDATA[Hide source schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Quellschema ausblenden]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1r9ljA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid URI.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie eine gültige URI ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1233,6 +1233,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";3uA4ml" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid datetime.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie einen gültigen Wert für „Datum/Uhrzeit“ ein.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";3vCCY7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The number of a specified time unit to subtract.]]></Val>
@@ -1391,6 +1400,15 @@
           <Val><![CDATA[Your flow has been updated.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Ihr Flow wurde aktualisiert.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";4iyEAY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[]D83D;]DCBE; Saving this flow...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[]D83D;]DCBE; Dieser Flow wird gespeichert...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1710,15 +1728,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";6WmLx1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Warning: input node type does not match one of the allowed types for this input]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Warnung: Der Eingabeknotentyp stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";6ZviI7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection reference]]></Val>
@@ -1989,20 +1998,20 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7jcTNd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid email.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie eine gültige E-Mail-Adresse an.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7k9jXx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status code]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Statuscode]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";7ku9t+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Report a bug]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Fehler melden]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3162,6 +3171,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";CyT8H7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Accepts 'Number', 'Integer', and 'Decimal' types.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akzeptiert die Typen „Zahl“, „Ganze Zahl“ und „Dezimal“.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";CypYLs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Insert a new step between {parentName} and {childName}]]></Val>
@@ -3275,6 +3293,15 @@
           <Val><![CDATA[Alt/Option + click to download ''{displayName}'']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[ALT/OPTION + Klicken Sie, um „{displayName}“ herunterzuladen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DS/WmZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Added Functions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hinzugefügte Funktionen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3545,6 +3572,15 @@
           <Val><![CDATA[View the request history for this operation]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Anforderungsverlauf für diesen Vorgang anzeigen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EptZhD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid table.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie eine gültige Tabelle ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4218,15 +4254,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";HoQiVa" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid datetime.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie einen gültigen Wert für „Datum/Uhrzeit“ ein.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";HsO1Rd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{addIcon} Install Gateway]]></Val>
@@ -4452,6 +4479,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";J5TTF6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Accepted data types: {type}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akzeptierte Datentypen: {type}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";J62n9E" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed]]></Val>
@@ -4493,6 +4529,15 @@
           <Val><![CDATA[Action undone]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Aktion rückgängig gemacht]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";JKZpcd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copilot chat canceled]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Copilot-Chat abgebrochen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4628,15 +4673,6 @@
           <Val><![CDATA[Replace "{selectedOperation}" with]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA["{selectedOperation}" ersetzen durch]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";KP0Rr2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid Double number.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie eine gültige Double-Zahl ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5220,15 +5256,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Mgcs5s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid number.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie eine gültige Zahl ein.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";MirIsS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show code]]></Val>
@@ -5297,6 +5324,15 @@
           <Val><![CDATA[(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02:00) Helsinki, Kiew, Riga, Sofia, Tallinn, Wilna]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NE54Uu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copied!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kopiert!]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5427,6 +5463,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";O0tSvb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[]D83D;]DD8A;️ Working on it...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[]D83D;]DD8A;️ Wird bearbeitet...]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";O1tedM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No errors found.]]></Val>
@@ -5459,6 +5504,15 @@
           <Val><![CDATA[OK]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[OK]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OBKhVi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This Action/Trigger cannot be copied.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Diese Aktion/dieser Trigger kann nicht kopiert werden.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5558,6 +5612,15 @@
           <Val><![CDATA[Enter the audience.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Geben Sie die Benutzergruppe ein.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OVDEFP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Report a bug]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fehler melden]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5711,6 +5774,15 @@
           <Val><![CDATA[Required. This value is the number of integers that is in the array.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erforderlich. Dieser Wert entspricht der Anzahl von ganzen Zahlen im Array.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";P4XUjW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Whitespaces must be encoded for URIs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Leerzeichen müssen für URIs codiert werden.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6219,6 +6291,15 @@
       <Item ItemId=";RhH4pF.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text" UsrLk="true">
           <Val><![CDATA[{minutes, plural, one {# minute} other {# minutes}}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RjvpD+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert a new step in {parentSubgraphName}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Neuen Schritt in "{parentSubgraphName}" einfügen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6749,6 +6830,15 @@
           <Val><![CDATA[Delete Workflow Action]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Workflowaktion löschen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UF3KjL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Try using a Conversion function such as: {conversionFunctions}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Verwenden Sie eine Konvertierungsfunktion, z. B.: {conversionFunctions}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7734,6 +7824,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";YEHutH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Clear Editor]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Editor löschen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";YF1yZk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[chat-session-id:]]></Val>
@@ -7995,6 +8094,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZUCTVP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Paste an action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aktion einfügen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZUaz3Y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Shorthand for trigger().outputs.body]]></Val>
@@ -8193,15 +8301,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";amRYtC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid float.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie einen gültigen Gleitkommawert ein.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";aoUT/3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading resources...]]></Val>
@@ -8333,6 +8432,15 @@
           <Val><![CDATA[Info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Info]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";bYwqkV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid json.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie einen gültigen JSON-Wert ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9120,6 +9228,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";fvGvnA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, something went wrong. Please try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Es ist ein Fehler aufgetreten. Wiederholen Sie den Vorgang.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";g/7QyT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select connection]]></Val>
@@ -9287,6 +9404,15 @@
           <Val><![CDATA[(UTC+05:00) Ashgabat, Tashkent]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+05:00) Aschgabat, Taschkent]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";gYaVvl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid float.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie einen gültigen Gleitkommawert ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9519,7 +9645,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";hic23z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";hihfHd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The value is too large.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -9623,6 +9749,15 @@
           <Val><![CDATA[Redo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wiederholen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";i1vHaT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copy Action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kopieraktion]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9848,15 +9983,6 @@
           <Val><![CDATA[{seconds}s]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{seconds}s]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ixutP5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid table.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie eine gültige Tabelle ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10328,6 +10454,15 @@
           <Val><![CDATA[Managed Identity]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Verwaltete Identität]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";lB56l2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie eine gültige Zahl ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10980,15 +11115,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";o2Cmny" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid uri.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Geben Sie eine gültige URL ein.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";o3SfI4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Zoom to fit]]></Val>
@@ -11079,6 +11205,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";oRxmXb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copy Trigger]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Trigger kopieren]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";oTBkbU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Output]]></Val>
@@ -11120,6 +11255,15 @@
           <Val><![CDATA[Add a note]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Notiz hinzufügen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";osKNnl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid Double number.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie eine gültige Double-Zahl ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11228,6 +11372,15 @@
           <Val><![CDATA[Required. The values to combine into an array.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erforderlich. Die Werte, die zu einem Array gruppiert werden sollen.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";pOVDll" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid integer.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geben Sie eine gültige ganze Zahl ein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12819,6 +12972,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";wP0/uB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Stop generating]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Generieren beenden]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";wPlTDB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Full path]]></Val>
@@ -13238,6 +13400,15 @@
           <Val><![CDATA[Returns an array sorted in ascending order]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gibt ein Array in aufsteigender Reihenfolge zurück.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";yNtBUV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: input node type does not match one of the allowed types for this input.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Warnung: Der Eingabeknotentyp stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

@@ -29,6 +29,12 @@
       "value": "Bermasalah"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Masukkan boolean yang valid."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Menghasilkan port dari URI. Jika port tidak ditentukan, akan menghasilkan port default untuk protokol"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Masukkan bilangan bulat yang valid."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Konversikan argumen parameter menjadi angka titik mengambang"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Masukkan email yang valid."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Sembunyikan skema sumber"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Masukkan URI yang valid."
     }
   ],
   "1uGBLP": [
@@ -863,6 +863,12 @@
       "value": "Tutup tampilan kode"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Masukkan tanggalwaktu yang valid."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
     {
       "type": 0,
       "value": "Alur Anda telah diperbarui."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Menyimpan alur ini..."
     }
   ],
   "4izAMi": [
@@ -1409,16 +1421,16 @@
       "value": "Ini akan mengembalikan alur kerja Anda ke status sebelum Copilot diedit. Jika Anda membuat pengeditan tambahan pada alur kerja setelah Copilot, perubahannya akan hilang. Tindakan ini tidak dapat dibatalkan. Anda ingin melanjutkan?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Masukkan email yang valid."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Kode status"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Laporkan bug"
     }
   ],
   "7lnElz": [
@@ -2237,7 +2249,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Menerima tipe 'Angka', 'Bilangan Bulat', dan 'Desimal'."
     }
   ],
   "CypYLs": [
@@ -2340,6 +2352,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Fungsi Tambahan"
     }
   ],
   "DWd9vy": [
@@ -2544,6 +2562,12 @@
     {
       "type": 0,
       "value": "Lihat riwayat permintaan untuk operasi ini"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Masukkan tabel yang valid."
     }
   ],
   "EqX3Mi": [
@@ -2993,12 +3017,6 @@
       "value": "Kesalahan saat mengambil manifes"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Masukkan tanggalwaktu yang valid."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3172,7 +3190,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Tipe data yang diterima: "
     },
     {
       "type": 1,
@@ -3223,6 +3241,12 @@
     {
       "type": 0,
       "value": "Tindakan dibatalkan"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Obrolan copilot dibatalkan"
     }
   ],
   "JNQHws": [
@@ -3321,12 +3345,6 @@
     {
       "type": 0,
       "value": "\" dengan"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Masukkan Nomor ganda yang valid."
     }
   ],
   "KV4uky": [
@@ -3706,12 +3724,6 @@
       "value": "Edit di mode lanjutan"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Masukkan nomor yang valid."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3758,6 +3770,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Disalin!"
     }
   ],
   "NGJ00e": [
@@ -3856,6 +3874,12 @@
       "value": "Prinsipal Layanan"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️Sedang dikerjakan..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3878,6 +3902,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Tindakan/Pemicu ini tidak dapat disalin."
     }
   ],
   "ODQCKj": [
@@ -3944,6 +3974,12 @@
     {
       "type": 0,
       "value": "Masukkan audiens."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Laporkan bug"
     }
   ],
   "OVvieE": [
@@ -4074,6 +4110,12 @@
     {
       "type": 0,
       "value": "Wajib. Nilai ini adalah nomor bilangan bulat yang ada dalam array."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Spasi kosong harus dikodekan untuk URI"
     }
   ],
   "P4rEwD": [
@@ -4437,6 +4479,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Sisipkan langkah baru di "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4832,7 +4884,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Coba gunakan fungsi Konversi seperti: "
     },
     {
       "type": 1,
@@ -5617,6 +5669,12 @@
       "value": "Kondisi pemicu"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Bersihkan Editor"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5811,6 +5869,12 @@
       "value": "Ciutkan Hasil Statik"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Tempel tindakan"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5943,12 +6007,6 @@
       "value": "Masukkan Pfx"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Masukkan float yang valid."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6041,6 +6099,12 @@
     {
       "type": 0,
       "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Masukkan json yang valid."
     }
   ],
   "ba9yGJ": [
@@ -6581,6 +6645,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Maaf, ada yang tidak beres. Coba lagi."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6693,6 +6763,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Ashgabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Masukkan float yang valid."
     }
   ],
   "gc6v4X": [
@@ -6836,7 +6912,7 @@
       "value": "Ini bukan yang saya cari"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Nilai terlalu besar."
@@ -6918,6 +6994,12 @@
     {
       "type": 0,
       "value": "Ulangi"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Salin Tindakan"
     }
   ],
   "i4C4aB": [
@@ -7080,12 +7162,6 @@
     {
       "type": 0,
       "value": "d"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Masukkan tabel yang valid."
     }
   ],
   "iy8rNf": [
@@ -7427,6 +7503,12 @@
     {
       "type": 0,
       "value": "Identitas Terkelola"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Masukkan nomor yang valid."
     }
   ],
   "lM9qrG": [
@@ -7889,12 +7971,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Masukkan uri yang valid."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -7955,6 +8031,12 @@
       "value": "Nilai bilangan bulat tidak valid"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Salin Pemicu"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -7983,6 +8065,12 @@
     {
       "type": 0,
       "value": "Tambahkan catatan"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Masukkan Nomor ganda yang valid."
     }
   ],
   "ox2Ou7": [
@@ -8055,6 +8143,12 @@
     {
       "type": 0,
       "value": "Wajib. Nilai yang dikombinasikan menjadi array."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Masukkan bilangan bulat yang valid."
     }
   ],
   "pXmFGf": [
@@ -9196,6 +9290,12 @@
       "value": "Termasuk konten dinamis"
     }
   ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Hentikan pembuatan"
+    }
+  ],
   "wPlTDB": [
     {
       "type": 0,
@@ -9481,7 +9581,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Peringatan: tipe node input tidak cocok dengan salah satu tipe yang diizinkan untuk input ini."
     }
   ],
   "yRDuqj": [

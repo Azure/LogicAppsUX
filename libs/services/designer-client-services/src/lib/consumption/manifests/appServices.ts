@@ -74,12 +74,11 @@ export const appServiceActionManifest = {
               },
             },
             operationDetails: {
-              title: 'Operation Parameters',
               description: 'Operation parameters for the above operation',
               'x-ms-dynamic-properties': {
                 dynamicState: {
                   extension: {
-                    operationId: 'getSwaggerOperationSchema',
+                    operationId: 'getAppserviceSwaggerOperationSchema',
                   },
                   isInput: true,
                 },
@@ -124,7 +123,7 @@ export const appServiceActionManifest = {
       'x-ms-dynamic-properties': {
         dynamicState: {
           extension: {
-            operationId: 'getSwaggerOperationSchema',
+            operationId: 'getAppserviceSwaggerOperationSchema',
           },
         },
         parameters: {

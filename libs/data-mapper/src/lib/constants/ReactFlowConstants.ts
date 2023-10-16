@@ -9,6 +9,7 @@ export const reactFlowFitViewOptions = { maxZoom: defaultCanvasZoom, includeHidd
 export enum ReactFlowNodeType {
   SchemaNode = 'schemaNode',
   FunctionNode = 'functionNode',
+  FunctionPlaceholder = 'functionPlaceholder',
 }
 
 export enum ReactFlowEdgeType {

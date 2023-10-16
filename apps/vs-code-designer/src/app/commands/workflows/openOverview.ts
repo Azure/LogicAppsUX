@@ -87,7 +87,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     enableScripts: true,
     retainContextWhenHidden: true,
   };
-  const { name, kind, operationOptions, statelessRunMode } = getStandardAppData(workflowName, workflowContent, /* parameters*/ {});
+  const { name, kind, operationOptions, statelessRunMode } = getStandardAppData(workflowName, workflowContent);
   const workflowProps = {
     name,
     stateType: getWorkflowStateType(name, kind, localSettings),

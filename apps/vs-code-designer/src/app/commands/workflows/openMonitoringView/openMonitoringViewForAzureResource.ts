@@ -176,7 +176,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         tenantId: this.node?.parent?.subscription?.tenantId,
       },
       workflowName: this.workflowName,
-      standardApp: getStandardAppData(this.workflowName, { ...this.workflow, definition: {} }, parameters),
+      standardApp: getStandardAppData(this.workflowName, { ...this.workflow, definition: {} }),
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
     };

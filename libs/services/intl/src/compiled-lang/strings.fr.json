@@ -29,6 +29,12 @@
       "value": "En échec"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Entrez une valeur booléenne valide."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -409,12 +415,6 @@
       "value": "Renvoie le port d’un URI. Si le port n’est pas spécifié, renvoie le port par défaut pour le protocole"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Entrez un entier valide."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +449,6 @@
     {
       "type": 0,
       "value": "Convertir l'argument de paramètre en nombre à virgule flottante"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Entrez une adresse e-mail valide."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Masquer le schéma source"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Entrez un URI valide."
     }
   ],
   "1uGBLP": [
@@ -871,6 +871,12 @@
       "value": "Fermer le mode Code"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Entrez une date/heure valide."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "Votre flux a été mis à jour."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Enregistrement de ce flux…"
     }
   ],
   "4izAMi": [
@@ -1417,16 +1429,16 @@
       "value": "Votre flux de travail va revenir à l’état qu’il avait avant la modification apportée par Copilot. Si vous avez apporté des modifications supplémentaires au flux de travail après les modifications effectuées par Copilot, vous allez les perdre. Cette action ne peut pas être annulée. Voulez-vous continuer ?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Entrez une adresse e-mail valide."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Code d'état"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Signaler un bogue"
     }
   ],
   "7lnElz": [
@@ -2267,7 +2279,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Accepte les types Numéro, Nombre entier et Décimal."
     }
   ],
   "CypYLs": [
@@ -2370,6 +2382,12 @@
     {
       "type": 0,
       "value": " »"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Fonctions ajoutées"
     }
   ],
   "DWd9vy": [
@@ -2574,6 +2592,12 @@
     {
       "type": 0,
       "value": "Afficher l’historique des demandes pour cette opération"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Entrez une table valide."
     }
   ],
   "EqX3Mi": [
@@ -3045,12 +3069,6 @@
       "value": "Nous n’avons pas pu récupérer le manifeste"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Entrez une date/heure valide."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3224,7 +3242,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Types de données acceptés : "
     },
     {
       "type": 1,
@@ -3275,6 +3293,12 @@
     {
       "type": 0,
       "value": "Action annulée"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Conversation Copilot annulée"
     }
   ],
   "JNQHws": [
@@ -3373,12 +3397,6 @@
     {
       "type": 0,
       "value": " » par"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Entrez un numéro double valide."
     }
   ],
   "KV4uky": [
@@ -3780,12 +3798,6 @@
       "value": "Modifier en mode Avancé"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Entrez un nombre valide."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3832,6 +3844,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copie effectuée."
     }
   ],
   "NGJ00e": [
@@ -3930,6 +3948,12 @@
       "value": "Principal du service"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Traitement en cours…"
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3952,6 +3976,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Impossible de copier cette action ou ce déclencheur."
     }
   ],
   "ODQCKj": [
@@ -4018,6 +4048,12 @@
     {
       "type": 0,
       "value": "Entrez le public."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Signaler un bogue"
     }
   ],
   "OVvieE": [
@@ -4148,6 +4184,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Cette valeur correspond au nombre d'entiers qui se trouvent dans le tableau."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Les espaces blancs doivent être codés pour les URI"
     }
   ],
   "P4rEwD": [
@@ -4533,6 +4575,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insérer une nouvelle étape dans "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4928,7 +4980,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Essayez d’utiliser une fonction de conversion telle que : "
     },
     {
       "type": 1,
@@ -5713,6 +5765,12 @@
       "value": "Conditions du déclencheur"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Effacer l’éditeur"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5907,6 +5965,12 @@
       "value": "Réduire le résultat statique"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Coller une action"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6039,12 +6103,6 @@
       "value": "Entrer Pfx"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Entrez une valeur flottante valide."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6137,6 +6195,12 @@
     {
       "type": 0,
       "value": "Informations"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Entrez un code JSON valide."
     }
   ],
   "ba9yGJ": [
@@ -6677,6 +6741,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Ouroumtsi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Une erreur s'est produite. Réessayez."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6797,6 +6867,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Achgabat, Tachkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Entrez une valeur flottante valide."
     }
   ],
   "gc6v4X": [
@@ -6962,7 +7038,7 @@
       "value": "Ce n’est pas ce que je recherche"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "La valeur est trop élevée."
@@ -7044,6 +7120,12 @@
     {
       "type": 0,
       "value": "Rétablir"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copier l’action"
     }
   ],
   "i4C4aB": [
@@ -7206,12 +7288,6 @@
     {
       "type": 0,
       "value": " s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Entrez une table valide."
     }
   ],
   "iy8rNf": [
@@ -7575,6 +7651,12 @@
     {
       "type": 0,
       "value": "Identité managée"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Entrez un nombre valide."
     }
   ],
   "lM9qrG": [
@@ -8037,12 +8119,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Entrez un URI valide."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8103,6 +8179,12 @@
       "value": "Valeur entière non valide"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copier le déclencheur"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8131,6 +8213,12 @@
     {
       "type": 0,
       "value": "Ajouter une note"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Entrez un numéro double valide."
     }
   ],
   "ox2Ou7": [
@@ -8203,6 +8291,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Valeurs à combiner dans un tableau."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Entrez un entier valide."
     }
   ],
   "pXmFGf": [
@@ -9366,6 +9460,12 @@
       "value": "Y compris le contenu dynamique"
     }
   ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Arrêter la génération"
+    }
+  ],
   "wPlTDB": [
     {
       "type": 0,
@@ -9651,7 +9751,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Avertissement : le type de nœud d’entrée ne correspond pas aux types autorisés pour cette entrée."
     }
   ],
   "yRDuqj": [
