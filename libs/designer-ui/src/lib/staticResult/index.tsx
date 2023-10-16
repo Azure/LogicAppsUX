@@ -102,7 +102,7 @@ export const StaticResultContainer = ({
   };
 
   const getLabel = () => {
-    return showStaticResults ? toggleLabelOff : toggleLabelOn;
+    return showStaticResults ? toggleLabelOn : toggleLabelOff;
   };
 
   const isLabelDisabled = (): boolean => {

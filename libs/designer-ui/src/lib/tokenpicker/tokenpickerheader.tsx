@@ -20,11 +20,19 @@ const buttonStyles: IButtonStyles = {
 
 interface TokenPickerHeaderProps {
   fullScreen: boolean;
+  isExpression: boolean;
   closeTokenPicker?: () => void;
   setFullScreen: (fullScreen: boolean) => void;
+  pasteLastUsedExpression?: () => void;
 }
 
-export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen }: TokenPickerHeaderProps) {
+export function TokenPickerHeader({
+  fullScreen,
+  isExpression,
+  closeTokenPicker,
+  setFullScreen,
+  pasteLastUsedExpression,
+}: TokenPickerHeaderProps) {
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -50,6 +58,11 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
   const fullScreenExitMessage = intl.formatMessage({
     defaultMessage: 'Exit full screen',
     description: "Token picker for 'Exit full screen'",
+  });
+
+  const pasteLastUsedExpressionMessage = intl.formatMessage({
+    defaultMessage: 'Paste last used expression',
+    description: "Token picker for 'Paste last used expression'",
   });
 
   const handleCloseTokenPicker = () => {
@@ -78,6 +91,17 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
           styles={buttonStyles}
         />
       </div>
+      {isExpression ? (
+        <div className="msla-token-picker-header-paste" data-automation-id="msla-token-picker-header-paste">
+          <IconButton
+            iconProps={{ iconName: 'Paste' }}
+            title={pasteLastUsedExpressionMessage}
+            ariaLabel={pasteLastUsedExpressionMessage}
+            onClick={pasteLastUsedExpression}
+            styles={buttonStyles}
+          />
+        </div>
+      ) : null}
       <div className="msla-token-picker-header-info" data-automation-id="msla-token-picker-header-info">
         <IconButton
           iconProps={{ iconName: 'Info' }}

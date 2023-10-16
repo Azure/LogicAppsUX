@@ -77,6 +77,14 @@ export function TokenPicker({
   const [expressionEditorError, setExpressionEditorError] = useState<string>('');
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const searchBoxRef = useRef<ISearchBox | null>(null);
+  const isExpression = initialMode === TokenPickerMode.EXPRESSION;
+
+  useEffect(() => {
+    if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
+      console.log(expression.value);
+      window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
+    }
+  }, [expression.value]);
 
   useEffect(() => {
     function handleResize() {
@@ -88,7 +96,7 @@ export function TokenPicker({
   }, []);
 
   useEffect(() => {
-    if (initialMode === TokenPickerMode.EXPRESSION) {
+    if (isExpression) {
       setTimeout(() => {
         expressionEditorRef.current?.focus();
       }, 300);
@@ -97,7 +105,7 @@ export function TokenPicker({
         searchBoxRef.current?.focus();
       }, 0);
     }
-  }, [initialMode]);
+  }, [isExpression]);
 
   const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
@@ -139,6 +147,11 @@ export function TokenPicker({
       }
     }
     return false;
+  };
+
+  const pasteLastUsedExpression = () => {
+    setExpression({ ...expression, value: window.localStorage.getItem('msla-tokenpicker-expression') ?? expression.value });
+    expressionEditorRef.current?.focus();
   };
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
@@ -203,10 +216,16 @@ export function TokenPicker({
         >
           <div className="msla-token-picker">
             {initialMode ? (
-              <TokenPickerHeader fullScreen={fullScreen} closeTokenPicker={closeTokenPicker} setFullScreen={setFullScreen} />
+              <TokenPickerHeader
+                fullScreen={fullScreen}
+                isExpression={isExpression}
+                closeTokenPicker={closeTokenPicker}
+                setFullScreen={setFullScreen}
+                pasteLastUsedExpression={pasteLastUsedExpression}
+              />
             ) : null}
 
-            {initialMode === TokenPickerMode.EXPRESSION ? (
+            {isExpression ? (
               <>
                 <ExpressionEditor
                   initialValue={expression.value}
@@ -250,7 +269,7 @@ export function TokenPicker({
               noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
               expressionEditorCurrentHeight={expressionEditorCurrentHeight}
             />
-            {initialMode === TokenPickerMode.EXPRESSION ? (
+            {isExpression ? (
               <TokenPickerFooter
                 tokenGroup={tokenGroup ?? []}
                 expression={expression}
