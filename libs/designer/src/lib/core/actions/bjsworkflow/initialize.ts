@@ -526,25 +526,14 @@ export const updateInvokerSettings = (
   dispatch: Dispatch,
   references?: ConnectionReferences
 ): void => {
-  if (isTrigger) {
-    return;
+  if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
+    dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { ...settings.invokerConnection, isSupported: true } } }));
   }
-
   if (references) {
     Object.keys(references).forEach((key) => {
       const impersonationSource = references[key].impersonation?.source;
       if (impersonationSource === ImpersonationSource.Invoker) {
-        // if impersonation is set, enable invoker settings
         dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { isSupported: true, value: { enabled: true } } } }));
-      } else {
-        const nodeSettings = tiggerNodeManifest?.properties?.settings;
-        if (nodeSettings?.invokerConnection) {
-          const updatedInvokerConnection = {
-            ...settings.invokerConnection,
-            isSupported: true,
-          };
-          dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: updatedInvokerConnection } }));
-        }
       }
     });
   }
