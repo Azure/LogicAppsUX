@@ -18,6 +18,9 @@ export namespace ext {
   export let context: ExtensionContext;
   export let workflowDesignTimePort: number;
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
+  export let dataMapperRuntimePort: number;
+  export let dataMapperChildProcess: cp.ChildProcess | undefined;
+  export let extensionPath: string;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
   export let extensionVersion: string;

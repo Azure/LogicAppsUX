@@ -1,5 +1,6 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
+import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -29,8 +30,17 @@ const perfStats = {
 };
 
 export async function activate(context: vscode.ExtensionContext) {
+  //TODO: double check below commands are necessary; poured over from data mapper extension
+  vscode.commands.executeCommand('setContext', 'azureDataMapper.supportedDataMapDefinitionFileExts', supportedDataMapDefinitionFileExts);
+  vscode.commands.executeCommand('setContext', 'azureDataMapper.supportedSchemaFileExts', supportedSchemaFileExts);
+  vscode.commands.executeCommand('setContext', 'azureDataMapper.supportedFileExts', [
+    ...supportedDataMapDefinitionFileExts,
+    ...supportedSchemaFileExts,
+  ]);
+
   ext.context = context;
 
+  ext.extensionPath = context.extensionPath;
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
 
   registerUIExtensionVariables(ext);
