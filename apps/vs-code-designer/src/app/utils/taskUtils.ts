@@ -74,8 +74,14 @@ export async function executeIfNotActive(task: Task): Promise<void> {
  *
  * @throws Will throw an error if the unzipping process fails.
  */
-export async function unzipLogicAppArtifacts(zipContent: Buffer, targetDirectory: string): Promise<void> {
+export async function unzipLogicAppArtifacts(zipContent: Buffer | Buffer[], targetDirectory: string): Promise<void> {
   try {
+    // Check if the zipContent is an array of buffers
+    if (Array.isArray(zipContent)) {
+      // Concatenate the buffers into a single buffer
+      zipContent = Buffer.concat(zipContent);
+    }
+
     // Initialize a new AdmZip object with the provided zip content
     const zip = new AdmZip(zipContent);
 
@@ -83,7 +89,7 @@ export async function unzipLogicAppArtifacts(zipContent: Buffer, targetDirectory
     // The second parameter set to 'true' indicates that it will overwrite existing files in the target directory
     zip.extractAllTo(targetDirectory, true);
   } catch (error) {
-    window.showErrorMessage('Failed to unzip logic app: ', error);
+    console.error('Failed to unzip logic app:', error);
     throw error;
   }
 }

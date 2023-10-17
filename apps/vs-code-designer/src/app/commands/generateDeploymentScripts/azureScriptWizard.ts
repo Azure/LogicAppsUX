@@ -46,7 +46,6 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
  */
 // Your existing function for creating the Azure Wizard
 export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath: string): AzureWizard<IAzureScriptWizard> {
-  // Existing prompt steps
   const promptSteps = [
     new ConfigureInitialLogicAppStep(),
     new setLogicappName(),
@@ -54,10 +53,7 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath
     new setAppPlantName(),
     new SourceControlPathListStep(),
   ];
-  const executeSteps: AzureWizardExecuteStep<IAzureScriptWizard>[] = [
-    new SaveAzureContext(projectPath),
-    // other steps
-  ];
+  const executeSteps: AzureWizardExecuteStep<IAzureScriptWizard>[] = [new SaveAzureContext(projectPath)];
 
   if (!isMultiRootWorkspace) {
     wizardContext.isValidWorkspace = false;
@@ -130,7 +126,7 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
       if (userChoice.label === deploymentLabel && rootDir) {
         selectedPath = await this.createDeploymentFolder(rootDir);
       } else if (userChoice.label === 'Choose a different folder.') {
-        selectedPath = await selectWorkspaceFolder(context, placeHolder); // Assuming selectWorkspaceFolder is a function you have for folder selection
+        selectedPath = await selectWorkspaceFolder(context, placeHolder);
       }
 
       if (selectedPath) {
