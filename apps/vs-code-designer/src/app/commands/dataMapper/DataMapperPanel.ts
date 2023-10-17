@@ -1,3 +1,4 @@
+import { ext } from '../../../extensionVariables';
 import DataMapperExt from './DataMapperExt';
 import {
   dataMapDefinitionsPath,
@@ -40,7 +41,7 @@ export default class DataMapperPanel {
     this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
 
-    DataMapperExt.context.subscriptions.push(panel);
+    ext.context.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
@@ -53,7 +54,7 @@ export default class DataMapperPanel {
     );
 
     // Handle messages from the webview (Data Mapper component)
-    this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.context.subscriptions);
+    this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, ext.context.subscriptions);
 
     this.panel.onDidDispose(
       () => {
@@ -62,7 +63,7 @@ export default class DataMapperPanel {
         if (customXsltFolderWatcher) customXsltFolderWatcher.dispose();
       },
       null,
-      DataMapperExt.context.subscriptions
+      ext.context.subscriptions
     );
   }
 
@@ -80,7 +81,7 @@ export default class DataMapperPanel {
 
   private async _setWebviewHtml() {
     // Get webview content, converting links to VS Code URIs
-    const indexPath = path.join(DataMapperExt.extensionPath, '/webview/index.html');
+    const indexPath = path.join(ext.context.extensionPath, '/webview/index.html');
     const html = await fs.readFile(indexPath, 'utf-8');
     // 1. Get all links prefixed by href or src
     const matchLinks = /(href|src)="([^"]*)"/g;
@@ -91,7 +92,7 @@ export default class DataMapperPanel {
         return `${prefix}="${link}"`;
       }
       // For scripts & links
-      const pth = path.join(DataMapperExt.extensionPath, '/webview/', link);
+      const pth = path.join(ext.context.extensionPath, '/webview/', link);
       const uri = Uri.file(pth);
       return `${prefix}="${this.panel.webview.asWebviewUri(uri)}"`;
     };
@@ -107,7 +108,7 @@ export default class DataMapperPanel {
     switch (msg.command) {
       case 'webviewLoaded':
         // Send runtime port to webview
-        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
+        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${ext.dataMapperRuntimePort}` });
 
         // If loading a data map, handle that + xslt filename
         this.handleLoadMapDefinitionIfAny();

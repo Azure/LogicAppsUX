@@ -40,7 +40,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
   ext.context = context;
 
-  ext.extensionPath = context.extensionPath;
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
 
   registerUIExtensionVariables(ext);

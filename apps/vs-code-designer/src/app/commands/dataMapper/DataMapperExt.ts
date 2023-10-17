@@ -1,23 +1,15 @@
+import { ext } from '../../../extensionVariables';
 import DataMapperPanel from './DataMapperPanel';
 import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
 import type { MapDefinitionData, MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
-import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
-import type { ChildProcess } from 'child_process';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import type { ExtensionContext } from 'vscode';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
 
 export default class DataMapperExt {
-  public static context: ExtensionContext;
-  public static extensionPath: string;
-  public static outputChannel: IAzExtOutputChannel;
-  public static backendRuntimePort: number;
-  public static backendRuntimeChildProcess: ChildProcess | undefined;
-
   public static panelManagers: DataMapperPanelDictionary = {};
 
   public static async openDataMapperPanel(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
@@ -54,8 +46,8 @@ export default class DataMapperExt {
 
     DataMapperExt.panelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName);
     DataMapperExt.panelManagers[dataMapName].panel.iconPath = {
-      light: Uri.file(path.join(DataMapperExt.context.extensionPath, 'assets', 'wand-light.png')),
-      dark: Uri.file(path.join(DataMapperExt.context.extensionPath, 'assets', 'wand-dark.png')),
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'wand-light.png')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'wand-dark.png')),
     };
     DataMapperExt.panelManagers[dataMapName].updateWebviewPanelTitle();
     DataMapperExt.panelManagers[dataMapName].mapDefinitionData = mapDefinitionData;
@@ -64,8 +56,8 @@ export default class DataMapperExt {
   }
 
   public static log(text: string) {
-    DataMapperExt.outputChannel.appendLine(text);
-    DataMapperExt.outputChannel.show();
+    ext.outputChannel.appendLine(text);
+    ext.outputChannel.show();
   }
 
   public static showWarning(errMsg: string) {
