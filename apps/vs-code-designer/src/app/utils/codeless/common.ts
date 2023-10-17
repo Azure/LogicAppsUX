@@ -17,7 +17,15 @@ import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { IWorkflowFileContent, StandardApp, Artifacts, AzureConnectorDetails, ILocalSettingsJson } from '@microsoft/vscode-extension';
+import type {
+  IWorkflowFileContent,
+  StandardApp,
+  Artifacts,
+  AzureConnectorDetails,
+  ILocalSettingsJson,
+  Parameter,
+  WorkflowParameter,
+} from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
@@ -58,6 +66,18 @@ export function getStandardAppData(workflowName: string, workflow: IWorkflowFile
     kind,
     operationOptions,
   };
+}
+
+export function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
+  const workflowParameters: Record<string, WorkflowParameter> = {};
+  for (const parameterKey of Object.keys(parameters)) {
+    const parameter = parameters[parameterKey];
+    workflowParameters[parameterKey] = {
+      ...parameter,
+      defaultValue: parameter.value,
+    };
+  }
+  return workflowParameters;
 }
 
 export async function updateFuncIgnore(projectPath: string, variables: string[]) {

@@ -1,20 +1,19 @@
 # Logic Apps Designer
-## [2.73.0](https://github.com/Azure/LogicAppsUX/compare/v2.72.0...v2.73.0) (2023-10-12)
 
+## [2.73.0](https://github.com/Azure/LogicAppsUX/compare/v2.72.0...v2.73.0) (2023-10-12)
 
 ### Features
 
-* **data mapper:** Able to move functions on canvas ([#3042](https://github.com/Azure/LogicAppsUX/issues/3042)) ([822d4c3](https://github.com/Azure/LogicAppsUX/commit/822d4c3ee12b8265d15b8abb7515813dfa526993))
-* **Data Mapper:** Enhanced Redo/Undo Using Redux-undo ([#3428](https://github.com/Azure/LogicAppsUX/issues/3428)) ([061478d](https://github.com/Azure/LogicAppsUX/commit/061478d6c7274f0343be559a04fa1a5ce02b3cd9))
-
+- **data mapper:** Able to move functions on canvas ([#3042](https://github.com/Azure/LogicAppsUX/issues/3042)) ([822d4c3](https://github.com/Azure/LogicAppsUX/commit/822d4c3ee12b8265d15b8abb7515813dfa526993))
+- **Data Mapper:** Enhanced Redo/Undo Using Redux-undo ([#3428](https://github.com/Azure/LogicAppsUX/issues/3428)) ([061478d](https://github.com/Azure/LogicAppsUX/commit/061478d6c7274f0343be559a04fa1a5ce02b3cd9))
 
 ### Bug Fixes
 
-* **Data Mapper:** Cannot generate YML code with two unconnected functions ([#3423](https://github.com/Azure/LogicAppsUX/issues/3423)) ([6a845b0](https://github.com/Azure/LogicAppsUX/commit/6a845b00bc5b7f96e9816cc05b1f73f110e2a098))
-* **designer:** Add gateway service config to allow hiding subscription dropdown for gateway connection creation ([#3404](https://github.com/Azure/LogicAppsUX/issues/3404)) ([187018d](https://github.com/Azure/LogicAppsUX/commit/187018d596233ae5b045110240e5e19a083759d5))
-* **designer:** Allow event bubbling in json modal ([#3410](https://github.com/Azure/LogicAppsUX/issues/3410)) ([8f2490d](https://github.com/Azure/LogicAppsUX/commit/8f2490dd2795204afd2aeae4fa4d0dec8e453769))
-* **Designer:** Fixed issue with nested openapi swagger parameter format ([#3420](https://github.com/Azure/LogicAppsUX/issues/3420)) ([bcaecda](https://github.com/Azure/LogicAppsUX/commit/bcaecda88aa1d226cb010d2c0df4b00e68e8fc52))
-* **Designer:** simple query builder not parsing correct data ([#3418](https://github.com/Azure/LogicAppsUX/issues/3418)) ([bfd8efd](https://github.com/Azure/LogicAppsUX/commit/bfd8efd99710b5e0728a0de86da255868aed1bc7))
+- **Data Mapper:** Cannot generate YML code with two unconnected functions ([#3423](https://github.com/Azure/LogicAppsUX/issues/3423)) ([6a845b0](https://github.com/Azure/LogicAppsUX/commit/6a845b00bc5b7f96e9816cc05b1f73f110e2a098))
+- **designer:** Add gateway service config to allow hiding subscription dropdown for gateway connection creation ([#3404](https://github.com/Azure/LogicAppsUX/issues/3404)) ([187018d](https://github.com/Azure/LogicAppsUX/commit/187018d596233ae5b045110240e5e19a083759d5))
+- **designer:** Allow event bubbling in json modal ([#3410](https://github.com/Azure/LogicAppsUX/issues/3410)) ([8f2490d](https://github.com/Azure/LogicAppsUX/commit/8f2490dd2795204afd2aeae4fa4d0dec8e453769))
+- **Designer:** Fixed issue with nested openapi swagger parameter format ([#3420](https://github.com/Azure/LogicAppsUX/issues/3420)) ([bcaecda](https://github.com/Azure/LogicAppsUX/commit/bcaecda88aa1d226cb010d2c0df4b00e68e8fc52))
+- **Designer:** simple query builder not parsing correct data ([#3418](https://github.com/Azure/LogicAppsUX/issues/3418)) ([bfd8efd](https://github.com/Azure/LogicAppsUX/commit/bfd8efd99710b5e0728a0de86da255868aed1bc7))
 
 ## [2.72.0](https://github.com/Azure/LogicAppsUX/compare/v2.71.0...v2.72.0) (2023-10-05)
 
