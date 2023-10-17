@@ -7,11 +7,7 @@ import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 
-type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
-
 export default class DataMapperExt {
-  public static panelManagers: DataMapperPanelDictionary = {};
-
   public static async openDataMapperPanel(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
     const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
 
@@ -24,11 +20,11 @@ export default class DataMapperExt {
 
   public static createOrShow(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
     // If a panel has already been created, re-show it
-    if (DataMapperExt.panelManagers[dataMapName]) {
+    if (ext.dataMapPanelManagers[dataMapName]) {
       // NOTE: Shouldn't need to re-send runtime port if webview has already been loaded/set up
 
       window.showInformationMessage(`A Data Mapper panel is already open for this data map (${dataMapName}).`);
-      DataMapperExt.panelManagers[dataMapName].panel.reveal(ViewColumn.Active);
+      ext.dataMapPanelManagers[dataMapName].panel.reveal(ViewColumn.Active);
       return;
     }
 
@@ -44,13 +40,13 @@ export default class DataMapperExt {
       }
     );
 
-    DataMapperExt.panelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName);
-    DataMapperExt.panelManagers[dataMapName].panel.iconPath = {
+    ext.dataMapPanelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName);
+    ext.dataMapPanelManagers[dataMapName].panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'wand-light.png')),
       dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'wand-dark.png')),
     };
-    DataMapperExt.panelManagers[dataMapName].updateWebviewPanelTitle();
-    DataMapperExt.panelManagers[dataMapName].mapDefinitionData = mapDefinitionData;
+    ext.dataMapPanelManagers[dataMapName].updateWebviewPanelTitle();
+    ext.dataMapPanelManagers[dataMapName].mapDefinitionData = mapDefinitionData;
 
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }

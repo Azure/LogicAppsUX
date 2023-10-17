@@ -141,7 +141,7 @@ function startBackendRuntimeProcess(workingDirectory: string | undefined, comman
 
 // Note: Per node, child processes may not be killed - if this is an issue in the future, a workaround is needed
 // HOWEVER - killing the parent process (the VS Code instance?) kills the child process for sure
-export function stopBackendRuntime(): void {
+export function stopDataMapperBackend(): void {
   if (ext.dataMapperChildProcess === null || ext.dataMapperChildProcess === undefined) {
     return;
   }
