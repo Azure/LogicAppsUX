@@ -29,6 +29,12 @@
       "value": "오류"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "유효한 부울을 입력하세요."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -72,7 +78,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "응답에 워크플로 헤더를 표시하지 않습니다."
     }
   ],
   "+xXHdp": [
@@ -409,12 +415,6 @@
       "value": "URI에서 포트를 반환합니다. 포트를 지정하지 않으면 프로토콜의 기본 포트가 반환됩니다."
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "유효한 정수를 입력하세요."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -451,12 +451,6 @@
       "value": "매개 변수 인수를 부동 소수점 숫자로 변환합니다."
     }
   ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "유효한 전자 메일을 입력하세요."
-    }
-  ],
   "1ZSzl6": [
     {
       "type": 0,
@@ -490,7 +484,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "요청을 다시 시도할 횟수"
     }
   ],
   "1htSs7": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "원본 스키마 숨기기"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "올바른 URI를 입력하세요."
     }
   ],
   "1uGBLP": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "새 실행이 큐에 대기되는 방법 제어"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "페이징 수가 잘못되었습니다. 값은 0보다 큰 숫자여야 합니다."
     }
   ],
   "2pRsUf": [
@@ -674,7 +674,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "기본값"
     }
   ],
   "2vnYre": [
@@ -863,6 +863,12 @@
       "value": "코드 보기 닫기"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "유효한 날짜를 입력하세요."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
     {
       "type": 0,
       "value": "흐름이 업데이트되었습니다."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 이 흐름을 저장하는 중..."
     }
   ],
   "4izAMi": [
@@ -1172,7 +1184,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "작업의 입력을 보안 설정합니다."
     }
   ],
   "63CC7M": [
@@ -1202,13 +1214,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
-    }
-  ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "경고: 입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
+      "value": "시간 제한 값이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
   "6ZviI7": [
@@ -1415,16 +1421,16 @@
       "value": "이 작업을 수행하면 워크플로가 Copilot가 편집되기 전의 상태로 되돌아갑니다. Copilot 이후에 워크플로를 추가로 편집한 경우 손실됩니다. 이 작업은 실행 취소할 수 없습니다. 계속하시겠습니까?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "유효한 전자 메일을 입력하세요."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "상태 코드"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "버그 보고"
     }
   ],
   "7lnElz": [
@@ -1454,7 +1460,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "지수 간격"
     }
   ],
   "7zsUT3": [
@@ -2099,7 +2105,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "실행에 대한 추적 ID를 설정합니다. 분할을 위해 이 추적 ID는 시작 요청에 해당합니다."
     }
   ],
   "BxITRH": [
@@ -2232,6 +2238,12 @@
       "value": "(UTC+09:30) 애들레이드"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "'숫자', '정수' 및 '소수점' 형식을 허용합니다."
+    }
+  ],
   "CypYLs": [
     {
       "type": 1,
@@ -2293,7 +2305,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "재시도 정책 간격이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
   "DEu7oK": [
@@ -2332,6 +2344,12 @@
     {
       "type": 0,
       "value": "' 다운로드"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
     }
   ],
   "DWd9vy": [
@@ -2379,7 +2397,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "이 작업의 단일 아웃바운드 요청에 대한 최대 기간입니다. 재시도를 실행한 후 이 제한 내에서 요청이 완료되지 않으면 작업이 실패합니다."
     }
   ],
   "DsPDVB": [
@@ -2534,6 +2552,12 @@
       "value": "이 작업에 대한 요청 기록 보기"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "올바른 테이블을 입력하세요."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -2561,7 +2585,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "최대 재시도 정책 간격이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
   "F9dR1Q": [
@@ -2981,12 +3005,6 @@
       "value": "매니페스트를 가져오는 동안 오류 발생"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "유효한 날짜를 입력하세요."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3157,6 +3175,16 @@
       "value": "."
     }
   ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "허용되는 데이터 형식: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3201,6 +3229,12 @@
     {
       "type": 0,
       "value": "작업 실행 취소"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot 채팅을 취소함"
     }
   ],
   "JNQHws": [
@@ -3299,12 +3333,6 @@
     {
       "type": 0,
       "value": "\"을(를) (으)로 바꾸기"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "유효한 이중 번호를 입력하세요."
     }
   ],
   "KV4uky": [
@@ -3441,7 +3469,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "활성화하면 이 동작은 Dataverse 트리거의 \"실행\" 설정에서 사용자와 함께 실행됩니다."
     }
   ],
   "LS8rfZ": [
@@ -3684,12 +3712,6 @@
       "value": "고급 모드에서 편집"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "유효한 숫자를 입력하세요."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3736,6 +3758,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 헬싱키, 키예프, 리가, 소피아, 탈린, 빌뉴스"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "복사됨!"
     }
   ],
   "NGJ00e": [
@@ -3834,6 +3862,12 @@
       "value": "서비스 사용자"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ 작업하는 중..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3856,6 +3890,12 @@
     {
       "type": 0,
       "value": "확인"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "이 작업/트리거는 복사할 수 없습니다."
     }
   ],
   "ODQCKj": [
@@ -3922,6 +3962,12 @@
     {
       "type": 0,
       "value": "대상 그룹을 입력하세요."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "버그 보고"
     }
   ],
   "OVvieE": [
@@ -4054,6 +4100,12 @@
       "value": "필수 사항으로, 이 값은 배열에 있는 정수의 개수입니다."
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "공백은 URI에 대해 인코딩되어야 합니다."
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4145,7 +4197,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "분할 추적 ID"
     }
   ],
   "Pq+4a+": [
@@ -4157,7 +4209,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "GZip 또는 Deflate를 사용하여 압축된 경우 요청 본문을 압축 해제합니다. 이 설정은 HTTP 트리거에만 적용됩니다."
     }
   ],
   "PsmHyH": [
@@ -4307,11 +4359,15 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "페이징 수가 최대값인 "
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": "을(를) 초과합니다."
     }
   ],
   "Qn8qxn": [
@@ -4415,6 +4471,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": "에 새 단계 삽입"
     }
   ],
   "RkgScy": [
@@ -4546,7 +4612,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "HTTP를 통해 콘텐츠를 전송하기 위한 동작 및 기능을 지정합니다. 큰 메시지는 큰 메시지 업로드를 허용하기 위해 커넥터에 대한 작은 요청으로 분할될 수 있습니다."
     }
   ],
   "SgiTAh": [
@@ -4807,6 +4873,16 @@
       "value": "워크플로 작업 삭제"
     }
   ],
+  "UF3KjL": [
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    },
+    {
+      "type": 0,
+      "value": " 등의 변환 함수를 사용해 보세요."
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4821,12 +4897,12 @@
   ],
   "UMPuUJ": [
     {
-      "type": 0,
-      "value": "Delete "
-    },
-    {
       "type": 1,
       "value": "expressionValue"
+    },
+    {
+      "type": 0,
+      "value": " 삭제"
     }
   ],
   "UR1CS5": [
@@ -4972,7 +5048,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "자세한 내용은 http://aka.ms/logicapps-chunk#upload-content-in-chunks에서 확인할 수 있습니다."
     }
   ],
   "V0ZbQO": [
@@ -5212,7 +5288,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "ISO 8601 형식으로 기간을 지정합니다."
     }
   ],
   "WS9kXD": [
@@ -5252,7 +5328,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "고정 간격"
     }
   ],
   "WcnIF8": [
@@ -5294,7 +5370,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "최소 재시도 정책 간격이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
   "X4gDhV": [
@@ -5360,13 +5436,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "트리거가 실행되려면 true여야 하는 하나 이상의 식을 지정합니다."
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "작업 시간 제한"
     }
   ],
   "XLUs2P": [
@@ -5581,6 +5657,12 @@
       "value": "트리거 조건"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "편집기 지우기"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5775,6 +5857,12 @@
       "value": "정적 결과 축소"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "작업 붙여넣기"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5892,7 +5980,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "각 분할 인스턴스에 대한 고유 추적 ID"
     }
   ],
   "ahW8Iv": [
@@ -5905,12 +5993,6 @@
     {
       "type": 0,
       "value": "PFX 입력"
-    }
-  ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "유효한 float를 입력합니다."
     }
   ],
   "aoUT/3": [
@@ -6005,6 +6087,12 @@
     {
       "type": 0,
       "value": "정보"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "ba9yGJ": [
@@ -6112,7 +6200,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "페이지 매김 한도까지 더 많은 결과를 검색합니다."
     }
   ],
   "cK2A/V": [
@@ -6428,7 +6516,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "선택한 배열의 항목당 워크플로 인스턴스를 시작하려면 분할을 사용하도록 설정합니다. 각 인스턴스에 고유한 추적 ID가 있을 수도 있습니다."
     }
   ],
   "epOMnV": [
@@ -6458,7 +6546,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "예: PT1S"
     }
   ],
   "f81ClO": [
@@ -6541,6 +6629,12 @@
       "value": "(UTC+08:00) 베이징, 충칭, 홍콩 특별행정구, 우루무치"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "죄송합니다. 문제가 발생했습니다. 다시 시도하십시오."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6574,7 +6668,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "제한"
     }
   ],
   "g7my78": [
@@ -6634,7 +6728,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "없음"
     }
   ],
   "gQt/0f": [
@@ -6653,6 +6747,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) 아슈하바트, 타슈켄트"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "올바른 float를 입력하세요."
     }
   ],
   "gc6v4X": [
@@ -6748,7 +6848,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "청크 허용"
     }
   ],
   "hN7iBP": [
@@ -6796,7 +6896,7 @@
       "value": "찾고 있는 항목이 아닙니다."
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "값이 너무 큽니다."
@@ -6878,6 +6978,12 @@
     {
       "type": 0,
       "value": "다시 실행"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "작업 복사"
     }
   ],
   "i4C4aB": [
@@ -6965,7 +7071,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "작업의 출력과 출력 속성의 참조를 보안 설정합니다."
     }
   ],
   "iTKrs8": [
@@ -7038,12 +7144,6 @@
       "value": "초"
     }
   ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "올바른 테이블을 입력하세요."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -7095,7 +7195,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "요청 옵션 - 시간 제한"
     }
   ],
   "jQ0Aqj": [
@@ -7173,7 +7273,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "보안 입력을 사용하도록 설정하면 보안 출력이 자동으로 보호됩니다."
     }
   ],
   "jgOaTX": [
@@ -7385,6 +7485,12 @@
       "value": "관리 ID"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "유효한 숫자를 입력하세요."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7472,7 +7578,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "제공된 스키마에 대해 요청 본문을 확인합니다. 불일치하는 경우 HTTP 400이 반환됩니다."
     }
   ],
   "lsKVU6": [
@@ -7514,7 +7620,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "반환할 항목의 임계값"
     }
   ],
   "mAuMD+": [
@@ -7837,12 +7943,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "유효한 URI를 입력합니다."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -7903,6 +8003,12 @@
       "value": "잘못된 정수 값"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "트리거 복사"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -7931,6 +8037,12 @@
     {
       "type": 0,
       "value": "메모 추가"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "유효한 이중 번호를 입력하세요."
     }
   ],
   "ox2Ou7": [
@@ -8003,6 +8115,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 배열로 결합할 값입니다."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "유효한 정수를 입력하세요."
     }
   ],
   "pXmFGf": [
@@ -8275,7 +8393,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "이 작업에 대한 재시도와 비동기 응답 사이의 최대 기간을 제한합니다. 참고: 단일 요청의 요청 시간 제한은 변경되지 않습니다."
     }
   ],
   "r/n6/9": [
@@ -9029,7 +9147,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "기간"
     }
   ],
   "vlDynP": [
@@ -9130,6 +9248,12 @@
     {
       "type": 0,
       "value": "동적 콘텐츠 포함"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "생성 중지"
     }
   ],
   "wPlTDB": [
@@ -9414,6 +9538,12 @@
       "value": "오름차순으로 정렬된 배열을 반환합니다."
     }
   ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "경고: 입력 노드 형식이 이 입력에 허용되는 형식 중 하나와 일치하지 않습니다."
+    }
+  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9555,7 +9685,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "식 편집기"
     }
   ],
   "zIDVd9": [

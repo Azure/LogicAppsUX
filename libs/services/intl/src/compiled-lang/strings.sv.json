@@ -29,6 +29,12 @@
       "value": "Fel"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt booleskt värde."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -76,7 +82,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "Ignorera arbetsflödeshuvuden vid svar"
     }
   ],
   "+xXHdp": [
@@ -413,12 +419,6 @@
       "value": "Returnerar porten från en URI. Om port inte anges, returneras standardporten för protokollet"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt heltalsvärde."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -455,12 +455,6 @@
       "value": "Konverterar parameterargumentet till ett flyttalsnummer"
     }
   ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Ange en giltig e-postadress."
-    }
-  ],
   "1ZSzl6": [
     {
       "type": 0,
@@ -494,7 +488,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "Antal gånger som begäran ska försökas igen"
     }
   ],
   "1htSs7": [
@@ -525,6 +519,12 @@
     {
       "type": 0,
       "value": "Dölj källschema"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Ange en giltig URI."
     }
   ],
   "1uGBLP": [
@@ -590,7 +590,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "Styr hur nya körningar ska köas"
     }
   ],
   "2NXYYu": [
@@ -650,7 +650,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "Växlingsantalet är ogiltigt. Värdet måste vara större än 0"
     }
   ],
   "2pRsUf": [
@@ -678,7 +678,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Standard"
     }
   ],
   "2vnYre": [
@@ -875,6 +875,12 @@
       "value": "Stäng kodvyn"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Ange giltigt datetime."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "Ditt flöde har uppdaterats."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Sparar det här flödet..."
     }
   ],
   "4izAMi": [
@@ -1184,7 +1196,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "Säkra indata för åtgärden"
     }
   ],
   "63CC7M": [
@@ -1214,13 +1226,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
-    }
-  ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Varning! Typ av indatanod matchar inte någon av de tillåtna typerna för dessa indata"
+      "value": "Tidsgränsintervallet är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
   "6ZviI7": [
@@ -1427,16 +1433,16 @@
       "value": "Detta återställer arbetsflödet till det tillstånd det innan Copilot redigerade det. Om du har gjort ytterligare ändringar i arbetsflödet efter Copilots ändringar kommer du att förlora dem. Det går inte att ångra den här åtgärden. Vill du fortsätta?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Ange en giltig e-postadress."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuskod"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Rapportera en bugg"
     }
   ],
   "7lnElz": [
@@ -1466,7 +1472,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "Exponentiellt intervall"
     }
   ],
   "7zsUT3": [
@@ -2126,7 +2132,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "Ställ in körningens spårnings-id. För delning är det här spårnings-id:t för initieringsbegäran"
     }
   ],
   "BxITRH": [
@@ -2259,6 +2265,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Typerna Number, Integer och Decimal godkänns."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -2320,7 +2332,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "Intervallet för återförsöksprincip är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
   "DEu7oK": [
@@ -2355,6 +2367,12 @@
     {
       "type": 1,
       "value": "displayName"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
     }
   ],
   "DWd9vy": [
@@ -2402,7 +2420,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "Den maximala varaktigheten för en enskild utgående begäran från den här åtgärden. Om begäran inte slutförs inom den här gränsen efter att återförsök har körts, kommer åtgärden att misslyckas"
     }
   ],
   "DsPDVB": [
@@ -2561,6 +2579,12 @@
       "value": "Visa den här åtgärdens begäranshistorik"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Ange en giltig tabell."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -2588,7 +2612,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Det högsta intervallet för återförsöksprincip är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3027,12 +3051,6 @@
       "value": "Fel vid hämtning av manifest"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Ange giltigt datetime."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3203,6 +3221,16 @@
       "value": "."
     }
   ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Godkända datatyper: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3247,6 +3275,12 @@
     {
       "type": 0,
       "value": "Åtgärden har ångrats"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot-chatten avbröts"
     }
   ],
   "JNQHws": [
@@ -3345,12 +3379,6 @@
     {
       "type": 0,
       "value": " med"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt dubbelnummer."
     }
   ],
   "KV4uky": [
@@ -3498,7 +3526,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "När den här åtgärden är aktiverad körs den med användaren från inställningen Kör som, i Dataverse-utlösaren"
     }
   ],
   "LS8rfZ": [
@@ -3741,12 +3769,6 @@
       "value": "Redigera i avancerat läge"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt tal."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3793,6 +3815,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsingfors, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Kopierat!"
     }
   ],
   "NGJ00e": [
@@ -3891,6 +3919,12 @@
       "value": "Tjänstens huvudnamn"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Vi jobbar på det..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3913,6 +3947,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Det går inte att kopiera den här åtgärden/utlösaren."
     }
   ],
   "ODQCKj": [
@@ -3979,6 +4019,12 @@
     {
       "type": 0,
       "value": "Ange målgruppen."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Rapportera en bugg"
     }
   ],
   "OVvieE": [
@@ -4107,6 +4153,12 @@
       "value": "Krävs. Det här värdet är antalet heltal som finns i matrisen."
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Blanksteg måste kodas för URI:er"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4198,7 +4250,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "Spårnings-id för delning"
     }
   ],
   "Pq+4a+": [
@@ -4210,7 +4262,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "Dekomprimera begärandetexten om den har komprimerats med GZip eller Deflate. Den här inställningen gäller bara för HTTP-utlösare"
     }
   ],
   "PsmHyH": [
@@ -4356,7 +4408,7 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "Växlingsantalet överskrider maxvärdet "
     },
     {
       "type": 1,
@@ -4475,6 +4527,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Infoga ett nytt steg i "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4602,7 +4664,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "Ange beteende och funktioner för överföring av innehåll via HTTP. Stora meddelanden kan delas upp i mindre begäranden till anslutningsprogrammet så att de kan laddas upp."
     }
   ],
   "SgiTAh": [
@@ -4863,6 +4925,16 @@
       "value": "Ta bort arbetsflödesåtgärd"
     }
   ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Prova att använda en konverteringsfunktion som: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4878,7 +4950,7 @@
   "UMPuUJ": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "Ta bort "
     },
     {
       "type": 1,
@@ -5032,7 +5104,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Du hittar mer information på http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5268,7 +5340,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Ange varaktigheten i ISO 8601-format"
     }
   ],
   "WS9kXD": [
@@ -5308,7 +5380,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "Fast intervall"
     }
   ],
   "WcnIF8": [
@@ -5350,7 +5422,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Det minsta intervallet för återförsöksprincip är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5416,13 +5488,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska aktiveras"
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Tidsgräns för åtgärd"
     }
   ],
   "XLUs2P": [
@@ -5637,6 +5709,12 @@
       "value": "Villkor för utlösare"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Rensa redigeringsprogrammet"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5831,6 +5909,12 @@
       "value": "Dölj statiskt resultat"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Klistra in en åtgärd"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5948,7 +6032,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "Distinkt spårnings-id för varje delningsinstans"
     }
   ],
   "ahW8Iv": [
@@ -5961,12 +6045,6 @@
     {
       "type": 0,
       "value": "Ange PFX"
-    }
-  ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt flyttal."
     }
   ],
   "aoUT/3": [
@@ -6061,6 +6139,12 @@
     {
       "type": 0,
       "value": "Information"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Ange en giltig JSON."
     }
   ],
   "ba9yGJ": [
@@ -6168,7 +6252,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "Hämta fler resultat upp till sidnumreringsgränsen"
     }
   ],
   "cK2A/V": [
@@ -6488,7 +6572,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "Starta en instans av arbetsflödet per objekt i den markerade matrisen genom att aktivera delning. Varje instans kan också ha ett distinkt spårnings-id."
     }
   ],
   "epOMnV": [
@@ -6518,7 +6602,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "Exempel: PT1S"
     }
   ],
   "f81ClO": [
@@ -6597,6 +6681,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hongkong SAR, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Någonting gick fel. Försök igen."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6630,7 +6720,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "Gräns"
     }
   ],
   "g7my78": [
@@ -6698,7 +6788,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "Inget"
     }
   ],
   "gQt/0f": [
@@ -6717,6 +6807,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Asjchabad, Tasjkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt flyttal."
     }
   ],
   "gc6v4X": [
@@ -6812,7 +6908,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "Tillåt segmentering"
     }
   ],
   "hN7iBP": [
@@ -6871,7 +6967,7 @@
       "value": "Det här är inte vad jag letar efter"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Värdet är för högt."
@@ -6953,6 +7049,12 @@
     {
       "type": 0,
       "value": "Gör om"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Kopiera åtgärd"
     }
   ],
   "i4C4aB": [
@@ -7044,7 +7146,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "Säkra utdata för åtgärden och referenser till utdataegenskaper"
     }
   ],
   "iTKrs8": [
@@ -7117,12 +7219,6 @@
       "value": "s"
     }
   ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Ange en giltig tabell."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -7174,7 +7270,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "Alternativ för begäran – tidsgräns"
     }
   ],
   "jQ0Aqj": [
@@ -7252,7 +7348,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "Om du aktiverar säkra indata skyddas utdata automatiskt."
     }
   ],
   "jgOaTX": [
@@ -7475,6 +7571,12 @@
       "value": "Hanterad identitet"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt tal."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7570,7 +7672,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "Verifiera frågetexten mot det tillhandahållna schemat. Om det finns ett matchningsfel returneras HTTP 400"
     }
   ],
   "lsKVU6": [
@@ -7612,7 +7714,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "Tröskelvärde för objekt att returnera"
     }
   ],
   "mAuMD+": [
@@ -7935,12 +8037,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Ange en giltig URI."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8001,6 +8097,12 @@
       "value": "Ogiltigt heltalsvärde"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Kopiera utlösare"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8029,6 +8131,12 @@
     {
       "type": 0,
       "value": "Lägg till en anteckning"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt dubbelnummer."
     }
   ],
   "ox2Ou7": [
@@ -8101,6 +8209,12 @@
     {
       "type": 0,
       "value": "Krävs. Värdena att kombinera till en matris."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt heltalsvärde."
     }
   ],
   "pXmFGf": [
@@ -8380,7 +8494,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "Begränsa den maximala varaktigheten mellan återförsök och asynkrona svar för den här åtgärden. Obs! Det här ändrar inte tidsgränsen för begäran för en enskild begäran"
     }
   ],
   "r/n6/9": [
@@ -9138,7 +9252,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Varaktighet"
     }
   ],
   "vlDynP": [
@@ -9243,6 +9357,12 @@
     {
       "type": 0,
       "value": "Inkludera dynamiskt innehåll"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Sluta generera"
     }
   ],
   "wPlTDB": [
@@ -9527,6 +9647,12 @@
       "value": "Returnerar en matris sorterad i stigande ordning"
     }
   ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Varning! Typen av indatanod matchar inte någon av de tillåtna typerna för indata."
+    }
+  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9668,7 +9794,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "Uttrycksredigerare"
     }
   ],
   "zIDVd9": [

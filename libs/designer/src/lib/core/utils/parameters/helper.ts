@@ -528,7 +528,7 @@ const toSimpleQueryBuilderViewModel = (
   let stringValue = input;
 
   try {
-    let operator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+    let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
     const negatory = operator === 'not';
     let endingLiteral: ValueSegment;
     if (negatory) {
@@ -538,7 +538,7 @@ const toSimpleQueryBuilderViewModel = (
       operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
       endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
     } else {
-      operationLiteral = operator;
+      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
       endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
     }
 
@@ -1911,7 +1911,7 @@ async function loadDynamicContentForInputsInNode(
             addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
           );
         } catch (error: any) {
-          const message = error.message as string;
+          const message = error.message ?? (error.content.message as string);
           const errorMessage = getIntl().formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
@@ -2249,7 +2249,7 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
     }
 
     if (config.title) {
-      const keyFromTitle = config.title.replace(' ', '_');
+      const keyFromTitle = config.title.toLowerCase().replace(' ', '_');
       schemaProperties[keyFromTitle] = config;
 
       const valueSegments = editorViewModel.outputValueSegmentsMap?.[key];
@@ -2302,7 +2302,7 @@ export const recurseSerializeCondition = (
     const operand1String = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
     const operand2String = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
-      if (!operand1String || !operand2String) {
+      if (!operand1String) {
         errors.push(
           getIntl().formatMessage({
             defaultMessage: 'Enter a valid condition statement.',
@@ -3470,14 +3470,18 @@ export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
   return parameterInfo && parameterInfo.required && !(parameterInfo.info.parentProperty && parameterInfo.info.parentProperty.optional);
 }
 
-export function validateParameter(parameter: ParameterInfo, parameterValue: ValueSegment[]): string[] {
+export function validateParameter(
+  parameter: ParameterInfo,
+  parameterValue: ValueSegment[],
+  shouldValidateUnknownParameterAsError = false
+): string[] {
   const parameterType = getInferredParameterType(parameterValue, parameter.type);
   const parameterValueString = parameterValueToStringWithoutCasting(parameterValue, /* forValidation */ true);
   const isJsonObject = parameterType === constants.SWAGGER.TYPE.OBJECT;
 
   return isJsonObject
     ? validateJSONParameter(parameter, parameterValue)
-    : validateStaticParameterInfo(parameter, parameterValueString, true);
+    : validateStaticParameterInfo(parameter, parameterValueString, shouldValidateUnknownParameterAsError);
 }
 
 // Riley - This is a very specific case where the either of the limit properties can be filled, but they cannot both be empty

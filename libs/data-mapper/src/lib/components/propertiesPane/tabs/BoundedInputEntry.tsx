@@ -22,7 +22,7 @@ export interface BoundedInputEntryProps {
 export const BoundedInputEntry = ({ index, input, functionData, connection, connectionDictionary }: BoundedInputEntryProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
   const pathOptions = useSelector((state: RootState) => state.function.customXsltFilePaths);
   const inputConnection = !connection
@@ -72,7 +72,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
 
       inputBox = (
         <FileDropdown
-          loadedSelection={removeQuotesFromString((connection?.inputs[0][0] as string) || '')} // danielle is it possible to have a connection with no inputs?
+          loadedSelection={removeQuotesFromString((connection?.inputs[0][0] as string) || '')}
           allPathOptions={pathOptions}
           placeholder={placeholder}
           setSelectedPath={(item: string | undefined) => {

@@ -10,7 +10,7 @@ import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-const acceptedSchemaFileInputExtensions = '.xsd';
+const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
 export enum UploadSchemaTypes {
   UploadNew = 'upload-new',
@@ -48,7 +48,7 @@ export const AddOrUpdateSchemaView = ({
 }: AddOrUpdateSchemaViewProps) => {
   const intl = useIntl();
   const { sourceSchema: curSourceSchema, targetSchema: curTargetSchema } = useSelector(
-    (state: RootState) => state.dataMap.curDataMapOperation
+    (state: RootState) => state.dataMap.present.curDataMapOperation
   );
   const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
 

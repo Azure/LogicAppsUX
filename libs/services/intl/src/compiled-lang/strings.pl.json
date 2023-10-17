@@ -29,6 +29,12 @@
       "value": "Błędne"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową wartość logiczną."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -72,7 +78,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "Pomijanie nagłówków przepływu pracy w odpowiedzi"
     }
   ],
   "+xXHdp": [
@@ -409,12 +415,6 @@
       "value": "Zwraca port z identyfikatora URI. Jeśli port nie jest określony, zwraca domyślny port dla protokołu"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową liczbę całkowitą."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -451,12 +451,6 @@
       "value": "Konwertuj argument parametru na liczbę zmiennoprzecinkową"
     }
   ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy adres e-mail."
-    }
-  ],
   "1ZSzl6": [
     {
       "type": 0,
@@ -490,7 +484,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "Liczba ponownych prób wysłania żądania"
     }
   ],
   "1htSs7": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Ukryj schemat źródłowy"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy identyfikator URI."
     }
   ],
   "1uGBLP": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "Kontroluj sposób kolejkowania nowych przebiegów"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "Nieprawidłowa liczba stronicowania. Wartość musi być liczbą większą niż 0"
     }
   ],
   "2pRsUf": [
@@ -674,7 +674,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Domyślny"
     }
   ],
   "2vnYre": [
@@ -871,6 +871,12 @@
       "value": "Zamknij widok kodu"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową datę/godzinę."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
     {
       "type": 0,
       "value": "Przepływ został zaktualizowany."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Trwa zapisywanie tego przepływu..."
     }
   ],
   "4izAMi": [
@@ -1180,7 +1192,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "Zabezpiecz dane wejściowe operacji"
     }
   ],
   "63CC7M": [
@@ -1210,13 +1222,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
-    }
-  ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Ostrzeżenie: typ węzła danych wejściowych nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych"
+      "value": "Wartość czasu jest nieprawidłowa, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "6ZviI7": [
@@ -1423,16 +1429,16 @@
       "value": "Spowoduje to przywrócenie przepływu pracy do stanu sprzed edycji przez funkcję Copilot. Jeśli wprowadzono dodatkowe zmiany w przepływie pracy po edycji przez funkcję Copilot, utracisz je. Tej akcji nie można cofnąć. Czy chcesz kontynuować?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy adres e-mail."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Kod stanu"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Zgłoś usterkę"
     }
   ],
   "7lnElz": [
@@ -1462,7 +1468,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "Interwał wykładniczy"
     }
   ],
   "7zsUT3": [
@@ -2148,7 +2154,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "Ustaw identyfikator śledzenia dla przebiegu. W przypadku podziału ten identyfikator śledzenia dotyczy żądania inicjującego"
     }
   ],
   "BxITRH": [
@@ -2281,6 +2287,12 @@
       "value": "(UTC+09:30) Adelajda"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Akceptuje typy „Number”, „Integer” i „Decimal”."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -2342,7 +2354,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "Interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "DEu7oK": [
@@ -2381,6 +2393,12 @@
     {
       "type": 0,
       "value": "”"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
     }
   ],
   "DWd9vy": [
@@ -2428,7 +2446,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "Maksymalny czas trwania w przypadku pojedynczego żądania wychodzącego z tej akcji. Jeśli żądanie nie zakończy się w ramach tego limitu po wykonaniu ponownych prób, akcja zakończy się niepowodzeniem"
     }
   ],
   "DsPDVB": [
@@ -2587,6 +2605,12 @@
       "value": "Wyświetl historię żądań dla tej operacji"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową tabeli."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -2614,7 +2638,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Maksymalny interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3075,12 +3099,6 @@
       "value": "Błąd podczas pobierania manifestu"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową datę/godzinę."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3251,6 +3269,16 @@
       "value": "."
     }
   ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Akceptowane typy danych: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3295,6 +3323,12 @@
     {
       "type": 0,
       "value": "Akcja cofnięta"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Rozmowa na czacie funkcji Copilot została anulowana"
     }
   ],
   "JNQHws": [
@@ -3393,12 +3427,6 @@
     {
       "type": 0,
       "value": "” za pomocą"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową podwójną liczbę."
     }
   ],
   "KV4uky": [
@@ -3568,7 +3596,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "Po włączeniu ta akcja zostanie uruchomiona z użytkownikiem z poziomu ustawienia „Uruchom jako” w wyzwalaczu Dataverse"
     }
   ],
   "LS8rfZ": [
@@ -3811,12 +3839,6 @@
       "value": "Edytuj w trybie zaawansowanym"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Wprowadź poprawną liczbę."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3863,6 +3885,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kijów, Ryga, Sofia, Tallin, Wilno"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Skopiowano!"
     }
   ],
   "NGJ00e": [
@@ -3961,6 +3989,12 @@
       "value": "Nazwa główna usługi"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Pracujemy nad tym..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3983,6 +4017,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Nie można skopiować tej akcji/tego wyzwalacza."
     }
   ],
   "ODQCKj": [
@@ -4049,6 +4089,12 @@
     {
       "type": 0,
       "value": "Wprowadź odbiorców."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Zgłoś usterkę"
     }
   ],
   "OVvieE": [
@@ -4181,6 +4227,12 @@
       "value": "Wymagane. Ta wartość określa ilość liczb całkowitych w tablicy."
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Białe znaki muszą być zakodowane dla identyfikatorów URI"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4272,7 +4324,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "Identyfikator śledzenia dla podziału"
     }
   ],
   "Pq+4a+": [
@@ -4284,7 +4336,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "Dekompresuj treść żądania, jeśli jest skompresowana przy użyciu GZip lub Deflate. To ustawienie dotyczy tylko wyzwalacza HTTP"
     }
   ],
   "PsmHyH": [
@@ -4438,7 +4490,7 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "Liczba stronicowania przekracza wartość maksymalną równą "
     },
     {
       "type": 1,
@@ -4581,6 +4633,16 @@
       "value": "minutes"
     }
   ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Wstaw nowy krok w elemencie "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    }
+  ],
   "RkgScy": [
     {
       "type": 0,
@@ -4710,7 +4772,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "Określ zachowanie i możliwości przesyłania zawartości za pomocą protokołu HTTP. Duże wiadomości można podzielić na mniejsze żądania do łącznika, aby umożliwić przekazywanie dużych wiadomości."
     }
   ],
   "SgiTAh": [
@@ -4971,6 +5033,16 @@
       "value": "Usuń akcję przepływu pracy"
     }
   ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Spróbuj użyć funkcji konwersji, takiej jak: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4986,7 +5058,7 @@
   "UMPuUJ": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "Usuń "
     },
     {
       "type": 1,
@@ -5140,7 +5212,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Więcej szczegółów można znaleźć pod adresem http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5380,7 +5452,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Określ czas trwania w formacie zgodnym ze standardem ISO 8601."
     }
   ],
   "WS9kXD": [
@@ -5420,7 +5492,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "Stały interwał"
     }
   ],
   "WcnIF8": [
@@ -5462,7 +5534,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Minimalny interwał zasad ponawiania prób jest nieprawidłowy, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5528,13 +5600,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony"
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Limit czasu akcji"
     }
   ],
   "XLUs2P": [
@@ -5749,6 +5821,12 @@
       "value": "Warunki wyzwalacza"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Wyczyść edytor"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5943,6 +6021,12 @@
       "value": "Zwiń wynik statyczny"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Wklej akcję"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6060,7 +6144,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "Unikatowy identyfikator śledzenia dla każdego wystąpienia podziału"
     }
   ],
   "ahW8Iv": [
@@ -6073,12 +6157,6 @@
     {
       "type": 0,
       "value": "Wprowadź certyfikat PFX"
-    }
-  ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy typ zmiennoprzecinkowy."
     }
   ],
   "aoUT/3": [
@@ -6173,6 +6251,12 @@
     {
       "type": 0,
       "value": "Informacje"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "ba9yGJ": [
@@ -6280,7 +6364,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "Pobierz więcej wyników do limitu dzielenia na strony"
     }
   ],
   "cK2A/V": [
@@ -6600,7 +6684,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "Włącz podział, aby uruchomić wystąpienie przepływu pracy na element w wybranej tablicy. Każde wystąpienie może mieć również oddzielny identyfikator śledzenia"
     }
   ],
   "epOMnV": [
@@ -6630,7 +6714,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "Przykład: PT1S"
     }
   ],
   "f81ClO": [
@@ -6709,6 +6793,12 @@
       "value": "(UTC+08:00) Pekin, Czungking, SRA Hongkong, Urumczi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Niestety, coś poszło źle. Spróbuj ponownie."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6742,7 +6832,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "Ograniczenie"
     }
   ],
   "g7my78": [
@@ -6810,7 +6900,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "Brak"
     }
   ],
   "gQt/0f": [
@@ -6829,6 +6919,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Aszchabad, Taszkient"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy typ zmiennoprzecinkowy."
     }
   ],
   "gc6v4X": [
@@ -6924,7 +7020,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "Zezwalanie na dzielenie na fragmenty"
     }
   ],
   "hN7iBP": [
@@ -7005,7 +7101,7 @@
       "value": "Tego nie szukam"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Wartość jest zbyt duża."
@@ -7087,6 +7183,12 @@
     {
       "type": 0,
       "value": "Wykonaj ponownie"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Kopiuj akcję"
     }
   ],
   "i4C4aB": [
@@ -7178,7 +7280,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "Zabezpiecz dane wyjściowe operacji i odwołania właściwości danych wyjściowych"
     }
   ],
   "iTKrs8": [
@@ -7251,12 +7353,6 @@
       "value": " s"
     }
   ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową tabeli."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -7308,7 +7404,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "Opcje żądania — limit czasu"
     }
   ],
   "jQ0Aqj": [
@@ -7386,7 +7482,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "Włączenie zabezpieczenia danych wejściowych spowoduje automatyczne zabezpieczenie danych wyjściowych."
     }
   ],
   "jgOaTX": [
@@ -7647,6 +7743,12 @@
       "value": "Tożsamość zarządzana"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Wprowadź poprawną liczbę."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7742,7 +7844,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "Weryfikuj treść żądania względem podanego schematu. W przypadku niezgodności zostanie zwrócony kod HTTP 400"
     }
   ],
   "lsKVU6": [
@@ -7784,7 +7886,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "Próg elementów do zwrócenia"
     }
   ],
   "mAuMD+": [
@@ -8107,12 +8209,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy identyfikator URI."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8173,6 +8269,12 @@
       "value": "Nieprawidłowa wartość całkowita"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Kopiuj wyzwalacz"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8201,6 +8303,12 @@
     {
       "type": 0,
       "value": "Dodaj notatkę"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową podwójną liczbę."
     }
   ],
   "ox2Ou7": [
@@ -8273,6 +8381,12 @@
     {
       "type": 0,
       "value": "Wymagane. Wartości do połączenia jako tablica."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową liczbę całkowitą."
     }
   ],
   "pXmFGf": [
@@ -8578,7 +8692,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "Ogranicz maksymalny czas trwania między ponownymi próbami a odpowiedziami asynchronicznymi w przypadku tej akcji. Uwaga: nie powoduje to zmiany limitu czasu żądania pojedynczego żądania"
     }
   ],
   "r/n6/9": [
@@ -9340,7 +9454,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Czas trwania"
     }
   ],
   "vlDynP": [
@@ -9445,6 +9559,12 @@
     {
       "type": 0,
       "value": "Uwzględnianie zawartości dynamicznej"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Zatrzymaj generowanie"
     }
   ],
   "wPlTDB": [
@@ -9729,6 +9849,12 @@
       "value": "Zwraca tablicę posortowane w kolejności rosnącej"
     }
   ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Ostrzeżenie: typ węzła danych wejściowych nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych."
+    }
+  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9870,7 +9996,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "Edytor wyrażeń"
     }
   ],
   "zIDVd9": [

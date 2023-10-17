@@ -9,26 +9,30 @@ interface ClearEditorProps {
 export default function ClearEditor({ showButton }: ClearEditorProps): JSX.Element {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
-  const text = intl.formatMessage({
+  const buttonText = intl.formatMessage({
     defaultMessage: 'Clear',
     description: 'Label to clear editor',
   });
+
+  const buttonLabel = intl.formatMessage({
+    defaultMessage: 'Clear Editor',
+    description: 'Label to clear editor',
+  });
+
   return (
     <>
       {showButton ? (
         <button
-          title={'Clear Editor'}
+          title={buttonLabel}
           onClick={() => {
             editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
             editor.focus();
           }}
         >
-          {text}
-          <ClearEditorEnabled />
+          {buttonText}
         </button>
-      ) : (
-        <ClearEditorEnabled />
-      )}
+      ) : null}
+      <ClearEditorEnabled />
     </>
   );
 }

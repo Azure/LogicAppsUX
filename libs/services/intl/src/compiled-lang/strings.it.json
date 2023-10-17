@@ -29,6 +29,12 @@
       "value": "Con errori"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Immetti un valore booleano valido."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -72,7 +78,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "Elimina intestazioni del flusso di lavoro nella risposta"
     }
   ],
   "+xXHdp": [
@@ -409,12 +415,6 @@
       "value": "Restituisce la porta da un URI. Se la porta non è specificata, restituisce la porta predefinita per il protocollo"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Immetti un numero intero valido."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -451,12 +451,6 @@
       "value": "Converte l'argomento del parametro in un numero a virgola mobile"
     }
   ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Immetti un indirizzo Email valido."
-    }
-  ],
   "1ZSzl6": [
     {
       "type": 0,
@@ -490,7 +484,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "Numero di tentativi per la richiesta"
     }
   ],
   "1htSs7": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Nascondi schema di origine"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Immetti un URI valido."
     }
   ],
   "1uGBLP": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "Controllare la modalità di accodamento delle nuove esecuzioni"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "Il conteggio delle pagine non è valido. Il valore deve essere un numero maggiore di 0"
     }
   ],
   "2pRsUf": [
@@ -674,7 +674,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Predefinito"
     }
   ],
   "2vnYre": [
@@ -863,6 +863,12 @@
       "value": "Chiudi visualizzazione codice"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Immetti un valore datetime valido."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
     {
       "type": 0,
       "value": "Il flusso è stato aggiornato."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Salvataggio di questo flusso in corso..."
     }
   ],
   "4izAMi": [
@@ -1172,7 +1184,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "Input sicuri dell'operazione"
     }
   ],
   "63CC7M": [
@@ -1202,13 +1214,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
-    }
-  ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Avviso: il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input"
+      "value": "Il valore del timeout non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "6ZviI7": [
@@ -1415,16 +1421,16 @@
       "value": "Il flusso di lavoro verrà ripristinato allo stato in cui si trovava prima della modifica di Copilot. Se sono state apportate modifiche aggiuntive al flusso di lavoro dopo il copilot, queste saranno perdute. Questa azione non può essere annullata. Continuare?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Immetti un indirizzo Email valido."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Codice stato"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Segnala un bug"
     }
   ],
   "7lnElz": [
@@ -1454,7 +1460,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "Intervallo esponenziale"
     }
   ],
   "7zsUT3": [
@@ -2129,7 +2135,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio"
     }
   ],
   "BxITRH": [
@@ -2262,6 +2268,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accetta i tipi \"Number\", \"Integer\" e \"Decimal\"."
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -2323,7 +2335,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "L'intervallo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "DEu7oK": [
@@ -2354,6 +2366,12 @@
     {
       "type": 0,
       "value": "ALT/OPZIONI + clic per scaricare {displayName}"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
     }
   ],
   "DWd9vy": [
@@ -2401,7 +2419,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "Durata massima di una singola richiesta in uscita da questa azione. Se la richiesta non termina entro questo limite dopo l'esecuzione di nuovi tentativi, l'azione non riesce"
     }
   ],
   "DsPDVB": [
@@ -2560,6 +2578,12 @@
       "value": "Visualizzare la cronologia delle richieste per questa operazione"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Immettere una tabella valida."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -2587,7 +2611,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "L'intervallo massimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "F9dR1Q": [
@@ -3029,12 +3053,6 @@
       "value": "Errore durante il recupero del manifesto"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Immetti un valore datetime valido."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3205,6 +3223,16 @@
       "value": "."
     }
   ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Tipi di dati accettati: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3249,6 +3277,12 @@
     {
       "type": 0,
       "value": "Azione annullata"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Chat di Copilot annullata"
     }
   ],
   "JNQHws": [
@@ -3347,12 +3381,6 @@
     {
       "type": 0,
       "value": "\" con"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Immetti un numero double valido."
     }
   ],
   "KV4uky": [
@@ -3511,7 +3539,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "Se abilitata, questa azione viene eseguita con l'utente dall'impostazione \"Esegui come\" nel trigger Dataverse"
     }
   ],
   "LS8rfZ": [
@@ -3754,12 +3782,6 @@
       "value": "Modifica in modalità avanzata"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Immetti un numero valido."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3806,6 +3828,12 @@
     {
       "type": 0,
       "value": "(UTC + 2.00 h) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copia completata."
     }
   ],
   "NGJ00e": [
@@ -3904,6 +3932,12 @@
       "value": "Entità servizio"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Attendere..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3926,6 +3960,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Non è possibile copiare l'azione o il trigger."
     }
   ],
   "ODQCKj": [
@@ -3992,6 +4032,12 @@
     {
       "type": 0,
       "value": "Immetti il gruppo di destinatari."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Segnala un bug"
     }
   ],
   "OVvieE": [
@@ -4132,6 +4178,12 @@
       "value": "Obbligatorio. Valore corrispondene al numero di integer nella matrice."
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Gli spazi vuoti devono essere codificati per gli URI"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4223,7 +4275,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "ID di traccia suddivisione"
     }
   ],
   "Pq+4a+": [
@@ -4235,7 +4287,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "Decomprimere il corpo della richiesta se è compresso tramite GZip o Deflate. Questa impostazione è applicabile solo per il trigger HTTP"
     }
   ],
   "PsmHyH": [
@@ -4385,7 +4437,7 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "Il conteggio delle pagine supera il valore massimo di "
     },
     {
       "type": 1,
@@ -4517,6 +4569,16 @@
       "value": "minutes"
     }
   ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Inserire un nuovo passaggio in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    }
+  ],
   "RkgScy": [
     {
       "type": 0,
@@ -4646,7 +4708,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "Specificare il comportamento e le funzionalità per il trasferimento del contenuto su HTTP. È possibile suddividere i messaggi in richieste più piccole al connettore per consentire il caricamento di messaggi di grandi dimensioni."
     }
   ],
   "SgiTAh": [
@@ -4907,6 +4969,16 @@
       "value": "Elimina azione flusso di lavoro"
     }
   ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Provare a usare una funzione di conversione, ad esempio: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4922,7 +4994,7 @@
   "UMPuUJ": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "Elimina "
     },
     {
       "type": 1,
@@ -5076,7 +5148,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Per altri dettagli, vedere http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5316,7 +5388,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Specificare la durata nel formato ISO 8601"
     }
   ],
   "WS9kXD": [
@@ -5356,7 +5428,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "Intervallo fisso"
     }
   ],
   "WcnIF8": [
@@ -5398,7 +5470,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "L'intervallo minimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "X4gDhV": [
@@ -5464,13 +5536,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "Specificare una o più espressioni che devono essere vere per l'attivazione del trigger"
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Timeout azione"
     }
   ],
   "XLUs2P": [
@@ -5685,6 +5757,12 @@
       "value": "Condizioni del trigger"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Cancella editor"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5879,6 +5957,12 @@
       "value": "Comprimi risultato statico"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Incolla un'azione"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5996,7 +6080,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "ID di rilevamento distinto per ogni istanza di suddivisione"
     }
   ],
   "ahW8Iv": [
@@ -6009,12 +6093,6 @@
     {
       "type": 0,
       "value": "Immetti file PFX"
-    }
-  ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Immetti un valore float valido."
     }
   ],
   "aoUT/3": [
@@ -6109,6 +6187,12 @@
     {
       "type": 0,
       "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Immetti un JSON valido."
     }
   ],
   "ba9yGJ": [
@@ -6216,7 +6300,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "Recuperare altri risultati fino al limite di impaginazione"
     }
   ],
   "cK2A/V": [
@@ -6536,7 +6620,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "Abilita la suddivisione per avviare un'istanza del flusso di lavoro per ogni elemento nella matrice selezionata. Ogni istanza può anche avere un ID di traccia distinto"
     }
   ],
   "epOMnV": [
@@ -6566,7 +6650,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "Esempio: PT1S"
     }
   ],
   "f81ClO": [
@@ -6649,6 +6733,12 @@
       "value": "(UTC + 8.00 h) Pechino, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Si è verificato un errore. Riprovare."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6682,7 +6772,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "Limite"
     }
   ],
   "g7my78": [
@@ -6742,7 +6832,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "Nessuno"
     }
   ],
   "gQt/0f": [
@@ -6761,6 +6851,12 @@
     {
       "type": 0,
       "value": "(UTC+5.00) Ashkhabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Immetti un valore float valido."
     }
   ],
   "gc6v4X": [
@@ -6856,7 +6952,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "Consenti la divisione in blocchi"
     }
   ],
   "hN7iBP": [
@@ -6926,7 +7022,7 @@
       "value": "Non è quello che sto cercando"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Il valore è troppo grande."
@@ -7008,6 +7104,12 @@
     {
       "type": 0,
       "value": "Ripeti"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copia azione"
     }
   ],
   "i4C4aB": [
@@ -7099,7 +7201,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "Output sicuri dell'operazione e riferimenti delle proprietà di output"
     }
   ],
   "iTKrs8": [
@@ -7172,12 +7274,6 @@
       "value": " s"
     }
   ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Immettere una tabella valida."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -7229,7 +7325,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "Opzioni richiesta - Timeout"
     }
   ],
   "jQ0Aqj": [
@@ -7307,7 +7403,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "L'abilitazione degli input sicuri garantirà automaticamente la sicurezza degli output."
     }
   ],
   "jgOaTX": [
@@ -7541,6 +7637,12 @@
       "value": "Identità gestita"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Immetti un numero valido."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7636,7 +7738,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "Convalidare il corpo della richiesta in base allo schema specificato. In caso di mancata corrispondenza, viene restituito il codice HTTP 400"
     }
   ],
   "lsKVU6": [
@@ -7678,7 +7780,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "Soglia per gli elementi da restituire"
     }
   ],
   "mAuMD+": [
@@ -7997,12 +8099,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Immetti un URI valido."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8063,6 +8159,12 @@
       "value": "Valore Integer non valido"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copia trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8091,6 +8193,12 @@
     {
       "type": 0,
       "value": "Aggiungi una nota"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Immetti un numero double valido."
     }
   ],
   "ox2Ou7": [
@@ -8163,6 +8271,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valori da combinare in una matrice."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Immetti un numero intero valido."
     }
   ],
   "pXmFGf": [
@@ -8457,7 +8571,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "Limitare la durata massima tra i tentativi e le risposte asincrone per questa azione. Nota: questo non modifica il timeout della richiesta di una singola richiesta"
     }
   ],
   "r/n6/9": [
@@ -9219,7 +9333,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Durata"
     }
   ],
   "vlDynP": [
@@ -9324,6 +9438,12 @@
     {
       "type": 0,
       "value": "Inclusione di contenuto dinamico"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Interrompi generazione"
     }
   ],
   "wPlTDB": [
@@ -9608,6 +9728,12 @@
       "value": "Restituisce una matrice in ordine crescente"
     }
   ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Avviso: il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input."
+    }
+  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9749,7 +9875,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "Editor espressioni"
     }
   ],
   "zIDVd9": [

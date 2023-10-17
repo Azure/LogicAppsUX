@@ -29,6 +29,12 @@
       "value": "Hatalı"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Geçerli bir boole değeri girin."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -72,7 +78,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "Yanıtta İş Akışı Üst Bilgilerini Gizleme"
     }
   ],
   "+xXHdp": [
@@ -409,12 +415,6 @@
       "value": "Bir URI'den bağlantı noktasını döndürür. Bağlantı noktası belirtilmezse, iletişim kuralı için varsayılan bağlantı noktasını döndürür"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Geçerli bir tamsayı girin."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -451,12 +451,6 @@
       "value": "Parametre bağımsız değişkenini bir kayan noktalı sayıya dönüştürür"
     }
   ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Geçerli bir e-posta adresi girin."
-    }
-  ],
   "1ZSzl6": [
     {
       "type": 0,
@@ -490,7 +484,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "İsteğin yeniden denenme sayısı"
     }
   ],
   "1htSs7": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "Kaynak şemayı gizle"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Geçerli bir URI girin."
     }
   ],
   "1uGBLP": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "Yeni çalıştırmaların nasıl kuyruğa alındığını denetleyin"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "Disk belleği sayısı geçersiz. Değer 0'dan büyük bir sayı olmalıdır"
     }
   ],
   "2pRsUf": [
@@ -674,7 +674,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Varsayılan"
     }
   ],
   "2vnYre": [
@@ -863,6 +863,12 @@
       "value": "Kod görünümünü kapat"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Geçerli bir tarih saat girin."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
     {
       "type": 0,
       "value": "Akışınız güncelleştirildi."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Bu akış kaydediliyor..."
     }
   ],
   "4izAMi": [
@@ -1172,7 +1184,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "İşlemin girişlerini güvenli hale getirin"
     }
   ],
   "63CC7M": [
@@ -1202,13 +1214,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
-    }
-  ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "Uyarı: Giriş düğümü türü bu giriş için izin verilen türlerden biri ile eşleşmiyor"
+      "value": "Zaman aşımı değeri geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
     }
   ],
   "6ZviI7": [
@@ -1415,16 +1421,16 @@
       "value": "Bu, iş akışınızı Copilot'ın düzenlemesinden önceki durumuna geri döndürür. Copilot'tan sonra iş akışında ek düzenlemeler yaptıysanız bunları kaybedersiniz. Bu eylem geri alınamaz. Devam etmek istiyor musunuz?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Geçerli bir e-posta adresi girin."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Durum kodu"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Hata bildirin"
     }
   ],
   "7lnElz": [
@@ -1454,7 +1460,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "Üstel Aralık"
     }
   ],
   "7zsUT3": [
@@ -2118,7 +2124,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "Çalıştırmanın izleme kimliğini ayarlayın. Bölünmüş izleme için bu izleme kimliği isteği başlatmaya yarar"
     }
   ],
   "BxITRH": [
@@ -2251,6 +2257,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "'Number', 'Integer' ve 'Decimal' türleri kabul edilir."
+    }
+  ],
   "CypYLs": [
     {
       "type": 1,
@@ -2312,7 +2324,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "Yeniden Deneme İlkesi aralığı geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
     }
   ],
   "DEu7oK": [
@@ -2351,6 +2363,12 @@
     {
       "type": 0,
       "value": "' indirmek için Alt/Option + tıklama"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
     }
   ],
   "DWd9vy": [
@@ -2398,7 +2416,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "Bu eylemden gelen tek bir giden istekte en uzun süre. İstek yeniden denemeler çalıştırıldıktan sonra bu sınır içinde tamamlanmazsa eylem başarısız olur"
     }
   ],
   "DsPDVB": [
@@ -2553,6 +2571,12 @@
       "value": "Bu işlemle ilgili istek geçmişini görüntüleyin"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Geçerli bir tablo girin."
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -2580,7 +2604,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Yeniden Deneme İlkesi Maksimum Aralığı geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
     }
   ],
   "F9dR1Q": [
@@ -3011,12 +3035,6 @@
       "value": "Bildirim getirilirken hata oluştu"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Geçerli bir tarih saat girin."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3187,6 +3205,16 @@
       "value": "."
     }
   ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Kabul edilen veri türleri: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3231,6 +3259,12 @@
     {
       "type": 0,
       "value": "Eylem geri alındı"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot sohbeti iptal edildi"
     }
   ],
   "JNQHws": [
@@ -3329,12 +3363,6 @@
     {
       "type": 0,
       "value": "\" öğesini şununla değiştir:"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Geçerli bir Çift sayı girin."
     }
   ],
   "KV4uky": [
@@ -3482,7 +3510,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "Etkinleştirildiğinde, bu eylem, Dataverse tetikleyicisindeki \"Farklı çalıştır\" ayarındaki kullanıcıyla birlikte çalışır"
     }
   ],
   "LS8rfZ": [
@@ -3725,12 +3753,6 @@
       "value": "Gelişmiş modda düzenle"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Geçerli bir sayı girin."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3777,6 +3799,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Kopyalandı!"
     }
   ],
   "NGJ00e": [
@@ -3875,6 +3903,12 @@
       "value": "Hizmet Sorumlusu"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Üzerinde çalışıyoruz..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3897,6 +3931,12 @@
     {
       "type": 0,
       "value": "Tamam"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Bu Eylem/Tetikleyici kopyalanamıyor."
     }
   ],
   "ODQCKj": [
@@ -3963,6 +4003,12 @@
     {
       "type": 0,
       "value": "Hedef kitleyi girin."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Hata bildirin"
     }
   ],
   "OVvieE": [
@@ -4095,6 +4141,12 @@
       "value": "Gerekli. Bu değer, dizideki tamsayıların sayısıdır."
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Boşluklar URI’ler için kodlanmalıdır"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4186,7 +4238,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "Bölünmüş İzleme Kimliği"
     }
   ],
   "Pq+4a+": [
@@ -4198,7 +4250,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "GZip veya Deflate kullanılarak sıkıştırılmışsa istek gövdesini açın. Bu ayar yalnızca HTTP tetikleyicisi için geçerlidir"
     }
   ],
   "PsmHyH": [
@@ -4348,11 +4400,15 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "Disk belleği sayısı maksimum değeri ("
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": ") aşıyor"
     }
   ],
   "Qn8qxn": [
@@ -4467,6 +4523,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": " alt grafiğine yeni bir adım ekleyin"
     }
   ],
   "RkgScy": [
@@ -4598,7 +4664,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "HTTP üzerinden içerik aktarma davranışını ve özelliklerini belirtin. Büyük boyutlu iletilerin karşıya yüklenmesine olanak sağlamak için bu iletiler küçük isteklere bölünerek bağlayıcıya gönderilebilir."
     }
   ],
   "SgiTAh": [
@@ -4855,6 +4921,16 @@
       "value": "İş Akışını Eylemini Sil"
     }
   ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Dönüştürme işlevini kullanmayı deneyin, örneğin: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4870,7 +4946,7 @@
   "UMPuUJ": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "Sil "
     },
     {
       "type": 1,
@@ -5024,7 +5100,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Daha fazla ayrıntı şu adreste bulunabilir: http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5264,7 +5340,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Süreyi ISO 8601 biçiminde belirtin"
     }
   ],
   "WS9kXD": [
@@ -5304,7 +5380,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "Sabit Aralık"
     }
   ],
   "WcnIF8": [
@@ -5346,7 +5422,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "Yeniden Deneme İlkesi Minimum Aralığı geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
     }
   ],
   "X4gDhV": [
@@ -5412,13 +5488,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "Tetikleyicinin başlatılması için doğru olması gereken bir veya daha fazla ifade belirtin"
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Eylem Zaman Aşımı"
     }
   ],
   "XLUs2P": [
@@ -5633,6 +5709,12 @@
       "value": "Tetikleyici koşulları"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Düzenleyiciyi Temizle"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5827,6 +5909,12 @@
       "value": "Statik Sonucu Daralt"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Eylemi yapıştır"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5944,7 +6032,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "Her bölünmüş örnek için ayrı İzleme kimliği"
     }
   ],
   "ahW8Iv": [
@@ -5957,12 +6045,6 @@
     {
       "type": 0,
       "value": "PFX girin"
-    }
-  ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Geçerli bir kayan girin."
     }
   ],
   "aoUT/3": [
@@ -6057,6 +6139,12 @@
     {
       "type": 0,
       "value": "Bilgi"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Geçerli bir json girin."
     }
   ],
   "ba9yGJ": [
@@ -6164,7 +6252,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "Sayfalandırma sınırına kadar daha fazla sonuç alın"
     }
   ],
   "cK2A/V": [
@@ -6480,7 +6568,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "Seçili dizideki her öğe için iş akışının bir örneğini başlatmak istiyorsanız bölünmüş seçeneğini etkinleştirin. Her örnek, özgün bir izleme kimliğine de sahip olabilir"
     }
   ],
   "epOMnV": [
@@ -6510,7 +6598,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "Örnek: PT1S"
     }
   ],
   "f81ClO": [
@@ -6593,6 +6681,12 @@
       "value": "(UTC+08:00) Pekin, Çongçing, Hong Kong, Urumçi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Ne yazık ki bir sorun oluştu. Lütfen yeniden deneyin."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6626,7 +6720,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "Sınır"
     }
   ],
   "g7my78": [
@@ -6686,7 +6780,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "Yok"
     }
   ],
   "gQt/0f": [
@@ -6705,6 +6799,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Aşkabad, Taşkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Geçerli bir kayan girin."
     }
   ],
   "gc6v4X": [
@@ -6800,7 +6900,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "Parçalamaya izin ver"
     }
   ],
   "hN7iBP": [
@@ -6859,7 +6959,7 @@
       "value": "Aradığım şey bu değil"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Değer çok büyük."
@@ -6941,6 +7041,12 @@
     {
       "type": 0,
       "value": "Yinele"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Eylemi Kopyala"
     }
   ],
   "i4C4aB": [
@@ -7028,7 +7134,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "İşlemin çıkışlarını ve çıkış özelliği başvurularını güvenli hale getirin"
     }
   ],
   "iTKrs8": [
@@ -7101,12 +7207,6 @@
       "value": " sn"
     }
   ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Geçerli bir tablo girin."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -7158,7 +7258,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "İstek Seçenekleri - Zaman Aşımı"
     }
   ],
   "jQ0Aqj": [
@@ -7236,7 +7336,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "Güvenli girişlerin etkinleştirilmesi, çıkışların otomatik olarak güvenliğini sağlar."
     }
   ],
   "jgOaTX": [
@@ -7459,6 +7559,12 @@
       "value": "Yönetilen Kimlik"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Geçerli bir sayı girin."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7554,7 +7660,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "İstek gövdesini sağlanan şemayla doğrulayın. Bir uyumsuzluk olması durumunda, HTTP 400 döndürülür"
     }
   ],
   "lsKVU6": [
@@ -7596,7 +7702,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "Döndürülecek öğe eşiği"
     }
   ],
   "mAuMD+": [
@@ -7919,12 +8025,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Geçerli bir URI girin."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -7985,6 +8085,12 @@
       "value": "Geçersiz Tamsayı değeri"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Tetikleyiciyi Kopyala"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8013,6 +8119,12 @@
     {
       "type": 0,
       "value": "Not ekle"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Geçerli bir Çift sayı girin."
     }
   ],
   "ox2Ou7": [
@@ -8085,6 +8197,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bir dizi olarak birleştirilecek değerler."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Geçerli bir tamsayı girin."
     }
   ],
   "pXmFGf": [
@@ -8368,7 +8486,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "Bu eylem ile ilişkili yeniden denemeler ve zaman uyumsuz yanıtlar arasındaki en uzun süreyi sınırlayın. Not: Bu, tek bir isteğin istek zaman aşımını değiştirmez"
     }
   ],
   "r/n6/9": [
@@ -9126,7 +9244,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Süre"
     }
   ],
   "vlDynP": [
@@ -9227,6 +9345,12 @@
     {
       "type": 0,
       "value": "Dinamik içerik ekleme"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Oluşturmayı durdur"
     }
   ],
   "wPlTDB": [
@@ -9511,6 +9635,12 @@
       "value": "Artan düzende sıralanan bir dizi döndürür"
     }
   ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Uyarı: Giriş düğüm türü bu giriş için izin verilen türlerden biri ile eşleşmiyor."
+    }
+  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9652,7 +9782,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "İfade Düzenleyicisi"
     }
   ],
   "zIDVd9": [

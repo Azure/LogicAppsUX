@@ -106,7 +106,13 @@ export const initializeOperationDetailsForSwagger = async (
 
     throw new Error('Operation info could not be found for a swagger operation');
   } catch (error: any) {
-    const message = `Unable to initialize operation details for swagger based operation - ${nodeId}. Error details - ${error}`;
+    let errorString = '';
+    try {
+      errorString = error?.toString() ?? error;
+    } catch (_: any) {
+      errorString = 'Could not convert error to string';
+    }
+    const message = `Unable to initialize operation details for swagger based operation - ${nodeId}. Error details - ${errorString}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',

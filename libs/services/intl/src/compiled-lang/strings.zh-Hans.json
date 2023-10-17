@@ -29,6 +29,12 @@
       "value": "已出错"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "输入有效的布尔值。"
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -72,7 +78,7 @@
   "+v1RlQ": [
     {
       "type": 0,
-      "value": "Suppress Workflow Headers on Response"
+      "value": "在响应时抑制工作流标头"
     }
   ],
   "+xXHdp": [
@@ -409,12 +415,6 @@
       "value": "返回 URI 的端口。如果未指定端口，则返回协议的默认端口"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "输入有效的整数。"
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -451,12 +451,6 @@
       "value": "将参数转换为浮点数"
     }
   ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "输入有效的电子邮件。"
-    }
-  ],
   "1ZSzl6": [
     {
       "type": 0,
@@ -490,7 +484,7 @@
   "1hPZqe": [
     {
       "type": 0,
-      "value": "The number of times to retry the request"
+      "value": "重试请求的次数"
     }
   ],
   "1htSs7": [
@@ -521,6 +515,12 @@
     {
       "type": 0,
       "value": "隐藏源架构"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "输入有效的 URI。"
     }
   ],
   "1uGBLP": [
@@ -586,7 +586,7 @@
   "2MOA1x": [
     {
       "type": 0,
-      "value": "Control how new runs are queued"
+      "value": "控制新运行的排队方式"
     }
   ],
   "2NXYYu": [
@@ -646,7 +646,7 @@
   "2pCFsW": [
     {
       "type": 0,
-      "value": "Paging count invalid. Value must be a number greater than 0"
+      "value": "分页计数无效。值必须是大于 0 的数字"
     }
   ],
   "2pRsUf": [
@@ -678,7 +678,7 @@
   "2uINs9": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "默认"
     }
   ],
   "2vnYre": [
@@ -875,6 +875,12 @@
       "value": "关闭代码视图"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "输入有效日期/时间。"
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -993,6 +999,12 @@
     {
       "type": 0,
       "value": "你的流已更新。"
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 正在保存此流..."
     }
   ],
   "4izAMi": [
@@ -1184,7 +1196,7 @@
   "632t9E": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation"
+      "value": "保护操作的输入"
     }
   ],
   "63CC7M": [
@@ -1214,13 +1226,7 @@
   "6VV7OY": [
     {
       "type": 0,
-      "value": "Timeout value is invalid, must match ISO 8601 duration format"
-    }
-  ],
-  "6WmLx1": [
-    {
-      "type": 0,
-      "value": "警告: 输入节点类型与此输入允许的类型之一不匹配"
+      "value": "超时值无效，必须与 ISO 8601 持续时间格式匹配"
     }
   ],
   "6ZviI7": [
@@ -1427,16 +1433,16 @@
       "value": "这会将工作流还原到在 Copilot 编辑之前所处的状态。如果在 Copilot 编辑之后对工作流进行了其他编辑，则将丢失这些编辑。此操作无法撤消。是否要继续?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "输入有效的电子邮件。"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "状态代码"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "报告 bug"
     }
   ],
   "7lnElz": [
@@ -1466,7 +1472,7 @@
   "7zDk9N": [
     {
       "type": 0,
-      "value": "Exponential Interval"
+      "value": "指数间隔"
     }
   ],
   "7zsUT3": [
@@ -2119,7 +2125,7 @@
   "BvCnOv": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request"
+      "value": "设置运行的跟踪 ID。对于拆分，此跟踪 ID 用于正在启动的请求。"
     }
   ],
   "BxITRH": [
@@ -2252,6 +2258,12 @@
       "value": "(UTC+09:30)阿德莱德"
     }
   ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "接受 \"Number\"、\"Integer\" 和 \"Decimal\" 类型。"
+    }
+  ],
   "CypYLs": [
     {
       "type": 0,
@@ -2317,7 +2329,7 @@
   "DEKsll": [
     {
       "type": 0,
-      "value": "Retry Policy Interval is invalid, must match ISO 8601 duration format"
+      "value": "重试策略间隔无效，必须与 ISO 8601 持续时间格式匹配"
     }
   ],
   "DEu7oK": [
@@ -2356,6 +2368,12 @@
     {
       "type": 0,
       "value": "\""
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Added Functions"
     }
   ],
   "DWd9vy": [
@@ -2403,7 +2421,7 @@
   "Dm0zAO": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails"
+      "value": "此操作单个出站请求的最大持续时间。如果请求在运行重试后未在此限制内完成，则操作会失败"
     }
   ],
   "DsPDVB": [
@@ -2562,6 +2580,12 @@
       "value": "查看此操作的请求历史记录"
     }
   ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "输入有效的表。"
+    }
+  ],
   "EqX3Mi": [
     {
       "type": 0,
@@ -2589,7 +2613,7 @@
   "F6+icQ": [
     {
       "type": 0,
-      "value": "Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format"
+      "value": "重试策略最大间隔无效，必须与 ISO 8601 持续时间格式匹配"
     }
   ],
   "F9dR1Q": [
@@ -3009,12 +3033,6 @@
       "value": "提取清单时出错"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "输入有效日期/时间。"
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3185,6 +3203,16 @@
       "value": "。"
     }
   ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "接受的数据类型: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
   "J62n9E": [
     {
       "type": 0,
@@ -3229,6 +3257,12 @@
     {
       "type": 0,
       "value": "操作已撤消"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot 聊天已取消"
     }
   ],
   "JNQHws": [
@@ -3327,12 +3361,6 @@
     {
       "type": 0,
       "value": "\" 替换为"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "输入有效的双精度数字。"
     }
   ],
   "KV4uky": [
@@ -3469,7 +3497,7 @@
   "LRAhSA": [
     {
       "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger"
+      "value": "启用后，此操作将使用 Dataverse 触发器中“运行方式”设置中的用户身份运行"
     }
   ],
   "LS8rfZ": [
@@ -3712,12 +3740,6 @@
       "value": "在高级模式中进行编辑"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "请输入有效的数字。"
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3764,6 +3786,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00)赫尔辛基，基辅，里加，索非亚，塔林，维尔纽斯"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "已复制!"
     }
   ],
   "NGJ00e": [
@@ -3862,6 +3890,12 @@
       "value": "服务主体"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ 正在处理..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3884,6 +3918,12 @@
     {
       "type": 0,
       "value": "确定"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "无法复制此操作/触发器。"
     }
   ],
   "ODQCKj": [
@@ -3950,6 +3990,12 @@
     {
       "type": 0,
       "value": "输入受众。"
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "报告 bug"
     }
   ],
   "OVvieE": [
@@ -4082,6 +4128,12 @@
       "value": "必需。此值为数组中的整数数目。"
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "对于 URI，必须编码空格。"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4173,7 +4225,7 @@
   "Pl/fcn": [
     {
       "type": 0,
-      "value": "Split-On Tracking Id"
+      "value": "拆分跟踪 ID"
     }
   ],
   "Pq+4a+": [
@@ -4185,7 +4237,7 @@
   "PqUAbF": [
     {
       "type": 0,
-      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger"
+      "value": "如果使用 GZip 或 Deflate 压缩了请求正文，请解压缩请求正文。此设置仅适用于 HTTP 触发器"
     }
   ],
   "PsmHyH": [
@@ -4339,7 +4391,7 @@
   "QhKk80": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value of "
+      "value": "分页计数超过最大值 "
     },
     {
       "type": 1,
@@ -4447,6 +4499,20 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": " 中插入新步骤"
     }
   ],
   "RkgScy": [
@@ -4578,7 +4644,7 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "指定通过 HTTP 传输内容的行为和功能。大型消息可能会拆分为对连接器的较小请求，以允许上传大型消息。"
     }
   ],
   "SgiTAh": [
@@ -4839,6 +4905,16 @@
       "value": "删除工作流操作"
     }
   ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "尝试使用转换函数，例如: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -4854,7 +4930,7 @@
   "UMPuUJ": [
     {
       "type": 0,
-      "value": "Delete "
+      "value": "删除 "
     },
     {
       "type": 1,
@@ -5008,7 +5084,7 @@
   "V+xi3c": [
     {
       "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "有关更多详细信息，请访问 http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -5260,7 +5336,7 @@
   "WS55UF": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "指定持续时间(按 ISO 8601 格式)"
     }
   ],
   "WS9kXD": [
@@ -5300,7 +5376,7 @@
   "Wb/cBR": [
     {
       "type": 0,
-      "value": "Fixed Interval"
+      "value": "固定间隔"
     }
   ],
   "WcnIF8": [
@@ -5342,7 +5418,7 @@
   "X4SuNU": [
     {
       "type": 0,
-      "value": "Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format"
+      "value": "重试策略最小间隔无效，必须与 ISO 8601 持续时间格式匹配"
     }
   ],
   "X4gDhV": [
@@ -5408,13 +5484,13 @@
   "XJkBrZ": [
     {
       "type": 0,
-      "value": "Specify one or more expressions that must be true for the trigger to fire"
+      "value": "指定一个或多个必须为 true 才能激发触发器的表达式"
     }
   ],
   "XKDZXi": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "操作超时"
     }
   ],
   "XLUs2P": [
@@ -5629,6 +5705,12 @@
       "value": "触发器条件"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "清除编辑器"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5823,6 +5905,12 @@
       "value": "折叠静态结果"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "粘贴操作"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5940,7 +6028,7 @@
   "ahFd/S": [
     {
       "type": 0,
-      "value": "Distinct Tracking id for each split-on instance"
+      "value": "每个拆分实例的非重复跟踪 ID"
     }
   ],
   "ahW8Iv": [
@@ -5953,12 +6041,6 @@
     {
       "type": 0,
       "value": "输入 Pfx"
-    }
-  ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "输入有效的浮点数。"
     }
   ],
   "aoUT/3": [
@@ -6053,6 +6135,12 @@
     {
       "type": 0,
       "value": "信息"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
     }
   ],
   "ba9yGJ": [
@@ -6160,7 +6248,7 @@
   "cJkSrD": [
     {
       "type": 0,
-      "value": "Retrieve more results up to the pagination limit"
+      "value": "检索更多结果，直到分页限制"
     }
   ],
   "cK2A/V": [
@@ -6480,7 +6568,7 @@
   "eo1YKX": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
+      "value": "启用拆分以启动所选数组中每个项的工作流实例。每个实例也可具有不同的跟踪 ID"
     }
   ],
   "epOMnV": [
@@ -6510,7 +6598,7 @@
   "f7Janv": [
     {
       "type": 0,
-      "value": "Example: PT1S"
+      "value": "示例: PT1S"
     }
   ],
   "f81ClO": [
@@ -6593,6 +6681,12 @@
       "value": "(UTC+08:00)北京，重庆，香港特別行政区，乌鲁木齐"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "对不起，出现错误。请重试。"
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6626,7 +6720,7 @@
   "g7/EKC": [
     {
       "type": 0,
-      "value": "Limit"
+      "value": "限制"
     }
   ],
   "g7my78": [
@@ -6694,7 +6788,7 @@
   "gL4rVQ": [
     {
       "type": 0,
-      "value": "None"
+      "value": "无"
     }
   ],
   "gQt/0f": [
@@ -6713,6 +6807,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00)阿什哈巴德，塔什干"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "输入有效的浮点数。"
     }
   ],
   "gc6v4X": [
@@ -6808,7 +6908,7 @@
   "hMf2TA": [
     {
       "type": 0,
-      "value": "Allow chunking"
+      "value": "允许分块"
     }
   ],
   "hN7iBP": [
@@ -6856,7 +6956,7 @@
       "value": "这不是我要查找的内容"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "值过大。"
@@ -6938,6 +7038,12 @@
     {
       "type": 0,
       "value": "重做"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "复制操作"
     }
   ],
   "i4C4aB": [
@@ -7029,7 +7135,7 @@
   "iSiVB0": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties"
+      "value": "保护操作的输出和输出属性的引用。"
     }
   ],
   "iTKrs8": [
@@ -7102,12 +7208,6 @@
       "value": " 秒"
     }
   ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "输入有效的表。"
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -7159,7 +7259,7 @@
   "jO5Fet": [
     {
       "type": 0,
-      "value": "Request Options - Timeout"
+      "value": "请求选项 - 超时"
     }
   ],
   "jQ0Aqj": [
@@ -7241,7 +7341,7 @@
   "jfU6pn": [
     {
       "type": 0,
-      "value": "Enabling secure inputs will automatically secure outputs."
+      "value": "启用安全输入将自动保护输出。"
     }
   ],
   "jgOaTX": [
@@ -7457,6 +7557,12 @@
       "value": "托管标识"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "请输入有效的数字。"
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7552,7 +7658,7 @@
   "lsH37F": [
     {
       "type": 0,
-      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned"
+      "value": "根据提供的架构验证请求正文。如果存在不匹配项，将会返回 HTTP 400"
     }
   ],
   "lsKVU6": [
@@ -7594,7 +7700,7 @@
   "m8z4Yr": [
     {
       "type": 0,
-      "value": "Threshold of items to return"
+      "value": "要返回的项目阈值"
     }
   ],
   "mAuMD+": [
@@ -7925,12 +8031,6 @@
       "value": " 页)"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "输入有效的 URL。"
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -7991,6 +8091,12 @@
       "value": "整数值无效"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "复制触发器"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8019,6 +8125,12 @@
     {
       "type": 0,
       "value": "添加备注"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "输入有效的双精度数字。"
     }
   ],
   "ox2Ou7": [
@@ -8091,6 +8203,12 @@
     {
       "type": 0,
       "value": "必需。要合并成数组的值。"
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "输入有效的整数。"
     }
   ],
   "pXmFGf": [
@@ -8363,7 +8481,7 @@
   "qzaoRR": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request"
+      "value": "限制此操作的重试和异步响应之间的最大持续时间。注意: 这不会更改单个请求的请求超时"
     }
   ],
   "r/n6/9": [
@@ -9121,7 +9239,7 @@
   "viee6C": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "持续时间"
     }
   ],
   "vlDynP": [
@@ -9226,6 +9344,12 @@
     {
       "type": 0,
       "value": "包括动态内容"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "停止生成"
     }
   ],
   "wPlTDB": [
@@ -9510,6 +9634,12 @@
       "value": "返回按升序排序的数组"
     }
   ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "警告: 输入节点类型与此输入允许的类型之一不匹配。"
+    }
+  ],
   "yRDuqj": [
     {
       "type": 0,
@@ -9655,7 +9785,7 @@
   "zEv8dd": [
     {
       "type": 0,
-      "value": "Expression Editor"
+      "value": "表达式编辑器"
     }
   ],
   "zIDVd9": [

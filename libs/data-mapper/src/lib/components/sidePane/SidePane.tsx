@@ -41,7 +41,7 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
   const intl = useIntl();
   const styles = useStyles();
 
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',

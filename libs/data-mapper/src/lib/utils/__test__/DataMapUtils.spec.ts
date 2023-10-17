@@ -12,6 +12,7 @@ import {
   qualifyLoopRelativeSourceKeys,
   removeSequenceFunction,
   splitKeyIntoChildren,
+  isValidToMakeMapDefinition,
 } from '../DataMap.Utils';
 import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
@@ -28,6 +29,496 @@ import {
 import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '__mocks__/schemas';
 
 describe('utils/DataMap', () => {
+  describe('isValidToMakeMapDefinition', () => {
+    it('includes a function node that is not connected to any input and outputs', () => {
+      const connectionsWithUnconnectedFunction: ConnectionDictionary = {
+        'ToLower-059C6C37-6BA4-4BF0-B100-4BDC798A5AA7': {
+          self: {
+            node: {
+              key: 'ToLower',
+              maxNumberOfInputs: 1,
+              functionName: 'lower-case',
+              outputValueType: NormalizedDataType.String,
+              inputs: [
+                {
+                  name: 'Value',
+                  allowedTypes: [NormalizedDataType.String],
+                  isOptional: false,
+                  allowCustomInput: true,
+                  tooltip: 'The value to use',
+                  placeHolder: 'The value',
+                },
+              ],
+              displayName: 'To Lower',
+              category: FunctionCategory.String,
+              description: 'Sets a string to be all lower case',
+              tooltip: 'Lower case',
+              children: [],
+            },
+            reactFlowKey: 'ToLower-059C6C37-6BA4-4BF0-B100-4BDC798A5AA7',
+          },
+          inputs: { '0': [] },
+          outputs: [],
+        },
+      };
+      expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(true);
+    });
+
+    it('includes a function node that is only connected to an input', () => {
+      const connectionsWithUnconnectedFunction: ConnectionDictionary = {
+        'ToLower-73F91D20-0B8E-4826-A705-76F3E59F1FEB': {
+          self: {
+            node: {
+              key: 'ToLower',
+              maxNumberOfInputs: 1,
+              functionName: 'lower-case',
+              outputValueType: NormalizedDataType.String,
+              inputs: [
+                {
+                  name: 'Value',
+                  allowedTypes: [NormalizedDataType.String],
+                  isOptional: false,
+                  allowCustomInput: true,
+                  tooltip: 'The value to use',
+                  placeHolder: 'The value',
+                },
+              ],
+              displayName: 'To Lower',
+              category: FunctionCategory.String,
+              description: 'Sets a string to be all lower case',
+              tooltip: 'Lower case',
+              children: [],
+            },
+            reactFlowKey: 'ToLower-73F91D20-0B8E-4826-A705-76F3E59F1FEB',
+          },
+          inputs: {
+            '0': [
+              {
+                reactFlowKey: 'source-/ns0:SourcePlaygroundRoot/UserID',
+                node: {
+                  key: '/ns0:SourcePlaygroundRoot/UserID',
+                  name: 'UserID',
+                  qName: 'UserID',
+                  type: NormalizedDataType.String,
+                  properties: 'None',
+                  parentKey: '/ns0:SourcePlaygroundRoot',
+                  nodeProperties: [SchemaNodeProperty.None],
+                  children: [],
+                  pathToRoot: [
+                    {
+                      key: '/ns0:SourcePlaygroundRoot',
+                      name: 'SourcePlaygroundRoot',
+                      qName: 'ns0:SourcePlaygroundRoot',
+                      repeating: false,
+                    },
+                    {
+                      key: '/ns0:SourcePlaygroundRoot/UserID',
+                      name: 'UserID',
+                      qName: 'UserID',
+                      repeating: false,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          outputs: [],
+        },
+        'source-/ns0:SourcePlaygroundRoot/UserID': {
+          self: {
+            node: {
+              key: '/ns0:SourcePlaygroundRoot/UserID',
+              name: 'UserID',
+              qName: 'UserID',
+              type: NormalizedDataType.String,
+              properties: 'None',
+              parentKey: '/ns0:SourcePlaygroundRoot',
+              nodeProperties: [SchemaNodeProperty.None],
+              children: [],
+              pathToRoot: [
+                {
+                  key: '/ns0:SourcePlaygroundRoot',
+                  name: 'SourcePlaygroundRoot',
+                  qName: 'ns0:SourcePlaygroundRoot',
+                  repeating: false,
+                },
+                {
+                  key: '/ns0:SourcePlaygroundRoot/UserID',
+                  name: 'UserID',
+                  qName: 'UserID',
+                  repeating: false,
+                },
+              ],
+            },
+            reactFlowKey: 'source-/ns0:SourcePlaygroundRoot/UserID',
+          },
+          inputs: {
+            '0': [],
+          },
+          outputs: [
+            {
+              node: {
+                key: 'ToLower',
+                maxNumberOfInputs: 1,
+                functionName: 'lower-case',
+                outputValueType: NormalizedDataType.String,
+                inputs: [
+                  {
+                    name: 'Value',
+                    allowedTypes: [NormalizedDataType.String],
+                    isOptional: false,
+                    allowCustomInput: true,
+                    tooltip: 'The value to use',
+                    placeHolder: 'The value',
+                  },
+                ],
+                displayName: 'To Lower',
+                category: FunctionCategory.String,
+                description: 'Sets a string to be all lower case',
+                tooltip: 'Lower case',
+                children: [],
+              },
+              reactFlowKey: 'ToLower-73F91D20-0B8E-4826-A705-76F3E59F1FEB',
+            },
+          ],
+        },
+      };
+      expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(true);
+    });
+
+    it('includes a function node that is only connected to an output', () => {
+      const connectionsWithUnconnectedFunction: ConnectionDictionary = {
+        'ToLower-1C55C194-8062-446F-B5C6-068DD9C5F06F': {
+          self: {
+            node: {
+              key: 'ToLower',
+              maxNumberOfInputs: 1,
+              functionName: 'lower-case',
+              outputValueType: NormalizedDataType.String,
+              inputs: [
+                {
+                  name: 'Value',
+                  allowedTypes: [NormalizedDataType.String],
+                  isOptional: false,
+                  allowCustomInput: true,
+                  tooltip: 'The value to use',
+                  placeHolder: 'The value',
+                },
+              ],
+              displayName: 'To Lower',
+              category: FunctionCategory.String,
+              description: 'Sets a string to be all lower case',
+              tooltip: 'Lower case',
+              children: [],
+            },
+            reactFlowKey: 'ToLower-1C55C194-8062-446F-B5C6-068DD9C5F06F',
+          },
+          inputs: {
+            '0': [],
+          },
+          outputs: [
+            {
+              node: {
+                key: '/ns0:TargetPlaygroundRoot/UserID',
+                name: 'UserID',
+                qName: 'UserID',
+                type: NormalizedDataType.String,
+                properties: 'None',
+                parentKey: '/ns0:TargetPlaygroundRoot',
+                nodeProperties: [SchemaNodeProperty.None],
+                children: [],
+                pathToRoot: [
+                  {
+                    key: '/ns0:TargetPlaygroundRoot',
+                    name: 'TargetPlaygroundRoot',
+                    qName: 'ns0:TargetPlaygroundRoot',
+                    repeating: false,
+                  },
+                  {
+                    key: '/ns0:TargetPlaygroundRoot/UserID',
+                    name: 'UserID',
+                    qName: 'UserID',
+                    repeating: false,
+                  },
+                ],
+              },
+              reactFlowKey: 'target-/ns0:TargetPlaygroundRoot/UserID',
+            },
+          ],
+        },
+        'target-/ns0:TargetPlaygroundRoot/UserID': {
+          self: {
+            node: {
+              key: '/ns0:TargetPlaygroundRoot/UserID',
+              name: 'UserID',
+              qName: 'UserID',
+              type: NormalizedDataType.String,
+              properties: 'None',
+              parentKey: '/ns0:TargetPlaygroundRoot',
+              nodeProperties: [SchemaNodeProperty.None],
+              children: [],
+              pathToRoot: [
+                {
+                  key: '/ns0:TargetPlaygroundRoot',
+                  name: 'TargetPlaygroundRoot',
+                  qName: 'ns0:TargetPlaygroundRoot',
+                  repeating: false,
+                },
+                {
+                  key: '/ns0:TargetPlaygroundRoot/UserID',
+                  name: 'UserID',
+                  qName: 'UserID',
+                  repeating: false,
+                },
+              ],
+            },
+            reactFlowKey: 'target-/ns0:TargetPlaygroundRoot/UserID',
+          },
+          inputs: {
+            '0': [
+              {
+                reactFlowKey: 'ToLower-1C55C194-8062-446F-B5C6-068DD9C5F06F',
+                node: {
+                  key: 'ToLower',
+                  maxNumberOfInputs: 1,
+                  functionName: 'lower-case',
+                  outputValueType: NormalizedDataType.String,
+                  inputs: [
+                    {
+                      name: 'Value',
+                      allowedTypes: [NormalizedDataType.String],
+                      isOptional: false,
+                      allowCustomInput: true,
+                      tooltip: 'The value to use',
+                      placeHolder: 'The value',
+                    },
+                  ],
+                  displayName: 'To Lower',
+                  category: FunctionCategory.String,
+                  description: 'Sets a string to be all lower case',
+                  tooltip: 'Lower case',
+                  children: [],
+                },
+              },
+            ],
+          },
+          outputs: [],
+        },
+      };
+
+      expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(false);
+    });
+
+    it('includes a function node that connected to both input and output', () => {
+      const connectionsWithUnconnectedFunction: ConnectionDictionary = {
+        'ToLower-5CBBDFEE-0809-4D8D-A62D-8D65ABE13738': {
+          self: {
+            node: {
+              key: 'ToLower',
+              maxNumberOfInputs: 1,
+              functionName: 'lower-case',
+              outputValueType: NormalizedDataType.String,
+              inputs: [
+                {
+                  name: 'Value',
+                  allowedTypes: [NormalizedDataType.String],
+                  isOptional: false,
+                  allowCustomInput: true,
+                  tooltip: 'The value to use',
+                  placeHolder: 'The value',
+                },
+              ],
+              displayName: 'To Lower',
+              category: FunctionCategory.String,
+              description: 'Sets a string to be all lower case',
+              tooltip: 'Lower case',
+              children: [],
+            },
+            reactFlowKey: 'ToLower-5CBBDFEE-0809-4D8D-A62D-8D65ABE13738',
+          },
+          inputs: {
+            '0': [
+              {
+                reactFlowKey: 'source-/ns0:SourcePlaygroundRoot/UserID',
+                node: {
+                  key: '/ns0:SourcePlaygroundRoot/UserID',
+                  name: 'UserID',
+                  qName: 'UserID',
+                  type: NormalizedDataType.String,
+                  properties: 'None',
+                  parentKey: '/ns0:SourcePlaygroundRoot',
+                  nodeProperties: [SchemaNodeProperty.None],
+                  children: [],
+                  pathToRoot: [
+                    {
+                      key: '/ns0:SourcePlaygroundRoot',
+                      name: 'SourcePlaygroundRoot',
+                      qName: 'ns0:SourcePlaygroundRoot',
+                      repeating: false,
+                    },
+                    {
+                      key: '/ns0:SourcePlaygroundRoot/UserID',
+                      name: 'UserID',
+                      qName: 'UserID',
+                      repeating: false,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          outputs: [
+            {
+              node: {
+                key: '/ns0:TargetPlaygroundRoot/UserID',
+                name: 'UserID',
+                qName: 'UserID',
+                type: NormalizedDataType.String,
+                properties: 'None',
+                parentKey: '/ns0:TargetPlaygroundRoot',
+                nodeProperties: [SchemaNodeProperty.None],
+                children: [],
+                pathToRoot: [
+                  {
+                    key: '/ns0:TargetPlaygroundRoot',
+                    name: 'TargetPlaygroundRoot',
+                    qName: 'ns0:TargetPlaygroundRoot',
+                    repeating: false,
+                  },
+                  {
+                    key: '/ns0:TargetPlaygroundRoot/UserID',
+                    name: 'UserID',
+                    qName: 'UserID',
+                    repeating: false,
+                  },
+                ],
+              },
+              reactFlowKey: 'target-/ns0:TargetPlaygroundRoot/UserID',
+            },
+          ],
+        },
+        'target-/ns0:TargetPlaygroundRoot/UserID': {
+          self: {
+            node: {
+              key: '/ns0:TargetPlaygroundRoot/UserID',
+              name: 'UserID',
+              qName: 'UserID',
+              type: NormalizedDataType.String,
+              properties: 'None',
+              parentKey: '/ns0:TargetPlaygroundRoot',
+              nodeProperties: [SchemaNodeProperty.None],
+              children: [],
+              pathToRoot: [
+                {
+                  key: '/ns0:TargetPlaygroundRoot',
+                  name: 'TargetPlaygroundRoot',
+                  qName: 'ns0:TargetPlaygroundRoot',
+                  repeating: false,
+                },
+                {
+                  key: '/ns0:TargetPlaygroundRoot/UserID',
+                  name: 'UserID',
+                  qName: 'UserID',
+                  repeating: false,
+                },
+              ],
+            },
+            reactFlowKey: 'target-/ns0:TargetPlaygroundRoot/UserID',
+          },
+          inputs: {
+            '0': [
+              {
+                reactFlowKey: 'ToLower-5CBBDFEE-0809-4D8D-A62D-8D65ABE13738',
+                node: {
+                  key: 'ToLower',
+                  maxNumberOfInputs: 1,
+                  functionName: 'lower-case',
+                  outputValueType: NormalizedDataType.String,
+                  inputs: [
+                    {
+                      name: 'Value',
+                      allowedTypes: [NormalizedDataType.String],
+                      isOptional: false,
+                      allowCustomInput: true,
+                      tooltip: 'The value to use',
+                      placeHolder: 'The value',
+                    },
+                  ],
+                  displayName: 'To Lower',
+                  category: FunctionCategory.String,
+                  description: 'Sets a string to be all lower case',
+                  tooltip: 'Lower case',
+                  children: [],
+                },
+              },
+            ],
+          },
+          outputs: [],
+        },
+        'source-/ns0:SourcePlaygroundRoot/UserID': {
+          self: {
+            node: {
+              key: '/ns0:SourcePlaygroundRoot/UserID',
+              name: 'UserID',
+              qName: 'UserID',
+              type: NormalizedDataType.String,
+              properties: 'None',
+              parentKey: '/ns0:SourcePlaygroundRoot',
+              nodeProperties: [SchemaNodeProperty.None],
+              children: [],
+              pathToRoot: [
+                {
+                  key: '/ns0:SourcePlaygroundRoot',
+                  name: 'SourcePlaygroundRoot',
+                  qName: 'ns0:SourcePlaygroundRoot',
+                  repeating: false,
+                },
+                {
+                  key: '/ns0:SourcePlaygroundRoot/UserID',
+                  name: 'UserID',
+                  qName: 'UserID',
+                  repeating: false,
+                },
+              ],
+            },
+            reactFlowKey: 'source-/ns0:SourcePlaygroundRoot/UserID',
+          },
+          inputs: {
+            '0': [],
+          },
+          outputs: [
+            {
+              node: {
+                key: 'ToLower',
+                maxNumberOfInputs: 1,
+                functionName: 'lower-case',
+                outputValueType: NormalizedDataType.String,
+                inputs: [
+                  {
+                    name: 'Value',
+                    allowedTypes: [NormalizedDataType.String],
+                    isOptional: false,
+                    allowCustomInput: true,
+                    tooltip: 'The value to use',
+                    placeHolder: 'The value',
+                  },
+                ],
+                displayName: 'To Lower',
+                category: FunctionCategory.String,
+                description: 'Sets a string to be all lower case',
+                tooltip: 'Lower case',
+                children: [],
+              },
+              reactFlowKey: 'ToLower-E9F823A5-4349-47CA-A49E-273CBEF6A86F',
+            },
+          ],
+        },
+      };
+
+      expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(true);
+    });
+  });
+
   describe('addAncestorNodesToCanvas', () => {
     const sourceSchema: Schema = comprehensiveSourceSchema;
     const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
@@ -213,6 +704,33 @@ describe('utils/DataMap', () => {
         'string(EmployeeID)',
       ]);
     });
+
+    it('Concat with three values including custom string', async () => {
+      expect(splitKeyIntoChildren('concat(EmployeeName, "EmployeeAge", EmployeeID)')).toEqual([
+        'EmployeeName',
+        '"EmployeeAge"',
+        'EmployeeID',
+      ]);
+    });
+
+    it('Concat with three values surrounded by another function including custom string', async () => {
+      expect(splitKeyIntoChildren('int(concat(/ns0:PersonOrigin/FirstName, " ",/ns0:PersonOrigin/LastName))')).toEqual([
+        'concat(/ns0:PersonOrigin/FirstName, " ",/ns0:PersonOrigin/LastName)',
+      ]);
+    });
+
+    it('Concat with three values surrounded by two other functions including custom string in the middle', async () => {
+      expect(splitKeyIntoChildren('subtract(2023, int(concat(/ns0:PersonOrigin/FirstName, " ",/ns0:PersonOrigin/LastName)))')).toEqual([
+        '2023',
+        'int(concat(/ns0:PersonOrigin/FirstName, " ",/ns0:PersonOrigin/LastName))',
+      ]);
+    });
+
+    it('Concat with three values surrounded by two other functions including custom string in the middle', async () => {
+      expect(
+        splitKeyIntoChildren('subtract(2023, int(concat("custom string", /ns0:PersonOrigin/FirstName, /ns0:PersonOrigin/LastName)))')
+      ).toEqual(['2023', 'int(concat("custom string", /ns0:PersonOrigin/FirstName, /ns0:PersonOrigin/LastName))']);
+    });
   });
 
   describe('qualifyLoopRelativeSourceKeys', () => {
@@ -332,6 +850,23 @@ describe('utils/DataMap', () => {
         '/ns0:TargetSchemaRoot/Looping/ManyToMany/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)/Simple/$for(SourceSimpleChild)/SimpleChild/$for(SourceSimpleChildChild)/SimpleChildChild/Direct'
       );
     });
+
+    it('returns unchanged string for multiple loops with custom string', () => {
+      const result = removeSequenceFunction([
+        'int',
+        Separators.OpenParenthesis,
+        'concat',
+        Separators.OpenParenthesis,
+        '"customString"',
+        Separators.Comma,
+        '/ns0:PersonOrigin/FirstName',
+        Separators.Comma,
+        '/ns0:PersonOrigin/LastName',
+        Separators.CloseParenthesis,
+        Separators.CloseParenthesis,
+      ]);
+      expect(result).toEqual('int(concat("customString",/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName))');
+    });
   });
 
   describe('separateIntoTokens', () => {
@@ -368,6 +903,49 @@ describe('utils/DataMap', () => {
       expect(result[12]).toEqual(Separators.CloseParenthesis);
       expect(result[13]).toEqual(Separators.CloseParenthesis);
       expect(result[14]).toEqual('/Person/Name');
+    });
+
+    it('separates a loop and sequence target', () => {
+      const result = separateIntoTokens('int(concat(/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName))');
+      expect(result[0]).toEqual('int');
+      expect(result[1]).toEqual(Separators.OpenParenthesis);
+      expect(result[2]).toEqual('concat');
+      expect(result[3]).toEqual(Separators.OpenParenthesis);
+      expect(result[4]).toEqual('/ns0:PersonOrigin/FirstName');
+      expect(result[5]).toEqual(Separators.Comma);
+      expect(result[6]).toEqual('/ns0:PersonOrigin/LastName');
+      expect(result[7]).toEqual(Separators.CloseParenthesis);
+      expect(result[8]).toEqual(Separators.CloseParenthesis);
+    });
+
+    it('separates a loop and sequence target', () => {
+      const result = separateIntoTokens('int(concat(/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName,"customString"))');
+      expect(result[0]).toEqual('int');
+      expect(result[1]).toEqual(Separators.OpenParenthesis);
+      expect(result[2]).toEqual('concat');
+      expect(result[3]).toEqual(Separators.OpenParenthesis);
+      expect(result[4]).toEqual('/ns0:PersonOrigin/FirstName');
+      expect(result[5]).toEqual(Separators.Comma);
+      expect(result[6]).toEqual('/ns0:PersonOrigin/LastName');
+      expect(result[7]).toEqual(Separators.Comma);
+      expect(result[8]).toEqual('"customString"');
+      expect(result[9]).toEqual(Separators.CloseParenthesis);
+      expect(result[10]).toEqual(Separators.CloseParenthesis);
+    });
+
+    it('separates a loop and sequence target', () => {
+      const result = separateIntoTokens('int(concat("customString",/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName))');
+      expect(result[0]).toEqual('int');
+      expect(result[1]).toEqual(Separators.OpenParenthesis);
+      expect(result[2]).toEqual('concat');
+      expect(result[3]).toEqual(Separators.OpenParenthesis);
+      expect(result[4]).toEqual('"customString"');
+      expect(result[5]).toEqual(Separators.Comma);
+      expect(result[6]).toEqual('/ns0:PersonOrigin/FirstName');
+      expect(result[7]).toEqual(Separators.Comma);
+      expect(result[8]).toEqual('/ns0:PersonOrigin/LastName');
+      expect(result[9]).toEqual(Separators.CloseParenthesis);
+      expect(result[10]).toEqual(Separators.CloseParenthesis);
     });
   });
 });
