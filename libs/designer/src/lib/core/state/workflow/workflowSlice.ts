@@ -82,6 +82,7 @@ export const workflowSlice = createSlice({
       if (action.payload.isTrigger) {
         deleteWorkflowNode(constants.NODE.TYPE.PLACEHOLDER_TRIGGER, graph);
         delete state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER];
+        delete state.operations[constants.NODE.TYPE.PLACEHOLDER_TRIGGER];
 
         if (graph.edges?.length) {
           graph.edges = graph.edges.map((edge) => {
