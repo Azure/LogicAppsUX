@@ -1,5 +1,5 @@
 import Constants from '../../../common/constants';
-import type { WorkflowParameter } from '../../../common/models/workflow';
+import { ImpersonationSource, type ConnectionReferences, type WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -523,9 +523,29 @@ export const updateInvokerSettings = (
   tiggerNodeManifest: OperationManifest | undefined,
   nodeId: string,
   settings: Settings,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  references?: ConnectionReferences
 ): void => {
-  if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
-    dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { ...settings.invokerConnection, isSupported: true } } }));
+  if (isTrigger) {
+    return;
+  }
+
+  if (references) {
+    Object.keys(references).forEach((key) => {
+      const impersonationSource = references[key].impersonation?.source;
+      if (impersonationSource === ImpersonationSource.Invoker) {
+        // if impersonation is set, enable invoker settings
+        dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { isSupported: true, value: { enabled: true } } } }));
+      } else {
+        const nodeSettings = tiggerNodeManifest?.properties?.settings;
+        if (nodeSettings?.invokerConnection) {
+          const updatedInvokerConnection = {
+            ...settings.invokerConnection,
+            isSupported: true,
+          };
+          dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: updatedInvokerConnection } }));
+        }
+      }
+    });
   }
 };
