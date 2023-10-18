@@ -1,10 +1,10 @@
 import constants from '../common/constants';
 import type { Workflow } from '../common/models/workflow';
 import { isSuccessResponse } from '../core/util';
-import LogicApps from '../images/LogicApps.svg';
 import Sparkle from '../images/Sparkle.svg';
 import SparkleDisabled from '../images/SparkleDisabled.svg';
-import { IconButton, Panel, PanelType, css, getId } from '@fluentui/react';
+import { CopilotPanelHeader } from './panelheader';
+import { Panel, PanelType, css, getId } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { ConversationItem, PromptGuideItem } from '@microsoft/designer-ui';
@@ -77,14 +77,6 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
 
   const intlText = useMemo(() => {
     return {
-      headerTitle: intl.formatMessage({
-        defaultMessage: 'Copilot',
-        description: 'Chatbot header title',
-      }),
-      pill: intl.formatMessage({
-        defaultMessage: 'In-Development',
-        description: 'Label in the chatbot header stating the chatbot feature is still in-development',
-      }),
       chatInputPlaceholder: intl.formatMessage({
         defaultMessage: 'Ask a question or describe how you want to change this flow',
         description: 'Chabot input placeholder text',
@@ -96,10 +88,6 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
       actionsButtonTitle: intl.formatMessage({
         defaultMessage: 'Actions',
         description: 'Actions button',
-      }),
-      closeButtonTitle: intl.formatMessage({
-        defaultMessage: 'Close',
-        description: 'Close button',
       }),
       queryTemplates: {
         createFlow1SentenceStart: intl.formatMessage({
@@ -347,106 +335,97 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
   return (
     <Panel
       type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
-      isOpen={!collapsed}
-      customWidth={'340px'}
+      isOpen={true}
+      customWidth={collapsed ? 'auto' : '360px'}
       hasCloseButton={false}
       isBlocking={false}
+      styles={{ content: { padding: '2px', minWidth: '22px' } }}
       layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
     >
       <div className={'msla-chatbot-container'}>
-        <div className={'msla-chatbot-header'}>
-          <div className={'msla-chatbot-header-icon'}>
-            <img src={LogicApps} alt="Logic Apps" />
-          </div>
-          <div className={'msla-chatbot-header-title'}>{intlText.headerTitle}</div>
-          <div className={'msla-chatbot-header-mode-pill'}>{intlText.pill}</div>
-          <IconButton
-            className={'msla-chatbot-close-button'}
-            title={intlText.closeButtonTitle}
-            iconProps={{ iconName: 'Clear' }}
-            onClick={() => {
-              setCollapsed(true);
-            }}
-          />
-        </div>
-        <div className={css('msla-chatbot-content')}>
-          {!answerGeneration && (
-            <ProgressCardWithStopButton
-              onStopButtonClick={() => abortFetching()}
-              progressState={intlText.progressCardText}
-              stopButtonLabel={intlText.progressCardStopButtonLabel}
-            />
-          )}
-          {isSaving && <ProgressCardWithStopButton progressState={intlText.progressCardSaveText} />}
-          {conversation.map((item) => (
-            <ConversationMessage key={item.id} item={item} />
-          ))}
-        </div>
-        <div className={'msla-chatbot-footer'}>
-          {selectedPromptGuideItemKey && <PromptGuideCard itemKey={selectedPromptGuideItemKey} />}
-          <ChatSuggestionGroup>
-            {canSaveCurrentFlow && (
-              <ChatSuggestion
-                text={intlText.chatSuggestion.saveButton}
-                iconName={'Save'}
-                onClick={() => saveCurrentFlow(false) /*TODO: add method to save workflow*/}
-              />
-            )}
-            {canTestCurrentFlow && (
-              <ChatSuggestion
-                text={intlText.chatSuggestion.testButton}
-                iconName={'TestBeaker'}
-                onClick={() => testCurrentFlow(false) /*TODO: add method to test workflow*/}
-              />
-            )}
-          </ChatSuggestionGroup>
-          <ChatInput
-            disabled={!answerGeneration}
-            footerActionsProps={[
-              {
-                title: intlText.actionsButtonTitle,
-                onClick: togglePromptGuide,
-                disabled: !answerGeneration,
-                toggle: true,
-                checked: isPromptGuideOpen,
-                elementRef: promptGuideButtonRef,
-                iconProps: {
-                  imageProps: {
-                    src: !answerGeneration ? SparkleDisabled : Sparkle,
+        <CopilotPanelHeader collapsed={collapsed} toggleCollapse={setCollapsed} />
+        {!collapsed && (
+          <>
+            <div className={css('msla-chatbot-content')}>
+              {!answerGeneration && (
+                <ProgressCardWithStopButton
+                  onStopButtonClick={() => abortFetching()}
+                  progressState={intlText.progressCardText}
+                  stopButtonLabel={intlText.progressCardStopButtonLabel}
+                />
+              )}
+              {isSaving && <ProgressCardWithStopButton progressState={intlText.progressCardSaveText} />}
+              {conversation.map((item) => (
+                <ConversationMessage key={item.id} item={item} />
+              ))}
+            </div>
+            <div className={'msla-chatbot-footer'}>
+              {selectedPromptGuideItemKey && <PromptGuideCard itemKey={selectedPromptGuideItemKey} />}
+              <ChatSuggestionGroup>
+                {canSaveCurrentFlow && (
+                  <ChatSuggestion
+                    text={intlText.chatSuggestion.saveButton}
+                    iconName={'Save'}
+                    onClick={() => saveCurrentFlow(false) /*TODO: add method to save workflow*/}
+                  />
+                )}
+                {canTestCurrentFlow && (
+                  <ChatSuggestion
+                    text={intlText.chatSuggestion.testButton}
+                    iconName={'TestBeaker'}
+                    onClick={() => testCurrentFlow(false) /*TODO: add method to test workflow*/}
+                  />
+                )}
+              </ChatSuggestionGroup>
+              <ChatInput
+                disabled={!answerGeneration}
+                footerActionsProps={[
+                  {
+                    title: intlText.actionsButtonTitle,
+                    onClick: togglePromptGuide,
+                    disabled: !answerGeneration,
+                    toggle: true,
+                    checked: isPromptGuideOpen,
+                    elementRef: promptGuideButtonRef,
+                    iconProps: {
+                      imageProps: {
+                        src: !answerGeneration ? SparkleDisabled : Sparkle,
+                      },
+                    },
                   },
-                },
-              },
-            ]}
-            isMultiline={true}
-            maxQueryLength={QUERY_MAX_LENGTH}
-            onQueryChange={(ev, newValue) => {
-              setInputQuery(newValue ?? '');
-            }}
-            placeholder={intlText.chatInputPlaceholder}
-            query={inputQuery}
-            showCharCount={true}
-            submitButtonProps={{
-              title: intlText.submitButtonTitle,
-              disabled: !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH,
-              iconProps: {
-                iconName: 'Send',
-                styles:
-                  !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH
-                    ? inputIconButtonStyles.disabled
-                    : inputIconButtonStyles.enabled,
-              },
-              onClick: () => onSubmitInputQuery(inputQuery),
-            }}
-          />
-          {isPromptGuideOpen ? (
-            <PromptGuideContextualMenu
-              onDismiss={closePromptGuide}
-              target={promptGuideButtonRef}
-              initialMenu={PromptGuideMenuKey.DefaultFlow}
-              onMenuItemClick={onPromptGuideItemClicked}
-            />
-          ) : null}
-        </div>
+                ]}
+                isMultiline={true}
+                maxQueryLength={QUERY_MAX_LENGTH}
+                onQueryChange={(_ev, newValue) => {
+                  setInputQuery(newValue ?? '');
+                }}
+                placeholder={intlText.chatInputPlaceholder}
+                query={inputQuery}
+                showCharCount={true}
+                submitButtonProps={{
+                  title: intlText.submitButtonTitle,
+                  disabled: !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH,
+                  iconProps: {
+                    iconName: 'Send',
+                    styles:
+                      !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH
+                        ? inputIconButtonStyles.disabled
+                        : inputIconButtonStyles.enabled,
+                  },
+                  onClick: () => onSubmitInputQuery(inputQuery),
+                }}
+              />
+              {isPromptGuideOpen ? (
+                <PromptGuideContextualMenu
+                  onDismiss={closePromptGuide}
+                  target={promptGuideButtonRef}
+                  initialMenu={PromptGuideMenuKey.DefaultFlow}
+                  onMenuItemClick={onPromptGuideItemClicked}
+                />
+              ) : null}
+            </div>
+          </>
+        )}
       </div>
     </Panel>
   );

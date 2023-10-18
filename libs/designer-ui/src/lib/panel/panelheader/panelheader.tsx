@@ -122,15 +122,19 @@ export const PanelHeader = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCollapsed]);
   const panelCollapseTitle = intl.formatMessage({
-    defaultMessage: 'Collapse/Expand',
-    description: 'Text of Tooltip to collapse and expand',
+    defaultMessage: 'Collapse',
+    description: 'Text of Tooltip to collapse',
+  });
+  const panelExpandTitle = intl.formatMessage({
+    defaultMessage: 'Expand',
+    description: 'Text of Tooltip to expand',
   });
 
   const isRight = headerLocation === PanelLocation.Right;
 
   const getIconClassName: string = css(isRight ? 'collapse-toggle-right' : 'collapse-toggle-left', isCollapsed && 'collapsed');
 
-  const getCollapseIconName: string = (isRight && isCollapsed) || (!isRight && !isCollapsed) ? 'DoubleChevronLeft8' : 'DoubleChevronRight8';
+  const getCollapseIconName: string = (isRight && isCollapsed) || (!isRight && !isCollapsed) ? 'DoubleChevronLeft' : 'DoubleChevronRight';
 
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
 
@@ -219,9 +223,14 @@ export const PanelHeader = ({
   return (
     <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
       <div className={getIconClassName}>
-        <TooltipHost className={getIconClassName} calloutProps={calloutProps} content={panelCollapseTitle} styles={tooltipStyles}>
+        <TooltipHost
+          className={getIconClassName}
+          calloutProps={calloutProps}
+          content={isCollapsed ? panelExpandTitle : panelCollapseTitle}
+          styles={tooltipStyles}
+        >
           <IconButton
-            ariaLabel={panelCollapseTitle}
+            ariaLabel={isCollapsed ? panelExpandTitle : panelCollapseTitle}
             disabled={false}
             iconProps={{ iconName: getCollapseIconName }}
             styles={collapseIconStyle}

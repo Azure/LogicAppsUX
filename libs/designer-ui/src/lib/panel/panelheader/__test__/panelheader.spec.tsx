@@ -14,6 +14,8 @@ describe('lib/panel/panelHeader/main', () => {
 
   beforeEach(() => {
     minimal = {
+      nodeId: '',
+      horizontalPadding: '',
       isCollapsed: false,
       panelHeaderMenu: [],
       headerLocation: PanelLocation.Right,
@@ -24,6 +26,8 @@ describe('lib/panel/panelHeader/main', () => {
       commentChange: jest.fn(),
     };
     minimalWithHeader = {
+      nodeId: '',
+      horizontalPadding: '',
       isCollapsed: false,
       onTitleChange: jest.fn(),
       commentChange: jest.fn(),
@@ -98,12 +102,12 @@ describe('lib/panel/panelHeader/main', () => {
     expect(collapseExpandWrapper.props.className).toBe('collapse-toggle-right');
 
     const collapseExpandTooltip = collapseExpandWrapper.props.children;
-    expect(collapseExpandTooltip.props.content).toBe('Collapse/Expand');
+    expect(collapseExpandTooltip.props.content).toBe('Collapse');
 
     const collapseExpandButton = collapseExpandTooltip.props.children;
-    expect(collapseExpandButton.props.ariaLabel).toBe('Collapse/Expand');
+    expect(collapseExpandButton.props.ariaLabel).toBe('Collapse');
     expect(collapseExpandButton.props.disabled).toBeFalsy();
-    expect(collapseExpandButton.props.iconProps).toEqual({ iconName: 'DoubleChevronRight8' });
+    expect(collapseExpandButton.props.iconProps).toEqual({ iconName: 'DoubleChevronRight' });
 
     expect(cardHeader.props.className).toBe('msla-panel-card-header');
     const [, titleContainer, panelControls]: any[] = React.Children.toArray(cardHeader.props.children);

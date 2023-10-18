@@ -15,11 +15,15 @@
   height: 50px;
   display: flex;
   flex-direction: row;
-  padding: 16px;
+  padding: 10px;
   align-items: center;
   font-size: large;
   font-weight: bold;
   box-shadow: rgba(0, 0, 0, 0.133) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px 0px;
+  z-index: 1;
+}
+
+.msla-chatbot-header-collapsed {
   z-index: 1;
 }
 
@@ -29,8 +33,8 @@
 
 .msla-chatbot-header-title {
   display: flex;
-  flex-grow: 2;
-  padding-left: 8px;
+  padding-left: 10px;
+  padding-right: 20px;
 }
 
 .msla-chatbot-header-mode-pill {
@@ -47,8 +51,9 @@
   line-height: 15px;
 }
 
-.msla-chatbot-close-button {
+.msla-chatbot-collapse-button {
   color: unset;
+  margin-left: auto;
 }
 
 .msla-chatbot-content {

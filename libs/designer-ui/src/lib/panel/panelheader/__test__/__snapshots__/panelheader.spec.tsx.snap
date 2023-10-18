@@ -17,7 +17,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
       role="none"
     >
       <button
-        aria-label="Collapse/Expand"
+        aria-label="Collapse"
         className="ms-Button ms-Button--icon root-110"
         data-automation-id="msla-panel-header-collapse-nav"
         data-is-focusable={true}
@@ -36,14 +36,14 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
           <i
             aria-hidden={true}
             className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-            data-icon-name="DoubleChevronRight8"
+            data-icon-name="DoubleChevronRight"
             style={
               Object {
-                "fontFamily": "\\"FabricMDL2Icons-12\\"",
+                "fontFamily": "\\"FabricMDL2Icons-6\\"",
               }
             }
           >
-            
+            
           </i>
         </span>
       </button>
@@ -63,7 +63,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
           }
         }
       >
-        Collapse/Expand
+        Collapse
       </div>
     </div>
   </div>
@@ -133,7 +133,7 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
       role="none"
     >
       <button
-        aria-label="Collapse/Expand"
+        aria-label="Collapse"
         className="ms-Button ms-Button--icon root-110"
         data-automation-id="msla-panel-header-collapse-nav"
         data-is-focusable={true}
@@ -152,14 +152,14 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
           <i
             aria-hidden={true}
             className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-            data-icon-name="DoubleChevronRight8"
+            data-icon-name="DoubleChevronRight"
             style={
               Object {
-                "fontFamily": "\\"FabricMDL2Icons-12\\"",
+                "fontFamily": "\\"FabricMDL2Icons-6\\"",
               }
             }
           >
-            
+            
           </i>
         </span>
       </button>
@@ -179,7 +179,7 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
           }
         }
       >
-        Collapse/Expand
+        Collapse
       </div>
     </div>
   </div>
