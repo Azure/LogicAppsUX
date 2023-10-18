@@ -59,7 +59,7 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         additionalFooterActions={hideFooter ? [] : [reportBugButton]}
         hideFooter={hideFooter}
       >
-        {text}
+        <span style={{ whiteSpace: 'pre-line' }}>{text}</span>
       </ChatBubble>
       {feedbackMessage}
     </div>
