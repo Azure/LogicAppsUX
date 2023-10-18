@@ -117,6 +117,9 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
+  dataMapSetSupportedDataMapDefinitionFileExts = 'azureLogicAppsStandard.dataMap.setUpportedDataMapDefinitionFileExts',
+  dataMapSetSupportedSchemaFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
+  dataMapSetSupportedFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSupportedFileExts',
 }
 
 // Context

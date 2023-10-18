@@ -1,3 +1,4 @@
+import { ext } from '../../../extensionVariables';
 import DataMapperExt from './DataMapperExt';
 import {
   backendRuntimeBaseUrl,
@@ -28,12 +29,12 @@ import { ProgressLocation, Uri, window } from 'vscode';
 export async function startBackendRuntime(projectPath: string): Promise<void> {
   const runtimeWorkingDir = path.join(projectPath, workflowDesignTimeDir);
 
-  if (!DataMapperExt.backendRuntimePort) {
-    DataMapperExt.backendRuntimePort = await portfinder.getPortPromise();
+  if (!ext.dataMapperRuntimePort) {
+    ext.dataMapperRuntimePort = await portfinder.getPortPromise();
   }
 
   // Note: Must append operationGroups as it's a valid endpoint to ping
-  const url = `${backendRuntimeBaseUrl}${DataMapperExt.backendRuntimePort}${workflowMgmtApi}operationGroups`;
+  const url = `${backendRuntimeBaseUrl}${ext.dataMapperRuntimePort}${workflowMgmtApi}operationGroups`;
 
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
@@ -52,7 +53,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
         await createJsonFile(runtimeWorkingDir, hostFileName, hostFileContent);
         await createJsonFile(runtimeWorkingDir, settingsFileName, modifiedSettingsFileContent);
 
-        startBackendRuntimeProcess(runtimeWorkingDir, 'func', 'host', 'start', '--port', `${DataMapperExt.backendRuntimePort}`);
+        startBackendRuntimeProcess(runtimeWorkingDir, 'func', 'host', 'start', '--port', `${ext.dataMapperRuntimePort}`);
 
         await waitForBackendRuntimeStartUp(url, new Date().getTime());
       } else {
@@ -127,28 +128,28 @@ function startBackendRuntimeProcess(workingDirectory: string | undefined, comman
   };
 
   DataMapperExt.log(`Running command: "${command} ${formattedArgs}"...`);
-  DataMapperExt.backendRuntimeChildProcess = cp.spawn(command, args, options);
+  ext.dataMapperChildProcess = cp.spawn(command, args, options);
 
-  DataMapperExt.backendRuntimeChildProcess.stdout?.on('data', (data: string | Buffer) => {
-    DataMapperExt.outputChannel.append(data.toString());
+  ext.dataMapperChildProcess.stdout?.on('data', (data: string | Buffer) => {
+    ext.outputChannel.append(data.toString());
   });
 
-  DataMapperExt.backendRuntimeChildProcess.stderr?.on('data', (data: string | Buffer) => {
-    DataMapperExt.outputChannel.append(data.toString());
+  ext.dataMapperChildProcess.stderr?.on('data', (data: string | Buffer) => {
+    ext.outputChannel.append(data.toString());
   });
 }
 
 // Note: Per node, child processes may not be killed - if this is an issue in the future, a workaround is needed
 // HOWEVER - killing the parent process (the VS Code instance?) kills the child process for sure
-export function stopBackendRuntime(): void {
-  if (DataMapperExt.backendRuntimeChildProcess === null || DataMapperExt.backendRuntimeChildProcess === undefined) {
+export function stopDataMapperBackend(): void {
+  if (ext.dataMapperChildProcess === null || ext.dataMapperChildProcess === undefined) {
     return;
   }
 
   if (os.platform() === 'win32') {
-    cp.exec('taskkill /pid ' + `${DataMapperExt.backendRuntimeChildProcess.pid}` + ' /T /F');
+    cp.exec('taskkill /pid ' + `${ext.dataMapperChildProcess.pid}` + ' /T /F');
   } else {
-    DataMapperExt.backendRuntimeChildProcess.kill();
+    ext.dataMapperChildProcess.kill();
   }
-  DataMapperExt.backendRuntimeChildProcess = undefined;
+  ext.dataMapperChildProcess = undefined;
 }
