@@ -42,8 +42,8 @@ export default class DataMapperExt {
 
     ext.dataMapPanelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName);
     ext.dataMapPanelManagers[dataMapName].panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'wand-light.png')),
-      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'wand-dark.png')),
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'wand.png')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'wand.png')),
     };
     ext.dataMapPanelManagers[dataMapName].updateWebviewPanelTitle();
     ext.dataMapPanelManagers[dataMapName].mapDefinitionData = mapDefinitionData;
