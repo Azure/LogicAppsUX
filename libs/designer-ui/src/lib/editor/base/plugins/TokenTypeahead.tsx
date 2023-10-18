@@ -68,10 +68,10 @@ function TokenMenuItem({
 interface TokenTypeAheadPluginProps {
   openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
   isEditorFocused?: boolean;
-  allowExpression?: boolean;
+  hideExpression?: boolean;
 }
 
-export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused, allowExpression = true }: TokenTypeAheadPluginProps) => {
+export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused, hideExpression = false }: TokenTypeAheadPluginProps) => {
   const [editor] = useLexicalComposerContext();
   const { isInverted } = useTheme();
   const checkForTriggerMatch = useTokenTypeaheadTriggerMatch('/', {
@@ -112,7 +112,7 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused, allowEx
     }),
   ];
 
-  if (allowExpression) {
+  if (!hideExpression) {
     options.push(
       new TokenOption(expressionButtonText, 'expression', {
         icon: () => <Icon iconName="Variable" />,

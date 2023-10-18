@@ -26,7 +26,7 @@ export enum TokenPickerButtonLocation {
 export interface TokenPickerButtonEditorProps {
   location?: TokenPickerButtonLocation;
   insideEditor?: boolean;
-  allowExpression?: boolean;
+  hideExpression?: boolean;
 }
 
 interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
@@ -37,7 +37,7 @@ export const TokenPickerButton = ({
   location = TokenPickerButtonLocation.Left,
   insideEditor,
   openTokenPicker,
-  allowExpression = true,
+  hideExpression = false,
 }: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
@@ -68,7 +68,7 @@ export const TokenPickerButton = ({
       if (boxElem && rootElement && anchorElement) {
         const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
-        const singleElementTop = !allowExpression ? 15 : 0;
+        const singleElementTop = hideExpression ? 15 : 0;
         if (anchorElement?.childNodes[0]?.nodeName === 'BR') {
           // some of our editors have smaller heights, so we need to adjust the position of the tokenpicker button
           if (rootElement.clientHeight === 24) {
@@ -128,13 +128,13 @@ export const TokenPickerButton = ({
           <TooltipHost content={dynamicContentButtonText}>
             <IconButton
               iconProps={dynamicContentIconProps}
-              styles={{ root: `top-root-button-style ${allowExpression ? '' : 'top-root-button-style-single'}` }}
+              styles={{ root: `top-root-button-style ${hideExpression ? 'top-root-button-style-single' : ''}` }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
               data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
               onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
             />
           </TooltipHost>
-          {allowExpression ? (
+          {!hideExpression ? (
             <TooltipHost content={expressionButtonText}>
               <IconButton
                 iconProps={expressionButtonProps}

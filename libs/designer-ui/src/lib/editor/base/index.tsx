@@ -206,7 +206,7 @@ export const BaseEditor = ({
             <TokenTypeAheadPlugin
               openTokenPicker={openTokenPicker}
               isEditorFocused={isEditorFocused}
-              allowExpression={tokenPickerButtonProps?.allowExpression}
+              hideExpression={tokenPickerButtonProps?.hideExpression}
             />
           ) : null}
           <OnBlur command={handleBlur} />
