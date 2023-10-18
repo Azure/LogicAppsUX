@@ -315,6 +315,24 @@
           "dark": "assets/logicapp.png"
         },
         "label": "Azure Logic Apps"
+      },
+      {
+        "id": "azureLogicAppsStandard.dataMapperMenu",
+        "label": "Data Mapper"
+      }
+    ],
+    "views": {
+      "azure": [
+        {
+          "id": "azDataMapper",
+          "name": "Data Mapper"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "azDataMapper",
+        "contents": "[Create new data map](command:azureDataMapper.createNewDataMap)\n[Load existing data map](command:azureDataMapper.loadDataMapFile)"
       }
     ],
     "menus": {
@@ -346,6 +364,11 @@
           "submenu": "azureLogicAppsStandard.submenus.workspaceActions",
           "when": "view == azureWorkspace",
           "group": "navigation@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.createNewDataMap",
+          "when": "view == azDataMapper",
+          "group": "navigation@1"
         }
       ],
       "view/item/context": [
@@ -610,6 +633,11 @@
           "command": "azureLogicAppsStandard.enableAzureConnectors",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@2"
+        },
+        {
+          "submenu": "azureLogicAppsStandard.dataMapperMenu",
+          "group": "navigation",
+          "when": "resourceExtname in azureLogicAppsStandard.dataMapSetSupportedFileExts"
         }
       ],
       "commandPalette": [
@@ -644,6 +672,13 @@
         {
           "command": "azureLogicAppsStandard.viewProperties",
           "when": "never"
+        }
+      ],
+      "azureLogicAppsStandard.dataMapperMenu": [
+        {
+          "command": "azureLogicAppsStandard.loadDataMapFile",
+          "group": "navigation",
+          "when": "resourceExtname in azureLogicAppsStandard.dataMapSetSupportedDataMapDefinitionFileExts"
         }
       ]
     },
@@ -828,6 +863,7 @@
     "onCommand:azureLogicAppsStandard.startRemoteDebug",
     "onView:azureWorkspace",
     "onView:azureResourceGroups",
+    "onView:azDataMapper",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
     "onDebugInitialConfigurations"
