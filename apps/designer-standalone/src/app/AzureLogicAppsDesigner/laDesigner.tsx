@@ -225,7 +225,7 @@ const DesignerEditor = () => {
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
+      skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
     return serializedWorkflow;

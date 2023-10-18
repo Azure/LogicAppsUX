@@ -27,14 +27,7 @@ export const FeedbackMessage = ({ id, date, reaction, askFeedback }: FeedbackMes
     }),
   };
   return askFeedback ? (
-    <ChatBubble
-      key={id}
-      isUserMessage={false}
-      isAIGenerated={false}
-      date={date}
-      isMarkdownMessage={false}
-      className={mergeStyles({ marginTop: 8 })}
-    >
+    <ChatBubble key={id} isUserMessage={false} isAIGenerated={false} date={date} className={mergeStyles({ marginTop: 8 })}>
       {reaction === ChatEntryReaction.thumbsUp && (
         <Link
           className="msla-feedbackmessage-link"

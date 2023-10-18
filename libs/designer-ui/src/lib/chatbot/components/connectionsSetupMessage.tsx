@@ -68,7 +68,6 @@ const ConnectionsSetup: React.FC<ConnectionsSetupProps> = ({ item }) => {
         isUserMessage={false}
         isAIGenerated={true}
         date={item.date}
-        isMarkdownMessage={false}
         additionalFooterActions={[
           {
             text: intlText.skipText,

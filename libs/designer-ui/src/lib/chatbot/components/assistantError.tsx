@@ -46,7 +46,6 @@ export const AssistantError = ({ item }: AssistantErrorProps) => {
         isUserMessage={false}
         isAIGenerated={false}
         date={item.date}
-        isMarkdownMessage={false}
         selectedReaction={reaction}
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         disabled={false} // TODO: add state isGeneratingAnswer}
