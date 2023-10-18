@@ -223,7 +223,7 @@ export const BaseEditor = ({
             : null}
         </div>
 
-        {tokens && true && !getInTokenPicker() ? (
+        {tokens && isEditorFocused && !getInTokenPicker() ? (
           createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
         ) : (
           <div />
