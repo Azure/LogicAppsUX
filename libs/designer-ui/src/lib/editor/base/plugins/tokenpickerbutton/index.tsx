@@ -26,6 +26,7 @@ export enum TokenPickerButtonLocation {
 export interface TokenPickerButtonEditorProps {
   location?: TokenPickerButtonLocation;
   insideEditor?: boolean;
+  allowExpression?: boolean;
 }
 
 interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
@@ -36,6 +37,7 @@ export const TokenPickerButton = ({
   location = TokenPickerButtonLocation.Left,
   insideEditor,
   openTokenPicker,
+  allowExpression = true,
 }: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
@@ -125,21 +127,23 @@ export const TokenPickerButton = ({
           <TooltipHost content={dynamicContentButtonText}>
             <IconButton
               iconProps={dynamicContentIconProps}
-              styles={{ root: 'top-root-button-style' }}
+              styles={{ root: `top-root-button-style ${allowExpression ? '' : 'top-root-button-style-single'}` }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
               data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
               onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
             />
           </TooltipHost>
-          <TooltipHost content={expressionButtonText}>
-            <IconButton
-              iconProps={expressionButtonProps}
-              styles={{ root: 'bottom-root-button-style' }}
-              className="msla-token-picker-entrypoint-button-dynamic-content"
-              data-automation-id="msla-token-picker-entrypoint-button-expression"
-              onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
-            />
-          </TooltipHost>
+          {allowExpression ? (
+            <TooltipHost content={expressionButtonText}>
+              <IconButton
+                iconProps={expressionButtonProps}
+                styles={{ root: 'bottom-root-button-style' }}
+                className="msla-token-picker-entrypoint-button-dynamic-content"
+                data-automation-id="msla-token-picker-entrypoint-button-expression"
+                onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
+              />
+            </TooltipHost>
+          ) : null}
         </div>
       ) : null}
       <OnChangePlugin onChange={onChange} />

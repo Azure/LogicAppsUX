@@ -68,9 +68,10 @@ function TokenMenuItem({
 interface TokenTypeAheadPluginProps {
   openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
   isEditorFocused?: boolean;
+  allowExpression?: boolean;
 }
 
-export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused }: TokenTypeAheadPluginProps) => {
+export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused, allowExpression = true }: TokenTypeAheadPluginProps) => {
   const [editor] = useLexicalComposerContext();
   const { isInverted } = useTheme();
   const checkForTriggerMatch = useTokenTypeaheadTriggerMatch('/', {
@@ -109,10 +110,16 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused }: Token
     new TokenOption(dynamicDataButtonText, 'dynamic', {
       icon: () => <Icon iconName="LightningBolt" />,
     }),
-    new TokenOption(expressionButtonText, 'expression', {
-      icon: () => <Icon iconName="Variable" />,
-    }),
   ];
+
+  if (allowExpression) {
+    options.push(
+      new TokenOption(expressionButtonText, 'expression', {
+        icon: () => <Icon iconName="Variable" />,
+      })
+    );
+  }
+
   return (
     <LexicalTypeaheadMenuPlugin
       // eslint-disable-next-line @typescript-eslint/no-empty-function
