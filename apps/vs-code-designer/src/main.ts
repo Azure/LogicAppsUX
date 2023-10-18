@@ -31,10 +31,13 @@ const perfStats = {
 };
 
 export async function activate(context: vscode.ExtensionContext) {
-  //TODO: double check below commands are necessary; poured over from data mapper extension
-  vscode.commands.executeCommand('setContext', 'azureDataMapper.supportedDataMapDefinitionFileExts', supportedDataMapDefinitionFileExts);
-  vscode.commands.executeCommand('setContext', 'azureDataMapper.supportedSchemaFileExts', supportedSchemaFileExts);
-  vscode.commands.executeCommand('setContext', 'azureDataMapper.supportedFileExts', [
+  vscode.commands.executeCommand(
+    'setContext',
+    extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts,
+    supportedDataMapDefinitionFileExts
+  );
+  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedSchemaFileExts, supportedSchemaFileExts);
+  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedFileExts, [
     ...supportedDataMapDefinitionFileExts,
     ...supportedSchemaFileExts,
   ]);
