@@ -45,6 +45,10 @@
     {
       "filename": "libs/vscode-extension/package.json",
       "type": "json"
+    },
+    {
+      "filename": "libs/chatbot/package.json",
+      "type": "json"
     }
   ]
 }
