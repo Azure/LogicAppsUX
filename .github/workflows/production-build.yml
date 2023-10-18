@@ -117,6 +117,7 @@ jobs:
             { dist: './dist/libs/parsers', package: 'parsers' },
             { dist: './dist/libs/services/intl', package: 'services-intl' },
             { dist: './dist/libs/vscode-extension', package: 'vscode-extension' },
+            { dist: './dist/libs/chatbot', package: 'chatbot' },
           ]
     steps:
       - name: 'Checkout Github Action'
