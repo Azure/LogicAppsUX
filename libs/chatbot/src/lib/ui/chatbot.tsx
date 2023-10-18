@@ -204,7 +204,7 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
       };
       stopAnswerGeneration(false);
       try {
-        const response = await axios.post(`${endpoint}/api/QueryWorkflow`, options.content, {
+        const response = await axios.post(`${endpoint}/api/query`, options.content, {
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
