@@ -141,7 +141,7 @@ export const initializeOperationMetadata = async (
     for (const nodeData of allNodeData) {
       const { id, settings } = nodeData;
       if (settings) {
-        updateInvokerSettings(id === triggerNodeId, triggerNodeManifest, id, settings, dispatch);
+        updateInvokerSettings(id === triggerNodeId, triggerNodeManifest, id, settings, dispatch, references);
       }
     }
   }
