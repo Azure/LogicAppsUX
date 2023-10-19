@@ -14,7 +14,7 @@ import {
   launchFileName,
   extensionsFileName,
   extensionCommand,
-  functionsExtensionId,
+  logicAppsStandardExtensionId,
 } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { localize } from '../../../../../../localize';
@@ -347,7 +347,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
   private async writeExtensionsJson(context: IActionContext, vscodePath: string, language: ProjectLanguage): Promise<void> {
     const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
     await confirmEditJsonFile(context, extensionsJsonPath, (data: IExtensionsJson): Record<string, any> => {
-      const recommendations: string[] = [functionsExtensionId];
+      const recommendations: string[] = [logicAppsStandardExtensionId];
       if (this.getRecommendedExtensions) {
         recommendations.push(...this.getRecommendedExtensions(language));
       }
