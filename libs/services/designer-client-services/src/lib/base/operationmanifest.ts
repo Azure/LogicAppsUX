@@ -111,8 +111,10 @@ const sendtobatch = 'sendtobatch';
 const xslttransform = 'xslttransform';
 const datamapper = 'datamapper';
 const x12encode = 'x12encode';
+const x12batchencode = 'x12batchencode';
 const x12decode = 'x12decode';
 const edifactencode = 'edifactencode';
+const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
@@ -189,8 +191,10 @@ export const supportedBaseManifestTypes = [
   wait,
   xslttransform,
   x12encode,
+  x12batchencode,
   x12decode,
   edifactencode,
+  edifactbatchencode,
   edifactdecode,
 ];
 
@@ -281,8 +285,10 @@ export function isBuiltInOperation(definition: any): boolean {
     case xslttransform:
     case x12decode:
     case x12encode:
+    case x12batchencode:
     case edifactdecode:
     case edifactencode:
+    case edifactbatchencode:
       return true;
 
     case appservice:
@@ -610,6 +616,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: x12connectorId,
     operationId: x12encode,
   },
+  [x12batchencode]: {
+    connectorId: x12connectorId,
+    operationId: x12batchencode,
+  },
   [edifactdecode]: {
     connectorId: edifactConnectorId,
     operationId: edifactdecode,
@@ -617,6 +627,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [edifactencode]: {
     connectorId: edifactConnectorId,
     operationId: edifactencode,
+  },
+  [edifactbatchencode]: {
+    connectorId: edifactConnectorId,
+    operationId: edifactbatchencode,
   },
 };
 
