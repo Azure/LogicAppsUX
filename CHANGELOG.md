@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [2.75.0](https://github.com/Azure/LogicAppsUX/compare/v2.74.0...v2.75.0) (2023-10-19)
+
+
+### Features
+
+* **designer:** Add option to hide expression in token picker ([#3473](https://github.com/Azure/LogicAppsUX/issues/3473)) ([b077720](https://github.com/Azure/LogicAppsUX/commit/b077720c76344152ab9b0cad178479440bada109))
+
+
+### Bug Fixes
+
+* **Designer:** Do not update swagger parameter format when in is unde… ([#3478](https://github.com/Azure/LogicAppsUX/issues/3478)) ([9fd8d9b](https://github.com/Azure/LogicAppsUX/commit/9fd8d9b0fed454e202e7cde7a075df630de65e2c))
+* **designer:** Fix copilot versioning ([#3474](https://github.com/Azure/LogicAppsUX/issues/3474)) ([6868390](https://github.com/Azure/LogicAppsUX/commit/6868390049bf087286871d9cdb4d19936bd82ea4))
+
 ## [2.74.0](https://github.com/Azure/LogicAppsUX/compare/v2.73.0...v2.74.0) (2023-10-18)
 
 
