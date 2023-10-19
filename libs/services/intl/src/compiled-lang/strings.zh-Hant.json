@@ -57,6 +57,12 @@
       "value": " 卡片的操作功能表"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -2348,6 +2354,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "已新增的函式"
     }
   ],
   "DWd9vy": [

@@ -61,6 +61,12 @@
       "value": "“"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -2391,6 +2397,12 @@
     {
       "type": 0,
       "value": "“ herunterzuladen"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Hinzugefügte Funktionen"
     }
   ],
   "DWd9vy": [

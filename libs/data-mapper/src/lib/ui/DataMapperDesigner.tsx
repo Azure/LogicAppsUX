@@ -16,7 +16,7 @@ import { SidePane, SidePanelTabValue } from '../components/sidePane/SidePane';
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
-import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
+import { saveDataMap, showNotification } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../mapDefinitions';
 import { generateMapMetadata } from '../mapDefinitions/MapMetadataSerializer';
@@ -31,6 +31,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider, useKeyPress } from 'reactflow';
+import { ActionCreators } from 'redux-undo';
 
 const centerViewId = 'centerView';
 
@@ -118,15 +119,15 @@ export const DataMapperDesigner = ({
   useStaticStyles();
   const styles = useStyles();
 
-  const isMapStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
-  const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchemaOrdering);
-  const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const functions = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
+  const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
+  const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
   const { centerViewHeight, centerViewWidth } = useCenterViewSize();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!selectedItemKey);
@@ -262,11 +263,11 @@ export const DataMapperDesigner = ({
   }, [ctrlSPressed, onSaveClick]);
 
   const onUndoClick = () => {
-    dispatch(undoDataMapOperation());
+    dispatch(ActionCreators.undo());
   };
 
   const onRedoClick = () => {
-    dispatch(redoDataMapOperation());
+    dispatch(ActionCreators.redo());
   };
 
   const setTestMapPanelOpen = (toOpen: boolean) => {

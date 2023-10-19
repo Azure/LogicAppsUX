@@ -61,6 +61,12 @@
       "value": "-kort"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -2367,6 +2373,12 @@
     {
       "type": 1,
       "value": "displayName"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Tillagda funktioner"
     }
   ],
   "DWd9vy": [

@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { LogicAppResolver } from '../../../LogicAppResolver';
 import {
   projectLanguageSetting,
   webProvider,
@@ -228,6 +229,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
 
     const resolved = new LogicAppResourceTree(subscription.subscription, { ...site, serverFarmId, hostNameSslStates });
+    await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
     await ext.rgApi.appResourceTree.refresh(context);
     return new SlotTreeItem(subscription, resolved);
   }

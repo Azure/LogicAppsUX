@@ -11,6 +11,7 @@ const GatewayPicker = (props: any) => {
     selectSubscriptionCallback,
     availableGateways,
     availableSubscriptions,
+    isSubscriptionDropdownDisabled,
     isLoading,
     value,
     setValue,
@@ -69,18 +70,20 @@ const GatewayPicker = (props: any) => {
 
   return (
     <div style={{ width: 'inherit' }}>
-      <Dropdown
-        id={`connection-param-${parameterKey}-subscriptions`}
-        label={subscriptionDropdownLabel}
-        className="connection-parameter-input"
-        selectedKey={selectedSubscriptionId}
-        onChange={(e: any, newVal?: IDropdownOption) => selectSubscriptionCallback?.(newVal?.key as string)}
-        disabled={isLoading}
-        ariaLabel={subscriptionDropdownLabel}
-        placeholder={subscriptionDropdownLabel}
-        options={subscriptionOptions}
-        styles={{ callout: { maxHeight: '300px' } }}
-      />
+      {!isSubscriptionDropdownDisabled && (
+        <Dropdown
+          id={`connection-param-${parameterKey}-subscriptions`}
+          label={subscriptionDropdownLabel}
+          className="connection-parameter-input"
+          selectedKey={selectedSubscriptionId}
+          onChange={(e: any, newVal?: IDropdownOption) => selectSubscriptionCallback?.(newVal?.key as string)}
+          disabled={isLoading}
+          ariaLabel={subscriptionDropdownLabel}
+          placeholder={subscriptionDropdownLabel}
+          options={subscriptionOptions}
+          styles={{ callout: { maxHeight: '300px' } }}
+        />
+      )}
       <Dropdown
         id={`connection-param-${parameterKey}-gateways`}
         label={gatewayDropdownLabel}
@@ -93,7 +96,7 @@ const GatewayPicker = (props: any) => {
             setValue({ id: newVal?.key.toString() });
           }
         }}
-        disabled={isLoading || !selectedSubscriptionId}
+        disabled={isLoading || !(selectedSubscriptionId || isSubscriptionDropdownDisabled)}
         ariaLabel={gatewayDropdownLabel}
         placeholder={gatewayDropdownLabel}
         options={gatewayOptions}

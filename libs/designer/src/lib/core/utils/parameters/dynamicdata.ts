@@ -282,17 +282,22 @@ export async function getDynamicInputsFromSchema(
     in: dynamicParameter.in,
   }));
 
-  // We are recieving some swagger parameters in the following format, ex:
-  //     body.$.body/content/appId
-  // We need to remove the extra `body` and convert the '/' to '.', ex:
+  // We are recieving some swagger parameters with keys in the following format, ex:
+  //     body.$.body/content.body/content/appId
+  // We need to reformat to the below string:
   //     body.$.content.appId
   for (const inputParameter of dynamicInputs) {
-    if (isOpenApiParameter(inputParameter)) {
+    if (isOpenApiParameter(inputParameter) && inputParameter?.in) {
       const { key: _key, in: _in } = inputParameter;
-      const key = replaceSubsegmentSeparator(_key)?.replace(`${_in}.$.${_in}.`, '') ?? '';
-      const name = key.split('.').pop() ?? '';
+      // _key = body.$.body/content.body/content/appId
+      const path = replaceSubsegmentSeparator(_key.split('.').pop() ?? '');
+      // path = body.content.appId
+      const key = `${_in}.$.${path.replace(`${_in}.`, '')}`;
+      // key = body.$.content.appId
+      const name = path.split('.').pop() ?? '';
+      // name = appId
 
-      inputParameter.key = `${_in}.$.${key}`;
+      inputParameter.key = key;
       inputParameter.name = name;
       inputParameter.title = name;
     }

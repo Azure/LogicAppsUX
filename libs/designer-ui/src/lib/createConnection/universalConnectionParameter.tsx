@@ -11,6 +11,7 @@ export interface ConnectionParameterProps {
   value: any;
   setValue: (value: any) => void;
   isLoading?: boolean;
+  isSubscriptionDropdownDisabled?: boolean;
   selectedSubscriptionId?: string;
   selectSubscriptionCallback?: (subscriptionId: string) => void;
   availableGateways?: any[];
@@ -23,6 +24,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
     parameter,
     value,
     setValue,
+    isSubscriptionDropdownDisabled,
     isLoading,
     selectedSubscriptionId,
     selectSubscriptionCallback,
@@ -44,6 +46,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
         selectSubscriptionCallback={selectSubscriptionCallback}
         availableGateways={availableGateways}
         availableSubscriptions={availableSubscriptions}
+        isSubscriptionDropdownDisabled={isSubscriptionDropdownDisabled}
         isLoading={isLoading}
         setValue={setValue}
         value={value}

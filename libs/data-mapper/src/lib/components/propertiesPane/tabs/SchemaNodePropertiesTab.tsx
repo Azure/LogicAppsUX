@@ -39,8 +39,8 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   const intl = useIntl();
   const styles = useStyles();
 
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',

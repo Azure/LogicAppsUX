@@ -57,6 +57,12 @@
       "value": "title"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -2352,6 +2358,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Fungsi Tambahan"
     }
   ],
   "DWd9vy": [
