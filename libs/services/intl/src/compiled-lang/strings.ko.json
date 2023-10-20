@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "마지막으로 사용한 식 붙여넣기"
     }
   ],
   "+mAJR3": [
@@ -4242,12 +4242,6 @@
       "value": "입력 문자열의 base 64 표현을 반환합니다."
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "닫기"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 1,
@@ -4811,12 +4805,6 @@
     {
       "type": 0,
       "value": "필수 사항으로, 피승수 1을 곱할 숫자입니다."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "축소/확장"
     }
   ],
   "U086AA": [
@@ -7527,6 +7515,12 @@
       "value": "반환"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8031,6 +8025,12 @@
     {
       "type": 0,
       "value": "저장되지 않은 모든 변경 내용을 삭제하시겠습니까?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9202,6 +9202,12 @@
       "value": "중복 값이 포함되어 있습니다."
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9734,6 +9740,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 페트로파블로프스크-캄차스키 - 사용하지 않음"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

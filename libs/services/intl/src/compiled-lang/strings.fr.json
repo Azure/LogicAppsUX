@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Coller la dernière expression utilisée"
     }
   ],
   "+mAJR3": [
@@ -4328,12 +4328,6 @@
       "value": "Retourne la représentation en base 64 de la chaîne entrée"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Fermer"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4915,12 +4909,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Nombre avec lequel multiplier le multiplicande 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Réduire/développer"
     }
   ],
   "U086AA": [
@@ -7695,6 +7683,12 @@
       "value": "Retourner"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8207,6 +8201,12 @@
     {
       "type": 0,
       "value": "Voulez-vous ignorer les modifications non enregistrées ?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9412,6 +9412,12 @@
       "value": "Contient une valeur dupliquée"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9944,6 +9950,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Ancien"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

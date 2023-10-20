@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Colar a última expressão utilizada"
     }
   ],
   "+mAJR3": [
@@ -4336,12 +4336,6 @@
       "value": "Devolve a representação da base 64 da cadeia de entrada"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Fechar"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4923,12 +4917,6 @@
     {
       "type": 0,
       "value": "Obrigatório. O número com o qual se multiplica o Multiplicando 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Fechar/expandir"
     }
   ],
   "U086AA": [
@@ -7703,6 +7691,12 @@
       "value": "Voltar"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8215,6 +8209,12 @@
     {
       "type": 0,
       "value": "Pretende eliminar todas as alterações não guardadas?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9420,6 +9420,12 @@
       "value": "Contém um valor duplicado"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9952,6 +9958,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antigo"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [
