@@ -4295,12 +4295,6 @@
       "value": "Returnerar indatasträngens Base 64-representation"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Stäng"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4863,12 +4857,6 @@
     {
       "type": 0,
       "value": "Krävs. Talet att multiplicera Multiplikand 1 med."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Minimera/expandera"
     }
   ],
   "U086AA": [
@@ -7613,6 +7601,12 @@
       "value": "Returnera"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8125,6 +8119,12 @@
     {
       "type": 0,
       "value": "Vill du ta bort alla ändringar som inte har sparats?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9311,6 +9311,12 @@
       "value": "Det här innehåller ett dubblettvärde"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9843,6 +9849,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamtjatskij - gammal"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

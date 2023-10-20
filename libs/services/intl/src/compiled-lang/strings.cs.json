@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Vložit naposledy použitý výraz"
     }
   ],
   "+mAJR3": [
@@ -4365,12 +4365,6 @@
       "value": "Vrátí reprezentaci Base 64 vstupního řetězce."
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Zavřít"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4959,12 +4953,6 @@
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, kterým se má vynásobit násobenec 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Sbalit nebo rozbalit"
     }
   ],
   "U086AA": [
@@ -7761,6 +7749,12 @@
       "value": "Návrat"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8273,6 +8267,12 @@
     {
       "type": 0,
       "value": "Chcete zahodit všechny neuložené změny?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9481,6 +9481,12 @@
       "value": "Toto pole obsahuje duplicitní hodnotu"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -10013,6 +10019,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamčatskij – starý čas"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

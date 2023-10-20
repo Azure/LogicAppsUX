@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Incollare l'ultima espressione usata"
     }
   ],
   "+mAJR3": [
@@ -4320,12 +4320,6 @@
       "value": "Restituisce la rappresentazione Base 64 della stringa di input"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Chiudi"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4907,12 +4901,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Comprimere/espandere"
     }
   ],
   "U086AA": [
@@ -7679,6 +7667,12 @@
       "value": "Restituisci"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8187,6 +8181,12 @@
     {
       "type": 0,
       "value": "Annullare tutte le modifiche non salvate?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9392,6 +9392,12 @@
       "value": "Contiene un valore duplicato"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9924,6 +9930,12 @@
     {
       "type": 0,
       "value": "(UTC + 12.00 h) Petropavlovsk-Kamčatskij - Vecchio"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

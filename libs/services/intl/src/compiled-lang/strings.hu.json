@@ -4303,12 +4303,6 @@
       "value": "A bemeneti sztringet Base 64 kódolású sztringként adja vissza."
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Bezárás"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4887,12 +4881,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A szám, amellyel meg kell szorozni az 1. szorzandót."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Összecsukás/kibontás"
     }
   ],
   "U086AA": [
@@ -7625,6 +7613,12 @@
       "value": "Vissza"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8137,6 +8131,12 @@
     {
       "type": 0,
       "value": "Biztosan elveti az összes nem mentett módosítást?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9327,6 +9327,12 @@
       "value": "Ez ismétlődő értéket tartalmaz"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9863,6 +9869,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovszk-Kamcsatszkij – régi"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

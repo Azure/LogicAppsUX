@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "最後に使用した式の貼り付け"
     }
   ],
   "+mAJR3": [
@@ -4250,12 +4250,6 @@
       "value": "入力文字列の Base 64 表現を返します"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "閉じる"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 1,
@@ -4815,12 +4809,6 @@
     {
       "type": 0,
       "value": "必須。Multiplicand 1 と乗算する数値。"
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "折りたたむまたは展開する"
     }
   ],
   "U086AA": [
@@ -7531,6 +7519,12 @@
       "value": "返す"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8035,6 +8029,12 @@
     {
       "type": 0,
       "value": "保存されていないすべての変更を破棄しますか?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9206,6 +9206,12 @@
       "value": "重複する値が含まれています"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9738,6 +9744,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) ペトロパブロフスク-カムチャツキー - 廃止"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [
