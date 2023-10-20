@@ -119,9 +119,13 @@ export enum extensionCommand {
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
   loadDataMapFile = 'azureLogicAppsStandard.loadDataMapFile',
+  dataMapAddSchemaFromFile = 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
+  dataMapAttemptToResolveMissingSchemaFile = 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
   dataMapSetSupportedDataMapDefinitionFileExts = 'azureLogicAppsStandard.dataMap.setUpportedDataMapDefinitionFileExts',
   dataMapSetSupportedSchemaFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
   dataMapSetSupportedFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSupportedFileExts',
+  dataMapSaveMapDefinition = 'azureLogicAppsStandard.dataMap.saveMapDefinition',
+  dataMapSaveMapXslt = 'azureLogicAppsStandard.dataMap.saveMapXslt',
 }
 
 // Context

@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { extensionCommand } from '../../../constants';
 import DataMapperExt from './DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from './extensionConfig';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
@@ -99,7 +100,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
 
   const attemptToResolveMissingSchemaFile = async (schemaName: string, schemaPath: string): Promise<boolean> => {
     return !!(await callWithTelemetryAndErrorHandling(
-      'azureDataMapper.attemptToResolveMissingSchemaFile',
+      extensionCommand.dataMapAttemptToResolveMissingSchemaFile,
       async (_context: IActionContext) => {
         const findSchemaFileButton = 'Find schema file';
         const clickedButton = await window.showErrorMessage(
