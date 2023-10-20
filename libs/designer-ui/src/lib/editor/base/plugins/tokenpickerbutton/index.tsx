@@ -90,7 +90,7 @@ export const TokenPickerButton = ({
         }
       }
     }
-  }, [anchorKey, editor, insideEditor, location]);
+  }, [anchorKey, editor, insideEditor, location, hideExpression]);
 
   useEffect(() => {
     window.addEventListener('resize', updatePosition);
