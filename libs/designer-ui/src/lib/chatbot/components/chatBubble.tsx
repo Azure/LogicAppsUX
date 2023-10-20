@@ -13,7 +13,6 @@ export enum ChatEntryReaction {
 
 type ChatBubbleProps = {
   isUserMessage?: boolean;
-  isMarkdownMessage?: boolean;
   children: any;
   date: Date;
   isAIGenerated?: boolean;

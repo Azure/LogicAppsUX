@@ -61,6 +61,12 @@
       "value": " card"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -4293,12 +4299,6 @@
       "value": "Returns the base 64 representation of the input string"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Close"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4869,12 +4869,6 @@
     {
       "type": 0,
       "value": "Required. The number to multiply Multiplicand 1 with."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Collapse/Expand"
     }
   ],
   "U086AA": [
@@ -7619,6 +7613,12 @@
       "value": "Return"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8131,6 +8131,12 @@
     {
       "type": 0,
       "value": "Do you want to discard all unsaved changes?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9325,6 +9331,12 @@
       "value": "This contains a duplicate value"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9861,6 +9873,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

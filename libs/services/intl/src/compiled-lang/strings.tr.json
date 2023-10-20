@@ -57,6 +57,12 @@
       "value": " kartı için bağlam menüsü"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -2368,7 +2374,7 @@
   "DS/WmZ": [
     {
       "type": 0,
-      "value": "Added Functions"
+      "value": "Eklenen İşlevler"
     }
   ],
   "DWd9vy": [

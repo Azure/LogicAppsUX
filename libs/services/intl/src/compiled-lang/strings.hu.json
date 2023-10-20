@@ -61,6 +61,12 @@
       "value": " kártya helyi menüje"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -2380,7 +2386,7 @@
   "DS/WmZ": [
     {
       "type": 0,
-      "value": "Added Functions"
+      "value": "Hozzáadott függvények"
     }
   ],
   "DWd9vy": [

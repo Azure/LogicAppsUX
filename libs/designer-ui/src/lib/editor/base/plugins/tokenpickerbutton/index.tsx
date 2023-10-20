@@ -26,6 +26,7 @@ export enum TokenPickerButtonLocation {
 export interface TokenPickerButtonEditorProps {
   location?: TokenPickerButtonLocation;
   insideEditor?: boolean;
+  hideExpression?: boolean;
 }
 
 interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
@@ -36,6 +37,7 @@ export const TokenPickerButton = ({
   location = TokenPickerButtonLocation.Left,
   insideEditor,
   openTokenPicker,
+  hideExpression = false,
 }: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
@@ -66,15 +68,16 @@ export const TokenPickerButton = ({
       if (boxElem && rootElement && anchorElement) {
         const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
+        const singleElementTop = hideExpression ? 15 : 0;
         if (anchorElement?.childNodes[0]?.nodeName === 'BR') {
           // some of our editors have smaller heights, so we need to adjust the position of the tokenpicker button
           if (rootElement.clientHeight === 24) {
-            boxElem.style.top = `${top - 16}px`;
+            boxElem.style.top = `${top - 16 + singleElementTop}px`;
           } else {
-            boxElem.style.top = `${top - 15}px`;
+            boxElem.style.top = `${top - 15 + singleElementTop}px`;
           }
         } else {
-          boxElem.style.top = `${top - 20}px`;
+          boxElem.style.top = `${top - 20 + singleElementTop}px`;
         }
         if (location === TokenPickerButtonLocation.Right) {
           boxElem.style.left = `${right - 20}px`;
@@ -125,21 +128,23 @@ export const TokenPickerButton = ({
           <TooltipHost content={dynamicContentButtonText}>
             <IconButton
               iconProps={dynamicContentIconProps}
-              styles={{ root: 'top-root-button-style' }}
+              styles={{ root: `top-root-button-style ${hideExpression ? 'top-root-button-style-single' : ''}` }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
               data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
               onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
             />
           </TooltipHost>
-          <TooltipHost content={expressionButtonText}>
-            <IconButton
-              iconProps={expressionButtonProps}
-              styles={{ root: 'bottom-root-button-style' }}
-              className="msla-token-picker-entrypoint-button-dynamic-content"
-              data-automation-id="msla-token-picker-entrypoint-button-expression"
-              onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
-            />
-          </TooltipHost>
+          {!hideExpression ? (
+            <TooltipHost content={expressionButtonText}>
+              <IconButton
+                iconProps={expressionButtonProps}
+                styles={{ root: 'bottom-root-button-style' }}
+                className="msla-token-picker-entrypoint-button-dynamic-content"
+                data-automation-id="msla-token-picker-entrypoint-button-expression"
+                onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
+              />
+            </TooltipHost>
+          ) : null}
         </div>
       ) : null}
       <OnChangePlugin onChange={onChange} />

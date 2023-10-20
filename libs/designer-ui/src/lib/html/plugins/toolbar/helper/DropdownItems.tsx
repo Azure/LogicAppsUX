@@ -1,10 +1,10 @@
 import { css, useTheme } from '@fluentui/react';
-import type { RefObject } from 'react';
+import type { MutableRefObject, RefObject } from 'react';
 import { createContext, useEffect, useMemo, useCallback, useState } from 'react';
 
 interface DropdownItemsProps {
   children: React.ReactNode;
-  dropDownRef: React.Ref<HTMLDivElement>;
+  dropDownRef: MutableRefObject<HTMLDivElement | null>;
   stopCloseOnClickSelf?: boolean;
   onClose: () => void;
 }
