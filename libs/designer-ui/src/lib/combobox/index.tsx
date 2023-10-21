@@ -94,6 +94,9 @@ export const Combobox = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
+  // Sort newOptions array alphabetically based on the `displayName` property.
+  options.sort((currentItem, nextItem) => currentItem.displayName.localeCompare(nextItem.displayName));
+
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {
       key: 'isloading',
@@ -115,9 +118,6 @@ export const Combobox = ({
         : errorDetails
         ? [errorOption]
         : options.filter((option) => new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.displayName.toLowerCase()));
-
-      // Sort newOptions array alphabetically based on the `displayName` property.
-      newOptions.sort((currentItem, nextItem) => currentItem.displayName.localeCompare(nextItem.displayName));
 
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
