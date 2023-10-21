@@ -6,10 +6,10 @@ import renderer from 'react-test-renderer';
 describe('lib/combobox', () => {
   const defaultProps = {
     options: [
-      { key: '1', value: 'one', displayName: 'One' },
-      { key: '2', value: 'two', displayName: 'Two' },
-      { key: '3', value: 'three', displayName: 'Three' },
-      { key: '4', value: 'four', displayName: 'Four' },
+      { key: '1', value: 'one', displayName: 'B' },
+      { key: '2', value: 'two', displayName: 'A' },
+      { key: '3', value: 'three', displayName: 'C' },
+      { key: '4', value: 'four', displayName: 'D' },
     ],
     initialValue: [],
     onChange: jest.fn(),
@@ -34,7 +34,7 @@ describe('lib/combobox', () => {
       fireEvent.click(combobox);
     });
 
-    const option = getByText('One');
+    const option = getByText('B');
     act(() => {
       fireEvent.click(option);
     });
@@ -51,7 +51,7 @@ describe('lib/combobox', () => {
       fireEvent.click(combobox);
     });
 
-    const option2 = getByText('Two');
+    const option2 = getByText('A');
     act(() => {
       fireEvent.click(option2);
     });
@@ -63,5 +63,25 @@ describe('lib/combobox', () => {
         }),
       ],
     });
+  });
+
+  it('ensures options are sorted alphabetically and special option is at the end', () => {
+    const { getByRole, getAllByRole } = render(<Combobox {...defaultProps} />);
+    const combobox = getByRole('combobox');
+
+    act(() => {
+      fireEvent.click(combobox);
+    });
+
+    const options = getAllByRole('option');
+    const optionTexts = options.map((option) => option.textContent);
+
+    // Ensure the special option is at the end
+    expect(optionTexts[optionTexts.length - 1]).toEqual('Enter custom value');
+
+    // Check the rest are sorted
+    const sortedTexts = [...optionTexts.slice(0, -1)].sort((a, b) => a.localeCompare(b));
+
+    expect(optionTexts.slice(0, -1)).toEqual(sortedTexts);
   });
 });

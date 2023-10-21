@@ -1,5 +1,6 @@
 {
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "cSpell.words": ["fluentui", "reactflow"],
-  "eslint.validate": ["json"]
+  "eslint.validate": ["json"],
+  "sarif-viewer.connectToGithubCodeScanning": "off"
 }

@@ -116,7 +116,7 @@ export const Combobox = ({
         ? [errorOption]
         : options.filter((option) => new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.displayName.toLowerCase()));
 
-      // Sort newOptions array alphabetically based on the `key` property.
+      // Sort newOptions array alphabetically based on the `displayName` property.
       newOptions.sort((currentItem, nextItem) => currentItem.displayName.localeCompare(nextItem.displayName));
 
       if (newOptions.length === 0) {
