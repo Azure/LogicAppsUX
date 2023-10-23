@@ -14,7 +14,7 @@ import type { HeadingNode } from '@lexical/rich-text';
 import { $isHeadingNode } from '@lexical/rich-text';
 import type { Expression } from '@microsoft/parsers-logic-apps';
 import { ExpressionParser } from '@microsoft/parsers-logic-apps';
-import type { LexicalNode, ParagraphNode, RootNode, TextFormatType } from 'lexical';
+import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
 import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, $createTextNode, $getRoot, createEditor } from 'lexical';
 
 export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
@@ -106,7 +106,7 @@ export const appendStringSegment = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
   value: string,
   childNodeStyles?: string,
-  childNodeFormat?: number | TextFormatType,
+  childNodeFormat?: number,
   nodeMap?: Map<string, ValueSegment>,
   tokensEnabled?: boolean
 ) => {
@@ -114,8 +114,9 @@ export const appendStringSegment = (
   let prevIndex = 0;
   while (currIndex < value.length) {
     if (value.substring(currIndex - 2, currIndex) === '$[') {
-      if (value.substring(prevIndex, currIndex - 2)) {
-        paragraph.append($createExtendedTextNode(value.substring(prevIndex, currIndex - 2), childNodeStyles, childNodeFormat));
+      const textSegment = value.substring(prevIndex, currIndex - 2);
+      if (textSegment) {
+        paragraph.append($createExtendedTextNode(textSegment, childNodeStyles, childNodeFormat));
       }
       const newIndex = value.indexOf(']$', currIndex) + 2;
       // token is found in the text
@@ -155,7 +156,10 @@ export const appendStringSegment = (
     }
     currIndex++;
   }
-  paragraph.append($createExtendedTextNode(value.substring(prevIndex, currIndex), childNodeStyles, childNodeFormat));
+  const textSegment = value.substring(prevIndex, currIndex);
+  if (textSegment) {
+    paragraph.append($createExtendedTextNode(textSegment, childNodeStyles, childNodeFormat));
+  }
 };
 
 export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
@@ -219,8 +223,11 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
     if (segment.type === ValueSegmentType.LITERAL) {
       text += segment.value;
     } else if (segment.token) {
-      const { title, value, brandColor } = segment.token;
-      const string = `$[${title},${value},${brandColor}]$`;
+      const segmentValue = segment.value;
+      // segment.token.value are not unique, so we'll need to use segment value instead
+      const { title, brandColor } = segment.token;
+      // get a unique identifier for the token
+      const string = `$[${title},${segmentValue},${brandColor}]$`;
       text += string;
       nodeMap?.set(string, segment);
     }

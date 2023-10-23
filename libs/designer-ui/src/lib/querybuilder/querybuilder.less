@@ -31,13 +31,12 @@
       position: relative;
       .editor-input {
         outline: 1px solid @panel-mode-panel-border-color;
-        margin: 1px;
         resize: none;
         font-size: 12px;
         tab-size: 1;
         min-height: 24px;
-        line-height: 24px;
-        padding-inline-start: 5px;
+        line-height: 20px;
+        padding-inline-start: 6px;
         padding-inline-end: 15px;
         &.readonly {
           background-color: rgba(128, 128, 128, 0.1);
@@ -46,6 +45,7 @@
           outline: 2px solid @primary_focus_blue;
         }
         p {
+          padding-top: 2px;
           margin: 0;
         }
       }

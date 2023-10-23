@@ -19,8 +19,12 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
     <BaseEditor
       {...baseEditorProps}
       className="msla-html-editor"
-      BasePlugins={{ tokens: true, clearEditor: true, toolbar: true }}
       initialValue={initialValue}
+      BasePlugins={{ tokens: true, clearEditor: true, toolbar: true, ...baseEditorProps.BasePlugins }}
+      tokenPickerButtonProps={{
+        ...baseEditorProps.tokenPickerButtonProps,
+        newlineVerticalOffset: 20,
+      }}
       onBlur={handleBlur}
     >
       <Change setValue={onValueChange} />

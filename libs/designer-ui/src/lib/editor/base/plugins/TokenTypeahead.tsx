@@ -1,5 +1,6 @@
 import { TokenPickerMode } from '../../../tokenpicker';
 import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
+import type { hideButtonOptions } from './tokenpickerbutton';
 import { Icon, Text, css, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalTypeaheadMenuPlugin, MenuOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
@@ -66,13 +67,14 @@ function TokenMenuItem({
 }
 
 interface TokenTypeAheadPluginProps {
-  openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
   isEditorFocused?: boolean;
-  hideExpression?: boolean;
+  hideTokenpickerOptions?: hideButtonOptions;
+  openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
 }
 
-export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused, hideExpression = false }: TokenTypeAheadPluginProps) => {
+export const TokenTypeAheadPlugin = ({ isEditorFocused, hideTokenpickerOptions, openTokenPicker }: TokenTypeAheadPluginProps) => {
   const [editor] = useLexicalComposerContext();
+  const { hideDynamicContent, hideExpression } = hideTokenpickerOptions ?? {};
   const { isInverted } = useTheme();
   const checkForTriggerMatch = useTokenTypeaheadTriggerMatch('/', {
     minLength: 0,
@@ -106,19 +108,22 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused, hideExp
     defaultMessage: 'Insert Dynamic Content',
     description: 'Label for button to open dynamic content picker',
   });
-  const options: TokenOption[] = [
-    new TokenOption(dynamicDataButtonText, 'dynamic', {
-      icon: () => <Icon iconName="LightningBolt" />,
-    }),
-  ];
+  const options: TokenOption[] = [];
+  // making the dynamic content button optional
+  !hideDynamicContent &&
+    options.push(
+      new TokenOption(dynamicDataButtonText, 'dynamic', {
+        icon: () => <Icon iconName="LightningBolt" />,
+      })
+    );
 
-  if (!hideExpression) {
+  // making the expression button optional
+  !hideExpression &&
     options.push(
       new TokenOption(expressionButtonText, 'expression', {
         icon: () => <Icon iconName="Variable" />,
       })
     );
-  }
 
   return (
     <LexicalTypeaheadMenuPlugin
