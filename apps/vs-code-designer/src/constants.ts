@@ -67,6 +67,7 @@ export enum extensionCommand {
   openFile = 'azureLogicAppsStandard.openFile',
   createNewProject = 'azureLogicAppsStandard.createNewProject',
   createNewCodeProject = 'azureLogicAppsStandard.createNewCodeProject',
+  createNewDataMap = 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createCodeless = 'azureLogicAppsStandard.createCodeless',
   createLogicApp = 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced = 'azureLogicAppsStandard.createLogicAppAdvanced',
@@ -117,9 +118,14 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
-  dataMapSetSupportedDataMapDefinitionFileExts = 'azureLogicAppsStandard.dataMap.setUpportedDataMapDefinitionFileExts',
+  loadDataMapFile = 'azureLogicAppsStandard.dataMap.loadDataMapFile',
+  dataMapAddSchemaFromFile = 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
+  dataMapAttemptToResolveMissingSchemaFile = 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
+  dataMapSetSupportedDataMapDefinitionFileExts = 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
   dataMapSetSupportedSchemaFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
-  dataMapSetSupportedFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSupportedFileExts',
+  dataMapSetSupportedFileExts = 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
+  dataMapSaveMapDefinition = 'azureLogicAppsStandard.dataMap.saveMapDefinition',
+  dataMapSaveMapXslt = 'azureLogicAppsStandard.dataMap.saveMapXslt',
 }
 
 // Context

@@ -1,3 +1,4 @@
+import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import DataMapperExt from './DataMapperExt';
 import {
@@ -229,7 +230,7 @@ export default class DataMapperPanel {
   }
 
   public addSchemaFromFile(filePath: string, schemaType: SchemaType) {
-    callWithTelemetryAndErrorHandlingSync('azureDataMapper.addSchemaFromFile', (_context: IActionContext) => {
+    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapAddSchemaFromFile, (_context: IActionContext) => {
       fs.readFile(filePath, 'utf8').then((text: string) => {
         const primarySchemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
         const expectedPrimarySchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, primarySchemaFileName);
@@ -273,7 +274,7 @@ export default class DataMapperPanel {
   }
 
   public saveMapDefinition(mapDefinition: string) {
-    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveMapDefinition', (_context: IActionContext) => {
+    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapDefinition, (_context: IActionContext) => {
       // Delete *draft* map definition as it's no longer needed
       this.deleteDraftDataMapDefinition();
 
@@ -306,7 +307,7 @@ export default class DataMapperPanel {
   }
 
   public saveMapXslt(mapXslt: string) {
-    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveMapXslt', (_context: IActionContext) => {
+    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapXslt, (_context: IActionContext) => {
       const fileName = `${this.dataMapName}${mapXsltExtension}`;
       const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
