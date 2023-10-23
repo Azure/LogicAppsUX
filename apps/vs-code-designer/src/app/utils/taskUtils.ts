@@ -5,6 +5,7 @@
 import * as packageJson from '../../package.json';
 import { isPathEqual } from './fs';
 import * as AdmZip from 'adm-zip';
+import * as vscode from 'vscode';
 import type { Task, WorkspaceFolder } from 'vscode';
 import { tasks as codeTasks, window } from 'vscode';
 
@@ -89,8 +90,9 @@ export async function unzipLogicAppArtifacts(zipContent: Buffer | Buffer[], targ
     // The second parameter set to 'true' indicates that it will overwrite existing files in the target directory
     zip.extractAllTo(targetDirectory, true);
   } catch (error) {
-    console.error('Failed to unzip logic app:', error);
-    throw error;
+    const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
+    window.showErrorMessage(`Failed to unzip logic app due to: ${errorString}`);
+    throw new Error(`Unzipping logic app failed with the following details: ${errorString}`);
   }
 }
 
@@ -106,4 +108,10 @@ export function showPreviewWarning(commandIdentifier: string): void {
     const commandTitle = targetCommand.title;
     window.showInformationMessage(`The "${commandTitle}" command is a preview feature and might be subject to change.`);
   }
+}
+
+export async function handleError(error: any, messagePrefix: string) {
+  const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
+  vscode.window.showErrorMessage(`${messagePrefix}: ${errorString}`);
+  throw new Error(`${messagePrefix} failed: ${errorString}`);
 }

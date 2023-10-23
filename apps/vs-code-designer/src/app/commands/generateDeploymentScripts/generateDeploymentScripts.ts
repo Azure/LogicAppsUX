@@ -16,7 +16,7 @@ import { getConnectionsJson } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { getAccountCredentials } from '../../utils/credentials';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
+import { handleError, showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
 import type { IAzureScriptWizard } from './azureScriptWizard';
 import { createAzureWizard } from './azureScriptWizard';
 import { FileManagement } from './iacGestureHelperFunctions';
@@ -31,16 +31,24 @@ import { window } from 'vscode';
 
 export async function generateDeploymentScripts(context: IActionContext, projectRoot: vscode.Uri): Promise<void> {
   try {
+    ext.outputChannel.show();
+    ext.outputChannel.appendLog('Initiating script generation...');
+
     addLocalFuncTelemetry(context);
     const commandIdentifier = extensionCommand.generateDeploymentScripts;
     showPreviewWarning(commandIdentifier);
     const scriptContext = await setupWizardScriptContext(context, projectRoot);
     const inputs = await gatherAndValidateInputs(scriptContext, projectRoot);
     const sourceControlPath = scriptContext.sourceControlPath;
-    const consumptionArtifactsContent = await callConsumptionApi(scriptContext, inputs);
-    await handleApiResponse(consumptionArtifactsContent, sourceControlPath);
+    await callConsumptionApi(scriptContext, inputs);
     const standardArtifactsContent = await callStandardApi(scriptContext, inputs);
     await handleApiResponse(standardArtifactsContent, sourceControlPath);
+    const deploymentScriptLocation = `workspace/${scriptContext.sourceControlPath}`;
+    ext.outputChannel.appendLog(
+      `Deployment script generation completed successfully. The scripts are added at location: ${deploymentScriptLocation}. ` +
+        'Warning: One or more workflows in your logic app may contain user-based authentication for managed connectors. ' +
+        'You are required to manually authenticate the connection from the Azure portal after the resource is deployed by the DevOps pipeline.'
+    );
 
     if (scriptContext.isValidWorkspace) {
       FileManagement.addFolderToWorkspace(sourceControlPath);
@@ -48,7 +56,8 @@ export async function generateDeploymentScripts(context: IActionContext, project
       FileManagement.convertToValidWorkspace(sourceControlPath);
     }
   } catch (error) {
-    vscode.window.showErrorMessage('The following error occurred: ', error);
+    ext.outputChannel.appendLog(`[Error] generateDeploymentScripts failed: ${error}`);
+    await handleError(error, 'Error during deployment script generation');
   }
 }
 
@@ -59,12 +68,17 @@ export async function generateDeploymentScripts(context: IActionContext, project
  * @returns - Promise<IAzureScriptWizard> with the modified script context.
  */
 async function setupWizardScriptContext(context: IActionContext, projectRoot: vscode.Uri): Promise<IAzureScriptWizard> {
-  const parentDirPath: string = path.normalize(path.dirname(projectRoot.fsPath));
-  const scriptContext = context as IAzureScriptWizard;
-  scriptContext.folderPath = path.normalize(projectRoot.fsPath);
-  scriptContext.customWorkspaceFolderPath = parentDirPath;
-  scriptContext.projectPath = parentDirPath;
-  return scriptContext;
+  try {
+    const parentDirPath: string = path.normalize(path.dirname(projectRoot.fsPath));
+    const scriptContext = context as IAzureScriptWizard;
+    scriptContext.folderPath = path.normalize(projectRoot.fsPath);
+    scriptContext.customWorkspaceFolderPath = parentDirPath;
+    scriptContext.projectPath = parentDirPath;
+    return scriptContext;
+  } catch (error) {
+    await handleError(error, 'Error in setupWizardScriptContext');
+    throw error;
+  }
 }
 
 /**
@@ -77,26 +91,44 @@ async function callStandardApi(scriptContext: IAzureScriptWizard, inputs: any): 
     const { subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan } = inputs;
     return await callStandardResourcesApi(subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan);
   } catch (error) {
-    window.showErrorMessage('The API call failed due to the following error: ', error);
-    throw new Error(`API call failed: ${error}`);
+    await handleError(error, 'Error calling Standard Resources API');
   }
 }
 
 /**
- * Calls the iac API to obtain the deployment consumption artifacts.
- * @param scriptContext - The script context of type IAzureScriptWizard.
- * @param inputs - The inputs object containing the necessary data for the API call.
- * @returns A Promise that resolves to an array of Buffers.
+ * Calls the iac API to obtain the deployment consumption artifacts for each managed connection.
+ * @param scriptContext - The script context containing the source control path.
+ * @param inputs - An object containing the subscription ID, resource group, and logic app name.
+ * @returns A Promise that resolves when all artifacts are processed.
  */
-async function callConsumptionApi(scriptContext: IAzureScriptWizard, inputs: any): Promise<Buffer[]> {
+export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inputs: any): Promise<void> {
   try {
     const { subscriptionId, resourceGroup, logicAppName } = inputs;
-    // Retrieve the managed connections
-    const managedConnections: string[] = await getConnectionNames(scriptContext.folderPath);
-    return await callManagedConnectionsApi(subscriptionId, resourceGroup, logicAppName, managedConnections);
+
+    // Retrieve the managed connections and their last parameters from the connection IDs
+    const managedConnections: { refEndPoint: string }[] = await getConnectionNames(scriptContext.folderPath);
+
+    for (const connectionObj of managedConnections) {
+      try {
+        // Make API Call and Get Binary Data
+        const bufferData = await callManagedConnectionsApi(subscriptionId, resourceGroup, logicAppName, connectionObj.refEndPoint);
+
+        if (!bufferData) {
+          vscode.window.showErrorMessage(`Failed to get data for connection ID: ${connectionObj.refEndPoint}`);
+          continue;
+        }
+
+        // Unzip to Target Directory
+        const unzipPath = path.join(scriptContext.sourceControlPath);
+        await handleApiResponse(bufferData, unzipPath);
+      } catch (error) {
+        const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
+        vscode.window.showErrorMessage(`Error calling Consumption Resources API: ${errorString}`);
+        throw new Error(`API call to Consumption Resources failed: ${errorString}`);
+      }
+    }
   } catch (error) {
-    window.showErrorMessage('The API call failed due to the following error: ', error);
-    throw new Error(`API call failed: ${error}`);
+    await handleError(error, 'Error calling Consumption Resources API Connections');
   }
 }
 
@@ -107,13 +139,17 @@ async function callConsumptionApi(scriptContext: IAzureScriptWizard, inputs: any
  * @param scriptContext - IAzureScriptWizard object for the script context.
  * @returns - Promise<void> indicating success or failure.
  */
+
+//todo: clean up
 async function handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory: string): Promise<void> {
-  if (!zipContent) {
-    window.showErrorMessage('API response content not valid');
-    window.showErrorMessage("The API response content isn't valid.");
+  try {
+    if (!zipContent) {
+      window.showErrorMessage("The API response content isn't valid.");
+    }
+    await unzipLogicAppArtifacts(zipContent, targetDirectory);
+  } catch (error) {
+    await handleError(error, 'Error in handleApiResponse');
   }
-  await unzipLogicAppArtifacts(zipContent, targetDirectory);
-  vscode.window.showInformationMessage('artifacts successfully exported to the following directory: ', targetDirectory);
 }
 
 /**
@@ -168,8 +204,7 @@ async function callStandardResourcesApi(
     const response = await requestP(requestOptions);
     return Buffer.from(response, 'binary'); // Convert the response to a buffer
   } catch (error) {
-    window.showErrorMessage('The following error occurred while calling the API: ', error);
-    throw error;
+    await handleError(error, 'Error calling Standard Resources API');
   }
 }
 
@@ -178,62 +213,56 @@ async function callStandardResourcesApi(
  * @param {string} subscriptionId - The ID of the subscription.
  * @param {string} resourceGroup - The name of the resource group.
  * @param {string} logicAppName - The name of the logic app.
- * @param {any[]} managedConnections - An array of managed connections binary data.
- * @returns {Promise<Buffer[]>} - A promise that resolves to an array of buffers containing the deployment artifacts.
- * @throws {Error} - If an error occurs while calling the API.
+
+//TODO: CLEAN UP
  */
 async function callManagedConnectionsApi(
   subscriptionId: string,
   resourceGroup: string,
   logicAppName: string,
-  managedConnections: any[]
-): Promise<Buffer[]> {
+  managedConnection: any
+): Promise<Buffer> {
   try {
     // Loop through each managed connection
-    const connectionsDataBuffer: Buffer[] = []; // Array to store multiple buffers
     const apiVersion = '2018-07-01-preview';
     const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
     const accessToken = await getAuthorizationToken(credentials);
     const cloudHost = await getCloudHost(credentials);
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
-    for (const connection of managedConnections) {
-      const connectionName = connection as string;
-      const targetLogicAppName = logicAppName;
-      const connectionReferenceName = connectionName;
+    const connectionName = managedConnection as string;
+    const targetLogicAppName = logicAppName;
+    const connectionReferenceName = connectionName;
 
-      // Construct the URL
-      const apiUrl = `${baseGraphUri}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}/generateDeploymentArtifacts?api-version=${apiVersion}`;
+    // Construct the URL
+    const apiUrl = `${baseGraphUri}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}/generateDeploymentArtifacts?api-version=${apiVersion}`;
 
-      // Construct the request body based on the parameters
-      const requestBody = {
-        TargetLogicAppName: targetLogicAppName,
-        ConnectionReferenceName: connectionReferenceName,
-      };
+    // Construct the request body based on the parameters
+    const requestBody = {
+      TargetLogicAppName: targetLogicAppName,
+      ConnectionReferenceName: connectionReferenceName,
+    };
 
-      // Set up the options for the POST request
-      const requestOptions = {
-        method: 'POST',
-        uri: apiUrl,
-        body: requestBody,
-        json: true,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${accessToken}`,
-        },
-        encoding: 'binary',
-      };
+    // Set up the options for the POST request
+    const requestOptions = {
+      method: 'POST',
+      uri: apiUrl,
+      body: requestBody,
+      json: true,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${accessToken}`,
+      },
+      encoding: 'binary',
+    };
 
-      // Send the POST request
-      const response = await requestP(requestOptions);
-      const buffer = Buffer.from(response, 'binary');
-      connectionsDataBuffer.push(buffer);
-      window.showInformationMessage(`Successfully retrieved deployment artifacts for ${connectionName}`);
-    }
-    return connectionsDataBuffer;
+    // Send the POST request
+    const response = await requestP(requestOptions);
+    const buffer = Buffer.from(response, 'binary');
+    window.showInformationMessage(`Successfully retrieved deployment artifacts for ${connectionName}`);
+    return buffer;
   } catch (error) {
-    window.showErrorMessage(`'The following error occurred while calling the API: ${error}`);
-    throw error;
+    await handleError(error, 'Error calling Managed Connections API');
   }
 }
 
@@ -244,34 +273,47 @@ async function callManagedConnectionsApi(
  * @returns - Object containing validated inputs.
  */
 async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder: vscode.Uri) {
-  // Get initial values from local settings
-  const localSettings = await getLocalSettings(scriptContext, folder);
+  let localSettings;
+  try {
+    localSettings = await getLocalSettings(scriptContext, folder);
+  } catch (error) {
+    await handleError(error, 'Error fetching local settings');
+    return;
+  }
 
-  let {
-    [workflowSubscriptionIdKey]: subscriptionId,
-    [workflowResourceGroupNameKey]: resourceGroup,
-    [workflowLocationKey]: location,
+  const {
+    [workflowSubscriptionIdKey]: defaultSubscriptionId,
+    [workflowResourceGroupNameKey]: defaultResourceGroup,
+    [workflowLocationKey]: defaultLocation,
   } = localSettings.Values;
 
-  let logicAppName = scriptContext.logicAppName || '';
-  let storageAccount = scriptContext.storageAccountName || '';
-  let appServicePlan = scriptContext.appServicePlan || '';
+  const {
+    subscriptionId = defaultSubscriptionId,
+    resourceGroup = { name: defaultResourceGroup, location: defaultLocation },
+    logicAppName = '',
+    storageAccountName = '',
+    appServicePlan = '',
+  } = scriptContext;
 
-  if (!subscriptionId || !resourceGroup || !logicAppName || !storageAccount || !appServicePlan) {
-    // Use Azure Wizard to get missing details
-    const wizard = createAzureWizard(scriptContext, folder.fsPath);
-    await wizard.prompt();
-    await wizard.execute();
-
-    // Update missing details from wizard context
-    subscriptionId = scriptContext.subscriptionId || subscriptionId;
-    resourceGroup = scriptContext.resourceGroup.name || resourceGroup;
-    logicAppName = scriptContext.logicAppName;
-    storageAccount = scriptContext.storageAccountName || storageAccount;
-    appServicePlan = scriptContext.appServicePlan || appServicePlan;
-    location = scriptContext.resourceGroup.location || location;
+  try {
+    if (!subscriptionId || !resourceGroup.name || !logicAppName || !storageAccountName || !appServicePlan) {
+      const wizard = createAzureWizard(scriptContext, folder.fsPath);
+      await wizard.prompt();
+      await wizard.execute();
+    }
+  } catch (error) {
+    await handleError(error, 'Error executing Azure Wizard');
+    return;
   }
-  return { subscriptionId, resourceGroup, logicAppName, storageAccount, location, appServicePlan };
+
+  return {
+    subscriptionId: scriptContext.subscriptionId || subscriptionId,
+    resourceGroup: scriptContext.resourceGroup.name || resourceGroup.name,
+    logicAppName: scriptContext.logicAppName || logicAppName,
+    storageAccount: scriptContext.storageAccountName || storageAccountName,
+    location: scriptContext.resourceGroup.location || resourceGroup.location,
+    appServicePlan: scriptContext.appServicePlan || appServicePlan,
+  };
 }
 
 /**
@@ -287,23 +329,24 @@ async function getLocalSettings(context: IAzureScriptWizard, folder: vscode.Uri)
 }
 
 /**
- * Retrieves the names of connections from a connections JSON file.
+ * Retrieves the ref names s of connections from a connections JSON file.
  * @param projectRoot The root directory of the project.
- * @returns A promise that resolves to an array of connection reference names.
+ * @returns A promise that resolves to an array of objects, each containing a reference name and the last parameter in the connection id.
  */
-export async function getConnectionNames(projectRoot: string): Promise<string[]> {
+export async function getConnectionNames(projectRoot: string): Promise<{ refEndPoint: string }[]> {
   const data: string = await getConnectionsJson(projectRoot);
-  const connectionRefNames: string[] = [];
+  const managedConnections: { refEndPoint: string }[] = [];
 
   if (data) {
     const connectionsJson = JSON.parse(data);
     const managedApiConnections = connectionsJson['managedApiConnections'];
     for (const connection in managedApiConnections) {
       if (Object.prototype.hasOwnProperty.call(managedApiConnections, connection)) {
-        const refName = connection.trim();
-        connectionRefNames.push(refName);
+        const idPath = managedApiConnections[connection]['connection']['id'];
+        const lastParam = idPath.substring(idPath.lastIndexOf('/') + 1);
+        managedConnections.push({ refEndPoint: lastParam });
       }
     }
   }
-  return connectionRefNames;
+  return managedConnections;
 }
