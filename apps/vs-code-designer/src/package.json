@@ -307,12 +307,12 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.createNewDataMap",
+        "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
         "title": "Data Mapper: Create new data map",
         "icon": "$(add)"
       },
       {
-        "command": "azureLogicAppsStandard.loadDataMapFile",
+        "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
         "title": "Data Mapper: Load existing data map"
       }
     ],
@@ -341,7 +341,7 @@
     "viewsWelcome": [
       {
         "view": "azDataMapper",
-        "contents": "[Create new data map](command:azureLogicAppsStandard.createNewDataMap)\n[Load existing data map](command:azureLogicAppsStandard.loadDataMapFile)"
+        "contents": "[Create new data map](command:azureLogicAppsStandard.dataMap.createNewDataMap)\n[Load existing data map](command:azureLogicAppsStandard.dataMap.loadDataMapFile)"
       }
     ],
     "menus": {
@@ -375,7 +375,7 @@
           "group": "navigation@2"
         },
         {
-          "command": "azureLogicAppsStandard.createNewDataMap",
+          "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
           "when": "view == azDataMapper",
           "group": "navigation@1"
         }
@@ -685,7 +685,7 @@
       ],
       "azureLogicAppsStandard.dataMapperMenu": [
         {
-          "command": "azureLogicAppsStandard.loadDataMapFile",
+          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
           "group": "navigation",
           "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         }
