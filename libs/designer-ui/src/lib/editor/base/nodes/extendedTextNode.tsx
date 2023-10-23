@@ -1,4 +1,4 @@
-import type { DOMConversion, DOMConversionMap, DOMConversionOutput, SerializedTextNode, TextFormatType } from 'lexical';
+import type { DOMConversion, DOMConversionMap, DOMConversionOutput, SerializedTextNode, Spread } from 'lexical';
 import { $isTextNode, TextNode } from 'lexical';
 
 // Since the TextNode is foundational to all Lexical packages, including the
@@ -7,6 +7,13 @@ import { $isTextNode, TextNode } from 'lexical';
 // deserialization of HTML/CSS styling properties to achieve full fidelity
 // between JSON <-> HTML. Since this is a very popular use case, below we are
 // proving a recipe to handle the most common use cases.
+
+export type SerializedExtendedTextNode = Spread<
+  {
+    type: 'extended-text';
+  },
+  SerializedTextNode
+>;
 
 export class ExtentedTextNode extends TextNode {
   static getType(): string {
@@ -52,8 +59,16 @@ export class ExtentedTextNode extends TextNode {
     return TextNode.importJSON(serializedNode);
   }
 
-  exportJSON(): SerializedTextNode {
-    return super.exportJSON();
+  exportJSON(): SerializedExtendedTextNode {
+    return {
+      text: this.__text,
+      format: this.__format,
+      detail: this.__detail,
+      style: this.__style,
+      type: 'extended-text',
+      mode: 'normal',
+      version: 1,
+    };
   }
 }
 
@@ -101,7 +116,7 @@ function patchStyleConversion(
   };
 }
 
-export function $createExtendedTextNode(text: string, styles?: string, format?: number | TextFormatType) {
+export function $createExtendedTextNode(text: string, styles?: string, format?: number) {
   const newNode = new ExtentedTextNode(text);
   newNode.setStyle(styles ?? '');
   newNode.setFormat(format ?? 0);
