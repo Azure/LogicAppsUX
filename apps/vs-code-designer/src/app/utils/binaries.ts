@@ -51,8 +51,10 @@ export async function validateAndInstallBinaries(context: IActionContext) {
 
       context.telemetry.properties.lastStep = 'getGlobalSetting';
       progress.report({ increment: 10, message: `Get Settings` });
+
       const dependencyTimeout = (await getDependencyTimeout()) * 1000;
-      context.telemetry.properties.dependencyTimeout = `${dependencyTimeout}`;
+
+      context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
       if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
         await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
         context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
@@ -63,7 +65,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       let dependenciesVersions: IBundleDependencyFeed;
       try {
         dependenciesVersions = await getDependenciesVersion(context);
-        context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
+        context.telemetry.properties.dependenciesVersions = JSON.stringify(dependenciesVersions);
       } catch (error) {
         // Unable to get dependency.json, will default to fallback versions
         console.log(error);

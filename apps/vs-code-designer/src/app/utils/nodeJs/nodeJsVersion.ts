@@ -70,7 +70,7 @@ export async function setNodeJsCommand(): Promise<void> {
       fs.chmodSync(nodeJsBinariesPath, 0o777);
     }
   }
-  updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
+  await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
 }
 
 function getNodeSubFolder(directoryPath: string): string | null {

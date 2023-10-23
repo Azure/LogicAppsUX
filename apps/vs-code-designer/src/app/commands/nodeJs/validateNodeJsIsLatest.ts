@@ -17,7 +17,6 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateNodeJsIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
-
     const showNodeJsWarningKey = 'showNodeJsWarning';
     const showNodeJsWarning = !!getWorkspaceSetting<boolean>(showNodeJsWarningKey);
     const binaries = binariesExist(nodeJsDependencyName);

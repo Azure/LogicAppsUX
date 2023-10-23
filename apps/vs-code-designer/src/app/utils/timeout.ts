@@ -11,7 +11,6 @@ export async function timeout(asyncFunc: (...params: any[]) => Promise<void>, ti
 
     return await asyncOperation;
   } catch (error) {
-    console.log(error);
     throw new Error(`${asyncFunc.name} timed out after ${timeoutMs} ms.`);
   }
 }

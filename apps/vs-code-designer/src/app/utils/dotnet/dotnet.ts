@@ -231,24 +231,39 @@ export async function setDotNetCommand(): Promise<void> {
       process.platform == Platform.windows
         ? path.join(dotNetBinariesPath, `${ext.dotNetCliPath}.exe`)
         : path.join(dotNetBinariesPath, `${ext.dotNetCliPath}`);
-    const currentPath = process.env.PATH;
-    const newPath = `${dotNetBinariesPath}${path.delimiter}${command}${path.delimiter}${currentPath}`;
+    const newPath = `${dotNetBinariesPath}${path.delimiter}\${env:PATH}`;
     fs.chmodSync(dotNetBinariesPath, 0o777);
+
     try {
+      const terminalConfig = vscode.workspace.getConfiguration();
+      const pathEnv = {
+        PATH: newPath,
+      };
+
+      // Required for dotnet cli in VSCode Terminal
       switch (process.platform) {
         case Platform.windows: {
-          const terminalConfig = vscode.workspace.getConfiguration();
-          const pathEnv = {
-            PATH: newPath,
-          };
           terminalConfig.update('terminal.integrated.env.windows', pathEnv, vscode.ConfigurationTarget.Workspace);
           break;
         }
+
+        case Platform.linux: {
+          terminalConfig.update('terminal.integrated.env.linux', pathEnv, vscode.ConfigurationTarget.Workspace);
+          break;
+        }
+
+        case Platform.mac: {
+          terminalConfig.update('terminal.integrated.env.osx', pathEnv, vscode.ConfigurationTarget.Workspace);
+          break;
+        }
       }
+
+      // Required for CoreClr
+      terminalConfig.update('omnisharp.dotNetCliPaths', [dotNetBinariesPath], vscode.ConfigurationTarget.Workspace);
     } catch (error) {
       console.log(error);
     }
   }
 
-  updateGlobalSetting<string>(dotNetBinaryPathSettingKey, command);
+  await updateGlobalSetting<string>(dotNetBinaryPathSettingKey, command);
 }

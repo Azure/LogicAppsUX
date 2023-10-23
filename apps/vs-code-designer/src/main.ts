@@ -50,6 +50,9 @@ export async function activate(context: vscode.ExtensionContext) {
       await runWithDurationTelemetry(actionContext, 'azureLogicAppsStandard.validateAndInstallBinaries', async () => {
         await validateAndInstallBinaries(actionContext);
         await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
+
+        activateContext.telemetry.properties.lastStep = 'promptStartDesignTimeOption';
+        await promptStartDesignTimeOption(activateContext);
       });
     });
 
@@ -82,9 +85,6 @@ export async function activate(context: vscode.ExtensionContext) {
     registerCommands();
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
-
-    activateContext.telemetry.properties.lastStep = 'promptStartDesignTimeOption';
-    promptStartDesignTimeOption(activateContext);
 
     activateContext.telemetry.properties.lastStep = 'activateAzurite';
     activateAzurite(activateContext);
