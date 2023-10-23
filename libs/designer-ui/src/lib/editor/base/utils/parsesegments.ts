@@ -18,7 +18,6 @@ import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
 import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, $createTextNode, $getRoot, createEditor } from 'lexical';
 
 export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
-  console.log(value);
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
   const root = $getRoot();
