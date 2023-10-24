@@ -192,14 +192,14 @@ export const PromptGuideContextualMenu = ({
 
   const defaultFlowMenuItems: IContextualMenuItem[] = [
     header(PromptGuideMenuKey.DefaultFlow, intlText.promptGuideMenu.title),
-    entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.AddAction, {
-      text: intlText.promptGuideMenu.addAction,
-      iconName: 'Add',
-    }),
-    entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.EditFlow, {
-      text: intlText.promptGuideMenu.editFlow,
-      iconName: 'Refresh',
-    }),
+    // entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.AddAction, {
+    //   text: intlText.promptGuideMenu.addAction,
+    //   iconName: 'Add',
+    // }),
+    // entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.EditFlow, {
+    //   text: intlText.promptGuideMenu.editFlow,
+    //   iconName: 'Refresh',
+    // }),
     entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.ExplainFlow, {
       text: intlText.promptGuideMenu.explainFlow,
       iconName: 'AlignJustify',
