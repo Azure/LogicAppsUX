@@ -803,6 +803,12 @@
       "value": "Returns the collection in reverse order"
     }
   ],
+  "3Vy0E6": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "3X4FHS": [
     {
       "type": 0,
@@ -965,6 +971,12 @@
       "value": "onDays"
     }
   ],
+  "4EEu6/": [
+    {
+      "type": 0,
+      "value": "What are some common Logic App connectors?"
+    }
+  ],
   "4Ekn9t": [
     {
       "type": 0,
@@ -1071,12 +1083,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Add a condition"
     }
   ],
   "5J9jne": [
@@ -2169,12 +2175,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "Add an action that sends an email"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2491,12 +2491,6 @@
     {
       "type": 0,
       "value": "Converts the parameter to a decimal number"
-    }
-  ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
     }
   ],
   "ERAWZA": [
@@ -4275,6 +4269,12 @@
       "value": "Connection errors"
     }
   ],
+  "PuD5mN": [
+    {
+      "type": 0,
+      "value": "Explain what the workflow does."
+    }
+  ],
   "Pudllg": [
     {
       "type": 0,
@@ -4731,12 +4731,6 @@
     {
       "type": 0,
       "value": "Give feedback"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Explain what an action does"
     }
   ],
   "TNEttQ": [
@@ -6397,12 +6391,6 @@
       "value": "Replace action"
     }
   ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
-    }
-  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -7183,6 +7171,12 @@
     {
       "type": 0,
       "value": "Example: 0, 10"
+    }
+  ],
+  "ibgYdM": [
+    {
+      "type": 0,
+      "value": "Welcome back! You can ask me any questions about your workflow or Logic Apps as a whole. For example:"
     }
   ],
   "id4DBb": [
@@ -9617,6 +9611,12 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "xpzXMs": [
+    {
+      "type": 0,
+      "value": "Explain what a specific action does."
     }
   ],
   "xt5TeT": [

@@ -18,6 +18,10 @@ export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHe
     defaultMessage: 'Preview',
     description: 'Label in the chatbot header stating the chatbot feature is a preview',
   });
+  const protectedPillText = intl.formatMessage({
+    defaultMessage: 'Protected',
+    description: 'Label in the chatbot header stating that the users information is ptotected in this chatbot',
+  });
 
   const collapseButtonTitle = intl.formatMessage({
     defaultMessage: 'Collapse',
@@ -36,6 +40,7 @@ export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHe
             <img src={LogicApps} alt="Logic Apps" />
           </div>
           <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
+          <div className={'msla-chatbot-header-mode-protected-pill'}>{protectedPillText}</div>{' '}
           <div className={'msla-chatbot-header-mode-pill'}>{pillText}</div>{' '}
         </>
       )}
