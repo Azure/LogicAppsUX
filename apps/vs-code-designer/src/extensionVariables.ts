@@ -39,7 +39,7 @@ export namespace ext {
   export let rgApi: AzureHostExtensionApi;
 
   // Data Mapper panel
-  export let dataMapPanelManagers: DataMapperPanelDictionary;
+  export const dataMapPanelManagers: DataMapperPanelDictionary = {};
 
   // Functions
   export const funcCliPath: string = func;
