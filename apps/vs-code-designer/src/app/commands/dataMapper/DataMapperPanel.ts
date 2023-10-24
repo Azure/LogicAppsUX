@@ -117,7 +117,7 @@ export default class DataMapperPanel {
         break;
       case 'webviewRscLoadError':
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
-        DataMapperExt.showError(`Error loading Data Mapper resource: ${msg.data}`);
+        ext.showError(`Error loading Data Mapper resource: ${msg.data}`);
         break;
       case 'addSchemaFromFile': {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
@@ -247,7 +247,7 @@ export default class DataMapperPanel {
 
           // Check that the schema file dependency exists in the same directory as the primary schema file
           if (!fileExistsSync(schemaFilePath)) {
-            DataMapperExt.showError(
+            ext.showError(
               `Schema loading error: couldn't find schema file dependency ${schemaFile} in the same directory as ${primarySchemaFileName}. ${primarySchemaFileName} will still be copied to the Schemas folder.`
             );
             return;
@@ -296,14 +296,14 @@ export default class DataMapperPanel {
             });
           });
         })
-        .catch(DataMapperExt.showError);
+        .catch(ext.showError);
     });
   }
 
   public saveMapMetadata(mapMetadata: string) {
     const vscodeFolderPath = this.getMapMetadataPath();
 
-    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(DataMapperExt.showError);
+    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(ext.showError);
   }
 
   public saveMapXslt(mapXslt: string) {
@@ -327,7 +327,7 @@ export default class DataMapperPanel {
             this.checkAndSetXslt();
           });
         })
-        .catch(DataMapperExt.showError);
+        .catch(ext.showError);
     });
   }
 
@@ -342,7 +342,7 @@ export default class DataMapperPanel {
       .then(() => {
         fs.writeFile(filePath, mapDefFileContents, 'utf8');
       })
-      .catch(DataMapperExt.showError);
+      .catch(ext.showError);
   }
 
   private readMapMetadataFile(): MapMetadata | undefined {
@@ -353,13 +353,13 @@ export default class DataMapperPanel {
         const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
         return metadataJson;
       } catch {
-        DataMapperExt.showError(
+        ext.showError(
           `Data map metadata file found at ${vscodeFolderPath} contains invalid JSON. Data map will load without metadata file.`
         );
         return undefined;
       }
     } else {
-      DataMapperExt.showWarning(
+      ext.showWarning(
         `Data map metadata not found at path ${vscodeFolderPath}. This file configures your function positioning and other info. Please save your map to regenerate the file.`
       );
       return undefined;
@@ -391,7 +391,7 @@ export default class DataMapperPanel {
         });
       });
     } else {
-      DataMapperExt.showWarning(`XSLT file not detected for ${this.dataMapName}`);
+      ext.showWarning(`XSLT file not detected for ${this.dataMapName}`);
     }
   }
 

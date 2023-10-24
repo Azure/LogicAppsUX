@@ -9,7 +9,7 @@ import type { Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type * as cp from 'child_process';
-import type { ExtensionContext, WebviewPanel } from 'vscode';
+import { window, type ExtensionContext, type WebviewPanel } from 'vscode';
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -59,6 +59,21 @@ export namespace ext {
     [webViewKey.monitoring]: {},
     [webViewKey.export]: {},
     [webViewKey.overview]: {},
+  };
+
+  export const log = (text: string) => {
+    ext.outputChannel.appendLine(text);
+    ext.outputChannel.show();
+  };
+
+  export const showWarning = (errMsg: string) => {
+    ext.log(errMsg);
+    window.showWarningMessage(errMsg);
+  };
+
+  export const showError = (errMsg: string) => {
+    ext.log(errMsg);
+    window.showErrorMessage(errMsg);
   };
 }
 

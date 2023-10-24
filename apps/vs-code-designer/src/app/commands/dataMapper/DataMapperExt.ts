@@ -51,26 +51,11 @@ export default class DataMapperExt {
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
 
-  public static log(text: string) {
-    ext.outputChannel.appendLine(text);
-    ext.outputChannel.show();
-  }
-
-  public static showWarning(errMsg: string) {
-    DataMapperExt.log(errMsg);
-    window.showWarningMessage(errMsg);
-  }
-
-  public static showError(errMsg: string) {
-    DataMapperExt.log(errMsg);
-    window.showErrorMessage(errMsg);
-  }
-
   public static getWorkspaceFolderFsPath() {
     if (workspace.workspaceFolders) {
       return workspace.workspaceFolders[0].uri.fsPath;
     } else {
-      DataMapperExt.showError('No VS Code folder/workspace found...');
+      ext.showError('No VS Code folder/workspace found...');
       return '';
     }
   }

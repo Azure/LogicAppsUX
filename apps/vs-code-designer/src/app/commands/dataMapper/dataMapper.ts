@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { extensionCommand } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import DataMapperExt from './DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from './extensionConfig';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
@@ -89,7 +90,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     typeof mapDefinition.$targetSchema !== 'string'
   ) {
     context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions';
-    DataMapperExt.showError('Invalid map definition: $sourceSchema and $targetSchema must be defined.');
+    ext.showError('Invalid map definition: $sourceSchema and $targetSchema must be defined.');
     return;
   }
 
@@ -143,7 +144,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
       context.telemetry.properties.result = 'Canceled';
       context.telemetry.properties.missingSourceSchema = 'true';
 
-      DataMapperExt.showError('No source schema file was selected. Aborting load...');
+      ext.showError('No source schema file was selected. Aborting load...');
       return;
     }
   }
@@ -155,7 +156,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
       context.telemetry.properties.result = 'Canceled';
       context.telemetry.properties.missingTargetSchema = 'true';
 
-      DataMapperExt.showError('No target schema file was selected. Aborting load...');
+      ext.showError('No target schema file was selected. Aborting load...');
       return;
     }
   }

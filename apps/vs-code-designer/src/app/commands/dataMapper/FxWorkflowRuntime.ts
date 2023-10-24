@@ -1,5 +1,4 @@
 import { ext } from '../../../extensionVariables';
-import DataMapperExt from './DataMapperExt';
 import {
   backendRuntimeBaseUrl,
   backendRuntimeTimeout,
@@ -40,7 +39,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
 
     if (await isBackendRuntimeUp(url)) {
-      DataMapperExt.log('Backend runtime is already running');
+      ext.log('Backend runtime is already running');
       return;
     }
 
@@ -63,7 +62,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
       window.showErrorMessage('Backend runtime could not be started');
 
       const errMsg = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
-      DataMapperExt.log(`Backend runtime failed to start: ${errMsg}`);
+      ext.log(`Backend runtime failed to start: ${errMsg}`);
     }
   });
 }
@@ -127,7 +126,7 @@ function startBackendRuntimeProcess(workingDirectory: string | undefined, comman
     shell: true,
   };
 
-  DataMapperExt.log(`Running command: "${command} ${formattedArgs}"...`);
+  ext.log(`Running command: "${command} ${formattedArgs}"...`);
   ext.dataMapperChildProcess = cp.spawn(command, args, options);
 
   ext.dataMapperChildProcess.stdout?.on('data', (data: string | Buffer) => {
