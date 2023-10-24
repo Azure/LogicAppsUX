@@ -11,6 +11,7 @@ import {
   extensionCommand,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getConnectionsJson } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
@@ -32,7 +33,7 @@ import { window } from 'vscode';
 export async function generateDeploymentScripts(context: IActionContext, projectRoot: vscode.Uri): Promise<void> {
   try {
     ext.outputChannel.show();
-    ext.outputChannel.appendLog('Initiating script generation...');
+    ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
     const commandIdentifier = extensionCommand.generateDeploymentScripts;
@@ -43,12 +44,14 @@ export async function generateDeploymentScripts(context: IActionContext, project
     await callConsumptionApi(scriptContext, inputs);
     const standardArtifactsContent = await callStandardApi(scriptContext, inputs);
     await handleApiResponse(standardArtifactsContent, sourceControlPath);
+
     const deploymentScriptLocation = `workspace/${scriptContext.sourceControlPath}`;
-    ext.outputChannel.appendLog(
-      `Deployment script generation completed successfully. The scripts are added at location: ${deploymentScriptLocation}. ` +
-        'Warning: One or more workflows in your logic app may contain user-based authentication for managed connectors. ' +
-        'You are required to manually authenticate the connection from the Azure portal after the resource is deployed by the DevOps pipeline.'
+    const localizedLogMessage = localize(
+      'scriptGenSuccess',
+      `Deployment script generation completed successfully. The scripts are added at location: {0}. Warning: One or more workflows in your logic app may contain user-based authentication for managed connectors. You are required to manually authenticate the connection from the Azure portal after the resource is deployed by the DevOps pipeline.`,
+      deploymentScriptLocation
     );
+    ext.outputChannel.appendLog(localizedLogMessage);
 
     if (scriptContext.isValidWorkspace) {
       FileManagement.addFolderToWorkspace(sourceControlPath);
@@ -56,6 +59,8 @@ export async function generateDeploymentScripts(context: IActionContext, project
       FileManagement.convertToValidWorkspace(sourceControlPath);
     }
   } catch (error) {
+    const localizedErrorMessage = localize('errorScriptGen', '[Error] generateDeploymentScripts failed: {0}', error);
+    ext.outputChannel.appendLog(localizedErrorMessage);
     ext.outputChannel.appendLog(`[Error] generateDeploymentScripts failed: ${error}`);
     await handleError(error, 'Error during deployment script generation');
   }
@@ -103,42 +108,61 @@ async function callStandardApi(scriptContext: IAzureScriptWizard, inputs: any): 
  */
 export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inputs: any): Promise<void> {
   try {
-    ext.outputChannel.appendLog('Initiating call to Consumption API for deployment artifacts.');
+    ext.outputChannel.appendLog(localize('initCallConsumption', 'Initiating call to Consumption API for deployment artifacts.'));
 
     const { subscriptionId, resourceGroup, logicAppName } = inputs;
     ext.outputChannel.appendLog(
-      `Operational context: Subscription ID: ${subscriptionId}, Resource Group: ${resourceGroup}, Logic App: ${logicAppName}`
+      localize(
+        'operationalContext',
+        'Operational context: Subscription ID: {0}, Resource Group: {1}, Logic App: {2}',
+        subscriptionId,
+        resourceGroup,
+        logicAppName
+      )
     );
 
     // Retrieve managed connections
-    ext.outputChannel.appendLog('Fetching list of managed connections...');
+    ext.outputChannel.appendLog(localize('fetchingManagedConnections', 'Fetching list of managed connections...'));
     const managedConnections: { refEndPoint: string }[] = await getConnectionNames(scriptContext.folderPath);
 
     for (const connectionObj of managedConnections) {
       try {
-        ext.outputChannel.appendLog(`Initiating API call for managed connection: ${connectionObj.refEndPoint}`);
+        ext.outputChannel.appendLog(
+          localize('initiatingApiCallForConnection', 'Initiating API call for managed connection: {0}', connectionObj.refEndPoint)
+        );
 
         const bufferData = await callManagedConnectionsApi(subscriptionId, resourceGroup, logicAppName, connectionObj.refEndPoint);
 
         if (!bufferData) {
-          vscode.window.showErrorMessage(`Data retrieval failed for: ${connectionObj.refEndPoint}`);
+          vscode.window.showErrorMessage(localize('dataRetrievalFailedFor', 'Data retrieval failed for: {0}', connectionObj.refEndPoint));
           continue;
         }
 
         // Specify the unzip path and handle the API response
         const unzipPath = path.join(scriptContext.sourceControlPath);
-        ext.outputChannel.appendLog(`Attempting to unzip artifacts for ${connectionObj.refEndPoint} at ${unzipPath}`);
+        ext.outputChannel.appendLog(
+          localize('attemptingUnzipArtifacts', 'Attempting to unzip artifacts for {0} at {1}', connectionObj.refEndPoint, unzipPath)
+        );
         await handleApiResponse(bufferData, unzipPath);
       } catch (error) {
         const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
-        ext.outputChannel.appendLog(`Failed API call for managed connection: ${connectionObj.refEndPoint}. Error: ${errorString}`);
-        vscode.window.showErrorMessage(`API call failed: ${errorString}`);
-        throw new Error(`API call to Consumption Resources failed: ${errorString}`);
+        ext.outputChannel.appendLog(
+          localize(
+            'failedApiCallForConnectionWithError',
+            'Failed API call for managed connection: {0}. Error: {1}',
+            connectionObj.refEndPoint,
+            errorString
+          )
+        );
+        vscode.window.showErrorMessage(localize('apiCallFailedWithError', 'API call failed: {0}', errorString));
+        throw new Error(localize('apiCallToConsumptionResourcesFailed', 'API call to Consumption Resources failed: {0}', errorString));
       }
     }
   } catch (error) {
-    ext.outputChannel.appendLog('Failed to complete Consumption API calls for all managed connections.');
-    await handleError(error, 'Error calling Consumption Resources API Connections');
+    ext.outputChannel.appendLog(
+      localize('failedAllConsumptionCalls', 'Failed to complete Consumption API calls for all managed connections.')
+    );
+    await handleError(error, localize('errorConsumptionResources', 'Error calling Consumption Resources API Connections'));
   }
 }
 
@@ -149,19 +173,18 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
  * @param scriptContext - IAzureScriptWizard object for the script context.
  * @returns - Promise<void> indicating success or failure.
  */
-
 async function handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory: string): Promise<void> {
   try {
     if (!zipContent) {
-      window.showErrorMessage('Invalid API response content.');
-      ext.outputChannel.appendLog('Invalid API response received. Exiting...');
+      window.showErrorMessage(localize('invalidApiResponseContent', 'Invalid API response content.'));
+      ext.outputChannel.appendLog(localize('invalidApiResponseExiting', 'Invalid API response received. Exiting...'));
       return;
     }
     await unzipLogicAppArtifacts(zipContent, targetDirectory);
-    ext.outputChannel.appendLog('Artifacts successfully unzipped.');
+    ext.outputChannel.appendLog(localize('artifactsSuccessfullyUnzipped', 'Artifacts successfully unzipped.'));
   } catch (error) {
-    ext.outputChannel.appendLog('Error occurred while handling API response.');
-    await handleError(error, 'Error in handleApiResponse');
+    ext.outputChannel.appendLog(localize('errorHandlingApiResponse', 'Error occurred while handling API response.'));
+    await handleError(error, localize('errorInHandleApiResponse', 'Error in handleApiResponse'));
   }
 }
 
@@ -184,11 +207,18 @@ async function callStandardResourcesApi(
   appServicePlan: string
 ): Promise<Buffer> {
   try {
-    ext.outputChannel.appendLog('Initiating API connection through workflow designer port...');
+    ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
     if (!ext.workflowDesignTimePort) {
-      ext.outputChannel.appendLog('Connection attempt failed. Workflow designer port not set. Trying to find an available port...');
+      ext.outputChannel.appendLog(
+        localize(
+          'connectionAttemptFailed',
+          'Connection attempt failed. Workflow designer port not set. Trying to find an available port...'
+        )
+      );
       ext.workflowDesignTimePort = await portfinder.getPortPromise();
-      ext.outputChannel.appendLog(`New workflow designer port set to ${ext.workflowDesignTimePort}. Retrying API connection.`);
+      ext.outputChannel.appendLog(
+        localize('newPortSet', `New workflow designer port set to ${ext.workflowDesignTimePort}. Retrying API connection.`)
+      );
     }
 
     const apiUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
@@ -216,19 +246,22 @@ async function callStandardResourcesApi(
       encoding: 'binary', // <-- Ensure response is treated as binary data
     };
 
-    // Use the requestP function to send the POST request
     ext.outputChannel.appendLog(
-      `Operational context: Subscription ID: ${subscriptionId}, Resource Group: ${resourceGroup}, Logic App: ${logicAppName}`
+      localize(
+        'operationalContext',
+        `Operational context: Subscription ID: ${subscriptionId}, Resource Group: ${resourceGroup}, Logic App: ${logicAppName}`
+      )
     );
-    ext.outputChannel.appendLog('Initiating Standard Resources API call...');
+    ext.outputChannel.appendLog(localize('initiatingStandardResourcesApiCall', 'Initiating Standard Resources API call...'));
     const response = await requestP(requestOptions);
-    ext.outputChannel.appendLog('API call successful, processing response...');
-    return Buffer.from(response, 'binary'); // Convert the response to a buffer
+    ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
+    return Buffer.from(response, 'binary');
   } catch (error) {
-    ext.outputChannel.appendLog('Failed to call Standard Resources API.');
-    await handleError(error, 'Error calling Standard Resources API');
+    ext.outputChannel.appendLog(localize('failedStandardResourcesApiCall', 'Failed to call Standard Resources API.'));
+    await handleError(error, localize('errorStandardResourcesApi', 'Error calling Standard Resources API'));
   }
 }
+
 /**
  * Calls the Managed Connections API to retrieve deployment artifacts for a given Logic App.
  * @param subscriptionId - The Azure subscription ID.
@@ -282,15 +315,18 @@ async function callManagedConnectionsApi(
 
     // Convert and log the successful response
     const buffer = Buffer.from(response, 'binary');
-    ext.outputChannel.appendLog(`Successfully retrieved deployment artifacts for connection: ${connectionName}.`);
-
+    ext.outputChannel.appendLog(
+      localize('successfulManagedConnection', `Successfully retrieved deployment artifacts for connection: ${connectionName}.`)
+    );
     return buffer;
   } catch (error) {
-    // Handle and log errors
     ext.outputChannel.appendLog(
-      `Error encountered while calling Managed Connections API: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`
+      localize(
+        'errorManagedConnectionsApi',
+        `Error encountered while calling Managed Connections API: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`
+      )
     );
-    await handleError(error, 'Error calling Managed Connections API');
+    await handleError(error, localize('handleErrorManagedConnectionsApi', 'Error calling Managed Connections API'));
   }
 }
 
@@ -304,12 +340,14 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   let localSettings;
 
   try {
-    ext.outputChannel.appendLog('Attempting to fetch local settings...');
+    ext.outputChannel.appendLog(localize('fetchLocalSettingsAttempt', 'Attempting to fetch local settings...'));
     localSettings = await getLocalSettings(scriptContext, folder);
-    ext.outputChannel.appendLog(`Successfully fetched local settings: ${JSON.stringify(localSettings)}`);
+    ext.outputChannel.appendLog(
+      localize('fetchLocalSettingsSuccess', `Successfully fetched local settings: ${JSON.stringify(localSettings)}`)
+    );
   } catch (error) {
-    ext.outputChannel.appendLog(`Error fetching local settings: ${error}`);
-    await handleError(error, 'Error fetching local settings');
+    ext.outputChannel.appendLog(localize('fetchLocalSettingsError', `Error fetching local settings: ${error}`));
+    await handleError(error, localize('handleErrorFetchLocalSettings', 'Error fetching local settings'));
     return;
   }
 
@@ -320,7 +358,10 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   } = localSettings.Values;
 
   ext.outputChannel.appendLog(
-    `Extracted default values: ${JSON.stringify({ defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
+    localize(
+      'extractDefaultValues',
+      `Extracted default values: ${JSON.stringify({ defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
+    )
   );
 
   const {
@@ -332,20 +373,25 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   } = scriptContext;
 
   ext.outputChannel.appendLog(
-    `Context values: ${JSON.stringify({ subscriptionId, resourceGroup, logicAppName, storageAccountName, appServicePlan })}`
+    localize(
+      'contextValues',
+      `Context values: ${JSON.stringify({ subscriptionId, resourceGroup, logicAppName, storageAccountName, appServicePlan })}`
+    )
   );
 
   try {
     if (!subscriptionId || !resourceGroup.name || !logicAppName || !storageAccountName || !appServicePlan) {
-      ext.outputChannel.appendLog('One or more required values are missing. Launching Azure Wizard...');
+      ext.outputChannel.appendLog(
+        localize('AttemptingExecuteAzureWizardSuccess', 'One or more required values are missing. Launching Azure Wizard...')
+      );
       const wizard = createAzureWizard(scriptContext, folder.fsPath);
       await wizard.prompt();
       await wizard.execute();
-      ext.outputChannel.appendLog('Azure Wizard executed successfully.');
+      ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
     }
   } catch (error) {
-    ext.outputChannel.appendLog(`Error executing Azure Wizard: ${error}`);
-    await handleError(error, 'Error executing Azure Wizard');
+    ext.outputChannel.appendLog(localize('executeAzureWizardError', `Error executing Azure Wizard: ${error}`));
+    await handleError(error, localize('handleErrorExecuteAzureWizard', 'Error executing Azure Wizard'));
     return;
   }
 
