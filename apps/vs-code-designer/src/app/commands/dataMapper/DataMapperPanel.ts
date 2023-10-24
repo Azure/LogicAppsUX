@@ -82,7 +82,7 @@ export default class DataMapperPanel {
 
   private async _setWebviewHtml() {
     // Get webview content, converting links to VS Code URIs
-    const indexPath = path.join(ext.context.extensionPath, '/vscode-data-mapper/index.html');
+    const indexPath = path.join(ext.context.extensionPath, '/vs-code-data-mapper/index.html');
     const html = await fs.readFile(indexPath, 'utf-8');
     // 1. Get all links prefixed by href or src
     const matchLinks = /(href|src)="([^"]*)"/g;
