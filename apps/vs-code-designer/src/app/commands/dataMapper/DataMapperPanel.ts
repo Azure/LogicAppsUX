@@ -82,7 +82,7 @@ export default class DataMapperPanel {
 
   private async _setWebviewHtml() {
     // Get webview content, converting links to VS Code URIs
-    const indexPath = path.join(ext.context.extensionPath, '/webview/index.html');
+    const indexPath = path.join(ext.context.extensionPath, '/vscode-data-mapper/index.html');
     const html = await fs.readFile(indexPath, 'utf-8');
     // 1. Get all links prefixed by href or src
     const matchLinks = /(href|src)="([^"]*)"/g;
@@ -109,6 +109,7 @@ export default class DataMapperPanel {
     switch (msg.command) {
       case 'webviewLoaded':
         // Send runtime port to webview
+        ext.outputChannel.appendLine('---webviewLoaded');
         this.sendMsgToWebview({ command: 'setRuntimePort', data: `${ext.dataMapperRuntimePort}` });
 
         // If loading a data map, handle that + xslt filename
