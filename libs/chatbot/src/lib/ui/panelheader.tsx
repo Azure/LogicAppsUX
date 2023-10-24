@@ -15,8 +15,8 @@ export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHe
     description: 'Chatbot header title',
   });
   const pillText = intl.formatMessage({
-    defaultMessage: 'In-Development',
-    description: 'Label in the chatbot header stating the chatbot feature is still in-development',
+    defaultMessage: 'Preview',
+    description: 'Label in the chatbot header stating the chatbot feature is a preview',
   });
 
   const collapseButtonTitle = intl.formatMessage({
