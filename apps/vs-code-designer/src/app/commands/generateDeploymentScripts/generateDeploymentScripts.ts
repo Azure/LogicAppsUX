@@ -127,7 +127,7 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
 
         // Specify the unzip path and handle the API response
         const unzipPath = path.join(scriptContext.sourceControlPath);
-        ext.outputChannel.appendLog(`Storing data at ${unzipPath}`);
+        ext.outputChannel.appendLog(`Attempting to unzip artifacts for ${connectionObj.refEndPoint} at ${unzipPath}`);
         await handleApiResponse(bufferData, unzipPath);
       } catch (error) {
         const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
@@ -157,7 +157,6 @@ async function handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory:
       ext.outputChannel.appendLog('Invalid API response received. Exiting...');
       return;
     }
-    ext.outputChannel.appendLog('Valid API response received. Unzipping artifacts...');
     await unzipLogicAppArtifacts(zipContent, targetDirectory);
     ext.outputChannel.appendLog('Artifacts successfully unzipped.');
   } catch (error) {
@@ -245,10 +244,6 @@ async function callManagedConnectionsApi(
   managedConnection: any
 ): Promise<Buffer> {
   try {
-    // Initial log to signify the start of the API call
-    ext.outputChannel.appendLog('Starting Managed Connections API call.');
-
-    // Initialize parameters and constants
     const apiVersion = '2018-07-01-preview';
     const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
     const accessToken = await getAuthorizationToken(credentials);
@@ -307,9 +302,13 @@ async function callManagedConnectionsApi(
  */
 async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder: vscode.Uri) {
   let localSettings;
+
   try {
+    ext.outputChannel.appendLog('Attempting to fetch local settings...');
     localSettings = await getLocalSettings(scriptContext, folder);
+    ext.outputChannel.appendLog(`Successfully fetched local settings: ${JSON.stringify(localSettings)}`);
   } catch (error) {
+    ext.outputChannel.appendLog(`Error fetching local settings: ${error}`);
     await handleError(error, 'Error fetching local settings');
     return;
   }
@@ -320,6 +319,10 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     [workflowLocationKey]: defaultLocation,
   } = localSettings.Values;
 
+  ext.outputChannel.appendLog(
+    `Extracted default values: ${JSON.stringify({ defaultSubscriptionId, defaultResourceGroup, defaultLocation })}`
+  );
+
   const {
     subscriptionId = defaultSubscriptionId,
     resourceGroup = { name: defaultResourceGroup, location: defaultLocation },
@@ -328,13 +331,20 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     appServicePlan = '',
   } = scriptContext;
 
+  ext.outputChannel.appendLog(
+    `Context values: ${JSON.stringify({ subscriptionId, resourceGroup, logicAppName, storageAccountName, appServicePlan })}`
+  );
+
   try {
     if (!subscriptionId || !resourceGroup.name || !logicAppName || !storageAccountName || !appServicePlan) {
+      ext.outputChannel.appendLog('One or more required values are missing. Launching Azure Wizard...');
       const wizard = createAzureWizard(scriptContext, folder.fsPath);
       await wizard.prompt();
       await wizard.execute();
+      ext.outputChannel.appendLog('Azure Wizard executed successfully.');
     }
   } catch (error) {
+    ext.outputChannel.appendLog(`Error executing Azure Wizard: ${error}`);
     await handleError(error, 'Error executing Azure Wizard');
     return;
   }
