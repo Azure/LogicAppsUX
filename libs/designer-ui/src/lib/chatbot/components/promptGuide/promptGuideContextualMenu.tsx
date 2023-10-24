@@ -79,7 +79,7 @@ export const PromptGuideContextualMenu = ({
         description: 'Chatbot prompt to replace an action',
       }),
       editFlow: intl.formatMessage({
-        defaultMessage: 'Edit Flow',
+        defaultMessage: 'Edit flow',
         description: 'Chatbot prompt to edit the workflow',
       }),
       askQuestion: intl.formatMessage({
@@ -192,14 +192,14 @@ export const PromptGuideContextualMenu = ({
 
   const defaultFlowMenuItems: IContextualMenuItem[] = [
     header(PromptGuideMenuKey.DefaultFlow, intlText.promptGuideMenu.title),
-    entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.AddAction, {
-      text: intlText.promptGuideMenu.addAction,
-      iconName: 'Add',
-    }),
-    entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.EditFlow, {
-      text: intlText.promptGuideMenu.editFlow,
-      iconName: 'Refresh',
-    }),
+    // entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.AddAction, {
+    //   text: intlText.promptGuideMenu.addAction,
+    //   iconName: 'Add',
+    // }),
+    // entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.EditFlow, {
+    //   text: intlText.promptGuideMenu.editFlow,
+    //   iconName: 'Refresh',
+    // }),
     entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.ExplainFlow, {
       text: intlText.promptGuideMenu.explainFlow,
       iconName: 'AlignJustify',
