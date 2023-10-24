@@ -1,5 +1,6 @@
 import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import DataMapperExt from './DataMapperExt';
 import {
   dataMapDefinitionsPath,
@@ -26,7 +27,7 @@ import {
 } from 'fs';
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
-import { RelativePattern, Uri, window, workspace } from 'vscode';
+import { RelativePattern, window, workspace } from 'vscode';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -81,24 +82,7 @@ export default class DataMapperPanel {
   }
 
   private async _setWebviewHtml() {
-    // Get webview content, converting links to VS Code URIs
-    const indexPath = path.join(ext.context.extensionPath, '/vs-code-data-mapper/index.html');
-    const html = await fs.readFile(indexPath, 'utf-8');
-    // 1. Get all links prefixed by href or src
-    const matchLinks = /(href|src)="([^"]*)"/g;
-    // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_: unknown, prefix: 'href' | 'src', link: string) => {
-      // For HTML elements
-      if (link === '#') {
-        return `${prefix}="${link}"`;
-      }
-      // For scripts & links
-      const pth = path.join(ext.context.extensionPath, '/vs-code-data-mapper/', link);
-      const uri = Uri.file(pth);
-      return `${prefix}="${this.panel.webview.asWebviewUri(uri)}"`;
-    };
-
-    this.panel.webview.html = html.replace(matchLinks, toUri);
+    this.panel.webview.html = await getWebViewHTML('vs-code-data-mapper', this.panel);
   }
 
   public sendMsgToWebview(msg: MessageToWebview) {
