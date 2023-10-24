@@ -103,31 +103,41 @@ async function callStandardApi(scriptContext: IAzureScriptWizard, inputs: any): 
  */
 export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inputs: any): Promise<void> {
   try {
-    const { subscriptionId, resourceGroup, logicAppName } = inputs;
+    ext.outputChannel.appendLog('Initiating call to Consumption API for deployment artifacts.');
 
-    // Retrieve the managed connections and their last parameters from the connection IDs
+    const { subscriptionId, resourceGroup, logicAppName } = inputs;
+    ext.outputChannel.appendLog(
+      `Operational context: Subscription ID: ${subscriptionId}, Resource Group: ${resourceGroup}, Logic App: ${logicAppName}`
+    );
+
+    // Retrieve managed connections
+    ext.outputChannel.appendLog('Fetching list of managed connections...');
     const managedConnections: { refEndPoint: string }[] = await getConnectionNames(scriptContext.folderPath);
 
     for (const connectionObj of managedConnections) {
       try {
-        // Make API Call and Get Binary Data
+        ext.outputChannel.appendLog(`Initiating API call for managed connection: ${connectionObj.refEndPoint}`);
+
         const bufferData = await callManagedConnectionsApi(subscriptionId, resourceGroup, logicAppName, connectionObj.refEndPoint);
 
         if (!bufferData) {
-          vscode.window.showErrorMessage(`Failed to get data for connection ID: ${connectionObj.refEndPoint}`);
+          vscode.window.showErrorMessage(`Data retrieval failed for: ${connectionObj.refEndPoint}`);
           continue;
         }
 
-        // Unzip to Target Directory
+        // Specify the unzip path and handle the API response
         const unzipPath = path.join(scriptContext.sourceControlPath);
+        ext.outputChannel.appendLog(`Storing data at ${unzipPath}`);
         await handleApiResponse(bufferData, unzipPath);
       } catch (error) {
         const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
-        vscode.window.showErrorMessage(`Error calling Consumption Resources API: ${errorString}`);
+        ext.outputChannel.appendLog(`Failed API call for managed connection: ${connectionObj.refEndPoint}. Error: ${errorString}`);
+        vscode.window.showErrorMessage(`API call failed: ${errorString}`);
         throw new Error(`API call to Consumption Resources failed: ${errorString}`);
       }
     }
   } catch (error) {
+    ext.outputChannel.appendLog('Failed to complete Consumption API calls for all managed connections.');
     await handleError(error, 'Error calling Consumption Resources API Connections');
   }
 }
@@ -140,14 +150,18 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
  * @returns - Promise<void> indicating success or failure.
  */
 
-//todo: clean up
 async function handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory: string): Promise<void> {
   try {
     if (!zipContent) {
-      window.showErrorMessage("The API response content isn't valid.");
+      window.showErrorMessage('Invalid API response content.');
+      ext.outputChannel.appendLog('Invalid API response received. Exiting...');
+      return;
     }
+    ext.outputChannel.appendLog('Valid API response received. Unzipping artifacts...');
     await unzipLogicAppArtifacts(zipContent, targetDirectory);
+    ext.outputChannel.appendLog('Artifacts successfully unzipped.');
   } catch (error) {
+    ext.outputChannel.appendLog('Error occurred while handling API response.');
     await handleError(error, 'Error in handleApiResponse');
   }
 }
@@ -171,11 +185,14 @@ async function callStandardResourcesApi(
   appServicePlan: string
 ): Promise<Buffer> {
   try {
-    // Construct the URL based on your requirements
+    ext.outputChannel.appendLog('Initiating API connection through workflow designer port...');
     if (!ext.workflowDesignTimePort) {
+      ext.outputChannel.appendLog('Connection attempt failed. Workflow designer port not set. Trying to find an available port...');
       ext.workflowDesignTimePort = await portfinder.getPortPromise();
+      ext.outputChannel.appendLog(`New workflow designer port set to ${ext.workflowDesignTimePort}. Retrying API connection.`);
     }
-    const apiUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/generateDeploymentArtifacts`; // Add the rest of your endpoint URL
+
+    const apiUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
 
     // Construct the request body based on the parameters
     const deploymentArtifactsInput = {
@@ -201,20 +218,25 @@ async function callStandardResourcesApi(
     };
 
     // Use the requestP function to send the POST request
+    ext.outputChannel.appendLog(
+      `Operational context: Subscription ID: ${subscriptionId}, Resource Group: ${resourceGroup}, Logic App: ${logicAppName}`
+    );
+    ext.outputChannel.appendLog('Initiating Standard Resources API call...');
     const response = await requestP(requestOptions);
+    ext.outputChannel.appendLog('API call successful, processing response...');
     return Buffer.from(response, 'binary'); // Convert the response to a buffer
   } catch (error) {
+    ext.outputChannel.appendLog('Failed to call Standard Resources API.');
     await handleError(error, 'Error calling Standard Resources API');
   }
 }
-
 /**
- * Calls the managed connections API to retrieve deployment artifacts.
- * @param {string} subscriptionId - The ID of the subscription.
- * @param {string} resourceGroup - The name of the resource group.
- * @param {string} logicAppName - The name of the logic app.
-
-//TODO: CLEAN UP
+ * Calls the Managed Connections API to retrieve deployment artifacts for a given Logic App.
+ * @param subscriptionId - The Azure subscription ID.
+ * @param resourceGroup - The Azure resource group name.
+ * @param logicAppName - The name of the Logic App.
+ * @param managedConnection - The reference name for the managed connection to call.
+ * @returns A Buffer containing the API response.
  */
 async function callManagedConnectionsApi(
   subscriptionId: string,
@@ -223,27 +245,31 @@ async function callManagedConnectionsApi(
   managedConnection: any
 ): Promise<Buffer> {
   try {
-    // Loop through each managed connection
+    // Initial log to signify the start of the API call
+    ext.outputChannel.appendLog('Starting Managed Connections API call.');
+
+    // Initialize parameters and constants
     const apiVersion = '2018-07-01-preview';
     const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
     const accessToken = await getAuthorizationToken(credentials);
     const cloudHost = await getCloudHost(credentials);
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
+    // Use explicit names to clarify intent
     const connectionName = managedConnection as string;
     const targetLogicAppName = logicAppName;
     const connectionReferenceName = connectionName;
 
-    // Construct the URL
+    // Build the URL for the API call
     const apiUrl = `${baseGraphUri}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}/generateDeploymentArtifacts?api-version=${apiVersion}`;
 
-    // Construct the request body based on the parameters
+    // Define the request body
     const requestBody = {
       TargetLogicAppName: targetLogicAppName,
       ConnectionReferenceName: connectionReferenceName,
     };
 
-    // Set up the options for the POST request
+    // Configure the POST request options
     const requestOptions = {
       method: 'POST',
       uri: apiUrl,
@@ -256,12 +282,19 @@ async function callManagedConnectionsApi(
       encoding: 'binary',
     };
 
-    // Send the POST request
+    // Execute the API call
     const response = await requestP(requestOptions);
+
+    // Convert and log the successful response
     const buffer = Buffer.from(response, 'binary');
-    window.showInformationMessage(`Successfully retrieved deployment artifacts for ${connectionName}`);
+    ext.outputChannel.appendLog(`Successfully retrieved deployment artifacts for connection: ${connectionName}.`);
+
     return buffer;
   } catch (error) {
+    // Handle and log errors
+    ext.outputChannel.appendLog(
+      `Error encountered while calling Managed Connections API: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`
+    );
     await handleError(error, 'Error calling Managed Connections API');
   }
 }
