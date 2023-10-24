@@ -123,25 +123,32 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
 
     // Retrieve managed connections
     ext.outputChannel.appendLog(localize('fetchingManagedConnections', 'Fetching list of managed connections...'));
-    const managedConnections: { refEndPoint: string }[] = await getConnectionNames(scriptContext.folderPath);
+    const managedConnections: { refEndPoint: string; originalKey: string }[] = await getConnectionNames(scriptContext.folderPath);
 
     for (const connectionObj of managedConnections) {
       try {
         ext.outputChannel.appendLog(
-          localize('initiatingApiCallForConnection', 'Initiating API call for managed connection: {0}', connectionObj.refEndPoint)
+          localize('initiatingApiCallForConnection', 'Initiating API call for managed connection: {0}', connectionObj.originalKey)
         );
 
-        const bufferData = await callManagedConnectionsApi(subscriptionId, resourceGroup, logicAppName, connectionObj.refEndPoint);
+        // The line below has been modified to pass both originalKey and refEndPoint
+        const bufferData = await callManagedConnectionsApi(
+          subscriptionId,
+          resourceGroup,
+          logicAppName,
+          connectionObj.originalKey,
+          connectionObj.refEndPoint
+        );
 
         if (!bufferData) {
-          vscode.window.showErrorMessage(localize('dataRetrievalFailedFor', 'Data retrieval failed for: {0}', connectionObj.refEndPoint));
+          vscode.window.showErrorMessage(localize('dataRetrievalFailedFor', 'Data retrieval failed for: {0}', connectionObj.originalKey));
           continue;
         }
 
         // Specify the unzip path and handle the API response
         const unzipPath = path.join(scriptContext.sourceControlPath);
         ext.outputChannel.appendLog(
-          localize('attemptingUnzipArtifacts', 'Attempting to unzip artifacts for {0} at {1}', connectionObj.refEndPoint, unzipPath)
+          localize('attemptingUnzipArtifacts', 'Attempting to unzip artifacts for {0} at {1}', connectionObj.originalKey, unzipPath)
         );
         await handleApiResponse(bufferData, unzipPath);
       } catch (error) {
@@ -150,7 +157,7 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
           localize(
             'failedApiCallForConnectionWithError',
             'Failed API call for managed connection: {0}. Error: {1}',
-            connectionObj.refEndPoint,
+            connectionObj.originalKey,
             errorString
           )
         );
@@ -267,14 +274,16 @@ async function callStandardResourcesApi(
  * @param subscriptionId - The Azure subscription ID.
  * @param resourceGroup - The Azure resource group name.
  * @param logicAppName - The name of the Logic App.
- * @param managedConnection - The reference name for the managed connection to call.
+ * @param managedConnection - The reference name for the managed connection template generation.
+ * @param connectionId - The parameter for connection ID endpoint deployed in portal.
  * @returns A Buffer containing the API response.
  */
 async function callManagedConnectionsApi(
   subscriptionId: string,
   resourceGroup: string,
   logicAppName: string,
-  managedConnection: any
+  connectionName: string,
+  connectionId: string
 ): Promise<Buffer> {
   try {
     const apiVersion = '2018-07-01-preview';
@@ -283,14 +292,11 @@ async function callManagedConnectionsApi(
     const cloudHost = await getCloudHost(credentials);
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
-    // Use explicit names to clarify intent
-    const connectionName = managedConnection as string;
     const targetLogicAppName = logicAppName;
     const connectionReferenceName = connectionName;
 
     // Build the URL for the API call
-    const apiUrl = `${baseGraphUri}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}/generateDeploymentArtifacts?api-version=${apiVersion}`;
-
+    const apiUrl = `${baseGraphUri}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionId}/generateDeploymentArtifacts?api-version=${apiVersion}`;
     // Define the request body
     const requestBody = {
       TargetLogicAppName: targetLogicAppName,
@@ -422,9 +428,9 @@ async function getLocalSettings(context: IAzureScriptWizard, folder: vscode.Uri)
  * @param projectRoot The root directory of the project.
  * @returns A promise that resolves to an array of objects, each containing a reference name and the last parameter in the connection id.
  */
-export async function getConnectionNames(projectRoot: string): Promise<{ refEndPoint: string }[]> {
+export async function getConnectionNames(projectRoot: string): Promise<{ refEndPoint: string; originalKey: string }[]> {
   const data: string = await getConnectionsJson(projectRoot);
-  const managedConnections: { refEndPoint: string }[] = [];
+  const managedConnections: { refEndPoint: string; originalKey: string }[] = [];
 
   if (data) {
     const connectionsJson = JSON.parse(data);
@@ -433,7 +439,7 @@ export async function getConnectionNames(projectRoot: string): Promise<{ refEndP
       if (Object.prototype.hasOwnProperty.call(managedApiConnections, connection)) {
         const idPath = managedApiConnections[connection]['connection']['id'];
         const lastParam = idPath.substring(idPath.lastIndexOf('/') + 1);
-        managedConnections.push({ refEndPoint: lastParam });
+        managedConnections.push({ refEndPoint: lastParam, originalKey: connection });
       }
     }
   }
