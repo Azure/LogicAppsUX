@@ -79,7 +79,7 @@ export const PromptGuideContextualMenu = ({
         description: 'Chatbot prompt to replace an action',
       }),
       editFlow: intl.formatMessage({
-        defaultMessage: 'Edit Flow',
+        defaultMessage: 'Edit flow',
         description: 'Chatbot prompt to edit the workflow',
       }),
       askQuestion: intl.formatMessage({
