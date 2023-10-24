@@ -93,7 +93,7 @@ export default class DataMapperPanel {
         return `${prefix}="${link}"`;
       }
       // For scripts & links
-      const pth = path.join(ext.context.extensionPath, '/webview/', link);
+      const pth = path.join(ext.context.extensionPath, '/vs-code-data-mapper/', link);
       const uri = Uri.file(pth);
       return `${prefix}="${this.panel.webview.asWebviewUri(uri)}"`;
     };
@@ -109,7 +109,6 @@ export default class DataMapperPanel {
     switch (msg.command) {
       case 'webviewLoaded':
         // Send runtime port to webview
-        ext.outputChannel.appendLine('---webviewLoaded');
         this.sendMsgToWebview({ command: 'setRuntimePort', data: `${ext.dataMapperRuntimePort}` });
 
         // If loading a data map, handle that + xslt filename
