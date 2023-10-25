@@ -18,6 +18,9 @@ export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 
+// Folder names
+export const workflowDesignTimeDir = '/workflow-designtime';
+
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
 // Functions
@@ -172,6 +175,20 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+export const hostFileContent = {
+  version: '2.0',
+  extensionBundle: {
+    id: extensionBundleId,
+    version: defaultVersionRange,
+  },
+  extensions: {
+    workflow: {
+      settings: {
+        'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+      },
+    },
+  },
+};
 
 // .NET
 export enum DotnetVersion {

@@ -9,28 +9,12 @@ export const schemasPath = `${artifactsPath}/Schemas`;
 export const customXsltPath = `${artifactsPath}/DataMapper/Extensions/InlineXslt`;
 export const dataMapsPath = `${artifactsPath}/Maps`;
 export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
-export const workflowDesignTimeDir = '/workflow-designtime';
 
 export const defaultDataMapFilename = 'default';
 export const draftMapDefinitionSuffix = '.draft';
 export const mapDefinitionExtension = '.yml';
 export const mapXsltExtension = '.xslt';
 
-export const settingsFileName = 'local.settings.json';
-export const hostFileContent = {
-  version: '2.0',
-  extensionBundle: {
-    id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
-    version: '[1.*, 2.0.0)',
-  },
-  extensions: {
-    workflow: {
-      settings: {
-        'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
-      },
-    },
-  },
-};
 export const settingsFileContent = {
   IsEncrypted: false,
   Values: {
@@ -41,5 +25,4 @@ export const settingsFileContent = {
 };
 
 export const backendRuntimeBaseUrl = 'http://localhost:';
-export const workflowMgmtApi = '/runtime/webhooks/workflow/api/management/';
-export const backendRuntimeTimeout = 60000;
+export const dataMapLoadTimeout = 60000;

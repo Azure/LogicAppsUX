@@ -1,15 +1,7 @@
-import { hostFileName } from '../../../constants';
+import { designerStartApi, hostFileContent, hostFileName, localSettingsFileName, workflowDesignTimeDir } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import {
-  backendRuntimeBaseUrl,
-  backendRuntimeTimeout,
-  hostFileContent,
-  settingsFileContent,
-  settingsFileName,
-  workflowDesignTimeDir,
-  workflowMgmtApi,
-} from './extensionConfig';
+import { backendRuntimeBaseUrl, dataMapLoadTimeout, settingsFileContent } from './extensionConfig';
 import * as cp from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import merge from 'lodash.merge';
@@ -34,7 +26,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
   }
 
   // Note: Must append operationGroups as it's a valid endpoint to ping
-  const url = `${backendRuntimeBaseUrl}${ext.dataMapperRuntimePort}${workflowMgmtApi}operationGroups`;
+  const url = `${backendRuntimeBaseUrl}${ext.dataMapperRuntimePort}${designerStartApi}`;
 
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
@@ -51,7 +43,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
       if (runtimeWorkingDir) {
         await createDesignTimeDirectory(runtimeWorkingDir);
         await createJsonFile(runtimeWorkingDir, hostFileName, hostFileContent);
-        await createJsonFile(runtimeWorkingDir, settingsFileName, modifiedSettingsFileContent);
+        await createJsonFile(runtimeWorkingDir, localSettingsFileName, modifiedSettingsFileContent);
 
         startBackendRuntimeProcess(runtimeWorkingDir, 'func', 'host', 'start', '--port', `${ext.dataMapperRuntimePort}`);
 
@@ -96,7 +88,7 @@ async function createJsonFile(
 }
 
 async function waitForBackendRuntimeStartUp(url: string, initialTime: number): Promise<void> {
-  while (!(await isBackendRuntimeUp(url)) && new Date().getTime() - initialTime < backendRuntimeTimeout) {
+  while (!(await isBackendRuntimeUp(url)) && new Date().getTime() - initialTime < dataMapLoadTimeout) {
     await delay(1000); // Re-poll every X ms
   }
 
