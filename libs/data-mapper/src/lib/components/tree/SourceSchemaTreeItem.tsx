@@ -83,7 +83,7 @@ const SourceSchemaTreeItem = ({ node, isNodeAdded, isNodeHovered }: SourceSchema
 export const SourceSchemaTreeHeader = () => {
   const styles = useSchemaTreeItemStyles();
 
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
 
   return (
     <Stack

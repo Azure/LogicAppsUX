@@ -81,10 +81,12 @@ export const ConnectionEdge = (props: EdgeProps) => {
   const reactFlowNodes = useNodes();
 
   const [sourceReactFlowKey, destinationRectFlowKey, _destinationPortReactFlowKey] = useSelector(
-    (state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys
+    (state: RootState) => state.dataMap.present.curDataMapOperation.inlineFunctionInputOutputKeys
   );
-  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
-  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
+  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKeyParts);
+  const selectedItemConnectedNodes = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes
+  );
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -132,6 +134,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
     return isEdgeHighlighted(!!selected, currentItemSplitIds, selectedItemConnectedNodes);
   }, [currentItemSplitIds, selected, selectedItemConnectedNodes]);
 
+  const x = Math.round(labelX - parentTotalSize / 2);
+  const y = labelY - parentTotalSize / 2;
+
   const onAddFunctionClick = (event: React.MouseEvent) => {
     event.stopPropagation();
 
@@ -141,6 +146,8 @@ export const ConnectionEdge = (props: EdgeProps) => {
         inputKey: getSourceIdFromReactFlowConnectionId(id),
         outputKey: getDestinationIdFromReactFlowConnectionId(id),
         port: getPortFromReactFlowConnectionId(id),
+        x: x.toString(),
+        y: y.toString(),
       })
     );
 
@@ -186,8 +193,8 @@ export const ConnectionEdge = (props: EdgeProps) => {
       <foreignObject
         width={parentTotalSize}
         height={parentTotalSize}
-        x={Math.round(labelX - parentTotalSize / 2)}
-        y={labelY - parentTotalSize / 2}
+        x={x}
+        y={y}
         style={{
           borderRadius: tokens.borderRadiusCircular,
           padding: parentPadding,

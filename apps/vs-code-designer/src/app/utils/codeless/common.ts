@@ -17,15 +17,7 @@ import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
-import type {
-  IWorkflowFileContent,
-  Parameter,
-  StandardApp,
-  Artifacts,
-  AzureConnectorDetails,
-  ILocalSettingsJson,
-  WorkflowParameter,
-} from '@microsoft/vscode-extension';
+import type { IWorkflowFileContent, StandardApp, Artifacts, AzureConnectorDetails, ILocalSettingsJson } from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
@@ -53,39 +45,19 @@ export function removeWebviewPanelFromCache(category: string, name: string): voi
   }
 }
 
-export function getStandardAppData(
-  workflowName: string,
-  workflow: IWorkflowFileContent,
-  parameters: Record<string, Parameter>
-): StandardApp {
+export function getStandardAppData(workflowName: string, workflow: IWorkflowFileContent): StandardApp {
   const { definition, kind, runtimeConfiguration } = workflow;
   const statelessRunMode = runtimeConfiguration && runtimeConfiguration.statelessRunMode ? runtimeConfiguration.statelessRunMode : '';
   const operationOptions = runtimeConfiguration && runtimeConfiguration.operationOptions ? runtimeConfiguration.operationOptions : '';
-  const workflowParameters = getWorkflowParameters(parameters);
 
   return {
     statelessRunMode,
-    definition: {
-      ...definition,
-      parameters: workflowParameters,
-    },
+    definition,
     name: workflowName,
     stateful: kind === 'Stateful',
     kind,
     operationOptions,
   };
-}
-
-export function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
-  const workflowParameters: Record<string, WorkflowParameter> = {};
-  for (const parameterKey of Object.keys(parameters)) {
-    const parameter = parameters[parameterKey];
-    workflowParameters[parameterKey] = {
-      ...parameter,
-      defaultValue: parameter.value,
-    };
-  }
-  return workflowParameters;
 }
 
 export async function updateFuncIgnore(projectPath: string, variables: string[]) {

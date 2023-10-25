@@ -1,7 +1,6 @@
 import { ChatBubble } from './chatBubble';
 import type { OperationsNeedingAttentionItem } from './conversationItem';
 import { OperationsNeedingAttentionOnUserAction } from './conversationItem';
-import { FeedbackMessage } from './feedbackMessage';
 import type { OperationInfoItemProps } from './flowDiffPreview';
 import { OperationItemsList } from './flowDiffPreview';
 import type { IFontIconProps } from '@fluentui/react';
@@ -68,18 +67,10 @@ export const OperationsNeedingAttentionMessage: React.FC<OperationsNeedingAttent
 
   return (
     <div>
-      <ChatBubble
-        key={item.id}
-        isUserMessage={false}
-        isAIGenerated={true}
-        date={item.date}
-        selectedReaction={item.reaction}
-        onThumbsReactionClicked={(reaction) => reaction} // TODO: add onMessageReactionClicked(item, reaction)
-      >
+      <ChatBubble key={item.id} isUserMessage={false} isAIGenerated={true} date={item.date} selectedReaction={item.reaction}>
         <div className={'msla-operationsneedattention-description'}>{description}</div>
         <OperationItemsList operations={operations} className={'msla-operationsneedattention-list'} />
       </ChatBubble>
-      <FeedbackMessage item={item} />
     </div>
   );
 };

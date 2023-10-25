@@ -29,6 +29,12 @@
       "value": "Błędne"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową wartość logiczną."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -49,6 +55,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Wklej ostatnio używane wyrażenie"
     }
   ],
   "+mAJR3": [
@@ -409,12 +421,6 @@
       "value": "Zwraca port z identyfikatora URI. Jeśli port nie jest określony, zwraca domyślny port dla protokołu"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową liczbę całkowitą."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +455,6 @@
     {
       "type": 0,
       "value": "Konwertuj argument parametru na liczbę zmiennoprzecinkową"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy adres e-mail."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +521,12 @@
     {
       "type": 0,
       "value": "Ukryj schemat źródłowy"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy identyfikator URI."
     }
   ],
   "1uGBLP": [
@@ -871,6 +877,12 @@
       "value": "Zamknij widok kodu"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową datę/godzinę."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +1001,12 @@
     {
       "type": 0,
       "value": "Przepływ został zaktualizowany."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Trwa zapisywanie tego przepływu..."
     }
   ],
   "4izAMi": [
@@ -1417,16 +1435,16 @@
       "value": "Spowoduje to przywrócenie przepływu pracy do stanu sprzed edycji przez funkcję Copilot. Jeśli wprowadzono dodatkowe zmiany w przepływie pracy po edycji przez funkcję Copilot, utracisz je. Tej akcji nie można cofnąć. Czy chcesz kontynuować?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy adres e-mail."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Kod stanu"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Zgłoś usterkę"
     }
   ],
   "7lnElz": [
@@ -1743,12 +1761,6 @@
     {
       "type": 0,
       "value": "”, dlatego nie można znaleźć w danych wyjściowych."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "W trakcie opracowywania"
     }
   ],
   "9YGcT2": [
@@ -2278,7 +2290,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Akceptuje typy „Number”, „Integer” i „Decimal”."
     }
   ],
   "CypYLs": [
@@ -2381,6 +2393,12 @@
     {
       "type": 0,
       "value": "”"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Dodano funkcje"
     }
   ],
   "DWd9vy": [
@@ -2585,6 +2603,12 @@
     {
       "type": 0,
       "value": "Wyświetl historię żądań dla tej operacji"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową tabeli."
     }
   ],
   "EqX3Mi": [
@@ -3075,12 +3099,6 @@
       "value": "Błąd podczas pobierania manifestu"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową datę/godzinę."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3254,7 +3272,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Akceptowane typy danych: "
     },
     {
       "type": 1,
@@ -3305,6 +3323,12 @@
     {
       "type": 0,
       "value": "Akcja cofnięta"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Rozmowa na czacie funkcji Copilot została anulowana"
     }
   ],
   "JNQHws": [
@@ -3403,12 +3427,6 @@
     {
       "type": 0,
       "value": "” za pomocą"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową podwójną liczbę."
     }
   ],
   "KV4uky": [
@@ -3821,12 +3839,6 @@
       "value": "Edytuj w trybie zaawansowanym"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Wprowadź poprawną liczbę."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3873,6 +3885,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kijów, Ryga, Sofia, Tallin, Wilno"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Skopiowano!"
     }
   ],
   "NGJ00e": [
@@ -3971,6 +3989,12 @@
       "value": "Nazwa główna usługi"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Pracujemy nad tym..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3993,6 +4017,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Nie można skopiować tej akcji/tego wyzwalacza."
     }
   ],
   "ODQCKj": [
@@ -4059,6 +4089,12 @@
     {
       "type": 0,
       "value": "Wprowadź odbiorców."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Zgłoś usterkę"
     }
   ],
   "OVvieE": [
@@ -4191,6 +4227,12 @@
       "value": "Wymagane. Ta wartość określa ilość liczb całkowitych w tablicy."
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Białe znaki muszą być zakodowane dla identyfikatorów URI"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4319,12 +4361,6 @@
     {
       "type": 0,
       "value": "Zwraca reprezentację base 64 ciągu wejściowego"
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Zamknij"
     }
   ],
   "PytMJ0": [
@@ -4589,6 +4625,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Wstaw nowy krok w elemencie "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4915,12 +4961,6 @@
       "value": "Wymagane. Liczba, przez którą mnożona jest mnożna 1."
     }
   ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Zwiń/rozwiń"
-    }
-  ],
   "U086AA": [
     {
       "type": 0,
@@ -4984,7 +5024,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Spróbuj użyć funkcji konwersji, takiej jak: "
     },
     {
       "type": 1,
@@ -5769,6 +5809,12 @@
       "value": "Warunki wyzwalacza"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Wyczyść edytor"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5963,6 +6009,12 @@
       "value": "Zwiń wynik statyczny"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Wklej akcję"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6095,12 +6147,6 @@
       "value": "Wprowadź certyfikat PFX"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy typ zmiennoprzecinkowy."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6193,6 +6239,12 @@
     {
       "type": 0,
       "value": "Informacje"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "ba9yGJ": [
@@ -6729,6 +6781,12 @@
       "value": "(UTC+08:00) Pekin, Czungking, SRA Hongkong, Urumczi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Niestety, coś poszło źle. Spróbuj ponownie."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6849,6 +6907,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Aszchabad, Taszkient"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy typ zmiennoprzecinkowy."
     }
   ],
   "gc6v4X": [
@@ -7025,7 +7089,7 @@
       "value": "Tego nie szukam"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Wartość jest zbyt duża."
@@ -7065,6 +7129,12 @@
     {
       "type": 0,
       "value": "Odbiorcy"
+    }
+  ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
     }
   ],
   "hza/cT": [
@@ -7107,6 +7177,12 @@
     {
       "type": 0,
       "value": "Wykonaj ponownie"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Kopiuj akcję"
     }
   ],
   "i4C4aB": [
@@ -7269,12 +7345,6 @@
     {
       "type": 0,
       "value": " s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową tabeli."
     }
   ],
   "iy8rNf": [
@@ -7667,6 +7737,12 @@
       "value": "Tożsamość zarządzana"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Wprowadź poprawną liczbę."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7695,6 +7771,12 @@
     {
       "type": 0,
       "value": "Powrót"
+    }
+  ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "lZT0JI": [
@@ -8127,12 +8209,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy identyfikator URI."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8193,6 +8269,12 @@
       "value": "Nieprawidłowa wartość całkowita"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Kopiuj wyzwalacz"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8211,6 +8293,12 @@
       "value": "Czy na pewno chcesz odrzucić wszystkie niezapisane zmiany?"
     }
   ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "odQ554": [
     {
       "type": 0,
@@ -8221,6 +8309,12 @@
     {
       "type": 0,
       "value": "Dodaj notatkę"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową podwójną liczbę."
     }
   ],
   "ox2Ou7": [
@@ -8293,6 +8387,12 @@
     {
       "type": 0,
       "value": "Wymagane. Wartości do połączenia jako tablica."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową liczbę całkowitą."
     }
   ],
   "pXmFGf": [
@@ -9075,6 +9175,12 @@
       "value": "Nazwa wyświetlana"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9413,6 +9519,12 @@
       "value": "Zawiera zduplikowaną wartość"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9465,6 +9577,12 @@
     {
       "type": 0,
       "value": "Uwzględnianie zawartości dynamicznej"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Zatrzymaj generowanie"
     }
   ],
   "wPlTDB": [
@@ -9752,7 +9870,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Ostrzeżenie: typ węzła danych wejściowych nie jest zgodny z jednym z dozwolonych typów dla tych danych wejściowych."
     }
   ],
   "yRDuqj": [
@@ -9939,6 +10057,12 @@
     {
       "type": 0,
       "value": "(GMT+12:00) Pietropawłowsk Kamczacki — stare"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { gitignoreFileName, hostFileName, localSettingsFileName } from '../../../../../constants';
+import { gitignoreFileName, hostFileName, localSettingsFileName, logicAppKind } from '../../../../../constants';
 import { addDefaultBundle } from '../../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../../utils/fs';
 import { ProjectCodeCreateStepBase } from '../../CodeProjectBase/ProjectCodeCreateStepBase';
@@ -62,7 +62,7 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           WORKFLOWS_SUBSCRIPTION_ID: '',
           FUNCTIONS_WORKER_RUNTIME: 'node',
-          APP_KIND: 'workflowapp',
+          APP_KIND: logicAppKind,
           AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
         },
       };

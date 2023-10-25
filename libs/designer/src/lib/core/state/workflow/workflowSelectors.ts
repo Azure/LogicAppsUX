@@ -290,3 +290,16 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
     })
   );
 };
+
+export const useParentRunId = (id: string | undefined): string | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!id) return undefined;
+      const parentId = state.nodesMetadata[id]?.parentNodeId;
+      if (parentId?.includes('elseActions') || parentId?.includes('actions')) {
+        return state.nodesMetadata[parentId]?.parentNodeId;
+      }
+      return parentId;
+    })
+  );
+};

@@ -11,6 +11,7 @@ import {
   isServiceProviderOperation,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
+import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -45,6 +46,8 @@ export const useGateways = (subscriptionId: string, connectorName: string) => {
 };
 
 export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
+
+export const useGatewayServiceConfig = () => useMemo(() => GatewayService().getConfig?.() ?? {}, []);
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
@@ -103,16 +106,28 @@ export const useIsOperationMissingConnection = (nodeId: string) => {
   return Object.keys(connectionsMapping).includes(nodeId) && connectionsMapping[nodeId] === null;
 };
 
-export const useShowIdentitySelector = (nodeId: string): boolean => {
+export const useShowIdentitySelectorQuery = (nodeId: string) => {
   const connector = useConnectorByNodeId(nodeId);
   const connectionQuery = useConnectionByNodeId(nodeId);
-  return useSelector((state: RootState) => {
-    const operationInfo = state.operations.operationInfo[nodeId];
-    const connectionReference = getConnectionReference(state.connections, nodeId);
-    if (connectionReference && !isServiceProviderOperation(operationInfo?.type) && !connectionQuery.isLoading) {
-      return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
-    }
 
-    return false;
-  });
+  const operationInfo = useOperationInfo(nodeId);
+  const connectionReference = useSelector((state: RootState) => getConnectionReference(state.connections, nodeId));
+
+  return useQuery(
+    ['showIdentitySelector', { nodeId }],
+    () => {
+      if (connectionReference && !isServiceProviderOperation(operationInfo?.type) && !connectionQuery.isLoading) {
+        return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
+      }
+      return false;
+    },
+    {
+      enabled: !connectionQuery.isLoading && !!operationInfo?.connectorId,
+      placeholderData: false,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 };

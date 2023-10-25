@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { dotnet, func, node, npm } from './constants';
+import type { Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type * as cp from 'child_process';
@@ -28,6 +29,7 @@ export namespace ext {
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
   export const treeViewName = 'azLogicApps';
   export let deploymentFolderPath: string;
+  export const logicAppSitesMap: Map<string, Map<string, Site>> = new Map();
 
   // Resource group API
   export let rgApi: AzureHostExtensionApi;

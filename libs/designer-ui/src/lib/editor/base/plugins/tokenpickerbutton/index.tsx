@@ -10,6 +10,8 @@ import { $getSelection } from 'lexical';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+const singleTokenHeightReduction = 15;
+
 const dynamicContentIconProps: IIconProps = {
   iconName: 'LightningBolt',
 };
@@ -23,9 +25,17 @@ export enum TokenPickerButtonLocation {
   Right = 'right',
 }
 
+export interface hideButtonOptions {
+  hideDynamicContent?: boolean;
+  hideExpression?: boolean;
+}
+
 export interface TokenPickerButtonEditorProps {
   location?: TokenPickerButtonLocation;
-  insideEditor?: boolean;
+  hideButtonOptions?: hideButtonOptions;
+  verticalOffSet?: number;
+  horizontalOffSet?: number;
+  newlineVerticalOffset?: number;
 }
 
 interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
@@ -34,9 +44,13 @@ interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
 
 export const TokenPickerButton = ({
   location = TokenPickerButtonLocation.Left,
-  insideEditor,
+  hideButtonOptions,
+  verticalOffSet = 20,
+  horizontalOffSet = 38,
+  newlineVerticalOffset = 15,
   openTokenPicker,
 }: TokenPickerButtonProps): JSX.Element => {
+  const { hideDynamicContent, hideExpression } = hideButtonOptions ?? {};
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
@@ -66,28 +80,21 @@ export const TokenPickerButton = ({
       if (boxElem && rootElement && anchorElement) {
         const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
+        const additionalOffset = hideExpression || hideDynamicContent ? singleTokenHeightReduction : 0;
         if (anchorElement?.childNodes[0]?.nodeName === 'BR') {
-          // some of our editors have smaller heights, so we need to adjust the position of the tokenpicker button
-          if (rootElement.clientHeight === 24) {
-            boxElem.style.top = `${top - 16}px`;
-          } else {
-            boxElem.style.top = `${top - 15}px`;
-          }
+          boxElem.style.top = `${top - newlineVerticalOffset + additionalOffset}px`;
         } else {
-          boxElem.style.top = `${top - 20}px`;
+          boxElem.style.top = `${top - verticalOffSet + additionalOffset}px`;
         }
+
         if (location === TokenPickerButtonLocation.Right) {
           boxElem.style.left = `${right - 20}px`;
         } else {
-          if (insideEditor) {
-            boxElem.style.left = `${left - 33}px`;
-          } else {
-            boxElem.style.left = `${left - 38}px`;
-          }
+          boxElem.style.left = `${left - horizontalOffSet}px`;
         }
       }
     }
-  }, [anchorKey, editor, insideEditor, location]);
+  }, [anchorKey, editor, hideExpression, hideDynamicContent, location, newlineVerticalOffset, verticalOffSet, horizontalOffSet]);
 
   useEffect(() => {
     window.addEventListener('resize', updatePosition);
@@ -123,23 +130,27 @@ export const TokenPickerButton = ({
           style={{ boxShadow: Depths.depth4 }}
         >
           <TooltipHost content={dynamicContentButtonText}>
-            <IconButton
-              iconProps={dynamicContentIconProps}
-              styles={{ root: 'top-root-button-style' }}
-              className="msla-token-picker-entrypoint-button-dynamic-content"
-              data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
-              onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
-            />
+            {!hideDynamicContent ? (
+              <IconButton
+                iconProps={dynamicContentIconProps}
+                styles={{ root: `top-root-button-style ${hideExpression ? 'top-root-button-style-single' : ''}` }}
+                className="msla-token-picker-entrypoint-button-dynamic-content"
+                data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
+                onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
+              />
+            ) : null}
           </TooltipHost>
-          <TooltipHost content={expressionButtonText}>
-            <IconButton
-              iconProps={expressionButtonProps}
-              styles={{ root: 'bottom-root-button-style' }}
-              className="msla-token-picker-entrypoint-button-dynamic-content"
-              data-automation-id="msla-token-picker-entrypoint-button-expression"
-              onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
-            />
-          </TooltipHost>
+          {!hideExpression ? (
+            <TooltipHost content={expressionButtonText}>
+              <IconButton
+                iconProps={expressionButtonProps}
+                styles={{ root: 'bottom-root-button-style' }}
+                className="msla-token-picker-entrypoint-button-dynamic-content"
+                data-automation-id="msla-token-picker-entrypoint-button-expression"
+                onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
+              />
+            </TooltipHost>
+          ) : null}
         </div>
       ) : null}
       <OnChangePlugin onChange={onChange} />

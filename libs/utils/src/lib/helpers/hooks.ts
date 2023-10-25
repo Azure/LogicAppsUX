@@ -1,3 +1,4 @@
+import type { MutableRefObject } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useThrottledEffect = (effect: () => void, deps: any[], delay: number) => {
@@ -36,6 +37,28 @@ export const useWindowDimensions = () => {
   }, []);
 
   return windowDimensions;
+};
+
+export const useOutsideClick = (refs: MutableRefObject<any>[], callback: () => void) => {
+  const handleClick = (e: MouseEvent) => {
+    let sendCallback = true;
+    for (const ref of refs) {
+      if (ref.current && ref.current.contains(e.target)) {
+        sendCallback = false;
+      }
+    }
+    if (sendCallback) {
+      callback();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
 };
 
 export const useConsoleLog = (value: any) =>

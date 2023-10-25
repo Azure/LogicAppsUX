@@ -29,6 +29,12 @@
       "value": "Con errores"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Escribir un valor booleano válido."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -49,6 +55,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
     }
   ],
   "+mAJR3": [
@@ -409,12 +421,6 @@
       "value": "Devuelve el puerto de un URI. Si no se especifica, devuelve el puerto predeterminado para el protocolo."
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Escriba un entero válido."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +455,6 @@
     {
       "type": 0,
       "value": "Convertir el argumento del parámetro en un número de punto flotante"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Escribir una dirección de correo electrónico válida."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +521,12 @@
     {
       "type": 0,
       "value": "Ocultar esquema de origen"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Escriba un URI válido."
     }
   ],
   "1uGBLP": [
@@ -871,6 +877,12 @@
       "value": "Cerrar vista de código"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Escribir una fecha y hora válidas."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +1001,12 @@
     {
       "type": 0,
       "value": "El flujo se ha actualizado."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Guardando este flujo..."
     }
   ],
   "4izAMi": [
@@ -1417,16 +1435,16 @@
       "value": "Esto revertirá el flujo de trabajo al estado en el que estaba antes de la edición de Copilot. Si realizó modificaciones adicionales en el flujo de trabajo después de Copilot, las perderá. Esta acción no se puede deshacer. ¿Desea continuar?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Escribir una dirección de correo electrónico válida."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Código de estado"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Informar de un error"
     }
   ],
   "7lnElz": [
@@ -1743,12 +1761,6 @@
     {
       "type": 0,
       "value": "\", no se encuentra en las salidas."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "En desarrollo"
     }
   ],
   "9YGcT2": [
@@ -2267,7 +2279,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Acepta tipos \"Número\", \"Entero\" y \"Decimal\"."
     }
   ],
   "CypYLs": [
@@ -2370,6 +2382,12 @@
     {
       "type": 0,
       "value": "\""
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Funciones agregadas"
     }
   ],
   "DWd9vy": [
@@ -2574,6 +2592,12 @@
     {
       "type": 0,
       "value": "Ver el historial de solicitudes de esta operación"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Escriba una tabla válida."
     }
   ],
   "EqX3Mi": [
@@ -3045,12 +3069,6 @@
       "value": "Error al capturar el manifiesto"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Escribir una fecha y hora válidas."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3224,7 +3242,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Tipos de datos aceptados: "
     },
     {
       "type": 1,
@@ -3275,6 +3293,12 @@
     {
       "type": 0,
       "value": "Acción deshecha"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Chat de Copilot cancelado"
     }
   ],
   "JNQHws": [
@@ -3373,12 +3397,6 @@
     {
       "type": 0,
       "value": "\" por"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Escribir un número doble válido."
     }
   ],
   "KV4uky": [
@@ -3780,12 +3798,6 @@
       "value": "Editar en modo avanzado"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Escribir un número válido."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3832,6 +3844,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofía, Tallin, Vilna"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copia realizada."
     }
   ],
   "NGJ00e": [
@@ -3930,6 +3948,12 @@
       "value": "Entidad de servicio"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Trabajando en ello..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3952,6 +3976,12 @@
     {
       "type": 0,
       "value": "Aceptar"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "No se puede copiar esta acción o desencadenador."
     }
   ],
   "ODQCKj": [
@@ -4018,6 +4048,12 @@
     {
       "type": 0,
       "value": "Escribir el público."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Informar de un error"
     }
   ],
   "OVvieE": [
@@ -4150,6 +4186,12 @@
       "value": "Obligatorio. Este valor es el número de enteros que se encuentran en esta matriz."
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Los espacios en blanco deben codificarse para los URI."
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4278,12 +4320,6 @@
     {
       "type": 0,
       "value": "Devuelve la representación de base 64 de la cadena de entrada."
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Cerrar"
     }
   ],
   "PytMJ0": [
@@ -4533,6 +4569,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Insertar un nuevo paso en "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4859,12 +4905,6 @@
       "value": "Obligatorio. El número con el que se multiplicará el multiplicando 1."
     }
   ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Contraer o expandir"
-    }
-  ],
   "U086AA": [
     {
       "type": 0,
@@ -4928,7 +4968,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Intente usar una función de conversión como: "
     },
     {
       "type": 1,
@@ -5713,6 +5753,12 @@
       "value": "Condiciones del desencadenador"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Borrar editor"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5907,6 +5953,12 @@
       "value": "Contraer resultado estático"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Pegar una acción"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6039,12 +6091,6 @@
       "value": "Especificar el archivo PFX"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Escriba un float válido."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6137,6 +6183,12 @@
     {
       "type": 0,
       "value": "Información"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Escriba un json válido."
     }
   ],
   "ba9yGJ": [
@@ -6677,6 +6729,12 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Lo sentimos, se produjo un error. Vuelva a intentarlo."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6797,6 +6855,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Asjabad, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Escriba un float válido."
     }
   ],
   "gc6v4X": [
@@ -6962,7 +7026,7 @@
       "value": "Esto no es lo que estoy buscando"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "El valor es demasiado grande."
@@ -7002,6 +7066,12 @@
     {
       "type": 0,
       "value": "Audiencia"
+    }
+  ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
     }
   ],
   "hza/cT": [
@@ -7044,6 +7114,12 @@
     {
       "type": 0,
       "value": "Rehacer"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copiar acción"
     }
   ],
   "i4C4aB": [
@@ -7206,12 +7282,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Escriba una tabla válida."
     }
   ],
   "iy8rNf": [
@@ -7577,6 +7647,12 @@
       "value": "Identidad administrada"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Escribir un número válido."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7605,6 +7681,12 @@
     {
       "type": 0,
       "value": "Volver"
+    }
+  ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "lZT0JI": [
@@ -8029,12 +8111,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Escriba un URI válido."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8095,6 +8171,12 @@
       "value": "Valor entero no válido"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copiar desencadenador"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8113,6 +8195,12 @@
       "value": "¿Quiere descartar todos los cambios no guardados?"
     }
   ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "odQ554": [
     {
       "type": 0,
@@ -8123,6 +8211,12 @@
     {
       "type": 0,
       "value": "Agregar una nota"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Escribir un número doble válido."
     }
   ],
   "ox2Ou7": [
@@ -8195,6 +8289,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Los valores que se combinarán en una matriz."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Escriba un entero válido."
     }
   ],
   "pXmFGf": [
@@ -8966,6 +9066,12 @@
       "value": "Nombre para mostrar"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9304,6 +9410,12 @@
       "value": "Contiene un valor duplicado"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9356,6 +9468,12 @@
     {
       "type": 0,
       "value": "Incluyendo contenido dinámico"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Dejar de generar"
     }
   ],
   "wPlTDB": [
@@ -9643,7 +9761,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Advertencia: el tipo de nodo de entrada no coincide con uno de los tipos permitidos para esta entrada."
     }
   ],
   "yRDuqj": [
@@ -9822,6 +9940,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropávlovsk-Kamchatski - Antiguo"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

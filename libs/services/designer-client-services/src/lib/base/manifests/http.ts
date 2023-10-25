@@ -212,7 +212,6 @@ export const httpWithSwaggerManifest = {
         inputs: {
           type: 'object',
           properties: {
-            authentication: authenticationParameter,
             // Dynamic Params
             operationId: {
               required: true,
@@ -244,7 +243,6 @@ export const httpWithSwaggerManifest = {
               },
             },
             operationDetails: {
-              title: 'Swagger Parameters',
               description: 'Enter all swagger parameters',
               'x-ms-dynamic-properties': {
                 dynamicState: {

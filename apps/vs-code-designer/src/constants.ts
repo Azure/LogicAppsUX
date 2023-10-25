@@ -210,6 +210,7 @@ export enum DotnetVersion {
   net2 = 'netcoreapp2.1',
   net48 = 'net48',
 }
+export const dotnetExtensionId = 'ms-dotnettools.csharp';
 
 // Packages Manager
 export enum PackageManager {

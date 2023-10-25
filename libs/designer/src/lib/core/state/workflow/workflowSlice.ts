@@ -10,14 +10,16 @@ import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
-import { getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
+import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
+import type { NodeOperation } from '../operation/operationMetadataSlice';
 import {
   updateNodeParameters,
   updateNodeSettings,
   updateParameterConditionalVisibility,
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
+import type { RelationshipIds } from '../panel/panelInterfaces';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { WorkflowKind } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
@@ -80,6 +82,7 @@ export const workflowSlice = createSlice({
       if (action.payload.isTrigger) {
         deleteWorkflowNode(constants.NODE.TYPE.PLACEHOLDER_TRIGGER, graph);
         delete state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER];
+        delete state.operations[constants.NODE.TYPE.PLACEHOLDER_TRIGGER];
 
         if (graph.edges?.length) {
           graph.edges = graph.edges.map((edge) => {
@@ -120,6 +123,24 @@ export const workflowSlice = createSlice({
         currentGraph,
         foreachNode,
         { graphId: foreachNode?.id, parentId: foreachNode.children?.[0].id },
+        state.nodesMetadata,
+        state
+      );
+    },
+    pasteNode: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation }>
+    ) => {
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
+      if (!graph) throw new Error('graph not set');
+
+      addNodeToWorkflow(
+        {
+          operation: action.payload.operation as any,
+          nodeId: action.payload.nodeId,
+          relationshipIds: action.payload.relationshipIds,
+        },
+        graph,
         state.nodesMetadata,
         state
       );
@@ -167,6 +188,10 @@ export const workflowSlice = createSlice({
 
         graph.children = [...(graph?.children ?? []), placeholderNode];
         state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER] = { graphId, isRoot: true };
+        state.operations[constants.NODE.TYPE.PLACEHOLDER_TRIGGER] = createWorkflowNode(
+          constants.NODE.TYPE.PLACEHOLDER_TRIGGER,
+          WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE
+        );
         for (const childId of existingChildren) {
           addNewEdge(state, constants.NODE.TYPE.PLACEHOLDER_TRIGGER, childId, graph, false);
         }
@@ -417,6 +442,8 @@ export const {
   initWorkflowKind,
   initRunInstance,
   addNode,
+  addImplicitForeachNode,
+  pasteNode,
   moveNode,
   deleteNode,
   deleteSwitchCase,
@@ -433,7 +460,6 @@ export const {
   clearFocusNode,
   setFocusNode,
   replaceId,
-  addImplicitForeachNode,
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,

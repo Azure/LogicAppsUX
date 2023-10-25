@@ -413,7 +413,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     return {
       panelId: this.panelName,
       appSettingNames: Object.keys(localSettings),
-      standardApp: getStandardAppData(this.workflowName, workflowContent, parametersData),
+      standardApp: getStandardAppData(this.workflowName, workflowContent),
       connectionsData,
       parametersData,
       localSettings,

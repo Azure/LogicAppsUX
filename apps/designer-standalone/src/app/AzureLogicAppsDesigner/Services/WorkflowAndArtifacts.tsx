@@ -278,7 +278,7 @@ const validateWorkflow = async (
   settings?: Record<string, string>,
   isConsumption = false
 ): Promise<any> => {
-  const requestPayload = { properties: workflow };
+  const requestPayload = { properties: { ...workflow } };
 
   if (connectionsData) {
     requestPayload.properties.connections = connectionsData;

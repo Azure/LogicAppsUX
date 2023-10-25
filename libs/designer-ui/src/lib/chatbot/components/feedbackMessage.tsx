@@ -1,15 +1,16 @@
 import { ChatBubble } from './chatBubble';
-import type { ReactionItem } from './conversationItem';
 import { ChatEntryReaction } from './conversationItem';
 import { Link, mergeStyles } from '@fluentui/react';
-import React from 'react';
 import { useIntl } from 'react-intl';
 
 type FeedbackMessageProps = {
-  item: ReactionItem;
+  id: string;
+  date: Date;
+  reaction: ChatEntryReaction | undefined;
+  askFeedback: boolean;
 };
 
-export const FeedbackMessage: React.FC<FeedbackMessageProps> = ({ item }) => {
+export const FeedbackMessage = ({ id, date, reaction, askFeedback }: FeedbackMessageProps) => {
   const intl = useIntl();
   const intlText = {
     feedbackCardPanelTitle: intl.formatMessage({
@@ -25,28 +26,25 @@ export const FeedbackMessage: React.FC<FeedbackMessageProps> = ({ item }) => {
       description: 'Chatbot feedback card link asking what user liked about the feature',
     }),
   };
-  return item.askFeedback ? (
-    <ChatBubble
-      key={item.id}
-      isUserMessage={false}
-      isAIGenerated={false}
-      date={item.date}
-      isMarkdownMessage={false}
-      className={mergeStyles({ marginTop: 8 })}
-    >
-      {item.reaction === ChatEntryReaction.thumbsUp && (
+  return askFeedback ? (
+    <ChatBubble key={id} isUserMessage={false} isAIGenerated={false} date={date} className={mergeStyles({ marginTop: 8 })}>
+      {reaction === ChatEntryReaction.thumbsUp && (
         <Link
+          className="msla-feedbackmessage-link"
           // TODO: onClick={} openFeedbackPanel(item)}
-          text={intlText.feedbackCardThumbsUpLinkText}
           isUnderlinedStyle={true}
-        />
+        >
+          {intlText.feedbackCardThumbsUpLinkText}
+        </Link>
       )}
-      {item.reaction === ChatEntryReaction.thumbsDown && (
+      {reaction === ChatEntryReaction.thumbsDown && (
         <Link
+          className="msla-feedbackmessage-link"
           // TODO: onClick={} openFeedbackPanel(item)}
-          text={intlText.feedbackCardThumbsUpLinkText}
           isUnderlinedStyle={true}
-        />
+        >
+          {intlText.feedbackCardThumbsDownLinkText}
+        </Link>
       )}
     </ChatBubble>
   ) : null;

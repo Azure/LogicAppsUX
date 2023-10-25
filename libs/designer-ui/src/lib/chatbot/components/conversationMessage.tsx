@@ -1,3 +1,4 @@
+import { useFeedbackMessage, useReportBugButton } from '../feedbackHelper';
 import { AssistantError } from './assistantError';
 import { AssistantGreeting } from './assistantGreeting';
 import { AssistantReplyWithFlow } from './assistantReplyWithFlow';
@@ -5,8 +6,8 @@ import { ChatBubble } from './chatBubble';
 import { ConnectionsSetupMessage } from './connectionsSetupMessage';
 import { ConversationItemType } from './conversationItem';
 import type { ConversationItem, UserQueryItem, AssistantReplyItem } from './conversationItem';
-import { FeedbackMessage } from './feedbackMessage';
 import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMessage';
+import Markdown from 'react-markdown';
 
 type ConversationMessageProps = {
   item: ConversationItem;
@@ -15,7 +16,7 @@ type ConversationMessageProps = {
 export const ConversationMessage = ({ item }: ConversationMessageProps) => {
   switch (item.type) {
     case ConversationItemType.Query:
-      return <UserMessage item={item} />; // TODO: Add other types of conversation items here
+      return <UserMessage item={item} />;
     case ConversationItemType.Greeting:
       return <AssistantGreeting item={item} />;
     case ConversationItemType.Reply:
@@ -35,38 +36,32 @@ export const ConversationMessage = ({ item }: ConversationMessageProps) => {
 
 const UserMessage = ({ item }: { item: UserQueryItem }) => {
   return (
-    <ChatBubble key={item.id} isUserMessage={true} isAIGenerated={false} date={item.date} isMarkdownMessage={false}>
+    <ChatBubble key={item.id} isUserMessage={true} isAIGenerated={false} date={item.date}>
       {item.text}
     </ChatBubble>
   );
 };
 
 const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
+  const { id, text, hideFooter, date } = item;
+  const reportBugButton = useReportBugButton(false);
+  const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   return (
     <div>
       <ChatBubble
-        key={item.id}
+        key={id}
         isUserMessage={false}
         isAIGenerated={true}
-        date={item.date}
-        isMarkdownMessage={item.isMarkdownText}
-        selectedReaction={item.reaction}
-        onThumbsReactionClicked={(reaction) => reaction} // TODO: add onMessageReactionClicked(item, reaction)}
+        date={date}
+        selectedReaction={reaction}
+        onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         disabled={false} //TODO: add isBlockingOperationInProgress}
-        footerActions={
-          //TODO: add check for isUsingDebugOptions
-          [
-            {
-              text: 'Report a bug',
-              //TODO: add onClick: () => onReportBugClick(item),
-              iconProps: { iconName: 'Bug' },
-            },
-          ]
-        }
+        additionalFooterActions={hideFooter ? [] : [reportBugButton]}
+        hideFooter={hideFooter}
       >
-        {item.text}
+        <Markdown>{text}</Markdown>
       </ChatBubble>
-      <FeedbackMessage item={item} />
+      {feedbackMessage}
     </div>
   );
 };

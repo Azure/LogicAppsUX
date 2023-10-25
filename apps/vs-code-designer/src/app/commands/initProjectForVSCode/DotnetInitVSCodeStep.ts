@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   dotnetPublishTaskLabel,
-  func,
   funcDependencyName,
+  dotnetExtensionId,
+  func,
   funcWatchProblemMatcher,
   hostStartCommand,
   show64BitWarningSetting,
@@ -28,7 +29,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
   private debugSubpath: string;
 
   protected getRecommendedExtensions(language: ProjectLanguage): string[] {
-    const recs: string[] = ['ms-dotnettools.csharp'];
+    const recs: string[] = [dotnetExtensionId];
     if (language === ProjectLanguage.FSharp) {
       recs.push('ionide.ionide-fsharp');
     }

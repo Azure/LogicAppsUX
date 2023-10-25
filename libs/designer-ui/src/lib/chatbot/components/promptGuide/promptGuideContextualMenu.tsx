@@ -1,22 +1,8 @@
+import Constants from '../../constants';
 import type { IButtonStyles, IContextualMenuItem, IContextualMenuProps, Target } from '@fluentui/react';
-import { ContextualMenu, ContextualMenuItemType, DirectionalHint, FontIcon, IconButton, getTheme } from '@fluentui/react';
-import React from 'react';
+import { ContextualMenu, ContextualMenuItemType, DirectionalHint, IconButton } from '@fluentui/react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-
-export type IPromptGuideContextualMenuProps = {
-  isOpen: boolean;
-  onDismiss: () => void;
-  target?: Target;
-  onMenuItemClick?: (item: PromptGuideItem) => void;
-  initialMenu?: PromptGuideMenuKey;
-};
-
-export enum PromptGuideMenuKey {
-  FromBlank = 'FromBlank',
-  CreateFlow = 'CreateFlow',
-  FlowWithAction = 'FlowWithAction',
-  DefaultFlow = 'DefaultFlow',
-}
 
 export enum PromptGuideItemKey {
   CreateFlow = 'CreateFlow',
@@ -31,6 +17,20 @@ export enum PromptGuideItemKey {
   ExplainFlow = 'ExplainFlow',
 }
 
+export type IPromptGuideContextualMenuProps = {
+  target?: Target;
+  onDismiss: () => void;
+  onMenuItemClick?: (item: PromptGuideItem) => void;
+  initialMenu?: PromptGuideMenuKey;
+};
+
+export enum PromptGuideMenuKey {
+  FromBlank = 'FromBlank',
+  CreateFlow = 'CreateFlow',
+  FlowWithAction = 'FlowWithAction',
+  DefaultFlow = 'DefaultFlow',
+}
+
 export type PromptGuideItem = {
   menuKey: PromptGuideMenuKey;
   itemKey: PromptGuideItemKey;
@@ -39,13 +39,12 @@ export type PromptGuideItem = {
 const menuItemKey = (menuKey: PromptGuideMenuKey, subMenuKey?: PromptGuideItemKey | 'header', subMenuDetails?: string) =>
   [menuKey, subMenuKey, subMenuDetails].filter(Boolean).join('-');
 
-export const PromptGuideContextualMenu: React.FC<IPromptGuideContextualMenuProps> = ({
-  isOpen,
+export const PromptGuideContextualMenu = ({
   onDismiss,
   target,
   onMenuItemClick,
   initialMenu = PromptGuideMenuKey.FromBlank,
-}) => {
+}: IPromptGuideContextualMenuProps) => {
   const intl = useIntl();
   const intlText = {
     promptGuideMenu: {
@@ -80,7 +79,7 @@ export const PromptGuideContextualMenu: React.FC<IPromptGuideContextualMenuProps
         description: 'Chatbot prompt to replace an action',
       }),
       editFlow: intl.formatMessage({
-        defaultMessage: 'Edit Flow',
+        defaultMessage: 'Edit flow',
         description: 'Chatbot prompt to edit the workflow',
       }),
       askQuestion: intl.formatMessage({
@@ -99,13 +98,9 @@ export const PromptGuideContextualMenu: React.FC<IPromptGuideContextualMenuProps
   };
   const { navigation, ...currentMenu } = useMenuNavigation(initialMenu);
 
-  React.useEffect(() => {
-    if (isOpen) {
-      navigation.reset(initialMenu);
-    } else {
-      navigation.reset();
-    }
-  }, [isOpen, navigation, initialMenu]);
+  useEffect(() => {
+    navigation.reset(initialMenu);
+  }, [navigation, initialMenu]);
 
   const header = (menu: PromptGuideMenuKey, title: string): IContextualMenuItem => ({
     key: menuItemKey(menu, 'header'),
@@ -197,14 +192,14 @@ export const PromptGuideContextualMenu: React.FC<IPromptGuideContextualMenuProps
 
   const defaultFlowMenuItems: IContextualMenuItem[] = [
     header(PromptGuideMenuKey.DefaultFlow, intlText.promptGuideMenu.title),
-    entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.AddAction, {
-      text: intlText.promptGuideMenu.addAction,
-      iconName: 'Add',
-    }),
-    entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.EditFlow, {
-      text: intlText.promptGuideMenu.editFlow,
-      iconName: 'Refresh',
-    }),
+    // entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.AddAction, {
+    //   text: intlText.promptGuideMenu.addAction,
+    //   iconName: 'Add',
+    // }),
+    // entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.EditFlow, {
+    //   text: intlText.promptGuideMenu.editFlow,
+    //   iconName: 'Refresh',
+    // }),
     entry(PromptGuideMenuKey.DefaultFlow, PromptGuideItemKey.ExplainFlow, {
       text: intlText.promptGuideMenu.explainFlow,
       iconName: 'AlignJustify',
@@ -224,7 +219,6 @@ export const PromptGuideContextualMenu: React.FC<IPromptGuideContextualMenuProps
 
   return (
     <ContextualMenu
-      hidden={!isOpen}
       onDismiss={onDismiss}
       target={target}
       isSubMenu={currentMenu.isSubMenu}
@@ -236,9 +230,9 @@ export const PromptGuideContextualMenu: React.FC<IPromptGuideContextualMenuProps
 };
 
 function useMenuNavigation(initialMenu: PromptGuideMenuKey) {
-  const [menuPath, setMenuPath] = React.useState<PromptGuideMenuKey[]>([initialMenu]);
+  const [menuPath, setMenuPath] = useState<PromptGuideMenuKey[]>([initialMenu]);
 
-  const navigation = React.useMemo(() => {
+  const navigation = useMemo(() => {
     const goTo = (menuKey: PromptGuideMenuKey) => setMenuPath((prev) => [...prev, menuKey]);
     const goBack = () => setMenuPath((prev) => prev.slice(0, -1));
     const reset = (menu?: PromptGuideMenuKey) => setMenuPath((prev) => [menu ?? prev[0]]);
@@ -273,13 +267,13 @@ const contextualMenuStyles: IContextualMenuProps['styles'] = {
     },
   },
   header: {
-    color: getTheme().palette.neutralSecondary,
+    color: Constants.NEUTRAL_SECONDARY,
   },
   list: {
-    color: getTheme().palette.black,
+    color: Constants.BLACK,
     padding: 4,
     '.ms-ContextualMenu-icon': {
-      color: getTheme().palette.neutralSecondary,
+      color: Constants.NEUTRAL_SECONDARY,
     },
     '.ms-ContextualMenu-link': {
       borderRadius: 4,
@@ -294,88 +288,5 @@ const HeaderbackIconButtton: React.FC<{
 };
 
 const headerBackButtonStyles: IButtonStyles = {
-  root: { color: getTheme().palette.neutralPrimary, marginTop: 6 },
-};
-
-type PromptGuideCardProps = {
-  itemKey: PromptGuideItemKey;
-};
-
-export const PromptGuideCard: React.FC<PromptGuideCardProps> = ({ itemKey }) => {
-  let iconName: string | undefined;
-  const intl = useIntl();
-  const intlText = {
-    addAction: intl.formatMessage({
-      defaultMessage: 'Add an action',
-      description: 'Chatbot prompt to add action',
-    }),
-    addActionDescription: intl.formatMessage({
-      defaultMessage:
-        'Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included.',
-      description: 'Chatbot prompt to add action description',
-    }),
-    replaceAction: intl.formatMessage({
-      defaultMessage: 'Replace action',
-      description: 'Chatbot prompt to replace an action',
-    }),
-    replaceActionDescription: intl.formatMessage({
-      defaultMessage:
-        'Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included.',
-      description: 'Chatbot prompt to replace an action description',
-    }),
-    editFlow: intl.formatMessage({
-      defaultMessage: 'Edit Flow',
-      description: 'Chatbot prompt to edit the workflow',
-    }),
-    editFlowDescription: intl.formatMessage({
-      defaultMessage:
-        'Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included.',
-      description: 'Chatbot prompt to edit the workflow description',
-    }),
-    question: intl.formatMessage({
-      defaultMessage: 'Ask a question',
-      description: 'Chatbot prompt to ask a question',
-    }),
-    questionDescription: intl.formatMessage({
-      defaultMessage: 'Ask question related to your workflow or Logic Apps.',
-      description: 'Chatbot prompt to ask a question description',
-    }),
-  };
-  let cardResources: undefined | { title: string; description: string };
-
-  switch (itemKey) {
-    case PromptGuideItemKey.AddAction:
-      iconName = 'Add';
-      cardResources = { title: intlText.addAction, description: intlText.addActionDescription };
-      break;
-    case PromptGuideItemKey.ReplaceAction:
-      iconName = 'Refresh';
-      cardResources = { title: intlText.replaceAction, description: intlText.replaceActionDescription };
-      break;
-    case PromptGuideItemKey.EditFlow:
-      iconName = 'Refresh';
-      cardResources = { title: intlText.editFlow, description: intlText.editFlowDescription };
-      break;
-    case PromptGuideItemKey.Question:
-      iconName = 'Unknown';
-      cardResources = { title: intlText.question, description: intlText.questionDescription };
-      break;
-    // Other items don't have a card: they directly trigger a query or open a sub-menu
-    default:
-      break;
-  }
-
-  if (!cardResources) {
-    return null;
-  }
-
-  return (
-    <div className={'msla-prompt-guide-card-container'}>
-      <div className={'msla-prompt-guide-card-header'}>
-        {iconName && <FontIcon iconName={iconName} />}
-        <div>{cardResources.title}</div>
-      </div>
-      <div className={'msla-prompt-guide-card-description'}>{cardResources.description}</div>
-    </div>
-  );
+  root: { color: Constants.NEUTRAL_PRIMARY, marginTop: 6 },
 };

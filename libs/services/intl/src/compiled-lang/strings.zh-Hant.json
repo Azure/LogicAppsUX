@@ -29,6 +29,12 @@
       "value": "已故障"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "輸入有效的布林值。"
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -49,6 +55,12 @@
     {
       "type": 0,
       "value": " 卡片的操作功能表"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "貼上上次使用的運算式"
     }
   ],
   "+mAJR3": [
@@ -409,12 +421,6 @@
       "value": "傳回 URI 的連接埠。若未指定連接埠，會傳回通訊協定的預設連接埠"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "輸入有效的整數。"
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +455,6 @@
     {
       "type": 0,
       "value": "將參數引數轉換為浮點數"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "輸入有效的電子郵件。"
     }
   ],
   "1ZSzl6": [
@@ -521,6 +521,12 @@
     {
       "type": 0,
       "value": "隱藏來源結構描述"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "請輸入有效的 URI。"
     }
   ],
   "1uGBLP": [
@@ -867,6 +873,12 @@
       "value": "關閉程式碼檢視"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "輸入有效日期/時間。"
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -989,6 +1001,12 @@
     {
       "type": 0,
       "value": "您的流程已更新。"
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 正在儲存此流程..."
     }
   ],
   "4izAMi": [
@@ -1417,16 +1435,16 @@
       "value": "這會將您的工作流程還原為 Copilot 編輯前所處於的狀態。如果在 Copilot 之後對工作流程進行其他編輯，將會遺失這些編輯。此動作無法復原。您要繼續嗎?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "輸入有效的電子郵件。"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "狀態碼"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "回報錯誤"
     }
   ],
   "7lnElz": [
@@ -1743,12 +1761,6 @@
     {
       "type": 0,
       "value": "' 的分割無效，在輸出中找不到。"
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "開發中"
     }
   ],
   "9YGcT2": [
@@ -2229,7 +2241,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "接受 'Number'、'Integer' 和 'Decimal' 類型。"
     }
   ],
   "CypYLs": [
@@ -2336,6 +2348,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "已新增的函式"
     }
   ],
   "DWd9vy": [
@@ -2540,6 +2558,12 @@
     {
       "type": 0,
       "value": "檢視此作業的要求歷程記錄"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "輸入有效的資料表。"
     }
   ],
   "EqX3Mi": [
@@ -2989,12 +3013,6 @@
       "value": "擷取資訊清單時發生錯誤"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "輸入有效日期/時間。"
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3168,7 +3186,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "接受的資料類型: "
     },
     {
       "type": 1,
@@ -3219,6 +3237,12 @@
     {
       "type": 0,
       "value": "動作已復原"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "已取消 Copilot 聊天"
     }
   ],
   "JNQHws": [
@@ -3317,12 +3341,6 @@
     {
       "type": 0,
       "value": "\" 取代為"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "輸入有效的雙數字。"
     }
   ],
   "KV4uky": [
@@ -3702,12 +3720,6 @@
       "value": "在進階模式中編輯"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "輸入有效的數字。"
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3754,6 +3766,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 赫爾辛基，基輔，里加，索菲亞，塔林，維爾紐斯"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "已複製!"
     }
   ],
   "NGJ00e": [
@@ -3852,6 +3870,12 @@
       "value": "服務主體"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ 正在處理中..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3874,6 +3898,12 @@
     {
       "type": 0,
       "value": "確定"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "無法複製此動作/觸發程式。"
     }
   ],
   "ODQCKj": [
@@ -3940,6 +3970,12 @@
     {
       "type": 0,
       "value": "輸入對象。"
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "回報錯誤"
     }
   ],
   "OVvieE": [
@@ -4062,6 +4098,12 @@
     {
       "type": 0,
       "value": "必要。此值是陣列中整數數目。"
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "必須編碼 URI 的空白字元"
     }
   ],
   "P4rEwD": [
@@ -4196,12 +4238,6 @@
     {
       "type": 0,
       "value": "傳回輸入字串的 Base 64 表示法"
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "關閉"
     }
   ],
   "PytMJ0": [
@@ -4425,6 +4461,20 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": " 中插入新步驟"
     }
   ],
   "RkgScy": [
@@ -4751,12 +4801,6 @@
       "value": "必要。要乘以被乘數 1 的數字。"
     }
   ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "摺疊/展開"
-    }
-  ],
   "U086AA": [
     {
       "type": 0,
@@ -4824,7 +4868,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "嘗試使用轉換函式，例如: "
     },
     {
       "type": 1,
@@ -5617,6 +5661,12 @@
       "value": "觸發程序條件"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "清除編輯器"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5811,6 +5861,12 @@
       "value": "摺疊靜態結果"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "貼上動作"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5943,12 +5999,6 @@
       "value": "請輸入 PfX"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "輸入有效的浮點數。"
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6041,6 +6091,12 @@
     {
       "type": 0,
       "value": "資訊"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "ba9yGJ": [
@@ -6581,6 +6637,12 @@
       "value": "(UTC+08:00) 北京，重慶，香港特別行政區，烏魯木齊"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "對不起，發生某些錯誤，請再試一次。"
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6693,6 +6755,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) 阿什哈巴德，塔什干"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "輸入有效的浮點數。"
     }
   ],
   "gc6v4X": [
@@ -6836,7 +6904,7 @@
       "value": "這不是我要尋找的"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "值過大。"
@@ -6876,6 +6944,12 @@
     {
       "type": 0,
       "value": "對象"
+    }
+  ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
     }
   ],
   "hza/cT": [
@@ -6918,6 +6992,12 @@
     {
       "type": 0,
       "value": "重做"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "複製動作"
     }
   ],
   "i4C4aB": [
@@ -7080,12 +7160,6 @@
     {
       "type": 0,
       "value": " 秒鐘"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "輸入有效的資料表。"
     }
   ],
   "iy8rNf": [
@@ -7429,6 +7503,12 @@
       "value": "受控識別"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "輸入有效的數字。"
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7457,6 +7537,12 @@
     {
       "type": 0,
       "value": "傳回"
+    }
+  ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "lZT0JI": [
@@ -7881,12 +7967,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "請輸入有效的 URI。"
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -7947,6 +8027,12 @@
       "value": "整數值無效"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "複製觸發程式"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -7965,6 +8051,12 @@
       "value": "要捨棄所有未儲存的變更嗎?"
     }
   ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "odQ554": [
     {
       "type": 0,
@@ -7975,6 +8067,12 @@
     {
       "type": 0,
       "value": "新增備註"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "輸入有效的雙數字。"
     }
   ],
   "ox2Ou7": [
@@ -8047,6 +8145,12 @@
     {
       "type": 0,
       "value": "必要。要併入陣列的值。"
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "輸入有效的整數。"
     }
   ],
   "pXmFGf": [
@@ -8796,6 +8900,12 @@
       "value": "顯示名稱"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9134,6 +9244,12 @@
       "value": "這包含重複的值"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9186,6 +9302,12 @@
     {
       "type": 0,
       "value": "包括動態內容"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "停止產生"
     }
   ],
   "wPlTDB": [
@@ -9473,7 +9595,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "警告: 輸入節點類型不符合此輸入允許的其中一種類型。"
     }
   ],
   "yRDuqj": [
@@ -9664,6 +9786,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 彼得保羅夫斯克-堪察加斯克 - 已過時"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

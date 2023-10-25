@@ -94,7 +94,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.workflowDesignTimePort}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
-        await waitForDesingTimeStartUp(url, new Date().getTime());
+        await waitForDesignTimeStartUp(url, new Date().getTime());
         actionContext.telemetry.properties.startDesignTimeApi = 'true';
       } else {
         throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
@@ -127,7 +127,7 @@ async function createJsonFile(directory: Uri, fileName: string, fileContent: any
   }
 }
 
-async function waitForDesingTimeStartUp(url: string, initialTime: number): Promise<void> {
+async function waitForDesignTimeStartUp(url: string, initialTime: number): Promise<void> {
   while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < workflowDesignerLoadTimeout) {
     await delay(2000);
   }

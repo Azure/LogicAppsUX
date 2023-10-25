@@ -29,6 +29,12 @@
       "value": "Con errori"
     }
   ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Immetti un valore booleano valido."
+    }
+  ],
   "+Jryh+": [
     {
       "type": 0,
@@ -49,6 +55,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Incollare l'ultima espressione usata"
     }
   ],
   "+mAJR3": [
@@ -409,12 +421,6 @@
       "value": "Restituisce la porta da un URI. Se la porta non è specificata, restituisce la porta predefinita per il protocollo"
     }
   ],
-  "11qu8f": [
-    {
-      "type": 0,
-      "value": "Immetti un numero intero valido."
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -449,12 +455,6 @@
     {
       "type": 0,
       "value": "Converte l'argomento del parametro in un numero a virgola mobile"
-    }
-  ],
-  "1REk6u": [
-    {
-      "type": 0,
-      "value": "Immetti un indirizzo Email valido."
     }
   ],
   "1ZSzl6": [
@@ -521,6 +521,12 @@
     {
       "type": 0,
       "value": "Nascondi schema di origine"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Immetti un URI valido."
     }
   ],
   "1uGBLP": [
@@ -863,6 +869,12 @@
       "value": "Chiudi visualizzazione codice"
     }
   ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Immetti un valore datetime valido."
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -981,6 +993,12 @@
     {
       "type": 0,
       "value": "Il flusso è stato aggiornato."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Salvataggio di questo flusso in corso..."
     }
   ],
   "4izAMi": [
@@ -1409,16 +1427,16 @@
       "value": "Il flusso di lavoro verrà ripristinato allo stato in cui si trovava prima della modifica di Copilot. Se sono state apportate modifiche aggiuntive al flusso di lavoro dopo il copilot, queste saranno perdute. Questa azione non può essere annullata. Continuare?"
     }
   ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Immetti un indirizzo Email valido."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Codice stato"
-    }
-  ],
-  "7ku9t+": [
-    {
-      "type": 0,
-      "value": "Segnala un bug"
     }
   ],
   "7lnElz": [
@@ -1735,12 +1753,6 @@
     {
       "type": 0,
       "value": "'' non è valido. Non è stato trovato negli output."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "In fase di sviluppo"
     }
   ],
   "9YGcT2": [
@@ -2259,7 +2271,7 @@
   "CyT8H7": [
     {
       "type": 0,
-      "value": "Accepts 'Number', 'Integer', and 'Decimal' types."
+      "value": "Accetta i tipi \"Number\", \"Integer\" e \"Decimal\"."
     }
   ],
   "CypYLs": [
@@ -2354,6 +2366,12 @@
     {
       "type": 0,
       "value": "ALT/OPZIONI + clic per scaricare {displayName}"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Funzioni aggiunte"
     }
   ],
   "DWd9vy": [
@@ -2558,6 +2576,12 @@
     {
       "type": 0,
       "value": "Visualizzare la cronologia delle richieste per questa operazione"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Immettere una tabella valida."
     }
   ],
   "EqX3Mi": [
@@ -3029,12 +3053,6 @@
       "value": "Errore durante il recupero del manifesto"
     }
   ],
-  "HoQiVa": [
-    {
-      "type": 0,
-      "value": "Immetti un valore datetime valido."
-    }
-  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -3208,7 +3226,7 @@
   "J5TTF6": [
     {
       "type": 0,
-      "value": "Accepted data types: "
+      "value": "Tipi di dati accettati: "
     },
     {
       "type": 1,
@@ -3259,6 +3277,12 @@
     {
       "type": 0,
       "value": "Azione annullata"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Chat di Copilot annullata"
     }
   ],
   "JNQHws": [
@@ -3357,12 +3381,6 @@
     {
       "type": 0,
       "value": "\" con"
-    }
-  ],
-  "KP0Rr2": [
-    {
-      "type": 0,
-      "value": "Immetti un numero double valido."
     }
   ],
   "KV4uky": [
@@ -3764,12 +3782,6 @@
       "value": "Modifica in modalità avanzata"
     }
   ],
-  "Mgcs5s": [
-    {
-      "type": 0,
-      "value": "Immetti un numero valido."
-    }
-  ],
   "MirIsS": [
     {
       "type": 0,
@@ -3816,6 +3828,12 @@
     {
       "type": 0,
       "value": "(UTC + 2.00 h) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copia completata."
     }
   ],
   "NGJ00e": [
@@ -3914,6 +3932,12 @@
       "value": "Entità servizio"
     }
   ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Attendere..."
+    }
+  ],
   "O1tedM": [
     {
       "type": 0,
@@ -3936,6 +3960,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBKhVi": [
+    {
+      "type": 0,
+      "value": "Non è possibile copiare l'azione o il trigger."
     }
   ],
   "ODQCKj": [
@@ -4002,6 +4032,12 @@
     {
       "type": 0,
       "value": "Immetti il gruppo di destinatari."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Segnala un bug"
     }
   ],
   "OVvieE": [
@@ -4142,6 +4178,12 @@
       "value": "Obbligatorio. Valore corrispondene al numero di integer nella matrice."
     }
   ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Gli spazi vuoti devono essere codificati per gli URI"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
@@ -4270,12 +4312,6 @@
     {
       "type": 0,
       "value": "Restituisce la rappresentazione Base 64 della stringa di input"
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Chiudi"
     }
   ],
   "PytMJ0": [
@@ -4525,6 +4561,16 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Inserire un nuovo passaggio in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
     }
   ],
   "RkgScy": [
@@ -4851,12 +4897,6 @@
       "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 1."
     }
   ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Comprimere/espandere"
-    }
-  ],
   "U086AA": [
     {
       "type": 0,
@@ -4920,7 +4960,7 @@
   "UF3KjL": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Provare a usare una funzione di conversione, ad esempio: "
     },
     {
       "type": 1,
@@ -5705,6 +5745,12 @@
       "value": "Condizioni del trigger"
     }
   ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Cancella editor"
+    }
+  ],
   "YF1yZk": [
     {
       "type": 0,
@@ -5899,6 +5945,12 @@
       "value": "Comprimi risultato statico"
     }
   ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Incolla un'azione"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -6031,12 +6083,6 @@
       "value": "Immetti file PFX"
     }
   ],
-  "amRYtC": [
-    {
-      "type": 0,
-      "value": "Immetti un valore float valido."
-    }
-  ],
   "aoUT/3": [
     {
       "type": 0,
@@ -6129,6 +6175,12 @@
     {
       "type": 0,
       "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Immetti un JSON valido."
     }
   ],
   "ba9yGJ": [
@@ -6669,6 +6721,12 @@
       "value": "(UTC + 8.00 h) Pechino, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Si è verificato un errore. Riprovare."
+    }
+  ],
   "g/7QyT": [
     {
       "type": 0,
@@ -6781,6 +6839,12 @@
     {
       "type": 0,
       "value": "(UTC+5.00) Ashkhabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Immetti un valore float valido."
     }
   ],
   "gc6v4X": [
@@ -6946,7 +7010,7 @@
       "value": "Non è quello che sto cercando"
     }
   ],
-  "hic23z": [
+  "hihfHd": [
     {
       "type": 0,
       "value": "Il valore è troppo grande."
@@ -6986,6 +7050,12 @@
     {
       "type": 0,
       "value": "Destinatari"
+    }
+  ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
     }
   ],
   "hza/cT": [
@@ -7028,6 +7098,12 @@
     {
       "type": 0,
       "value": "Ripeti"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copia azione"
     }
   ],
   "i4C4aB": [
@@ -7190,12 +7266,6 @@
     {
       "type": 0,
       "value": " s"
-    }
-  ],
-  "ixutP5": [
-    {
-      "type": 0,
-      "value": "Immettere una tabella valida."
     }
   ],
   "iy8rNf": [
@@ -7561,6 +7631,12 @@
       "value": "Identità gestita"
     }
   ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Immetti un numero valido."
+    }
+  ],
   "lM9qrG": [
     {
       "type": 0,
@@ -7589,6 +7665,12 @@
     {
       "type": 0,
       "value": "Restituisci"
+    }
+  ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "lZT0JI": [
@@ -8017,12 +8099,6 @@
       "value": "max_page"
     }
   ],
-  "o2Cmny": [
-    {
-      "type": 0,
-      "value": "Immetti un URI valido."
-    }
-  ],
   "o3SfI4": [
     {
       "type": 0,
@@ -8083,6 +8159,12 @@
       "value": "Valore Integer non valido"
     }
   ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copia trigger"
+    }
+  ],
   "oTBkbU": [
     {
       "type": 0,
@@ -8101,6 +8183,12 @@
       "value": "Annullare tutte le modifiche non salvate?"
     }
   ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "odQ554": [
     {
       "type": 0,
@@ -8111,6 +8199,12 @@
     {
       "type": 0,
       "value": "Aggiungi una nota"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Immetti un numero double valido."
     }
   ],
   "ox2Ou7": [
@@ -8183,6 +8277,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valori da combinare in una matrice."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Immetti un numero intero valido."
     }
   ],
   "pXmFGf": [
@@ -8954,6 +9054,12 @@
       "value": "Nome visualizzato"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9292,6 +9398,12 @@
       "value": "Contiene un valore duplicato"
     }
   ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9344,6 +9456,12 @@
     {
       "type": 0,
       "value": "Inclusione di contenuto dinamico"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Interrompi generazione"
     }
   ],
   "wPlTDB": [
@@ -9631,7 +9749,7 @@
   "yNtBUV": [
     {
       "type": 0,
-      "value": "Warning: input node type does not match one of the allowed types for this input."
+      "value": "Avviso: il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input."
     }
   ],
   "yRDuqj": [
@@ -9818,6 +9936,12 @@
     {
       "type": 0,
       "value": "(UTC + 12.00 h) Petropavlovsk-Kamčatskij - Vecchio"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [
