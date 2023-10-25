@@ -10,7 +10,6 @@ import { setMethodName } from '../createCodeProjectSteps/createFunction/setMetho
 import { setNamespace } from '../createCodeProjectSteps/createFunction/setNamepSpace';
 import { CodeProjectWorkflowStateTypeStep } from '../createCodeProjectSteps/createLogicApp/CodeProjectWorkflowStateTypeStep';
 import { addInitVSCustomCodeSteps } from '../createCodeProjectSteps/createLogicApp/initLogicAppCodeProjectVScode/InitVSCode';
-import { DesignerConfig } from '../createCodeProjectSteps/createLogicApp/workflowDesigner/DesignerConfig';
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
@@ -130,7 +129,6 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
       new setMethodName(),
       new setNamespace(),
       new InvokeFunctionProjectSetup(),
-      new DesignerConfig(),
       await CodeProjectWorkflowStateTypeStep.create(context, {
         isProjectWizard: true,
         templateId: this.templateId,

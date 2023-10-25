@@ -579,7 +579,7 @@
         },
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
-          "when": "explorerResourceIsFolder == true",
+          "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },
         {
