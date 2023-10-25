@@ -51,7 +51,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
 
   const { data: allOperations, isLoading: isLoadingOperations } = useAllOperations();
   const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
-  const [isLoadingOperationsGroup, setIsLoadingOperationGroup] = useState<boolean>(false);
+  const [isLoadingOperationGroup, setIsLoadingOperationGroup] = useState<boolean>(false);
 
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
   const { data: allConnectors } = useAllConnectors();
@@ -179,7 +179,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
               groupOperations={allOperationsForGroup}
               filters={filters}
               onOperationClick={onOperationClick}
-              isLoading={isLoadingOperations || isLoadingOperationsGroup}
+              isLoading={isLoadingOperations || isLoadingOperationGroup}
               displayRuntimeInfo={displayRuntimeInfo}
             />
           ) : null,
