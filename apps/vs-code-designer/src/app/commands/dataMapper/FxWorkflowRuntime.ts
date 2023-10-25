@@ -1,10 +1,10 @@
+import { hostFileName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import {
   backendRuntimeBaseUrl,
   backendRuntimeTimeout,
   hostFileContent,
-  hostFileName,
   settingsFileContent,
   settingsFileName,
   workflowDesignTimeDir,

@@ -1,6 +1,4 @@
 export const webviewType = 'dataMapperWebview';
-export const outputChannelTitle = 'Data Mapper';
-export const outputChannelPrefix = 'azureLogicAppsDataMapper';
 
 export const supportedDataMapDefinitionFileExts = ['.yml'];
 export const supportedSchemaFileExts = ['.xsd', '.json'];
@@ -18,7 +16,6 @@ export const draftMapDefinitionSuffix = '.draft';
 export const mapDefinitionExtension = '.yml';
 export const mapXsltExtension = '.xslt';
 
-export const hostFileName = 'host.json';
 export const settingsFileName = 'local.settings.json';
 export const hostFileContent = {
   version: '2.0',
