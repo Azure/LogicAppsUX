@@ -1,5 +1,7 @@
 import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
+import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import DataMapperExt from './DataMapperExt';
 import {
   dataMapDefinitionsPath,
@@ -26,7 +28,7 @@ import {
 } from 'fs';
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
-import { RelativePattern, Uri, window, workspace } from 'vscode';
+import { RelativePattern, window, workspace } from 'vscode';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -81,24 +83,7 @@ export default class DataMapperPanel {
   }
 
   private async _setWebviewHtml() {
-    // Get webview content, converting links to VS Code URIs
-    const indexPath = path.join(ext.context.extensionPath, '/webview/index.html');
-    const html = await fs.readFile(indexPath, 'utf-8');
-    // 1. Get all links prefixed by href or src
-    const matchLinks = /(href|src)="([^"]*)"/g;
-    // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_: unknown, prefix: 'href' | 'src', link: string) => {
-      // For HTML elements
-      if (link === '#') {
-        return `${prefix}="${link}"`;
-      }
-      // For scripts & links
-      const pth = path.join(ext.context.extensionPath, '/webview/', link);
-      const uri = Uri.file(pth);
-      return `${prefix}="${this.panel.webview.asWebviewUri(uri)}"`;
-    };
-
-    this.panel.webview.html = html.replace(matchLinks, toUri);
+    this.panel.webview.html = await getWebViewHTML('vs-code-data-mapper', this.panel);
   }
 
   public sendMsgToWebview(msg: MessageToWebview) {
@@ -117,7 +102,7 @@ export default class DataMapperPanel {
         break;
       case 'webviewRscLoadError':
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
-        DataMapperExt.showError(`Error loading Data Mapper resource: ${msg.data}`);
+        ext.showError(localize('WebviewRscLoadError', `Error loading Data Mapper resource: "{0}"`, msg.data));
         break;
       case 'addSchemaFromFile': {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
@@ -247,8 +232,14 @@ export default class DataMapperPanel {
 
           // Check that the schema file dependency exists in the same directory as the primary schema file
           if (!fileExistsSync(schemaFilePath)) {
-            DataMapperExt.showError(
-              `Schema loading error: couldn't find schema file dependency ${schemaFile} in the same directory as ${primarySchemaFileName}. ${primarySchemaFileName} will still be copied to the Schemas folder.`
+            ext.showError(
+              localize(
+                'SchemaLoadingError',
+                `Schema loading error: couldn't find schema file dependency 
+              "{0}" in the same directory as "{1}". "{1}" will still be copied to the Schemas folder.`,
+                schemaFile,
+                primarySchemaFileName
+              )
             );
             return;
           }
@@ -296,14 +287,14 @@ export default class DataMapperPanel {
             });
           });
         })
-        .catch(DataMapperExt.showError);
+        .catch(ext.showError);
     });
   }
 
   public saveMapMetadata(mapMetadata: string) {
     const vscodeFolderPath = this.getMapMetadataPath();
 
-    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(DataMapperExt.showError);
+    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(ext.showError);
   }
 
   public saveMapXslt(mapXslt: string) {
@@ -327,7 +318,7 @@ export default class DataMapperPanel {
             this.checkAndSetXslt();
           });
         })
-        .catch(DataMapperExt.showError);
+        .catch(ext.showError);
     });
   }
 
@@ -342,7 +333,7 @@ export default class DataMapperPanel {
       .then(() => {
         fs.writeFile(filePath, mapDefFileContents, 'utf8');
       })
-      .catch(DataMapperExt.showError);
+      .catch(ext.showError);
   }
 
   private readMapMetadataFile(): MapMetadata | undefined {
@@ -353,14 +344,22 @@ export default class DataMapperPanel {
         const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
         return metadataJson;
       } catch {
-        DataMapperExt.showError(
-          `Data map metadata file found at ${vscodeFolderPath} contains invalid JSON. Data map will load without metadata file.`
+        ext.showError(
+          localize(
+            'MetadataInvalidJSON',
+            `Data map metadata file found at "{0}" contains invalid JSON. Data map will load without metadata file.`,
+            vscodeFolderPath
+          )
         );
         return undefined;
       }
     } else {
-      DataMapperExt.showWarning(
-        `Data map metadata not found at path ${vscodeFolderPath}. This file configures your function positioning and other info. Please save your map to regenerate the file.`
+      ext.showWarning(
+        localize(
+          'MetadataNotFound',
+          `Data map metadata not found at path "{0}". This file configures your function positioning and other info. Please save your map to regenerate the file.`,
+          vscodeFolderPath
+        )
       );
       return undefined;
     }
@@ -391,7 +390,7 @@ export default class DataMapperPanel {
         });
       });
     } else {
-      DataMapperExt.showWarning(`XSLT file not detected for ${this.dataMapName}`);
+      ext.showWarning(localize('XSLTFileNotDetected', `XSLT file not detected for "{0}"`, this.dataMapName));
     }
   }
 
