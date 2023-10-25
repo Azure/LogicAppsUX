@@ -127,7 +127,7 @@ function startBackendRuntimeProcess(workingDirectory: string | undefined, comman
     shell: true,
   };
 
-  ext.log(localize('RunningCommand', `Running command: ""{0}" "{formattedArgs}""...`, command, formattedArgs));
+  ext.log(localize('RunningCommand', `Running command: ""{0}" "{1}""...`, command, formattedArgs));
   ext.dataMapperChildProcess = cp.spawn(command, args, options);
 
   ext.dataMapperChildProcess.stdout?.on('data', (data: string | Buffer) => {
