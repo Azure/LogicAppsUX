@@ -1,5 +1,6 @@
 import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import DataMapperExt from './DataMapperExt';
 import {
@@ -101,7 +102,7 @@ export default class DataMapperPanel {
         break;
       case 'webviewRscLoadError':
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
-        ext.showError(`Error loading Data Mapper resource: ${msg.data}`);
+        ext.showError(localize('WebviewRscLoadError', `Error loading Data Mapper resource: "{0}"`, msg.data));
         break;
       case 'addSchemaFromFile': {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
@@ -232,7 +233,13 @@ export default class DataMapperPanel {
           // Check that the schema file dependency exists in the same directory as the primary schema file
           if (!fileExistsSync(schemaFilePath)) {
             ext.showError(
-              `Schema loading error: couldn't find schema file dependency ${schemaFile} in the same directory as ${primarySchemaFileName}. ${primarySchemaFileName} will still be copied to the Schemas folder.`
+              localize(
+                'SchemaLoadingError',
+                `Schema loading error: couldn't find schema file dependency 
+              "{0}" in the same directory as "{1}". "{1}" will still be copied to the Schemas folder.`,
+                schemaFile,
+                primarySchemaFileName
+              )
             );
             return;
           }
@@ -338,13 +345,21 @@ export default class DataMapperPanel {
         return metadataJson;
       } catch {
         ext.showError(
-          `Data map metadata file found at ${vscodeFolderPath} contains invalid JSON. Data map will load without metadata file.`
+          localize(
+            'MetadataInvalidJSON',
+            `Data map metadata file found at "{0}" contains invalid JSON. Data map will load without metadata file.`,
+            vscodeFolderPath
+          )
         );
         return undefined;
       }
     } else {
       ext.showWarning(
-        `Data map metadata not found at path ${vscodeFolderPath}. This file configures your function positioning and other info. Please save your map to regenerate the file.`
+        localize(
+          'MetadataNotFound',
+          `Data map metadata not found at path "{0}". This file configures your function positioning and other info. Please save your map to regenerate the file.`,
+          vscodeFolderPath
+        )
       );
       return undefined;
     }
@@ -375,7 +390,7 @@ export default class DataMapperPanel {
         });
       });
     } else {
-      ext.showWarning(`XSLT file not detected for ${this.dataMapName}`);
+      ext.showWarning(localize('XSLTFileNotDetected', `XSLT file not detected for "{0}"`, this.dataMapName));
     }
   }
 

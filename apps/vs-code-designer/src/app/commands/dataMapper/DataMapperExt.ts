@@ -1,4 +1,5 @@
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import DataMapperPanel from './DataMapperPanel';
 import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
@@ -55,7 +56,7 @@ export default class DataMapperExt {
     if (workspace.workspaceFolders) {
       return workspace.workspaceFolders[0].uri.fsPath;
     } else {
-      ext.showError('No VS Code folder/workspace found...');
+      ext.showError(localize('MissingWorkspace', 'No VS Code folder/workspace found...'));
       return '';
     }
   }
