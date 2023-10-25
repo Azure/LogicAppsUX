@@ -82,6 +82,10 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
         defaultMessage: 'Ask a question or describe how you want to change this flow',
         description: 'Chabot input placeholder text',
       }),
+      protectedMessage: intl.formatMessage({
+        defaultMessage: 'Your personal and company data are protected in this chat',
+        description: 'Letting user know that their data is protected in the chatbot',
+      }),
       submitButtonTitle: intl.formatMessage({
         defaultMessage: 'Submit',
         description: 'Submit button',
@@ -363,7 +367,7 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
             <div className={'msla-chatbot-footer'}>
               <div className={'msla-protected-footer'}>
                 {' '}
-                <ShieldCheckmarkRegular className="shield-checkmark-regular" /> Your personal and company data are protected in this chat
+                <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {intlText.protectedMessage}
               </div>
               {selectedPromptGuideItemKey && <PromptGuideCard itemKey={selectedPromptGuideItemKey} />}
               <ChatSuggestionGroup>
