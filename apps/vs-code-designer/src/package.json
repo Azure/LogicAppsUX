@@ -692,6 +692,11 @@
             "type": "string",
             "description": "The default subpath for the workspace folder to use during deployment. If you set this value, you won't get a prompt for the folder path during deployment."
           },
+          "azureLogicAppsStandard.dependencyTimeout": {
+            "type": "number",
+            "description": "The timeout (in seconds) to be used when validating and installing dependencies.",
+            "default": 120
+          },
           "azureLogicAppsStandard.dependenciesPath": {
             "scope": "resource",
             "type": "string",

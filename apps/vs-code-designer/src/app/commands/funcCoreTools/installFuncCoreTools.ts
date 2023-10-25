@@ -10,7 +10,6 @@ import {
   getFunctionCoreToolsBinariesReleaseUrl,
   getLatestFunctionCoreToolsVersion,
 } from '../../utils/binaries';
-import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -38,6 +37,4 @@ export async function installFuncCoreTools(context: IActionContext, majorVersion
   }
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
   await downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
-  context.telemetry.properties.lastStep = 'setFunctionsCommand';
-  await setFunctionsCommand();
 }

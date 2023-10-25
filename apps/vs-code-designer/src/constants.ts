@@ -187,6 +187,7 @@ export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAp
 export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
+export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';

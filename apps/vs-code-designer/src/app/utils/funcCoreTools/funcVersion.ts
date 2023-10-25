@@ -146,18 +146,21 @@ export function checkSupportedFuncVersion(version: FuncVersion) {
  */
 export function getFunctionsCommand(): string {
   const command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+  if (command == null) {
+    throw Error('Functions Core Tools Binary Path Setting is empty');
+  }
   return command;
 }
 
-export function setFunctionsCommand(): void {
+export async function setFunctionsCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
   const binariesExist = fs.existsSync(funcBinariesPath);
   let command = ext.funcCliPath;
   if (binariesExist) {
     command = path.join(funcBinariesPath, ext.funcCliPath);
-    fs.chmodSync(command, 0o777);
+    fs.chmodSync(funcBinariesPath, 0o777);
   }
 
-  updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
+  await updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
 }

@@ -7,6 +7,7 @@ import {
   Platform,
   defaultDependencyPathValue,
   dependenciesPathSettingKey,
+  dependencyTimeoutSettingKey,
   dotnetDependencyName,
   funcPackageName,
 } from '../../constants';
@@ -19,9 +20,11 @@ import { validateNodeJsIsLatest } from '../commands/nodeJs/validateNodeJsIsLates
 import { getDependenciesVersion } from './bundleFeed';
 import { setDotNetCommand } from './dotnet/dotnet';
 import { executeCommand } from './funcCoreTools/cpUtils';
-import { getNpmCommand } from './nodeJs/nodeJsVersion';
+import { setFunctionsCommand } from './funcCoreTools/funcVersion';
+import { getNpmCommand, setNodeJsCommand } from './nodeJs/nodeJsVersion';
 import { runWithDurationTelemetry } from './telemetry';
-import { getGlobalSetting, updateGlobalSetting } from './vsCodeConfig/settings';
+import { timeout } from './timeout';
+import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import * as AdmZip from 'adm-zip';
@@ -45,18 +48,24 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         // Handle cancellation logic
         executeCommand(ext.outputChannel, undefined, 'echo', 'validateAndInstallBinaries was canceled');
       });
+
       context.telemetry.properties.lastStep = 'getGlobalSetting';
       progress.report({ increment: 10, message: `Get Settings` });
+
+      const dependencyTimeout = (await getDependencyTimeout()) * 1000;
+
+      context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
       if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
         await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
         context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
       }
+
       context.telemetry.properties.lastStep = 'getDependenciesVersion';
       progress.report({ increment: 10, message: `Get dependency version from CDN` });
       let dependenciesVersions: IBundleDependencyFeed;
       try {
         dependenciesVersions = await getDependenciesVersion(context);
-        context.telemetry.properties.dependenciesVersions = dependenciesVersions?.toString();
+        context.telemetry.properties.dependenciesVersions = JSON.stringify(dependenciesVersions);
       } catch (error) {
         // Unable to get dependency.json, will default to fallback versions
         console.log(error);
@@ -65,21 +74,22 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       context.telemetry.properties.lastStep = 'validateNodeJsIsLatest';
       await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
         progress.report({ increment: 20, message: `Node Js` });
-        await validateNodeJsIsLatest(dependenciesVersions?.nodejs);
+        await timeout(validateNodeJsIsLatest, dependencyTimeout, dependenciesVersions?.nodejs);
+        await setNodeJsCommand();
       });
 
       context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
       await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
         progress.report({ increment: 20, message: `Azure Function Core Tools` });
-        await validateFuncCoreToolsIsLatest(dependenciesVersions?.funcCoreTools);
+        await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, dependenciesVersions?.funcCoreTools);
+        await setFunctionsCommand();
       });
 
       context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
       await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
         progress.report({ increment: 20, message: `.NET SDK` });
-        await validateDotNetIsLatest(dependenciesVersions?.dotnet);
-        context.telemetry.properties.lastStep = 'setDotNetCommand';
-        setDotNetCommand();
+        await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
+        await setDotNetCommand();
       });
     }
   );
@@ -322,14 +332,18 @@ function getCompressionFileExtension(binariesUrl: string): string {
 
 async function extractBinaries(binariesFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
   await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${binariesFilePath}`);
-  if (binariesFilePath.endsWith('.zip')) {
-    const zip = new AdmZip(binariesFilePath);
-    await zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
-  } else {
-    await executeCommand(ext.outputChannel, undefined, 'tar', `-xzvf`, binariesFilePath, '-C', targetFolder);
+  try {
+    if (binariesFilePath.endsWith('.zip')) {
+      const zip = new AdmZip(binariesFilePath);
+      await zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
+    } else {
+      await executeCommand(ext.outputChannel, undefined, 'tar', `-xzvf`, binariesFilePath, '-C', targetFolder);
+    }
+    cleanupContainerFolder(targetFolder);
+    await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
+  } catch (error) {
+    throw new Error(`Error extracting ${dependencyName}: ${error}`);
   }
-  cleanupContainerFolder(targetFolder);
-  await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
 }
 
 function checkMajorVersion(version: string, majorVersion: string): boolean {
@@ -356,4 +370,26 @@ function cleanupContainerFolder(targetFolder: string) {
       fs.rmSync(containerFolderPath, { recursive: true });
     }
   }
+}
+
+/**
+ * Gets dependency timeout setting value from workspace settings.
+ * @param {IActionContext} context - Command context.
+ * @returns {number} Timeout value in seconds.
+ */
+function getDependencyTimeout(): number {
+  const dependencyTimeoutValue: number | undefined = getWorkspaceSetting<number>(dependencyTimeoutSettingKey);
+  const timeoutInSeconds = Number(dependencyTimeoutValue);
+  if (isNaN(timeoutInSeconds)) {
+    throw new Error(
+      localize(
+        'invalidSettingValue',
+        'The setting "{0}" must be a number, but instead found "{1}".',
+        dependencyTimeoutValue,
+        dependencyTimeoutValue
+      )
+    );
+  }
+
+  return timeoutInSeconds;
 }
