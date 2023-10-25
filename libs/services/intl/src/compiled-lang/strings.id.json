@@ -57,6 +57,12 @@
       "value": "title"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1747,12 +1753,6 @@
     {
       "type": 0,
       "value": "', tidak dapat menemukan dalam output."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Dalam Pengembangan"
     }
   ],
   "9YGcT2": [
@@ -4248,12 +4248,6 @@
       "value": "Menampilkan representasi base 64 dari string input"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Tutup"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4813,12 +4807,6 @@
     {
       "type": 0,
       "value": "Wajib. Nomor untuk mengalikan Multiplicand 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Ciutkan/Luaskan"
     }
   ],
   "U086AA": [
@@ -6954,6 +6942,12 @@
       "value": "Audiens"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7541,6 +7535,12 @@
       "value": "Kembalikan"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8053,6 +8053,12 @@
     {
       "type": 0,
       "value": "Apakah Anda ingin membuang semua perubahan yang tidak disimpan?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -8898,6 +8904,12 @@
       "value": "Nama Tampilan"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9234,6 +9246,12 @@
     {
       "type": 0,
       "value": "Berisi nilai duplikat"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9768,6 +9786,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Lama"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

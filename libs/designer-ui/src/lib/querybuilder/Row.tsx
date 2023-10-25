@@ -265,7 +265,11 @@ export const Row = ({
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
           onChange={handleKeyChange}
           editorBlur={handleKeySave}
-          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, insideEditor: !isSimpleQueryBuilder }}
+          tokenPickerButtonProps={{
+            location: TokenPickerButtonLocation.Left,
+            newlineVerticalOffset: 16,
+            horizontalOffSet: isSimpleQueryBuilder ? undefined /* uses default of 38*/ : 33,
+          }}
         />
         <RowDropdown disabled={readonly || key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
@@ -277,7 +281,7 @@ export const Row = ({
           getTokenPicker={getTokenPicker}
           editorBlur={handleValueSave}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
-          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, insideEditor: true }}
+          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, newlineVerticalOffset: 16, horizontalOffSet: 33 }}
         />
       </div>
       {forceSingleCondition ? null : (

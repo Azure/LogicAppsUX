@@ -57,6 +57,12 @@
       "value": "title"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Wklej ostatnio używane wyrażenie"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1755,12 +1761,6 @@
     {
       "type": 0,
       "value": "”, dlatego nie można znaleźć w danych wyjściowych."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "W trakcie opracowywania"
     }
   ],
   "9YGcT2": [
@@ -4363,12 +4363,6 @@
       "value": "Zwraca reprezentację base 64 ciągu wejściowego"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Zamknij"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4965,12 +4959,6 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba, przez którą mnożona jest mnożna 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Zwiń/rozwiń"
     }
   ],
   "U086AA": [
@@ -7143,6 +7131,12 @@
       "value": "Odbiorcy"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7779,6 +7773,12 @@
       "value": "Powrót"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8291,6 +8291,12 @@
     {
       "type": 0,
       "value": "Czy na pewno chcesz odrzucić wszystkie niezapisane zmiany?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9169,6 +9175,12 @@
       "value": "Nazwa wyświetlana"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9505,6 +9517,12 @@
     {
       "type": 0,
       "value": "Zawiera zduplikowaną wartość"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -10039,6 +10057,12 @@
     {
       "type": 0,
       "value": "(GMT+12:00) Pietropawłowsk Kamczacki — stare"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

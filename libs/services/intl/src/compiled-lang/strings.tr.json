@@ -57,6 +57,12 @@
       "value": " kartı için bağlam menüsü"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1747,12 +1753,6 @@
     {
       "type": 0,
       "value": "' değeri geçersiz, çıkışlarda bulunamıyor."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Geliştirme Aşamasında"
     }
   ],
   "9YGcT2": [
@@ -4277,12 +4277,6 @@
       "value": "Giriş dizesinin base 64 gösterimini döndürür"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Kapat"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 1,
@@ -4853,12 +4847,6 @@
     {
       "type": 0,
       "value": "Gerekli. Çarpan 1'in çarpılacağı sayı."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Daralt/Genişlet"
     }
   ],
   "U086AA": [
@@ -7001,6 +6989,12 @@
       "value": "Hedef kitle"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7595,6 +7589,12 @@
       "value": "Dönüş"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8107,6 +8107,12 @@
     {
       "type": 0,
       "value": "Kaydedilmeyen tüm değişiklikleri atmak istiyor musunuz?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -8959,6 +8965,12 @@
       "value": "Görünen Ad"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9291,6 +9303,12 @@
     {
       "type": 0,
       "value": "Bu yinelenen bir değer içeriyor"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9825,6 +9843,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Eski"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

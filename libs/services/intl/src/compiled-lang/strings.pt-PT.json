@@ -57,6 +57,12 @@
       "value": "title"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Colar a última expressão utilizada"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1755,12 +1761,6 @@
     {
       "type": 0,
       "value": "\"; não se encontra nas saídas."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Em desenvolvimento"
     }
   ],
   "9YGcT2": [
@@ -4330,12 +4330,6 @@
       "value": "Devolve a representação da base 64 da cadeia de entrada"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Fechar"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4917,12 +4911,6 @@
     {
       "type": 0,
       "value": "Obrigatório. O número com o qual se multiplica o Multiplicando 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Fechar/expandir"
     }
   ],
   "U086AA": [
@@ -7088,6 +7076,12 @@
       "value": "Audiência"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7697,6 +7691,12 @@
       "value": "Voltar"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8209,6 +8209,12 @@
     {
       "type": 0,
       "value": "Pretende eliminar todas as alterações não guardadas?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9076,6 +9082,12 @@
       "value": "Nome a Apresentar"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9412,6 +9424,12 @@
     {
       "type": 0,
       "value": "Contém um valor duplicado"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9946,6 +9964,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antigo"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

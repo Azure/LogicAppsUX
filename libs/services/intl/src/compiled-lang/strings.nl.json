@@ -57,6 +57,12 @@
       "value": "title"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1759,12 +1765,6 @@
     {
       "type": 0,
       "value": ", kan niet worden gevonden in de uitvoer."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "In ontwikkeling"
     }
   ],
   "9YGcT2": [
@@ -4293,12 +4293,6 @@
       "value": "Er wordt een base 64-weergave van de ingevoerde tekenreeks geretourneerd"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Sluiten"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4861,12 +4855,6 @@
     {
       "type": 0,
       "value": "Vereist. Het getal waarmee vermenigvuldigtal 1 moet worden vermenigvuldigd."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Samenvouwen/uitvouwen"
     }
   ],
   "U086AA": [
@@ -7017,6 +7005,12 @@
       "value": "Doelgroep"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7615,6 +7609,12 @@
       "value": "Terug"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8127,6 +8127,12 @@
     {
       "type": 0,
       "value": "Wilt u alle niet-opgeslagen wijzigingen negeren?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -8971,6 +8977,12 @@
       "value": "Weergavenaam"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9307,6 +9319,12 @@
     {
       "type": 0,
       "value": "Deze bevat een dubbele waarde"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9841,6 +9859,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamtsjatski - verouderd"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

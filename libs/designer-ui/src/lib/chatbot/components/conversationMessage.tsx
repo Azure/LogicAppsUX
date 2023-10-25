@@ -7,6 +7,7 @@ import { ConnectionsSetupMessage } from './connectionsSetupMessage';
 import { ConversationItemType } from './conversationItem';
 import type { ConversationItem, UserQueryItem, AssistantReplyItem } from './conversationItem';
 import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMessage';
+import Markdown from 'react-markdown';
 
 type ConversationMessageProps = {
   item: ConversationItem;
@@ -35,14 +36,14 @@ export const ConversationMessage = ({ item }: ConversationMessageProps) => {
 
 const UserMessage = ({ item }: { item: UserQueryItem }) => {
   return (
-    <ChatBubble key={item.id} isUserMessage={true} isAIGenerated={false} date={item.date} isMarkdownMessage={false}>
+    <ChatBubble key={item.id} isUserMessage={true} isAIGenerated={false} date={item.date}>
       {item.text}
     </ChatBubble>
   );
 };
 
 const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
-  const { id, isMarkdownText, text, hideFooter, date } = item;
+  const { id, text, hideFooter, date } = item;
   const reportBugButton = useReportBugButton(false);
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   return (
@@ -52,14 +53,13 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         isUserMessage={false}
         isAIGenerated={true}
         date={date}
-        isMarkdownMessage={isMarkdownText}
         selectedReaction={reaction}
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         disabled={false} //TODO: add isBlockingOperationInProgress}
         additionalFooterActions={hideFooter ? [] : [reportBugButton]}
         hideFooter={hideFooter}
       >
-        {text}
+        <Markdown>{text}</Markdown>
       </ChatBubble>
       {feedbackMessage}
     </div>

@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetPublishTaskLabel, func, funcWatchProblemMatcher, hostStartCommand, show64BitWarningSetting } from '../../../constants';
+import {
+  dotnetExtensionId,
+  dotnetPublishTaskLabel,
+  func,
+  funcWatchProblemMatcher,
+  hostStartCommand,
+  show64BitWarningSetting,
+} from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
@@ -20,7 +27,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
   private debugSubpath: string;
 
   protected getRecommendedExtensions(language: ProjectLanguage): string[] {
-    const recs: string[] = ['ms-dotnettools.csharp'];
+    const recs: string[] = [dotnetExtensionId];
     if (language === ProjectLanguage.FSharp) {
       recs.push('ionide.ionide-fsharp');
     }

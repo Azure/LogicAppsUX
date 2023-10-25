@@ -79,6 +79,18 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const [value, setValue] = useState<string>(inputName || '');
   const [selectedOptions, setSelectedOptions] = React.useState<string[]>(inputValue ? [inputValue] : []);
 
+  useEffect(() => {
+    if (inputName) {
+      setValue(inputName);
+    }
+  }, [inputName]);
+
+  useEffect(() => {
+    if (inputValue) {
+      setSelectedOptions([inputValue]);
+    }
+  }, [inputValue]);
+
   const customValueSchemaNodeTypeMismatchLoc = intl.formatMessage({
     defaultMessage: `Warning: custom value does not match the schema node's type`,
     description: 'Warning message for when custom value does not match schema node type',

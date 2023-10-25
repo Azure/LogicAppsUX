@@ -61,6 +61,12 @@
       "value": "“"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Zuletzt verwendeten Ausdruck einfügen"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1771,12 +1777,6 @@
     {
       "type": 0,
       "value": "“. Er kann nicht in den Ausgaben gefunden werden."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "In der Entwicklung"
     }
   ],
   "9YGcT2": [
@@ -4325,12 +4325,6 @@
       "value": "Gibt die Base64-Darstellung der Eingabezeichenfolge zurück."
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Schließen"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4909,12 +4903,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zahl, mit der Multiplikand 1 multipliziert werden soll."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Reduzieren/Erweitern"
     }
   ],
   "U086AA": [
@@ -7077,6 +7065,12 @@
       "value": "Benutzergruppe"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7675,6 +7669,12 @@
       "value": "Zurückgeben"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8191,6 +8191,12 @@
     {
       "type": 0,
       "value": "Möchten Sie alle nicht gespeicherten Änderungen verwerfen?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9043,6 +9049,12 @@
       "value": "Anzeigename"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9383,6 +9395,12 @@
     {
       "type": 0,
       "value": "Dies enthält einen doppelten Wert."
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9921,6 +9939,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropawlowsk-Kamtschatski – alt"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [
