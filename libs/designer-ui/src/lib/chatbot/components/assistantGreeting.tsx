@@ -13,25 +13,25 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
       description: 'Chatbot greeting message from NL2 flow',
     }),
     greetingMessageFromOpenedFlow: intl.formatMessage({
-      defaultMessage: 'Welcome back! You can ask me any questions about your workflow or Logic Apps as a whole. For example:',
+      defaultMessage: 'Welcome back! If you want me to change your flow, just say what you want. For example:',
       description: 'Chatbot greeting message from existing flow',
     }),
     suggestedPromptItem1: intl.formatMessage({
-      defaultMessage: 'Explain what a specific action does.',
+      defaultMessage: 'Add an action that sends an email',
       description: 'Chatbot suggested input for user',
     }),
     suggestedPromptItem2: intl.formatMessage({
-      defaultMessage: 'Explain what the workflow does.',
+      defaultMessage: 'Explain what an action does',
       description: 'Chatbot suggested input for user',
     }),
     suggestedPromptItem3: intl.formatMessage({
-      defaultMessage: 'What are some common Logic App connectors?',
+      defaultMessage: 'Add a condition',
       description: 'Chatbot suggested input prompt for user',
     }),
-    // saveYourFlow: intl.formatMessage({
-    //   defaultMessage: 'Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!',
-    //   description: 'Chatbot suggestion to user to check if parameters need to be set in the workflow actions and to save',
-    // }),
+    saveYourFlow: intl.formatMessage({
+      defaultMessage: 'Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!',
+      description: 'Chatbot suggestion to user to check if parameters need to be set in the workflow actions and to save',
+    }),
   };
 
   const getSpecificGreetingPart = (origin: FlowOrigin) => {
@@ -60,7 +60,7 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
         <li>{intlText.suggestedPromptItem1}</li>
         <li>{intlText.suggestedPromptItem2}</li>
         <li>{intlText.suggestedPromptItem3}</li>
-        {/* <div style={{ marginTop: 12 }}>{intlText.saveYourFlow}</div> */}
+        <div style={{ marginTop: 12 }}>{intlText.saveYourFlow}</div>
       </ChatBubble>
       {feedbackMessage}
     </div>
