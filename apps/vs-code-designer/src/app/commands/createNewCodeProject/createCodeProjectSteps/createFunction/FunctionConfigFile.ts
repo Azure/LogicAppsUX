@@ -1,3 +1,4 @@
+import { dotnetExtensionId, functionsExtensionId } from '../../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fs from 'fs-extra';
@@ -51,7 +52,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
   private async generateExtensionsJson(folderPath: string): Promise<void> {
     const filePath = path.join(folderPath, 'extensions.json');
     const content = {
-      recommendations: ['ms-azuretools.vscode-azurefunctions', 'ms-dotnettools.csharp'],
+      recommendations: [functionsExtensionId, dotnetExtensionId],
     };
     await fs.writeJson(filePath, content, { spaces: 2 });
   }

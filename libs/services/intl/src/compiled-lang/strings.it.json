@@ -57,6 +57,12 @@
       "value": "title"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Incollare l'ultima espressione usata"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1749,12 +1755,6 @@
       "value": "'' non è valido. Non è stato trovato negli output."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "In fase di sviluppo"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2371,7 +2371,7 @@
   "DS/WmZ": [
     {
       "type": 0,
-      "value": "Added Functions"
+      "value": "Funzioni aggiunte"
     }
   ],
   "DWd9vy": [
@@ -4314,12 +4314,6 @@
       "value": "Restituisce la rappresentazione Base 64 della stringa di input"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Chiudi"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4901,12 +4895,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Comprimere/espandere"
     }
   ],
   "U086AA": [
@@ -7064,6 +7052,12 @@
       "value": "Destinatari"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7673,6 +7667,12 @@
       "value": "Restituisci"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8181,6 +8181,12 @@
     {
       "type": 0,
       "value": "Annullare tutte le modifiche non salvate?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9048,6 +9054,12 @@
       "value": "Nome visualizzato"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9384,6 +9396,12 @@
     {
       "type": 0,
       "value": "Contiene un valore duplicato"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9918,6 +9936,12 @@
     {
       "type": 0,
       "value": "(UTC + 12.00 h) Petropavlovsk-Kamčatskij - Vecchio"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

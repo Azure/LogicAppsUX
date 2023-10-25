@@ -1,4 +1,36 @@
 # Logic Apps Designer
+## [2.75.0](https://github.com/Azure/LogicAppsUX/compare/v2.74.0...v2.75.0) (2023-10-19)
+
+
+### Features
+
+* **designer:** Add option to hide expression in token picker ([#3473](https://github.com/Azure/LogicAppsUX/issues/3473)) ([b077720](https://github.com/Azure/LogicAppsUX/commit/b077720c76344152ab9b0cad178479440bada109))
+
+
+### Bug Fixes
+
+* **Designer:** Do not update swagger parameter format when in is unde… ([#3478](https://github.com/Azure/LogicAppsUX/issues/3478)) ([9fd8d9b](https://github.com/Azure/LogicAppsUX/commit/9fd8d9b0fed454e202e7cde7a075df630de65e2c))
+* **designer:** Fix copilot versioning ([#3474](https://github.com/Azure/LogicAppsUX/issues/3474)) ([6868390](https://github.com/Azure/LogicAppsUX/commit/6868390049bf087286871d9cdb4d19936bd82ea4))
+
+## [2.74.0](https://github.com/Azure/LogicAppsUX/compare/v2.73.0...v2.74.0) (2023-10-18)
+
+
+### Features
+
+* **data-mapper:** create unique ID for function and load position ([#3432](https://github.com/Azure/LogicAppsUX/issues/3432)) ([33aea13](https://github.com/Azure/LogicAppsUX/commit/33aea13d9bc2fe5dc596750e3f073341c0c60bb0))
+* **designer:** Adding a more versatile - collapsable panel  ([#3471](https://github.com/Azure/LogicAppsUX/issues/3471)) ([aa9937d](https://github.com/Azure/LogicAppsUX/commit/aa9937d904b24add2441083cf1b557473594f5dd))
+* **vscode:** Add Logger Configuration and Package Version Updates ([#3444](https://github.com/Azure/LogicAppsUX/issues/3444)) ([1b2f889](https://github.com/Azure/LogicAppsUX/commit/1b2f889663ffb86693bbf3bc69de8fe6bd970c9f))
+
+
+### Bug Fixes
+
+* **copilot:** Minor fixes to copilot UI including proper text formatting and correct api endpoint ([#3466](https://github.com/Azure/LogicAppsUX/issues/3466)) ([fb1a4ae](https://github.com/Azure/LogicAppsUX/commit/fb1a4aebd55bb5737a8aeed372ce35546f511b4a))
+* **Data Mapper:** User able to paste path directly into "Select existing" ([#3436](https://github.com/Azure/LogicAppsUX/issues/3436)) ([6155d50](https://github.com/Azure/LogicAppsUX/commit/6155d501a35c27136ebfb44dfe63fdd095373a92))
+* **designer:** Adding Expression Paste Functionality  ([#3441](https://github.com/Azure/LogicAppsUX/issues/3441)) ([3d49b20](https://github.com/Azure/LogicAppsUX/commit/3d49b20f909bee95f3131daa56b58cffcf40510b))
+* **designer:** Cleanup placeholder trigger when trigger is added ([#3472](https://github.com/Azure/LogicAppsUX/issues/3472)) ([e6e5299](https://github.com/Azure/LogicAppsUX/commit/e6e529920f4a3f56d4d65af4d8b81ddbd09d0139))
+* **Designer:** Invoker connection UI toggle doesn't retain after flow save ([#3464](https://github.com/Azure/LogicAppsUX/issues/3464)) ([b5491e2](https://github.com/Azure/LogicAppsUX/commit/b5491e26a187527056396b1e79688b346f5bc892))
+* **vscode:** Update logic app list in tree view after creating logic app in azure ([#3460](https://github.com/Azure/LogicAppsUX/issues/3460)) ([3b0d543](https://github.com/Azure/LogicAppsUX/commit/3b0d5439499f8ad6a9576b671c996afe736d00eb))
+
 ## [2.73.0](https://github.com/Azure/LogicAppsUX/compare/v2.72.0...v2.73.0) (2023-10-12)
 
 

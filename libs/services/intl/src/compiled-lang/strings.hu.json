@@ -61,6 +61,12 @@
       "value": " kártya helyi menüje"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Paste last used expression"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1757,12 +1763,6 @@
       "value": "” érték szerinti felosztás. Nem található a kimenetekben."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Fejlesztés alatt"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2380,7 +2380,7 @@
   "DS/WmZ": [
     {
       "type": 0,
-      "value": "Added Functions"
+      "value": "Hozzáadott függvények"
     }
   ],
   "DWd9vy": [
@@ -4297,12 +4297,6 @@
       "value": "A bemeneti sztringet Base 64 kódolású sztringként adja vissza."
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Bezárás"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4881,12 +4875,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A szám, amellyel meg kell szorozni az 1. szorzandót."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Összecsukás/kibontás"
     }
   ],
   "U086AA": [
@@ -7021,6 +7009,12 @@
       "value": "Célközönség"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7619,6 +7613,12 @@
       "value": "Vissza"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8131,6 +8131,12 @@
     {
       "type": 0,
       "value": "Biztosan elveti az összes nem mentett módosítást?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -8983,6 +8989,12 @@
       "value": "Megjelenített név"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9319,6 +9331,12 @@
     {
       "type": 0,
       "value": "Ez ismétlődő értéket tartalmaz"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9857,6 +9875,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovszk-Kamcsatszkij – régi"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

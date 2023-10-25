@@ -57,6 +57,12 @@
       "value": "title"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Coller la dernière expression utilisée"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1757,12 +1763,6 @@
       "value": " », introuvable dans les sorties."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "En cours de développement"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2387,7 +2387,7 @@
   "DS/WmZ": [
     {
       "type": 0,
-      "value": "Added Functions"
+      "value": "Fonctions ajoutées"
     }
   ],
   "DWd9vy": [
@@ -4322,12 +4322,6 @@
       "value": "Retourne la représentation en base 64 de la chaîne entrée"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Fermer"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4909,12 +4903,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Nombre avec lequel multiplier le multiplicande 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Réduire/développer"
     }
   ],
   "U086AA": [
@@ -7080,6 +7068,12 @@
       "value": "Audience"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7689,6 +7683,12 @@
       "value": "Retourner"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8201,6 +8201,12 @@
     {
       "type": 0,
       "value": "Voulez-vous ignorer les modifications non enregistrées ?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -9068,6 +9074,12 @@
       "value": "Nom d'affichage"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9404,6 +9416,12 @@
     {
       "type": 0,
       "value": "Contient une valeur dupliquée"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9938,6 +9956,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Ancien"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [

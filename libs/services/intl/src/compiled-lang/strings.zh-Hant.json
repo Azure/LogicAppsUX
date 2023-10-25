@@ -57,6 +57,12 @@
       "value": " 卡片的操作功能表"
     }
   ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "貼上上次使用的運算式"
+    }
+  ],
   "+mAJR3": [
     {
       "type": 0,
@@ -1757,12 +1763,6 @@
       "value": "' 的分割無效，在輸出中找不到。"
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "開發中"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2353,7 +2353,7 @@
   "DS/WmZ": [
     {
       "type": 0,
-      "value": "Added Functions"
+      "value": "已新增的函式"
     }
   ],
   "DWd9vy": [
@@ -4240,12 +4240,6 @@
       "value": "傳回輸入字串的 Base 64 表示法"
     }
   ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "關閉"
-    }
-  ],
   "PytMJ0": [
     {
       "type": 0,
@@ -4805,12 +4799,6 @@
     {
       "type": 0,
       "value": "必要。要乘以被乘數 1 的數字。"
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "摺疊/展開"
     }
   ],
   "U086AA": [
@@ -6958,6 +6946,12 @@
       "value": "對象"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7545,6 +7539,12 @@
       "value": "傳回"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -8049,6 +8049,12 @@
     {
       "type": 0,
       "value": "要捨棄所有未儲存的變更嗎?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "odQ554": [
@@ -8894,6 +8900,12 @@
       "value": "顯示名稱"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9230,6 +9242,12 @@
     {
       "type": 0,
       "value": "這包含重複的值"
+    }
+  ],
+  "vyKxuD": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9768,6 +9786,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 彼得保羅夫斯克-堪察加斯克 - 已過時"
+    }
+  ],
+  "zYbkZM": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "zb3lE6": [
