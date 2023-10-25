@@ -1,5 +1,6 @@
 import LogicApps from '../images/LogicApps.svg';
 import { FontSizes } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
 import { useIntl } from 'react-intl';
@@ -23,7 +24,10 @@ export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHe
     defaultMessage: 'Protected',
     description: 'Label in the chatbot header stating that the users information is protected in this chatbot',
   });
-
+  const protectedMessage = intl.formatMessage({
+    defaultMessage: 'Your personal and company data are protected in this chat',
+    description: 'Letting user know that their data is protected in the chatbot',
+  });
   const collapseButtonTitle = intl.formatMessage({
     defaultMessage: 'Collapse',
     description: 'Label for the collapse button in the chatbot header',
@@ -41,9 +45,11 @@ export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHe
             <img src={LogicApps} alt="Logic Apps" />
           </div>
           <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
-          <div className={'msla-chatbot-header-mode-protected-pill'}>
-            <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {protectedPillText}
-          </div>{' '}
+          <Tooltip content={protectedMessage} relationship="label" positioning="below" withArrow>
+            <div className={'msla-chatbot-header-mode-protected-pill'}>
+              <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {protectedPillText}
+            </div>
+          </Tooltip>{' '}
           <div className={'msla-chatbot-header-mode-pill'}>{pillText}</div>{' '}
         </>
       )}
