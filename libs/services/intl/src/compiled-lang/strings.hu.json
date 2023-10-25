@@ -1763,12 +1763,6 @@
       "value": "” érték szerinti felosztás. Nem található a kimenetekben."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Fejlesztés alatt"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -7015,6 +7009,12 @@
       "value": "Célközönség"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -8987,6 +8987,12 @@
     {
       "type": 0,
       "value": "Megjelenített név"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
     }
   ],
   "u81zB9": [
