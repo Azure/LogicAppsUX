@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { func } from './constants';
+import { dotnet, func, node, npm } from './constants';
 import type { Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
@@ -18,6 +18,8 @@ export namespace ext {
   export let context: ExtensionContext;
   export let workflowDesignTimePort: number;
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
+  export let workflowDotNetProcess: cp.ChildProcess | undefined;
+  export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
   export let extensionVersion: string;
@@ -34,6 +36,13 @@ export namespace ext {
 
   // Functions
   export const funcCliPath: string = func;
+
+  // DotNet
+  export const dotNetCliPath: string = dotnet;
+
+  // Node Js
+  export const nodeJsCliPath: string = node;
+  export const npmCliPath: string = npm;
 
   // WebViews
   export enum webViewKey {

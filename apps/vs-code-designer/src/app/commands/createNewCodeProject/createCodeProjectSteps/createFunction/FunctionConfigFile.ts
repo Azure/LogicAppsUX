@@ -111,7 +111,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
       tasks: [
         {
           label: 'build',
-          command: 'dotnet',
+          command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
           type: 'process',
           args: ['build', '${workspaceFolder}'],
           group: {

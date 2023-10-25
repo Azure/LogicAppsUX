@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from './localize';
+import * as os from 'os';
+import * as path from 'path';
 
 // File names
 export const hostFileName = 'host.json';
@@ -20,6 +22,11 @@ export const funcIgnoreFileName = '.funcignore';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
+// Azurite
+export const azuriteExtensionId = 'Azurite.azurite';
+export const azuriteExtensionPrefix = 'azurite';
+export const azuriteLocationSetting = 'location';
+
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
@@ -31,6 +38,16 @@ export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
 export const defaultFuncPort = '7071';
 export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
+export const funcDependencyName = 'FuncCoreTools';
+
+// DotNet
+export const dotnet = 'dotnet';
+export const dotnetDependencyName = 'DotNetSDK';
+
+// Node
+export const node = 'node';
+export const npm = 'npm';
+export const nodeJsDependencyName = 'NodeJs';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -118,6 +135,8 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
+  validateAndInstallBinaries = 'azureLogicAppsStandard.validateAndInstallBinaries',
+  azureAzuriteStart = 'azurite.start',
 }
 
 // Context
@@ -141,6 +160,8 @@ export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
+export const validateDotNetSDKSetting = 'validateDotNetSDK';
+export const validateNodeJsSetting = 'validateNodeJs';
 export const showDeployConfirmationSetting = 'showDeployConfirmation';
 export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
@@ -148,6 +169,8 @@ export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
+export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
+export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
@@ -158,12 +181,28 @@ export const extInstallTaskName = `${func}: ${extInstallCommand}`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
+export const dependenciesPathSettingKey = 'dependenciesPath';
+export const defaultLogicAppsFolder = '.azurelogicapps';
+export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
+export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
+export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
+export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
+export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
+export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+
+// Fallback Dependency Versions
+export enum DependencyVersion {
+  dotnet6 = '6.0.413',
+  funcCoreTools = '4.0.5198',
+  nodeJs = '18.17.1',
+}
 
 // .NET
 export enum DotnetVersion {
@@ -178,6 +217,13 @@ export const dotnetExtensionId = 'ms-dotnettools.csharp';
 export enum PackageManager {
   npm = 'npm',
   brew = 'brew',
+}
+
+// Operating System Platforms
+export enum Platform {
+  windows = 'win32',
+  mac = 'darwin',
+  linux = 'linux',
 }
 
 // Resources

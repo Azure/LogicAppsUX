@@ -2,35 +2,35 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { validateFuncCoreToolsSetting } from '../../../constants';
+import { validateDotNetSDKSetting } from '../../../constants';
 import { localize } from '../../../localize';
+import { getDotNetCommand } from '../../utils/dotnet/dotnet';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
-import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { installFuncCoreTools } from './installFuncCoreTools';
+import { installDotNet } from './installDotNet';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { MessageItem } from 'vscode';
 
 /**
- * Checks if functions core tools is installed, and installs it if needed.
+ * Checks if dotnet 6 is installed, and installs it if needed.
  * @param {IActionContext} context - Workflow file path.
  * @param {string} message - Message for warning.
  * @param {string} fsPath - Workspace file system path.
  * @returns {Promise<boolean>} Returns true if it is installed or was sucessfully installed, otherwise returns false.
  */
-export async function validateFuncCoreToolsInstalled(context: IActionContext, message: string, fsPath: string): Promise<boolean> {
+export async function validateDotNetIsInstalled(context: IActionContext, message: string, fsPath: string): Promise<boolean> {
   let input: MessageItem | undefined;
   let installed = false;
   const install: MessageItem = { title: localize('install', 'Install') };
 
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsInstalled', async (innerContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsInstalled', async (innerContext: IActionContext) => {
     innerContext.errorHandling.suppressDisplay = true;
 
-    if (!getWorkspaceSetting<boolean>(validateFuncCoreToolsSetting, fsPath)) {
-      innerContext.telemetry.properties.validateFuncCoreTools = 'false';
+    if (!getWorkspaceSetting<boolean>(validateDotNetSDKSetting, fsPath)) {
+      innerContext.telemetry.properties.validateDotNet = 'false';
       installed = true;
-    } else if (await isFuncToolsInstalled()) {
+    } else if (await isDotNetInstalled()) {
       installed = true;
     } else {
       const items: MessageItem[] = [install, DialogResponses.learnMore];
@@ -38,23 +38,23 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
       innerContext.telemetry.properties.dialogResult = input.title;
 
       if (input === install) {
-        await installFuncCoreTools(innerContext);
+        await installDotNet(innerContext);
         installed = true;
       } else if (input === DialogResponses.learnMore) {
-        await openUrl('https://aka.ms/Dqur4e');
+        await openUrl('https://dotnet.microsoft.com/download/dotnet/6.0');
       }
     }
   });
 
-  // validate that Func Tools was installed only if user confirmed
+  // validate that DotNet was installed only if user confirmed
   if (input === install && !installed) {
     if (
       (await context.ui.showWarningMessage(
-        localize('failedInstallFuncTools', 'The Azure Functions Core Tools installion has failed and will have to be installed manually.'),
+        localize('failedInstallDotNet', 'The .NET SDK installation failed. Please manually install instead.'),
         DialogResponses.learnMore
       )) === DialogResponses.learnMore
     ) {
-      await openUrl('https://aka.ms/Dqur4e');
+      await openUrl('https://dotnet.microsoft.com/download/dotnet/6.0');
     }
   }
 
@@ -62,13 +62,12 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
 }
 
 /**
- * Check is functions core tools is installed.
+ * Check is dotnet is installed.
  * @returns {Promise<boolean>} Returns true if installed, otherwise returns false.
  */
-export async function isFuncToolsInstalled(): Promise<boolean> {
-  const funcCommand = getFunctionsCommand();
+export async function isDotNetInstalled(): Promise<boolean> {
   try {
-    await executeCommand(undefined, undefined, funcCommand, '--version');
+    await executeCommand(undefined, undefined, getDotNetCommand(), '--version');
     return true;
   } catch (error) {
     return false;

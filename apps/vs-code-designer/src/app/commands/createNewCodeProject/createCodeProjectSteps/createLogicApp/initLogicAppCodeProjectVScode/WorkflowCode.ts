@@ -2,7 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../../../constants';
+import { binariesExist } from '../../../../../../app/utils/binaries';
+import { extensionCommand, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../../../constants';
 import { ScriptInit } from './ScriptInit';
 import type { IProjectWizardContext, ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension';
 import type { TaskDefinition } from 'vscode';
@@ -13,17 +14,24 @@ export class WorkflowInitCodeProject extends ScriptInit {
   }
 
   protected getTasks(): TaskDefinition[] {
+    const funcBinariesExist = binariesExist(funcDependencyName);
     return [
       {
         label: 'generateDebugSymbols',
-        command: 'dotnet',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
         args: ['${input:getDebugSymbolDll}'],
         type: 'process',
         problemMatcher: '$msCompile',
       },
       {
-        type: func,
-        command: hostStartCommand,
+        type: funcBinariesExist ? 'shell' : func,
+        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
+        args: funcBinariesExist ? ['host', 'start'] : undefined,
+        options: {
+          env: {
+            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;$env:PATH',
+          },
+        },
         problemMatcher: funcWatchProblemMatcher,
         isBackground: true,
         label: 'func: host start',
