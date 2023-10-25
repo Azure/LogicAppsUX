@@ -1763,12 +1763,6 @@
       "value": "' – nelze najít ve výstupech."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Vývoj"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -7129,6 +7123,12 @@
       "value": "Cílová skupina"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -9141,6 +9141,12 @@
     {
       "type": 0,
       "value": "Zobrazovaný název"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
     }
   ],
   "u81zB9": [
