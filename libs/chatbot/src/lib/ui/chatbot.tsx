@@ -6,6 +6,7 @@ import SparkleDisabled from '../images/SparkleDisabled.svg';
 import { CopilotPanelHeader } from './panelheader';
 import { Panel, PanelType, css, getId } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
+import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { ConversationItem, PromptGuideItem } from '@microsoft/designer-ui';
 import {
@@ -360,6 +361,10 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
               ))}
             </div>
             <div className={'msla-chatbot-footer'}>
+              <div className={'msla-protected-footer'}>
+                {' '}
+                <ShieldCheckmarkRegular className="shield-checkmark-regular" /> Your personal and company data are protected in this chat
+              </div>
               {selectedPromptGuideItemKey && <PromptGuideCard itemKey={selectedPromptGuideItemKey} />}
               <ChatSuggestionGroup>
                 {canSaveCurrentFlow && (
