@@ -1,5 +1,6 @@
 import LogicApps from '../images/LogicApps.svg';
 import { FontSizes } from '@fluentui/react';
+import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
 import { useIntl } from 'react-intl';
 
@@ -40,7 +41,9 @@ export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHe
             <img src={LogicApps} alt="Logic Apps" />
           </div>
           <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
-          <div className={'msla-chatbot-header-mode-protected-pill'}>{protectedPillText}</div>{' '}
+          <div className={'msla-chatbot-header-mode-protected-pill'}>
+            <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {protectedPillText}
+          </div>{' '}
           <div className={'msla-chatbot-header-mode-pill'}>{pillText}</div>{' '}
         </>
       )}
