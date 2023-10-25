@@ -1735,12 +1735,6 @@
       "value": "'. Não foi possível localizar nas saídas."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Em desenvolvimento"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -7042,6 +7036,12 @@
       "value": "Audiência"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -9040,6 +9040,12 @@
     {
       "type": 0,
       "value": "Nome de Exibição"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
     }
   ],
   "u81zB9": [

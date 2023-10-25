@@ -1755,12 +1755,6 @@
       "value": "' değeri geçersiz, çıkışlarda bulunamıyor."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Geliştirme Aşamasında"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -6995,6 +6989,12 @@
       "value": "Hedef kitle"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -8963,6 +8963,12 @@
     {
       "type": 0,
       "value": "Görünen Ad"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
     }
   ],
   "u81zB9": [

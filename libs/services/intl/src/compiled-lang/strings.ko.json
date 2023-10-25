@@ -1747,12 +1747,6 @@
       "value": "{splitOn}의 분할 값이 잘못되었습니다. 출력에서 찾을 수 없습니다."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "개발 중"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -6932,6 +6926,12 @@
       "value": "대상"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -8866,6 +8866,12 @@
     {
       "type": 0,
       "value": "표시 이름"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
     }
   ],
   "u81zB9": [
