@@ -23,6 +23,12 @@
       "value": "Function display"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -801,12 +807,6 @@
     {
       "type": 0,
       "value": "Returns the collection in reverse order"
-    }
-  ],
-  "3Vy0E6": [
-    {
-      "type": 0,
-      "value": "Protected"
     }
   ],
   "3X4FHS": [

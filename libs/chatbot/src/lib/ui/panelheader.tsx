@@ -21,7 +21,7 @@ export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHe
   });
   const protectedPillText = intl.formatMessage({
     defaultMessage: 'Protected',
-    description: 'Label in the chatbot header stating that the users information is ptotected in this chatbot',
+    description: 'Label in the chatbot header stating that the users information is protected in this chatbot',
   });
 
   const collapseButtonTitle = intl.formatMessage({
