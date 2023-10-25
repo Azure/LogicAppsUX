@@ -28,6 +28,8 @@ export interface ISearchService {
   searchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getRuntimeCategories?(): OperationRuntimeCategory[];
   filterConnector?(connector: Connector, runtimeFilter: string): boolean;
+  getOperationById?(operationId: string): Promise<DiscoveryOperation<DiscoveryResultTypes> | undefined>;
+  getOperationsByConnector?(connectorId: string, actionType?: string): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
 }
 
 let service: ISearchService;
