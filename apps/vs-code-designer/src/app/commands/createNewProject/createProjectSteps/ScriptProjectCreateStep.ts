@@ -73,6 +73,7 @@ obj
 appsettings.json
 local.settings.json
 __blobstorage__
+.debug
 __queuestorage__
 __azurite_db*__.json`)
       );
