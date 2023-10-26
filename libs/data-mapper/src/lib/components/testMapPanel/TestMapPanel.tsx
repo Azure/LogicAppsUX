@@ -265,6 +265,7 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
             value={testMapInput}
             onContentChanged={(e) => setTestMapInput(e.value ?? '')}
             className={styles.editorStyle}
+            contextMenu={true}
             {...commonCodeEditorProps}
           />
         </PivotItem>
