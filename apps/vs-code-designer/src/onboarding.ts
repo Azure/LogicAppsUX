@@ -1,0 +1,52 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+import { activateAzurite } from './app/utils/azurite/activateAzurite';
+import { promptInstallBinariesOption, validateAndInstallBinaries } from './app/utils/binaries';
+import { promptStartDesignTimeOption } from './app/utils/codeless/startDesignTimeApi';
+import { runWithDurationTelemetry } from './app/utils/telemetry';
+import { getGlobalSetting } from './app/utils/vsCodeConfig/settings';
+import { validateTasksJson } from './app/utils/vsCodeConfig/tasks';
+import {
+  extensionCommand,
+  autoBinariesInstallationSetting,
+  autoStartDesignTimeSetting,
+  showStartDesignTimeMessageSetting,
+  showAutoStartAzuriteWarning,
+} from './constants';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
+import * as vscode from 'vscode';
+
+export const startOnboarding = async (activateContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling('promptAutoBinariesInstallation', async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, 'promptAutoBinariesInstallation', async () => {
+      activateContext.telemetry.properties.lastStep = 'promptAutoBinariesInstallation';
+      await promptInstallBinariesOption(actionContext);
+    });
+  });
+
+  callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
+      const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+      if (binariesInstallation) {
+        await validateAndInstallBinaries(actionContext);
+        await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
+        activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
+      }
+    });
+  });
+
+  callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
+      await promptStartDesignTimeOption(activateContext);
+    });
+  });
+
+  callWithTelemetryAndErrorHandling(showAutoStartAzuriteWarning, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, showAutoStartAzuriteWarning, async () => {
+      activateContext.telemetry.properties.lastStep = 'activateAzurite';
+      activateAzurite(activateContext);
+    });
+  });
+};

@@ -415,8 +415,10 @@ export async function promptInstallBinariesOption(context: IActionContext) {
       result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
       if (result === confirm) {
         await updateGlobalSetting(autoBinariesInstallationSetting, true);
+        context.telemetry.properties.autoBinariesInstallation = 'true';
       } else if (result === DialogResponses.dontWarnAgain) {
         await updateGlobalSetting(autoBinariesInstallationSetting, false);
+        context.telemetry.properties.autoBinariesInstallation = 'false';
       }
     }
   }
