@@ -10,7 +10,7 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/vs-code-data-mapper/webview",
+        "outputPath": "dist/apps/vs-code-designer/vs-code-data-mapper",
         "index": "apps/vs-code-data-mapper-react/src/index.html",
         "baseHref": "/",
         "main": "apps/vs-code-data-mapper-react/src/main.tsx",

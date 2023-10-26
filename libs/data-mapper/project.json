@@ -27,7 +27,7 @@
       },
       "configurations": {
         "vscode": {
-          "outputPath": "dist/apps/vs-code-data-mapper/data-mapper"
+          "outputPath": "dist/apps/vs-code-designer/vs-code-data-mapper/data-mapper"
         }
       }
     },
