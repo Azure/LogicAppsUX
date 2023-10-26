@@ -6,7 +6,7 @@ import { projectLanguageSetting, funcVersionSetting, showProjectWarningSetting }
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
 import { tryParseFuncVersion } from '../funcCoreTools/funcVersion';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from './settings';
 import { verifyTargetFramework } from './verifyTargetFramework';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -27,7 +27,7 @@ export async function verifyVSCodeConfigOnActivate(
   if (folders) {
     for (const folder of folders) {
       const workspacePath: string = folder.uri.fsPath;
-      const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, folder);
+      const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder);
 
       if (projectPath) {
         context.telemetry.suppressIfSuccessful = false;

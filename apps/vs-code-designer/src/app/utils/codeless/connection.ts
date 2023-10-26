@@ -5,7 +5,7 @@ import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
@@ -67,7 +67,7 @@ export async function getFunctionProjectRoot(context: IActionContext, workflowFi
   const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   const workspacePath: string = workspaceFolder.uri.fsPath;
 
-  const projectRoot: string | undefined = await tryGetFunctionProjectRoot(context, workspacePath);
+  const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);
 
   if (projectRoot === undefined) {
     throw new Error('Error in determining project root. Please confirm project structure is correct.');

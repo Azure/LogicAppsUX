@@ -17,7 +17,7 @@ import type { MessageItem, WorkspaceFolder } from 'vscode';
 const projectSubpathKey = 'projectSubpath';
 
 // Use 'host.json' as an indicator that this is a functions project
-export async function isFunctionProject(folderPath: string): Promise<boolean> {
+export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   return await fse.pathExists(path.join(folderPath, hostFileName));
 }
 
@@ -26,7 +26,7 @@ export async function isFunctionProject(folderPath: string): Promise<boolean> {
  * If a single function project is found, returns that path.
  * If multiple projects are found, prompt to pick the project.
  */
-export async function tryGetFunctionProjectRoot(
+export async function tryGetLogicAppProjectRoot(
   context: IActionContext,
   workspaceFolder: WorkspaceFolder | string,
   suppressPrompt = false
@@ -36,14 +36,14 @@ export async function tryGetFunctionProjectRoot(
   if (!subpath) {
     if (!(await fse.pathExists(folderPath))) {
       return undefined;
-    } else if (await isFunctionProject(folderPath)) {
+    } else if (await isLogicAppProject(folderPath)) {
       return folderPath;
     } else {
       const subpaths: string[] = await fse.readdir(folderPath);
       const matchingSubpaths: string[] = [];
       await Promise.all(
         subpaths.map(async (s) => {
-          if (await isFunctionProject(path.join(folderPath, s))) {
+          if (await isLogicAppProject(path.join(folderPath, s))) {
             matchingSubpaths.push(s);
           }
         })
@@ -96,7 +96,7 @@ export async function verifyAndPromptToCreateProject(
 ): Promise<string | undefined> {
   options = options || {};
 
-  const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, fsPath);
+  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, fsPath);
   if (!projectPath) {
     if (!options.suppressCreateProjectPrompt) {
       const message: string = localize('notLogicApp', 'The selected folder is not a logic app project. Create new project?');

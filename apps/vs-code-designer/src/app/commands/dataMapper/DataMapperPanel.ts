@@ -2,7 +2,7 @@ import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
-import { tryGetFunctionProjectRoot } from '../../utils/verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import DataMapperExt from './DataMapperExt';
 import {
   dataMapDefinitionsPath,
@@ -193,7 +193,7 @@ export default class DataMapperPanel {
 
   public handleReadSchemaFileOptions() {
     callWithTelemetryAndErrorHandling('todo: getLogicAppProjectRoot', async (_context: IActionContext) => {
-      const logicAppProjectRoot = await tryGetFunctionProjectRoot(_context, DataMapperExt.getWorkspaceFolderFsPath(), false);
+      const logicAppProjectRoot = await tryGetLogicAppProjectRoot(_context, DataMapperExt.getWorkspaceFolderFsPath(), false);
       const logicAppRelativeProjectRoot = logicAppProjectRoot.replace(DataMapperExt.getWorkspaceFolderFsPath(), '');
       return this.getFilesForPath(`${logicAppRelativeProjectRoot}${schemasPath}`, 'showAvailableSchemas', supportedSchemaFileExts);
     });
