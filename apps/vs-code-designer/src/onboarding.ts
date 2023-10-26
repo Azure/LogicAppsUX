@@ -19,9 +19,9 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import * as vscode from 'vscode';
 
 export const startOnboarding = async (activateContext: IActionContext) => {
-  await callWithTelemetryAndErrorHandling('promptAutoBinariesInstallation', async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, 'promptAutoBinariesInstallation', async () => {
-      activateContext.telemetry.properties.lastStep = 'promptAutoBinariesInstallation';
+  await callWithTelemetryAndErrorHandling(autoBinariesInstallationSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, autoBinariesInstallationSetting, async () => {
+      activateContext.telemetry.properties.lastStep = autoBinariesInstallationSetting;
       await promptInstallBinariesOption(actionContext);
     });
   });
@@ -30,9 +30,9 @@ export const startOnboarding = async (activateContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
       const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
       if (binariesInstallation) {
+        activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
         await validateAndInstallBinaries(actionContext);
         await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
-        activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
       }
     });
   });
@@ -45,7 +45,7 @@ export const startOnboarding = async (activateContext: IActionContext) => {
 
   callWithTelemetryAndErrorHandling(showAutoStartAzuriteWarning, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showAutoStartAzuriteWarning, async () => {
-      activateContext.telemetry.properties.lastStep = 'activateAzurite';
+      activateContext.telemetry.properties.lastStep = showAutoStartAzuriteWarning;
       activateAzurite(activateContext);
     });
   });

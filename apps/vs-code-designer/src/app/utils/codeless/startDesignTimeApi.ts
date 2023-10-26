@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  Platform,
   ProjectDirectoryPath,
   autoStartDesignTimeSetting,
   defaultVersionRange,
@@ -190,7 +191,7 @@ export function stopDesignTimeApi(): void {
     return;
   }
 
-  if (os.platform() === 'win32') {
+  if (os.platform() === Platform.windows) {
     cp.exec('taskkill /pid ' + `${ext.workflowDesignChildProcess.pid}` + ' /T /F');
   } else {
     ext.workflowDesignChildProcess.kill();

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
+import { Platform, defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { preDebugValidate } from '../debug/validatePreDebug';
@@ -220,7 +220,7 @@ async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<string> {
     }
   }
   const children: OSAgnosticProcess[] =
-    process.platform === 'win32' ? await getWindowsChildren(taskInfo.processId) : await getUnixChildren(taskInfo.processId);
+    process.platform === Platform.windows ? await getWindowsChildren(taskInfo.processId) : await getUnixChildren(taskInfo.processId);
   const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet|func)(\.exe|)$/i.test(c.command || ''));
   return child ? child.pid.toString() : String(taskInfo.processId);
 }
