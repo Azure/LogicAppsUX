@@ -25,7 +25,7 @@ export function getSplitOnArrayAliasMetadata(schema: SchemaObject, required: boo
   } else if (schema.type === SwaggerConstants.Types.Object) {
     const keys = Object.keys(schema.properties || {});
 
-    if (keys.length === 1) {
+    if (keys.length >= 1) {
       const firstKey = keys[0];
       const propertyRequired = required && (schema.required || []).indexOf(firstKey) !== -1;
       return getSplitOnArrayAliasMetadata(schema.properties?.[firstKey] as SchemaObject, propertyRequired, firstKey);
