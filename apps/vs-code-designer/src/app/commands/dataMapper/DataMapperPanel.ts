@@ -2,6 +2,7 @@ import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
+import { tryGetFunctionProjectRoot } from '../../utils/verifyIsProject';
 import DataMapperExt from './DataMapperExt';
 import {
   dataMapDefinitionsPath,
@@ -16,7 +17,7 @@ import {
 } from './extensionConfig';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import {
   copyFileSync,
   existsSync as fileExistsSync,
@@ -191,7 +192,11 @@ export default class DataMapperPanel {
   }
 
   public handleReadSchemaFileOptions() {
-    return this.getFilesForPath(schemasPath, 'showAvailableSchemas', supportedSchemaFileExts);
+    callWithTelemetryAndErrorHandling('todo: getLogicAppProjectRoot', async (_context: IActionContext) => {
+      const logicAppProjectRoot = await tryGetFunctionProjectRoot(_context, DataMapperExt.getWorkspaceFolderFsPath(), false);
+      const logicAppRelativeProjectRoot = logicAppProjectRoot.replace(DataMapperExt.getWorkspaceFolderFsPath(), '');
+      return this.getFilesForPath(`${logicAppRelativeProjectRoot}${schemasPath}`, 'showAvailableSchemas', supportedSchemaFileExts);
+    });
   }
 
   public handleReadAvailableFunctionPaths() {
