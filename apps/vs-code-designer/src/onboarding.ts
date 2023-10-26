@@ -18,14 +18,7 @@ import {
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 
-export const startOnboarding = async (activateContext: IActionContext) => {
-  await callWithTelemetryAndErrorHandling(autoBinariesInstallationSetting, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, autoBinariesInstallationSetting, async () => {
-      activateContext.telemetry.properties.lastStep = autoBinariesInstallationSetting;
-      await promptInstallBinariesOption(actionContext);
-    });
-  });
-
+export const onboardBinaries = async (activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
       const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
@@ -36,6 +29,17 @@ export const startOnboarding = async (activateContext: IActionContext) => {
       }
     });
   });
+};
+
+export const startOnboarding = async (activateContext: IActionContext) => {
+  callWithTelemetryAndErrorHandling(autoBinariesInstallationSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, autoBinariesInstallationSetting, async () => {
+      activateContext.telemetry.properties.lastStep = autoBinariesInstallationSetting;
+      await promptInstallBinariesOption(actionContext);
+    });
+  });
+
+  await onboardBinaries(activateContext);
 
   callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {

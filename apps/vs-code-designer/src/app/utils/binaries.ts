@@ -14,6 +14,7 @@ import {
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { onboardBinaries } from '../../onboarding';
 import { validateDotNetIsLatest } from '../commands/dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
@@ -415,6 +416,7 @@ export async function promptInstallBinariesOption(context: IActionContext) {
       result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
       if (result === confirm) {
         await updateGlobalSetting(autoBinariesInstallationSetting, true);
+        await onboardBinaries(context);
         context.telemetry.properties.autoBinariesInstallation = 'true';
       } else if (result === DialogResponses.dontWarnAgain) {
         await updateGlobalSetting(autoBinariesInstallationSetting, false);
