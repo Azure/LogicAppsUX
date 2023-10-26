@@ -1,5 +1,5 @@
 import LogicApps from '../images/LogicApps.svg';
-import { FontSizes } from '@fluentui/react';
+import { FontSizes, Link } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
@@ -47,7 +47,14 @@ export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHe
           <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
           <Tooltip content={protectedMessage} relationship="label" positioning="below" withArrow>
             <div className={'msla-chatbot-header-mode-protected-pill'}>
-              <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {protectedPillText}
+              <ShieldCheckmarkRegular className="shield-checkmark-regular" />
+              <Link
+                className="msla-protectedmessage-link"
+                onClick={() => window.open('https://learn.microsoft.com/en-us/bing-chat-enterprise/privacy-and-protections', '_blank')}
+                isUnderlinedStyle={true}
+              >
+                {protectedPillText}
+              </Link>
             </div>
           </Tooltip>{' '}
           <div className={'msla-chatbot-header-mode-pill'}>{pillText}</div>{' '}
