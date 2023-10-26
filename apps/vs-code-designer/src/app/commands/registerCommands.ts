@@ -19,6 +19,7 @@ import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createL
 import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { createSlot } from './createSlot';
+import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
@@ -54,6 +55,7 @@ import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@m
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeCommandCallback } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
+import type { Uri } from 'vscode';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -124,4 +126,8 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
+
+  // Data Mapper Commands
+  registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
+  registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
 }
