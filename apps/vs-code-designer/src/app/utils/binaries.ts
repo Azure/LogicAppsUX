@@ -5,6 +5,7 @@
 import {
   DependencyVersion,
   Platform,
+  autoBinariesInstallationSetting,
   defaultDependencyPathValue,
   dependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
@@ -24,8 +25,10 @@ import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { getNpmCommand, setNodeJsCommand } from './nodeJs/nodeJsVersion';
 import { runWithDurationTelemetry } from './telemetry';
 import { timeout } from './timeout';
+import { tryGetFunctionProjectRoot } from './verifyIsProject';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import { getWorkspaceFolder } from './workspace';
+import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import * as AdmZip from 'adm-zip';
 import axios from 'axios';
@@ -392,4 +395,29 @@ function getDependencyTimeout(): number {
   }
 
   return timeoutInSeconds;
+}
+
+/**
+ * Propmts warning message to decide the auto validation/installation of dependency binaries.
+ * @param {IActionContext} context - Activation context.
+ */
+export async function promptInstallBinariesOption(context: IActionContext) {
+  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+    const workspace = await getWorkspaceFolder(context);
+    const projectPath = await tryGetFunctionProjectRoot(context, workspace);
+    const message = localize('useBinaries', 'Always validate and install the latest dependency binaries at launch');
+    const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
+    let result: vscode.MessageItem;
+
+    const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+
+    if (projectPath && binariesInstallation === undefined) {
+      result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
+      if (result === confirm) {
+        await updateGlobalSetting(autoBinariesInstallationSetting, true);
+      } else if (result === DialogResponses.dontWarnAgain) {
+        await updateGlobalSetting(autoBinariesInstallationSetting, false);
+      }
+    }
+  }
 }

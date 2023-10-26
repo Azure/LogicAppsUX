@@ -212,7 +212,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
           'startDesignTimeApi',
           'Always start the background design-time process at launch? The workflow designer will open faster.'
         );
-        const confirm = { title: 'Yes (Recommended)' };
+        const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
         let result: MessageItem;
         do {
           result = await context.ui.showWarningMessage(message, confirm, DialogResponses.learnMore, DialogResponses.dontWarnAgain);

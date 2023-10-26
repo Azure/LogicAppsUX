@@ -4,7 +4,7 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { activateAzurite } from './app/utils/azurite/activateAzurite';
-import { validateAndInstallBinaries } from './app/utils/binaries';
+import { promptInstallBinariesOption, validateAndInstallBinaries } from './app/utils/binaries';
 import { promptStartDesignTimeOption, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
@@ -46,8 +46,16 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
 
     activateContext.telemetry.properties.lastStep = 'validateAndInstallBinaries';
+
+    await callWithTelemetryAndErrorHandling('promptInstallBinariesOption', async (actionContext: IActionContext) => {
+      await runWithDurationTelemetry(actionContext, 'promptInstallBinariesOption', async () => {
+        activateContext.telemetry.properties.lastStep = 'promptInstallBinariesOption';
+        await promptInstallBinariesOption(actionContext);
+      });
+    });
+
     callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
-      await runWithDurationTelemetry(actionContext, 'azureLogicAppsStandard.validateAndInstallBinaries', async () => {
+      await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
         await validateAndInstallBinaries(actionContext);
         await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
 

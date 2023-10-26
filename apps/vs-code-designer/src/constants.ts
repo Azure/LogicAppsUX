@@ -171,6 +171,7 @@ export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
+export const autoBinariesInstallationSetting = 'autoBinariesInstallation';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
