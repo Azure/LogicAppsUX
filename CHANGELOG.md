@@ -1,4 +1,24 @@
 # Logic Apps Designer
+## [2.76.0](https://github.com/Azure/LogicAppsUX/compare/v2.75.0...v2.76.0) (2023-10-26)
+
+
+### Features
+
+* **Data Mapper:** Merge with Designer Vs-code Extension ([#3461](https://github.com/Azure/LogicAppsUX/issues/3461)) ([c3a6d43](https://github.com/Azure/LogicAppsUX/commit/c3a6d430e8f0845c224790a54a1de0a1246fe816)), closes [#3443](https://github.com/Azure/LogicAppsUX/issues/3443) [#3465](https://github.com/Azure/LogicAppsUX/issues/3465) [#3500](https://github.com/Azure/LogicAppsUX/issues/3500) [#3508](https://github.com/Azure/LogicAppsUX/issues/3508) [#3513](https://github.com/Azure/LogicAppsUX/issues/3513)
+* **designer:** Add support for recommendation view to work without depending on prefetched data ([#3525](https://github.com/Azure/LogicAppsUX/issues/3525)) ([661e099](https://github.com/Azure/LogicAppsUX/commit/661e099e9422880c4c53ff0f0a064a27c11d675e))
+* **designer:** Add support for x12 and edifact batch encode opertation. ([#3479](https://github.com/Azure/LogicAppsUX/issues/3479)) ([7c669d6](https://github.com/Azure/LogicAppsUX/commit/7c669d619de4e75a0aadbbf283ef15fb7916ca2c))
+* **desinger:** Export getTriggerNodeId and update outputToken schema ([#3489](https://github.com/Azure/LogicAppsUX/issues/3489)) ([054370c](https://github.com/Azure/LogicAppsUX/commit/054370ced1d9e403185bde7e367d1b12396b579f))
+
+
+### Bug Fixes
+
+* **Copilot:** Changing In-development to Preview ([#3494](https://github.com/Azure/LogicAppsUX/issues/3494)) ([f40d1e5](https://github.com/Azure/LogicAppsUX/commit/f40d1e5e257d207b0a3fafa547c94eef97b2e74e))
+* **Copilot:** Removing add and edit from menu options ([#3515](https://github.com/Azure/LogicAppsUX/issues/3515)) ([2e1998a](https://github.com/Azure/LogicAppsUX/commit/2e1998a22900f4f26ae38d7a252e1bd025181683))
+* **Data Mapper:** Property pane does not update deleted unbounded inputs properly ([#3514](https://github.com/Azure/LogicAppsUX/issues/3514)) ([7a48ab5](https://github.com/Azure/LogicAppsUX/commit/7a48ab5abc54e3e6ce52ec7fc94661445a44e016))
+* **Designer:** Fix spliton for hybrid triggers with headers schema in outputs ([#3487](https://github.com/Azure/LogicAppsUX/issues/3487)) ([e2f004f](https://github.com/Azure/LogicAppsUX/commit/e2f004f14593a9d6e437e421290e179a4f1b43f9))
+* **designer:** Html Editor not showing proper tokens ([#3504](https://github.com/Azure/LogicAppsUX/issues/3504)) ([e13c615](https://github.com/Azure/LogicAppsUX/commit/e13c615aeb62c8b6908cf20858a32c5725f13a96))
+* **vscode:** Update recommendations for logic apps project ([#3485](https://github.com/Azure/LogicAppsUX/issues/3485)) ([9cac4d9](https://github.com/Azure/LogicAppsUX/commit/9cac4d90f07b03cb7d8dd50e0b909f2d76da8dcc))
+
 ## [2.75.0](https://github.com/Azure/LogicAppsUX/compare/v2.74.0...v2.75.0) (2023-10-19)
 
 
