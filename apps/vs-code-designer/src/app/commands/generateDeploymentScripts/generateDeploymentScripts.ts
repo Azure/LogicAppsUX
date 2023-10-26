@@ -229,6 +229,7 @@ async function callStandardResourcesApi(
     }
 
     const apiUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
+    ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
 
     // Construct the request body based on the parameters
     const deploymentArtifactsInput = {
@@ -250,7 +251,7 @@ async function callStandardResourcesApi(
         'Content-Type': 'application/json',
         Accept: 'application/zip',
       },
-      encoding: 'binary', // <-- Ensure response is treated as binary data
+      encoding: 'binary',
     };
 
     ext.outputChannel.appendLog(
@@ -264,7 +265,12 @@ async function callStandardResourcesApi(
     ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
     return Buffer.from(response, 'binary');
   } catch (error) {
-    ext.outputChannel.appendLog(localize('failedStandardResourcesApiCall', 'Failed to call Standard Resources API.'));
+    ext.outputChannel.appendLog(
+      localize('failedStandardResourcesApiCall', `Failed to call Standard Resources API. Error: ${error.message || error}`)
+    );
+    if (error.stack) {
+      ext.outputChannel.appendLog(localize('errorStack', `Error Stack: ${error.stack}`));
+    }
     await handleError(error, localize('errorStandardResourcesApi', 'Error calling Standard Resources API'));
   }
 }
@@ -348,9 +354,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   try {
     ext.outputChannel.appendLog(localize('fetchLocalSettingsAttempt', 'Attempting to fetch local settings...'));
     localSettings = await getLocalSettings(scriptContext, folder);
-    ext.outputChannel.appendLog(
-      localize('fetchLocalSettingsSuccess', `Successfully fetched local settings: ${JSON.stringify(localSettings)}`)
-    );
+    ext.outputChannel.appendLog(localize('fetchLocalSettingsSuccess', `Successfully fetched local settings from ${localSettings}`));
   } catch (error) {
     ext.outputChannel.appendLog(localize('fetchLocalSettingsError', `Error fetching local settings: ${error}`));
     await handleError(error, localize('handleErrorFetchLocalSettings', 'Error fetching local settings'));

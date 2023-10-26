@@ -116,9 +116,22 @@ export function showPreviewWarning(commandIdentifier: string): void {
  * @param messagePrefix - A string prefix that will be prepended to the error message.
  * @throws {Error} - Throws a new Error with a localized message including the prefix and error details.
  */
-export async function handleError(error: any, messagePrefix: string) {
-  const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
-  const localizedMessage = localize('handleError.errorMessage', messagePrefix, errorString);
-  vscode.window.showErrorMessage(localizedMessage);
-  throw new Error(localize('handleError.error', messagePrefix, errorString));
+export async function handleError(error: Error, messagePrefix: string): Promise<void> {
+  let errorDetails: string = error.message || 'Unknown Error';
+
+  if (error.stack) {
+    errorDetails += `\nStack Trace: ${error.stack}`;
+  }
+
+  // Serializing other potential properties on the error object
+  const additionalErrorInfo: string = JSON.stringify(error, Object.getOwnPropertyNames(error));
+  if (additionalErrorInfo && additionalErrorInfo !== '{}') {
+    errorDetails += `\nAdditional Info: ${additionalErrorInfo}`;
+  }
+
+  const fullErrorMessage = `${messagePrefix}: ${errorDetails}`;
+  vscode.window.showErrorMessage(fullErrorMessage);
+
+  // Throwing a new error with the composed message for consistency and clarity
+  throw new Error(localize('handleError.error', fullErrorMessage));
 }
