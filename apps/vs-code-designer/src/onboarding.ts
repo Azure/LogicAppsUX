@@ -18,6 +18,10 @@ import {
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 
+/**
+ * Prompts warning message for installing the installing/validate binaries and taks.json.
+ * @param {IActionContext} activateContext - Activation context.
+ */
 export const onboardBinaries = async (activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
@@ -31,6 +35,11 @@ export const onboardBinaries = async (activateContext: IActionContext) => {
   });
 };
 
+/**
+ * Start onboarding experience prompting inputs for user.
+ * This function will propmpt/install dependencies binaries, start design time api and start azurite.
+ * @param {IActionContext} activateContext - Activation context.
+ */
 export const startOnboarding = async (activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(autoBinariesInstallationSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, autoBinariesInstallationSetting, async () => {

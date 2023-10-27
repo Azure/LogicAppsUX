@@ -20,8 +20,8 @@ import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
  */
 export function getGlobalSetting<T>(key: string, prefix: string = ext.prefix): T | undefined {
   const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
-  const result: { globalValue?: T } | undefined = projectConfiguration.inspect<T>(key);
-  return result && result.globalValue;
+  const result: { globalValue?: T; defaultValue?: T } | undefined = projectConfiguration.inspect<T>(key);
+  return result && (result.globalValue || result.defaultValue);
 }
 
 /**
