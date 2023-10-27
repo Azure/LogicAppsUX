@@ -425,3 +425,11 @@ export async function promptInstallBinariesOption(context: IActionContext) {
     }
   }
 }
+
+/**
+ * Returns boolean to determine if workspace uses binaries dependencies.
+ */
+export const useBinariesDependencies = (): boolean => {
+  const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+  return !!binariesInstallation;
+};
