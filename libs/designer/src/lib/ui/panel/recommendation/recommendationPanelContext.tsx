@@ -84,7 +84,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
         setIsLoadingOperationGroup(false);
       });
     setSelectionState(SELECTION_STATES.DETAILS);
-  }, [selectedOperationGroupId, allOperations, filters]);
+  }, [selectedOperationGroupId, allOperations, filters, hideActionTypeFilter]);
 
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
