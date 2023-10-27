@@ -6,6 +6,7 @@ import { connectionsFileName, funcIgnoreFileName, funcVersionSetting, hostFileNa
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
 import { DotnetTemplateProvider } from '../../templates/dotnet/DotnetTemplateProvider';
+import { useBinariesDependencies } from '../../utils/binaries';
 import {
   getDotnetBuildFile,
   addNugetPackagesToBuildFile,
@@ -16,7 +17,7 @@ import {
   addFileToBuildPath,
   addLibToPublishPath,
 } from '../../utils/codeless/updateBuildFile';
-import { getLocalDotNetVersion, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
+import { getLocalDotNetVersionFromBinaries, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { validateDotnetInstalled, getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -104,7 +105,8 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   const projectPath: string = target.fsPath;
   const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath);
-  const dotnetLocalVersion = await getLocalDotNetVersion();
+  const useBinaries = useBinariesDependencies();
+  const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries() : '';
 
   await deleteBundleProjectFiles(target);
   await renameBundleProjectFiles(target);
@@ -125,7 +127,9 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
 
   await copyBundleProjectFiles(target);
   await updateBuildFile(context, target, dotnetVersion);
-  await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
+  if (useBinaries) {
+    await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
+  }
 
   const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(target.fsPath);
 

@@ -288,6 +288,9 @@ export function getCpuArchitecture() {
  * @returns true if expected binaries folder directory path exists
  */
 export function binariesExist(dependencyName: string): boolean {
+  if (!useBinariesDependencies()) {
+    return false;
+  }
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
@@ -412,7 +415,7 @@ export async function promptInstallBinariesOption(context: IActionContext) {
 
     const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
 
-    if (projectPath && binariesInstallation === undefined) {
+    if (projectPath && binariesInstallation === null) {
       result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
       if (result === confirm) {
         await updateGlobalSetting(autoBinariesInstallationSetting, true);

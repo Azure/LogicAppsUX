@@ -5,7 +5,7 @@
 import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
-import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies as hasBinariesDependencies } from '../../utils/binaries';
+import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies } from '../../utils/binaries';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
@@ -23,7 +23,7 @@ import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
 export async function validateFuncCoreToolsIsLatest(majorVersion?: string): Promise<void> {
-  if (hasBinariesDependencies()) {
+  if (useBinariesDependencies()) {
     await validateFuncCoreToolsIsLatestBinaries(majorVersion);
   } else {
     await validateFuncCoreToolsIsLatestSystem();
