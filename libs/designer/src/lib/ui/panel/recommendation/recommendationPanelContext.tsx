@@ -185,7 +185,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
               onOperationClick={onOperationClick}
               isLoading={isLoadingOperations || isLoadingOperationGroup}
               displayRuntimeInfo={displayRuntimeInfo}
-              respectActionsFilter={!hideActionTypeFilter}
+              ignoreActionsFilter={hideActionTypeFilter}
             />
           ) : null,
           [SELECTION_STATES.SEARCH]: (
