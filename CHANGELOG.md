@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [2.77.0](https://github.com/Azure/LogicAppsUX/compare/v2.76.0...v2.77.0) (2023-10-27)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Paste into test tool using right mouse click not working ([#3531](https://github.com/Azure/LogicAppsUX/issues/3531)) ([a07cd56](https://github.com/Azure/LogicAppsUX/commit/a07cd561f676bc6a9798f89e65d3f9a1c45562fd))
+* **Designer:** Filtering out tokens that should be inaccessible by loop scope logic ([#3547](https://github.com/Azure/LogicAppsUX/issues/3547)) ([3b834f8](https://github.com/Azure/LogicAppsUX/commit/3b834f86f443a386593069cd4f13f8d20565fb15))
+
 ## [2.76.0](https://github.com/Azure/LogicAppsUX/compare/v2.75.0...v2.76.0) (2023-10-26)
 
 
