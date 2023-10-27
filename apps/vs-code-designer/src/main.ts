@@ -10,9 +10,11 @@ import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
+import { isLogicAppProject } from './app/utils/verifyIsProject';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
+import { localize } from './localize';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
   callWithTelemetryAndErrorHandling,
@@ -62,6 +64,16 @@ export async function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
+    //TODO - Elaina: seperate as a helper function
+    if (vscode.workspace.workspaceFolders) {
+      vscode.workspace.workspaceFolders.forEach(async (workspaceFolder) => {
+        if (await isLogicAppProject(workspaceFolder.uri.fsPath)) {
+          ext.logicAppWorkspace = workspaceFolder.uri.fsPath;
+        }
+      });
+    } else {
+      ext.showError(localize('MissingWorkspace', 'No VS Code folder/workspace found...'));
+    }
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
     });

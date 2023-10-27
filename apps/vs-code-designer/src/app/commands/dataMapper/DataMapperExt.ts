@@ -1,5 +1,6 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { isLogicAppProject } from '../../utils/verifyIsProject';
 import DataMapperPanel from './DataMapperPanel';
 import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
@@ -9,8 +10,10 @@ import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 
 export default class DataMapperExt {
+  public static logicAppProjectRelativeRoot = '/';
+
   public static async openDataMapperPanel(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
-    const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
+    const workflowFolder = await ext.logicAppWorkspace;
 
     if (workflowFolder) {
       await startBackendRuntime(workflowFolder);
@@ -54,6 +57,28 @@ export default class DataMapperExt {
 
   public static getWorkspaceFolderFsPath() {
     if (workspace.workspaceFolders) {
+      return workspace.workspaceFolders[0].uri.fsPath;
+    } else {
+      ext.showError(localize('MissingWorkspace', 'No VS Code folder/workspace found...'));
+      return '';
+    }
+  }
+
+  public static async getWorkspaceFolderFsPathAsync() {
+    if (workspace.workspaceFolders) {
+      console.log('*******Elaina , workspace.workspaceFolders ', workspace.workspaceFolders);
+      console.log('*******Elaina , workspace.workspaceFolders[0].uri.fsPath ', workspace.workspaceFolders[0].uri.fsPath);
+      console.log('*******Elaina , workspace.workspaceFolders[1].uri.fsPath ', workspace.workspaceFolders[1].uri.fsPath);
+      workspace.workspaceFolders.forEach(async (workspaceFolder, index) => {
+        console.log(
+          '*******Elaina , workspaceFolder ',
+          index,
+          ': ',
+          workspaceFolder.uri.fsPath,
+          ' : ',
+          await isLogicAppProject(workspaceFolder.uri.fsPath)
+        );
+      });
       return workspace.workspaceFolders[0].uri.fsPath;
     } else {
       ext.showError(localize('MissingWorkspace', 'No VS Code folder/workspace found...'));
