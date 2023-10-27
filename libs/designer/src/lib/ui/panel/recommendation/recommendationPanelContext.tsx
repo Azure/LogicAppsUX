@@ -57,6 +57,9 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
+  // hide actions type filter if we don't have any operations for the browse view
+  const hideActionTypeFilter = (!allOperations || allOperations.length === 0) && !searchTerm;
+
   // effect to set the current list of operations by group
   useEffect(() => {
     if (!selectedOperationGroupId) return;
@@ -64,7 +67,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
     const searchOperation = SearchService().getOperationsByConnector?.bind(SearchService());
 
     const searchResultPromise = searchOperation
-      ? searchOperation(selectedOperationGroupId, filters['actionType']?.toLowerCase())
+      ? searchOperation(selectedOperationGroupId, hideActionTypeFilter ? undefined : filters['actionType']?.toLowerCase())
       : Promise.resolve(
           (allOperations ?? []).filter((operation) => {
             const apiId = operation.properties.api.id;
@@ -86,6 +89,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
     dispatch(selectOperationId(''));
+    setAllOperationsForGroup([]);
     setSelectionState(SELECTION_STATES.SEARCH);
   }, [dispatch]);
 
@@ -181,6 +185,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
               onOperationClick={onOperationClick}
               isLoading={isLoadingOperations || isLoadingOperationGroup}
               displayRuntimeInfo={displayRuntimeInfo}
+              respectActionsFilter={!hideActionTypeFilter}
             />
           ) : null,
           [SELECTION_STATES.SEARCH]: (
@@ -194,6 +199,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
                 setFilters={setFilters}
                 isTriggerNode={isTrigger}
                 displayRuntimeInfo={displayRuntimeInfo}
+                displayActionType={!hideActionTypeFilter}
               />
               {searchTerm ? (
                 <SearchView
