@@ -1,8 +1,8 @@
 import constants from '../constants';
 import { FontSizes, IconButton, mergeStyles, mergeStyleSets, TextField } from '@fluentui/react';
 import type { IButtonProps, IStyle, ITextField, ITextFieldStyles } from '@fluentui/react';
-import React from 'react';
-import type { FormEvent } from 'react';
+import type { FC, FormEvent, FocusEvent, KeyboardEventHandler, RefObject } from 'react';
+import { useCallback } from 'react';
 
 export interface IChatInputProps {
   query: string;
@@ -13,17 +13,16 @@ export interface IChatInputProps {
   maxQueryLength?: number;
   submitButtonProps: IButtonProps & { onClick: () => void };
   showCharCount?: boolean;
-  footerActionsProps?: IButtonProps[];
   onQueryChange: (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
-  onBlur?: (ev: React.FocusEvent<HTMLInputElement>) => void;
-  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onBlur?: (ev: FocusEvent<HTMLInputElement>) => void;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onRenderPrefix?: () => JSX.Element;
-  textFieldRef?: React.RefObject<ITextField>;
+  textFieldRef?: RefObject<ITextField>;
   role?: string;
   styles?: Partial<IChatInputStyles>;
 }
 
-export const ChatInput: React.FC<IChatInputProps> = ({
+export const ChatInput: FC<IChatInputProps> = ({
   query,
   placeholder,
   showCharCount,
@@ -32,7 +31,6 @@ export const ChatInput: React.FC<IChatInputProps> = ({
   maxQueryLength,
   isMultiline,
   submitButtonProps,
-  footerActionsProps,
   onQueryChange,
   onBlur,
   onKeyDown,
@@ -50,7 +48,7 @@ export const ChatInput: React.FC<IChatInputProps> = ({
   const textFieldStyles = mergeStyleSets(chatInputStyles.textField, styles?.textField);
 
   const { onClick } = submitButtonProps;
-  const submitOnEnter: React.KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = React.useCallback(
+  const submitOnEnter: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
     (event) => {
       // ENTER+SHIFT is ignored to allow adding new lines
       if (!disabled && event.key === 'Enter' && !event.shiftKey) {
@@ -84,13 +82,8 @@ export const ChatInput: React.FC<IChatInputProps> = ({
         onRenderPrefix={onRenderPrefix}
         onKeyDown={onKeyDown ?? submitOnEnter}
       />
-      {showCharCount && <div className={charCounterClassName}>{`${query.length}/${maxQueryLength}`}</div>}
       <div className={footerClassName}>
-        <div>
-          {footerActionsProps?.map((actionProps, index) => (
-            <IconButton key={index} {...actionProps} disabled={disabled || actionProps.disabled} />
-          ))}
-        </div>
+        {showCharCount && <div className={charCounterClassName}>{`${query.length}/${maxQueryLength}`}</div>}
         <IconButton {...submitButtonProps} disabled={disabled || submitButtonProps.disabled} />
       </div>
     </div>
@@ -137,10 +130,12 @@ const getChatInputStyles = (): IChatInputStyles => {
       color: constants.NEUTRAL_SECONDARY_ALT,
       textAlign: 'left',
       paddingLeft: 8,
+      width: 'fit-content',
     },
     footer: {
       display: 'flex',
       justifyContent: 'space-between',
+      width: 'fit-contet',
     },
   };
 };

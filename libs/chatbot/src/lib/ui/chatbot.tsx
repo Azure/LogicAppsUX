@@ -1,13 +1,11 @@
 import constants from '../common/constants';
 import type { Workflow } from '../common/models/workflow';
 import { isSuccessResponse } from '../core/util';
-import Sparkle from '../images/Sparkle.svg';
-import SparkleDisabled from '../images/SparkleDisabled.svg';
 import { CopilotPanelHeader } from './panelheader';
+import type { ITextField } from '@fluentui/react';
 import { Panel, PanelType, css, getId } from '@fluentui/react';
-import { useBoolean } from '@fluentui/react-hooks';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { ConversationItem, PromptGuideItem } from '@microsoft/designer-ui';
+import type { ConversationItem } from '@microsoft/designer-ui';
 import {
   PanelLocation,
   ChatInput,
@@ -17,10 +15,6 @@ import {
   ProgressCardWithStopButton,
   ChatSuggestionGroup,
   ChatSuggestion,
-  PromptGuideContextualMenu,
-  PromptGuideMenuKey,
-  PromptGuideItemKey,
-  PromptGuideCard,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
@@ -62,6 +56,7 @@ export const Chatbot = ({
   openFeedbackPanel,
   closeChatBot,
 }: ChatbotProps) => {
+  const textInputRef = useRef<ITextField>(null);
   const chatSessionId = useRef(guid());
   const intl = useIntl();
   const [inputQuery, setInputQuery] = useState('');
@@ -70,8 +65,6 @@ export const Chatbot = ({
   const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
   const [canTestCurrentFlow, testCurrentFlow] = useState(false);
   const [isSaving] = useState(false);
-  const [selectedPromptGuideItemKey, setSelectedPromptGuideItemKey] = useState<PromptGuideItemKey | undefined>(undefined);
-  const promptGuideButtonRef = useRef<HTMLButtonElement>(null);
   const [conversation, setConversation] = useState<ConversationItem[]>([
     {
       type: ConversationItemType.Greeting,
@@ -81,7 +74,6 @@ export const Chatbot = ({
       reaction: undefined,
     },
   ]);
-  const [isPromptGuideOpen, { toggle: togglePromptGuide, setFalse: closePromptGuide }] = useBoolean(false);
   const [controller, setController] = useState(new AbortController());
   const signal = controller.signal;
   const [selectedOperation] = useState('');
@@ -230,6 +222,9 @@ export const Chatbot = ({
           ...current,
         ]);
         stopAnswerGeneration(true);
+        setTimeout(() => {
+          textInputRef.current?.focus();
+        }, 100);
       } catch (error: any) {
         LoggerService().log({
           level: LogEntryLevel.Error,
@@ -273,63 +268,12 @@ export const Chatbot = ({
           ]);
           stopAnswerGeneration(true);
         }
+        setTimeout(() => {
+          textInputRef.current?.focus();
+        }, 100);
       }
     },
     [endpoint, intlText.assistantErrorMessage, intlText.cancelGenerationText, signal, getUpdatedWorkflow, openFeedbackPanel]
-  );
-
-  const onPromptGuideItemClicked = useCallback(
-    (item: PromptGuideItem) => {
-      setSelectedPromptGuideItemKey(item.itemKey);
-
-      const setInputAndFocus = (query: string) => {
-        if (query.length === 0) {
-          // User removed or rephrased the sentence, discard selected guide.
-          setSelectedPromptGuideItemKey(undefined);
-        }
-        setInputQuery(query);
-      };
-
-      switch (item.itemKey) {
-        case PromptGuideItemKey.ReplaceAction:
-          if (selectedOperation) {
-            setInputAndFocus(intlText.queryTemplates.replaceActionSentenceStartFormat);
-          }
-          break;
-        case PromptGuideItemKey.AddAction:
-          setInputAndFocus(intlText.queryTemplates.addActionSentenceStart);
-          break;
-        case PromptGuideItemKey.ExplainAction:
-          if (selectedOperation) {
-            onSubmitInputQuery(intlText.queryTemplates.explainActionSentenceFormat);
-          }
-          break;
-        case PromptGuideItemKey.ExplainFlow:
-          onSubmitInputQuery(intlText.queryTemplates.explainFlowSentence);
-          break;
-        case PromptGuideItemKey.CreateFlowExample1:
-          setInputAndFocus(intlText.queryTemplates.createFlow1SentenceStart);
-          break;
-        case PromptGuideItemKey.CreateFlowExample2:
-          setInputAndFocus(intlText.queryTemplates.createFlow2SentenceStart);
-          break;
-        case PromptGuideItemKey.CreateFlowExample3:
-          setInputAndFocus(intlText.queryTemplates.createFlow3SentenceStart);
-          break;
-        case PromptGuideItemKey.Question:
-          setInputAndFocus(intlText.queryTemplates.questionSentenceStart);
-          break;
-        case PromptGuideItemKey.EditFlow:
-          setInputAndFocus(intlText.queryTemplates.editFlowSentenceStart);
-          break;
-        case PromptGuideItemKey.CreateFlow:
-          // CreateFlow opens a sub-menu
-          break;
-        default:
-          break;
-      }
-    },
-    [onSubmitInputQuery, selectedOperation, intlText.queryTemplates]
   );
 
   const abortFetching = useCallback(() => {
@@ -338,7 +282,6 @@ export const Chatbot = ({
 
   useEffect(() => {
     setInputQuery('');
-    setSelectedPromptGuideItemKey(undefined);
   }, [conversation]);
 
   return (
@@ -372,7 +315,6 @@ export const Chatbot = ({
           ))}
         </div>
         <div className={'msla-chatbot-footer'}>
-          {selectedPromptGuideItemKey && <PromptGuideCard itemKey={selectedPromptGuideItemKey} />}
           <ChatSuggestionGroup>
             {canSaveCurrentFlow && (
               <ChatSuggestion
@@ -390,22 +332,8 @@ export const Chatbot = ({
             )}
           </ChatSuggestionGroup>
           <ChatInput
+            textFieldRef={textInputRef}
             disabled={!answerGeneration}
-            footerActionsProps={[
-              {
-                title: intlText.actionsButtonTitle,
-                onClick: togglePromptGuide,
-                disabled: !answerGeneration,
-                toggle: true,
-                checked: isPromptGuideOpen,
-                elementRef: promptGuideButtonRef,
-                iconProps: {
-                  imageProps: {
-                    src: !answerGeneration ? SparkleDisabled : Sparkle,
-                  },
-                },
-              },
-            ]}
             isMultiline={true}
             maxQueryLength={QUERY_MAX_LENGTH}
             onQueryChange={(_ev, newValue) => {
@@ -427,14 +355,6 @@ export const Chatbot = ({
               onClick: () => onSubmitInputQuery(inputQuery),
             }}
           />
-          {isPromptGuideOpen ? (
-            <PromptGuideContextualMenu
-              onDismiss={closePromptGuide}
-              target={promptGuideButtonRef}
-              initialMenu={PromptGuideMenuKey.DefaultFlow}
-              onMenuItemClick={onPromptGuideItemClicked}
-            />
-          ) : null}
         </div>
       </div>
     </Panel>

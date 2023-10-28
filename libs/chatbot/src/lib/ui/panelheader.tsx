@@ -13,7 +13,7 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
     defaultMessage: 'Copilot',
     description: 'Chatbot header title',
   });
-  const pillText = intl.formatMessage({
+  const subtitleText = intl.formatMessage({
     defaultMessage: 'Preview',
     description: 'Label in the chatbot header stating the chatbot feature is a preview',
   });
@@ -28,9 +28,9 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
       <div className={'msla-chatbot-header-icon'}>
         <img src={LogicApps} alt="Logic Apps" />
       </div>
-      <div className={'msla-chatbot-header-container'}>
+      <div className={'msla-chatbot-header-title-container'}>
         <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
-        <div className={'msla-chatbot-header-mode-pill'}>{pillText}</div>
+        <div className={'msla-chatbot-header-subtitle'}>{subtitleText}</div>
       </div>
       <IconButton
         className={'msla-chatbot-collapse-button'}

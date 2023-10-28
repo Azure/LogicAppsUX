@@ -123,7 +123,6 @@ export const workflowLoadingSlice = createSlice({
       state.resourcePath = '';
     },
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
-      console.log(action.payload);
       state.showChatBot = action.payload;
     },
     loadLastWorkflow: (state) => {
