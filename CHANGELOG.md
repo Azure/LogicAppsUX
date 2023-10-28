@@ -1,52 +1,72 @@
 # Logic Apps Designer
-## [2.75.0](https://github.com/Azure/LogicAppsUX/compare/v2.74.0...v2.75.0) (2023-10-19)
 
-
-### Features
-
-* **designer:** Add option to hide expression in token picker ([#3473](https://github.com/Azure/LogicAppsUX/issues/3473)) ([b077720](https://github.com/Azure/LogicAppsUX/commit/b077720c76344152ab9b0cad178479440bada109))
-
+## [2.77.0](https://github.com/Azure/LogicAppsUX/compare/v2.76.0...v2.77.0) (2023-10-27)
 
 ### Bug Fixes
 
-* **Designer:** Do not update swagger parameter format when in is unde… ([#3478](https://github.com/Azure/LogicAppsUX/issues/3478)) ([9fd8d9b](https://github.com/Azure/LogicAppsUX/commit/9fd8d9b0fed454e202e7cde7a075df630de65e2c))
-* **designer:** Fix copilot versioning ([#3474](https://github.com/Azure/LogicAppsUX/issues/3474)) ([6868390](https://github.com/Azure/LogicAppsUX/commit/6868390049bf087286871d9cdb4d19936bd82ea4))
+- **Data Mapper:** Paste into test tool using right mouse click not working ([#3531](https://github.com/Azure/LogicAppsUX/issues/3531)) ([a07cd56](https://github.com/Azure/LogicAppsUX/commit/a07cd561f676bc6a9798f89e65d3f9a1c45562fd))
+- **Designer:** Filtering out tokens that should be inaccessible by loop scope logic ([#3547](https://github.com/Azure/LogicAppsUX/issues/3547)) ([3b834f8](https://github.com/Azure/LogicAppsUX/commit/3b834f86f443a386593069cd4f13f8d20565fb15))
+
+## [2.76.0](https://github.com/Azure/LogicAppsUX/compare/v2.75.0...v2.76.0) (2023-10-26)
+
+### Features
+
+- **Data Mapper:** Merge with Designer Vs-code Extension ([#3461](https://github.com/Azure/LogicAppsUX/issues/3461)) ([c3a6d43](https://github.com/Azure/LogicAppsUX/commit/c3a6d430e8f0845c224790a54a1de0a1246fe816)), closes [#3443](https://github.com/Azure/LogicAppsUX/issues/3443) [#3465](https://github.com/Azure/LogicAppsUX/issues/3465) [#3500](https://github.com/Azure/LogicAppsUX/issues/3500) [#3508](https://github.com/Azure/LogicAppsUX/issues/3508) [#3513](https://github.com/Azure/LogicAppsUX/issues/3513)
+- **designer:** Add support for recommendation view to work without depending on prefetched data ([#3525](https://github.com/Azure/LogicAppsUX/issues/3525)) ([661e099](https://github.com/Azure/LogicAppsUX/commit/661e099e9422880c4c53ff0f0a064a27c11d675e))
+- **designer:** Add support for x12 and edifact batch encode opertation. ([#3479](https://github.com/Azure/LogicAppsUX/issues/3479)) ([7c669d6](https://github.com/Azure/LogicAppsUX/commit/7c669d619de4e75a0aadbbf283ef15fb7916ca2c))
+- **desinger:** Export getTriggerNodeId and update outputToken schema ([#3489](https://github.com/Azure/LogicAppsUX/issues/3489)) ([054370c](https://github.com/Azure/LogicAppsUX/commit/054370ced1d9e403185bde7e367d1b12396b579f))
+
+### Bug Fixes
+
+- **Copilot:** Changing In-development to Preview ([#3494](https://github.com/Azure/LogicAppsUX/issues/3494)) ([f40d1e5](https://github.com/Azure/LogicAppsUX/commit/f40d1e5e257d207b0a3fafa547c94eef97b2e74e))
+- **Copilot:** Removing add and edit from menu options ([#3515](https://github.com/Azure/LogicAppsUX/issues/3515)) ([2e1998a](https://github.com/Azure/LogicAppsUX/commit/2e1998a22900f4f26ae38d7a252e1bd025181683))
+- **Data Mapper:** Property pane does not update deleted unbounded inputs properly ([#3514](https://github.com/Azure/LogicAppsUX/issues/3514)) ([7a48ab5](https://github.com/Azure/LogicAppsUX/commit/7a48ab5abc54e3e6ce52ec7fc94661445a44e016))
+- **Designer:** Fix spliton for hybrid triggers with headers schema in outputs ([#3487](https://github.com/Azure/LogicAppsUX/issues/3487)) ([e2f004f](https://github.com/Azure/LogicAppsUX/commit/e2f004f14593a9d6e437e421290e179a4f1b43f9))
+- **designer:** Html Editor not showing proper tokens ([#3504](https://github.com/Azure/LogicAppsUX/issues/3504)) ([e13c615](https://github.com/Azure/LogicAppsUX/commit/e13c615aeb62c8b6908cf20858a32c5725f13a96))
+- **vscode:** Update recommendations for logic apps project ([#3485](https://github.com/Azure/LogicAppsUX/issues/3485)) ([9cac4d9](https://github.com/Azure/LogicAppsUX/commit/9cac4d90f07b03cb7d8dd50e0b909f2d76da8dcc))
+
+## [2.75.0](https://github.com/Azure/LogicAppsUX/compare/v2.74.0...v2.75.0) (2023-10-19)
+
+### Features
+
+- **designer:** Add option to hide expression in token picker ([#3473](https://github.com/Azure/LogicAppsUX/issues/3473)) ([b077720](https://github.com/Azure/LogicAppsUX/commit/b077720c76344152ab9b0cad178479440bada109))
+
+### Bug Fixes
+
+- **Designer:** Do not update swagger parameter format when in is unde… ([#3478](https://github.com/Azure/LogicAppsUX/issues/3478)) ([9fd8d9b](https://github.com/Azure/LogicAppsUX/commit/9fd8d9b0fed454e202e7cde7a075df630de65e2c))
+- **designer:** Fix copilot versioning ([#3474](https://github.com/Azure/LogicAppsUX/issues/3474)) ([6868390](https://github.com/Azure/LogicAppsUX/commit/6868390049bf087286871d9cdb4d19936bd82ea4))
 
 ## [2.74.0](https://github.com/Azure/LogicAppsUX/compare/v2.73.0...v2.74.0) (2023-10-18)
 
-
 ### Features
 
-* **data-mapper:** create unique ID for function and load position ([#3432](https://github.com/Azure/LogicAppsUX/issues/3432)) ([33aea13](https://github.com/Azure/LogicAppsUX/commit/33aea13d9bc2fe5dc596750e3f073341c0c60bb0))
-* **designer:** Adding a more versatile - collapsable panel  ([#3471](https://github.com/Azure/LogicAppsUX/issues/3471)) ([aa9937d](https://github.com/Azure/LogicAppsUX/commit/aa9937d904b24add2441083cf1b557473594f5dd))
-* **vscode:** Add Logger Configuration and Package Version Updates ([#3444](https://github.com/Azure/LogicAppsUX/issues/3444)) ([1b2f889](https://github.com/Azure/LogicAppsUX/commit/1b2f889663ffb86693bbf3bc69de8fe6bd970c9f))
-
+- **data-mapper:** create unique ID for function and load position ([#3432](https://github.com/Azure/LogicAppsUX/issues/3432)) ([33aea13](https://github.com/Azure/LogicAppsUX/commit/33aea13d9bc2fe5dc596750e3f073341c0c60bb0))
+- **designer:** Adding a more versatile - collapsable panel ([#3471](https://github.com/Azure/LogicAppsUX/issues/3471)) ([aa9937d](https://github.com/Azure/LogicAppsUX/commit/aa9937d904b24add2441083cf1b557473594f5dd))
+- **vscode:** Add Logger Configuration and Package Version Updates ([#3444](https://github.com/Azure/LogicAppsUX/issues/3444)) ([1b2f889](https://github.com/Azure/LogicAppsUX/commit/1b2f889663ffb86693bbf3bc69de8fe6bd970c9f))
 
 ### Bug Fixes
 
-* **copilot:** Minor fixes to copilot UI including proper text formatting and correct api endpoint ([#3466](https://github.com/Azure/LogicAppsUX/issues/3466)) ([fb1a4ae](https://github.com/Azure/LogicAppsUX/commit/fb1a4aebd55bb5737a8aeed372ce35546f511b4a))
-* **Data Mapper:** User able to paste path directly into "Select existing" ([#3436](https://github.com/Azure/LogicAppsUX/issues/3436)) ([6155d50](https://github.com/Azure/LogicAppsUX/commit/6155d501a35c27136ebfb44dfe63fdd095373a92))
-* **designer:** Adding Expression Paste Functionality  ([#3441](https://github.com/Azure/LogicAppsUX/issues/3441)) ([3d49b20](https://github.com/Azure/LogicAppsUX/commit/3d49b20f909bee95f3131daa56b58cffcf40510b))
-* **designer:** Cleanup placeholder trigger when trigger is added ([#3472](https://github.com/Azure/LogicAppsUX/issues/3472)) ([e6e5299](https://github.com/Azure/LogicAppsUX/commit/e6e529920f4a3f56d4d65af4d8b81ddbd09d0139))
-* **Designer:** Invoker connection UI toggle doesn't retain after flow save ([#3464](https://github.com/Azure/LogicAppsUX/issues/3464)) ([b5491e2](https://github.com/Azure/LogicAppsUX/commit/b5491e26a187527056396b1e79688b346f5bc892))
-* **vscode:** Update logic app list in tree view after creating logic app in azure ([#3460](https://github.com/Azure/LogicAppsUX/issues/3460)) ([3b0d543](https://github.com/Azure/LogicAppsUX/commit/3b0d5439499f8ad6a9576b671c996afe736d00eb))
+- **copilot:** Minor fixes to copilot UI including proper text formatting and correct api endpoint ([#3466](https://github.com/Azure/LogicAppsUX/issues/3466)) ([fb1a4ae](https://github.com/Azure/LogicAppsUX/commit/fb1a4aebd55bb5737a8aeed372ce35546f511b4a))
+- **Data Mapper:** User able to paste path directly into "Select existing" ([#3436](https://github.com/Azure/LogicAppsUX/issues/3436)) ([6155d50](https://github.com/Azure/LogicAppsUX/commit/6155d501a35c27136ebfb44dfe63fdd095373a92))
+- **designer:** Adding Expression Paste Functionality ([#3441](https://github.com/Azure/LogicAppsUX/issues/3441)) ([3d49b20](https://github.com/Azure/LogicAppsUX/commit/3d49b20f909bee95f3131daa56b58cffcf40510b))
+- **designer:** Cleanup placeholder trigger when trigger is added ([#3472](https://github.com/Azure/LogicAppsUX/issues/3472)) ([e6e5299](https://github.com/Azure/LogicAppsUX/commit/e6e529920f4a3f56d4d65af4d8b81ddbd09d0139))
+- **Designer:** Invoker connection UI toggle doesn't retain after flow save ([#3464](https://github.com/Azure/LogicAppsUX/issues/3464)) ([b5491e2](https://github.com/Azure/LogicAppsUX/commit/b5491e26a187527056396b1e79688b346f5bc892))
+- **vscode:** Update logic app list in tree view after creating logic app in azure ([#3460](https://github.com/Azure/LogicAppsUX/issues/3460)) ([3b0d543](https://github.com/Azure/LogicAppsUX/commit/3b0d5439499f8ad6a9576b671c996afe736d00eb))
 
 ## [2.73.0](https://github.com/Azure/LogicAppsUX/compare/v2.72.0...v2.73.0) (2023-10-12)
 
-
 ### Features
 
-* **data mapper:** Able to move functions on canvas ([#3042](https://github.com/Azure/LogicAppsUX/issues/3042)) ([822d4c3](https://github.com/Azure/LogicAppsUX/commit/822d4c3ee12b8265d15b8abb7515813dfa526993))
-* **Data Mapper:** Enhanced Redo/Undo Using Redux-undo ([#3428](https://github.com/Azure/LogicAppsUX/issues/3428)) ([061478d](https://github.com/Azure/LogicAppsUX/commit/061478d6c7274f0343be559a04fa1a5ce02b3cd9))
-
+- **data mapper:** Able to move functions on canvas ([#3042](https://github.com/Azure/LogicAppsUX/issues/3042)) ([822d4c3](https://github.com/Azure/LogicAppsUX/commit/822d4c3ee12b8265d15b8abb7515813dfa526993))
+- **Data Mapper:** Enhanced Redo/Undo Using Redux-undo ([#3428](https://github.com/Azure/LogicAppsUX/issues/3428)) ([061478d](https://github.com/Azure/LogicAppsUX/commit/061478d6c7274f0343be559a04fa1a5ce02b3cd9))
 
 ### Bug Fixes
 
-* **Data Mapper:** Cannot generate YML code with two unconnected functions ([#3423](https://github.com/Azure/LogicAppsUX/issues/3423)) ([6a845b0](https://github.com/Azure/LogicAppsUX/commit/6a845b00bc5b7f96e9816cc05b1f73f110e2a098))
-* **designer:** Add gateway service config to allow hiding subscription dropdown for gateway connection creation ([#3404](https://github.com/Azure/LogicAppsUX/issues/3404)) ([187018d](https://github.com/Azure/LogicAppsUX/commit/187018d596233ae5b045110240e5e19a083759d5))
-* **designer:** Allow event bubbling in json modal ([#3410](https://github.com/Azure/LogicAppsUX/issues/3410)) ([8f2490d](https://github.com/Azure/LogicAppsUX/commit/8f2490dd2795204afd2aeae4fa4d0dec8e453769))
-* **Designer:** Fixed issue with nested openapi swagger parameter format ([#3420](https://github.com/Azure/LogicAppsUX/issues/3420)) ([bcaecda](https://github.com/Azure/LogicAppsUX/commit/bcaecda88aa1d226cb010d2c0df4b00e68e8fc52))
-* **Designer:** simple query builder not parsing correct data ([#3418](https://github.com/Azure/LogicAppsUX/issues/3418)) ([bfd8efd](https://github.com/Azure/LogicAppsUX/commit/bfd8efd99710b5e0728a0de86da255868aed1bc7))
+- **Data Mapper:** Cannot generate YML code with two unconnected functions ([#3423](https://github.com/Azure/LogicAppsUX/issues/3423)) ([6a845b0](https://github.com/Azure/LogicAppsUX/commit/6a845b00bc5b7f96e9816cc05b1f73f110e2a098))
+- **designer:** Add gateway service config to allow hiding subscription dropdown for gateway connection creation ([#3404](https://github.com/Azure/LogicAppsUX/issues/3404)) ([187018d](https://github.com/Azure/LogicAppsUX/commit/187018d596233ae5b045110240e5e19a083759d5))
+- **designer:** Allow event bubbling in json modal ([#3410](https://github.com/Azure/LogicAppsUX/issues/3410)) ([8f2490d](https://github.com/Azure/LogicAppsUX/commit/8f2490dd2795204afd2aeae4fa4d0dec8e453769))
+- **Designer:** Fixed issue with nested openapi swagger parameter format ([#3420](https://github.com/Azure/LogicAppsUX/issues/3420)) ([bcaecda](https://github.com/Azure/LogicAppsUX/commit/bcaecda88aa1d226cb010d2c0df4b00e68e8fc52))
+- **Designer:** simple query builder not parsing correct data ([#3418](https://github.com/Azure/LogicAppsUX/issues/3418)) ([bfd8efd](https://github.com/Azure/LogicAppsUX/commit/bfd8efd99710b5e0728a0de86da255868aed1bc7))
 
 ## [2.72.0](https://github.com/Azure/LogicAppsUX/compare/v2.71.0...v2.72.0) (2023-10-05)
 

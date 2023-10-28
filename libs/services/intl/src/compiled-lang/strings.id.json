@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Tempel ekspresi yang terakhir digunakan"
     }
   ],
   "+mAJR3": [
@@ -1753,12 +1753,6 @@
     {
       "type": 0,
       "value": "', tidak dapat menemukan dalam output."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Dalam Pengembangan"
     }
   ],
   "9YGcT2": [
@@ -6948,6 +6942,12 @@
       "value": "Audiens"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit alur"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7538,7 +7538,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Ciutkan"
     }
   ],
   "lZT0JI": [
@@ -8058,7 +8058,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Luaskan"
     }
   ],
   "odQ554": [
@@ -8904,6 +8904,12 @@
       "value": "Nama Tampilan"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Pratinjau"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9245,7 +9251,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Luaskan"
     }
   ],
   "vz2gZC": [
@@ -9785,7 +9791,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Ciutkan"
     }
   ],
   "zb3lE6": [

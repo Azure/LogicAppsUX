@@ -1763,12 +1763,6 @@
       "value": "\"; não se encontra nas saídas."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Em desenvolvimento"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -7082,6 +7076,12 @@
       "value": "Audiência"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Editar fluxo"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7694,7 +7694,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Fechar"
     }
   ],
   "lZT0JI": [
@@ -8214,7 +8214,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "odQ554": [
@@ -9082,6 +9082,12 @@
       "value": "Nome a Apresentar"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Pré-visualização"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9423,7 +9429,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "vz2gZC": [
@@ -9963,7 +9969,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Fechar"
     }
   ],
   "zb3lE6": [

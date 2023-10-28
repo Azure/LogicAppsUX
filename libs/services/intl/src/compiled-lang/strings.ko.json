@@ -1747,12 +1747,6 @@
       "value": "{splitOn}의 분할 값이 잘못되었습니다. 출력에서 찾을 수 없습니다."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "개발 중"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -6932,6 +6926,12 @@
       "value": "대상"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7518,7 +7518,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "접기"
     }
   ],
   "lZT0JI": [
@@ -8030,7 +8030,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "펼치기"
     }
   ],
   "odQ554": [
@@ -8868,6 +8868,12 @@
       "value": "표시 이름"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "미리 보기"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9205,7 +9211,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "펼치기"
     }
   ],
   "vz2gZC": [
@@ -9745,7 +9751,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "접기"
     }
   ],
   "zb3lE6": [

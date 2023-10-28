@@ -1755,12 +1755,6 @@
       "value": "'' non è valido. Non è stato trovato negli output."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "In fase di sviluppo"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -7058,6 +7052,12 @@
       "value": "Destinatari"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Modifica flusso"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7670,7 +7670,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Comprimi"
     }
   ],
   "lZT0JI": [
@@ -8186,7 +8186,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Espandi"
     }
   ],
   "odQ554": [
@@ -9054,6 +9054,12 @@
       "value": "Nome visualizzato"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Anteprima"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9395,7 +9401,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Espandi"
     }
   ],
   "vz2gZC": [
@@ -9935,7 +9941,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Comprimi"
     }
   ],
   "zb3lE6": [

@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "粘贴上次使用的表达式"
     }
   ],
   "+mAJR3": [
@@ -1765,12 +1765,6 @@
     {
       "type": 0,
       "value": "\" 无效，在输出中找不到它。"
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "正在开发"
     }
   ],
   "9YGcT2": [
@@ -6992,6 +6986,12 @@
       "value": "受众"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "编辑流"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7590,7 +7590,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "折叠"
     }
   ],
   "lZT0JI": [
@@ -8118,7 +8118,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展开"
     }
   ],
   "odQ554": [
@@ -8960,6 +8960,12 @@
       "value": "显示名称"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "预览"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9301,7 +9307,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展开"
     }
   ],
   "vz2gZC": [
@@ -9845,7 +9851,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "折叠"
     }
   ],
   "zb3lE6": [

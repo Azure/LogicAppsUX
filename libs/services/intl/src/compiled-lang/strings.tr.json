@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Son kullanılan ifadeyi yapıştır"
     }
   ],
   "+mAJR3": [
@@ -1753,12 +1753,6 @@
     {
       "type": 0,
       "value": "' değeri geçersiz, çıkışlarda bulunamıyor."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Geliştirme Aşamasında"
     }
   ],
   "9YGcT2": [
@@ -6995,6 +6989,12 @@
       "value": "Hedef kitle"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7592,7 +7592,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Daralt"
     }
   ],
   "lZT0JI": [
@@ -8112,7 +8112,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Genişlet"
     }
   ],
   "odQ554": [
@@ -8965,6 +8965,12 @@
       "value": "Görünen Ad"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Önizleme"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9302,7 +9308,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Genişlet"
     }
   ],
   "vz2gZC": [
@@ -9842,7 +9848,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Daralt"
     }
   ],
   "zb3lE6": [

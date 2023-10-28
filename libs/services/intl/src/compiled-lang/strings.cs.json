@@ -1763,12 +1763,6 @@
       "value": "' – nelze najít ve výstupech."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Vývoj"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -7129,6 +7123,12 @@
       "value": "Cílová skupina"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Upravit tok"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7752,7 +7752,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Sbalit"
     }
   ],
   "lZT0JI": [
@@ -8272,7 +8272,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Rozbalit"
     }
   ],
   "odQ554": [
@@ -9143,6 +9143,12 @@
       "value": "Zobrazovaný název"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9484,7 +9490,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Rozbalit"
     }
   ],
   "vz2gZC": [
@@ -10024,7 +10030,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Sbalit"
     }
   ],
   "zb3lE6": [

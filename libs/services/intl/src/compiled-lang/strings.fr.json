@@ -1763,12 +1763,6 @@
       "value": " », introuvable dans les sorties."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "En cours de développement"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -7074,6 +7068,12 @@
       "value": "Audience"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Modifier le flux"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7686,7 +7686,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Réduire"
     }
   ],
   "lZT0JI": [
@@ -8206,7 +8206,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Développer"
     }
   ],
   "odQ554": [
@@ -9074,6 +9074,12 @@
       "value": "Nom d'affichage"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Préversion"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9415,7 +9421,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Développer"
     }
   ],
   "vz2gZC": [
@@ -9955,7 +9961,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Réduire"
     }
   ],
   "zb3lE6": [

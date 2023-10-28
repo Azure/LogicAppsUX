@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Pegar la última expresión usada"
     }
   ],
   "+mAJR3": [
@@ -1761,12 +1761,6 @@
     {
       "type": 0,
       "value": "\", no se encuentra en las salidas."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "En desarrollo"
     }
   ],
   "9YGcT2": [
@@ -7074,6 +7068,12 @@
       "value": "Audiencia"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Editar flujo"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7686,7 +7686,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Contraer"
     }
   ],
   "lZT0JI": [
@@ -8198,7 +8198,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "odQ554": [
@@ -9066,6 +9066,12 @@
       "value": "Nombre para mostrar"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Versión preliminar"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9407,7 +9413,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "vz2gZC": [
@@ -9939,7 +9945,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Contraer"
     }
   ],
   "zb3lE6": [

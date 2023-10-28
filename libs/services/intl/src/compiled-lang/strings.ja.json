@@ -1755,12 +1755,6 @@
       "value": "' の分割が無効です。出力で見つかりません。"
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "開発中"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -6936,6 +6930,12 @@
       "value": "対象ユーザー"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7522,7 +7522,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "折りたたむ"
     }
   ],
   "lZT0JI": [
@@ -8034,7 +8034,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開"
     }
   ],
   "odQ554": [
@@ -8872,6 +8872,12 @@
       "value": "表示名"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "プレビュー"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9209,7 +9215,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開"
     }
   ],
   "vz2gZC": [
@@ -9749,7 +9755,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "折りたたむ"
     }
   ],
   "zb3lE6": [

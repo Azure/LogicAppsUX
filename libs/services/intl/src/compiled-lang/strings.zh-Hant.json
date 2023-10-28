@@ -1763,12 +1763,6 @@
       "value": "' 的分割無效，在輸出中找不到。"
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "開發中"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -6952,6 +6946,12 @@
       "value": "對象"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "編輯流程"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7542,7 +7542,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "摺疊"
     }
   ],
   "lZT0JI": [
@@ -8054,7 +8054,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開"
     }
   ],
   "odQ554": [
@@ -8900,6 +8900,12 @@
       "value": "顯示名稱"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "預覽"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9241,7 +9247,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開"
     }
   ],
   "vz2gZC": [
@@ -9785,7 +9791,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "摺疊"
     }
   ],
   "zb3lE6": [

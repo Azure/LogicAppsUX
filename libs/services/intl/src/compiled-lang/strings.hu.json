@@ -64,7 +64,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Legutóbb használt kifejezés beillesztése"
     }
   ],
   "+mAJR3": [
@@ -1761,12 +1761,6 @@
     {
       "type": 0,
       "value": "” érték szerinti felosztás. Nem található a kimenetekben."
-    }
-  ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Fejlesztés alatt"
     }
   ],
   "9YGcT2": [
@@ -7015,6 +7009,12 @@
       "value": "Célközönség"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Edit flow"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7616,7 +7616,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Összecsukás"
     }
   ],
   "lZT0JI": [
@@ -8136,7 +8136,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Kibontás"
     }
   ],
   "odQ554": [
@@ -8989,6 +8989,12 @@
       "value": "Megjelenített név"
     }
   ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Előzetes verzió"
+    }
+  ],
   "u81zB9": [
     {
       "type": 0,
@@ -9330,7 +9336,7 @@
   "vyKxuD": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Kibontás"
     }
   ],
   "vz2gZC": [
@@ -9874,7 +9880,7 @@
   "zYbkZM": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Összecsukás"
     }
   ],
   "zb3lE6": [
