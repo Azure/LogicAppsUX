@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { environment } from '../../environments/environment';
-import type { RootState } from '../../state/store';
+import type { AppDispatch, RootState } from '../../state/store';
 import { useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } from '../../state/workflowLoadingSelectors';
+import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ParametersData } from './Models/Workflow';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
@@ -38,12 +39,13 @@ import {
 } from '@microsoft/logic-apps-designer';
 import { guid, startsWith } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
 const DesignerEditorConsumption = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { id: workflowId } = useSelector((state: RootState) => ({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
@@ -156,6 +158,10 @@ const DesignerEditorConsumption = () => {
     return serializedWorkflow;
   };
 
+  const openFeedBackPanel = () => {
+    alert('Open FeedBack Panel');
+  };
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, useLegacyWorkflowParameters: true }}>
@@ -172,7 +178,17 @@ const DesignerEditorConsumption = () => {
                 isConsumption
               />
               <Designer />
-              {showChatBot ? <Chatbot endpoint={environment.chatbotEndpoint} getUpdatedWorkflow={getUpdatedWorkflow} /> : null}
+              {showChatBot ? (
+                <Chatbot
+                  endpoint={environment.chatbotEndpoint}
+                  getUpdatedWorkflow={getUpdatedWorkflow}
+                  openFeedbackPanel={openFeedBackPanel}
+                  closeChatBot={() => {
+                    console.log('close chatbot');
+                    dispatch(setIsChatBotEnabled(false));
+                  }}
+                />
+              ) : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}

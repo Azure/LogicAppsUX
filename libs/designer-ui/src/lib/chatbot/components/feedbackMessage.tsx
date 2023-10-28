@@ -7,10 +7,11 @@ type FeedbackMessageProps = {
   id: string;
   date: Date;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
+  askFeedback?: boolean;
+  openFeedback?: () => void;
 };
 
-export const FeedbackMessage = ({ id, date, reaction, askFeedback }: FeedbackMessageProps) => {
+export const FeedbackMessage = ({ id, date, reaction, askFeedback, openFeedback }: FeedbackMessageProps) => {
   const intl = useIntl();
   const intlText = {
     feedbackCardPanelTitle: intl.formatMessage({
@@ -29,20 +30,12 @@ export const FeedbackMessage = ({ id, date, reaction, askFeedback }: FeedbackMes
   return askFeedback ? (
     <ChatBubble key={id} isUserMessage={false} isAIGenerated={false} date={date} className={mergeStyles({ marginTop: 8 })}>
       {reaction === ChatEntryReaction.thumbsUp && (
-        <Link
-          className="msla-feedbackmessage-link"
-          // TODO: onClick={} openFeedbackPanel(item)}
-          isUnderlinedStyle={true}
-        >
+        <Link className="msla-feedbackmessage-link" onClick={openFeedback}>
           {intlText.feedbackCardThumbsUpLinkText}
         </Link>
       )}
       {reaction === ChatEntryReaction.thumbsDown && (
-        <Link
-          className="msla-feedbackmessage-link"
-          // TODO: onClick={} openFeedbackPanel(item)}
-          isUnderlinedStyle={true}
-        >
+        <Link className="msla-feedbackmessage-link" onClick={openFeedback}>
           {intlText.feedbackCardThumbsDownLinkText}
         </Link>
       )}
