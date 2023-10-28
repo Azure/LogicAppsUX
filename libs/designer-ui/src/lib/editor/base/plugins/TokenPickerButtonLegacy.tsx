@@ -53,11 +53,11 @@ export default function TokenPickerButtonLegacy({
     description: 'Label for button to open token picker',
   });
   const addContentAltTextShow = intl.formatMessage({
-    defaultMessage: 'Button to add dynamic content if TokenPicker is shown',
+    defaultMessage: 'Button to add dynamic content if Token Picker is shown',
     description: 'Text for if image does not show up',
   });
   const addContentAltTextHide = intl.formatMessage({
-    defaultMessage: 'Button to add dynamic content if TokenPicker is hidden',
+    defaultMessage: 'Button to add dynamic content if Token Picker is hidden',
     description: 'Text for if image does not show up',
   });
 
