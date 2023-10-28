@@ -9705,6 +9705,9 @@
       <Item ItemId=";hwj1Ht" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Edit flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Edytuj przepływ]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -12466,7 +12469,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Preview]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Wersja zapoznawcza]]></Val>
+            <Val><![CDATA[Podgląd]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
