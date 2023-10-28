@@ -68,13 +68,13 @@ function TokenMenuItem({
 
 interface TokenTypeAheadPluginProps {
   isEditorFocused?: boolean;
-  hideTokenpickerOptions?: hideButtonOptions;
+  hideTokenPickerOptions?: hideButtonOptions;
   openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
 }
 
-export const TokenTypeAheadPlugin = ({ isEditorFocused, hideTokenpickerOptions, openTokenPicker }: TokenTypeAheadPluginProps) => {
+export const TokenTypeAheadPlugin = ({ isEditorFocused, hideTokenPickerOptions, openTokenPicker }: TokenTypeAheadPluginProps) => {
   const [editor] = useLexicalComposerContext();
-  const { hideDynamicContent, hideExpression } = hideTokenpickerOptions ?? {};
+  const { hideDynamicContent, hideExpression } = hideTokenPickerOptions ?? {};
   const { isInverted } = useTheme();
   const checkForTriggerMatch = useTokenTypeaheadTriggerMatch('/', {
     minLength: 0,

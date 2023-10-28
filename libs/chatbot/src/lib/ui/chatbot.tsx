@@ -1,13 +1,11 @@
 import constants from '../common/constants';
 import type { Workflow } from '../common/models/workflow';
 import { isSuccessResponse } from '../core/util';
-import Sparkle from '../images/Sparkle.svg';
-import SparkleDisabled from '../images/SparkleDisabled.svg';
 import { CopilotPanelHeader } from './panelheader';
+import type { ITextField } from '@fluentui/react';
 import { Panel, PanelType, css, getId } from '@fluentui/react';
-import { useBoolean } from '@fluentui/react-hooks';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { ConversationItem, PromptGuideItem } from '@microsoft/designer-ui';
+import type { ConversationItem } from '@microsoft/designer-ui';
 import {
   PanelLocation,
   ChatInput,
@@ -17,15 +15,13 @@ import {
   ProgressCardWithStopButton,
   ChatSuggestionGroup,
   ChatSuggestion,
-  PromptGuideContextualMenu,
-  PromptGuideMenuKey,
-  PromptGuideItemKey,
-  PromptGuideCard,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+
+export const chatbotPanelWidth = '360px';
 
 const inputIconButtonStyles = {
   enabled: {
@@ -46,10 +42,21 @@ interface ChatbotProps {
   panelLocation?: PanelLocation;
   endpoint?: string;
   getUpdatedWorkflow: () => Promise<Workflow>;
+  openFeedbackPanel: () => void; // callback when feedback panel is opened
+  closeChatBot?: () => void; // callback when chatbot is closed
 }
+
 const QUERY_MIN_LENGTH = 5;
 const QUERY_MAX_LENGTH = 2000;
-export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdatedWorkflow }: ChatbotProps) => {
+
+export const Chatbot = ({
+  panelLocation = PanelLocation.Left,
+  endpoint,
+  getUpdatedWorkflow,
+  openFeedbackPanel,
+  closeChatBot,
+}: ChatbotProps) => {
+  const textInputRef = useRef<ITextField>(null);
   const chatSessionId = useRef(guid());
   const intl = useIntl();
   const [inputQuery, setInputQuery] = useState('');
@@ -58,8 +65,6 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
   const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
   const [canTestCurrentFlow, testCurrentFlow] = useState(false);
   const [isSaving] = useState(false);
-  const [selectedPromptGuideItemKey, setSelectedPromptGuideItemKey] = useState<PromptGuideItemKey | undefined>(undefined);
-  const promptGuideButtonRef = useRef<HTMLButtonElement>(null);
   const [conversation, setConversation] = useState<ConversationItem[]>([
     {
       type: ConversationItemType.Greeting,
@@ -67,10 +72,8 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
       id: getId(),
       date: new Date(),
       reaction: undefined,
-      askFeedback: false,
     },
   ]);
-  const [isPromptGuideOpen, { toggle: togglePromptGuide, setFalse: closePromptGuide }] = useBoolean(false);
   const [controller, setController] = useState(new AbortController());
   const signal = controller.signal;
   const [selectedOperation] = useState('');
@@ -214,11 +217,14 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
             __rawRequest: options,
             __rawResponse: response,
             reaction: undefined,
-            askFeedback: false,
+            openFeedback: openFeedbackPanel,
           },
           ...current,
         ]);
         stopAnswerGeneration(true);
+        setTimeout(() => {
+          textInputRef.current?.focus();
+        }, 100);
       } catch (error: any) {
         LoggerService().log({
           level: LogEntryLevel.Error,
@@ -242,7 +248,6 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
               __rawRequest: options,
               __rawResponse: error,
               reaction: undefined,
-              askFeedback: false,
               hideFooter: true,
             },
             ...current,
@@ -258,69 +263,17 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
               __rawRequest: options,
               __rawResponse: error,
               reaction: undefined,
-              askFeedback: false,
             },
             ...current,
           ]);
           stopAnswerGeneration(true);
         }
+        setTimeout(() => {
+          textInputRef.current?.focus();
+        }, 100);
       }
     },
-    [endpoint, getUpdatedWorkflow, intlText, signal]
-  );
-
-  const onPromptGuideItemClicked = useCallback(
-    (item: PromptGuideItem) => {
-      setSelectedPromptGuideItemKey(item.itemKey);
-
-      const setInputAndFocus = (query: string) => {
-        if (query.length === 0) {
-          // User removed or rephrased the sentence, discard selected guide.
-          setSelectedPromptGuideItemKey(undefined);
-        }
-        setInputQuery(query);
-      };
-
-      switch (item.itemKey) {
-        case PromptGuideItemKey.ReplaceAction:
-          if (selectedOperation) {
-            setInputAndFocus(intlText.queryTemplates.replaceActionSentenceStartFormat);
-          }
-          break;
-        case PromptGuideItemKey.AddAction:
-          setInputAndFocus(intlText.queryTemplates.addActionSentenceStart);
-          break;
-        case PromptGuideItemKey.ExplainAction:
-          if (selectedOperation) {
-            onSubmitInputQuery(intlText.queryTemplates.explainActionSentenceFormat);
-          }
-          break;
-        case PromptGuideItemKey.ExplainFlow:
-          onSubmitInputQuery(intlText.queryTemplates.explainFlowSentence);
-          break;
-        case PromptGuideItemKey.CreateFlowExample1:
-          setInputAndFocus(intlText.queryTemplates.createFlow1SentenceStart);
-          break;
-        case PromptGuideItemKey.CreateFlowExample2:
-          setInputAndFocus(intlText.queryTemplates.createFlow2SentenceStart);
-          break;
-        case PromptGuideItemKey.CreateFlowExample3:
-          setInputAndFocus(intlText.queryTemplates.createFlow3SentenceStart);
-          break;
-        case PromptGuideItemKey.Question:
-          setInputAndFocus(intlText.queryTemplates.questionSentenceStart);
-          break;
-        case PromptGuideItemKey.EditFlow:
-          setInputAndFocus(intlText.queryTemplates.editFlowSentenceStart);
-          break;
-        case PromptGuideItemKey.CreateFlow:
-          // CreateFlow opens a sub-menu
-          break;
-        default:
-          break;
-      }
-    },
-    [onSubmitInputQuery, selectedOperation, intlText.queryTemplates]
+    [endpoint, intlText.assistantErrorMessage, intlText.cancelGenerationText, signal, getUpdatedWorkflow, openFeedbackPanel]
   );
 
   const abortFetching = useCallback(() => {
@@ -329,103 +282,80 @@ export const Chatbot = ({ panelLocation = PanelLocation.Left, endpoint, getUpdat
 
   useEffect(() => {
     setInputQuery('');
-    setSelectedPromptGuideItemKey(undefined);
   }, [conversation]);
 
   return (
     <Panel
       type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
-      isOpen={true}
-      customWidth={collapsed ? 'auto' : '360px'}
+      isOpen={!collapsed}
+      customWidth={chatbotPanelWidth}
       hasCloseButton={false}
       isBlocking={false}
-      styles={{ content: { padding: '2px', minWidth: '22px' } }}
       layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
     >
       <div className={'msla-chatbot-container'}>
-        <CopilotPanelHeader collapsed={collapsed} toggleCollapse={setCollapsed} />
-        {!collapsed && (
-          <>
-            <div className={css('msla-chatbot-content')}>
-              {!answerGeneration && (
-                <ProgressCardWithStopButton
-                  onStopButtonClick={() => abortFetching()}
-                  progressState={intlText.progressCardText}
-                  stopButtonLabel={intlText.progressCardStopButtonLabel}
-                />
-              )}
-              {isSaving && <ProgressCardWithStopButton progressState={intlText.progressCardSaveText} />}
-              {conversation.map((item) => (
-                <ConversationMessage key={item.id} item={item} />
-              ))}
-            </div>
-            <div className={'msla-chatbot-footer'}>
-              {selectedPromptGuideItemKey && <PromptGuideCard itemKey={selectedPromptGuideItemKey} />}
-              <ChatSuggestionGroup>
-                {canSaveCurrentFlow && (
-                  <ChatSuggestion
-                    text={intlText.chatSuggestion.saveButton}
-                    iconName={'Save'}
-                    onClick={() => saveCurrentFlow(false) /*TODO: add method to save workflow*/}
-                  />
-                )}
-                {canTestCurrentFlow && (
-                  <ChatSuggestion
-                    text={intlText.chatSuggestion.testButton}
-                    iconName={'TestBeaker'}
-                    onClick={() => testCurrentFlow(false) /*TODO: add method to test workflow*/}
-                  />
-                )}
-              </ChatSuggestionGroup>
-              <ChatInput
-                disabled={!answerGeneration}
-                footerActionsProps={[
-                  {
-                    title: intlText.actionsButtonTitle,
-                    onClick: togglePromptGuide,
-                    disabled: !answerGeneration,
-                    toggle: true,
-                    checked: isPromptGuideOpen,
-                    elementRef: promptGuideButtonRef,
-                    iconProps: {
-                      imageProps: {
-                        src: !answerGeneration ? SparkleDisabled : Sparkle,
-                      },
-                    },
-                  },
-                ]}
-                isMultiline={true}
-                maxQueryLength={QUERY_MAX_LENGTH}
-                onQueryChange={(_ev, newValue) => {
-                  setInputQuery(newValue ?? '');
-                }}
-                placeholder={intlText.chatInputPlaceholder}
-                query={inputQuery}
-                showCharCount={true}
-                submitButtonProps={{
-                  title: intlText.submitButtonTitle,
-                  disabled: !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH,
-                  iconProps: {
-                    iconName: 'Send',
-                    styles:
-                      !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH
-                        ? inputIconButtonStyles.disabled
-                        : inputIconButtonStyles.enabled,
-                  },
-                  onClick: () => onSubmitInputQuery(inputQuery),
-                }}
+        <CopilotPanelHeader
+          closeCopilot={() => {
+            setCollapsed(true);
+            closeChatBot?.();
+          }}
+        />
+
+        <div className={css('msla-chatbot-content')}>
+          {!answerGeneration && (
+            <ProgressCardWithStopButton
+              onStopButtonClick={() => abortFetching()}
+              progressState={intlText.progressCardText}
+              stopButtonLabel={intlText.progressCardStopButtonLabel}
+            />
+          )}
+          {isSaving && <ProgressCardWithStopButton progressState={intlText.progressCardSaveText} />}
+          {conversation.map((item) => (
+            <ConversationMessage key={item.id} item={item} />
+          ))}
+        </div>
+        <div className={'msla-chatbot-footer'}>
+          <ChatSuggestionGroup>
+            {canSaveCurrentFlow && (
+              <ChatSuggestion
+                text={intlText.chatSuggestion.saveButton}
+                iconName={'Save'}
+                onClick={() => saveCurrentFlow(false) /*TODO: add method to save workflow*/}
               />
-              {isPromptGuideOpen ? (
-                <PromptGuideContextualMenu
-                  onDismiss={closePromptGuide}
-                  target={promptGuideButtonRef}
-                  initialMenu={PromptGuideMenuKey.DefaultFlow}
-                  onMenuItemClick={onPromptGuideItemClicked}
-                />
-              ) : null}
-            </div>
-          </>
-        )}
+            )}
+            {canTestCurrentFlow && (
+              <ChatSuggestion
+                text={intlText.chatSuggestion.testButton}
+                iconName={'TestBeaker'}
+                onClick={() => testCurrentFlow(false) /*TODO: add method to test workflow*/}
+              />
+            )}
+          </ChatSuggestionGroup>
+          <ChatInput
+            textFieldRef={textInputRef}
+            disabled={!answerGeneration}
+            isMultiline={true}
+            maxQueryLength={QUERY_MAX_LENGTH}
+            onQueryChange={(_ev, newValue) => {
+              setInputQuery(newValue ?? '');
+            }}
+            placeholder={intlText.chatInputPlaceholder}
+            query={inputQuery}
+            showCharCount={true}
+            submitButtonProps={{
+              title: intlText.submitButtonTitle,
+              disabled: !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH,
+              iconProps: {
+                iconName: 'Send',
+                styles:
+                  !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH
+                    ? inputIconButtonStyles.disabled
+                    : inputIconButtonStyles.enabled,
+              },
+              onClick: () => onSubmitInputQuery(inputQuery),
+            }}
+          />
+        </div>
       </div>
     </Panel>
   );
