@@ -17,6 +17,7 @@ import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
 import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
+import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
 import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
 import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 import { isString } from '@microsoft/utils-logic-apps';
@@ -79,6 +80,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
       new FolderListStep(),
       new setWorkspaceName(),
       new SetLogicAppType(),
+      new SetLogicAppName(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
       new OpenBehaviorStep(),
     ],

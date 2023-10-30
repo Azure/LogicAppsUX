@@ -75,7 +75,12 @@ local.settings.json
 __blobstorage__
 .debug
 __queuestorage__
-__azurite_db*__.json`)
+__azurite_db*__.json
+
+# Added folders and file patterns
+workflow-designtime/
+.vscode/
+*.code-workspace`)
       );
     }
 

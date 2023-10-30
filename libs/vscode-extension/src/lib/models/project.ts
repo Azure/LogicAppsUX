@@ -65,6 +65,7 @@ export interface IProjectWizardContext extends IActionContext {
   openApiSpecificationFile?: Uri[];
   targetFramework?: string | string[];
   isCustomCodeLogicApp?: boolean;
+  logicAppName?: string;
 }
 
 export enum OpenBehavior {
