@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { projectLanguageSetting, funcVersionSetting, showProjectWarningSetting } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
 import { tryParseFuncVersion } from '../funcCoreTools/funcVersion';
@@ -30,6 +31,7 @@ export async function verifyVSCodeConfigOnActivate(
       const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, folder);
 
       if (projectPath) {
+        ext.logicAppWorkspace = projectPath;
         context.telemetry.suppressIfSuccessful = false;
 
         const language: ProjectLanguage | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);

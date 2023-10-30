@@ -1,16 +1,15 @@
 import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
 import DataMapperPanel from './DataMapperPanel';
 import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
 import type { MapDefinitionData, MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { Uri, ViewColumn, window, workspace } from 'vscode';
+import { Uri, ViewColumn, window } from 'vscode';
 
 export default class DataMapperExt {
   public static async openDataMapperPanel(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
-    const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
+    const workflowFolder = ext.logicAppWorkspace;
 
     if (workflowFolder) {
       await startBackendRuntime(workflowFolder);
@@ -50,15 +49,6 @@ export default class DataMapperExt {
     ext.dataMapPanelManagers[dataMapName].mapDefinitionData = mapDefinitionData;
 
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
-  }
-
-  public static getWorkspaceFolderFsPath() {
-    if (workspace.workspaceFolders) {
-      return workspace.workspaceFolders[0].uri.fsPath;
-    } else {
-      ext.showError(localize('MissingWorkspace', 'No VS Code folder/workspace found...'));
-      return '';
-    }
   }
 
   /*
