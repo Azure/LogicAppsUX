@@ -741,6 +741,12 @@
       "value": "Add dynamic content"
     }
   ],
+  "3CkRua": [
+    {
+      "type": 0,
+      "value": "How to receive files from SFTP server"
+    }
+  ],
   "3ERi+E": [
     {
       "type": 0,
@@ -983,6 +989,12 @@
       "value": "Add a new connection"
     }
   ],
+  "4SOcg/": [
+    {
+      "type": 0,
+      "value": "Some things you can say:"
+    }
+  ],
   "4YKQAF": [
     {
       "type": 0,
@@ -1065,12 +1077,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Add a condition"
     }
   ],
   "5J9jne": [
@@ -1431,6 +1437,12 @@
     {
       "type": 0,
       "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
+    }
+  ],
+  "7iCbpX": [
+    {
+      "type": 0,
+      "value": "Learn about workflows, the way they work, and how to create them."
     }
   ],
   "7jcTNd": [
@@ -2161,12 +2173,6 @@
     {
       "type": 0,
       "value": "True"
-    }
-  ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "Add an action that sends an email"
     }
   ],
   "CG772M": [
@@ -3967,6 +3973,12 @@
       "value": "Operation options:"
     }
   ],
+  "OG3391": [
+    {
+      "type": 0,
+      "value": "Copilot doesn’t store or use your data."
+    }
+  ],
   "OH9xlX": [
     {
       "type": 0,
@@ -4725,12 +4737,6 @@
     {
       "type": 0,
       "value": "Give feedback"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Explain what an action does"
     }
   ],
   "TNEttQ": [
@@ -5593,6 +5599,12 @@
       "value": "'."
     }
   ],
+  "XfGQqx": [
+    {
+      "type": 0,
+      "value": "Copilot doesn’t edit or change your workflows."
+    }
+  ],
   "Xj0Gr/": [
     {
       "type": 0,
@@ -5967,6 +5979,12 @@
       "value": "Learn more about dynamic content."
     }
   ],
+  "ZuUxtG": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6061,6 +6079,12 @@
     {
       "type": 0,
       "value": "Add or select a source schema to use for your map."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6495,6 +6519,12 @@
       "value": "How often do you want to check for items?"
     }
   ],
+  "e31z+W": [
+    {
+      "type": 0,
+      "value": "How to call an external endpoint"
+    }
+  ],
   "e4JZEY": [
     {
       "type": 0,
@@ -6737,6 +6767,12 @@
       "value": "Run test"
     }
   ],
+  "gA7uY8": [
+    {
+      "type": 0,
+      "value": "Get details about Azure Logic Apps platform’s capabilities and connectors."
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6971,6 +7007,12 @@
     {
       "type": 0,
       "value": "The value is too large."
+    }
+  ],
+  "hmgHQQ": [
+    {
+      "type": 0,
+      "value": "Copilot can help you with tasks such as the following:"
     }
   ],
   "hq1mk6": [
@@ -8143,6 +8185,12 @@
     {
       "type": 0,
       "value": "Response body"
+    }
+  ],
+  "ofOzbb": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow"
     }
   ],
   "onXUu0": [
@@ -9933,6 +9981,12 @@
     {
       "type": 0,
       "value": "Required. The number to add to Summand 1."
+    }
+  ],
+  "zspid3": [
+    {
+      "type": 0,
+      "value": "Describe this workflow"
     }
   ],
   "zxe9hh": [
