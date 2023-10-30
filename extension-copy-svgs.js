@@ -17,11 +17,7 @@ const copyDoc = async (projectPath) => {
  */
 const copyFiles = async (argumentsArray) => {
   let projectPath = '';
-  if (argumentsArray.includes('designer')) {
-    projectPath = 'dist/apps/vs-code-designer';
-  } else {
-    projectPath = 'dist/apps/vs-code-data-mapper';
-  }
+  projectPath = 'dist/apps/vs-code-designer';
 
   try {
     await copySVG(projectPath);
