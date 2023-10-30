@@ -413,7 +413,7 @@ export async function promptInstallBinariesOption(context: IActionContext) {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     const workspace = await getWorkspaceFolder(context);
     const projectPath = await tryGetFunctionProjectRoot(context, workspace);
-    const message = localize('useBinaries', 'Always validate and install the latest dependency binaries at launch TEST');
+    const message = localize('useBinaries', 'Always validate and install the latest dependency binaries at launch');
     const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
     let result: vscode.MessageItem;
 
