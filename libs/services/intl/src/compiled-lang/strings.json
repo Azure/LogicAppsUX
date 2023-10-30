@@ -741,12 +741,6 @@
       "value": "Add dynamic content"
     }
   ],
-  "3CkRua": [
-    {
-      "type": 0,
-      "value": "How to receive files from SFTP server"
-    }
-  ],
   "3ERi+E": [
     {
       "type": 0,
@@ -987,12 +981,6 @@
     {
       "type": 0,
       "value": "Add a new connection"
-    }
-  ],
-  "4SOcg/": [
-    {
-      "type": 0,
-      "value": "Some things you can say:"
     }
   ],
   "4YKQAF": [
@@ -1437,12 +1425,6 @@
     {
       "type": 0,
       "value": "This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?"
-    }
-  ],
-  "7iCbpX": [
-    {
-      "type": 0,
-      "value": "Learn about workflows, the way they work, and how to create them."
     }
   ],
   "7jcTNd": [
@@ -2493,12 +2475,6 @@
       "value": "Converts the parameter to a decimal number"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2755,6 +2731,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -3859,6 +3841,12 @@
       "value": "Returns the value of the specified variable."
     }
   ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -3971,12 +3959,6 @@
     {
       "type": 0,
       "value": "Operation options:"
-    }
-  ],
-  "OG3391": [
-    {
-      "type": 0,
-      "value": "Copilot doesn’t store or use your data."
     }
   ],
   "OH9xlX": [
@@ -5335,6 +5317,12 @@
       "value": "label"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5599,12 +5587,6 @@
       "value": "'."
     }
   ],
-  "XfGQqx": [
-    {
-      "type": 0,
-      "value": "Copilot doesn’t edit or change your workflows."
-    }
-  ],
   "Xj0Gr/": [
     {
       "type": 0,
@@ -5687,6 +5669,12 @@
     {
       "type": 0,
       "value": "Select a Swagger Function App resource"
+    }
+  ],
+  "Y7532T": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server"
     }
   ],
   "Y9kBz5": [
@@ -5977,12 +5965,6 @@
     {
       "type": 0,
       "value": "Learn more about dynamic content."
-    }
-  ],
-  "ZuUxtG": [
-    {
-      "type": 0,
-      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "ZyDq4/": [
@@ -6307,6 +6289,12 @@
       "value": "Error Message"
     }
   ],
+  "cbFh8D": [
+    {
+      "type": 0,
+      "value": "Some things you can say:"
+    }
+  ],
   "ceVB5l": [
     {
       "type": 0,
@@ -6421,12 +6409,6 @@
       "value": "Replace action"
     }
   ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Welcome back! If you want me to change your flow, just say what you want. For example:"
-    }
-  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -6517,12 +6499,6 @@
     {
       "type": 0,
       "value": "How often do you want to check for items?"
-    }
-  ],
-  "e31z+W": [
-    {
-      "type": 0,
-      "value": "How to call an external endpoint"
     }
   ],
   "e4JZEY": [
@@ -6767,12 +6743,6 @@
       "value": "Run test"
     }
   ],
-  "gA7uY8": [
-    {
-      "type": 0,
-      "value": "Get details about Azure Logic Apps platform’s capabilities and connectors."
-    }
-  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -7007,12 +6977,6 @@
     {
       "type": 0,
       "value": "The value is too large."
-    }
-  ],
-  "hmgHQQ": [
-    {
-      "type": 0,
-      "value": "Copilot can help you with tasks such as the following:"
     }
   ],
   "hq1mk6": [
@@ -7505,6 +7469,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
+    }
+  ],
+  "kYjd4m": [
+    {
+      "type": 0,
+      "value": "Describe this workflow"
     }
   ],
   "kZCX7t": [
@@ -8185,12 +8155,6 @@
     {
       "type": 0,
       "value": "Response body"
-    }
-  ],
-  "ofOzbb": [
-    {
-      "type": 0,
-      "value": "What is the concurrency setting of this workflow"
     }
   ],
   "onXUu0": [
@@ -8929,6 +8893,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [
@@ -9981,12 +9951,6 @@
     {
       "type": 0,
       "value": "Required. The number to add to Summand 1."
-    }
-  ],
-  "zspid3": [
-    {
-      "type": 0,
-      "value": "Describe this workflow"
     }
   ],
   "zxe9hh": [
