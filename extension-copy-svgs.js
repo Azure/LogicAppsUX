@@ -16,8 +16,7 @@ const copyDoc = async (projectPath) => {
  * Copy svgs and documentation files to dist folder before pack vsix.
  */
 const copyFiles = async (argumentsArray) => {
-  let projectPath = '';
-  projectPath = 'dist/apps/vs-code-designer';
+  const projectPath = 'dist/apps/vs-code-designer';
 
   try {
     await copySVG(projectPath);
