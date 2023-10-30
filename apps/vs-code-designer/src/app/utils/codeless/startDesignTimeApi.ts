@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  Platform,
   ProjectDirectoryPath,
   autoStartDesignTimeSetting,
   defaultVersionRange,
@@ -190,7 +191,7 @@ export function stopDesignTimeApi(): void {
     return;
   }
 
-  if (os.platform() === 'win32') {
+  if (os.platform() === Platform.windows) {
     cp.exec('taskkill /pid ' + `${ext.workflowDesignChildProcess.pid}` + ' /T /F');
   } else {
     ext.workflowDesignChildProcess.kill();
@@ -212,7 +213,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
           'startDesignTimeApi',
           'Always start the background design-time process at launch? The workflow designer will open faster.'
         );
-        const confirm = { title: 'Yes (Recommended)' };
+        const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
         let result: MessageItem;
         do {
           result = await context.ui.showWarningMessage(message, confirm, DialogResponses.learnMore, DialogResponses.dontWarnAgain);

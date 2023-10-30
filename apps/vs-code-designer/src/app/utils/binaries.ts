@@ -5,6 +5,7 @@
 import {
   DependencyVersion,
   Platform,
+  autoBinariesInstallationSetting,
   defaultDependencyPathValue,
   dependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
@@ -13,6 +14,7 @@ import {
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { onboardBinaries } from '../../onboarding';
 import { validateDotNetIsLatest } from '../commands/dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
@@ -24,8 +26,10 @@ import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { getNpmCommand, setNodeJsCommand } from './nodeJs/nodeJsVersion';
 import { runWithDurationTelemetry } from './telemetry';
 import { timeout } from './timeout';
+import { tryGetFunctionProjectRoot } from './verifyIsProject';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import { getWorkspaceFolder } from './workspace';
+import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import * as AdmZip from 'adm-zip';
 import axios from 'axios';
@@ -284,6 +288,9 @@ export function getCpuArchitecture() {
  * @returns true if expected binaries folder directory path exists
  */
 export function binariesExist(dependencyName: string): boolean {
+  if (!useBinariesDependencies()) {
+    return false;
+  }
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
@@ -393,3 +400,39 @@ function getDependencyTimeout(): number {
 
   return timeoutInSeconds;
 }
+
+/**
+ * Propmts warning message to decide the auto validation/installation of dependency binaries.
+ * @param {IActionContext} context - Activation context.
+ */
+export async function promptInstallBinariesOption(context: IActionContext) {
+  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+    const workspace = await getWorkspaceFolder(context);
+    const projectPath = await tryGetFunctionProjectRoot(context, workspace);
+    const message = localize('useBinaries', 'Always validate and install the latest dependency binaries at launch');
+    const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
+    let result: vscode.MessageItem;
+
+    const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+
+    if (projectPath && binariesInstallation === null) {
+      result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
+      if (result === confirm) {
+        await updateGlobalSetting(autoBinariesInstallationSetting, true);
+        await onboardBinaries(context);
+        context.telemetry.properties.autoBinariesInstallation = 'true';
+      } else if (result === DialogResponses.dontWarnAgain) {
+        await updateGlobalSetting(autoBinariesInstallationSetting, false);
+        context.telemetry.properties.autoBinariesInstallation = 'false';
+      }
+    }
+  }
+}
+
+/**
+ * Returns boolean to determine if workspace uses binaries dependencies.
+ */
+export const useBinariesDependencies = (): boolean => {
+  const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+  return !!binariesInstallation;
+};
