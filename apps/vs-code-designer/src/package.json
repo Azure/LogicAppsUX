@@ -847,7 +847,7 @@
           },
           "azureLogicAppsStandard.autoBinariesInstallation": {
             "type": "boolean",
-            "description": "Start using binaries installation",
+            "description": "Start using binaries installation Test",
             "default": null
           },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
