@@ -184,7 +184,7 @@ export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string
   return getProjectTemplateKey(runtimeInfo.targetFramework, isIsolated);
 }
 
-export async function getLocalDotNetVersion(): Promise<string> {
+export async function getLocalDotNetVersionFromBinaries(): Promise<string> {
   const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const sdkVersionFolder = path.join(dotNetBinariesPath, 'sdk');

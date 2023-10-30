@@ -2,14 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { validateFuncCoreToolsSetting } from '../../../constants';
+import { type PackageManager, funcVersionSetting, validateFuncCoreToolsSetting } from '../../../constants';
 import { localize } from '../../../localize';
+import { useBinariesDependencies } from '../../utils/binaries';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
-import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
+import { getFunctionsCommand, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { installFuncCoreTools } from './installFuncCoreTools';
+import { installFuncCoreToolsBinaries, installFuncCoreToolsSystem } from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { FuncVersion } from '@microsoft/vscode-extension';
 import type { MessageItem } from 'vscode';
 
 /**
@@ -33,15 +36,10 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
     } else if (await isFuncToolsInstalled()) {
       installed = true;
     } else {
-      const items: MessageItem[] = [install, DialogResponses.learnMore];
-      input = await innerContext.ui.showWarningMessage(message, { modal: true }, ...items);
-      innerContext.telemetry.properties.dialogResult = input.title;
-
-      if (input === install) {
-        await installFuncCoreTools(innerContext);
-        installed = true;
-      } else if (input === DialogResponses.learnMore) {
-        await openUrl('https://aka.ms/Dqur4e');
+      if (useBinariesDependencies()) {
+        installed = await validateFuncCoreToolsInstalledBinaries(innerContext, message, install, input, installed);
+      } else {
+        installed = await validateFuncCoreToolsInstalledSystem(innerContext, message, install, input, installed, fsPath);
       }
     }
   });
@@ -60,6 +58,57 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
 
   return installed;
 }
+
+const validateFuncCoreToolsInstalledBinaries = async (
+  innerContext: IActionContext,
+  message: string,
+  install: MessageItem,
+  input: MessageItem | undefined,
+  installed: boolean
+) => {
+  const items: MessageItem[] = [install, DialogResponses.learnMore];
+  input = await innerContext.ui.showWarningMessage(message, { modal: true }, ...items);
+  innerContext.telemetry.properties.dialogResult = input.title;
+
+  if (input === install) {
+    await installFuncCoreToolsBinaries(innerContext);
+    installed = true;
+  } else if (input === DialogResponses.learnMore) {
+    await openUrl('https://aka.ms/Dqur4e');
+  }
+
+  return installed;
+};
+
+const validateFuncCoreToolsInstalledSystem = async (
+  innerContext: IActionContext,
+  message: string,
+  install: MessageItem,
+  input: MessageItem | undefined,
+  installed: boolean,
+  fsPath: string
+) => {
+  const items: MessageItem[] = [];
+  const packageManagers: PackageManager[] = await getFuncPackageManagers(false /* isFuncInstalled */);
+  if (packageManagers.length > 0) {
+    items.push(install);
+  } else {
+    items.push(DialogResponses.learnMore);
+  }
+
+  input = await innerContext.ui.showWarningMessage(message, { modal: true }, ...items);
+
+  innerContext.telemetry.properties.dialogResult = input.title;
+
+  if (input === install) {
+    const version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, fsPath));
+    await installFuncCoreToolsSystem(innerContext, packageManagers, version);
+    installed = true;
+  } else if (input === DialogResponses.learnMore) {
+    await openUrl('https://aka.ms/Dqur4e');
+  }
+  return installed;
+};
 
 /**
  * Check is functions core tools is installed.

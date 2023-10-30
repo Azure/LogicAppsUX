@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { azuriteExtensionPrefix, azuriteLocationSetting, defaultAzuritePathValue, extensionCommand } from '../../../constants';
+import {
+  azuriteBinariesLocationSetting,
+  azuriteExtensionPrefix,
+  azuriteLocationSetting,
+  defaultAzuritePathValue,
+  extensionCommand,
+  showAutoStartAzuriteWarning,
+} from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
 import { isFunctionProject } from '../verifyIsProject';
@@ -25,17 +32,15 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
     const globalAzuriteLocationSetting: string = getWorkspaceSetting<string>(azuriteLocationSetting, workspacePath, azuriteExtensionPrefix);
     context.telemetry.properties.globalAzuriteLocation = globalAzuriteLocationSetting;
 
-    const azuriteLoationSettingKey = 'azuriteLocationSetting';
-    const azuriteLocationExtSetting: string = getWorkspaceSetting<string>(azuriteLoationSettingKey);
+    const azuriteLocationExtSetting: string = getWorkspaceSetting<string>(azuriteBinariesLocationSetting);
 
-    const showAutoStartAzuriteWarningKey = 'showAutoStartAzuriteWarning';
-    const showAutoStartAzuriteWarning = !!getWorkspaceSetting<boolean>(showAutoStartAzuriteWarningKey);
+    const showAutoStartAzuriteWarningSetting = !!getWorkspaceSetting<boolean>(showAutoStartAzuriteWarning);
 
     const autoStartAzuriteKey = 'autoStartAzurite';
     const autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteKey);
     context.telemetry.properties.autoStartAzurite = `${autoStartAzurite}`;
 
-    if (showAutoStartAzuriteWarning) {
+    if (showAutoStartAzuriteWarningSetting) {
       const enableMessage: MessageItem = { title: localize('enableAutoStart', 'Enable AutoStart') };
 
       const result = await context.ui.showWarningMessage(
@@ -46,9 +51,9 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
       );
 
       if (result == DialogResponses.dontWarnAgain) {
-        await updateGlobalSetting(showAutoStartAzuriteWarningKey, false);
+        await updateGlobalSetting(showAutoStartAzuriteWarning, false);
       } else if (result == enableMessage) {
-        await updateGlobalSetting(showAutoStartAzuriteWarningKey, false);
+        await updateGlobalSetting(showAutoStartAzuriteWarning, false);
         await updateGlobalSetting(autoStartAzuriteKey, true);
 
         // User has not configured workspace azurite.location.
@@ -61,16 +66,16 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
           });
 
           if (azuriteDir) {
-            await updateGlobalSetting(azuriteLoationSettingKey, azuriteDir);
+            await updateGlobalSetting(azuriteBinariesLocationSetting, azuriteDir);
           } else {
-            await updateGlobalSetting(azuriteLoationSettingKey, defaultAzuriteDir);
+            await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuriteDir);
           }
         }
       }
     }
 
     if (getWorkspaceSetting<boolean>(autoStartAzuriteKey)) {
-      const azuriteWorkspaceSetting = getWorkspaceSetting<string>(azuriteLoationSettingKey);
+      const azuriteWorkspaceSetting = getWorkspaceSetting<string>(azuriteBinariesLocationSetting);
       await updateWorkspaceSetting(azuriteLocationSetting, azuriteWorkspaceSetting, workspacePath, azuriteExtensionPrefix);
       await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
       context.telemetry.properties.azuriteStart = 'true';

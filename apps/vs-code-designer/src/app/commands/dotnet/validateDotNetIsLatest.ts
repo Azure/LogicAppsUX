@@ -5,7 +5,7 @@
 import { dotnetDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { binariesExist, getLatestDotNetVersion } from '../../utils/binaries';
-import { getDotNetCommand, getLocalDotNetVersion } from '../../utils/dotnet/dotnet';
+import { getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../../utils/dotnet/dotnet';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { installDotNet } from './installDotNet';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
@@ -28,7 +28,7 @@ export async function validateDotNetIsLatest(majorVersion?: string): Promise<voi
       context.telemetry.properties.binaryCommand = `${getDotNetCommand()}`;
     } else if (showDotNetWarning) {
       context.telemetry.properties.binaryCommand = `${getDotNetCommand()}`;
-      const localVersion: string | null = await getLocalDotNetVersion();
+      const localVersion: string | null = await getLocalDotNetVersionFromBinaries();
       context.telemetry.properties.localVersion = localVersion;
       const newestVersion: string | undefined = await getLatestDotNetVersion(context, majorVersion);
       if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {

@@ -146,7 +146,7 @@ export function checkSupportedFuncVersion(version: FuncVersion) {
  */
 export function getFunctionsCommand(): string {
   const command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
-  if (command == null) {
+  if (!command) {
     throw Error('Functions Core Tools Binary Path Setting is empty');
   }
   return command;
