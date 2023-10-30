@@ -47,7 +47,7 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
             <ShieldCheckmarkRegular className="shield-checkmark-regular" />
             <Link
               className="msla-protectedmessage-link"
-              onClick={() => window.open('https://learn.microsoft.com/en-us/bing-chat-enterprise/privacy-and-protections', '_blank')}
+              onClick={() => window.open('https://aka.ms/azurecopilot/privacystatement', '_blank')}
               isUnderlinedStyle={true}
             >
               {protectedPillText}
