@@ -21,7 +21,7 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     subHeading2: intl.formatMessage({
-      defaultMessage: 'Some things you can say:',
+      defaultMessage: 'Some things you can ask:',
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     suggestedPromptItem1: intl.formatMessage({
