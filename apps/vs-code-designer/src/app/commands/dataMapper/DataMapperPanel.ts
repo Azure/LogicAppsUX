@@ -2,7 +2,6 @@ import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
-import DataMapperExt from './DataMapperExt';
 import {
   dataMapDefinitionsPath,
   dataMapsPath,
@@ -72,7 +71,7 @@ export default class DataMapperPanel {
 
   private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
     // Watch folder for changes to update available file list within Data Mapper
-    const absoluteFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath);
+    const absoluteFolderPath = path.join(ext.logicAppWorkspace, folderPath);
     if (fileExistsSync(absoluteFolderPath)) {
       const folderWatcher = workspace.createFileSystemWatcher(new RelativePattern(absoluteFolderPath, `**/*.{${fileExtensions.join()}}`));
       folderWatcher.onDidCreate(fn);
@@ -174,7 +173,7 @@ export default class DataMapperPanel {
   }
 
   public getNestedFilePaths(fileName: string, parentPath: string, relativePath: string, filesToDisplay: string[], filetypes: string[]) {
-    const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), relativePath);
+    const rootPath = path.join(ext.logicAppWorkspace, relativePath);
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       readdirSync(absolutePath).forEach((childFileName) => {
@@ -195,14 +194,14 @@ export default class DataMapperPanel {
   }
 
   public handleReadAvailableFunctionPaths() {
-    const absoluteFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), customXsltPath);
+    const absoluteFolderPath = path.join(ext.logicAppWorkspace, customXsltPath);
     if (fileExistsSync(absoluteFolderPath)) {
       return this.getFilesForPath(customXsltPath, 'getAvailableCustomXsltPaths', supportedCustomXsltFileExts);
     }
   }
 
   private getFilesForPath(folderPath: string, command: 'showAvailableSchemas' | 'getAvailableCustomXsltPaths', fileTypes: string[]) {
-    fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath)).then((result) => {
+    fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
         this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
@@ -218,7 +217,7 @@ export default class DataMapperPanel {
     callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapAddSchemaFromFile, (_context: IActionContext) => {
       fs.readFile(filePath, 'utf8').then((text: string) => {
         const primarySchemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-        const expectedPrimarySchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, primarySchemaFileName);
+        const expectedPrimarySchemaPath = path.join(ext.logicAppWorkspace, schemasPath, primarySchemaFileName);
 
         // Examine the loaded text for the 'schemaLocation' attribute to auto-load in any dependencies too
         // NOTE: We only check in the same directory as the primary schema file (also, it doesn't attempt to deal with complicated paths/URLs, just filenames)
@@ -245,7 +244,7 @@ export default class DataMapperPanel {
           }
 
           // Check that the schema file dependency doesn't already exist in the Schemas folder
-          const expectedSchemaFilePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFile);
+          const expectedSchemaFilePath = path.join(ext.logicAppWorkspace, schemasPath, schemaFile);
           if (!fileExistsSync(expectedSchemaFilePath)) {
             copyFileSync(schemaFilePath, expectedSchemaFilePath);
           }
@@ -270,7 +269,7 @@ export default class DataMapperPanel {
       this.deleteDraftDataMapDefinition();
 
       const fileName = `${this.dataMapName}${mapDefinitionExtension}`;
-      const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath);
+      const dataMapFolderPath = path.join(ext.logicAppWorkspace, dataMapDefinitionsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
 
       // Mkdir as extra insurance that directory exists so file can be written
@@ -300,7 +299,7 @@ export default class DataMapperPanel {
   public saveMapXslt(mapXslt: string) {
     callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapXslt, (_context: IActionContext) => {
       const fileName = `${this.dataMapName}${mapXsltExtension}`;
-      const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath);
+      const dataMapFolderPath = path.join(ext.logicAppWorkspace, dataMapsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
 
       // Mkdir as extra insurance that directory exists so file can be written
@@ -324,7 +323,7 @@ export default class DataMapperPanel {
 
   public saveDraftDataMapDefinition(mapDefFileContents: string) {
     const mapDefileName = `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`;
-    const dataMapDefFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath);
+    const dataMapDefFolderPath = path.join(ext.logicAppWorkspace, dataMapDefinitionsPath);
     const filePath = path.join(dataMapDefFolderPath, mapDefileName);
 
     // Mkdir as extra insurance that directory exists so file can be written
@@ -367,7 +366,7 @@ export default class DataMapperPanel {
 
   public deleteDraftDataMapDefinition() {
     const draftMapDefinitionPath = path.join(
-      DataMapperExt.getWorkspaceFolderFsPath(),
+      ext.logicAppWorkspace,
       dataMapDefinitionsPath,
       `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`
     );
@@ -377,7 +376,7 @@ export default class DataMapperPanel {
   }
 
   public checkAndSetXslt() {
-    const expectedXsltPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
+    const expectedXsltPath = path.join(ext.logicAppWorkspace, dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
 
     if (fileExistsSync(expectedXsltPath)) {
       fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
@@ -404,7 +403,7 @@ export default class DataMapperPanel {
   }
 
   private getMapMetadataPath() {
-    const projectPath = DataMapperExt.getWorkspaceFolderFsPath();
+    const projectPath = ext.logicAppWorkspace;
     const vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
     return vscodeFolderPath;
   }

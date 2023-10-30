@@ -24,6 +24,7 @@ export namespace ext {
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
   export let dataMapperRuntimePort: number;
   export let dataMapperChildProcess: cp.ChildProcess | undefined;
+  export let logicAppWorkspace: string;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
   export let extensionVersion: string;
