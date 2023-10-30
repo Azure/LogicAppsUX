@@ -207,6 +207,12 @@ export enum DependencyVersion {
   nodeJs = '18.17.1',
 }
 
+export enum DependencyDefaultPath {
+  dotnet = 'dotnet',
+  funcCoreTools = 'func',
+  node = 'node',
+}
+
 // .NET
 export enum DotnetVersion {
   net6 = 'net6.0',

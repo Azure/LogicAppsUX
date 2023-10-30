@@ -109,6 +109,16 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
     const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
     const releaseArgs: string[] = ['--configuration', 'Release'];
     const funcBinariesExist = binariesExist(funcDependencyName);
+    const binariesOptions = funcBinariesExist
+      ? {
+          options: {
+            cwd: this.debugSubpath,
+            env: {
+              PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;$env:PATH',
+            },
+          },
+        }
+      : {};
     return [
       {
         label: 'clean',
@@ -148,12 +158,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
         label: 'func: host start',
         type: funcBinariesExist ? 'shell' : func,
         dependsOn: 'build',
-        options: {
-          cwd: this.debugSubpath,
-          env: {
-            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;$env:PATH',
-          },
-        },
+        ...binariesOptions,
         command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
         args: funcBinariesExist ? ['host', 'start'] : undefined,
         isBackground: true,

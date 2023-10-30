@@ -15,6 +15,15 @@ export class WorkflowInitVSCodeStep extends ScriptInitVSCodeStep {
 
   protected getTasks(): TaskDefinition[] {
     const funcBinariesExist = binariesExist(funcDependencyName);
+    const binariesOptions = funcBinariesExist
+      ? {
+          options: {
+            env: {
+              PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;$env:PATH',
+            },
+          },
+        }
+      : {};
     return [
       {
         label: 'generateDebugSymbols',
@@ -27,11 +36,7 @@ export class WorkflowInitVSCodeStep extends ScriptInitVSCodeStep {
         type: funcBinariesExist ? 'shell' : func,
         command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
         args: funcBinariesExist ? ['host', 'start'] : undefined,
-        options: {
-          env: {
-            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;$env:PATH',
-          },
-        },
+        ...binariesOptions,
         problemMatcher: funcWatchProblemMatcher,
         isBackground: true,
         label: 'func: host start',
