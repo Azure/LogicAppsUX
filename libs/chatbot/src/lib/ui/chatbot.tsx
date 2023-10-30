@@ -81,7 +81,7 @@ export const Chatbot = ({
   const intlText = useMemo(() => {
     return {
       chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask a question or describe how you want to change this flow',
+        defaultMessage: 'Ask a question about this workflow or about Logic Apps as a whole',
         description: 'Chabot input placeholder text',
       }),
       submitButtonTitle: intl.formatMessage({
