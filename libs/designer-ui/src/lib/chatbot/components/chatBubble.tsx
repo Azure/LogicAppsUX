@@ -1,7 +1,7 @@
 import constants from '../constants';
 import { animations } from './animations';
 import { ThumbsReactionButton } from './thumbsReactionButton';
-import { ActionButton, css } from '@fluentui/react';
+import { ActionButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -38,6 +38,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isEmphasized,
 }) => {
   const intl = useIntl();
+  const { isInverted } = useTheme();
   const intlText = {
     aIGeneratedDisclaimer: intl.formatMessage({
       defaultMessage: 'AI-generated content may be incorrect',
@@ -61,7 +62,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
             <div className={'msla-bubble-footer-actions'}>
               {additionalFooterActions.map((action, i) => (
                 <div key={i} className={'msla-bubble-actions-footer'}>
-                  <ActionButton {...action} disabled={disabled || action.disabled} styles={footerButtonStyles} />
+                  <ActionButton {...action} disabled={disabled || action.disabled} styles={getFooterButtonStyles(isInverted)} />
                 </div>
               ))}
             </div>
@@ -93,35 +94,37 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
 
 const USER_MESSAGE_CLASS = 'is-user-message';
 
-const footerButtonStyles: IButtonStyles = {
-  root: {
-    color: constants.NEUTRAL_PRIMARY,
-    alignItems: 'center',
-    border: `1px solid ${constants.NEUTRAL_TERTIARY}`,
-    borderRadius: 4,
-    padding: '2px 8px',
-    lineHeight: 16,
-    height: '28px',
-  },
-  rootDisabled: {
-    backgroundColor: constants.NEUTRAL_LIGHTER,
-    color: '#BDBDBD',
-  },
-  rootHovered: {
-    backgroundColor: constants.NEUTRAL_LIGHTER,
-    color: constants.NEUTRAL_PRIMARY_ALT,
-  },
-  rootPressed: {
-    backgroundColor: constants.NEUTRAL_LIGHTER,
-    color: constants.NEUTRAL_PRIMARY,
-  },
-  icon: {
-    color: constants.NEUTRAL_PRIMARY,
-  },
-  iconHovered: {
-    color: constants.NEUTRAL_PRIMARY_ALT,
-  },
-  iconPressed: {
-    color: constants.NEUTRAL_PRIMARY,
-  },
+const getFooterButtonStyles = (isInverted?: boolean): IButtonStyles => {
+  return {
+    root: {
+      color: isInverted ? constants.DARK_PRIMARY : constants.NEUTRAL_PRIMARY,
+      alignItems: 'center',
+      border: `1px solid ${constants.NEUTRAL_TERTIARY}`,
+      borderRadius: 4,
+      padding: '2px 8px',
+      lineHeight: 16,
+      height: '28px',
+    },
+    rootDisabled: {
+      backgroundColor: constants.NEUTRAL_LIGHTER,
+      color: '#BDBDBD',
+    },
+    rootHovered: {
+      backgroundColor: isInverted ? constants.NEUTRAL_PRIMARY : constants.NEUTRAL_LIGHTER,
+      color: isInverted ? constants.DARK_PRIMARY : constants.NEUTRAL_PRIMARY_ALT,
+    },
+    rootPressed: {
+      backgroundColor: constants.NEUTRAL_LIGHTER,
+      color: constants.NEUTRAL_PRIMARY,
+    },
+    icon: {
+      color: constants.NEUTRAL_PRIMARY,
+    },
+    iconHovered: {
+      color: constants.NEUTRAL_PRIMARY_ALT,
+    },
+    iconPressed: {
+      color: constants.NEUTRAL_PRIMARY,
+    },
+  };
 };

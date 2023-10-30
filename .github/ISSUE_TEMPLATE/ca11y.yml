@@ -1,6 +1,6 @@
 name: 'Report an accessibility issue'
 description: Create a report to help us improve Logic Apps
-labels: ["a11y", "triage"]
+labels: ['a11y', 'triage']
 body:
   - type: textarea
     id: description
@@ -23,7 +23,6 @@ body:
         - Old Designer (With the properties on the actual card)
     validations:
       required: true
-
 
   - type: textarea
     id: screenshots_or_videos

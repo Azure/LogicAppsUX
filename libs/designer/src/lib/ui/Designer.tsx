@@ -208,7 +208,7 @@ export const Designer = (props: DesignerProps) => {
   };
 
   const copilotPadding: CSSProperties = {
-    paddingLeft: props.rightShift,
+    marginLeft: props.rightShift,
   };
 
   return (

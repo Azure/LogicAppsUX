@@ -1,6 +1,6 @@
 import constants from '../constants';
 import type { IStyle } from '@fluentui/react';
-import { keyframes, mergeStyleSets } from '@fluentui/react';
+import { keyframes, mergeStyleSets, useTheme } from '@fluentui/react';
 import React from 'react';
 
 type ContainerWithProgressBarProps = {
@@ -16,7 +16,8 @@ export const ContainerWithProgressBar: React.FC<ContainerWithProgressBarProps> =
   styles,
   dataAutomationId,
 }) => {
-  const containerClassNames = mergeStyleSets(getContainerStyles(), styles);
+  const { isInverted } = useTheme();
+  const containerClassNames = mergeStyleSets(getContainerStyles(isInverted), styles);
   return (
     <div className={containerClassNames.root} data-automation-id={dataAutomationId}>
       <div className={containerClassNames.content}>{children}</div>
@@ -54,10 +55,10 @@ export interface IContainerWithProgressBarStyles {
   progressBar: IStyle;
 }
 
-const getContainerStyles = () => {
+const getContainerStyles = (isInverted?: boolean) => {
   return {
     root: {
-      background: constants.WHITE,
+      background: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
       boxShadow: constants.ELEVATION4,
       display: 'flex',
       flexDirection: 'column',
