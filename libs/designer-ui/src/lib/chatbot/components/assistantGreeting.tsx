@@ -68,10 +68,6 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
       defaultMessage: 'Copilot doesn’t store or use your data.',
       description: 'Chatbot disclaimer message that Copilot does not gather data',
     }),
-    saveYourFlow: intl.formatMessage({
-      defaultMessage: 'Check the flow’s actions to see if any parameters need to be set. Don’t forget to save when you’re done!',
-      description: 'Chatbot suggestion to user to check if parameters need to be set in the workflow actions and to save',
-    }),
   };
 
   const getSpecificGreetingPart = (origin: FlowOrigin) => {
