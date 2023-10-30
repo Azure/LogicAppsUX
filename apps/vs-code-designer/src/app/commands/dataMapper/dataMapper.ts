@@ -32,7 +32,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   if (!mapDefinitionPath) {
     const fileUris = await window.showOpenDialog({
       title: 'Select a data map definition to load',
-      defaultUri: Uri.file(path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath)),
+      defaultUri: Uri.file(path.join(ext.logicAppWorkspace, dataMapDefinitionsPath)),
       canSelectMany: false,
       canSelectFiles: true,
       canSelectFolders: false,
@@ -96,7 +96,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   }
 
   // Attempt to load schema files if specified
-  const schemasFolder = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
+  const schemasFolder = path.join(ext.logicAppWorkspace, schemasPath);
   const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
   const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 

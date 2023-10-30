@@ -1,16 +1,17 @@
 # Logic Apps Designer
-## [2.78.0](https://github.com/Azure/LogicAppsUX/compare/v2.77.0...v2.78.0) (2023-10-28)
 
+## [2.78.0](https://github.com/Azure/LogicAppsUX/compare/v2.77.0...v2.78.0) (2023-10-28)
 
 ### Features
 
-* **copilot:** Copilot Fixtures ([#3557](https://github.com/Azure/LogicAppsUX/issues/3557)) ([09c3783](https://github.com/Azure/LogicAppsUX/commit/09c37831cdc10cbd6dac18328acfb8405aadb20d))
+- **copilot:** Copilot Fixtures ([#3557](https://github.com/Azure/LogicAppsUX/issues/3557)) ([09c3783](https://github.com/Azure/LogicAppsUX/commit/09c37831cdc10cbd6dac18328acfb8405aadb20d))
 
+## [2.77.0](https://github.com/Azure/LogicAppsUX/compare/v2.76.0...v2.77.0) (2023-10-27)
 
 ### Bug Fixes
 
-* **designer:** Make info bubbles in settings work with screen reader ([#3555](https://github.com/Azure/LogicAppsUX/issues/3555)) ([9378775](https://github.com/Azure/LogicAppsUX/commit/93787757400d7dad6bae3f6f01ca568bf21a2207))
-* **designer:** Remove action type filtering for where the prefetched operations is empty ([#3542](https://github.com/Azure/LogicAppsUX/issues/3542)) ([e49a5f7](https://github.com/Azure/LogicAppsUX/commit/e49a5f79c546510e3c1473f90c8794ad8c59faa6))
+- **designer:** Make info bubbles in settings work with screen reader ([#3555](https://github.com/Azure/LogicAppsUX/issues/3555)) ([9378775](https://github.com/Azure/LogicAppsUX/commit/93787757400d7dad6bae3f6f01ca568bf21a2207))
+- **designer:** Remove action type filtering for where the prefetched operations is empty ([#3542](https://github.com/Azure/LogicAppsUX/issues/3542)) ([e49a5f7](https://github.com/Azure/LogicAppsUX/commit/e49a5f79c546510e3c1473f90c8794ad8c59faa6))
 
 ## [2.77.0](https://github.com/Azure/LogicAppsUX/compare/v2.76.0...v2.77.0) (2023-10-27)
 
