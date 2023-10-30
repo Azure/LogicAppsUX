@@ -8,10 +8,6 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const intl = useIntl();
   const intlText = {
-    greetingMessageFromNL2Flow: intl.formatMessage({
-      defaultMessage: 'Here’s your flow. If you want me to change it, just say what you want. For example:',
-      description: 'Chatbot greeting message from NL2 flow',
-    }),
     greetingMessageFromOpenedFlow: intl.formatMessage({
       defaultMessage: 'Welcome to Copilot in Azure Logic Apps!',
       description: 'Chatbot greeting message from existing flow',
@@ -48,8 +44,6 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
 
   const getSpecificGreetingPart = (origin: FlowOrigin) => {
     switch (origin) {
-      case FlowOrigin.FromNL2Flow:
-        return intlText.greetingMessageFromNL2Flow;
       case FlowOrigin.Default:
       default:
         return intlText.greetingMessageFromOpenedFlow;

@@ -1,5 +1,5 @@
 import constants from '../constants';
-import { FontSizes, IconButton, mergeStyles, mergeStyleSets, TextField } from '@fluentui/react';
+import { FontSizes, IconButton, mergeStyles, mergeStyleSets, TextField, useTheme } from '@fluentui/react';
 import type { IButtonProps, IStyle, ITextField, ITextFieldStyles } from '@fluentui/react';
 import type { FC, FormEvent, FocusEvent, KeyboardEventHandler, RefObject } from 'react';
 import { useCallback } from 'react';
@@ -39,7 +39,8 @@ export const ChatInput: FC<IChatInputProps> = ({
   role,
   styles,
 }) => {
-  const chatInputStyles = getChatInputStyles();
+  const { isInverted } = useTheme();
+  const chatInputStyles = getChatInputStyles(isInverted);
 
   const rootClassName = mergeStyles(chatInputStyles.root, styles?.root);
   const charCounterClassName = mergeStyles(chatInputStyles.charCounter, styles?.charCounter);
@@ -97,7 +98,7 @@ export interface IChatInputStyles {
   footer: IStyle;
 }
 
-const getChatInputStyles = (): IChatInputStyles => {
+const getChatInputStyles = (isInverted?: boolean): IChatInputStyles => {
   return {
     root: {
       display: 'flex',
@@ -107,27 +108,27 @@ const getChatInputStyles = (): IChatInputStyles => {
       borderColor: constants.NEUTRAL_TERTIARY,
       borderRadius: 8,
       padding: 5,
-      backgroundColor: constants.WHITE,
+      backgroundColor: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
     },
     textField: {
       fieldGroup: {
-        backgroundColor: constants.WHITE,
+        backgroundColor: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
       },
       field: {
         paddingBottom: 16,
-        backgroundColor: constants.WHITE,
+        backgroundColor: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
         ':disabled': {
-          backgroundColor: constants.WHITE,
+          backgroundColor: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
         },
         '::placeholder, :-ms-input-placeholder, ::-ms-input-placeholder': {
-          color: constants.NEUTRAL_SECONDARY_ALT,
+          color: isInverted ? constants.GRAY : constants.NEUTRAL_SECONDARY_ALT,
           opacity: 1, // Firefox adds a lower opacity to the placeholder, so we use opacity: 1 to fix this.,
         },
       },
     },
     charCounter: {
       fontSize: FontSizes.small,
-      color: constants.NEUTRAL_SECONDARY_ALT,
+      color: isInverted ? constants.GRAY : constants.NEUTRAL_SECONDARY_ALT,
       textAlign: 'left',
       paddingLeft: 8,
       width: 'fit-content',
