@@ -25,27 +25,6 @@
             "properties": "Repeating",
             "children": [
               {
-                "key": "/ns0:bookstore/ns0:book/ns0:book2/@genre",
-                "name": "genre",
-                "type": "String",
-                "properties": "Attribute",
-                "qName": "@genre"
-              },
-              {
-                "key": "/ns0:bookstore/ns0:book/ns0:book2/@publicationdate",
-                "name": "publicationdate",
-                "type": "DateTime",
-                "properties": "Attribute",
-                "qName": "@publicationdate"
-              },
-              {
-                "key": "/ns0:bookstore/ns0:book/ns0:book2/@ISBN",
-                "name": "ISBN",
-                "type": "String",
-                "properties": "Attribute",
-                "qName": "@ISBN"
-              },
-              {
                 "key": "/ns0:bookstore/ns0:book/ns0:book2/ns0:book3",
                 "name": "book3",
                 "type": "Complex",
@@ -60,13 +39,6 @@
                   }
                 ],
                 "qName": "ns0:book3"
-              },
-              {
-                "key": "/ns0:bookstore/ns0:book/ns0:book2/ns0:title",
-                "name": "title",
-                "type": "String",
-                "properties": "None",
-                "qName": "ns0:title"
               },
               {
                 "key": "/ns0:bookstore/ns0:book/ns0:book2/ns0:author",
@@ -97,13 +69,6 @@
                   }
                 ],
                 "qName": "ns0:author"
-              },
-              {
-                "key": "/ns0:bookstore/ns0:book/ns0:book2/ns0:price",
-                "name": "price",
-                "type": "Decimal",
-                "properties": "None",
-                "qName": "ns0:price"
               }
             ],
             "qName": "ns0:book2"

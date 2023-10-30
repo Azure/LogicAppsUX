@@ -8,6 +8,7 @@ import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/Reac
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 import {
+  deepNestedSequenceAndObject,
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
   sourceMockJsonSchema,
@@ -700,6 +701,84 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(simpleChildChildEntries.length).toEqual(1);
         expect(simpleChildChildEntries[0][0]).toEqual('Direct');
         expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
+      });
+
+      it('generates body with nested loop bug', () => {
+        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
+        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
+        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
+        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
+
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        // source nodes
+        const book1Seq = extendedComprehensiveSourceSchema.schemaTreeRoot.children[0];
+        const book2Seq = book1Seq.children[0];
+        const book3Seq = book2Seq.children[0];
+        const book3Name = book3Seq.children[0];
+        const authObj = book2Seq.children[1];
+        const authorName = authObj.children[1];
+
+        // target nodes
+        const personLoop = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[0]; // root/looping/employee/person
+        const personName = personLoop.children[0];
+        const personAddress = personLoop.children[1];
+
+        // add 'loop' connections
+        applyConnectionValue(connections, {
+          targetNode: personLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(personLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book1Seq.key, SchemaType.Source),
+            node: book1Seq,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: personLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(personLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book2Seq.key, SchemaType.Source),
+            node: book2Seq,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: personLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(personLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book3Seq.key, SchemaType.Source),
+            node: book3Seq,
+          },
+        });
+
+        // apply direct connections
+        applyConnectionValue(connections, {
+          targetNode: personName,
+          targetNodeReactFlowKey: addReactFlowPrefix(personName.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(authorName.key, SchemaType.Source),
+            node: authorName,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: personAddress,
+          targetNodeReactFlowKey: addReactFlowPrefix(personAddress.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book3Name.key, SchemaType.Source),
+            node: book3Name,
+          },
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections);
+        console.log('a');
       });
 
       it('Generates body with many to one nested loops', () => {
