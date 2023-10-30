@@ -64,7 +64,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Klistra in det senast använda uttrycket"
     }
   ],
   "+mAJR3": [
@@ -1019,12 +1019,6 @@
     {
       "type": 0,
       "value": "Växla miniatyröversikt"
-    }
-  ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker är dolt"
     }
   ],
   "4vcnOA": [
@@ -3003,12 +2997,6 @@
       "value": "Välj en befintlig anslutningsreferens eller skapa en ny."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker visas"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3467,6 +3455,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängtidsstämpels veckokomponent"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5945,6 +5939,12 @@
       "value": "Lägg till nytt objekt"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -7000,7 +7000,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "Redigera flöde"
     }
   ],
   "hza/cT": [
@@ -7604,7 +7604,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Dölj"
     }
   ],
   "lZT0JI": [
@@ -8124,7 +8124,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Visa"
     }
   ],
   "odQ554": [
@@ -8239,6 +8239,12 @@
     {
       "type": 0,
       "value": "Krävs. Talet att dela nämnaren med. Efter divisionen tas resten."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8976,7 +8982,7 @@
   "tu4TTM": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Förhandsversion"
     }
   ],
   "u81zB9": [
@@ -9315,12 +9321,6 @@
     {
       "type": 0,
       "value": "Det här innehåller ett dubblettvärde"
-    }
-  ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9855,12 +9855,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamtjatskij - gammal"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Collapse"
     }
   ],
   "zb3lE6": [

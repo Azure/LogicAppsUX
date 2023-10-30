@@ -1,5 +1,7 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
+import { stopDataMapperBackend } from './app/commands/dataMapper/FxWorkflowRuntime';
+import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -29,6 +31,17 @@ const perfStats = {
 };
 
 export async function activate(context: vscode.ExtensionContext) {
+  vscode.commands.executeCommand(
+    'setContext',
+    extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts,
+    supportedDataMapDefinitionFileExts
+  );
+  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedSchemaFileExts, supportedSchemaFileExts);
+  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedFileExts, [
+    ...supportedDataMapDefinitionFileExts,
+    ...supportedSchemaFileExts,
+  ]);
+
   ext.context = context;
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
@@ -76,6 +89,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate(): Promise<any> {
   stopDesignTimeApi();
+  stopDataMapperBackend();
   return undefined;
 }
 

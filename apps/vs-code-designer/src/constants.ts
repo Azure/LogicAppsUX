@@ -18,6 +18,9 @@ export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 
+// Folder names
+export const workflowDesignTimeDir = '/workflow-designtime';
+
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
 // Functions
@@ -67,6 +70,7 @@ export enum extensionCommand {
   openFile = 'azureLogicAppsStandard.openFile',
   createNewProject = 'azureLogicAppsStandard.createNewProject',
   createNewCodeProject = 'azureLogicAppsStandard.createNewCodeProject',
+  createNewDataMap = 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createCodeless = 'azureLogicAppsStandard.createCodeless',
   createLogicApp = 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced = 'azureLogicAppsStandard.createLogicAppAdvanced',
@@ -117,6 +121,14 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
+  loadDataMapFile = 'azureLogicAppsStandard.dataMap.loadDataMapFile',
+  dataMapAddSchemaFromFile = 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
+  dataMapAttemptToResolveMissingSchemaFile = 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
+  dataMapSetSupportedDataMapDefinitionFileExts = 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
+  dataMapSetSupportedSchemaFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
+  dataMapSetSupportedFileExts = 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
+  dataMapSaveMapDefinition = 'azureLogicAppsStandard.dataMap.saveMapDefinition',
+  dataMapSaveMapXslt = 'azureLogicAppsStandard.dataMap.saveMapXslt',
 }
 
 // Context
@@ -163,6 +175,20 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+export const hostFileContent = {
+  version: '2.0',
+  extensionBundle: {
+    id: extensionBundleId,
+    version: defaultVersionRange,
+  },
+  extensions: {
+    workflow: {
+      settings: {
+        'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+      },
+    },
+  },
+};
 
 // .NET
 export enum DotnetVersion {

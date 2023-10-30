@@ -47,7 +47,7 @@ import type {
   Edge as ReactFlowEdge,
   Node as ReactFlowNode,
 } from 'reactflow';
-import ReactFlow, { ConnectionLineType, useKeyPress, useNodesState } from 'reactflow';
+import { ReactFlow, ConnectionLineType, useKeyPress, useNodesState } from 'reactflow';
 import { ActionCreators } from 'redux-undo';
 
 type CanvasExtent = [[number, number], [number, number]];

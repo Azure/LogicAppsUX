@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.75.0",
+  "version": "2.78.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -305,6 +305,15 @@
         "command": "azureLogicAppsStandard.reportIssue",
         "title": "Report Issue...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
+        "title": "Data Mapper: Create new data map",
+        "icon": "$(add)"
+      },
+      {
+        "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
+        "title": "Data Mapper: Load existing data map"
       }
     ],
     "submenus": [
@@ -315,6 +324,24 @@
           "dark": "assets/logicapp.png"
         },
         "label": "Azure Logic Apps"
+      },
+      {
+        "id": "azureLogicAppsStandard.dataMapperMenu",
+        "label": "Data Mapper"
+      }
+    ],
+    "views": {
+      "azure": [
+        {
+          "id": "azDataMapper",
+          "name": "Data Mapper"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "azDataMapper",
+        "contents": "[Create new data map](command:azureLogicAppsStandard.dataMap.createNewDataMap)\n[Load existing data map](command:azureLogicAppsStandard.dataMap.loadDataMapFile)"
       }
     ],
     "menus": {
@@ -346,6 +373,11 @@
           "submenu": "azureLogicAppsStandard.submenus.workspaceActions",
           "when": "view == azureWorkspace",
           "group": "navigation@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
+          "when": "view == azDataMapper",
+          "group": "navigation@1"
         }
       ],
       "view/item/context": [
@@ -610,6 +642,11 @@
           "command": "azureLogicAppsStandard.enableAzureConnectors",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@2"
+        },
+        {
+          "submenu": "azureLogicAppsStandard.dataMapperMenu",
+          "group": "navigation",
+          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedFileExts"
         }
       ],
       "commandPalette": [
@@ -644,6 +681,13 @@
         {
           "command": "azureLogicAppsStandard.viewProperties",
           "when": "never"
+        }
+      ],
+      "azureLogicAppsStandard.dataMapperMenu": [
+        {
+          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
+          "group": "navigation",
+          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         }
       ]
     },
@@ -770,6 +814,11 @@
             "type": "boolean",
             "description": "Show a warning when an Azure Functions .NET project was detected that has mismatched target frameworks.",
             "default": true
+          },
+          "azureLogicAppsStandard.useExpandedFunctionCards": {
+            "type": "boolean",
+            "default": true,
+            "description": "Default the data mapper to use the expanded function cards."
           }
         }
       }
@@ -828,6 +877,7 @@
     "onCommand:azureLogicAppsStandard.startRemoteDebug",
     "onView:azureWorkspace",
     "onView:azureResourceGroups",
+    "onView:azDataMapper",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
     "onDebugInitialConfigurations"

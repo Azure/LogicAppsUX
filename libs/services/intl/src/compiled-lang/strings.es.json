@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Pegar la última expresión usada"
     }
   ],
   "+mAJR3": [
@@ -1019,12 +1019,6 @@
     {
       "type": 0,
       "value": "Alternar minimapa"
-    }
-  ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Botón para agregar contenido dinámico si TokenPicker está oculto"
     }
   ],
   "4vcnOA": [
@@ -3021,12 +3015,6 @@
       "value": "Seleccione una referencia de conexión existente o cree una nueva."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Botón para agregar contenido dinámico si se muestra TokenPicker"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3496,6 +3484,12 @@
     {
       "type": 0,
       "value": "Devuelve el componente de día de la semana de la marca de tiempo de una cadena."
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -6001,6 +5995,12 @@
       "value": "Agregar nuevo elemento"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -7071,7 +7071,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "Editar flujo"
     }
   ],
   "hza/cT": [
@@ -7686,7 +7686,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Contraer"
     }
   ],
   "lZT0JI": [
@@ -8198,7 +8198,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "odQ554": [
@@ -8313,6 +8313,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El número por el cual se dividirá el dividendo. Después de la división, se tomará el resto."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -9069,7 +9075,7 @@
   "tu4TTM": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Versión preliminar"
     }
   ],
   "u81zB9": [
@@ -9408,12 +9414,6 @@
     {
       "type": 0,
       "value": "Contiene un valor duplicado"
-    }
-  ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9940,12 +9940,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropávlovsk-Kamchatski - Antiguo"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Collapse"
     }
   ],
   "zb3lE6": [

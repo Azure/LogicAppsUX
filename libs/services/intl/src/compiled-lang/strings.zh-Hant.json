@@ -1021,12 +1021,6 @@
       "value": "切換縮圖"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "當 TokenPicker 隱藏時新增動態內容的按鈕"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -2965,12 +2959,6 @@
       "value": "選取現有的連接參考或建立新的連接參考。"
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "當 TokenPicker 顯示時新增動態內容的按鈕"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3418,6 +3406,12 @@
     {
       "type": 0,
       "value": "傳回字串時間戳記當週第幾天的部分"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5909,6 +5903,12 @@
       "value": "新增項目"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6949,7 +6949,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "編輯流程"
     }
   ],
   "hza/cT": [
@@ -7542,7 +7542,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "摺疊"
     }
   ],
   "lZT0JI": [
@@ -8054,7 +8054,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開"
     }
   ],
   "odQ554": [
@@ -8169,6 +8169,12 @@
     {
       "type": 0,
       "value": "必要。要除以被除數的數字。除完之後會捨去餘數。"
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8903,7 +8909,7 @@
   "tu4TTM": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "預覽"
     }
   ],
   "u81zB9": [
@@ -9242,12 +9248,6 @@
     {
       "type": 0,
       "value": "這包含重複的值"
-    }
-  ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9786,12 +9786,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 彼得保羅夫斯克-堪察加斯克 - 已過時"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Collapse"
     }
   ],
   "zb3lE6": [

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",

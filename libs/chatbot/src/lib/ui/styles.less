@@ -8,18 +8,16 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background-color: rgb(250, 249, 248);
+  background-color: rgb(255, 255, 255);
 }
 
 .msla-chatbot-header {
-  height: 50px;
   display: flex;
   flex-direction: row;
   padding: 10px;
   align-items: center;
-  font-size: large;
+  font-size: xx-large;
   font-weight: bold;
-  box-shadow: rgba(0, 0, 0, 0.133) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px 0px;
   z-index: 1;
 }
 
@@ -31,10 +29,22 @@
   color: #2899f5;
 }
 
-.msla-chatbot-header-title {
-  display: flex;
-  padding-left: 10px;
-  padding-right: 20px;
+.msla-chatbot-header-title-container {
+  .msla-chatbot-header-title {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 28px;
+    margin: 0px 12px;
+  }
+
+  .msla-chatbot-header-subtitle {
+    margin-left: 14px;
+    width: fit-content;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 20px;
+    line-height: 15px;
+  }
 }
 
 .msla-chatbot-header-mode-pill {
@@ -48,6 +58,15 @@
   background-color: rgb(234, 234, 234);
   border-radius: 20px;
   padding: 3.5px 8px;
+  line-height: 15px;
+}
+
+.msla-chatbot-header-subtitle {
+  margin-left: 14px;
+  width: fit-content;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 20px;
   line-height: 15px;
 }
 

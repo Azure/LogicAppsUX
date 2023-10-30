@@ -1031,12 +1031,6 @@
       "value": "Toggle Minimap"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -3009,12 +3003,6 @@
       "value": "Select an existing connection reference or create a new one."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3473,6 +3461,12 @@
     {
       "type": 0,
       "value": "Returns the day of week component of a string timestamp"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5973,6 +5967,12 @@
       "value": "Add new item"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8265,6 +8265,12 @@
       "value": "Required. The number to divide the Dividend by. After the division, the remainder is taken."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9349,12 +9355,6 @@
       "value": "This contains a duplicate value"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expand"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9891,12 +9891,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Collapse"
     }
   ],
   "zb3lE6": [

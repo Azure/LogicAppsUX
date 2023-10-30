@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Son kullanılan ifadeyi yapıştır"
     }
   ],
   "+mAJR3": [
@@ -1011,12 +1011,6 @@
     {
       "type": 0,
       "value": "Mini Haritayı Aç/Kapat"
-    }
-  ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "TokenPicker gizliyse dinamik içerik ekleme düğmesi"
     }
   ],
   "4vcnOA": [
@@ -2987,12 +2981,6 @@
       "value": "Mevcut bir bağlantı başvurusu seçin veya yeni bir başvuru oluşturun."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "TokenPicker gösteriliyorsa dinamik içerik ekleme düğmesi"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3451,6 +3439,12 @@
     {
       "type": 0,
       "value": "Bir dize zaman damgası için haftanın günü bileşenini döndürür"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5945,6 +5939,12 @@
       "value": "Yeni öğe ekle"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6992,7 +6992,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "Akışı düzenle"
     }
   ],
   "hza/cT": [
@@ -7592,7 +7592,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Daralt"
     }
   ],
   "lZT0JI": [
@@ -8112,7 +8112,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Genişlet"
     }
   ],
   "odQ554": [
@@ -8227,6 +8227,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bölünenin bölüneceği sayı. Bölme işleminden sonra kalan alınır."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8968,7 +8974,7 @@
   "tu4TTM": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Önizleme"
     }
   ],
   "u81zB9": [
@@ -9303,12 +9309,6 @@
     {
       "type": 0,
       "value": "Bu yinelenen bir değer içeriyor"
-    }
-  ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9843,12 +9843,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Eski"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Collapse"
     }
   ],
   "zb3lE6": [

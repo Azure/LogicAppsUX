@@ -60,7 +60,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Tempel ekspresi yang terakhir digunakan"
     }
   ],
   "+mAJR3": [
@@ -1011,12 +1011,6 @@
     {
       "type": 0,
       "value": "Hidupkan/Matikan Peta Mini"
-    }
-  ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Tombol untuk menambahkan konten dinamis jika TokenPicker disembunyikan"
     }
   ],
   "4vcnOA": [
@@ -2969,12 +2963,6 @@
       "value": "Pilih referensi koneksi yang sudah ada atau buat baru."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Tombol untuk menambahkan konten dinamis jika TokenPicker ditampilkan"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3422,6 +3410,12 @@
     {
       "type": 0,
       "value": "Menampilkan komponen jumlah hari dalam seminggu dari tanda waktu string"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5905,6 +5899,12 @@
       "value": "Tambahkan item baru"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6945,7 +6945,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "Edit alur"
     }
   ],
   "hza/cT": [
@@ -7538,7 +7538,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Ciutkan"
     }
   ],
   "lZT0JI": [
@@ -8058,7 +8058,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Luaskan"
     }
   ],
   "odQ554": [
@@ -8173,6 +8173,12 @@
     {
       "type": 0,
       "value": "Wajib. Nomor untuk membagi Dividen. Setelah dibagi, sisanya diambil."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8907,7 +8913,7 @@
   "tu4TTM": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Pratinjau"
     }
   ],
   "u81zB9": [
@@ -9246,12 +9252,6 @@
     {
       "type": 0,
       "value": "Berisi nilai duplikat"
-    }
-  ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9786,12 +9786,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Lama"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Collapse"
     }
   ],
   "zb3lE6": [
