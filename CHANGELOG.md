@@ -6,6 +6,8 @@
 
 - **copilot:** Copilot Fixtures ([#3557](https://github.com/Azure/LogicAppsUX/issues/3557)) ([09c3783](https://github.com/Azure/LogicAppsUX/commit/09c37831cdc10cbd6dac18328acfb8405aadb20d))
 
+## [2.77.0](https://github.com/Azure/LogicAppsUX/compare/v2.76.0...v2.77.0) (2023-10-27)
+
 ### Bug Fixes
 
 - **designer:** Make info bubbles in settings work with screen reader ([#3555](https://github.com/Azure/LogicAppsUX/issues/3555)) ([9378775](https://github.com/Azure/LogicAppsUX/commit/93787757400d7dad6bae3f6f01ca568bf21a2207))
@@ -556,13 +558,9 @@
 
 ## [2.28.0](https://github.com/Azure/LogicAppsUX/compare/v2.27.0...v2.28.0) (2023-06-13)
 
-<<<<<<< HEAD
 
 ## [2.23.0](https://github.com/Azure/LogicAppsUX/compare/v2.22.0...v2.23.0) (2023-05-31)
 
-=======
-
-> > > > > > > 1e1eae823fa9b1f80d35b77f66cdc9c9a4876840
 
 ### Features
 
