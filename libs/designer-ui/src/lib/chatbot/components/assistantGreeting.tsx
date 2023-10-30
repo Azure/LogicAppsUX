@@ -25,11 +25,11 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     suggestedPromptItem1: intl.formatMessage({
-      defaultMessage: 'Describe this workflow',
+      defaultMessage: 'Describe this workflow.',
       description: 'Chatbot suggestion message to describe the workflow',
     }),
     suggestedPromptItem2: intl.formatMessage({
-      defaultMessage: 'Explain how to receive files from SFTP server',
+      defaultMessage: 'Explain how to receive files from SFTP server.',
       description: 'Chatbot suggestion message to recieve specific files from SFTP server',
     }),
     suggestedPromptItem3: intl.formatMessage({

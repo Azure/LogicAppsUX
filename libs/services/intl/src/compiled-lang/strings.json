@@ -4245,6 +4245,12 @@
       "value": "Split-On Tracking Id"
     }
   ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
@@ -5669,12 +5675,6 @@
     {
       "type": 0,
       "value": "Select a Swagger Function App resource"
-    }
-  ],
-  "Y7532T": [
-    {
-      "type": 0,
-      "value": "Explain how to receive files from SFTP server"
     }
   ],
   "Y9kBz5": [
@@ -7471,12 +7471,6 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
-  "kYjd4m": [
-    {
-      "type": 0,
-      "value": "Describe this workflow"
-    }
-  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7797,6 +7791,12 @@
       "value": "', split on not in array."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7837,12 +7837,6 @@
     {
       "type": 0,
       "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Ask a question or describe how you want to change this flow"
     }
   ],
   "mvrlkP": [
@@ -8065,6 +8059,12 @@
     {
       "type": 0,
       "value": "Zoom to fit"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
     }
   ],
   "o7bd1o": [
