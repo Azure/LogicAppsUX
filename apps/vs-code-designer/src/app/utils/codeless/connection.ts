@@ -95,7 +95,7 @@ async function addConnectionDataInJson(
   const connectionsJsonString = await getConnectionsJson(functionAppPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
-  const { connectionData, connectionKey, pathLocation } = ConnectionAndAppSetting;
+  const { connectionData, connectionKey, pathLocation, settings } = ConnectionAndAppSetting;
 
   let pathToSetConnectionsData = connectionsJson;
 
@@ -113,7 +113,7 @@ async function addConnectionDataInJson(
     return;
   }
 
-  parameterizer.parameterizeConnection(connectionData, connectionKey, parametersData);
+  parameterizer.parameterizeConnection(connectionData, connectionKey, parametersData, settings);
 
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
@@ -161,7 +161,7 @@ async function getConnectionReference(
         connectionProperties,
       };
 
-      parameterizer.parameterizeConnection(connectionReference, referenceKey, parametersToAdd);
+      parameterizer.parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
 
       return connectionReference;
     })

@@ -34,15 +34,17 @@ const API_MANAGEMENT_SERVICE_NAME_INDEX = 8;
  * @param connection The connection reference to parameterize.
  * @param referenceKey The reference key of the connection.
  * @param parametersObject The parameters object.
+ * @param settingsRecord The settings record.
  * @returns parameterized connection reference
  */
 export function parameterizeConnection(
   connection: ConnectionReferenceModel | ServiceProviderConnectionModel | FunctionConnectionModel | APIManagementConnectionModel,
   referenceKey: string,
-  parametersObject: any
+  parametersObject: any,
+  settingsRecord: Record<string, string>
 ): any {
   if (isConnectionReferenceModel(connection)) {
-    connection = getParameterizedConnectionReferenceModel(connection, referenceKey, parametersObject);
+    connection = getParameterizedConnectionReferenceModel(connection, referenceKey, parametersObject, settingsRecord);
   } else if (isFunctionConnectionModel(connection)) {
     connection = getParameterizedFunctionConnectionModel(connection, referenceKey, parametersObject);
   } else if (isAPIManagementConnectionModel(connection)) {
@@ -61,16 +63,18 @@ export function parameterizeConnection(
  * @param connection The connection.
  * @param referenceKey The connection reference key.
  * @param parametersObject The parameters object.
+ * @param settingsRecord The settings record.
  * @returns Parameterized Managed API connection.
  */
 function getParameterizedConnectionReferenceModel(
   connection: ConnectionReferenceModel,
   referenceKey: string,
-  parametersObject: any
+  parametersObject: any,
+  settingsRecord: Record<string, string>
 ): ConnectionReferenceModel {
   parameterizeManagedApiId(connection);
   parameterizeManagedConnectionId(connection);
-  parameterizeManagedConnectionRuntimeUrl(connection, referenceKey, parametersObject);
+  parameterizeManagedConnectionRuntimeUrl(connection, referenceKey, parametersObject, settingsRecord);
   parameterizeManagedConnectionAuthentication(connection, referenceKey, parametersObject);
   return connection;
 }
@@ -126,13 +130,20 @@ function parameterizeManagedConnectionId(connection: ConnectionReferenceModel): 
   connection.connection.id = segments.join(DELIMITER);
 }
 
-function parameterizeManagedConnectionRuntimeUrl(connection: ConnectionReferenceModel, referenceKey: string, parametersObject: any): void {
+function parameterizeManagedConnectionRuntimeUrl(
+  connection: ConnectionReferenceModel,
+  referenceKey: string,
+  parametersObject: any,
+  settingsRecord: Record<string, string>
+): void {
   if (isEmptyString(connection.connectionRuntimeUrl)) {
     return;
   }
 
   const propertyName = getPropertyName('ConnectionRuntimeUrl', referenceKey);
-  connection.connectionRuntimeUrl = getParameterizedProperty(propertyName, connection.connectionRuntimeUrl, 'String', parametersObject);
+  settingsRecord[propertyName] = connection.connectionRuntimeUrl;
+  const appSettingReference = getAppSettingReference(propertyName, false);
+  connection.connectionRuntimeUrl = getParameterizedProperty(propertyName, appSettingReference, 'String', parametersObject);
 }
 
 function parameterizeManagedConnectionAuthentication(
