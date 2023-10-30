@@ -232,6 +232,12 @@ export const hostFileContent = {
   },
 };
 
+export enum DependencyDefaultPath {
+  dotnet = 'dotnet',
+  funcCoreTools = 'func',
+  node = 'node',
+}
+
 // .NET
 export enum DotnetVersion {
   net6 = 'net6.0',
