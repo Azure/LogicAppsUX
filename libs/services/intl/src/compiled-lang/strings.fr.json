@@ -1021,12 +1021,6 @@
       "value": "Activer/désactiver la minimap"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Bouton permettant d’ajouter du contenu dynamique si TokenPicker est masqué"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -3021,12 +3015,6 @@
       "value": "Sélectionnez une connexion existante ou créez-en une nouvelle."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Bouton permettant d’ajouter du contenu dynamique si TokenPicker est affiché"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3496,6 +3484,12 @@
     {
       "type": 0,
       "value": "Retourne le jour du composant Semaine d'un horodateur de chaîne"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -6001,6 +5995,12 @@
       "value": "Ajouter un nouvel élément"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8323,6 +8323,12 @@
       "value": "Obligatoire. Nombre par lequel diviser le dividende. Après la division, le chiffre restant est accepté."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9418,12 +9424,6 @@
       "value": "Contient une valeur dupliquée"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Développer"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9956,12 +9956,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Ancien"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Réduire"
     }
   ],
   "zb3lE6": [

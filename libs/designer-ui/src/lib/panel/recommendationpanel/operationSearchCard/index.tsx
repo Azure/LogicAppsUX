@@ -46,7 +46,7 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
       {displayRuntimeInfo && previewTag ? <Text className="msla-psuedo-badge">{previewTag}</Text> : null}
       {displayRuntimeInfo && isBuiltIn && category ? <Text className="msla-psuedo-badge">{category}</Text> : null}
       {displayRuntimeInfo && isTrigger ? <Text className="msla-psuedo-badge">{triggerBadgeText}</Text> : null}
-      <InfoDot title={title} description={description} />
+      <InfoDot description={description} />
     </button>
   );
 };

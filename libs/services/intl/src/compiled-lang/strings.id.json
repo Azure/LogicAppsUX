@@ -1013,12 +1013,6 @@
       "value": "Hidupkan/Matikan Peta Mini"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Tombol untuk menambahkan konten dinamis jika TokenPicker disembunyikan"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -2969,12 +2963,6 @@
       "value": "Pilih referensi koneksi yang sudah ada atau buat baru."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Tombol untuk menambahkan konten dinamis jika TokenPicker ditampilkan"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3422,6 +3410,12 @@
     {
       "type": 0,
       "value": "Menampilkan komponen jumlah hari dalam seminggu dari tanda waktu string"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5905,6 +5899,12 @@
       "value": "Tambahkan item baru"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8175,6 +8175,12 @@
       "value": "Wajib. Nomor untuk membagi Dividen. Setelah dibagi, sisanya diambil."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9248,12 +9254,6 @@
       "value": "Berisi nilai duplikat"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Luaskan"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9786,12 +9786,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Lama"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Ciutkan"
     }
   ],
   "zb3lE6": [

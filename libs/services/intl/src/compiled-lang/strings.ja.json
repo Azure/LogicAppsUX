@@ -1013,12 +1013,6 @@
       "value": "ミニマップの切り替え"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "TokenPicker が非表示になっている場合に動的なコンテンツを追加するボタン"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -2965,12 +2959,6 @@
       "value": "既存の接続参照を選択するか、新規に作成してください。"
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "TokenPicker が表示されている場合に動的なコンテンツを追加するボタン"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3418,6 +3406,12 @@
     {
       "type": 0,
       "value": "文字列のタイムスタンプの曜日部分を返します"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5897,6 +5891,12 @@
       "value": "新しい項目の追加"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6933,7 +6933,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "フローの編集"
     }
   ],
   "hza/cT": [
@@ -8151,6 +8151,12 @@
       "value": "必須。Dividend を除算する数値。この除算の後、剰余が取得されます。"
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9212,12 +9218,6 @@
       "value": "重複する値が含まれています"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "展開"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9750,12 +9750,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) ペトロパブロフスク-カムチャツキー - 廃止"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "折りたたむ"
     }
   ],
   "zb3lE6": [
