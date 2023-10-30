@@ -847,7 +847,7 @@
           },
           "azureLogicAppsStandard.autoBinariesInstallation": {
             "type": "boolean",
-            "description": "Enable automatic validation and installation for binary dependencies",
+            "description": "Enable automatic validation and installation for binary dependencies.",
             "default": null
           },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
