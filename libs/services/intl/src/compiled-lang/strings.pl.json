@@ -1021,12 +1021,6 @@
       "value": "Przełącz minimapę"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Przycisk dodawania zawartości dynamicznej, jeśli platforma TokenPicker jest ukryta"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -3051,12 +3045,6 @@
       "value": "Wybierz istniejące odwołanie do połączenia lub utwórz nowe."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Przycisk dodawania zawartości dynamicznej, jeśli platforma TokenPicker jest wyświetlana"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3537,6 +3525,12 @@
     {
       "type": 0,
       "value": "Zwraca składnik dnia tygodnia z sygnatury czasowej ciągu"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -6057,6 +6051,12 @@
       "value": "Dodaj nowy element"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -7134,7 +7134,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "Edytuj przepływ"
     }
   ],
   "hza/cT": [
@@ -8413,6 +8413,12 @@
       "value": "Wymagane. Liczba, przez którą dzielona jest dzielna. Po wykonaniu dzielenia reszta zostanie usunięta."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9178,7 +9184,7 @@
   "tu4TTM": [
     {
       "type": 0,
-      "value": "Wersja zapoznawcza"
+      "value": "Podgląd"
     }
   ],
   "u81zB9": [
@@ -9517,12 +9523,6 @@
     {
       "type": 0,
       "value": "Zawiera zduplikowaną wartość"
-    }
-  ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Rozwiń"
     }
   ],
   "vz2gZC": [
@@ -10057,12 +10057,6 @@
     {
       "type": 0,
       "value": "(GMT+12:00) Pietropawłowsk Kamczacki — stare"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Zwiń"
     }
   ],
   "zb3lE6": [

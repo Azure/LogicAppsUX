@@ -1021,12 +1021,6 @@
       "value": "Přepnout minimapu"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker skrytý"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -3051,12 +3045,6 @@
       "value": "Vyberte existující informace o připojení nebo vytvořte nové."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker zobrazený"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3533,6 +3521,12 @@
     {
       "type": 0,
       "value": "Vrátí část řetězcového časového razítka, která představuje den v týdnu."
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -6045,6 +6039,12 @@
       "value": "Přidat novou položku"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8389,6 +8389,12 @@
       "value": "Povinný parametr. Číslo, kterým se má dělit dělenec. Po dělení se zbytek odebere."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9487,12 +9493,6 @@
       "value": "Toto pole obsahuje duplicitní hodnotu"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Rozbalit"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -10025,12 +10025,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamčatskij – starý čas"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Sbalit"
     }
   ],
   "zb3lE6": [

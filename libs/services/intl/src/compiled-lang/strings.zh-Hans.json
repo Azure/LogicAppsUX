@@ -1025,12 +1025,6 @@
       "value": "切换缩略图"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "当 TokenPicker 隐藏时添加动态内容的按钮"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -2985,12 +2979,6 @@
       "value": "选择现有连接引用或新建。"
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "当 TokenPicker 显示时添加动态内容的按钮"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3438,6 +3426,12 @@
     {
       "type": 0,
       "value": "返回字符串时间戳星期组件的某天"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5941,6 +5935,12 @@
       "value": "添加新项"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8235,6 +8235,12 @@
       "value": "必需。被除数要除以的数字。相除后，将取余数。"
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9304,12 +9310,6 @@
       "value": "这包含重复的值"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "展开"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9846,12 +9846,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00)彼得罗巴甫洛夫斯克-堪察加 - 旧称"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "折叠"
     }
   ],
   "zb3lE6": [

@@ -1013,12 +1013,6 @@
       "value": "미니맵 토글"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "TokenPicker가 숨겨진 경우 동적 콘텐츠를 추가하는 버튼"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -2957,12 +2951,6 @@
       "value": "기존 연결 참조를 선택하거나 새 연결 참조를 만듭니다."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "TokenPicker가 표시되는 경우 동적 콘텐츠를 추가하는 버튼"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3410,6 +3398,12 @@
     {
       "type": 0,
       "value": "문자열 타임스탬프의 주 구성 요소를 반환합니다."
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5893,6 +5887,12 @@
       "value": "새 항목 추가"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6929,7 +6929,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "흐름 편집"
     }
   ],
   "hza/cT": [
@@ -8147,6 +8147,12 @@
       "value": "필수 사항으로, 피제수로 나눌 숫자입니다. 나눈 후에 나머지를 사용합니다."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9208,12 +9214,6 @@
       "value": "중복 값이 포함되어 있습니다."
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "펼치기"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9746,12 +9746,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 페트로파블로프스크-캄차스키 - 사용하지 않음"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "접기"
     }
   ],
   "zb3lE6": [

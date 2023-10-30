@@ -1021,12 +1021,6 @@
       "value": "Växla miniatyröversikt"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker är dolt"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -3003,12 +2997,6 @@
       "value": "Välj en befintlig anslutningsreferens eller skapa en ny."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker visas"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3467,6 +3455,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängtidsstämpels veckokomponent"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5945,6 +5939,12 @@
       "value": "Lägg till nytt objekt"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8241,6 +8241,12 @@
       "value": "Krävs. Talet att dela nämnaren med. Efter divisionen tas resten."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9317,12 +9323,6 @@
       "value": "Det här innehåller ett dubblettvärde"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Visa"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9855,12 +9855,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamtjatskij - gammal"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Dölj"
     }
   ],
   "zb3lE6": [

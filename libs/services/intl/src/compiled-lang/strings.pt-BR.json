@@ -1005,12 +1005,6 @@
       "value": "Alternar Minimapa"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Botão para adicionar conteúdo dinâmico se o Seletor de Token estiver oculto"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -2993,12 +2987,6 @@
       "value": "Selecione uma referência de conexão existente ou crie uma nova."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Botão para adicionar conteúdo dinâmico se o Seletor de Token for mostrado"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3468,6 +3456,12 @@
     {
       "type": 0,
       "value": "Retorna o dia do componente de semana de um carimbo de data/hora de cadeia de caracteres"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5969,6 +5963,12 @@
       "value": "Adicionar novo item"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8291,6 +8291,12 @@
       "value": "Necessário. O número pelo qual dividir o Dividendo. Após a divisão, o resto é obtido."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9386,12 +9392,6 @@
       "value": "Contém um valor duplicado"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expandir"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9924,12 +9924,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antiga"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Recolher"
     }
   ],
   "zb3lE6": [
