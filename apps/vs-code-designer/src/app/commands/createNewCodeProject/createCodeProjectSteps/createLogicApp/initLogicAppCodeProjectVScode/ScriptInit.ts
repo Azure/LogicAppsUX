@@ -21,17 +21,22 @@ export class ScriptInit extends InitCodeProject {
 
   protected getTasks(): TaskDefinition[] {
     const funcBinariesExist = binariesExist(funcDependencyName);
+    const binariesOptions = funcBinariesExist
+      ? {
+          options: {
+            env: {
+              PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;$env:PATH',
+            },
+          },
+        }
+      : {};
     return [
       {
         label: 'func: host start',
         type: funcBinariesExist ? 'shell' : func,
         command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
         args: funcBinariesExist ? ['host', 'start'] : undefined,
-        options: {
-          env: {
-            PATH: '${config:azureLogicAppsStandard.dependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.dependenciesPath}\\DotNetSDK;$env:PATH',
-          },
-        },
+        ...binariesOptions,
         problemMatcher: funcWatchProblemMatcher,
         dependsOn: this.useFuncExtensionsInstall ? extInstallTaskName : undefined,
         isBackground: true,
