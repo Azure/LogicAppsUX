@@ -4,6 +4,7 @@ import { isSuccessResponse } from '../core/util';
 import { CopilotPanelHeader } from './panelheader';
 import type { ITextField } from '@fluentui/react';
 import { Panel, PanelType, css, getId } from '@fluentui/react';
+import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { ConversationItem } from '@microsoft/designer-ui';
 import {
@@ -81,8 +82,12 @@ export const Chatbot = ({
   const intlText = useMemo(() => {
     return {
       chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask a question or describe how you want to change this flow',
+        defaultMessage: 'Ask a question about this workflow or about Logic Apps as a whole',
         description: 'Chabot input placeholder text',
+      }),
+      protectedMessage: intl.formatMessage({
+        defaultMessage: 'Your personal and company data are protected in this chat',
+        description: 'Letting user know that their data is protected in the chatbot',
       }),
       submitButtonTitle: intl.formatMessage({
         defaultMessage: 'Submit',
@@ -315,6 +320,10 @@ export const Chatbot = ({
           ))}
         </div>
         <div className={'msla-chatbot-footer'}>
+          <div className={'msla-protected-footer'}>
+            {' '}
+            <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {intlText.protectedMessage}
+          </div>
           <ChatSuggestionGroup>
             {canSaveCurrentFlow && (
               <ChatSuggestion
