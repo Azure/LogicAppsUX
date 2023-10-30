@@ -3,14 +3,18 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  DependencyDefaultPath,
   DependencyVersion,
   Platform,
   autoBinariesInstallationSetting,
   defaultDependencyPathValue,
   dependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
+  dotNetBinaryPathSettingKey,
   dotnetDependencyName,
+  funcCoreToolsBinaryPathSettingKey,
   funcPackageName,
+  nodeJsBinaryPathSettingKey,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -423,6 +427,9 @@ export async function promptInstallBinariesOption(context: IActionContext) {
         context.telemetry.properties.autoBinariesInstallation = 'true';
       } else if (result === DialogResponses.dontWarnAgain) {
         await updateGlobalSetting(autoBinariesInstallationSetting, false);
+        await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+        await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+        await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
         context.telemetry.properties.autoBinariesInstallation = 'false';
       }
     }
