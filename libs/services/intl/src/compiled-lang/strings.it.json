@@ -1013,12 +1013,6 @@
       "value": "Attiva/disattiva minimappa"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è nascosto"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -3005,12 +2999,6 @@
       "value": "Seleziona un riferimento alla connessione esistente o creane uno nuovo."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è visualizzato"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3480,6 +3468,12 @@
     {
       "type": 0,
       "value": "Restituisce il componente giorno della settimana di un timestamp in formato stringa"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -5993,6 +5987,12 @@
       "value": "Aggiungi nuovo elemento"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8303,6 +8303,12 @@
       "value": "Obbligatorio. Numero in base a cui dividere il dividendo. Dopo la divisione, viene preso il resto."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9398,12 +9404,6 @@
       "value": "Contiene un valore duplicato"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Espandi"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9936,12 +9936,6 @@
     {
       "type": 0,
       "value": "(UTC + 12.00 h) Petropavlovsk-Kamčatskij - Vecchio"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Comprimi"
     }
   ],
   "zb3lE6": [

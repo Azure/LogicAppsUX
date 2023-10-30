@@ -1021,12 +1021,6 @@
       "value": "Alternar Minimap"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Botão para adicionar conteúdo dinâmico se TokenPicker estiver oculto"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -3029,12 +3023,6 @@
       "value": "Selecione uma referência de ligação existente ou crie uma nova."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Botão para adicionar conteúdo dinâmico se TokenPicker for apresentado"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3504,6 +3492,12 @@
     {
       "type": 0,
       "value": "Devolve o dia do componente da semana de um carimbo de data/hora de cadeia"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -6009,6 +6003,12 @@
       "value": "Adicionar novo item"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -8331,6 +8331,12 @@
       "value": "Obrigatório. O número pelo qual se divide o Dividendo. Após a divisão, o resto é retirado."
     }
   ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
+    }
+  ],
   "pcGqoB": [
     {
       "type": 0,
@@ -9426,12 +9432,6 @@
       "value": "Contém um valor duplicado"
     }
   ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expandir"
-    }
-  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -9964,12 +9964,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antigo"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Fechar"
     }
   ],
   "zb3lE6": [
