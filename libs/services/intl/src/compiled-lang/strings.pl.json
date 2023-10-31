@@ -23,6 +23,12 @@
       "value": "Wyświetlanie funkcji"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -1061,12 +1067,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokio"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Dodaj warunek"
     }
   ],
   "5J9jne": [
@@ -2181,12 +2181,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "Dodawanie akcji, która wysyła wiadomość e-mail"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2505,12 +2499,6 @@
       "value": "Konwertuje parametr na liczbę dziesiętną"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Sprawdź akcje przepływu, aby sprawdzić, czy należy ustawić jakiekolwiek parametry. Pamiętaj o zapisaniu po zakończeniu!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2789,6 +2777,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -3211,12 +3205,6 @@
     {
       "type": 0,
       "value": "Brak właściwości"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "Oto Twój przepływ. Jeśli chcesz, abym to zmienił, po prostu to powiedz. Na przykład:"
     }
   ],
   "IxWip7": [
@@ -3923,6 +3911,12 @@
       "value": "Zwraca wartość określonej zmiennej."
     }
   ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -4319,6 +4313,12 @@
     {
       "type": 0,
       "value": "Identyfikator śledzenia dla podziału"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
     }
   ],
   "Pq+4a+": [
@@ -4821,12 +4821,6 @@
     {
       "type": 0,
       "value": "Prześlij opinię"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Wyjaśnij, co robi akcja"
     }
   ],
   "TNEttQ": [
@@ -5425,6 +5419,12 @@
       "value": "label"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5939,6 +5939,12 @@
       "value": "Brak"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -6157,6 +6163,12 @@
     {
       "type": 0,
       "value": "Dodaj lub wybierz schemat źródłowy, który ma być używany dla mapy."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6491,12 +6503,6 @@
     {
       "type": 0,
       "value": "Zamień akcję"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Witamy ponownie! Jeśli chcesz, abym zmienił przepływ, po prostu to powiedz. Na przykład:"
     }
   ],
   "dOpdsP": [
@@ -7533,6 +7539,12 @@
       "value": "Komunikat"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7945,6 +7957,12 @@
       "value": "”, dlatego brak podziału w tablicy."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7985,12 +8003,6 @@
     {
       "type": 0,
       "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do żądania wychodzącego."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Zadaj pytanie lub opisz, jak chcesz zmienić ten przepływ"
     }
   ],
   "mvrlkP": [
@@ -8213,6 +8225,12 @@
     {
       "type": 0,
       "value": "Dopasuj widok do rozmiaru"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
     }
   ],
   "o7bd1o": [
@@ -9063,6 +9081,12 @@
     {
       "type": 0,
       "value": " godz."
+    }
+  ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

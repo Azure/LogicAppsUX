@@ -23,6 +23,12 @@
       "value": "Tampilan fungsi"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -1053,12 +1059,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Tambahkan kondisi"
     }
   ],
   "5J9jne": [
@@ -2140,12 +2140,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "Tambahkan tindakan yang mengirim email"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2464,12 +2458,6 @@
       "value": "Mengonversi parameter menjadi angka desimal"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Periksa tindakan alur untuk melihat apakah ada parameter yang perlu ditetapkan. Jangan lupa untuk menyimpan bila Anda sudah selesai!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2715,6 +2703,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -3129,12 +3123,6 @@
     {
       "type": 0,
       "value": "Tidak ada properti"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "Berikut adalah alur Anda. Jika Anda ingin agar saya mengubahnya, cukup katakan apa yang Anda inginkan. Misalnya:"
     }
   ],
   "IxWip7": [
@@ -3808,6 +3796,12 @@
       "value": "Menampilkan nilai dari variabel yang ditentukan."
     }
   ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -4204,6 +4198,12 @@
     {
       "type": 0,
       "value": "Id Pelacakan Pemisahan"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
     }
   ],
   "Pq+4a+": [
@@ -4669,12 +4669,6 @@
     {
       "type": 0,
       "value": "Berikan tanggapan"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Jelaskan apa fungsi tindakan"
     }
   ],
   "TNEttQ": [
@@ -5273,6 +5267,12 @@
       "value": "label"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5787,6 +5787,12 @@
       "value": "Tidak ada"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -6005,6 +6011,12 @@
     {
       "type": 0,
       "value": "Tambahkan atau pilih skema sumber yang akan digunakan untuk peta Anda."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6339,12 +6351,6 @@
     {
       "type": 0,
       "value": "Ganti tindakan"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Selamat datang kembali! Jika Anda ingin agar saya mengubah alur Anda, cukup katakan apa yang Anda inginkan. Misalnya:"
     }
   ],
   "dOpdsP": [
@@ -7344,6 +7350,12 @@
       "value": "Pesan"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7707,6 +7719,12 @@
       "value": "', pemisahan tidak dalam array."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7747,12 +7765,6 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Ajukan pertanyaan atau jelaskan bagaimana Anda ingin mengubah alur ini"
     }
   ],
   "mvrlkP": [
@@ -7975,6 +7987,12 @@
     {
       "type": 0,
       "value": "Zoom hingga pas"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
     }
   ],
   "o7bd1o": [
@@ -8792,6 +8810,12 @@
     {
       "type": 0,
       "value": "j"
+    }
+  ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

@@ -23,6 +23,12 @@
       "value": "함수 표시"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -1053,12 +1059,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 오사카, 삿포로, 도쿄"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "조건 추가"
     }
   ],
   "5J9jne": [
@@ -2132,12 +2132,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "전자 메일을 보내는 작업 추가"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2456,12 +2450,6 @@
       "value": "매개 변수를 10진수로 변환"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "흐름의 작업을 확인하여 매개 변수를 설정해야 하는지 확인합니다. 완료되면 저장하는 것을 잊지 마세요!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2703,6 +2691,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -3117,12 +3111,6 @@
     {
       "type": 0,
       "value": "속성 없음"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "흐름은 다음과 같습니다. 변경하려는 경우 원하는 내용을 말하세요. 예를 들어:"
     }
   ],
   "IxWip7": [
@@ -3796,6 +3784,12 @@
       "value": "지정된 변수의 값을 반환합니다."
     }
   ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -4192,6 +4186,12 @@
     {
       "type": 0,
       "value": "분할 추적 ID"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
     }
   ],
   "Pq+4a+": [
@@ -4661,12 +4661,6 @@
     {
       "type": 0,
       "value": "피드백 제공"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "작업이 수행하는 작업 설명"
     }
   ],
   "TNEttQ": [
@@ -5261,6 +5255,12 @@
       "value": "에서 텍스트 Select all"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5775,6 +5775,12 @@
       "value": "없음"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -5993,6 +5999,12 @@
     {
       "type": 0,
       "value": "맵에 사용할 원본 스키마를 추가하거나 선택합니다."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6327,12 +6339,6 @@
     {
       "type": 0,
       "value": "작업 바꾸기"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "다시 오시 것을 환영합니다! 흐름을 변경하려면 원하는 대로 말하세요. 예를 들어:"
     }
   ],
   "dOpdsP": [
@@ -7324,6 +7330,12 @@
       "value": "메시지"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7679,6 +7691,12 @@
       "value": "'에 대해 분할 유형이 잘못되었습니다. 분할이 배열에 없습니다."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7719,12 +7737,6 @@
     {
       "type": 0,
       "value": "Logic Apps가 나가는 요청에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "질문을 하거나 이 흐름을 변경할 방법을 설명하세요."
     }
   ],
   "mvrlkP": [
@@ -7947,6 +7959,12 @@
     {
       "type": 0,
       "value": "크기에 맞게"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
     }
   ],
   "o7bd1o": [
@@ -8760,6 +8778,12 @@
     {
       "type": 0,
       "value": "시간"
+    }
+  ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

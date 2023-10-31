@@ -23,6 +23,12 @@
       "value": "İşlev görüntüsü"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -1053,12 +1059,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Koşul ekleyin"
     }
   ],
   "5J9jne": [
@@ -2151,12 +2151,6 @@
       "value": "Doğru"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "E-posta gönderen bir eylem ekleyin"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2475,12 +2469,6 @@
       "value": "Parametreyi ondalık sayıya dönüştürür"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Herhangi bir parametrenin ayarlanması gerekip gerekmediğini görmek için akışın eylemlerini denetleyin. İşiniz bittiğinde kaydetmeyi unutmayın!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2733,6 +2721,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -3147,12 +3141,6 @@
     {
       "type": 0,
       "value": "Özellik yok"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "İşte akışınız. Akışınızı değiştirmemi istiyorsanız, ne istediğinizi söylemeniz yeterlidir. Örneğin:"
     }
   ],
   "IxWip7": [
@@ -3837,6 +3825,12 @@
       "value": "Belirtilen değişkenin değerini döndürür."
     }
   ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -4233,6 +4227,12 @@
     {
       "type": 0,
       "value": "Bölünmüş İzleme Kimliği"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
     }
   ],
   "Pq+4a+": [
@@ -4713,12 +4713,6 @@
     {
       "type": 0,
       "value": "Geri bildirim gönder"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Eylemin ne yaptığını açıklayın"
     }
   ],
   "TNEttQ": [
@@ -5313,6 +5307,12 @@
       "value": " içindeki tüm metni seç"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5827,6 +5827,12 @@
       "value": "Yok"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -6045,6 +6051,12 @@
     {
       "type": 0,
       "value": "Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6379,12 +6391,6 @@
     {
       "type": 0,
       "value": "Eylemi değiştir"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Tekrar hoş geldiniz! Akışınızı değiştirmemi istiyorsanız, ne istediğinizi söylemeniz yeterlidir. Örneğin:"
     }
   ],
   "dOpdsP": [
@@ -7387,6 +7393,12 @@
       "value": "İleti"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7761,6 +7773,12 @@
       "value": "' değerinde tür geçersiz, bölünme dizide değil."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7801,12 +7819,6 @@
     {
       "type": 0,
       "value": "Logic Apps'i giden isteklerde iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Soru sorun veya bu akışı nasıl değiştirmek istediğinizi açıklayın"
     }
   ],
   "mvrlkP": [
@@ -8029,6 +8041,12 @@
     {
       "type": 0,
       "value": "Sığacak kadar yakınlaştır"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
     }
   ],
   "o7bd1o": [
@@ -8853,6 +8871,12 @@
     {
       "type": 0,
       "value": " sa"
+    }
+  ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [
