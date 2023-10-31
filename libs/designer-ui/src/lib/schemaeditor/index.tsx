@@ -131,6 +131,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
         onContentChanged={handleContentChanged}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        contextMenu={true}
       />
       <div className="msla-schema-editor-operations">
         <ActionButton className="msla-schema-card-button" disabled={readonly} styles={buttonStyles} onClick={openModal}>

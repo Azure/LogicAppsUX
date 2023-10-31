@@ -30,7 +30,13 @@ export function SettingLabel({
       <div className="msla-setting-label-container">
         <div className="msla-setting-label-title">{labelText}</div>
         <TooltipHost content={infoTooltipText}>
-          <IconButton className="msla-setting-label-tooltip-icon" iconProps={{ iconName: 'Info' }} styles={infoButtonStyles} />
+          <IconButton
+            role="tooltip"
+            aria-label={infoTooltipText}
+            className="msla-setting-label-tooltip-icon"
+            iconProps={{ iconName: 'Info' }}
+            styles={infoButtonStyles}
+          />
         </TooltipHost>
       </div>
       {settingDescription ? <div className="msla-setting-label-description">{settingDescription}</div> : null}

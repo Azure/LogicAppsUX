@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.75.0",
+  "version": "2.78.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -22,7 +22,7 @@
     "build:chatbot": "nx run chatbot:build",
     "build:parsers": "nx run parsers:build",
     "build:vscode-react": "nx run vs-code-react:build",
-    "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-designer-react:build && nx run vs-code-react:build",
+    "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-data-mapper-react:build && nx run vs-code-designer-react:build && nx run vs-code-react:build",
     "build:vscode-datamapper": "nx run vs-code-data-mapper:build && nx run vs-code-data-mapper-react:build",
     "build:utils": "nx run utils:build",
     "build:docs": "nx build logic-apps-ux-docs",
