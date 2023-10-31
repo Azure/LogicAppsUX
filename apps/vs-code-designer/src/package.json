@@ -309,6 +309,7 @@
       {
         "command": "azureLogicAppsStandard.validateAndInstallBinaries",
         "title": "Validate and install dependency binaries",
+        "preview": true,
         "category": "Azure Logic Apps"
       },
       {
