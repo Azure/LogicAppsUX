@@ -80,7 +80,6 @@ appsettings.json
 local.settings.json
 __blobstorage__
 .debug
-.gitignore
 __queuestorage__
 __azurite_db*__.json
 
