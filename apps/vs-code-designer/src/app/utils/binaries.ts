@@ -30,9 +30,7 @@ import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { getNpmCommand, setNodeJsCommand } from './nodeJs/nodeJsVersion';
 import { runWithDurationTelemetry } from './telemetry';
 import { timeout } from './timeout';
-import { tryGetFunctionProjectRoot } from './verifyIsProject';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { getWorkspaceFolder } from './workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import axios from 'axios';
@@ -411,28 +409,24 @@ function getDependencyTimeout(): number {
  * @param {IActionContext} context - Activation context.
  */
 export async function promptInstallBinariesOption(context: IActionContext) {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const workspace = await getWorkspaceFolder(context);
-    const projectPath = await tryGetFunctionProjectRoot(context, workspace);
-    const message = localize('useBinaries', 'Always validate and install the latest dependency binaries at launch');
-    const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
-    let result: vscode.MessageItem;
+  const message = localize('useBinaries', 'Always validate and install the latest dependency binaries at launch');
+  const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
+  let result: vscode.MessageItem;
 
-    const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+  const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
 
-    if (projectPath && binariesInstallation === null) {
-      result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
-      if (result === confirm) {
-        await updateGlobalSetting(autoBinariesInstallationSetting, true);
-        await onboardBinaries(context);
-        context.telemetry.properties.autoBinariesInstallation = 'true';
-      } else if (result === DialogResponses.dontWarnAgain) {
-        await updateGlobalSetting(autoBinariesInstallationSetting, false);
-        await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
-        await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
-        await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
-        context.telemetry.properties.autoBinariesInstallation = 'false';
-      }
+  if (binariesInstallation === null) {
+    result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
+    if (result === confirm) {
+      await updateGlobalSetting(autoBinariesInstallationSetting, true);
+      await onboardBinaries(context);
+      context.telemetry.properties.autoBinariesInstallation = 'true';
+    } else if (result === DialogResponses.dontWarnAgain) {
+      await updateGlobalSetting(autoBinariesInstallationSetting, false);
+      await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+      await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+      await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+      context.telemetry.properties.autoBinariesInstallation = 'false';
     }
   }
 }
