@@ -1,6 +1,6 @@
 export const webviewType = 'dataMapperWebview';
 
-export const supportedDataMapDefinitionFileExts = ['.yml'];
+export const supportedDataMapDefinitionFileExts = ['.lml', '.yml'];
 export const supportedSchemaFileExts = ['.xsd', '.json'];
 export const supportedCustomXsltFileExts = ['.xslt', '.xml'];
 
@@ -12,7 +12,7 @@ export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
 
 export const defaultDataMapFilename = 'default';
 export const draftMapDefinitionSuffix = '.draft';
-export const mapDefinitionExtension = '.yml';
+export const mapDefinitionExtension = '.lml';
 export const mapXsltExtension = '.xslt';
 
 export const settingsFileContent = {
