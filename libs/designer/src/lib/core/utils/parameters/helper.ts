@@ -2063,6 +2063,9 @@ export async function loadDynamicValuesForParameter(
           workflowParameters
         );
 
+        // Sort Dynamic Values alphabetically ASC
+        dynamicValues.sort((currentItem, nextItem) => currentItem.displayName.localeCompare(nextItem.displayName));
+
         dispatch(
           updateNodeParameters({
             nodeId,
