@@ -40,7 +40,7 @@ export interface ServiceProviderConnectionModel {
   displayName?: string;
 }
 
-export interface APIManagementConnectionModel {
+interface APIManagementConnectionModel {
   apiId: string;
   baseUrl: string;
   subscriptionKey: string;
