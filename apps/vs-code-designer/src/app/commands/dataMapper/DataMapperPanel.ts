@@ -1,4 +1,7 @@
-import DataMapperExt from './DataMapperExt';
+import { extensionCommand } from '../../../constants';
+import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
+import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import {
   dataMapDefinitionsPath,
   dataMapsPath,
@@ -24,7 +27,7 @@ import {
 } from 'fs';
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
-import { RelativePattern, Uri, window, workspace } from 'vscode';
+import { RelativePattern, window, workspace } from 'vscode';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -40,7 +43,7 @@ export default class DataMapperPanel {
     this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
 
-    DataMapperExt.context.subscriptions.push(panel);
+    ext.context.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
@@ -53,22 +56,22 @@ export default class DataMapperPanel {
     );
 
     // Handle messages from the webview (Data Mapper component)
-    this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.context.subscriptions);
+    this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, ext.context.subscriptions);
 
     this.panel.onDidDispose(
       () => {
-        delete DataMapperExt.panelManagers[this.dataMapName];
+        delete ext.dataMapPanelManagers[this.dataMapName];
         if (schemaFolderWatcher) schemaFolderWatcher.dispose();
         if (customXsltFolderWatcher) customXsltFolderWatcher.dispose();
       },
       null,
-      DataMapperExt.context.subscriptions
+      ext.context.subscriptions
     );
   }
 
   private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
     // Watch folder for changes to update available file list within Data Mapper
-    const absoluteFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath);
+    const absoluteFolderPath = path.join(ext.logicAppWorkspace, folderPath);
     if (fileExistsSync(absoluteFolderPath)) {
       const folderWatcher = workspace.createFileSystemWatcher(new RelativePattern(absoluteFolderPath, `**/*.{${fileExtensions.join()}}`));
       folderWatcher.onDidCreate(fn);
@@ -79,24 +82,7 @@ export default class DataMapperPanel {
   }
 
   private async _setWebviewHtml() {
-    // Get webview content, converting links to VS Code URIs
-    const indexPath = path.join(DataMapperExt.extensionPath, '/webview/index.html');
-    const html = await fs.readFile(indexPath, 'utf-8');
-    // 1. Get all links prefixed by href or src
-    const matchLinks = /(href|src)="([^"]*)"/g;
-    // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_: unknown, prefix: 'href' | 'src', link: string) => {
-      // For HTML elements
-      if (link === '#') {
-        return `${prefix}="${link}"`;
-      }
-      // For scripts & links
-      const pth = path.join(DataMapperExt.extensionPath, '/webview/', link);
-      const uri = Uri.file(pth);
-      return `${prefix}="${this.panel.webview.asWebviewUri(uri)}"`;
-    };
-
-    this.panel.webview.html = html.replace(matchLinks, toUri);
+    this.panel.webview.html = await getWebViewHTML('vs-code-data-mapper', this.panel);
   }
 
   public sendMsgToWebview(msg: MessageToWebview) {
@@ -107,7 +93,7 @@ export default class DataMapperPanel {
     switch (msg.command) {
       case 'webviewLoaded':
         // Send runtime port to webview
-        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
+        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${ext.dataMapperRuntimePort}` });
 
         // If loading a data map, handle that + xslt filename
         this.handleLoadMapDefinitionIfAny();
@@ -115,7 +101,7 @@ export default class DataMapperPanel {
         break;
       case 'webviewRscLoadError':
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
-        DataMapperExt.showError(`Error loading Data Mapper resource: ${msg.data}`);
+        ext.showError(localize('WebviewRscLoadError', `Error loading Data Mapper resource: "{0}"`, msg.data));
         break;
       case 'addSchemaFromFile': {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
@@ -187,7 +173,7 @@ export default class DataMapperPanel {
   }
 
   public getNestedFilePaths(fileName: string, parentPath: string, relativePath: string, filesToDisplay: string[], filetypes: string[]) {
-    const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), relativePath);
+    const rootPath = path.join(ext.logicAppWorkspace, relativePath);
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       readdirSync(absolutePath).forEach((childFileName) => {
@@ -208,14 +194,14 @@ export default class DataMapperPanel {
   }
 
   public handleReadAvailableFunctionPaths() {
-    const absoluteFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), customXsltPath);
+    const absoluteFolderPath = path.join(ext.logicAppWorkspace, customXsltPath);
     if (fileExistsSync(absoluteFolderPath)) {
       return this.getFilesForPath(customXsltPath, 'getAvailableCustomXsltPaths', supportedCustomXsltFileExts);
     }
   }
 
   private getFilesForPath(folderPath: string, command: 'showAvailableSchemas' | 'getAvailableCustomXsltPaths', fileTypes: string[]) {
-    fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), folderPath)).then((result) => {
+    fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
         this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
@@ -228,10 +214,10 @@ export default class DataMapperPanel {
   }
 
   public addSchemaFromFile(filePath: string, schemaType: SchemaType) {
-    callWithTelemetryAndErrorHandlingSync('azureDataMapper.addSchemaFromFile', (_context: IActionContext) => {
+    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapAddSchemaFromFile, (_context: IActionContext) => {
       fs.readFile(filePath, 'utf8').then((text: string) => {
         const primarySchemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-        const expectedPrimarySchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, primarySchemaFileName);
+        const expectedPrimarySchemaPath = path.join(ext.logicAppWorkspace, schemasPath, primarySchemaFileName);
 
         // Examine the loaded text for the 'schemaLocation' attribute to auto-load in any dependencies too
         // NOTE: We only check in the same directory as the primary schema file (also, it doesn't attempt to deal with complicated paths/URLs, just filenames)
@@ -245,14 +231,20 @@ export default class DataMapperPanel {
 
           // Check that the schema file dependency exists in the same directory as the primary schema file
           if (!fileExistsSync(schemaFilePath)) {
-            DataMapperExt.showError(
-              `Schema loading error: couldn't find schema file dependency ${schemaFile} in the same directory as ${primarySchemaFileName}. ${primarySchemaFileName} will still be copied to the Schemas folder.`
+            ext.showError(
+              localize(
+                'SchemaLoadingError',
+                `Schema loading error: couldn't find schema file dependency 
+              "{0}" in the same directory as "{1}". "{1}" will still be copied to the Schemas folder.`,
+                schemaFile,
+                primarySchemaFileName
+              )
             );
             return;
           }
 
           // Check that the schema file dependency doesn't already exist in the Schemas folder
-          const expectedSchemaFilePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFile);
+          const expectedSchemaFilePath = path.join(ext.logicAppWorkspace, schemasPath, schemaFile);
           if (!fileExistsSync(expectedSchemaFilePath)) {
             copyFileSync(schemaFilePath, expectedSchemaFilePath);
           }
@@ -272,12 +264,12 @@ export default class DataMapperPanel {
   }
 
   public saveMapDefinition(mapDefinition: string) {
-    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveMapDefinition', (_context: IActionContext) => {
+    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapDefinition, (_context: IActionContext) => {
       // Delete *draft* map definition as it's no longer needed
       this.deleteDraftDataMapDefinition();
 
       const fileName = `${this.dataMapName}${mapDefinitionExtension}`;
-      const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath);
+      const dataMapFolderPath = path.join(ext.logicAppWorkspace, dataMapDefinitionsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
 
       // Mkdir as extra insurance that directory exists so file can be written
@@ -294,20 +286,20 @@ export default class DataMapperPanel {
             });
           });
         })
-        .catch(DataMapperExt.showError);
+        .catch(ext.showError);
     });
   }
 
   public saveMapMetadata(mapMetadata: string) {
     const vscodeFolderPath = this.getMapMetadataPath();
 
-    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(DataMapperExt.showError);
+    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(ext.showError);
   }
 
   public saveMapXslt(mapXslt: string) {
-    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveMapXslt', (_context: IActionContext) => {
+    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapXslt, (_context: IActionContext) => {
       const fileName = `${this.dataMapName}${mapXsltExtension}`;
-      const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath);
+      const dataMapFolderPath = path.join(ext.logicAppWorkspace, dataMapsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
 
       // Mkdir as extra insurance that directory exists so file can be written
@@ -325,13 +317,13 @@ export default class DataMapperPanel {
             this.checkAndSetXslt();
           });
         })
-        .catch(DataMapperExt.showError);
+        .catch(ext.showError);
     });
   }
 
   public saveDraftDataMapDefinition(mapDefFileContents: string) {
     const mapDefileName = `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`;
-    const dataMapDefFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath);
+    const dataMapDefFolderPath = path.join(ext.logicAppWorkspace, dataMapDefinitionsPath);
     const filePath = path.join(dataMapDefFolderPath, mapDefileName);
 
     // Mkdir as extra insurance that directory exists so file can be written
@@ -340,7 +332,7 @@ export default class DataMapperPanel {
       .then(() => {
         fs.writeFile(filePath, mapDefFileContents, 'utf8');
       })
-      .catch(DataMapperExt.showError);
+      .catch(ext.showError);
   }
 
   private readMapMetadataFile(): MapMetadata | undefined {
@@ -351,14 +343,22 @@ export default class DataMapperPanel {
         const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
         return metadataJson;
       } catch {
-        DataMapperExt.showError(
-          `Data map metadata file found at ${vscodeFolderPath} contains invalid JSON. Data map will load without metadata file.`
+        ext.showError(
+          localize(
+            'MetadataInvalidJSON',
+            `Data map metadata file found at "{0}" contains invalid JSON. Data map will load without metadata file.`,
+            vscodeFolderPath
+          )
         );
         return undefined;
       }
     } else {
-      DataMapperExt.showWarning(
-        `Data map metadata not found at path ${vscodeFolderPath}. This file configures your function positioning and other info. Please save your map to regenerate the file.`
+      ext.showWarning(
+        localize(
+          'MetadataNotFound',
+          `Data map metadata not found at path "{0}". This file configures your function positioning and other info. Please save your map to regenerate the file.`,
+          vscodeFolderPath
+        )
       );
       return undefined;
     }
@@ -366,7 +366,7 @@ export default class DataMapperPanel {
 
   public deleteDraftDataMapDefinition() {
     const draftMapDefinitionPath = path.join(
-      DataMapperExt.getWorkspaceFolderFsPath(),
+      ext.logicAppWorkspace,
       dataMapDefinitionsPath,
       `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`
     );
@@ -376,7 +376,7 @@ export default class DataMapperPanel {
   }
 
   public checkAndSetXslt() {
-    const expectedXsltPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
+    const expectedXsltPath = path.join(ext.logicAppWorkspace, dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
 
     if (fileExistsSync(expectedXsltPath)) {
       fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
@@ -389,7 +389,7 @@ export default class DataMapperPanel {
         });
       });
     } else {
-      DataMapperExt.showWarning(`XSLT file not detected for ${this.dataMapName}`);
+      ext.showWarning(localize('XSLTFileNotDetected', `XSLT file not detected for "{0}"`, this.dataMapName));
     }
   }
 
@@ -403,7 +403,7 @@ export default class DataMapperPanel {
   }
 
   private getMapMetadataPath() {
-    const projectPath = DataMapperExt.getWorkspaceFolderFsPath();
+    const projectPath = ext.logicAppWorkspace;
     const vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
     return vscodeFolderPath;
   }

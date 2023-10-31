@@ -23,6 +23,12 @@
       "value": "函数显示"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -55,6 +61,12 @@
     {
       "type": 0,
       "value": " 卡的上下文菜单"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "粘贴上次使用的表达式"
     }
   ],
   "+mAJR3": [
@@ -1019,12 +1031,6 @@
       "value": "切换缩略图"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "当 TokenPicker 隐藏时添加动态内容的按钮"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1065,12 +1071,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00)大阪，札幌，东京"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "添加条件"
     }
   ],
   "5J9jne": [
@@ -1761,12 +1761,6 @@
       "value": "\" 无效，在输出中找不到它。"
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "正在开发"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2158,12 +2152,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "添加发送电子邮件的操作"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2486,12 +2474,6 @@
       "value": "将参数转换为小数"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "检查流的操作，看看是否需要设置任何参数。完成后，别忘了保存!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2737,6 +2719,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -2985,12 +2973,6 @@
       "value": "选择现有连接引用或新建。"
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "当 TokenPicker 显示时添加动态内容的按钮"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3157,12 +3139,6 @@
     {
       "type": 0,
       "value": "无属性"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "这是你的流。如果希望我更改它，只需说出你的要求。例如:"
     }
   ],
   "IxWip7": [
@@ -3438,6 +3414,12 @@
     {
       "type": 0,
       "value": "返回字符串时间戳星期组件的某天"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -3828,6 +3810,12 @@
     {
       "type": 0,
       "value": "返回指定变量的值。"
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
     }
   ],
   "NnD8gF": [
@@ -4228,6 +4216,12 @@
       "value": "拆分跟踪 ID"
     }
   ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
@@ -4262,12 +4256,6 @@
     {
       "type": 0,
       "value": "返回输入字符串的 Base 64 表示形式"
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "关闭"
     }
   ],
   "PytMJ0": [
@@ -4707,12 +4695,6 @@
       "value": "提供反馈"
     }
   ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "解释操作的作用"
-    }
-  ],
   "TNEttQ": [
     {
       "type": 0,
@@ -4837,12 +4819,6 @@
     {
       "type": 0,
       "value": "必需。要与被乘数 1 相乘的数字。"
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "折叠/展开"
     }
   ],
   "U086AA": [
@@ -5325,6 +5301,12 @@
     {
       "type": 0,
       "value": " 中的所有文本"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
     }
   ],
   "WR1K3z": [
@@ -5841,6 +5823,12 @@
       "value": "无"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -5953,6 +5941,12 @@
       "value": "添加新项"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6053,6 +6047,12 @@
     {
       "type": 0,
       "value": "添加或选择要用于映射的源架构。"
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6387,12 +6387,6 @@
     {
       "type": 0,
       "value": "替换操作"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "欢迎回来! 如果希望我更改你的流，只需说出你的要求。例如:"
     }
   ],
   "dOpdsP": [
@@ -6998,6 +6992,12 @@
       "value": "受众"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "编辑流"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7398,6 +7398,12 @@
       "value": "消息"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7593,6 +7599,12 @@
       "value": "返回"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "折叠"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -7759,6 +7771,12 @@
       "value": "\" 的类型无效，拆分对象不在数组中。"
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7799,12 +7817,6 @@
     {
       "type": 0,
       "value": "限制逻辑应用，使其不在传出请求中包含工作流元数据标头。"
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "提出问题或描述你希望如何更改此流"
     }
   ],
   "mvrlkP": [
@@ -8037,6 +8049,12 @@
       "value": "缩放到合适大小"
     }
   ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
+    }
+  ],
   "o7bd1o": [
     {
       "type": 0,
@@ -8113,6 +8131,12 @@
     {
       "type": 0,
       "value": "是否要放弃所有未保存的更改?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "展开"
     }
   ],
   "odQ554": [
@@ -8227,6 +8251,12 @@
     {
       "type": 0,
       "value": "必需。被除数要除以的数字。相除后，将取余数。"
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8842,6 +8872,12 @@
       "value": " 小时"
     }
   ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
+    }
+  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -8952,6 +8988,12 @@
     {
       "type": 0,
       "value": "显示名称"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "预览"
     }
   ],
   "u81zB9": [

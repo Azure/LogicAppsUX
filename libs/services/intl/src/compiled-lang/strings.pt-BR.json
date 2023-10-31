@@ -23,6 +23,12 @@
       "value": "Exibição da função"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -55,6 +61,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Colar a última expressão usada"
     }
   ],
   "+mAJR3": [
@@ -999,12 +1011,6 @@
       "value": "Alternar Minimapa"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Botão para adicionar conteúdo dinâmico se o Seletor de Token estiver oculto"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1045,12 +1051,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tóquio"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Adicionar uma condição"
     }
   ],
   "5J9jne": [
@@ -1729,12 +1729,6 @@
       "value": "'. Não foi possível localizar nas saídas."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Em desenvolvimento"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2148,12 +2142,6 @@
       "value": "Verdadeiro"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "Adicionar uma ação que envia um email"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2472,12 +2460,6 @@
       "value": "Converte o parâmetro em um número decimal"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Verifique as ações do fluxo para ver se algum parâmetro precisa ser definido. Não se esqueça de salvar quando terminar."
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2747,6 +2729,12 @@
       "value": "2"
     }
   ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
@@ -2993,12 +2981,6 @@
       "value": "Selecione uma referência de conexão existente ou crie uma nova."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Botão para adicionar conteúdo dinâmico se o Seletor de Token for mostrado"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3165,12 +3147,6 @@
     {
       "type": 0,
       "value": "Nenhuma propriedade"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "Aqui está seu fluxo. Se você quiser que eu o altere, basta dizer o que deseja. Por exemplo:"
     }
   ],
   "IxWip7": [
@@ -3468,6 +3444,12 @@
     {
       "type": 0,
       "value": "Retorna o dia do componente de semana de um carimbo de data/hora de cadeia de caracteres"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -3858,6 +3840,12 @@
     {
       "type": 0,
       "value": "Retorna o valor da variável especificada."
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
     }
   ],
   "NnD8gF": [
@@ -4258,6 +4246,12 @@
       "value": "ID de Rastreamento de Divisão"
     }
   ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
@@ -4292,12 +4286,6 @@
     {
       "type": 0,
       "value": "Retorna a representação de base 64 da cadeia de caracteres de entrada"
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Fechar"
     }
   ],
   "PytMJ0": [
@@ -4747,12 +4735,6 @@
       "value": "Enviar comentários"
     }
   ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Explicar o que uma ação faz"
-    }
-  ],
   "TNEttQ": [
     {
       "type": 0,
@@ -4877,12 +4859,6 @@
     {
       "type": 0,
       "value": "Necessário. O número pelo qual multiplicar o Multiplicando 1."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Recolher/Expandir"
     }
   ],
   "U086AA": [
@@ -5353,6 +5329,12 @@
     {
       "type": 1,
       "value": "label"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
     }
   ],
   "WR1K3z": [
@@ -5869,6 +5851,12 @@
       "value": "Nenhum"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -5981,6 +5969,12 @@
       "value": "Adicionar novo item"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6081,6 +6075,12 @@
     {
       "type": 0,
       "value": "Adicione ou selecione um esquema de origem para usar em seu mapa."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6415,12 +6415,6 @@
     {
       "type": 0,
       "value": "Substituir ação"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Bem-vindo de volta! Se você quiser que eu altere seu fluxo, basta dizer o que deseja. Por exemplo:"
     }
   ],
   "dOpdsP": [
@@ -7048,6 +7042,12 @@
       "value": "Audiência"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Editar fluxo"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7444,6 +7444,12 @@
       "value": "Mensagem"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7657,6 +7663,12 @@
       "value": "Retornar"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Recolher"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -7823,6 +7835,12 @@
       "value": "\", dividido em não na matriz."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7863,12 +7881,6 @@
     {
       "type": 0,
       "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Faça uma pergunta ou descreva como você deseja alterar esse fluxo"
     }
   ],
   "mvrlkP": [
@@ -8093,6 +8105,12 @@
       "value": "Zoom para caber"
     }
   ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
+    }
+  ],
   "o7bd1o": [
     {
       "type": 0,
@@ -8169,6 +8187,12 @@
     {
       "type": 0,
       "value": "Deseja descartar todas as alterações não salvas?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expandir"
     }
   ],
   "odQ554": [
@@ -8283,6 +8307,12 @@
     {
       "type": 0,
       "value": "Necessário. O número pelo qual dividir o Dividendo. Após a divisão, o resto é obtido."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8920,6 +8950,12 @@
       "value": "h"
     }
   ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
+    }
+  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -9034,6 +9070,12 @@
     {
       "type": 0,
       "value": "Nome de Exibição"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Versão Prévia"
     }
   ],
   "u81zB9": [

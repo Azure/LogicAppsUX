@@ -23,6 +23,12 @@
       "value": "İşlev görüntüsü"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -55,6 +61,12 @@
     {
       "type": 0,
       "value": " kartı için bağlam menüsü"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Son kullanılan ifadeyi yapıştır"
     }
   ],
   "+mAJR3": [
@@ -1007,12 +1019,6 @@
       "value": "Mini Haritayı Aç/Kapat"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "TokenPicker gizliyse dinamik içerik ekleme düğmesi"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1053,12 +1059,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Koşul ekleyin"
     }
   ],
   "5J9jne": [
@@ -1749,12 +1749,6 @@
       "value": "' değeri geçersiz, çıkışlarda bulunamıyor."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Geliştirme Aşamasında"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2157,12 +2151,6 @@
       "value": "Doğru"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "E-posta gönderen bir eylem ekleyin"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2481,12 +2469,6 @@
       "value": "Parametreyi ondalık sayıya dönüştürür"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Herhangi bir parametrenin ayarlanması gerekip gerekmediğini görmek için akışın eylemlerini denetleyin. İşiniz bittiğinde kaydetmeyi unutmayın!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2741,6 +2723,12 @@
       "value": "2"
     }
   ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
@@ -2987,12 +2975,6 @@
       "value": "Mevcut bir bağlantı başvurusu seçin veya yeni bir başvuru oluşturun."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "TokenPicker gösteriliyorsa dinamik içerik ekleme düğmesi"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3159,12 +3141,6 @@
     {
       "type": 0,
       "value": "Özellik yok"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "İşte akışınız. Akışınızı değiştirmemi istiyorsanız, ne istediğinizi söylemeniz yeterlidir. Örneğin:"
     }
   ],
   "IxWip7": [
@@ -3451,6 +3427,12 @@
     {
       "type": 0,
       "value": "Bir dize zaman damgası için haftanın günü bileşenini döndürür"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -3841,6 +3823,12 @@
     {
       "type": 0,
       "value": "Belirtilen değişkenin değerini döndürür."
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
     }
   ],
   "NnD8gF": [
@@ -4241,6 +4229,12 @@
       "value": "Bölünmüş İzleme Kimliği"
     }
   ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
@@ -4275,12 +4269,6 @@
     {
       "type": 0,
       "value": "Giriş dizesinin base 64 gösterimini döndürür"
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Kapat"
     }
   ],
   "PytMJ0": [
@@ -4727,12 +4715,6 @@
       "value": "Geri bildirim gönder"
     }
   ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Eylemin ne yaptığını açıklayın"
-    }
-  ],
   "TNEttQ": [
     {
       "type": 0,
@@ -4853,12 +4835,6 @@
     {
       "type": 0,
       "value": "Gerekli. Çarpan 1'in çarpılacağı sayı."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Daralt/Genişlet"
     }
   ],
   "U086AA": [
@@ -5329,6 +5305,12 @@
     {
       "type": 0,
       "value": " içindeki tüm metni seç"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
     }
   ],
   "WR1K3z": [
@@ -5845,6 +5827,12 @@
       "value": "Yok"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -5957,6 +5945,12 @@
       "value": "Yeni öğe ekle"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6057,6 +6051,12 @@
     {
       "type": 0,
       "value": "Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6391,12 +6391,6 @@
     {
       "type": 0,
       "value": "Eylemi değiştir"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Tekrar hoş geldiniz! Akışınızı değiştirmemi istiyorsanız, ne istediğinizi söylemeniz yeterlidir. Örneğin:"
     }
   ],
   "dOpdsP": [
@@ -7001,6 +6995,12 @@
       "value": "Hedef kitle"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Akışı düzenle"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7393,6 +7393,12 @@
       "value": "İleti"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7595,6 +7601,12 @@
       "value": "Dönüş"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Daralt"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -7761,6 +7773,12 @@
       "value": "' değerinde tür geçersiz, bölünme dizide değil."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7801,12 +7819,6 @@
     {
       "type": 0,
       "value": "Logic Apps'i giden isteklerde iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Soru sorun veya bu akışı nasıl değiştirmek istediğinizi açıklayın"
     }
   ],
   "mvrlkP": [
@@ -8031,6 +8043,12 @@
       "value": "Sığacak kadar yakınlaştır"
     }
   ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
+    }
+  ],
   "o7bd1o": [
     {
       "type": 0,
@@ -8107,6 +8125,12 @@
     {
       "type": 0,
       "value": "Kaydedilmeyen tüm değişiklikleri atmak istiyor musunuz?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Genişlet"
     }
   ],
   "odQ554": [
@@ -8221,6 +8245,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bölünenin bölüneceği sayı. Bölme işleminden sonra kalan alınır."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8843,6 +8873,12 @@
       "value": " sa"
     }
   ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
+    }
+  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -8957,6 +8993,12 @@
     {
       "type": 0,
       "value": "Görünen Ad"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Önizleme"
     }
   ],
   "u81zB9": [

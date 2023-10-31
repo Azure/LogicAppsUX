@@ -10,7 +10,7 @@ import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
-import { getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
+import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import {
@@ -82,6 +82,7 @@ export const workflowSlice = createSlice({
       if (action.payload.isTrigger) {
         deleteWorkflowNode(constants.NODE.TYPE.PLACEHOLDER_TRIGGER, graph);
         delete state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER];
+        delete state.operations[constants.NODE.TYPE.PLACEHOLDER_TRIGGER];
 
         if (graph.edges?.length) {
           graph.edges = graph.edges.map((edge) => {
@@ -187,6 +188,10 @@ export const workflowSlice = createSlice({
 
         graph.children = [...(graph?.children ?? []), placeholderNode];
         state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER] = { graphId, isRoot: true };
+        state.operations[constants.NODE.TYPE.PLACEHOLDER_TRIGGER] = createWorkflowNode(
+          constants.NODE.TYPE.PLACEHOLDER_TRIGGER,
+          WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE
+        );
         for (const childId of existingChildren) {
           addNewEdge(state, constants.NODE.TYPE.PLACEHOLDER_TRIGGER, childId, graph, false);
         }
@@ -266,6 +271,8 @@ export const workflowSlice = createSlice({
       const nodeRunData = {
         ...state.nodesMetadata[nodeId].runData,
         ...runData,
+        inputsLink: runData?.inputsLink ?? null,
+        outputsLink: runData?.outputsLink ?? null,
         duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
       };
       state.nodesMetadata[nodeId].runData = nodeRunData as LogicAppsV2.WorkflowRunAction;

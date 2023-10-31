@@ -1,5 +1,6 @@
 import { TokenPickerMode } from '../../../tokenpicker';
 import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
+import type { hideButtonOptions } from './tokenpickerbutton';
 import { Icon, Text, css, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalTypeaheadMenuPlugin, MenuOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
@@ -66,12 +67,14 @@ function TokenMenuItem({
 }
 
 interface TokenTypeAheadPluginProps {
-  openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
   isEditorFocused?: boolean;
+  hideTokenPickerOptions?: hideButtonOptions;
+  openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
 }
 
-export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused }: TokenTypeAheadPluginProps) => {
+export const TokenTypeAheadPlugin = ({ isEditorFocused, hideTokenPickerOptions, openTokenPicker }: TokenTypeAheadPluginProps) => {
   const [editor] = useLexicalComposerContext();
+  const { hideDynamicContent, hideExpression } = hideTokenPickerOptions ?? {};
   const { isInverted } = useTheme();
   const checkForTriggerMatch = useTokenTypeaheadTriggerMatch('/', {
     minLength: 0,
@@ -105,14 +108,23 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused }: Token
     defaultMessage: 'Insert Dynamic Content',
     description: 'Label for button to open dynamic content picker',
   });
-  const options: TokenOption[] = [
-    new TokenOption(dynamicDataButtonText, 'dynamic', {
-      icon: () => <Icon iconName="LightningBolt" />,
-    }),
-    new TokenOption(expressionButtonText, 'expression', {
-      icon: () => <Icon iconName="Variable" />,
-    }),
-  ];
+  const options: TokenOption[] = [];
+  // making the dynamic content button optional
+  !hideDynamicContent &&
+    options.push(
+      new TokenOption(dynamicDataButtonText, 'dynamic', {
+        icon: () => <Icon iconName="LightningBolt" />,
+      })
+    );
+
+  // making the expression button optional
+  !hideExpression &&
+    options.push(
+      new TokenOption(expressionButtonText, 'expression', {
+        icon: () => <Icon iconName="Variable" />,
+      })
+    );
+
   return (
     <LexicalTypeaheadMenuPlugin
       // eslint-disable-next-line @typescript-eslint/no-empty-function

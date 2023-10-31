@@ -1,8 +1,6 @@
 import type { OperationInfo } from './flowDiffPreview';
 
 export enum FlowOrigin {
-  FromNL2Flow = 'fromNL2Flow',
-  // We may want to define other flow origins in future
   Default = 'default',
 }
 
@@ -35,6 +33,10 @@ type BaseConversationItem = {
   date: Date;
 };
 
+type BaseAssistantMessageItem = BaseConversationItem & {
+  openFeedback?: () => void;
+};
+
 export enum ConversationItemType {
   Query = 'query',
   Reply = 'reply',
@@ -54,28 +56,25 @@ export function isUserQueryItem(item: ConversationItem): item is UserQueryItem {
   return item.type === ConversationItemType.Query;
 }
 
-export type AssistantGreetingItem = BaseConversationItem & {
+export type AssistantGreetingItem = BaseAssistantMessageItem & {
   type: ConversationItemType.Greeting;
   origin: FlowOrigin;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
 };
 
-export type AssistantErrorItem = BaseConversationItem & {
+export type AssistantErrorItem = BaseAssistantMessageItem & {
   type: ConversationItemType.ReplyError;
   error: any;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
   chatSessionId: string;
   __rawRequest: any;
   __rawResponse: any;
 };
 
-export type AssistantReplyItem = BaseConversationItem & {
+export type AssistantReplyItem = BaseAssistantMessageItem & {
   type: ConversationItemType.Reply;
   text: string;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
   isMarkdownText: boolean;
   correlationId?: string;
   hideFooter?: boolean;
@@ -83,22 +82,20 @@ export type AssistantReplyItem = BaseConversationItem & {
   __rawResponse: any;
 };
 
-export type ConnectionsSetupItem = BaseConversationItem & {
+export type ConnectionsSetupItem = BaseAssistantMessageItem & {
   type: ConversationItemType.ConnectionsSetup;
   // connectionReferences: ConnectionReference[]; // TODO: Later change this to Record<string, ConnectionReference>
   // connectionReferencesNeedingSetup: string[];
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
   // The setup UX is displayed until connections are setup or the user skips.
   isSetupComplete: boolean;
   correlationId?: string;
 };
 
-export type AssistantReplyWithFlowItem = BaseConversationItem & {
+export type AssistantReplyWithFlowItem = BaseAssistantMessageItem & {
   type: ConversationItemType.ReplyWithFlow;
   text: string;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
   undoStatus: UndoStatus;
   correlationId?: string;
   __rawRequest: any;
@@ -116,10 +113,9 @@ export enum OperationsNeedingAttentionOnUserAction {
   saving,
 }
 
-export type OperationsNeedingAttentionItem = BaseConversationItem & {
+export type OperationsNeedingAttentionItem = BaseAssistantMessageItem & {
   type: ConversationItemType.OperationsNeedingAttention;
   userAction: OperationsNeedingAttentionOnUserAction;
   operationsNeedingAttention: OperationInfo[];
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
 };

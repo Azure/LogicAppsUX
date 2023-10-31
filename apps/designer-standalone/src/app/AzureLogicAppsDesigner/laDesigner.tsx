@@ -1,6 +1,6 @@
 import { environment } from '../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
-import { changeRunId } from '../../state/workflowLoadingSlice';
+import { changeRunId, setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
@@ -21,7 +21,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot } from '@microsoft/chatbot';
+import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -225,10 +225,14 @@ const DesignerEditor = () => {
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
+      skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
     return serializedWorkflow;
+  };
+
+  const openFeedBackPanel = () => {
+    alert('Open FeedBack Panel');
   };
 
   return (
@@ -248,8 +252,15 @@ const DesignerEditor = () => {
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
               />
-              <Designer />
-              {showChatBot ? <Chatbot endpoint={environment.chatbotEndpoint} getUpdatedWorkflow={getUpdatedWorkflow} /> : null}
+              <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
+              {showChatBot ? (
+                <Chatbot
+                  endpoint={environment.chatbotEndpoint}
+                  getUpdatedWorkflow={getUpdatedWorkflow}
+                  openFeedbackPanel={openFeedBackPanel}
+                  closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                />
+              ) : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}

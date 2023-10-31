@@ -19,11 +19,12 @@ import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelRoot';
-import { setLayerHostSelector } from '@fluentui/react';
+import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
+import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -38,6 +39,7 @@ export interface DesignerProps {
   panelLocation?: PanelLocation;
   customPanelLocations?: CustomPanelLocation[];
   displayRuntimeInfo?: boolean;
+  rightShift?: string; // How much we shift the canvas to the right (due to copilot)
 }
 
 type NodeTypesObj = {
@@ -205,10 +207,14 @@ export const Designer = (props: DesignerProps) => {
     ],
   };
 
+  const copilotPadding: CSSProperties = {
+    marginLeft: props.rightShift,
+  };
+
   return (
     <DndProvider options={DND_OPTIONS}>
       {isMonitoringView || isReadOnly ? null : <SearchPreloader />}
-      <div className="msla-designer-canvas msla-panel-mode">
+      <div className="msla-designer-canvas msla-panel-mode" style={copilotPadding}>
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
@@ -236,7 +242,7 @@ export const Designer = (props: DesignerProps) => {
             />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
           </ReactFlow>
-          <div className={`msla-designer-tools ${panelLocation === PanelLocation.Left ? 'msla-designer-tools-left-panel' : ''}`}>
+          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />
             <Minimap />
           </div>

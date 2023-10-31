@@ -23,6 +23,12 @@
       "value": "Funktionsvisning"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -59,6 +65,12 @@
     {
       "type": 0,
       "value": "-kort"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Klistra in det senast använda uttrycket"
     }
   ],
   "+mAJR3": [
@@ -1015,12 +1027,6 @@
       "value": "Växla miniatyröversikt"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker är dolt"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1061,12 +1067,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Lägg till ett villkor"
     }
   ],
   "5J9jne": [
@@ -1761,12 +1761,6 @@
       "value": ", finns inte i utdata."
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "Under utveckling"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2165,12 +2159,6 @@
       "value": "Sant"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "Lägg till en åtgärd som skickar ett e-postmeddelande"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2485,12 +2473,6 @@
       "value": "Omvandlar parametern till ett decimaltal"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Kontrollera flödets åtgärder för att se om några parametrar behöver konfigureras. Glöm inte att spara när du är klar!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2749,6 +2731,12 @@
       "value": "2"
     }
   ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
@@ -3003,12 +2991,6 @@
       "value": "Välj en befintlig anslutningsreferens eller skapa en ny."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker visas"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3175,12 +3157,6 @@
     {
       "type": 0,
       "value": "Inga egenskaper"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "Här är ditt flöde. Om du vill att jag ska ändra det, så säg bara vad du vill. Exempel:"
     }
   ],
   "IxWip7": [
@@ -3467,6 +3443,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängtidsstämpels veckokomponent"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -3857,6 +3839,12 @@
     {
       "type": 0,
       "value": "Returnerar värdet för den angivna variabeln."
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
     }
   ],
   "NnD8gF": [
@@ -4253,6 +4241,12 @@
       "value": "Spårnings-id för delning"
     }
   ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
@@ -4287,12 +4281,6 @@
     {
       "type": 0,
       "value": "Returnerar indatasträngens Base 64-representation"
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "Stäng"
     }
   ],
   "PytMJ0": [
@@ -4727,12 +4715,6 @@
       "value": "Ge feedback"
     }
   ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Förklara vad en åtgärd gör"
-    }
-  ],
   "TNEttQ": [
     {
       "type": 0,
@@ -4857,12 +4839,6 @@
     {
       "type": 0,
       "value": "Krävs. Talet att multiplicera Multiplikand 1 med."
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "Minimera/expandera"
     }
   ],
   "U086AA": [
@@ -5329,6 +5305,12 @@
     {
       "type": 1,
       "value": "label"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
     }
   ],
   "WR1K3z": [
@@ -5845,6 +5827,12 @@
       "value": "Inget"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -5957,6 +5945,12 @@
       "value": "Lägg till nytt objekt"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6057,6 +6051,12 @@
     {
       "type": 0,
       "value": "Lägg till eller välj ett källschema som ska användas för kartan."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6391,12 +6391,6 @@
     {
       "type": 0,
       "value": "Ersätt åtgärd"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Välkommen tillbaka! Om du vill att jag ska ändra ditt flöde, så säg bara vad du vill. Exempel:"
     }
   ],
   "dOpdsP": [
@@ -7009,6 +7003,12 @@
       "value": "Målgrupp"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Redigera flöde"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7405,6 +7405,12 @@
       "value": "Meddelande"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7607,6 +7613,12 @@
       "value": "Returnera"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Dölj"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -7773,6 +7785,12 @@
       "value": ", delning finns inte matrisen."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7813,12 +7831,6 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Ställ en fråga eller beskriv hur du vill ändra det här flödet"
     }
   ],
   "mvrlkP": [
@@ -8043,6 +8055,12 @@
       "value": "Anpassa zoomning"
     }
   ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
+    }
+  ],
   "o7bd1o": [
     {
       "type": 0,
@@ -8119,6 +8137,12 @@
     {
       "type": 0,
       "value": "Vill du ta bort alla ändringar som inte har sparats?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Visa"
     }
   ],
   "odQ554": [
@@ -8233,6 +8257,12 @@
     {
       "type": 0,
       "value": "Krävs. Talet att dela nämnaren med. Efter divisionen tas resten."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8851,6 +8881,12 @@
       "value": " tim"
     }
   ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
+    }
+  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -8965,6 +9001,12 @@
     {
       "type": 0,
       "value": "Visningsnamn"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Förhandsversion"
     }
   ],
   "u81zB9": [

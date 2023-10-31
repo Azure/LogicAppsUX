@@ -23,6 +23,12 @@
       "value": "関数の表示"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -55,6 +61,12 @@
     {
       "type": 0,
       "value": " カードのコンテキスト メニュー"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "最後に使用した式の貼り付け"
     }
   ],
   "+mAJR3": [
@@ -1007,12 +1019,6 @@
       "value": "ミニマップの切り替え"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "TokenPicker が非表示になっている場合に動的なコンテンツを追加するボタン"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1053,12 +1059,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 大阪、札幌、東京"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "条件を追加してください"
     }
   ],
   "5J9jne": [
@@ -1749,12 +1749,6 @@
       "value": "' の分割が無効です。出力で見つかりません。"
     }
   ],
-  "9W3giy": [
-    {
-      "type": 0,
-      "value": "開発中"
-    }
-  ],
   "9YGcT2": [
     {
       "type": 0,
@@ -2146,12 +2140,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "メールを送信するアクションを追加してください"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2470,12 +2458,6 @@
       "value": "パラメーターを 10 進数に変換します"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "フローのアクションをチェックして、パラメータを設定する必要があるかどうかを確認してください。完了したら、忘れずに保存してください。"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2717,6 +2699,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -2965,12 +2953,6 @@
       "value": "既存の接続参照を選択するか、新規に作成してください。"
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "TokenPicker が表示されている場合に動的なコンテンツを追加するボタン"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3137,12 +3119,6 @@
     {
       "type": 0,
       "value": "プロパティなし"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "フローは次のとおりです。変更をご希望の場合は、ご希望の点をお知らせください。例："
     }
   ],
   "IxWip7": [
@@ -3418,6 +3394,12 @@
     {
       "type": 0,
       "value": "文字列のタイムスタンプの曜日部分を返します"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -3808,6 +3790,12 @@
     {
       "type": 0,
       "value": "指定された変数の値を返します。"
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
     }
   ],
   "NnD8gF": [
@@ -4208,6 +4196,12 @@
       "value": "分割の追跡 ID"
     }
   ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
+    }
+  ],
   "Pq+4a+": [
     {
       "type": 0,
@@ -4242,12 +4236,6 @@
     {
       "type": 0,
       "value": "入力文字列の Base 64 表現を返します"
-    }
-  ],
-  "Px7S/2": [
-    {
-      "type": 0,
-      "value": "閉じる"
     }
   ],
   "PytMJ0": [
@@ -4683,12 +4671,6 @@
       "value": "フィードバックの送信"
     }
   ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "アクションの実行内容を説明してください"
-    }
-  ],
   "TNEttQ": [
     {
       "type": 0,
@@ -4809,12 +4791,6 @@
     {
       "type": 0,
       "value": "必須。Multiplicand 1 と乗算する数値。"
-    }
-  ],
-  "Tz5jTR": [
-    {
-      "type": 0,
-      "value": "折りたたむまたは展開する"
     }
   ],
   "U086AA": [
@@ -5281,6 +5257,12 @@
     {
       "type": 0,
       "value": " のすべてのテキストを選択"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
     }
   ],
   "WR1K3z": [
@@ -5797,6 +5779,12 @@
       "value": "なし"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -5909,6 +5897,12 @@
       "value": "新しい項目の追加"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6009,6 +6003,12 @@
     {
       "type": 0,
       "value": "マップに使用するソース スキーマを追加または選択します。"
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6343,12 +6343,6 @@
     {
       "type": 0,
       "value": "アクションを置き換えてください"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "お帰りなさい! フローの変更をご希望の場合は、ご希望の点をお知らせください。例："
     }
   ],
   "dOpdsP": [
@@ -6942,6 +6936,12 @@
       "value": "対象ユーザー"
     }
   ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "フローの編集"
+    }
+  ],
   "hza/cT": [
     {
       "type": 0,
@@ -7334,6 +7334,12 @@
       "value": "メッセージ"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7525,6 +7531,12 @@
       "value": "返す"
     }
   ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "折りたたむ"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -7683,6 +7695,12 @@
       "value": "' の分割の種類が無効です。分割が配列にありません。"
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7723,12 +7741,6 @@
     {
       "type": 0,
       "value": "送信要求にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "このフローを変更する方法について質問するか、説明してください"
     }
   ],
   "mvrlkP": [
@@ -7953,6 +7965,12 @@
       "value": "ウィンドウのサイズに合わせて大きさを変更"
     }
   ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
+    }
+  ],
   "o7bd1o": [
     {
       "type": 0,
@@ -8029,6 +8047,12 @@
     {
       "type": 0,
       "value": "保存されていないすべての変更を破棄しますか?"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "展開"
     }
   ],
   "odQ554": [
@@ -8143,6 +8167,12 @@
     {
       "type": 0,
       "value": "必須。Dividend を除算する数値。この除算の後、剰余が取得されます。"
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8754,6 +8784,12 @@
       "value": " 時間"
     }
   ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
+    }
+  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -8864,6 +8900,12 @@
     {
       "type": 0,
       "value": "表示名"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "プレビュー"
     }
   ],
   "u81zB9": [

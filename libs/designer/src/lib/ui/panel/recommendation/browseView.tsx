@@ -36,7 +36,7 @@ export const BrowseView = ({
         if (!filterMethod(connector, filters['runtime'])) return false;
       }
 
-      if (filters['actionType']) {
+      if (filters['actionType'] && (allApiIdsWithActions.data.length > 0 || allApiIdsWithTriggers.data.length > 0)) {
         const capabilities = connector.properties?.capabilities ?? [];
         const ignoreCapabilities = capabilities.length === 0;
         const supportsActions =
