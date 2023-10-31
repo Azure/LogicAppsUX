@@ -14,7 +14,6 @@
     "services-designer-client-services": "libs/services/designer-client-services",
     "services-intl": "libs/services/intl",
     "utils": "libs/utils",
-    "vs-code-data-mapper": "apps/vs-code-data-mapper",
     "vs-code-data-mapper-react": "apps/vs-code-data-mapper-react",
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-designer-react": "apps/vs-code-designer-react",
