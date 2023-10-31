@@ -65,7 +65,7 @@ describe('lib/combobox', () => {
     });
   });
 
-  it('ensures options are sorted alphabetically and special option is at the end', () => {
+  it('ensures options conform to the sort order of items passed in', () => {
     const { getByRole, getAllByRole } = render(<Combobox {...defaultProps} />);
     const combobox = getByRole('combobox');
 
@@ -79,9 +79,6 @@ describe('lib/combobox', () => {
     // Ensure the special option is at the end
     expect(optionTexts[optionTexts.length - 1]).toEqual('Enter custom value');
 
-    // Check the rest are sorted
-    const sortedTexts = [...optionTexts.slice(0, -1)].sort((a, b) => a.localeCompare(b));
-
-    expect(optionTexts.slice(0, -1)).toEqual(sortedTexts);
+    expect(optionTexts.slice(0, -1)).toEqual(defaultProps.options.map((option) => option.displayName));
   });
 });

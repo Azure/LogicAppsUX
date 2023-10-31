@@ -94,9 +94,6 @@ export const Combobox = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  // Sort newOptions array alphabetically based on the `displayName` property.
-  options.sort((currentItem, nextItem) => currentItem.displayName.localeCompare(nextItem.displayName));
-
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {
       key: 'isloading',
