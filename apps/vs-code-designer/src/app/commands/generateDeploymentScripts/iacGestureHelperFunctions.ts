@@ -2,7 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import * as vscode from 'vscode';
+
+import { ext } from '../../../extensionVariables';
 
 export class FileManagement {
   /**
@@ -11,18 +15,27 @@ export class FileManagement {
    */
   public static addFolderToWorkspace(folderPath: string): void {
     try {
+      ext.outputChannel.appendLog(localize('addingFolderToWorkspace', `Adding folder to workspace: ${folderPath}`));
+
       const uri = vscode.Uri.file(folderPath);
       const existingFolders = vscode.workspace.workspaceFolders || [];
-
-      // Check if the folder is already in the workspace
       const isAlreadyInWorkspace = existingFolders.some((folder) => folder.uri.fsPath === folderPath);
 
-      // Add the folder to the workspace if it's not already there
       if (!isAlreadyInWorkspace) {
-        vscode.workspace.updateWorkspaceFolders(0, null, { uri });
+        const result = vscode.workspace.updateWorkspaceFolders(0, null, { uri });
+        if (result) {
+          ext.outputChannel.appendLog(localize('folderAddedSuccessfully', `Folder added successfully: ${folderPath}`));
+        } else {
+          ext.outputChannel.appendLog(
+            localize('failedToAddFolder', `Failed to add folder to workspace (updateWorkspaceFolders returned false): ${folderPath}`)
+          );
+        }
+      } else {
+        ext.outputChannel.appendLog(localize('folderAlreadyInWorkspace', `Folder is already in the workspace: ${folderPath}`));
       }
     } catch (error) {
-      vscode.window.showErrorMessage('Failed to add folder to workspace: ' + error.message);
+      ext.outputChannel.appendLog(localize('errorAddingFolder', `Error in addFolderToWorkspace: ${error}`));
+      vscode.window.showErrorMessage(localize('errorMessageAddingFolder', 'Failed to add folder to workspace: ') + error.message);
     }
   }
 
@@ -32,24 +45,39 @@ export class FileManagement {
    */
   public static convertToValidWorkspace(targetDirectory: string): void {
     try {
+      ext.outputChannel.appendLog(
+        localize('convertingDirectoryToWorkspace', `Converting directory to valid workspace: ${targetDirectory}`)
+      );
+
       const workspaceFolders = vscode.workspace.workspaceFolders;
       const folderPaths = workspaceFolders?.map((folder) => folder.uri.fsPath) || [];
 
-      // Check if the target directory is already a workspace folder
       if (folderPaths.includes(targetDirectory)) {
+        ext.outputChannel.appendLog(
+          localize('directoryAlreadyWorkspaceFolder', `Directory is already a workspace folder: ${targetDirectory}`)
+        );
         return;
       }
 
-      // Add the target directory as the root workspace folder
       folderPaths.unshift(targetDirectory);
-
-      // Update the workspace folders with the new configuration
       const added = vscode.workspace.updateWorkspaceFolders(0, null, ...folderPaths.map((path) => ({ uri: vscode.Uri.file(path) })));
+
       if (!added) {
-        throw new Error(workspaceFolders ? 'Failed to add folder to workspace' : 'Failed to create workspace');
+        throw new Error(
+          workspaceFolders
+            ? localize('failedToAddFolderToWorkspace', 'Failed to add folder to workspace')
+            : localize('failedToCreateWorkspace', 'Failed to create workspace')
+        );
+      } else {
+        ext.outputChannel.appendLog(
+          localize('workspaceFoldersUpdated', `Workspace folders updated successfully with new directory: ${targetDirectory}`)
+        );
       }
     } catch (error) {
-      vscode.window.showErrorMessage('Failed to convert to valid workspace: ' + error.message);
+      ext.outputChannel.appendLog(localize('errorConvertingToWorkspace', `Error in convertToValidWorkspace: ${error}`));
+      vscode.window.showErrorMessage(
+        localize('errorMessageConvertingToWorkspace', 'Failed to convert to valid workspace: ') + error.message
+      );
     }
   }
 }

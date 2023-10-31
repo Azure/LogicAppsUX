@@ -86,7 +86,12 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     await fs.ensureDir(workspacePath);
     context.customWorkspaceFolderPath = workspacePath;
 
-    const logicAppFolderPath = path.join(workspacePath, 'LogicApp');
+    let logicAppFolderName = 'LogicApp';
+    if (!isCustomCodeLogicApp && context.isCustomCodeLogicApp !== null && context.logicAppName) {
+      logicAppFolderName = context.logicAppName;
+    }
+
+    const logicAppFolderPath = path.join(workspacePath, logicAppFolderName);
     await fs.ensureDir(logicAppFolderPath);
     context.logicAppFolderPath = logicAppFolderPath;
 
@@ -98,7 +103,6 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     }
     await this.createWorkspaceFile(context);
   }
-
   /**
    * Setup directories and configs for custom code logic app
    * @param context - Project wizard context
@@ -165,13 +169,21 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
    * @param context - Project wizard context
    */
   private async createWorkspaceFile(context: IProjectWizardContext): Promise<void> {
-    const workspaceData = {
-      folders: [{ name: 'LogicApp', path: './LogicApp' }],
-    };
+    // Start with an empty folders array
+    const workspaceFolders = [];
 
+    // Add Functions folder first if it's a custom code code Logic App
     if (context.isCustomCodeLogicApp) {
-      workspaceData.folders.unshift({ name: 'Functions', path: './Function' });
+      workspaceFolders.push({ name: 'Functions', path: './Function' });
     }
+
+    // Use context.logicAppName for the folder name; default to 'LogicApp' if not available
+    const logicAppName = context.logicAppName || 'LogicApp';
+    workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
+
+    const workspaceData = {
+      folders: workspaceFolders,
+    };
 
     const workspaceFilePath = path.join(context.customWorkspaceFolderPath, `${context.workspaceName}.code-workspace`);
     context.customWorkspaceFolderPath = workspaceFilePath;
