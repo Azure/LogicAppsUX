@@ -35,14 +35,15 @@ import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vs
 import { getWorkspaceFolder } from './workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
-import * as AdmZip from 'adm-zip';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as request from 'request';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
+
+import AdmZip = require('adm-zip');
+import request = require('request');
 
 export async function validateAndInstallBinaries(context: IActionContext) {
   await vscode.window.withProgress(
