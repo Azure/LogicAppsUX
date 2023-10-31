@@ -65,4 +65,4 @@ The extension will activate/initialize automatically upon viewing the Azure Tool
 Listed below are different ways you can kick off your usage/flow of Data Mapper:
 
 - Create a new data map: open the Azure Tools extension tab, find the Data Mapper sub-view, and click either 'Create new data map' button
-- Load a data map: right-click on a .yml map definition
+- Load a data map: right-click on a .lml map definition
