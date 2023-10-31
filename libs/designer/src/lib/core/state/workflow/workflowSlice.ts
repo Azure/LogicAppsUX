@@ -271,6 +271,8 @@ export const workflowSlice = createSlice({
       const nodeRunData = {
         ...state.nodesMetadata[nodeId].runData,
         ...runData,
+        inputsLink: runData?.inputsLink ?? null,
+        outputsLink: runData?.outputsLink ?? null,
         duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
       };
       state.nodesMetadata[nodeId].runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
