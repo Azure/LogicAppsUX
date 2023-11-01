@@ -25,7 +25,11 @@ import type { MessageItem } from 'vscode';
  * User can specify location.
  */
 export async function activateAzurite(context: IActionContext): Promise<void> {
-  if (vscode.workspace.workspaceFolders.length > 0 && (await isFunctionProject(vscode.workspace.workspaceFolders[0].uri.fsPath))) {
+  if (
+    vscode.workspace.workspaceFolders &&
+    vscode.workspace.workspaceFolders.length > 0 &&
+    (await isFunctionProject(vscode.workspace.workspaceFolders[0].uri.fsPath))
+  ) {
     const workspaceFolder = vscode.workspace.workspaceFolders[0];
     const workspacePath = workspaceFolder.uri.fsPath;
 
