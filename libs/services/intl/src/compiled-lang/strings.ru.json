@@ -23,6 +23,12 @@
       "value": "Отображение функции"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -1061,12 +1067,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Осака, Саппоро, Токио"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Добавить условие"
     }
   ],
   "5J9jne": [
@@ -2181,12 +2181,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "Добавить действие, которое отправляет сообщение электронной почты"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2505,12 +2499,6 @@
       "value": "Преобразует параметр в десятичное число"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Проверьте действия потока, чтобы узнать, нужно ли настроить какие-либо параметры. Не забудьте сохранить после завершения."
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2789,6 +2777,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -3211,12 +3205,6 @@
     {
       "type": 0,
       "value": "Свойства отсутствуют"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "Вот ваш поток. Если вы хотите, чтобы я изменил его, просто скажите, что нужно сделать. Например:"
     }
   ],
   "IxWip7": [
@@ -3923,6 +3911,12 @@
       "value": "Возвращает значение указанной переменной."
     }
   ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -4319,6 +4313,12 @@
     {
       "type": 0,
       "value": "ИД отслеживания splitOn"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
     }
   ],
   "Pq+4a+": [
@@ -4817,12 +4817,6 @@
     {
       "type": 0,
       "value": "Оставить отзыв"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Объяснить, что выполняет действие"
     }
   ],
   "TNEttQ": [
@@ -5421,6 +5415,12 @@
       "value": "label"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5935,6 +5935,12 @@
       "value": "Нет"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -6153,6 +6159,12 @@
     {
       "type": 0,
       "value": "Добавьте или выберите исходную схему, которая будет применяться для вашей карты."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6487,12 +6499,6 @@
     {
       "type": 0,
       "value": "Заменить действие"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "С возвращением! Если вы хотите, чтобы я изменил ваш поток, просто скажите, что нужно сделать. Например:"
     }
   ],
   "dOpdsP": [
@@ -7529,6 +7535,12 @@
       "value": "Сообщение"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7929,6 +7941,12 @@
       "value": "\". Разделение отсутствует в массиве."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7969,12 +7987,6 @@
     {
       "type": 0,
       "value": "Запрет на включение в исходящий запрос заголовков метаданных по рабочим процессам в Logic Apps."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Задайте вопрос или опишите, как нужно изменить этот поток"
     }
   ],
   "mvrlkP": [
@@ -8197,6 +8209,12 @@
     {
       "type": 0,
       "value": "По размеру окна"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
     }
   ],
   "o7bd1o": [
@@ -9047,6 +9065,12 @@
     {
       "type": 0,
       "value": " ч"
+    }
+  ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

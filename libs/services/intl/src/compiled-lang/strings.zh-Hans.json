@@ -23,6 +23,12 @@
       "value": "函数显示"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -1065,12 +1071,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00)大阪，札幌，东京"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "添加条件"
     }
   ],
   "5J9jne": [
@@ -2152,12 +2152,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "添加发送电子邮件的操作"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2480,12 +2474,6 @@
       "value": "将参数转换为小数"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "检查流的操作，看看是否需要设置任何参数。完成后，别忘了保存!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2731,6 +2719,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -3145,12 +3139,6 @@
     {
       "type": 0,
       "value": "无属性"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "这是你的流。如果希望我更改它，只需说出你的要求。例如:"
     }
   ],
   "IxWip7": [
@@ -3824,6 +3812,12 @@
       "value": "返回指定变量的值。"
     }
   ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -4220,6 +4214,12 @@
     {
       "type": 0,
       "value": "拆分跟踪 ID"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
     }
   ],
   "Pq+4a+": [
@@ -4693,12 +4693,6 @@
     {
       "type": 0,
       "value": "提供反馈"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "解释操作的作用"
     }
   ],
   "TNEttQ": [
@@ -5309,6 +5303,12 @@
       "value": " 中的所有文本"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5823,6 +5823,12 @@
       "value": "无"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -6041,6 +6047,12 @@
     {
       "type": 0,
       "value": "添加或选择要用于映射的源架构。"
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6375,12 +6387,6 @@
     {
       "type": 0,
       "value": "替换操作"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "欢迎回来! 如果希望我更改你的流，只需说出你的要求。例如:"
     }
   ],
   "dOpdsP": [
@@ -7392,6 +7398,12 @@
       "value": "消息"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7759,6 +7771,12 @@
       "value": "\" 的类型无效，拆分对象不在数组中。"
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7799,12 +7817,6 @@
     {
       "type": 0,
       "value": "限制逻辑应用，使其不在传出请求中包含工作流元数据标头。"
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "提出问题或描述你希望如何更改此流"
     }
   ],
   "mvrlkP": [
@@ -8035,6 +8047,12 @@
     {
       "type": 0,
       "value": "缩放到合适大小"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
     }
   ],
   "o7bd1o": [
@@ -8852,6 +8870,12 @@
     {
       "type": 0,
       "value": " 小时"
+    }
+  ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [
