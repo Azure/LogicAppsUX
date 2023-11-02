@@ -742,10 +742,10 @@
             "description": "The timeout (in seconds) to be used when validating and installing dependencies.",
             "default": 120
           },
-          "azureLogicAppsStandard.dependenciesPath": {
+          "azureLogicAppsStandard.autoRuntimeDependenciesPath": {
             "scope": "resource",
             "type": "string",
-            "description": "The path for Azure Logic Apps extension runtime dependencies."
+            "description": "The path for Azure Logic Apps extension runtime dependencies. (Preview)"
           },
           "azureLogicAppsStandard.dotnetBinaryPath": {
             "scope": "resource",
@@ -879,9 +879,9 @@
             "description": "Start background design-time process at project load time.",
             "default": false
           },
-          "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation (Preview)": {
+          "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
             "type": "boolean",
-            "description": "Enable automatic validation and installation for runtime dependencies at the configured path",
+            "description": "Enable automatic validation and installation for runtime dependencies at the configured path. (Preview)",
             "default": null
           },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {

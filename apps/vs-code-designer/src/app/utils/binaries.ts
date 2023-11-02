@@ -8,7 +8,7 @@ import {
   Platform,
   autoRuntimeDependenciesValidationAndInstallationSetting,
   defaultDependencyPathValue,
-  dependenciesPathSettingKey,
+  autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dotNetBinaryPathSettingKey,
   dotnetDependencyName,
@@ -62,8 +62,8 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       const dependencyTimeout = (await getDependencyTimeout()) * 1000;
 
       context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
-      if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
-        await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
+      if (!getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey)) {
+        await updateGlobalSetting(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
         context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
       }
 
@@ -294,7 +294,7 @@ export function binariesExist(dependencyName: string): boolean {
   if (!useBinariesDependencies()) {
     return false;
   }
-  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
 

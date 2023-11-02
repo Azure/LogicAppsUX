@@ -182,7 +182,7 @@ export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
-export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation (Preview)';
+export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 
@@ -195,7 +195,7 @@ export const extInstallTaskName = `${func}: ${extInstallCommand}`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
-export const dependenciesPathSettingKey = 'dependenciesPath';
+export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const defaultLogicAppsFolder = '.azurelogicapps';
 export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
 export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
