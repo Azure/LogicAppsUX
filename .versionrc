@@ -27,10 +27,6 @@
       "type": "json"
     },
     {
-      "filename": "apps/vs-code-data-mapper/src/package.json",
-      "type": "json"
-    },
-    {
       "filename": "libs/data-mapper/package.json",
       "type": "json"
     },
