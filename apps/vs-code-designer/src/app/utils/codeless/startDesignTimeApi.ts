@@ -201,8 +201,8 @@ export function stopDesignTimeApi(): void {
 
 export async function promptStartDesignTimeOption(context: IActionContext) {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const workspace = await getWorkspaceFolder(context);
-    const projectPath = await tryGetFunctionProjectRoot(context, workspace);
+    const workspaceFolder = await getWorkspaceFolder(context);
+    const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
     const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
     if (projectPath) {

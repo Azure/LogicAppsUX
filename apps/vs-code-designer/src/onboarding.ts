@@ -50,13 +50,13 @@ export const startOnboarding = async (activateContext: IActionContext) => {
 
   await onboardBinaries(activateContext);
 
-  callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
       await promptStartDesignTimeOption(activateContext);
     });
   });
 
-  callWithTelemetryAndErrorHandling(showAutoStartAzuriteWarning, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(showAutoStartAzuriteWarning, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showAutoStartAzuriteWarning, async () => {
       activateContext.telemetry.properties.lastStep = showAutoStartAzuriteWarning;
       activateAzurite(activateContext);
