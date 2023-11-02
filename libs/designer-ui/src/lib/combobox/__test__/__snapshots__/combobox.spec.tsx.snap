@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/combobox should render 1`] = `
+<div
+  className="msla-combobox-container"
+>
+  <div
+    className="ms-ComboBox-container msla-combobox "
+    onClick={[Function]}
+  >
+    <div
+      className="ms-ComboBox css-109"
+      data-ktp-target={true}
+      id="ComboBox0wrapper"
+    >
+      <input
+        aria-autocomplete="list"
+        aria-expanded={false}
+        autoCapitalize="off"
+        autoComplete="off"
+        className="ms-ComboBox-Input css-110"
+        data-is-interactable={true}
+        data-ktp-execute-target={true}
+        data-lpignore={true}
+        id="ComboBox0-input"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClick={[Function]}
+        onCompositionEnd={[Function]}
+        onCompositionStart={[Function]}
+        onCompositionUpdate={[Function]}
+        onFocus={[Function]}
+        onInput={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onTouchStart={[Function]}
+        role="combobox"
+        spellCheck={false}
+        style={
+          Object {
+            "fontFamily": "inherit",
+          }
+        }
+        type="text"
+        value=""
+      />
+      <button
+        className="ms-Button ms-Button--icon ms-ComboBox-CaretDown-button root-117"
+        data-is-focusable={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyPress={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseUp={[Function]}
+        tabIndex={-1}
+        type="button"
+      >
+        <span
+          className="ms-Button-flexContainer flexContainer-118"
+          data-automationid="splitbuttonprimary"
+        >
+          <i
+            aria-hidden={true}
+            className="ms-Icon root-105 css-126 ms-Button-icon icon-120"
+            data-icon-name="ChevronDown"
+            style={
+              Object {
+                "fontFamily": "\\"FabricMDL2Icons\\"",
+              }
+            }
+          >
+            
+          </i>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

@@ -29,14 +29,36 @@ export function useReportBugButton(disabled: boolean): IButtonProps {
   };
 }
 
+export function useAzureCopilotButton(azureButtonCallback?: () => void): IButtonProps {
+  const intl = useIntl();
+  const intlText = {
+    azureCopilotButtonText: intl.formatMessage({
+      defaultMessage: 'Open Azure Copilot',
+      description: 'Text for button that allows user to open azure copilot',
+    }),
+  };
+  return {
+    text: intlText.azureCopilotButtonText,
+    onClick: azureButtonCallback,
+    iconProps: {
+      iconName: 'AzureLogo',
+      styles: {
+        root: {
+          color: Constants.NEUTRAL_PRIMARY,
+          backgroundColor: 'transparent',
+        },
+      },
+    },
+  };
+}
+
 export function useFeedbackMessage(item: ReactionItem): {
   feedbackMessage: JSX.Element;
   onMessageReactionClicked: (chatEntryReaction: ChatEntryReaction) => void;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
 } {
   const [reaction, setReaction] = useState(item.reaction);
-  const [askFeedback, setAskFeedback] = useState(item.askFeedback);
+  const [askFeedback, setAskFeedback] = useState(false);
 
   const onMessageReactionClicked = (chatReaction: ChatEntryReaction) => {
     if (reaction === chatReaction) {
@@ -51,16 +73,15 @@ export function useFeedbackMessage(item: ReactionItem): {
   const feedbackMessage = useMemo(() => {
     return (
       <div>
-        <FeedbackMessage id={item.id} date={item.date} reaction={reaction} askFeedback={askFeedback} />
+        <FeedbackMessage id={item.id} date={item.date} reaction={reaction} askFeedback={askFeedback} openFeedback={item.openFeedback} />
       </div>
     );
-  }, [askFeedback, item.date, item.id, reaction]);
+  }, [askFeedback, item.date, item.id, item.openFeedback, reaction]);
 
   return {
     feedbackMessage,
-    onMessageReactionClicked,
     reaction,
-    askFeedback,
+    onMessageReactionClicked,
   };
 }
 

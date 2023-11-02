@@ -1,0 +1,51 @@
+name: 'Report an accessibility issue'
+description: Create a report to help us improve Logic Apps
+labels: ['a11y', 'triage']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the issue
+      description: Provide a clear and concise description of the challenge you are running into. Please tell us what the current behavior is as well as what you expect it to be.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: designerType
+    attributes:
+      label: Are you using new designer or old designer
+      options:
+        - New Designer (With action panels)
+        - Old Designer (With the properties on the actual card)
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots_or_videos
+    attributes:
+      label: Screenshots or Videos
+      description: |
+        If applicable, add screenshots or a video to help explain your problem.
+        For more information on the supported file image/file types and the file size limits, please refer
+        to the following link: https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/attaching-files
+      placeholder: |
+        You can drag your video or image files inside of this editor ↓
+
+  - type: textarea
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: |
+        - Browser: [e.g. Chrome, Safari, Firefox]
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.

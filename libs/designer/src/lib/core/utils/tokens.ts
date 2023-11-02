@@ -58,8 +58,16 @@ export const getTokenNodeIds = (
   operationInfos: Record<string, NodeOperation>,
   operationMap: Record<string, string>
 ): string[] => {
-  const tokenNodes = getUpstreamNodeIds(nodeId, graph, nodesMetadata, operationMap);
+  let tokenNodeIds = getUpstreamNodeIds(nodeId, graph, nodesMetadata, operationMap);
   const manifest = nodesManifest[nodeId]?.manifest;
+
+  const preliminaryRepetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
+  // Remove token nodes that have inaccessible outputs due to loop scope
+  tokenNodeIds = tokenNodeIds.filter((tokenNodeId) => {
+    const tokenRepititionNodes = getRepetitionNodeIds(tokenNodeId, nodesMetadata, operationInfos);
+    // filter out if repetitionNodeIds does not contain all of tokenRepititionNodes
+    return tokenRepititionNodes.every((tokenRepititionId) => preliminaryRepetitionNodeIds.includes(tokenRepititionId));
+  });
 
   if (manifest) {
     // Should include itself as repetition reference if nodes can reference its outputs
@@ -72,17 +80,17 @@ export const getTokenNodeIds = (
       // If repetition is set for a node but not set for self reference,
       // then nodes having this type as repetition can reference its outputs like Foreach and Until
       if (nodeManifest?.properties.repetition && !nodeManifest.properties.repetition.self) {
-        tokenNodes.push(repetitionNodeId);
+        tokenNodeIds.push(repetitionNodeId);
       }
     }
 
     if (manifest.properties?.outputTokens?.selfReference) {
       const allNodesInsideNode = getAllNodesInsideNode(nodeId, graph, operationMap);
-      tokenNodes.push(...allNodesInsideNode);
+      tokenNodeIds.push(...allNodesInsideNode);
     }
   }
 
-  return Array.from(new Set(tokenNodes));
+  return Array.from(new Set(tokenNodeIds));
 };
 
 export const getBuiltInTokens = (manifest?: OperationManifest): OutputToken[] => {

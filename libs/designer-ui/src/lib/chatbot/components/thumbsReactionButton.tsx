@@ -1,9 +1,11 @@
 import Constants from '../constants';
 import Dislike from '../images/Dislike.svg';
 import DislikeFilled from '../images/DislikeFilled.svg';
+import DislikeDark from '../images/Dislike_Dark.svg';
 import Like from '../images/Like.svg';
 import LikeFilled from '../images/LikeFilled.svg';
-import { IconButton } from '@fluentui/react';
+import LikeDark from '../images/Like_Dark.svg';
+import { IconButton, useTheme } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -15,7 +17,18 @@ export interface IThumbsReactionButtonProps {
 }
 
 export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isVoted, onClick, isDownvote, disabled }) => {
-  const icon = isDownvote ? (isVoted ? DislikeFilled : Dislike) : isVoted ? LikeFilled : Like;
+  const { isInverted } = useTheme();
+  const icon = isDownvote
+    ? isVoted
+      ? DislikeFilled
+      : isInverted
+      ? DislikeDark
+      : Dislike
+    : isVoted
+    ? LikeFilled
+    : isInverted
+    ? LikeDark
+    : Like;
   const intl = useIntl();
   const intlText = {
     upvote: intl.formatMessage({
@@ -31,7 +44,7 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
   return (
     <IconButton
       title={isDownvote ? intlText.downvote : intlText.upvote}
-      styles={getIconButtonStyles(isVoted)}
+      styles={getIconButtonStyles(isVoted, isInverted)}
       onClick={onClick}
       disabled={disabled}
       toggle={true}
@@ -39,18 +52,18 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
       iconProps={{
         imageProps: {
           src: icon,
-          styles: getIconButtonStyles(isVoted),
+          styles: getIconButtonStyles(isVoted, isInverted),
         },
       }}
     />
   );
 };
 
-const getIconButtonStyles = (isVoted?: boolean) => {
+const getIconButtonStyles = (isVoted?: boolean, isInverted?: boolean) => {
   return {
-    root: { color: Constants.NEUTRAL_PRIMARY, backgroundColor: 'transparent' },
+    root: { color: isInverted ? Constants.DARK_PRIMARY : Constants.NEUTRAL_PRIMARY, backgroundColor: 'transparent' },
     rootChecked: { color: Constants.THEME_PRIMARY, backgroundColor: 'transparent' },
-    icon: { color: isVoted ? Constants.THEME_PRIMARY : 'unset' },
+    icon: { color: isInverted ? Constants.DARK_PRIMARY : isVoted ? Constants.THEME_PRIMARY : 'unset' },
     rootDisabled: { color: Constants.NEUTRAL_LIGHTER, backgroundColor: 'transparent' },
   };
 };

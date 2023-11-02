@@ -23,6 +23,12 @@
       "value": "Tampilan fungsi"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -60,7 +66,7 @@
   "+ijo/2": [
     {
       "type": 0,
-      "value": "Paste last used expression"
+      "value": "Tempel ekspresi yang terakhir digunakan"
     }
   ],
   "+mAJR3": [
@@ -1013,12 +1019,6 @@
       "value": "Hidupkan/Matikan Peta Mini"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "Tombol untuk menambahkan konten dinamis jika TokenPicker disembunyikan"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1059,12 +1059,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "Tambahkan kondisi"
     }
   ],
   "5J9jne": [
@@ -2146,12 +2140,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "Tambahkan tindakan yang mengirim email"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2470,12 +2458,6 @@
       "value": "Mengonversi parameter menjadi angka desimal"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "Periksa tindakan alur untuk melihat apakah ada parameter yang perlu ditetapkan. Jangan lupa untuk menyimpan bila Anda sudah selesai!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2721,6 +2703,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -2969,12 +2957,6 @@
       "value": "Pilih referensi koneksi yang sudah ada atau buat baru."
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "Tombol untuk menambahkan konten dinamis jika TokenPicker ditampilkan"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3141,12 +3123,6 @@
     {
       "type": 0,
       "value": "Tidak ada properti"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "Berikut adalah alur Anda. Jika Anda ingin agar saya mengubahnya, cukup katakan apa yang Anda inginkan. Misalnya:"
     }
   ],
   "IxWip7": [
@@ -3422,6 +3398,12 @@
     {
       "type": 0,
       "value": "Menampilkan komponen jumlah hari dalam seminggu dari tanda waktu string"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -3812,6 +3794,12 @@
     {
       "type": 0,
       "value": "Menampilkan nilai dari variabel yang ditentukan."
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
     }
   ],
   "NnD8gF": [
@@ -4210,6 +4198,12 @@
     {
       "type": 0,
       "value": "Id Pelacakan Pemisahan"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
     }
   ],
   "Pq+4a+": [
@@ -4675,12 +4669,6 @@
     {
       "type": 0,
       "value": "Berikan tanggapan"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "Jelaskan apa fungsi tindakan"
     }
   ],
   "TNEttQ": [
@@ -5279,6 +5267,12 @@
       "value": "label"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5793,6 +5787,12 @@
       "value": "Tidak ada"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -5905,6 +5905,12 @@
       "value": "Tambahkan item baru"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6005,6 +6011,12 @@
     {
       "type": 0,
       "value": "Tambahkan atau pilih skema sumber yang akan digunakan untuk peta Anda."
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6339,12 +6351,6 @@
     {
       "type": 0,
       "value": "Ganti tindakan"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "Selamat datang kembali! Jika Anda ingin agar saya mengubah alur Anda, cukup katakan apa yang Anda inginkan. Misalnya:"
     }
   ],
   "dOpdsP": [
@@ -6945,7 +6951,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "Edit alur"
     }
   ],
   "hza/cT": [
@@ -7344,6 +7350,12 @@
       "value": "Pesan"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7538,7 +7550,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Ciutkan"
     }
   ],
   "lZT0JI": [
@@ -7707,6 +7719,12 @@
       "value": "', pemisahan tidak dalam array."
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7747,12 +7765,6 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "Ajukan pertanyaan atau jelaskan bagaimana Anda ingin mengubah alur ini"
     }
   ],
   "mvrlkP": [
@@ -7977,6 +7989,12 @@
       "value": "Zoom hingga pas"
     }
   ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
+    }
+  ],
   "o7bd1o": [
     {
       "type": 0,
@@ -8058,7 +8076,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Luaskan"
     }
   ],
   "odQ554": [
@@ -8173,6 +8191,12 @@
     {
       "type": 0,
       "value": "Wajib. Nomor untuk membagi Dividen. Setelah dibagi, sisanya diambil."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8788,6 +8812,12 @@
       "value": "j"
     }
   ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
+    }
+  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -8907,7 +8937,7 @@
   "tu4TTM": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Pratinjau"
     }
   ],
   "u81zB9": [
@@ -9246,12 +9276,6 @@
     {
       "type": 0,
       "value": "Berisi nilai duplikat"
-    }
-  ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9786,12 +9810,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Lama"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Collapse"
     }
   ],
   "zb3lE6": [

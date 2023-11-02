@@ -6,7 +6,6 @@ import {
   useIsParallelBranch,
   useRelationshipIds,
   useSelectedSearchOperationGroupId,
-  useSelectedSearchOperationId,
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
@@ -15,6 +14,7 @@ import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
 import { Link, Icon, IconButton, Text } from '@fluentui/react';
+import { SearchService } from '@microsoft/designer-client-services-logic-apps';
 import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
@@ -49,27 +49,47 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
 
   const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
-  const selectedOperationId = useSelectedSearchOperationId();
   const { data: allOperations, isLoading: isLoadingOperations } = useAllOperations();
-  const selectedOperation = allOperations.find((o) => o.id === selectedOperationId);
+  const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
+  const [isLoadingOperationGroup, setIsLoadingOperationGroup] = useState<boolean>(false);
 
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
+  // hide actions type filter if we don't have any operations for the browse view
+  const hideActionTypeFilter = (!allOperations || allOperations.length === 0) && !searchTerm;
+
+  // effect to set the current list of operations by group
   useEffect(() => {
-    if (!allOperations || !selectedOperationGroupId) return;
-    const filteredOps = allOperations.filter((operation) => {
-      const apiId = operation.properties.api.id;
-      return areApiIdsEqual(apiId, selectedOperationGroupId);
-    });
-    setAllOperationsForGroup(filteredOps);
+    if (!selectedOperationGroupId) return;
+
+    const searchOperation = SearchService().getOperationsByConnector?.bind(SearchService());
+
+    const searchResultPromise = searchOperation
+      ? searchOperation(selectedOperationGroupId, hideActionTypeFilter ? undefined : filters['actionType']?.toLowerCase())
+      : Promise.resolve(
+          (allOperations ?? []).filter((operation) => {
+            const apiId = operation.properties.api.id;
+            return areApiIdsEqual(apiId, selectedOperationGroupId);
+          })
+        );
+
+    setIsLoadingOperationGroup(true);
+    searchResultPromise
+      .then((filteredOps) => {
+        setAllOperationsForGroup(filteredOps);
+      })
+      .finally(() => {
+        setIsLoadingOperationGroup(false);
+      });
     setSelectionState(SELECTION_STATES.DETAILS);
-  }, [selectedOperationGroupId, allOperations]);
+  }, [selectedOperationGroupId, allOperations, filters, hideActionTypeFilter]);
 
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
     dispatch(selectOperationId(''));
+    setAllOperationsForGroup([]);
     setSelectionState(SELECTION_STATES.SEARCH);
   }, [dispatch]);
 
@@ -94,21 +114,27 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
 
   const onOperationClick = useCallback(
     (id: string, apiId?: string) => {
-      const operation = (allOperations ?? []).find((o: DiscoveryOperation<DiscoveryResultTypes>) => {
-        return apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id;
+      const searchOperation = SearchService().getOperationById?.bind(SearchService());
+
+      const searchResultPromise = searchOperation
+        ? searchOperation(id)
+        : Promise.resolve((allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id)));
+
+      searchResultPromise.then((operation) => {
+        if (!operation) return;
+        dispatch(selectOperationId(operation.id));
+        setSelectedOperation(operation);
+        if (hasAzureResourceSelection(operation)) {
+          startAzureResourceSelection();
+          return;
+        }
+        if (hasSwaggerSelection(operation)) {
+          startSwaggerSelection();
+          return;
+        }
+        const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
+        dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
       });
-      if (!operation) return;
-      dispatch(selectOperationId(operation.id));
-      if (hasAzureResourceSelection(operation)) {
-        startAzureResourceSelection();
-        return;
-      }
-      if (hasSwaggerSelection(operation)) {
-        startSwaggerSelection();
-        return;
-      }
-      const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
-      dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
     },
     [
       allOperations,
@@ -157,8 +183,9 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
               groupOperations={allOperationsForGroup}
               filters={filters}
               onOperationClick={onOperationClick}
-              isLoading={isLoadingOperations}
+              isLoading={isLoadingOperations || isLoadingOperationGroup}
               displayRuntimeInfo={displayRuntimeInfo}
+              ignoreActionsFilter={hideActionTypeFilter}
             />
           ) : null,
           [SELECTION_STATES.SEARCH]: (
@@ -172,6 +199,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
                 setFilters={setFilters}
                 isTriggerNode={isTrigger}
                 displayRuntimeInfo={displayRuntimeInfo}
+                displayActionType={!hideActionTypeFilter}
               />
               {searchTerm ? (
                 <SearchView

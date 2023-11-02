@@ -81,7 +81,6 @@ export function TokenPicker({
 
   useEffect(() => {
     if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
-      console.log(expression.value);
       window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
     }
   }, [expression.value]);

@@ -1,5 +1,6 @@
 name: '🐞 Logic Apps/Power Automate Bug Report'
 description: Create a report to help us improve Logic Apps
+labels: ['bug', 'triage']
 body:
   - type: markdown
     attributes:

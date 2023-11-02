@@ -44,19 +44,21 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
         docsUrl={externalDocs?.url}
       />
       {isHybrid ? <HybridNotice /> : null}
-      <div className="msla-op-group-item-container">
+      <ul className="msla-op-group-item-container">
         {!isLoading && operationActionsData.length === 0 ? (
           <MessageBar messageBarType={MessageBarType.info}>{noOperationsText}</MessageBar>
         ) : null}
         {operationActionsData?.map((op) => (
-          <OperationSearchCard key={op.id} operationActionData={op} onClick={onOperationClick} displayRuntimeInfo={displayRuntimeInfo} />
+          <li key={op.id}>
+            <OperationSearchCard operationActionData={op} onClick={onOperationClick} displayRuntimeInfo={displayRuntimeInfo} />
+          </li>
         ))}
         {isLoading ? (
           <div style={{ margin: '16px 0' }}>
             <Spinner label={loadingText} ariaLive="assertive" labelPosition="right" />
           </div>
         ) : null}
-      </div>
+      </ul>
     </div>
   );
 };
