@@ -90,6 +90,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+ijo/2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Paste last used expression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tempel ekspresi yang terakhir digunakan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+mAJR3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Kuala Lumpur, Singapore]]></Val>
@@ -2444,15 +2453,6 @@
           <Val><![CDATA[Invalid split on value ''{splitOn}'', cannot find in outputs.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Pemisahan tidak valid pada nilai ''{splitOn}'', tidak dapat menemukan dalam output.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";9W3giy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[In-Development]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dalam Pengembangan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5967,15 +5967,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Px7S/2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Close]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tutup]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";PytMJ0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Run after {sourceNodeId}]]></Val>
@@ -6737,15 +6728,6 @@
           <Val><![CDATA[Required. The number to multiply Multiplicand 1 with.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wajib. Nomor untuk mengalikan Multiplicand 1.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";Tz5jTR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Collapse/Expand]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ciutkan/Luaskan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9675,6 +9657,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";hwj1Ht" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Edit flow]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Edit alur]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";hza/cT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+00:00) Casablanca]]></Val>
@@ -10494,6 +10485,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";lX30/R" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Collapse]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ciutkan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";lZT0JI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add Group]]></Val>
@@ -11219,6 +11219,15 @@
           <Val><![CDATA[Do you want to discard all unsaved changes?]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Apakah Anda ingin membuang semua perubahan yang tidak disimpan?]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";oZMhX/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Expand]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Luaskan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12393,6 +12402,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";tu4TTM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Preview]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pratinjau]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";u81zB9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-09:00) Coordinated Universal Time-09]]></Val>
@@ -12866,6 +12884,15 @@
           <Val><![CDATA[This contains a duplicate value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Berisi nilai duplikat]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vyKxuD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Expand]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Luaskan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -13649,6 +13676,15 @@
           <Val><![CDATA[(UTC+12:00) Petropavlovsk-Kamchatsky - Old]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+12:00) Petropavlovsk-Kamchatsky - Lama]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";zYbkZM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Collapse]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ciutkan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

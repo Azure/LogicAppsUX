@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageManager, Platform, dependenciesPathSettingKey, funcDependencyName, funcPackageName } from '../../../constants';
+import { PackageManager, Platform, autoRuntimeDependenciesPathSettingKey, funcDependencyName, funcPackageName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import {
   downloadAndExtractBinaries,
@@ -21,7 +21,7 @@ import { localize } from 'vscode-nls';
 export async function installFuncCoreToolsBinaries(context: IActionContext, majorVersion?: string): Promise<void> {
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
-  const targetDirectory = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   context.telemetry.properties.lastStep = 'getLatestFunctionCoreToolsVersion';
   const version = await getLatestFunctionCoreToolsVersion(context, majorVersion);
   let azureFunctionCoreToolsReleasesUrl;

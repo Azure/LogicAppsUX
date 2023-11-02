@@ -23,6 +23,12 @@
       "value": "函數顯示"
     }
   ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protected"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -1021,12 +1027,6 @@
       "value": "切換縮圖"
     }
   ],
-  "4pm5yw": [
-    {
-      "type": 0,
-      "value": "當 TokenPicker 隱藏時新增動態內容的按鈕"
-    }
-  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1067,12 +1067,6 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 大阪，北海道，東京"
-    }
-  ],
-  "5H+8Sb": [
-    {
-      "type": 0,
-      "value": "新增條件"
     }
   ],
   "5J9jne": [
@@ -2154,12 +2148,6 @@
       "value": "True"
     }
   ],
-  "CFOUe3": [
-    {
-      "type": 0,
-      "value": "新增傳送電子郵件的動作"
-    }
-  ],
   "CG772M": [
     {
       "type": 0,
@@ -2466,12 +2454,6 @@
       "value": "將參數轉換為十進位數字"
     }
   ],
-  "EKjaix": [
-    {
-      "type": 0,
-      "value": "檢查流程的動作，以查看是否需要設定任何參數。當您完成時，別忘了儲存!"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2717,6 +2699,12 @@
     {
       "type": 0,
       "value": "2"
+    }
+  ],
+  "FpQfZG": [
+    {
+      "type": 0,
+      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -2965,12 +2953,6 @@
       "value": "選取現有的連接參考或建立新的連接參考。"
     }
   ],
-  "HQ8/tk": [
-    {
-      "type": 0,
-      "value": "當 TokenPicker 顯示時新增動態內容的按鈕"
-    }
-  ],
   "HSJLCu": [
     {
       "type": 0,
@@ -3137,12 +3119,6 @@
     {
       "type": 0,
       "value": "無屬性"
-    }
-  ],
-  "IuHdCO": [
-    {
-      "type": 0,
-      "value": "這是您的流程。如果您希望我做變更，只要說出您的需求即可。例如:"
     }
   ],
   "IxWip7": [
@@ -3418,6 +3394,12 @@
     {
       "type": 0,
       "value": "傳回字串時間戳記當週第幾天的部分"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is shown"
     }
   ],
   "L4RJF0": [
@@ -3808,6 +3790,12 @@
     {
       "type": 0,
       "value": "傳回指定變數的值。"
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "How can I call an external endpoint?"
     }
   ],
   "NnD8gF": [
@@ -4202,6 +4190,12 @@
     {
       "type": 0,
       "value": "分割追蹤識別碼"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explain how to receive files from SFTP server."
     }
   ],
   "Pq+4a+": [
@@ -4667,12 +4661,6 @@
     {
       "type": 0,
       "value": "提供意見反應"
-    }
-  ],
-  "TLMkrg": [
-    {
-      "type": 0,
-      "value": "解釋動作的功能"
     }
   ],
   "TNEttQ": [
@@ -5283,6 +5271,12 @@
       "value": " 中的所有文字"
     }
   ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "What is the concurrency setting of this workflow?"
+    }
+  ],
   "WR1K3z": [
     {
       "type": 0,
@@ -5797,6 +5791,12 @@
       "value": "無"
     }
   ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Your personal and company data are protected in this chat"
+    }
+  ],
   "Yuu5CD": [
     {
       "type": 0,
@@ -5909,6 +5909,12 @@
       "value": "新增項目"
     }
   ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -6009,6 +6015,12 @@
     {
       "type": 0,
       "value": "新增或選取要用於對應的來源結構描述。"
+    }
+  ],
+  "b+4gP8": [
+    {
+      "type": 0,
+      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6343,12 +6355,6 @@
     {
       "type": 0,
       "value": "取代動作"
-    }
-  ],
-  "dNpnmn": [
-    {
-      "type": 0,
-      "value": "歡迎回來! 如果您希望我變更您的流程，只要說出您的需求即可。例如:"
     }
   ],
   "dOpdsP": [
@@ -6949,7 +6955,7 @@
   "hwj1Ht": [
     {
       "type": 0,
-      "value": "Edit flow"
+      "value": "編輯流程"
     }
   ],
   "hza/cT": [
@@ -7348,6 +7354,12 @@
       "value": "訊息"
     }
   ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Some things you can ask:"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -7542,7 +7554,7 @@
   "lX30/R": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "摺疊"
     }
   ],
   "lZT0JI": [
@@ -7703,6 +7715,12 @@
       "value": "' 上的分割類型無效，分割不在陣列中。"
     }
   ],
+  "mRBHC6": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Logic Apps as a whole"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7743,12 +7761,6 @@
     {
       "type": 0,
       "value": "限制 Logic Apps 不要在傳出要求中包含工作流程中繼資料標頭。"
-    }
-  ],
-  "mkd0Jx": [
-    {
-      "type": 0,
-      "value": "提出問題或描述您要如何變更此流程"
     }
   ],
   "mvrlkP": [
@@ -7973,6 +7985,12 @@
       "value": "縮放至最適大小"
     }
   ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Describe this workflow."
+    }
+  ],
   "o7bd1o": [
     {
       "type": 0,
@@ -8054,7 +8072,7 @@
   "oZMhX/": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開"
     }
   ],
   "odQ554": [
@@ -8169,6 +8187,12 @@
     {
       "type": 0,
       "value": "必要。要除以被除數的數字。除完之後會捨去餘數。"
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if Token Picker is hidden"
     }
   ],
   "pcGqoB": [
@@ -8784,6 +8808,12 @@
       "value": " 小時"
     }
   ],
+  "tInDJg": [
+    {
+      "type": 0,
+      "value": "Welcome to Copilot in Azure Logic Apps!"
+    }
+  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -8903,7 +8933,7 @@
   "tu4TTM": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "預覽"
     }
   ],
   "u81zB9": [
@@ -9242,12 +9272,6 @@
     {
       "type": 0,
       "value": "這包含重複的值"
-    }
-  ],
-  "vyKxuD": [
-    {
-      "type": 0,
-      "value": "Expand"
     }
   ],
   "vz2gZC": [
@@ -9786,12 +9810,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 彼得保羅夫斯克-堪察加斯克 - 已過時"
-    }
-  ],
-  "zYbkZM": [
-    {
-      "type": 0,
-      "value": "Collapse"
     }
   ],
   "zb3lE6": [

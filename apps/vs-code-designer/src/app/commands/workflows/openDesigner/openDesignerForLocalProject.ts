@@ -19,7 +19,7 @@ import {
   getParametersFromFile,
   saveConnectionReferences,
 } from '../../../utils/codeless/connection';
-import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
+import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
 import { OpenDesignerBase } from './openDesignerBase';
@@ -126,7 +126,23 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.panel.onDidChangeViewState(
       async (event) => {
         const eventPanel: WebviewPanel = event.webviewPanel;
-        await this.reloadWebviewPanel(eventPanel);
+        this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+        eventPanel.webview.html = await this.getWebviewContent({
+          connectionsData: this.panelMetadata.connectionsData,
+          parametersData: this.panelMetadata.parametersData || {},
+          localSettings: this.panelMetadata.localSettings,
+          artifacts: this.panelMetadata.artifacts,
+          azureDetails: this.panelMetadata.azureDetails,
+          workflowDetails: this.panelMetadata.workflowDetails,
+        });
+        this.sendMsgToWebview({
+          command: ExtensionCommand.update_panel_metadata,
+          data: {
+            panelMetadata: this.panelMetadata,
+            connectionData: this.connectionData,
+            apiHubServiceDetails: this.apiHubServiceDetails,
+          },
+        });
       },
       undefined,
       ext.context.subscriptions
@@ -171,12 +187,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.workflowFilePath,
           this.panelMetadata.workflowContent,
           msg,
-          this.panelMetadata.parametersData,
           this.panelMetadata.azureDetails?.tenantId,
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
         await this.validateWorkflow(this.panelMetadata.workflowContent);
-        await this.reloadWebviewPanel(this.getExistingPanel());
         break;
       }
       case ExtensionCommand.addConnection: {
@@ -219,7 +233,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     filePath: string,
     workflow: any,
     workflowToSave: any,
-    panelParameterRecord: Record<string, Parameter>,
     azureTenantId?: string,
     workflowBaseManagementUri?: string
   ): Promise<void> {
@@ -234,6 +247,16 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         const definitionToSave: any = definition;
         const parametersFromDefinition = parameters;
 
+        if (parametersFromDefinition) {
+          delete parametersFromDefinition.$connections;
+          for (const parameterKey of Object.keys(parametersFromDefinition)) {
+            const parameter = parametersFromDefinition[parameterKey];
+            parameter.value = parameter.value ?? parameter.defaultValue;
+            delete parameter.defaultValue;
+          }
+          await saveParameters(this.context, filePath, parametersFromDefinition);
+        }
+
         workflow.definition = definitionToSave;
 
         if (connectionReferences) {
@@ -242,8 +265,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             filePath,
             connectionReferences,
             azureTenantId,
-            workflowBaseManagementUri,
-            parametersFromDefinition
+            workflowBaseManagementUri
           );
 
           await saveConnectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
@@ -251,17 +273,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           if (containsApiHubConnectionReference(connectionReferences)) {
             window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
           }
-        }
-
-        if (parametersFromDefinition) {
-          delete parametersFromDefinition.$connections;
-          for (const parameterKey of Object.keys(parametersFromDefinition)) {
-            const parameter = parametersFromDefinition[parameterKey];
-            parameter.value = parameter.value ?? parameter.defaultValue;
-            delete parameter.defaultValue;
-          }
-          await this.mergeJsonParameters(filePath, parametersFromDefinition, panelParameterRecord);
-          await saveWorkflowParameter(this.context, filePath, parametersFromDefinition);
         }
 
         writeFileSync(filePath, JSON.stringify(workflow, null, 4));
@@ -426,50 +437,5 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
     };
-  }
-
-  /**
-   * Merges parameters from JSON.
-   * @param filePath The file path of the parameters JSON file.
-   * @param definitionParameters The parameters from the designer.
-   * @param panelParameterRecord The parameters from the panel
-   * @returns parameters from JSON file and designer.
-   */
-  private async mergeJsonParameters(
-    filePath: string,
-    definitionParameters: any,
-    panelParameterRecord: Record<string, Parameter>
-  ): Promise<void> {
-    const jsonParameters = await getParametersFromFile(this.context, filePath);
-
-    Object.entries(jsonParameters).forEach(([key, parameter]) => {
-      if (!definitionParameters[key] && !panelParameterRecord[key]) {
-        definitionParameters[key] = parameter;
-      }
-    });
-  }
-
-  /**
-   * Reloads the webview panel and updates the view state.
-   * @param webviewPanel The web view panel to update.
-   */
-  private async reloadWebviewPanel(webviewPanel: WebviewPanel): Promise<void> {
-    this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
-    webviewPanel.webview.html = await this.getWebviewContent({
-      connectionsData: this.panelMetadata.connectionsData,
-      parametersData: this.panelMetadata.parametersData || {},
-      localSettings: this.panelMetadata.localSettings,
-      artifacts: this.panelMetadata.artifacts,
-      azureDetails: this.panelMetadata.azureDetails,
-      workflowDetails: this.panelMetadata.workflowDetails,
-    });
-    this.sendMsgToWebview({
-      command: ExtensionCommand.update_panel_metadata,
-      data: {
-        panelMetadata: this.panelMetadata,
-        connectionData: this.connectionData,
-        apiHubServiceDetails: this.apiHubServiceDetails,
-      },
-    });
   }
 }

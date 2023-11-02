@@ -1,19 +1,17 @@
 /* eslint-disable no-param-reassign */
-import DataMapperExt from '../DataMapperExt';
-import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from '../extensionConfig';
+import { extensionCommand } from '../../../constants';
+import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
+import DataMapperExt from './DataMapperExt';
+import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from './extensionConfig';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
 import * as path from 'path';
 import { Uri, window } from 'vscode';
 
-export const registerCommands = () => {
-  registerCommand('azureDataMapper.createNewDataMap', (context: IActionContext) => createNewDataMapCmd(context));
-  registerCommand('azureDataMapper.loadDataMapFile', (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
-};
-
-const createNewDataMapCmd = (context: IActionContext) => {
+export const createNewDataMapCmd = (context: IActionContext) => {
   window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDataMapName) => {
     if (!newDataMapName) {
       context.telemetry.properties.result = 'Canceled';
@@ -26,7 +24,7 @@ const createNewDataMapCmd = (context: IActionContext) => {
   });
 };
 
-const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
+export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
 
@@ -34,7 +32,7 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   if (!mapDefinitionPath) {
     const fileUris = await window.showOpenDialog({
       title: 'Select a data map definition to load',
-      defaultUri: Uri.file(path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath)),
+      defaultUri: Uri.file(path.join(ext.logicAppWorkspace, dataMapDefinitionsPath)),
       canSelectMany: false,
       canSelectFiles: true,
       canSelectFolders: false,
@@ -79,12 +77,12 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   }
 
   /*   const mapDefinition = yaml.load(
-    fileContents
-  ) as {
-    $sourceSchema: string;
-    $targetSchema: string;
-    [key: string]: any;
-  }; */
+      fileContents
+    ) as {
+      $sourceSchema: string;
+      $targetSchema: string;
+      [key: string]: any;
+    }; */
 
   if (
     !mapDefinition.$sourceSchema ||
@@ -93,18 +91,18 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     typeof mapDefinition.$targetSchema !== 'string'
   ) {
     context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions';
-    DataMapperExt.showError('Invalid map definition: $sourceSchema and $targetSchema must be defined.');
+    ext.showError(localize('MissingSourceTargetSchema', 'Invalid map definition: $sourceSchema and $targetSchema must be defined.'));
     return;
   }
 
   // Attempt to load schema files if specified
-  const schemasFolder = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
+  const schemasFolder = path.join(ext.logicAppWorkspace, schemasPath);
   const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
   const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 
   const attemptToResolveMissingSchemaFile = async (schemaName: string, schemaPath: string): Promise<boolean> => {
     return !!(await callWithTelemetryAndErrorHandling(
-      'azureDataMapper.attemptToResolveMissingSchemaFile',
+      extensionCommand.dataMapAttemptToResolveMissingSchemaFile,
       async (_context: IActionContext) => {
         const findSchemaFileButton = 'Find schema file';
         const clickedButton = await window.showErrorMessage(
@@ -147,7 +145,7 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
       context.telemetry.properties.result = 'Canceled';
       context.telemetry.properties.missingSourceSchema = 'true';
 
-      DataMapperExt.showError('No source schema file was selected. Aborting load...');
+      ext.showError(localize('MissingSourceSchema', 'No source schema file was selected. Aborting load...'));
       return;
     }
   }
@@ -159,7 +157,7 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
       context.telemetry.properties.result = 'Canceled';
       context.telemetry.properties.missingTargetSchema = 'true';
 
-      DataMapperExt.showError('No target schema file was selected. Aborting load...');
+      ext.showError(localize('MissingTargetSchema', 'No target schema file was selected. Aborting load...'));
       return;
     }
   }

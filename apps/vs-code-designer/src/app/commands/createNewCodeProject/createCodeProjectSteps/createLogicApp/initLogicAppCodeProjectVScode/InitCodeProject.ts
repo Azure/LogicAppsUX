@@ -135,7 +135,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
             "args" : ["host", "start"],
             "options": {
               "env": {
-                "PATH": "\${config:azureLogicAppsStandard.dependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.dependenciesPath}\\\\DotNetSDK;$env:PATH"
+                "PATH": "\${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\DotNetSDK;$env:PATH"
               }
             },
             "problemMatcher": "$func-watch",

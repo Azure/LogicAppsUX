@@ -5,10 +5,11 @@
 import { localize } from '../../localize';
 import * as packageJson from '../../package.json';
 import { isPathEqual } from './fs';
-import * as AdmZip from 'adm-zip';
 import * as vscode from 'vscode';
 import type { Task, WorkspaceFolder } from 'vscode';
 import { tasks as codeTasks, window } from 'vscode';
+
+import AdmZip = require('adm-zip');
 
 /**
  * Gets task's file system path.

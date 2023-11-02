@@ -20,6 +20,9 @@ export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 
+// Folder names
+export const workflowDesignTimeDir = '/workflow-designtime';
+
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
 // Azurite
@@ -84,6 +87,7 @@ export enum extensionCommand {
   openFile = 'azureLogicAppsStandard.openFile',
   createNewProject = 'azureLogicAppsStandard.createNewProject',
   createNewCodeProject = 'azureLogicAppsStandard.createNewCodeProject',
+  createNewDataMap = 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createCodeless = 'azureLogicAppsStandard.createCodeless',
   createLogicApp = 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced = 'azureLogicAppsStandard.createLogicAppAdvanced',
@@ -137,6 +141,14 @@ export enum extensionCommand {
   reportIssue = 'azureLogicAppsStandard.reportIssue',
   validateAndInstallBinaries = 'azureLogicAppsStandard.validateAndInstallBinaries',
   azureAzuriteStart = 'azurite.start',
+  loadDataMapFile = 'azureLogicAppsStandard.dataMap.loadDataMapFile',
+  dataMapAddSchemaFromFile = 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
+  dataMapAttemptToResolveMissingSchemaFile = 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
+  dataMapSetSupportedDataMapDefinitionFileExts = 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
+  dataMapSetSupportedSchemaFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
+  dataMapSetSupportedFileExts = 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
+  dataMapSaveMapDefinition = 'azureLogicAppsStandard.dataMap.saveMapDefinition',
+  dataMapSaveMapXslt = 'azureLogicAppsStandard.dataMap.saveMapXslt',
 }
 
 // Context
@@ -171,9 +183,10 @@ export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
-export const autoBinariesInstallationSetting = 'autoBinariesInstallation';
+export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
+export const autoStartAzuriteSetting = 'autoStartAzurite';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
@@ -184,7 +197,7 @@ export const extInstallTaskName = `${func}: ${extInstallCommand}`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
-export const dependenciesPathSettingKey = 'dependenciesPath';
+export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const defaultLogicAppsFolder = '.azurelogicapps';
 export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
 export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
@@ -206,6 +219,20 @@ export enum DependencyVersion {
   funcCoreTools = '4.0.5198',
   nodeJs = '18.17.1',
 }
+export const hostFileContent = {
+  version: '2.0',
+  extensionBundle: {
+    id: extensionBundleId,
+    version: defaultVersionRange,
+  },
+  extensions: {
+    workflow: {
+      settings: {
+        'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+      },
+    },
+  },
+};
 
 export enum DependencyDefaultPath {
   dotnet = 'dotnet',

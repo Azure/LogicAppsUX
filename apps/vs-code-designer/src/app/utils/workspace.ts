@@ -9,6 +9,7 @@ import { isPathEqual, isSubpath } from './fs';
 import { isNullOrUndefined, isString } from '@microsoft/utils-logic-apps';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
+//TODO: revisit this import again (globby)
 import * as globby from 'globby';
 import * as path from 'path';
 import * as vscode from 'vscode';

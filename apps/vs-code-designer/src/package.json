@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.75.0",
+  "version": "2.80.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -315,7 +315,17 @@
       {
         "command": "azureLogicAppsStandard.validateAndInstallBinaries",
         "title": "Validate and install dependency binaries",
+        "preview": true,
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
+        "title": "Data Mapper: Create new data map",
+        "icon": "$(add)"
+      },
+      {
+        "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
+        "title": "Data Mapper: Load existing data map"
       }
     ],
     "submenus": [
@@ -326,6 +336,24 @@
           "dark": "assets/logicapp.png"
         },
         "label": "Azure Logic Apps"
+      },
+      {
+        "id": "azureLogicAppsStandard.dataMapperMenu",
+        "label": "Data Mapper"
+      }
+    ],
+    "views": {
+      "azure": [
+        {
+          "id": "azDataMapper",
+          "name": "Data Mapper"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "azDataMapper",
+        "contents": "[Create new data map](command:azureLogicAppsStandard.dataMap.createNewDataMap)\n[Load existing data map](command:azureLogicAppsStandard.dataMap.loadDataMapFile)"
       }
     ],
     "menus": {
@@ -357,6 +385,11 @@
           "submenu": "azureLogicAppsStandard.submenus.workspaceActions",
           "when": "view == azureWorkspace",
           "group": "navigation@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
+          "when": "view == azDataMapper",
+          "group": "navigation@1"
         }
       ],
       "view/item/context": [
@@ -626,6 +659,11 @@
           "command": "azureLogicAppsStandard.enableAzureConnectors",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@2"
+        },
+        {
+          "submenu": "azureLogicAppsStandard.dataMapperMenu",
+          "group": "navigation",
+          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedFileExts"
         }
       ],
       "commandPalette": [
@@ -660,6 +698,13 @@
         {
           "command": "azureLogicAppsStandard.viewProperties",
           "when": "never"
+        }
+      ],
+      "azureLogicAppsStandard.dataMapperMenu": [
+        {
+          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
+          "group": "navigation",
+          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         }
       ]
     },
@@ -708,10 +753,10 @@
             "description": "The timeout (in seconds) to be used when validating and installing dependencies.",
             "default": 120
           },
-          "azureLogicAppsStandard.dependenciesPath": {
+          "azureLogicAppsStandard.autoRuntimeDependenciesPath": {
             "scope": "resource",
             "type": "string",
-            "description": "The path for Azure Logic Apps extension dependency binaries."
+            "description": "The path for Azure Logic Apps extension runtime dependencies. (Preview)"
           },
           "azureLogicAppsStandard.dotnetBinaryPath": {
             "scope": "resource",
@@ -843,7 +888,12 @@
           "azureLogicAppsStandard.autoStartDesignTime": {
             "type": "boolean",
             "description": "Start background design-time process at project load time.",
-            "default": false
+            "default": true
+          },
+          "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
+            "type": "boolean",
+            "description": "Enable automatic validation and installation for runtime dependencies at the configured path. (Preview)",
+            "default": null
           },
           "azureLogicAppsStandard.autoBinariesInstallation": {
             "type": "boolean",
@@ -853,16 +903,21 @@
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
             "description": "Show a warning asking if user's would like to configure Azurite auto start.",
-            "default": true
+            "default": false
           },
           "azureLogicAppsStandard.autoStartAzurite": {
             "type": "boolean",
             "description": "Start Azurite when project starts.",
-            "default": false
+            "default": true
           },
           "azureLogicAppsStandard.azuriteLocationSetting": {
             "type": "string",
             "description": "Default location for Azurite repository for Logic Apps Standard Workspaces"
+          },
+          "azureLogicAppsStandard.useExpandedFunctionCards": {
+            "type": "boolean",
+            "default": true,
+            "description": "Default the data mapper to use the expanded function cards."
           }
         }
       }
@@ -922,6 +977,7 @@
     "onCommand:azureLogicAppsStandard.startRemoteDebug",
     "onView:azureWorkspace",
     "onView:azureResourceGroups",
+    "onView:azDataMapper",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
     "onDebugInitialConfigurations",
