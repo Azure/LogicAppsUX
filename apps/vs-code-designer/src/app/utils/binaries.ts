@@ -79,25 +79,39 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       }
 
       context.telemetry.properties.lastStep = 'validateNodeJsIsLatest';
-      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
-        progress.report({ increment: 20, message: `Node Js` });
-        await timeout(validateNodeJsIsLatest, dependencyTimeout, dependenciesVersions?.nodejs);
-        await setNodeJsCommand();
-      });
 
-      context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
-      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
-        progress.report({ increment: 20, message: `Azure Function Core Tools` });
-        await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, dependenciesVersions?.funcCoreTools);
-        await setFunctionsCommand();
-      });
+      try {
+        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
+          progress.report({ increment: 20, message: `NodeJS` });
+          await timeout(validateNodeJsIsLatest, dependencyTimeout, dependenciesVersions?.nodejs);
+          await setNodeJsCommand();
+        });
 
-      context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
-      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
-        progress.report({ increment: 20, message: `.NET SDK` });
-        await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
-        await setDotNetCommand();
-      });
+        context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
+        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
+          progress.report({ increment: 20, message: `Functions Runtime` });
+          await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, dependenciesVersions?.funcCoreTools);
+          await setFunctionsCommand();
+        });
+
+        context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
+        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
+          progress.report({ increment: 20, message: `.NET SDK` });
+          await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
+          await setDotNetCommand();
+        });
+        ext.outputChannel.appendLog(
+          localize(
+            'azureLogicApsBinariesSucessfull',
+            'Azure Logic Apps Standard Runtime Dependencies validation and installation completed successfully.'
+          )
+        );
+      } catch (error) {
+        ext.outputChannel.appendLog(
+          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', error)
+        );
+        context.telemetry.properties.dependenciesError = error;
+      }
     }
   );
 }

@@ -877,7 +877,7 @@
           "azureLogicAppsStandard.autoStartDesignTime": {
             "type": "boolean",
             "description": "Start background design-time process at project load time.",
-            "default": false
+            "default": true
           },
           "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
             "type": "boolean",
@@ -892,7 +892,7 @@
           "azureLogicAppsStandard.autoStartAzurite": {
             "type": "boolean",
             "description": "Start Azurite when project starts.",
-            "default": false
+            "default": true
           },
           "azureLogicAppsStandard.azuriteLocationSetting": {
             "type": "string",
