@@ -29,6 +29,29 @@ export function useReportBugButton(disabled: boolean): IButtonProps {
   };
 }
 
+export function useAzureCopilotButton(azureButtonCallback?: () => void): IButtonProps {
+  const intl = useIntl();
+  const intlText = {
+    azureCopilotButtonText: intl.formatMessage({
+      defaultMessage: 'Open Azure Copilot',
+      description: 'Text for button that allows user to open azure copilot',
+    }),
+  };
+  return {
+    text: intlText.azureCopilotButtonText,
+    onClick: azureButtonCallback,
+    iconProps: {
+      iconName: 'AzureLogo',
+      styles: {
+        root: {
+          color: Constants.NEUTRAL_PRIMARY,
+          backgroundColor: 'transparent',
+        },
+      },
+    },
+  };
+}
+
 export function useFeedbackMessage(item: ReactionItem): {
   feedbackMessage: JSX.Element;
   onMessageReactionClicked: (chatEntryReaction: ChatEntryReaction) => void;

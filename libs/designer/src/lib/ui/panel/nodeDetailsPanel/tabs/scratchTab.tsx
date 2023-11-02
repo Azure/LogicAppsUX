@@ -30,8 +30,11 @@ import {
   // outputToken2,
   //ArrayType,
   CreateNaturalLanguageToFlowInput,
-  SuggestedFlowsSection, // RowDropdownOptions,
+  SuggestedFlowsSection,
+  ConversationMessage,
+  ConversationItemType, // RowDropdownOptions,
 } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 
 //import { guid } from '@microsoft/utils-logic-apps';
@@ -106,9 +109,30 @@ export const ScratchTab = () => {
     setNaturalLanguageQueryInput(example);
   }, []);
 
+  const azureCallback = (prompt?: string) => {
+    alert(prompt);
+  };
+
   const children = (): React.ReactNode => {
     return (
       <>
+        {
+          <ConversationMessage
+            item={{
+              type: ConversationItemType.Reply,
+              id: 'test',
+              date: new Date(),
+              text: "Your question seems like it's outside the scope of Logic Apps, perhaps Azure Copilot would be better suited for your question",
+              isMarkdownText: false,
+              correlationId: guid(),
+              __rawRequest: {},
+              __rawResponse:
+                "Your question seems like it's outside the scope of Logic Apps, perhaps Azure Copilot would be better suited for your question",
+              reaction: undefined,
+              azureButtonCallback: () => azureCallback('what is the meaning of life?'),
+            }}
+          />
+        }
         {
           <CreateNaturalLanguageToFlowInput
             searchString={naturalLanguageQueryInput}
