@@ -44,6 +44,7 @@ interface ChatbotProps {
   endpoint?: string;
   getUpdatedWorkflow: () => Promise<Workflow>;
   openFeedbackPanel: () => void; // callback when feedback panel is opened
+  openAzureCopilotPanel?: (prompt?: string) => void; // callback to open Azure Copilot Panel
   closeChatBot?: () => void; // callback when chatbot is closed
 }
 
@@ -55,6 +56,7 @@ export const Chatbot = ({
   endpoint,
   getUpdatedWorkflow,
   openFeedbackPanel,
+  openAzureCopilotPanel,
   closeChatBot,
 }: ChatbotProps) => {
   const textInputRef = useRef<ITextField>(null);
@@ -211,6 +213,7 @@ export const Chatbot = ({
           throw new Error(response.statusText);
         }
         const queryResponse: string = response.data.response;
+        const additionalParameters: string[] | undefined = response.data.additionalParameters;
         setConversation((current) => [
           {
             type: ConversationItemType.Reply,
@@ -222,6 +225,10 @@ export const Chatbot = ({
             __rawRequest: options,
             __rawResponse: response,
             reaction: undefined,
+            azureButtonCallback:
+              additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure) && openAzureCopilotPanel
+                ? () => openAzureCopilotPanel(query)
+                : undefined,
             openFeedback: openFeedbackPanel,
           },
           ...current,
@@ -278,7 +285,15 @@ export const Chatbot = ({
         }, 100);
       }
     },
-    [endpoint, intlText.assistantErrorMessage, intlText.cancelGenerationText, signal, getUpdatedWorkflow, openFeedbackPanel]
+    [
+      getUpdatedWorkflow,
+      endpoint,
+      signal,
+      openAzureCopilotPanel,
+      openFeedbackPanel,
+      intlText.cancelGenerationText,
+      intlText.assistantErrorMessage,
+    ]
   );
 
   const abortFetching = useCallback(() => {
