@@ -12,7 +12,7 @@ interface CopilotPanelHeaderProps {
 export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): JSX.Element => {
   const intl = useIntl();
   const headerTitle = intl.formatMessage({
-    defaultMessage: 'Copilot',
+    defaultMessage: 'Workflow Assistant',
     description: 'Chatbot header title',
   });
   const subtitleText = intl.formatMessage({

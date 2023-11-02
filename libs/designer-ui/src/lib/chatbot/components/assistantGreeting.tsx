@@ -9,11 +9,12 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
   const intl = useIntl();
   const intlText = {
     greetingMessageFromOpenedFlow: intl.formatMessage({
-      defaultMessage: 'Welcome to Copilot in Azure Logic Apps!',
+      defaultMessage: 'Welcome to Logic Apps Workflow Assistant!',
       description: 'Chatbot greeting message from existing flow',
     }),
     subHeading1: intl.formatMessage({
-      defaultMessage: 'Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors.',
+      defaultMessage:
+        'This workflow assistant can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors.',
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     subHeading2: intl.formatMessage({
@@ -37,8 +38,8 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
       description: 'Chatbot suggestion message to get the concurrency setting of the workflow',
     }),
     outroMessage: intl.formatMessage({
-      defaultMessage: 'Copilot is designed only to provide help and doesn’t support workflow creation or editing.',
-      description: 'Chatbot disclaimer message that Copilot can only provide help and not modify workflows',
+      defaultMessage: 'The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing.',
+      description: 'Chatbot disclaimer message that workflow assistant can only provide help and not modify workflows',
     }),
   };
 
