@@ -14,7 +14,7 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
     }),
     subHeading1: intl.formatMessage({
       defaultMessage:
-        'This workflow assistant can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors.',
+        'This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.',
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     subHeading2: intl.formatMessage({

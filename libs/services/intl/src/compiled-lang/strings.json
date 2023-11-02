@@ -729,12 +729,6 @@
       "value": "Loading connection..."
     }
   ],
-  "3/I/kM": [
-    {
-      "type": 0,
-      "value": "This workflow assistant can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -3509,6 +3503,12 @@
     {
       "type": 0,
       "value": "See More"
+    }
+  ],
+  "LM1O0e": [
+    {
+      "type": 0,
+      "value": "This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "LMB8am": [
