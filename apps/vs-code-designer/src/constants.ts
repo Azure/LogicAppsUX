@@ -185,6 +185,7 @@ export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
+export const autoStartAzuriteSetting = 'autoStartAzurite';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';

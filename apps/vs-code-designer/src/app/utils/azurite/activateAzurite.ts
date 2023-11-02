@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  autoStartAzuriteSetting,
   azuriteBinariesLocationSetting,
   azuriteExtensionPrefix,
   azuriteLocationSetting,
@@ -38,8 +39,7 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
 
       const showAutoStartAzuriteWarningSetting = !!getWorkspaceSetting<boolean>(showAutoStartAzuriteWarning);
 
-      const autoStartAzuriteKey = 'autoStartAzurite';
-      const autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteKey);
+      const autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteSetting);
       context.telemetry.properties.autoStartAzurite = `${autoStartAzurite}`;
 
       if (showAutoStartAzuriteWarningSetting) {
@@ -56,27 +56,33 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
           await updateGlobalSetting(showAutoStartAzuriteWarning, false);
         } else if (result == enableMessage) {
           await updateGlobalSetting(showAutoStartAzuriteWarning, false);
-          await updateGlobalSetting(autoStartAzuriteKey, true);
+          await updateGlobalSetting(autoStartAzuriteSetting, true);
 
           // User has not configured workspace azurite.location.
           if (!azuriteLocationExtSetting) {
-            const defaultAzuriteDir = defaultAzuritePathValue;
             const azuriteDir = await context.ui.showInputBox({
               placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
               prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
-              value: defaultAzuriteDir,
+              value: defaultAzuritePathValue,
             });
 
             if (azuriteDir) {
               await updateGlobalSetting(azuriteBinariesLocationSetting, azuriteDir);
             } else {
-              await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuriteDir);
+              await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
             }
           }
         }
+      } else {
+        if (autoStartAzurite && !azuriteLocationExtSetting) {
+          await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
+          vscode.window.showInformationMessage(
+            localize('autoAzuriteLocation', `Azurite is setup to auto start at ${defaultAzuritePathValue}`)
+          );
+        }
       }
 
-      if (getWorkspaceSetting<boolean>(autoStartAzuriteKey)) {
+      if (getWorkspaceSetting<boolean>(autoStartAzuriteSetting)) {
         const azuriteWorkspaceSetting = getWorkspaceSetting<string>(azuriteBinariesLocationSetting);
         await updateWorkspaceSetting(azuriteLocationSetting, azuriteWorkspaceSetting, projectPath, azuriteExtensionPrefix);
         await executeOnAzurite(context, extensionCommand.azureAzuriteStart);

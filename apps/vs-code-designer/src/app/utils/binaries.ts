@@ -15,6 +15,7 @@ import {
   funcCoreToolsBinaryPathSettingKey,
   funcPackageName,
   nodeJsBinaryPathSettingKey,
+  defaultLogicAppsFolder,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -130,7 +131,7 @@ export async function downloadAndExtractBinaries(
   dependencyName: string,
   dotNetVersion?: string
 ): Promise<void> {
-  const tempFolderPath = path.join(os.tmpdir(), '.azurelogicapps', dependencyName);
+  const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, dependencyName);
   targetFolder = path.join(targetFolder, dependencyName);
   fs.mkdirSync(targetFolder, { recursive: true });
 

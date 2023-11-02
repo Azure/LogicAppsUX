@@ -887,7 +887,7 @@
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
             "description": "Show a warning asking if user's would like to configure Azurite auto start.",
-            "default": true
+            "default": false
           },
           "azureLogicAppsStandard.autoStartAzurite": {
             "type": "boolean",
