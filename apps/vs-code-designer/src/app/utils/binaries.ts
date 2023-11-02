@@ -6,15 +6,16 @@ import {
   DependencyDefaultPath,
   DependencyVersion,
   Platform,
-  autoBinariesInstallationSetting,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   defaultDependencyPathValue,
-  dependenciesPathSettingKey,
+  autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dotNetBinaryPathSettingKey,
   dotnetDependencyName,
   funcCoreToolsBinaryPathSettingKey,
   funcPackageName,
   nodeJsBinaryPathSettingKey,
+  defaultLogicAppsFolder,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -30,19 +31,18 @@ import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { getNpmCommand, setNodeJsCommand } from './nodeJs/nodeJsVersion';
 import { runWithDurationTelemetry } from './telemetry';
 import { timeout } from './timeout';
-import { tryGetFunctionProjectRoot } from './verifyIsProject';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { getWorkspaceFolder } from './workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
-import * as AdmZip from 'adm-zip';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as request from 'request';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
+
+import AdmZip = require('adm-zip');
+import request = require('request');
 
 export async function validateAndInstallBinaries(context: IActionContext) {
   await vscode.window.withProgress(
@@ -63,8 +63,8 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       const dependencyTimeout = (await getDependencyTimeout()) * 1000;
 
       context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
-      if (!getGlobalSetting<string>(dependenciesPathSettingKey)) {
-        await updateGlobalSetting(dependenciesPathSettingKey, defaultDependencyPathValue);
+      if (!getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey)) {
+        await updateGlobalSetting(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
         context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
       }
 
@@ -80,25 +80,39 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       }
 
       context.telemetry.properties.lastStep = 'validateNodeJsIsLatest';
-      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
-        progress.report({ increment: 20, message: `Node Js` });
-        await timeout(validateNodeJsIsLatest, dependencyTimeout, dependenciesVersions?.nodejs);
-        await setNodeJsCommand();
-      });
 
-      context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
-      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
-        progress.report({ increment: 20, message: `Azure Function Core Tools` });
-        await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, dependenciesVersions?.funcCoreTools);
-        await setFunctionsCommand();
-      });
+      try {
+        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
+          progress.report({ increment: 20, message: `NodeJS` });
+          await timeout(validateNodeJsIsLatest, dependencyTimeout, dependenciesVersions?.nodejs);
+          await setNodeJsCommand();
+        });
 
-      context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
-      await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
-        progress.report({ increment: 20, message: `.NET SDK` });
-        await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
-        await setDotNetCommand();
-      });
+        context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
+        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
+          progress.report({ increment: 20, message: `Functions Runtime` });
+          await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, dependenciesVersions?.funcCoreTools);
+          await setFunctionsCommand();
+        });
+
+        context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
+        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
+          progress.report({ increment: 20, message: `.NET SDK` });
+          await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
+          await setDotNetCommand();
+        });
+        ext.outputChannel.appendLog(
+          localize(
+            'azureLogicApsBinariesSucessfull',
+            'Azure Logic Apps Standard Runtime Dependencies validation and installation completed successfully.'
+          )
+        );
+      } catch (error) {
+        ext.outputChannel.appendLog(
+          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', error)
+        );
+        context.telemetry.properties.dependenciesError = error;
+      }
     }
   );
 }
@@ -117,7 +131,7 @@ export async function downloadAndExtractBinaries(
   dependencyName: string,
   dotNetVersion?: string
 ): Promise<void> {
-  const tempFolderPath = path.join(os.tmpdir(), '.azurelogicapps', dependencyName);
+  const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, dependencyName);
   targetFolder = path.join(targetFolder, dependencyName);
   fs.mkdirSync(targetFolder, { recursive: true });
 
@@ -295,7 +309,7 @@ export function binariesExist(dependencyName: string): boolean {
   if (!useBinariesDependencies()) {
     return false;
   }
-  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
 
@@ -410,28 +424,24 @@ function getDependencyTimeout(): number {
  * @param {IActionContext} context - Activation context.
  */
 export async function promptInstallBinariesOption(context: IActionContext) {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const workspace = await getWorkspaceFolder(context);
-    const projectPath = await tryGetFunctionProjectRoot(context, workspace);
-    const message = localize('useBinaries', 'Always validate and install the latest dependency binaries at launch');
-    const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
-    let result: vscode.MessageItem;
+  const message = localize('useBinaries', 'Allow auto runtime dependencies validation and installation at extension launch (Preview)');
+  const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
+  let result: vscode.MessageItem;
 
-    const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
 
-    if (projectPath && binariesInstallation === null) {
-      result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
-      if (result === confirm) {
-        await updateGlobalSetting(autoBinariesInstallationSetting, true);
-        await onboardBinaries(context);
-        context.telemetry.properties.autoBinariesInstallation = 'true';
-      } else if (result === DialogResponses.dontWarnAgain) {
-        await updateGlobalSetting(autoBinariesInstallationSetting, false);
-        await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
-        await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
-        await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
-        context.telemetry.properties.autoBinariesInstallation = 'false';
-      }
+  if (binariesInstallation === null) {
+    result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
+    if (result === confirm) {
+      await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, true);
+      await onboardBinaries(context);
+      context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
+    } else if (result === DialogResponses.dontWarnAgain) {
+      await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, false);
+      await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+      await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+      await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+      context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
     }
   }
 }
@@ -440,6 +450,6 @@ export async function promptInstallBinariesOption(context: IActionContext) {
  * Returns boolean to determine if workspace uses binaries dependencies.
  */
 export const useBinariesDependencies = (): boolean => {
-  const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
   return !!binariesInstallation;
 };

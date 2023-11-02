@@ -315,6 +315,7 @@
       {
         "command": "azureLogicAppsStandard.validateAndInstallBinaries",
         "title": "Validate and install dependency binaries",
+        "preview": true,
         "category": "Azure Logic Apps"
       },
       {
@@ -752,10 +753,10 @@
             "description": "The timeout (in seconds) to be used when validating and installing dependencies.",
             "default": 120
           },
-          "azureLogicAppsStandard.dependenciesPath": {
+          "azureLogicAppsStandard.autoRuntimeDependenciesPath": {
             "scope": "resource",
             "type": "string",
-            "description": "The path for Azure Logic Apps extension dependency binaries."
+            "description": "The path for Azure Logic Apps extension runtime dependencies. (Preview)"
           },
           "azureLogicAppsStandard.dotnetBinaryPath": {
             "scope": "resource",
@@ -887,7 +888,12 @@
           "azureLogicAppsStandard.autoStartDesignTime": {
             "type": "boolean",
             "description": "Start background design-time process at project load time.",
-            "default": false
+            "default": true
+          },
+          "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
+            "type": "boolean",
+            "description": "Enable automatic validation and installation for runtime dependencies at the configured path. (Preview)",
+            "default": null
           },
           "azureLogicAppsStandard.autoBinariesInstallation": {
             "type": "boolean",
@@ -897,12 +903,12 @@
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
             "description": "Show a warning asking if user's would like to configure Azurite auto start.",
-            "default": true
+            "default": false
           },
           "azureLogicAppsStandard.autoStartAzurite": {
             "type": "boolean",
             "description": "Start Azurite when project starts.",
-            "default": false
+            "default": true
           },
           "azureLogicAppsStandard.azuriteLocationSetting": {
             "type": "string",

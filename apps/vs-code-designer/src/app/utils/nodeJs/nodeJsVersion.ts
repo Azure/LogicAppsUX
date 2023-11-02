@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Platform, dependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
+import { Platform, autoRuntimeDependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
@@ -32,7 +32,7 @@ export async function getLocalNodeJsVersion(): Promise<string | null> {
  * Get the npm binaries executable or use the system npm executable.
  */
 export function getNpmCommand(): string {
-  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
   const binariesExist = fs.existsSync(nodeJsBinariesPath);
   let command = ext.npmCliPath;
@@ -56,7 +56,7 @@ export function getNodeJsCommand(): string {
 }
 
 export async function setNodeJsCommand(): Promise<void> {
-  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
   const binariesExist = fs.existsSync(nodeJsBinariesPath);
   let command = ext.nodeJsCliPath;

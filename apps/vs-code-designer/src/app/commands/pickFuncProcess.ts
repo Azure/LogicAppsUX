@@ -25,7 +25,7 @@ import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-ex
 import * as unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 //TODO: revisit this import again (yargsParser)
-import yargsParser from 'yargs-parser';
+import * as parser from 'yargs-parser';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -256,7 +256,7 @@ async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
 function getFunctionRuntimePort(funcTask: vscode.Task): number {
   const { command } = funcTask.definition;
   try {
-    const args = yargsParser(command);
+    const args = parser(command);
     const port = args['port'] || args['p'] || undefined;
     return port ?? Number(defaultFuncPort);
   } catch {

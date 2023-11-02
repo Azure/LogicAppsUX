@@ -2,7 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dependenciesPathSettingKey, funcCoreToolsBinaryPathSettingKey, funcDependencyName, funcVersionSetting } from '../../../constants';
+import {
+  autoRuntimeDependenciesPathSettingKey,
+  funcCoreToolsBinaryPathSettingKey,
+  funcDependencyName,
+  funcVersionSetting,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../vsCodeConfig/settings';
@@ -153,7 +158,7 @@ export function getFunctionsCommand(): string {
 }
 
 export async function setFunctionsCommand(): Promise<void> {
-  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
   const binariesExist = fs.existsSync(funcBinariesPath);
   let command = ext.funcCliPath;
