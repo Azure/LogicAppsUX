@@ -6,7 +6,7 @@ import {
   DependencyDefaultPath,
   DependencyVersion,
   Platform,
-  autoBinariesInstallationSetting,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   defaultDependencyPathValue,
   dependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
@@ -413,20 +413,20 @@ export async function promptInstallBinariesOption(context: IActionContext) {
   const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
   let result: vscode.MessageItem;
 
-  const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
 
   if (binariesInstallation === null) {
     result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
     if (result === confirm) {
-      await updateGlobalSetting(autoBinariesInstallationSetting, true);
+      await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, true);
       await onboardBinaries(context);
-      context.telemetry.properties.autoBinariesInstallation = 'true';
+      context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
     } else if (result === DialogResponses.dontWarnAgain) {
-      await updateGlobalSetting(autoBinariesInstallationSetting, false);
+      await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, false);
       await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
       await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
       await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
-      context.telemetry.properties.autoBinariesInstallation = 'false';
+      context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
     }
   }
 }
@@ -435,6 +435,6 @@ export async function promptInstallBinariesOption(context: IActionContext) {
  * Returns boolean to determine if workspace uses binaries dependencies.
  */
 export const useBinariesDependencies = (): boolean => {
-  const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
   return !!binariesInstallation;
 };

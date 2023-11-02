@@ -11,7 +11,7 @@ import { getGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import { validateTasksJson } from './app/utils/vsCodeConfig/tasks';
 import {
   extensionCommand,
-  autoBinariesInstallationSetting,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoStartDesignTimeSetting,
   showStartDesignTimeMessageSetting,
   showAutoStartAzuriteWarning,
@@ -26,7 +26,7 @@ import * as vscode from 'vscode';
 export const onboardBinaries = async (activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
-      const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+      const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
       if (binariesInstallation) {
         showPreviewWarning(extensionCommand.validateAndInstallBinaries);
         activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
@@ -43,9 +43,9 @@ export const onboardBinaries = async (activateContext: IActionContext) => {
  * @param {IActionContext} activateContext - Activation context.
  */
 export const startOnboarding = async (activateContext: IActionContext) => {
-  callWithTelemetryAndErrorHandling(autoBinariesInstallationSetting, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, autoBinariesInstallationSetting, async () => {
-      activateContext.telemetry.properties.lastStep = autoBinariesInstallationSetting;
+  callWithTelemetryAndErrorHandling(autoRuntimeDependenciesValidationAndInstallationSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
+      activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
       await promptInstallBinariesOption(actionContext);
     });
   });
