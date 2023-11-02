@@ -69,13 +69,6 @@ jobs:
       - name: 'Local Version Bump'
         run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
 
-      - name: 'Set DM VSIX aiKey in package.json'
-        run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-data-mapper/src/package.json`" > apps/vs-code-data-mapper/src/package.json
-
-      - run: npx nx build vs-code-data-mapper
-      - run: npx nx build vs-code-data-mapper-react
-      - run: npm run vscode:data-mapper:pack
-
       - name: 'Set Designer Extension VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
 
@@ -92,12 +85,11 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: |
-            dist/apps/vs-code-data-mapper/*.vsix
             dist/apps/vs-code-designer/*.vsix
 
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: 'LICENSE.md,dist/apps/vs-code-data-mapper/*.vsix,dist/apps/vs-code-designer/*.vsix'
+          artifacts: 'LICENSE.md,dist/apps/vs-code-designer/*.vsix'
           generateReleaseNotes: true
           tag: '${{ steps.previoustag.outputs.tag }}'
           token: ${{ secrets.AUTOMATION_PAT }}
