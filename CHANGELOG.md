@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.80.0](https://github.com/Azure/LogicAppsUX/compare/v2.79.0...v2.80.0) (2023-11-02)
+
+
+### Features
+
+* **copilot:** Adding support for redirect to Azure Copilot ([#3589](https://github.com/Azure/LogicAppsUX/issues/3589)) ([56f5759](https://github.com/Azure/LogicAppsUX/commit/56f5759cc1dcced9e1e596f3e67a30b64735e7f4))
+
 ## [2.79.0](https://github.com/Azure/LogicAppsUX/compare/v2.78.0...v2.79.0) (2023-11-02)
 
 
