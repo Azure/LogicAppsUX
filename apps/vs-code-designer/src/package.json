@@ -745,7 +745,7 @@
           "azureLogicAppsStandard.dependenciesPath": {
             "scope": "resource",
             "type": "string",
-            "description": "The path for Azure Logic Apps extension dependency binaries."
+            "description": "The path for Azure Logic Apps extension runtime dependencies."
           },
           "azureLogicAppsStandard.dotnetBinaryPath": {
             "scope": "resource",

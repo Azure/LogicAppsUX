@@ -409,7 +409,7 @@ function getDependencyTimeout(): number {
  * @param {IActionContext} context - Activation context.
  */
 export async function promptInstallBinariesOption(context: IActionContext) {
-  const message = localize('useBinaries', 'Always validate and install the latest dependency binaries at launch');
+  const message = localize('useBinaries', 'Allow auto runtime dependencies validation and installation at extension launch (Preview)');
   const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
   let result: vscode.MessageItem;
 

@@ -5,7 +5,6 @@
 import { activateAzurite } from './app/utils/azurite/activateAzurite';
 import { promptInstallBinariesOption, validateAndInstallBinaries } from './app/utils/binaries';
 import { promptStartDesignTimeOption } from './app/utils/codeless/startDesignTimeApi';
-import { showPreviewWarning } from './app/utils/taskUtils';
 import { runWithDurationTelemetry } from './app/utils/telemetry';
 import { getGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import { validateTasksJson } from './app/utils/vsCodeConfig/tasks';
@@ -28,7 +27,6 @@ export const onboardBinaries = async (activateContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
       const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
       if (binariesInstallation) {
-        showPreviewWarning(extensionCommand.validateAndInstallBinaries);
         activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
         await validateAndInstallBinaries(actionContext);
         await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
