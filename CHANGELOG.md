@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.80.3](https://github.com/Azure/LogicAppsUX/compare/v2.80.2...v2.80.3) (2023-11-03)
+
+
+### Features
+
+* **copilot:** adding support for staging endpoint ([#3596](https://github.com/Azure/LogicAppsUX/issues/3596)) ([c6c2a2f](https://github.com/Azure/LogicAppsUX/commit/c6c2a2f7eefee0a7f41d7591dee152e26e124306))
+* **vscode:** Introduce onboarding experience ([#3581](https://github.com/Azure/LogicAppsUX/issues/3581)) ([f28c4fa](https://github.com/Azure/LogicAppsUX/commit/f28c4fade69d032ec75d3fe0aea158d3f1b8d4cb)), closes [#2830](https://github.com/Azure/LogicAppsUX/issues/2830) [#3031](https://github.com/Azure/LogicAppsUX/issues/3031) [#3037](https://github.com/Azure/LogicAppsUX/issues/3037)
+
 ### [2.80.2](https://github.com/Azure/LogicAppsUX/compare/v2.80.0...v2.80.2) (2023-11-03)
 
 
