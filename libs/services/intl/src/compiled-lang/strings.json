@@ -1421,12 +1421,6 @@
       "value": "Schema Validation"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Configure"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -2479,6 +2473,12 @@
     {
       "type": 0,
       "value": "' has an input with a mismatched type"
+    }
+  ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
     }
   ],
   "E8iqLl": [
@@ -6415,12 +6415,6 @@
       "value": "Update"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Generate"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -9769,6 +9763,12 @@
     {
       "type": 0,
       "value": "Dislike"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [

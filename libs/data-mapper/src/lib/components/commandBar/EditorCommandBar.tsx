@@ -12,6 +12,7 @@ import {
   OrganizationHorizontal20Regular,
   Play20Regular,
   Save20Regular,
+  Gesture20Filled,
   Settings20Regular,
 } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -95,8 +96,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         description: 'Button text for save the changes',
       }),
       GENERATE: intl.formatMessage({
-        defaultMessage: 'Generate',
-        description: 'Button text for generate the map',
+        defaultMessage: 'Generate XSLT',
+        description: 'Button text for generate the map xslt',
       }),
       UNDO: intl.formatMessage({
         defaultMessage: 'Undo',
@@ -122,9 +123,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Test',
         description: 'Button text for running test',
       }),
-      CONFIGURATION: intl.formatMessage({
-        defaultMessage: 'Configure',
-        description: 'Button text for opening the configuration',
+      SETTINGS: intl.formatMessage({
+        defaultMessage: 'Settings',
+        description: 'Button text for opening the settings',
       }),
       TOUR_TUTORIAL: intl.formatMessage({
         defaultMessage: 'Tour',
@@ -177,6 +178,13 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         >
           {Resources.SAVE}
         </ToolbarButton>
+        <ToolbarButton aria-label={Resources.GENERATE} icon={<Gesture20Filled />} disabled={!bothSchemasDefined} onClick={onGenerateClick}>
+          {Resources.GENERATE}
+        </ToolbarButton>
+        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
+          {Resources.RUN_TEST}
+        </ToolbarButton>
+        <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={onUndoClick}>
           {Resources.UNDO}
         </ToolbarButton>
@@ -192,9 +200,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
           {Resources.DISCARD}
         </ToolbarButton>
         <ToolbarDivider className={toolbarStyles.divider} />
-        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
-          {Resources.RUN_TEST}
-        </ToolbarButton>
         <ToolbarButton
           aria-label={showMapOverview ? Resources.RETURN : Resources.MAP_OVERVIEW}
           icon={<OrganizationHorizontal20Regular />}
@@ -219,7 +224,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         </ToolbarButton>
         <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton
-          aria-label={Resources.CONFIGURATION}
+          aria-label={Resources.SETTINGS}
           icon={<Settings20Regular />}
           disabled={!bothSchemasDefined}
           onClick={() => {
@@ -230,12 +235,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
             });
           }}
         >
-          {Resources.CONFIGURATION}
-        </ToolbarButton>
-      </ToolbarGroup>
-      <ToolbarGroup style={{ marginRight: '40px' }}>
-        <ToolbarButton aria-label={Resources.GENERATE} appearance="primary" disabled={!bothSchemasDefined} onClick={onGenerateClick}>
-          {Resources.GENERATE}
+          {Resources.SETTINGS}
         </ToolbarButton>
       </ToolbarGroup>
     </Toolbar>
