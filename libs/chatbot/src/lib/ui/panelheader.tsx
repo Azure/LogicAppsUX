@@ -48,7 +48,7 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
             <Link
               className="msla-protectedmessage-link"
               onClick={() => window.open('https://aka.ms/azurecopilot/privacystatement', '_blank')}
-              isUnderlinedStyle={true}
+              underline={true}
             >
               {protectedPillText}
             </Link>

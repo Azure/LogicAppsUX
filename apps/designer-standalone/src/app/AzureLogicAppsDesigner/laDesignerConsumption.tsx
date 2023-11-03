@@ -15,6 +15,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
+import type { RequestData, ResponseData } from '@microsoft/chatbot';
 import { Chatbot } from '@microsoft/chatbot';
 import {
   BaseApiManagementService,
@@ -38,6 +39,8 @@ import {
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
 import { guid, startsWith } from '@microsoft/utils-logic-apps';
+import type { AxiosResponse } from 'axios';
+import axios from 'axios';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -162,6 +165,19 @@ const DesignerEditorConsumption = () => {
     alert('Open FeedBack Panel');
   };
 
+  // This logic will be moved into a chatbot service
+  const getWorkflowResponse = async (requestData: RequestData, signal: AbortSignal): Promise<AxiosResponse<ResponseData>> => {
+    const response = await axios.post(`${environment.chatbotEndpoint}`, requestData, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+      signal,
+    });
+    return response;
+  };
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, useLegacyWorkflowParameters: true }}>
@@ -180,13 +196,12 @@ const DesignerEditorConsumption = () => {
               <Designer />
               {showChatBot ? (
                 <Chatbot
-                  endpoint={environment.chatbotEndpoint}
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
                   closeChatBot={() => {
-                    console.log('close chatbot');
                     dispatch(setIsChatBotEnabled(false));
                   }}
+                  getWorkflowResponse={getWorkflowResponse}
                 />
               ) : null}
             </div>
