@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { func } from './constants';
+import { dotnet, func, node, npm } from './constants';
 import type { Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
@@ -22,6 +22,8 @@ export namespace ext {
   export let context: ExtensionContext;
   export let workflowDesignTimePort: number;
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
+  export let workflowDotNetProcess: cp.ChildProcess | undefined;
+  export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let dataMapperRuntimePort: number;
   export let dataMapperChildProcess: cp.ChildProcess | undefined;
   export let logicAppWorkspace: string;
@@ -44,6 +46,13 @@ export namespace ext {
 
   // Functions
   export const funcCliPath: string = func;
+
+  // DotNet
+  export const dotNetCliPath: string = dotnet;
+
+  // Node Js
+  export const nodeJsCliPath: string = node;
+  export const npmCliPath: string = npm;
 
   // WebViews
   export enum webViewKey {

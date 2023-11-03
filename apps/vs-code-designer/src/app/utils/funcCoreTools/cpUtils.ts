@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { Platform } from '../../../constants';
 import { localize } from '../../../localize';
 import { isString } from '@microsoft/utils-logic-apps';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
@@ -37,7 +38,7 @@ export async function executeCommand(
       );
     }
   } else {
-    if (outputChannel) {
+    if (outputChannel && command != 'echo') {
       outputChannel.appendLog(localize('finishedRunningCommand', 'Finished running command: "{0} {1}".', command, result.formattedArgs));
     }
   }
@@ -62,7 +63,7 @@ export async function tryExecuteCommand(
     };
     const childProc: cp.ChildProcess = cp.spawn(command, args, options);
 
-    if (outputChannel) {
+    if (outputChannel && command != 'echo') {
       outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
     }
 
@@ -101,7 +102,7 @@ export async function tryExecuteCommand(
  * @returns {string} Argument wrapped in quotation marks.
  */
 export function wrapArgInQuotes(arg?: string | boolean | number): string {
-  const quotationMark: string = process.platform === 'win32' ? '"' : "'";
+  const quotationMark: string = process.platform === Platform.windows ? '"' : "'";
   arg ??= '';
   return isString(arg) ? quotationMark + arg + quotationMark : String(arg);
 }
