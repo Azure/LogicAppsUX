@@ -6,6 +6,7 @@ import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
+import { validateAndInstallBinaries } from '../utils/binaries';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
 import { editAppSetting } from './appSettings/editAppSetting';
 import { renameAppSetting } from './appSettings/renameAppSetting';
@@ -127,6 +128,9 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
 
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, async (context: IActionContext) =>
+    validateAndInstallBinaries(context)
+  );
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
