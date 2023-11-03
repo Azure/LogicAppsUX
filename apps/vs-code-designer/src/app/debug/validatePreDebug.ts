@@ -8,6 +8,7 @@ import {
   localEmulatorConnectionString,
   azureWebJobsStorageKey,
   localSettingsFileName,
+  Platform,
 } from '../../constants';
 import { localize } from '../../localize';
 import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
@@ -134,7 +135,7 @@ async function validateEmulatorIsRunning(context: IActionContext, projectPath: s
         localSettingsFileName
       );
 
-      const learnMoreLink: string = process.platform === 'win32' ? 'https://aka.ms/AA4ym56' : 'https://aka.ms/AA4yef8';
+      const learnMoreLink: string = process.platform === Platform.windows ? 'https://aka.ms/AA4ym56' : 'https://aka.ms/AA4yef8';
       const debugAnyway: vscode.MessageItem = { title: localize('debugAnyway', 'Debug anyway') };
       const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { learnMoreLink, modal: true }, debugAnyway);
       return result === debugAnyway;

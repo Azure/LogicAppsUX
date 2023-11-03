@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcPackageName, PackageManager } from '../../../constants';
+import { funcPackageName, PackageManager, Platform } from '../../../constants';
 import { executeCommand } from './cpUtils';
 import { tryGetInstalledBrewPackageName } from './getBrewPackageName';
 import { FuncVersion } from '@microsoft/vscode-extension';
@@ -15,10 +15,10 @@ import { FuncVersion } from '@microsoft/vscode-extension';
 export async function getFuncPackageManagers(isFuncInstalled: boolean): Promise<PackageManager[]> {
   const result: PackageManager[] = [];
   switch (process.platform) {
-    case 'linux':
+    case Platform.linux:
       // https://github.com/Microsoft/vscode-azurefunctions/issues/311
       break;
-    case 'darwin':
+    case Platform.mac:
       if (await hasBrew(isFuncInstalled)) {
         result.push(PackageManager.brew);
       }

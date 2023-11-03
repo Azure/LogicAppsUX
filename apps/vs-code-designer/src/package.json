@@ -303,7 +303,13 @@
       },
       {
         "command": "azureLogicAppsStandard.reportIssue",
-        "title": "Report Issue...",
+        "title": "Report issue...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.validateAndInstallBinaries",
+        "title": "Validate and install dependency binaries",
+        "preview": true,
         "category": "Azure Logic Apps"
       },
       {
@@ -729,7 +735,35 @@
           "azureLogicAppsStandard.deploySubpath": {
             "scope": "resource",
             "type": "string",
-            "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
+            "description": "The default subpath for the workspace folder to use during deployment. If you set this value, you won't get a prompt for the folder path during deployment."
+          },
+          "azureLogicAppsStandard.dependencyTimeout": {
+            "type": "number",
+            "description": "The timeout (in seconds) to be used when validating and installing dependencies.",
+            "default": 120
+          },
+          "azureLogicAppsStandard.autoRuntimeDependenciesPath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The path for Azure Logic Apps extension runtime dependencies. (Preview)"
+          },
+          "azureLogicAppsStandard.dotnetBinaryPath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The path for Azure Logic Apps extension .NET SDK dependency binary.",
+            "default": "dotnet"
+          },
+          "azureLogicAppsStandard.nodeJsBinaryPath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The path for Azure Logic Apps extension Node JS dependency binary.",
+            "default": "node"
+          },
+          "azureLogicAppsStandard.funcCoreToolsBinaryPath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The path for Azure Logic Apps extension Azure Function Core Tools dependency binary.",
+            "default": "func"
           },
           "azureLogicAppsStandard.projectSubpath": {
             "scope": "resource",
@@ -748,22 +782,42 @@
           },
           "azureLogicAppsStandard.validateFuncCoreTools": {
             "type": "boolean",
-            "description": "Validate the Azure Functions Core Tools is installed before debugging.",
+            "description": "Make sure that Azure Functions Core Tools is installed before you start debugging.",
+            "default": true
+          },
+          "azureLogicAppsStandard.validateDotNetSDK": {
+            "type": "boolean",
+            "description": "Make sure that the .NET SDK is installed before you start debugging.",
+            "default": true
+          },
+          "azureLogicAppsStandard.validateNodeJs": {
+            "type": "boolean",
+            "description": "Make sure that Node JS is installed before you start debugging.",
             "default": true
           },
           "azureLogicAppsStandard.showDeployConfirmation": {
             "type": "boolean",
-            "description": "Ask for confirmation before deploying to a Function App in Azure (deploying will overwrite any previous deployment and cannot be undone).",
+            "description": "Ask to confirm before deploying to a function app in Azure. Deployment overwrites any previous deployment and can't be undone.",
             "default": true
           },
           "azureLogicAppsStandard.showCoreToolsWarning": {
             "type": "boolean",
-            "description": "Show a warning if your installed version of Azure Functions Core Tools is out-of-date.",
+            "description": "Show a warning when your installed version of the Azure Functions Core Tools is outdated.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showDotNetWarning": {
+            "type": "boolean",
+            "description": "Show a warning when your installed version of the .NET SDK is outdated.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showNodeJsWarning": {
+            "type": "boolean",
+            "description": "Show a warning when your installed version of Node JS is outdated.",
             "default": true
           },
           "azureLogicAppsStandard.showMultiCoreToolsWarning": {
             "type": "boolean",
-            "description": "Show a warning if multiple installs of Azure Functions Core Tools are detected.",
+            "description": "Show a warning when multiple installations of the Azure Functions Core Tools are found.",
             "default": true
           },
           "azureLogicAppsStandard.requestTimeout": {
@@ -812,8 +866,37 @@
           },
           "azureLogicAppsStandard.showTargetFrameworkWarning": {
             "type": "boolean",
-            "description": "Show a warning when an Azure Functions .NET project was detected that has mismatched target frameworks.",
+            "description": "Show a warning after detecting an Azure Functions .NET project with mismatched target frameworks.",
             "default": true
+          },
+          "azureLogicAppsStandard.showStartDesignTimeMessage": {
+            "type": "boolean",
+            "description": "Show a message asking customers if they want to start the background design-time process at project load time.",
+            "default": true
+          },
+          "azureLogicAppsStandard.autoStartDesignTime": {
+            "type": "boolean",
+            "description": "Start background design-time process at project load time.",
+            "default": true
+          },
+          "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
+            "type": "boolean",
+            "description": "Enable automatic validation and installation for runtime dependencies at the configured path. (Preview)",
+            "default": null
+          },
+          "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
+            "type": "boolean",
+            "description": "Show a warning asking if user's would like to configure Azurite auto start.",
+            "default": false
+          },
+          "azureLogicAppsStandard.autoStartAzurite": {
+            "type": "boolean",
+            "description": "Start Azurite when project starts.",
+            "default": true
+          },
+          "azureLogicAppsStandard.azuriteLocationSetting": {
+            "type": "string",
+            "description": "Default location for Azurite repository for Logic Apps Standard Workspaces"
           },
           "azureLogicAppsStandard.useExpandedFunctionCards": {
             "type": "boolean",
@@ -880,7 +963,8 @@
     "onView:azDataMapper",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
-    "onDebugInitialConfigurations"
+    "onDebugInitialConfigurations",
+    "onStartupFinished"
   ],
   "galleryBanner": {
     "color": "#015cda",

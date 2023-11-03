@@ -3,21 +3,34 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  Platform,
   ProjectDirectoryPath,
+  autoStartDesignTimeSetting,
   defaultVersionRange,
   designerStartApi,
   extensionBundleId,
   hostFileName,
   localSettingsFileName,
   logicAppKind,
+  showStartDesignTimeMessageSetting,
   workflowDesignerLoadTimeout,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
+import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
+import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
+import { getWorkspaceFolder } from '../workspace';
 import { delay } from '@azure/ms-rest-js';
-import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import {
+  DialogResponses,
+  openUrl,
+  type IActionContext,
+  type IAzExtOutputChannel,
+  callWithTelemetryAndErrorHandling,
+} from '@microsoft/vscode-azext-utils';
 import { WorkerRuntime } from '@microsoft/vscode-extension';
 import * as cp from 'child_process';
 import * as fs from 'fs';
@@ -25,71 +38,78 @@ import * as os from 'os';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as requestP from 'request-promise';
+import * as vscode from 'vscode';
 import { Uri, window, workspace } from 'vscode';
 import type { MessageItem } from 'vscode';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
-  const designTimeDirectoryName = 'workflow-designtime';
-  const hostFileContent: any = {
-    version: '2.0',
-    extensionBundle: {
-      id: extensionBundleId,
-      version: defaultVersionRange,
-    },
-    extensions: {
-      workflow: {
-        settings: {
-          'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
+    actionContext.telemetry.properties.startDesignTimeApi = 'false';
+
+    const designTimeDirectoryName = 'workflow-designtime';
+    const hostFileContent: any = {
+      version: '2.0',
+      extensionBundle: {
+        id: extensionBundleId,
+        version: defaultVersionRange,
+      },
+      extensions: {
+        workflow: {
+          settings: {
+            'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+          },
         },
       },
-    },
-  };
-  const settingsFileContent: any = {
-    IsEncrypted: false,
-    Values: {
-      AzureWebJobsSecretStorageType: 'Files',
-      FUNCTIONS_WORKER_RUNTIME: WorkerRuntime.Node,
-      APP_KIND: logicAppKind,
-    },
-  };
-  if (!ext.workflowDesignTimePort) {
-    ext.workflowDesignTimePort = await portfinder.getPortPromise();
-  }
-
-  const url = `http://localhost:${ext.workflowDesignTimePort}${designerStartApi}`;
-  if (await isDesignTimeUp(url)) {
-    return;
-  }
-
-  try {
-    window.showInformationMessage(
-      localize('azureFunctions.designTimeApi', 'Starting workflow design time api. It might take a few seconds.'),
-      'OK'
-    );
-
-    const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-    settingsFileContent.Values[ProjectDirectoryPath] = path.join(designTimeDirectory.fsPath);
-
-    if (designTimeDirectory) {
-      await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
-      await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-      await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
-      const cwd: string = designTimeDirectory.fsPath;
-      const portArgs = `--port ${ext.workflowDesignTimePort}`;
-      startDesignTimeProcess(ext.outputChannel, cwd, 'func', 'host', 'start', portArgs);
-      await waitForDesignTimeStartUp(url, new Date().getTime());
-    } else {
-      throw new Error(localize('DesignTimeDirectoryError', 'Design time directory could not be created.'));
+    };
+    const settingsFileContent: any = {
+      IsEncrypted: false,
+      Values: {
+        AzureWebJobsSecretStorageType: 'Files',
+        FUNCTIONS_WORKER_RUNTIME: WorkerRuntime.Node,
+        APP_KIND: logicAppKind,
+      },
+    };
+    if (!ext.workflowDesignTimePort) {
+      ext.workflowDesignTimePort = await portfinder.getPortPromise();
     }
-  } catch (ex) {
-    const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
-    const message: string = localize('DesignTimeError', 'Workflow design time could not be started.');
-    await window.showErrorMessage(message, viewOutput).then(async (result) => {
-      if (result === viewOutput) {
-        ext.outputChannel.show();
+
+    const url = `http://localhost:${ext.workflowDesignTimePort}${designerStartApi}`;
+    if (await isDesignTimeUp(url)) {
+      actionContext.telemetry.properties.isDesignTimeUp = 'true';
+      return;
+    }
+
+    try {
+      window.showInformationMessage(
+        localize('azureFunctions.designTimeApi', 'Starting workflow design-time API, which might take a few seconds.'),
+        'OK'
+      );
+
+      const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
+      settingsFileContent.Values[ProjectDirectoryPath] = path.join(designTimeDirectory.fsPath);
+
+      if (designTimeDirectory) {
+        await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
+        await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
+        await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
+        const cwd: string = designTimeDirectory.fsPath;
+        const portArgs = `--port ${ext.workflowDesignTimePort}`;
+        startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
+        await waitForDesignTimeStartUp(url, new Date().getTime());
+        actionContext.telemetry.properties.startDesignTimeApi = 'true';
+      } else {
+        throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
       }
-    });
-  }
+    } catch (ex) {
+      const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
+      const message: string = localize('DesignTimeError', "Can't start the background design-time process.");
+      await window.showErrorMessage(message, viewOutput).then(async (result) => {
+        if (result === viewOutput) {
+          ext.outputChannel.show();
+        }
+      });
+    }
+  });
 }
 
 async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
@@ -171,10 +191,42 @@ export function stopDesignTimeApi(): void {
     return;
   }
 
-  if (os.platform() === 'win32') {
+  if (os.platform() === Platform.windows) {
     cp.exec('taskkill /pid ' + `${ext.workflowDesignChildProcess.pid}` + ' /T /F');
   } else {
     ext.workflowDesignChildProcess.kill();
   }
   ext.workflowDesignChildProcess = undefined;
+}
+
+export async function promptStartDesignTimeOption(context: IActionContext) {
+  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+    const workspaceFolder = await getWorkspaceFolder(context);
+    const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
+    const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
+    const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
+    if (projectPath) {
+      if (autoStartDesignTime) {
+        startDesignTimeApi(projectPath);
+      } else if (showStartDesignTimeMessage) {
+        const message = localize(
+          'startDesignTimeApi',
+          'Always start the background design-time process at launch? The workflow designer will open faster.'
+        );
+        const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
+        let result: MessageItem;
+        do {
+          result = await context.ui.showWarningMessage(message, confirm, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
+          if (result === confirm) {
+            await updateGlobalSetting(autoStartDesignTimeSetting, true);
+            startDesignTimeApi(projectPath);
+          } else if (result === DialogResponses.learnMore) {
+            await openUrl('https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local');
+          } else if (result === DialogResponses.dontWarnAgain) {
+            await updateGlobalSetting(showStartDesignTimeMessageSetting, false);
+          }
+        } while (result === DialogResponses.learnMore);
+      }
+    }
+  }
 }

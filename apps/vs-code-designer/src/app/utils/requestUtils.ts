@@ -84,7 +84,7 @@ export async function sendRequestWithExtTimeout(
         localize('timeoutFeed', 'Request timed out. Modify setting "{0}.{1}" if you want to extend the timeout.', ext.prefix, timeoutKey)
       );
     } else {
-      throw error;
+      throw new Error(localize('sendRequestError', `${options.url} request failed with error: ${error}`));
     }
   }
 }

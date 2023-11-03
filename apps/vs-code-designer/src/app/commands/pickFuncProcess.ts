@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
+import { Platform, defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { preDebugValidate } from '../debug/validatePreDebug';
@@ -25,7 +25,7 @@ import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-ex
 import * as unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 //TODO: revisit this import again (yargsParser)
-import yargsParser from 'yargs-parser';
+import * as parser from 'yargs-parser';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -221,7 +221,7 @@ async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<string> {
     }
   }
   const children: OSAgnosticProcess[] =
-    process.platform === 'win32' ? await getWindowsChildren(taskInfo.processId) : await getUnixChildren(taskInfo.processId);
+    process.platform === Platform.windows ? await getWindowsChildren(taskInfo.processId) : await getUnixChildren(taskInfo.processId);
   const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet|func)(\.exe|)$/i.test(c.command || ''));
   return child ? child.pid.toString() : String(taskInfo.processId);
 }
@@ -256,7 +256,7 @@ async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
 function getFunctionRuntimePort(funcTask: vscode.Task): number {
   const { command } = funcTask.definition;
   try {
-    const args = yargsParser(command);
+    const args = parser(command);
     const port = args['port'] || args['p'] || undefined;
     return port ?? Number(defaultFuncPort);
   } catch {
