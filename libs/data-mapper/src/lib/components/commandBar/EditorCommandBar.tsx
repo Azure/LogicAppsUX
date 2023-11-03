@@ -9,10 +9,10 @@ import {
   ArrowUndo20Regular,
   Dismiss20Regular,
   Globe20Regular,
-  OrganizationHorizontal20Regular,
+  Organization20Regular,
   Play20Regular,
   Save20Regular,
-  Gesture20Filled,
+  ArrowExportLtr20Regular,
   Settings20Regular,
 } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -24,8 +24,6 @@ export interface EditorCommandBarProps {
   onUndoClick: () => void;
   onRedoClick: () => void;
   onTestClick: () => void;
-  showMapOverview: boolean;
-  setShowMapOverview: (showMapOverview: boolean) => void;
   showGlobalView: boolean;
   setShowGlobalView: (showGlobalView: boolean) => void;
   onGenerateClick: () => void;
@@ -49,17 +47,7 @@ const useStyles = makeStyles({
 });
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const {
-    onSaveClick,
-    onUndoClick,
-    onRedoClick,
-    onTestClick,
-    showMapOverview,
-    setShowMapOverview,
-    showGlobalView,
-    setShowGlobalView,
-    onGenerateClick,
-  } = props;
+  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showGlobalView, setShowGlobalView, onGenerateClick } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -143,17 +131,13 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Publish',
         description: 'Button text for publish',
       }),
-      MAP_OVERVIEW: intl.formatMessage({
-        defaultMessage: 'Overview',
-        description: 'Button text for overview',
-      }),
       GLOBAL_VIEW: intl.formatMessage({
-        defaultMessage: 'Global view',
+        defaultMessage: 'Overview',
         description: 'Button text for whole overview',
       }),
-      RETURN: intl.formatMessage({
-        defaultMessage: 'Return',
-        description: 'Button text for returning to the canvas',
+      CANVAS: intl.formatMessage({
+        defaultMessage: 'Canvas',
+        description: 'Button text for showing the canvas view',
       }),
       DIVIDER: intl.formatMessage({
         defaultMessage: 'Divider',
@@ -178,7 +162,12 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         >
           {Resources.SAVE}
         </ToolbarButton>
-        <ToolbarButton aria-label={Resources.GENERATE} icon={<Gesture20Filled />} disabled={!bothSchemasDefined} onClick={onGenerateClick}>
+        <ToolbarButton
+          aria-label={Resources.GENERATE}
+          icon={<ArrowExportLtr20Regular />}
+          disabled={!bothSchemasDefined}
+          onClick={onGenerateClick}
+        >
           {Resources.GENERATE}
         </ToolbarButton>
         <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
@@ -201,26 +190,24 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         </ToolbarButton>
         <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton
-          aria-label={showMapOverview ? Resources.RETURN : Resources.MAP_OVERVIEW}
-          icon={<OrganizationHorizontal20Regular />}
+          aria-label={Resources.CANVAS}
+          icon={<Organization20Regular />}
           disabled={!bothSchemasDefined}
           onClick={() => {
-            setShowMapOverview(!showMapOverview);
             setShowGlobalView(false);
           }}
         >
-          {showMapOverview ? Resources.RETURN : Resources.MAP_OVERVIEW}
+          {Resources.CANVAS}
         </ToolbarButton>
         <ToolbarButton
-          aria-label={showGlobalView ? Resources.RETURN : Resources.GLOBAL_VIEW}
+          aria-label={showGlobalView ? Resources.CANVAS : Resources.GLOBAL_VIEW}
           icon={<Globe20Regular />}
           disabled={!bothSchemasDefined}
           onClick={() => {
-            setShowMapOverview(false);
-            setShowGlobalView(!showGlobalView);
+            setShowGlobalView(true);
           }}
         >
-          {showGlobalView ? Resources.RETURN : Resources.GLOBAL_VIEW}
+          {Resources.GLOBAL_VIEW}
         </ToolbarButton>
         <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton
