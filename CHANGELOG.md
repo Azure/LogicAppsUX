@@ -1,4 +1,14 @@
 # Logic Apps Designer
+### [2.80.2](https://github.com/Azure/LogicAppsUX/compare/v2.80.0...v2.80.2) (2023-11-03)
+
+
+### Bug Fixes
+
+* **Copilot:** Changing from Copilot to Workflow Assistant ([#3590](https://github.com/Azure/LogicAppsUX/issues/3590)) ([3659e43](https://github.com/Azure/LogicAppsUX/commit/3659e4396cf25ee3296c643dca70a90907fbe03c))
+* **designer:** Alert error messages for required editor fields ([#3592](https://github.com/Azure/LogicAppsUX/issues/3592)) ([7a3a0ef](https://github.com/Azure/LogicAppsUX/commit/7a3a0efde1d67db2af22907b97b58cb5d97038d7))
+
+### [2.80.1](https://github.com/Azure/LogicAppsUX/compare/v2.80.0...v2.80.1) (2023-11-02)
+
 ## [2.80.0](https://github.com/Azure/LogicAppsUX/compare/v2.79.0...v2.80.0) (2023-11-02)
 
 
