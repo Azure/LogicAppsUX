@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.81.0](https://github.com/Azure/LogicAppsUX/compare/v2.80.3...v2.81.0) (2023-11-03)
+
+
+### Features
+
+* **Data Mapper:** uninstall legacy extension on activation of Designer extension ([#3597](https://github.com/Azure/LogicAppsUX/issues/3597)) ([437ca97](https://github.com/Azure/LogicAppsUX/commit/437ca97f9470986284f6e54f5fdefbd9376a2db6))
+
 ### [2.80.3](https://github.com/Azure/LogicAppsUX/compare/v2.80.2...v2.80.3) (2023-11-03)
 
 
