@@ -80,6 +80,7 @@ export type AssistantReplyItem = BaseAssistantMessageItem & {
   hideFooter?: boolean;
   __rawRequest: any;
   __rawResponse: any;
+  azureButtonCallback?: (prompt?: string) => void;
 };
 
 export type ConnectionsSetupItem = BaseAssistantMessageItem & {

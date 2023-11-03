@@ -12,7 +12,7 @@ interface CopilotPanelHeaderProps {
 export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): JSX.Element => {
   const intl = useIntl();
   const headerTitle = intl.formatMessage({
-    defaultMessage: 'Copilot',
+    defaultMessage: 'Workflow assistant',
     description: 'Chatbot header title',
   });
   const subtitleText = intl.formatMessage({
@@ -48,7 +48,7 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
             <Link
               className="msla-protectedmessage-link"
               onClick={() => window.open('https://aka.ms/azurecopilot/privacystatement', '_blank')}
-              isUnderlinedStyle={true}
+              underline={true}
             >
               {protectedPillText}
             </Link>

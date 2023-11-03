@@ -1,4 +1,5 @@
 import constants from '../common/constants';
+import type { RequestData, ResponseData } from '../common/models/Query';
 import type { Workflow } from '../common/models/workflow';
 import { isSuccessResponse } from '../core/util';
 import { CopilotPanelHeader } from './panelheader';
@@ -18,7 +19,7 @@ import {
   ChatSuggestion,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
-import axios from 'axios';
+import type { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -41,9 +42,10 @@ const inputIconButtonStyles = {
 
 interface ChatbotProps {
   panelLocation?: PanelLocation;
-  endpoint?: string;
+  getWorkflowResponse: (request: RequestData, signal: AbortSignal) => Promise<AxiosResponse<ResponseData>>;
   getUpdatedWorkflow: () => Promise<Workflow>;
   openFeedbackPanel: () => void; // callback when feedback panel is opened
+  openAzureCopilotPanel?: (prompt?: string) => void; // callback to open Azure Copilot Panel
   closeChatBot?: () => void; // callback when chatbot is closed
 }
 
@@ -52,9 +54,10 @@ const QUERY_MAX_LENGTH = 2000;
 
 export const Chatbot = ({
   panelLocation = PanelLocation.Left,
-  endpoint,
+  getWorkflowResponse,
   getUpdatedWorkflow,
   openFeedbackPanel,
+  openAzureCopilotPanel,
   closeChatBot,
 }: ChatbotProps) => {
   const textInputRef = useRef<ITextField>(null);
@@ -190,38 +193,37 @@ export const Chatbot = ({
         ...current,
       ]);
 
-      const options = {
-        content: {
-          queryId: guid(),
-          createTime: date.toJSON(),
+      const requestPayload: RequestData = {
+        properties: {
           query,
-          workflowJson: await getUpdatedWorkflow(),
+          workflow: await getUpdatedWorkflow(),
         },
       };
       stopAnswerGeneration(false);
       try {
-        const response = await axios.post(`${endpoint}/api/query`, options.content, {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          signal,
-        });
+        const response = await getWorkflowResponse(requestPayload, signal);
         if (!isSuccessResponse(response.status)) {
           throw new Error(response.statusText);
         }
-        const queryResponse: string = response.data.response;
+        const queryResponse: string = response.data.properties.response;
+        // commenting out usage of additionalParameters until Logic Apps backend is updated to include this response property
+        // const additionalParameters: string[] | undefined = response.data.properties.additionalParameters;
         setConversation((current) => [
           {
             type: ConversationItemType.Reply,
-            id: response.data.queryId,
+            id: response.data.properties.queryId,
             date: new Date(),
             text: queryResponse,
             isMarkdownText: false,
             correlationId: chatSessionId.current,
-            __rawRequest: options,
+            __rawRequest: requestPayload,
             __rawResponse: response,
             reaction: undefined,
+            azureButtonCallback:
+              /*additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure)*/ queryResponse ===
+                constants.DefaultAzureResponseCallback && openAzureCopilotPanel
+                ? () => openAzureCopilotPanel(query)
+                : undefined,
             openFeedback: openFeedbackPanel,
           },
           ...current,
@@ -250,7 +252,7 @@ export const Chatbot = ({
               isMarkdownText: false,
               chatSessionId: chatSessionId.current,
               correlationId: guid(),
-              __rawRequest: options,
+              __rawRequest: requestPayload,
               __rawResponse: error,
               reaction: undefined,
               hideFooter: true,
@@ -265,7 +267,7 @@ export const Chatbot = ({
               date: new Date(),
               error: intlText.assistantErrorMessage,
               chatSessionId: chatSessionId.current,
-              __rawRequest: options,
+              __rawRequest: requestPayload,
               __rawResponse: error,
               reaction: undefined,
             },
@@ -278,7 +280,15 @@ export const Chatbot = ({
         }, 100);
       }
     },
-    [endpoint, intlText.assistantErrorMessage, intlText.cancelGenerationText, signal, getUpdatedWorkflow, openFeedbackPanel]
+    [
+      getUpdatedWorkflow,
+      getWorkflowResponse,
+      signal,
+      openAzureCopilotPanel,
+      openFeedbackPanel,
+      intlText.cancelGenerationText,
+      intlText.assistantErrorMessage,
+    ]
   );
 
   const abortFetching = useCallback(() => {

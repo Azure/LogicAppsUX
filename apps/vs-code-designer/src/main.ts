@@ -2,7 +2,6 @@ import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { stopDataMapperBackend } from './app/commands/dataMapper/FxWorkflowRuntime';
 import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
-import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
@@ -13,6 +12,7 @@ import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTa
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
+import { startOnboarding } from './onboarding';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
   callWithTelemetryAndErrorHandling,
@@ -42,6 +42,16 @@ export async function activate(context: vscode.ExtensionContext) {
     ...supportedSchemaFileExts,
   ]);
 
+  // temporary fix to uninstall the old DM extension if it exists
+  const legacyExtension = vscode.extensions.getExtension('ms-azuretools.data-mapper-vscode-extension');
+  if (legacyExtension !== undefined) {
+    vscode.commands.executeCommand('workbench.extensions.uninstallExtension', legacyExtension.id);
+    vscode.window.showWarningMessage(
+      'The deprecated Data Mapper extension has been uninstalled. The Data Mapper is now managed in the Logic Apps extension.'
+    );
+    vscode.window.showWarningMessage('Please restart VSCode to complete the new Data Mapper migration.');
+  }
+
   ext.context = context;
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
@@ -54,7 +64,8 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
-    validateFuncCoreToolsIsLatest();
+
+    await startOnboarding(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
@@ -62,10 +73,12 @@ export async function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
+    activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
     });
 
+    activateContext.telemetry.properties.lastStep = 'registerEvent';
     registerEvent(
       extensionCommand.validateLogicAppProjects,
       vscode.workspace.onDidChangeWorkspaceFolders,
@@ -77,8 +90,11 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
 
+    activateContext.telemetry.properties.lastStep = 'registerReportIssueCommand';
     registerReportIssueCommand(extensionCommand.reportIssue);
+    activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
+    activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
