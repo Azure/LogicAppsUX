@@ -5,7 +5,8 @@
     {
       "files": ["*.ts"],
       "rules": {
-        "no-param-reassign": "off"
+        "no-param-reassign": "off",
+        "react-hooks/rules-of-hooks": "off"
       }
     },
     {

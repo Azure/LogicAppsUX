@@ -599,9 +599,7 @@
 
 ## [2.28.0](https://github.com/Azure/LogicAppsUX/compare/v2.27.0...v2.28.0) (2023-06-13)
 
-
 ## [2.23.0](https://github.com/Azure/LogicAppsUX/compare/v2.22.0...v2.23.0) (2023-05-31)
-
 
 ### Features
 
