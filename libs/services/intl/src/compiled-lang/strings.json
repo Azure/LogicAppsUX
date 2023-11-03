@@ -437,12 +437,6 @@
       "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
     }
   ],
-  "11xHiv": [
-    {
-      "type": 0,
-      "value": "Workflow Assistant"
-    }
-  ],
   "14lYtE": [
     {
       "type": 0,
@@ -597,6 +591,12 @@
     {
       "type": 0,
       "value": "Select a file to upload"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow assistant"
     }
   ],
   "2JA3gY": [
@@ -3369,12 +3369,6 @@
       "value": "When a new item..."
     }
   ],
-  "KWtjOc": [
-    {
-      "type": 0,
-      "value": "Welcome to Logic Apps Workflow Assistant!"
-    }
-  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -3503,12 +3497,6 @@
     {
       "type": 0,
       "value": "See More"
-    }
-  ],
-  "LM1O0e": [
-    {
-      "type": 0,
-      "value": "This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "LMB8am": [
@@ -6893,6 +6881,12 @@
       "value": "Loading..."
     }
   ],
+  "gyv32Z": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors."
+    }
+  ],
   "h+W3VW": [
     {
       "type": 0,
@@ -8305,6 +8299,12 @@
     {
       "type": 0,
       "value": "Triggers"
+    }
+  ],
+  "pl+hNy": [
+    {
+      "type": 0,
+      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
