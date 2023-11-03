@@ -1440,15 +1440,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";4pm5yw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Button to add dynamic content if TokenPicker is hidden]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[TokenPicker が非表示になっている場合に動的なコンテンツを追加するボタン]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";4vcnOA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the minimum value in the input array of numbers]]></Val>
@@ -4176,15 +4167,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";HQ8/tk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Button to add dynamic content if TokenPicker is shown]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[TokenPicker が表示されている場合に動的なコンテンツを追加するボタン]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";HSJLCu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Headers]]></Val>
@@ -4794,6 +4776,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[文字列のタイムスタンプの曜日部分を返します]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";L0hujG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Button to add dynamic content if Token Picker is shown]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8136,6 +8124,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZihyUf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Close]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[閉じる]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZkjTbp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Learn more about dynamic content.]]></Val>
@@ -11403,6 +11400,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";pc0FCg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Button to add dynamic content if Token Picker is hidden]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";pcGqoB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error loading outputs]]></Val>
@@ -12888,15 +12891,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";vyKxuD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Expand]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[展開]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";vz2gZC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Workflow Properties]]></Val>
@@ -13676,15 +13670,6 @@
           <Val><![CDATA[(UTC+12:00) Petropavlovsk-Kamchatsky - Old]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+12:00) ペトロパブロフスク-カムチャツキー - 廃止]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";zYbkZM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Collapse]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[折りたたむ]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
