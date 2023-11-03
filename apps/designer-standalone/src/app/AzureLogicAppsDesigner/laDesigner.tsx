@@ -21,6 +21,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
+import type { RequestData, ResponseData } from '@microsoft/chatbot';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
 import {
   BaseApiManagementService,
@@ -46,6 +47,7 @@ import {
 } from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/utils-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { AxiosResponse } from 'axios';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
@@ -235,6 +237,19 @@ const DesignerEditor = () => {
     alert('Open FeedBack Panel');
   };
 
+  // This logic will be moved into a chatbot service
+  const getWorkflowResponse = async (requestData: RequestData, signal: AbortSignal): Promise<AxiosResponse<ResponseData>> => {
+    const response = await axios.post(`${environment.chatbotEndpoint}`, requestData, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+      signal,
+    });
+    return response;
+  };
+
   return (
     <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
@@ -255,10 +270,10 @@ const DesignerEditor = () => {
               <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
               {showChatBot ? (
                 <Chatbot
-                  endpoint={environment.chatbotEndpoint}
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                  getWorkflowResponse={getWorkflowResponse}
                 />
               ) : null}
             </div>
