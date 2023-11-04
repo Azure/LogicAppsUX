@@ -1,12 +1,12 @@
 import constants from '../common/constants';
-import type { RequestData, ResponseData } from '../common/models/Query';
+import type { RequestData } from '../common/models/Query';
 import type { Workflow } from '../common/models/workflow';
 import { isSuccessResponse } from '../core/util';
 import { CopilotPanelHeader } from './panelheader';
 import type { ITextField } from '@fluentui/react';
 import { Panel, PanelType, css, getId } from '@fluentui/react';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/designer-client-services-logic-apps';
 import type { ConversationItem } from '@microsoft/designer-ui';
 import {
   PanelLocation,
@@ -19,7 +19,6 @@ import {
   ChatSuggestion,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
-import type { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -42,7 +41,7 @@ const inputIconButtonStyles = {
 
 interface ChatbotProps {
   panelLocation?: PanelLocation;
-  getWorkflowResponse: (request: RequestData, signal: AbortSignal) => Promise<AxiosResponse<ResponseData>>;
+  getAuthToken: () => Promise<string>;
   getUpdatedWorkflow: () => Promise<Workflow>;
   openFeedbackPanel: () => void; // callback when feedback panel is opened
   openAzureCopilotPanel?: (prompt?: string) => void; // callback to open Azure Copilot Panel
@@ -54,7 +53,7 @@ const QUERY_MAX_LENGTH = 2000;
 
 export const Chatbot = ({
   panelLocation = PanelLocation.Left,
-  getWorkflowResponse,
+  getAuthToken,
   getUpdatedWorkflow,
   openFeedbackPanel,
   openAzureCopilotPanel,
@@ -63,6 +62,7 @@ export const Chatbot = ({
   const textInputRef = useRef<ITextField>(null);
   const chatSessionId = useRef(guid());
   const intl = useIntl();
+  const chatbotService = ChatbotService();
   const [inputQuery, setInputQuery] = useState('');
   const [collapsed, setCollapsed] = useState(false);
   const [answerGeneration, stopAnswerGeneration] = useState(true);
@@ -201,7 +201,7 @@ export const Chatbot = ({
       };
       stopAnswerGeneration(false);
       try {
-        const response = await getWorkflowResponse(requestPayload, signal);
+        const response = await chatbotService.getCopilotResponse(query, await getUpdatedWorkflow(), signal, await getAuthToken());
         if (!isSuccessResponse(response.status)) {
           throw new Error(response.statusText);
         }
@@ -282,8 +282,9 @@ export const Chatbot = ({
     },
     [
       getUpdatedWorkflow,
-      getWorkflowResponse,
+      chatbotService,
       signal,
+      getAuthToken,
       openAzureCopilotPanel,
       openFeedbackPanel,
       intlText.cancelGenerationText,
