@@ -9,12 +9,11 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
   const intl = useIntl();
   const intlText = {
     greetingMessageFromOpenedFlow: intl.formatMessage({
-      defaultMessage: 'Welcome to Logic Apps Workflow Assistant!',
+      defaultMessage: 'Welcome to workflow assistant!',
       description: 'Chatbot greeting message from existing flow',
     }),
     subHeading1: intl.formatMessage({
-      defaultMessage:
-        'This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.',
+      defaultMessage: 'This assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.',
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     subHeading2: intl.formatMessage({
