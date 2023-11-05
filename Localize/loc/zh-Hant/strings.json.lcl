@@ -243,6 +243,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";/X2+cq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Open Azure Copilot]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[開啟 Azure Copilot]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";/doURb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Convert the input to an array]]></Val>
@@ -617,6 +626,15 @@
           <Val><![CDATA[Returns the port from a URI. If port is not specified, returns the default port for the protocol]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[傳回 URI 的連接埠。若未指定連接埠，會傳回通訊協定的預設連接埠]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";11xHiv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Workflow Assistant]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[工作流程助理]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3798,15 +3816,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";FpQfZG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot 可協助您了解工作流程和 Azure Logic Apps 平台的功能與連接器。]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";FslNgF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status]]></Val>
@@ -4644,6 +4653,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";KWtjOc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Welcome to Logic Apps Workflow Assistant!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[歡迎使用 Logic Apps 工作流程助理!]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";KX1poC#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text" UsrLk="true">
           <Val><![CDATA[# Cases]]></Val>
@@ -4829,6 +4847,15 @@
           <Val><![CDATA[See More]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[查看更多]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LM1O0e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[此工作流程助理可協助您了解工作流程和 Azure Logic Apps 平台的功能和連接器。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6912,6 +6939,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";UlyCAo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[工作流程助理是專為提供協助所設計，不支援工作流程建立或編輯。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Umpr3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Every {interval} weeks]]></Val>
@@ -8262,15 +8298,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";ahW8Iv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";ahsVI/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter Pfx]]></Val>
@@ -8294,15 +8321,6 @@
           <Val><![CDATA[Add or select a source schema to use for your map.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[新增或選取要用於對應的來源結構描述。]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";b+4gP8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot is designed only to provide help and doesn’t support workflow creation or editing.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot 的主要目的僅限於提供說明，並不支援建立或編輯工作流程。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12272,15 +12290,6 @@
           <Val><![CDATA[{days}d {hours}h]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{days} 天 {hours} 小時]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";tInDJg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Welcome to Copilot in Azure Logic Apps!]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[歡迎使用 Azure Logic Apps 中的 Copilot!]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

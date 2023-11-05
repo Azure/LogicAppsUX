@@ -243,6 +243,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";/X2+cq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Open Azure Copilot]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Azure Copilot'ı aç]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";/doURb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Convert the input to an array]]></Val>
@@ -618,6 +627,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Bir URI'den bağlantı noktasını döndürür. Bağlantı noktası belirtilmezse, iletişim kuralı için varsayılan bağlantı noktasını döndürür]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";11xHiv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Workflow Assistant]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3804,12 +3819,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";FpQfZG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors.]]></Val>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";FslNgF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status]]></Val>
@@ -4647,6 +4656,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";KWtjOc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Welcome to Logic Apps Workflow Assistant!]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";KX1poC#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text" UsrLk="true">
           <Val><![CDATA[# Cases]]></Val>
@@ -4770,6 +4785,9 @@
       <Item ItemId=";L0hujG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Button to add dynamic content if Token Picker is shown]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Belirteç Seçici gösteriliyorsa dinamik içerik ekleme düğmesi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4833,6 +4851,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Daha Fazlasını Göster]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LM1O0e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5361,6 +5385,9 @@
       <Item ItemId=";NhJPUn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[How can I call an external endpoint?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dış uç nokta nasıl çağrılır?]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5898,6 +5925,9 @@
       <Item ItemId=";Pnt0Xj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Explain how to receive files from SFTP server.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[SFTP sunucusundan dosya alma hakkında bilgi.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6912,6 +6942,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";UlyCAo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Umpr3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Every {interval} weeks]]></Val>
@@ -7284,6 +7320,9 @@
       <Item ItemId=";WMX2ig" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[What is the concurrency setting of this workflow?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışının eşzamanlılık ayarı nedir?]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7983,6 +8022,9 @@
       <Item ItemId=";Yrw/Qt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Your personal and company data are protected in this chat]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kişisel verileriniz ve şirket verileriniz bu sohbette korunuyor]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8256,15 +8298,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";ahW8Iv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";ahsVI/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter Pfx]]></Val>
@@ -8289,12 +8322,6 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin.]]></Val>
           </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";b+4gP8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot is designed only to provide help and doesn’t support workflow creation or editing.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10230,6 +10257,9 @@
       <Item ItemId=";kEjmTx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Some things you can ask:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sorabileceğiniz bazı şeyler:]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10734,6 +10764,9 @@
       <Item ItemId=";mRBHC6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Ask a question about this workflow or about Logic Apps as a whole]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışı veya bir bütün olarak Logic Apps hakkında soru sorun]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11118,6 +11151,9 @@
       <Item ItemId=";o5fYVy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Describe this workflow.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışını açıkla.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11421,6 +11457,9 @@
       <Item ItemId=";pc0FCg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Button to add dynamic content if Token Picker is hidden]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Belirteç Seçici gizliyse dinamik içerik ekleme düğmesi]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -12261,12 +12300,6 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{days} gü {hours} sa]]></Val>
           </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";tInDJg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Welcome to Copilot in Azure Logic Apps!]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>

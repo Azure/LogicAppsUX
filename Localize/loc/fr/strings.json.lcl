@@ -243,6 +243,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";/X2+cq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Open Azure Copilot]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ouvrir Azure Copilot]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";/doURb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Convert the input to an array]]></Val>
@@ -617,6 +626,15 @@
           <Val><![CDATA[Returns the port from a URI. If port is not specified, returns the default port for the protocol]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Renvoie le port d’un URI. Si le port n’est pas spécifié, renvoie le port par défaut pour le protocole]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";11xHiv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Workflow Assistant]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Assistant Flux de travail]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3810,15 +3828,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";FpQfZG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[La fonctionnalité Copilot peut vous permettre d’obtenir plus d’informations sur les workflows et les fonctionnalités et connecteurs de la plateforme Azure Logic Apps.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";FslNgF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status]]></Val>
@@ -4656,6 +4665,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";KWtjOc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Welcome to Logic Apps Workflow Assistant!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bienvenue dans l’assistant de flux de travail Logic Apps !]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";KX1poC#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text" UsrLk="true">
           <Val><![CDATA[# Cases]]></Val>
@@ -4782,6 +4800,9 @@
       <Item ItemId=";L0hujG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Button to add dynamic content if Token Picker is shown]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bouton permettant d’ajouter du contenu dynamique si le sélecteur de jeton est affiché]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4844,6 +4865,15 @@
           <Val><![CDATA[See More]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Afficher plus]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LM1O0e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Cet assistant de flux de travail peut vous aider à découvrir vos flux de travail ainsi que les fonctionnalités et les connecteurs de la plateforme Azure Logic Apps.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6933,6 +6963,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";UlyCAo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[L’assistant de flux de travail est conçu uniquement pour fournir de l’aide et ne prend pas en charge la création ou l’édition de flux de travail.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Umpr3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Every {interval} weeks]]></Val>
@@ -8283,15 +8322,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";ahW8Iv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";ahsVI/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter Pfx]]></Val>
@@ -8315,15 +8345,6 @@
           <Val><![CDATA[Add or select a source schema to use for your map.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Ajoutez ou sélectionnez un schéma source à utiliser pour votre mappage.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";b+4gP8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Copilot is designed only to provide help and doesn’t support workflow creation or editing.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot est conçu uniquement pour fournir de l’aide et ne prend pas en charge la création ou la modification de workflows.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11466,6 +11487,9 @@
       <Item ItemId=";pc0FCg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Button to add dynamic content if Token Picker is hidden]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bouton permettant d’ajouter du contenu dynamique si le sélecteur de jeton est masqué]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -12308,15 +12332,6 @@
           <Val><![CDATA[{days}d {hours}h]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{days} d {hours} h]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";tInDJg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Welcome to Copilot in Azure Logic Apps!]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Bienvenue dans Copilot dans Azure Logic Apps !]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
