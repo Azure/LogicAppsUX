@@ -1,4 +1,4 @@
-import { useAzureCopilotButton, useFeedbackMessage, useReportBugButton } from '../feedbackHelper';
+import { useAzureCopilotButton, useFeedbackMessage } from '../feedbackHelper';
 import { AssistantError } from './assistantError';
 import { AssistantGreeting } from './assistantGreeting';
 import { AssistantReplyWithFlow } from './assistantReplyWithFlow';
@@ -44,7 +44,6 @@ const UserMessage = ({ item }: { item: UserQueryItem }) => {
 
 const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
   const { id, text, hideFooter, date, azureButtonCallback } = item;
-  const reportBugButton = useReportBugButton(false);
   const azureCopilotButton = useAzureCopilotButton(azureButtonCallback);
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   return (
@@ -57,7 +56,7 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         selectedReaction={reaction}
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         disabled={false} //TODO: add isBlockingOperationInProgress}
-        additionalFooterActions={hideFooter ? [] : azureButtonCallback ? [azureCopilotButton] : [reportBugButton]}
+        additionalFooterActions={hideFooter ? [] : azureButtonCallback ? [azureCopilotButton] : []}
         hideFooter={hideFooter}
       >
         <Markdown>{text}</Markdown>

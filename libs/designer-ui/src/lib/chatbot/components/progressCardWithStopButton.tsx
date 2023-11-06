@@ -1,10 +1,11 @@
 import constants from '../constants';
 import StopGenerating from '../images/StopGenerating.svg';
+import StopGeneratingDark from '../images/StopGenerating_Dark.svg';
 import { animations } from './animations';
 import type { IContainerWithProgressBarStyles } from './containerWithProgressBar';
 import { ContainerWithProgressBar } from './containerWithProgressBar';
 import type { IStyle } from '@fluentui/react';
-import { keyframes, mergeStyleSets } from '@fluentui/react';
+import { useTheme, keyframes, mergeStyleSets } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
 import React from 'react';
@@ -26,6 +27,7 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
   dataAutomationId,
 }) => {
   const intl = useIntl();
+  const { isInverted } = useTheme();
   const intlText = {
     stopButtonAltText: intl.formatMessage({
       defaultMessage: 'Stop',
@@ -40,11 +42,11 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
       </ContainerWithProgressBar>
       {onStopButtonClick && stopButtonLabel && (
         <div className={classNames.stopContainer}>
-          <img src={StopGenerating} alt={intlText.stopButtonAltText} />
+          <img src={isInverted ? StopGeneratingDark : StopGenerating} alt={intlText.stopButtonAltText} />
           <ActionButton
             text={stopButtonLabel}
             iconProps={{ styles: { root: { paddingBottom: 3 } } }}
-            styles={mergeStyleSets(getActionButtonStyles(), styles?.actionButton)}
+            styles={mergeStyleSets(getActionButtonStyles(isInverted), styles?.actionButton)}
             onClick={onStopButtonClick}
           ></ActionButton>
         </div>
@@ -74,10 +76,10 @@ const getStyles = () => {
   };
 };
 
-const getActionButtonStyles = () => {
+const getActionButtonStyles = (isInverted?: boolean) => {
   return {
     root: {
-      color: constants.NEUTRAL_PRIMARY,
+      color: isInverted ? constants.DARK_PRIMARY : constants.NEUTRAL_PRIMARY,
       backgroundColor: 'transparent',
     },
     icon: {
