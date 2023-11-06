@@ -593,6 +593,12 @@
       "value": "Select a file to upload"
     }
   ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow assistant"
+    }
+  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -2743,12 +2749,6 @@
     {
       "type": 0,
       "value": "2"
-    }
-  ],
-  "FpQfZG": [
-    {
-      "type": 0,
-      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "FslNgF": [
@@ -5023,6 +5023,12 @@
       "value": "Required. The length of each chunk."
     }
   ],
+  "UlyCAo": [
+    {
+      "type": 0,
+      "value": "The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing."
+    }
+  ],
   "Umpr3z": [
     {
       "type": 0,
@@ -6051,12 +6057,6 @@
       "value": "Distinct Tracking id for each split-on instance"
     }
   ],
-  "ahW8Iv": [
-    {
-      "type": 0,
-      "value": "Copilot"
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -6073,12 +6073,6 @@
     {
       "type": 0,
       "value": "Add or select a source schema to use for your map."
-    }
-  ],
-  "b+4gP8": [
-    {
-      "type": 0,
-      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6885,6 +6879,12 @@
     {
       "type": 0,
       "value": "Loading..."
+    }
+  ],
+  "gyv32Z": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "h+W3VW": [
@@ -8301,6 +8301,12 @@
       "value": "Triggers"
     }
   ],
+  "pl+hNy": [
+    {
+      "type": 0,
+      "value": "Welcome to workflow assistant!"
+    }
+  ],
   "pozypE": [
     {
       "type": 0,
@@ -8905,12 +8911,6 @@
     {
       "type": 0,
       "value": "h"
-    }
-  ],
-  "tInDJg": [
-    {
-      "type": 0,
-      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

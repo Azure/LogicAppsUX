@@ -25,6 +25,7 @@ import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
+  BaseChatbotService,
   BaseFunctionService,
   BaseGatewayService,
   BaseOAuthService,
@@ -135,6 +136,7 @@ const DesignerEditor = () => {
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
+
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const services = useMemo(
     () =>
@@ -235,6 +237,10 @@ const DesignerEditor = () => {
     alert('Open FeedBack Panel');
   };
 
+  const getAuthToken = async () => {
+    return environment.armToken ?? '';
+  };
+
   return (
     <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
@@ -255,7 +261,7 @@ const DesignerEditor = () => {
               <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
               {showChatBot ? (
                 <Chatbot
-                  endpoint={environment.chatbotEndpoint}
+                  getAuthToken={getAuthToken}
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
@@ -467,6 +473,15 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const chatbotService = new BaseChatbotService({
+    // temporarily having brazilus as the baseUrl until deployment finishes in prod
+    baseUrl: 'https://brazilus.management.azure.com',
+    apiVersion: '2022-09-01-preview',
+    subscriptionId,
+    // temporarily hardcoding location until we have deployed to all regions
+    location: 'westcentralus',
+  });
+
   return {
     appService,
     connectionService,
@@ -481,6 +496,7 @@ const getDesignerServices = (
     functionService,
     runService,
     hostService,
+    chatbotService,
   };
 };
 

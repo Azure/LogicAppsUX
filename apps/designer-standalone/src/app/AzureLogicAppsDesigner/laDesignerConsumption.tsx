@@ -26,6 +26,7 @@ import {
   ConsumptionConnectorService,
   ConsumptionOperationManifestService,
   ConsumptionSearchService,
+  BaseChatbotService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -162,6 +163,10 @@ const DesignerEditorConsumption = () => {
     alert('Open FeedBack Panel');
   };
 
+  const getAuthToken = async () => {
+    return environment.armToken ?? '';
+  };
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, useLegacyWorkflowParameters: true }}>
@@ -180,13 +185,12 @@ const DesignerEditorConsumption = () => {
               <Designer />
               {showChatBot ? (
                 <Chatbot
-                  endpoint={environment.chatbotEndpoint}
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
                   closeChatBot={() => {
-                    console.log('close chatbot');
                     dispatch(setIsChatBotEnabled(false));
                   }}
+                  getAuthToken={getAuthToken}
                 />
               ) : null}
             </div>
@@ -352,6 +356,15 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const chatbotService = new BaseChatbotService({
+    // temporarily having brazilus as the baseUrl until deployment finishes in prod
+    baseUrl: 'https://brazilus.management.azure.com',
+    apiVersion: '2022-09-01-preview',
+    subscriptionId,
+    // temporarily hardcoding location until we have deployed to all regions
+    location: 'westcentralus',
+  });
+
   return {
     appServiceService,
     connectionService,
@@ -364,6 +377,7 @@ const getDesignerServices = (
     workflowService,
     apimService,
     functionService,
+    chatbotService,
   };
 };
 

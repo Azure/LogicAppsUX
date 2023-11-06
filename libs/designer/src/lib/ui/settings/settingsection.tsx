@@ -330,7 +330,11 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       <div key={i} style={{ display: 'flex', gap: '4px' }}>
         <div className={getClassName()} style={{ flex: '1 1 auto' }}>
           {renderSetting()}
-          {errorMessage && !hideErrorMessage[i] && <div className="msla-input-parameter-error">{errorMessage}</div>}
+          {errorMessage && !hideErrorMessage[i] && (
+            <span className="msla-input-parameter-error" role="alert">
+              {errorMessage}
+            </span>
+          )}
         </div>
         <RemoveConditionalParameter />
       </div>

@@ -86,7 +86,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       );
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-      settingsFileContent.Values[ProjectDirectoryPath] = path.join(projectPath);
+      settingsFileContent.Values[ProjectDirectoryPath] = path.join(designTimeDirectory.fsPath);
 
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);

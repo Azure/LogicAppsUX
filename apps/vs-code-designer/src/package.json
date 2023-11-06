@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.80.0",
+  "version": "2.81.1",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -898,6 +898,35 @@
           "azureLogicAppsStandard.autoBinariesInstallation": {
             "type": "boolean",
             "description": "Enable automatic validation and installation for binary dependencies.",
+            "default": null
+          },
+          "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
+            "type": "boolean",
+            "description": "Show a warning asking if user's would like to configure Azurite auto start.",
+            "default": false
+          },
+          "azureLogicAppsStandard.autoStartAzurite": {
+            "type": "boolean",
+            "description": "Start Azurite when project starts.",
+            "default": true
+          },
+          "azureLogicAppsStandard.azuriteLocationSetting": {
+            "type": "string",
+            "description": "Default location for Azurite repository for Logic Apps Standard Workspaces"
+          },
+          "azureLogicAppsStandard.showStartDesignTimeMessage": {
+            "type": "boolean",
+            "description": "Show a message asking customers if they want to start the background design-time process at project load time.",
+            "default": true
+          },
+          "azureLogicAppsStandard.autoStartDesignTime": {
+            "type": "boolean",
+            "description": "Start background design-time process at project load time.",
+            "default": true
+          },
+          "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
+            "type": "boolean",
+            "description": "Enable automatic validation and installation for runtime dependencies at the configured path. (Preview)",
             "default": null
           },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
