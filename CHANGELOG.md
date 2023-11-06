@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [2.81.1](https://github.com/Azure/LogicAppsUX/compare/v2.81.0...v2.81.1) (2023-11-06)
+
+
+### Features
+
+* **chatbot:** Adding Chatbot service ([#3603](https://github.com/Azure/LogicAppsUX/issues/3603)) ([ead9e16](https://github.com/Azure/LogicAppsUX/commit/ead9e1627ea10d892769a3fb95eb703ae608d99b))
+* **designer:** Add ability to get tokens from current node in token selector ([#3598](https://github.com/Azure/LogicAppsUX/issues/3598)) ([9a507eb](https://github.com/Azure/LogicAppsUX/commit/9a507eb778512f4c3fba81e5315ac5fd826cc284))
+
+
+### Bug Fixes
+
+* **copilot:** Changing capitalization of workflow assistant ([#3594](https://github.com/Azure/LogicAppsUX/issues/3594)) ([fbf60c0](https://github.com/Azure/LogicAppsUX/commit/fbf60c02c3b6aec5b7332fe0f530cd02f1b660d4))
 
 ## [2.81.0](https://github.com/Azure/LogicAppsUX/compare/v2.80.3...v2.81.0) (2023-11-03)
 
