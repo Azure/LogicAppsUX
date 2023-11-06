@@ -57,13 +57,11 @@ export function CodeEditor({
     setInTokenPicker(!getInTokenPicker());
   };
 
-  const closeTokenPicker = () => {
-    setInTokenPicker(false);
-    codeEditorRef.current?.focus();
-  };
-
-  const onClickTokenPicker = (b: boolean) => {
+  const setIsInTokenpicker = (b: boolean) => {
     setInTokenPicker(b);
+    if (!b) {
+      codeEditorRef.current?.focus();
+    }
   };
 
   const tokenClicked = (valueSegment: ValueSegment) => {
@@ -123,8 +121,7 @@ export function CodeEditor({
             callOutLabelId,
             undefined /* TokenPickerMode: undefined uses legacy tokenpicker */,
             undefined /* Editortype: undefined defaults to parameter type */,
-            closeTokenPicker,
-            onClickTokenPicker,
+            setIsInTokenpicker,
             tokenClicked
           )
         : null}

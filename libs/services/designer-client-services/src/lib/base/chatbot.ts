@@ -35,7 +35,7 @@ export class BaseChatbotService implements IChatbotService {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${armToken}`,
+        Authorization: armToken,
       },
       params: { 'api-version': apiVersion },
       signal,

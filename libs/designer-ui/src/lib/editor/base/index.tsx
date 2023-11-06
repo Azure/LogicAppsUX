@@ -27,7 +27,6 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
@@ -46,8 +45,7 @@ export type GetTokenPickerHandler = (
   labelId: string,
   tokenPickerMode?: TokenPickerMode,
   valueType?: string,
-  closeTokenPicker?: () => void,
-  tokenPickerClicked?: (b: boolean) => void,
+  setInTokenpicker?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
 ) => JSX.Element;
 
@@ -109,7 +107,7 @@ export const BaseEditor = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
-  const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
+  const [isInTokenPicker, setIsInTokenPicker] = useState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 
@@ -142,32 +140,24 @@ export const BaseEditor = ({
       }),
   };
 
-  const closeTokenPicker = () => {
-    setInTokenPicker(false);
-  };
-
   const handleFocus = () => {
     setIsEditorFocused(true);
-    setInTokenPicker(false);
+    setIsInTokenPicker(false);
     onFocus?.();
   };
 
   const handleBlur = () => {
     setIsEditorFocused(false);
-    if (!getInTokenPicker()) {
+    if (!isInTokenPicker) {
       setTokenPickerMode(undefined);
-      setInTokenPicker(false);
+      setIsInTokenPicker(false);
       onBlur?.();
     }
   };
 
   const openTokenPicker = (mode: TokenPickerMode) => {
-    setInTokenPicker(true);
+    setIsInTokenPicker(true);
     setTokenPickerMode(mode);
-  };
-
-  const tokenPickerClicked = (b: boolean) => {
-    setInTokenPicker(b);
   };
 
   const id = useId('deiosnoin');
@@ -218,12 +208,10 @@ export const BaseEditor = ({
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {toolbar && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
           {children}
-          {tokens && getInTokenPicker()
-            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, closeTokenPicker, tokenPickerClicked)
-            : null}
+          {tokens && isInTokenPicker ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsInTokenPicker) : null}
         </div>
 
-        {tokens && isEditorFocused && !getInTokenPicker() ? (
+        {tokens && isEditorFocused && !isInTokenPicker ? (
           createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
         ) : (
           <div />

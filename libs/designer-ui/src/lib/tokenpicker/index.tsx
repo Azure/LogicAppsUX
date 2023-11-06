@@ -47,10 +47,9 @@ export interface TokenPickerProps {
   expressionGroup?: TokenGroup[];
   // if initialMode is undefined, it is Legacy TokenPicker
   initialMode?: TokenPickerMode;
-  tokenPickerFocused?: (b: boolean) => void;
+  setIsInTokenpicker?: (b: boolean) => void;
   // tokenClickedCallback is used for the code Editor TokenPicker(Legacy Token Picker)
   tokenClickedCallback?: (token: ValueSegment) => void;
-  closeTokenPicker?: () => void;
 }
 export function TokenPicker({
   editorId,
@@ -59,10 +58,9 @@ export function TokenPicker({
   filteredTokenGroup,
   expressionGroup,
   initialMode,
-  tokenPickerFocused,
+  setIsInTokenpicker,
   getValueSegmentFromToken,
   tokenClickedCallback,
-  closeTokenPicker,
 }: TokenPickerProps): JSX.Element {
   const intl = useIntl();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
@@ -109,7 +107,7 @@ export function TokenPicker({
   const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
     setSelectedKey(TokenPickerMode.EXPRESSION);
-    tokenPickerFocused?.(true);
+    setIsInTokenpicker?.(true);
     setExpressionToBeUpdated(n);
 
     setTimeout(() => {
@@ -175,7 +173,7 @@ export function TokenPicker({
         beakWidth={beakWidth}
         directionalHint={directionalHint}
         onMouseDown={() => {
-          tokenPickerFocused?.(true);
+          setIsInTokenpicker?.(true);
         }}
         onMouseMove={handleExpressionEditorMoveDistance}
         onMouseUp={() => {
@@ -189,7 +187,7 @@ export function TokenPicker({
           } else {
             editor?.blur();
           }
-          closeTokenPicker?.();
+          setIsInTokenpicker?.(false);
         }}
         onRestoreFocus={() => {
           return;
@@ -218,7 +216,7 @@ export function TokenPicker({
               <TokenPickerHeader
                 fullScreen={fullScreen}
                 isExpression={isExpression}
-                closeTokenPicker={closeTokenPicker}
+                closeTokenPicker={() => setIsInTokenpicker?.(false)}
                 setFullScreen={setFullScreen}
                 pasteLastUsedExpression={pasteLastUsedExpression}
               />

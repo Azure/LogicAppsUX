@@ -302,8 +302,7 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     editorType?: string,
     isCodeEditor?: boolean,
-    closeTokenPicker?: () => void,
-    tokenPickerClicked?: (b: boolean) => void,
+    setIsInTokenPicker?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
@@ -337,13 +336,12 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
-        tokenPickerFocused={tokenPickerClicked}
+        setIsInTokenpicker={setIsInTokenPicker}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
         }
         tokenClickedCallback={tokenClickedCallback}
-        closeTokenPicker={closeTokenPicker}
       />
     );
   };
@@ -389,8 +387,7 @@ const ParameterSection = ({
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
             editorType?: string,
-            closeTokenPicker?: () => void,
-            tokenPickerClicked?: (b: boolean) => void,
+            setIsInTokenPicker?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
           ) =>
             getTokenPicker(
@@ -400,8 +397,7 @@ const ParameterSection = ({
               tokenPickerMode,
               editorType,
               editor?.toLowerCase() === constants.EDITOR.CODE,
-              closeTokenPicker,
-              tokenPickerClicked,
+              setIsInTokenPicker,
               tokenClickedCallback
             ),
         },

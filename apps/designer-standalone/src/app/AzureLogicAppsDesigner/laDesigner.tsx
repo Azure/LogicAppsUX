@@ -238,7 +238,7 @@ const DesignerEditor = () => {
   };
 
   const getAuthToken = async () => {
-    return environment.armToken ?? '';
+    return `Bearer ${environment.armToken}` ?? '';
   };
 
   return (
