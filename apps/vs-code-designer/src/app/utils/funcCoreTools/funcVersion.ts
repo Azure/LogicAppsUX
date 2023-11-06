@@ -165,6 +165,7 @@ export async function setFunctionsCommand(): Promise<void> {
   if (binariesExist) {
     command = path.join(funcBinariesPath, ext.funcCliPath);
     fs.chmodSync(funcBinariesPath, 0o777);
+    fs.chmodSync(command, 0o777);
   }
 
   await updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
