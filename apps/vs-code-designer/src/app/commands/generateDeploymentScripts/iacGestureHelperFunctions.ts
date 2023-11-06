@@ -6,8 +6,6 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import * as vscode from 'vscode';
 
-import { ext } from '../../../extensionVariables';
-
 export class FileManagement {
   /**
    * Adds a folder to the workspace.
