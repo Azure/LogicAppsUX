@@ -247,7 +247,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Open Azure Copilot]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Azure Copilot'ı aç]]></Val>
+            <Val><![CDATA[Azure Copilot’u aç]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -633,6 +633,9 @@
       <Item ItemId=";11xHiv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Workflow Assistant]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[İş Akışı Yardımcısı]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4659,6 +4662,9 @@
       <Item ItemId=";KWtjOc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Welcome to Logic Apps Workflow Assistant!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Logic Apps İş Akışı Yardımcısına Hoş Geldiniz!]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4857,6 +4863,9 @@
       <Item ItemId=";LM1O0e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu iş akışı yardımcısı, iş akışları ve Azure Logic Apps platformunun özellikleri ve bağlayıcıları hakkında bilgi edinmenize yardımcı olabilir.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6945,6 +6954,9 @@
       <Item ItemId=";UlyCAo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[İş akışı yardımcısı yalnızca yardım sağlamak üzere tasarlanmıştır ve iş akışı oluşturmayı veya düzenlemeyi desteklemez.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
