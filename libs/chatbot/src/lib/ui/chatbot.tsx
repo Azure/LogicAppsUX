@@ -71,7 +71,7 @@ export const Chatbot = ({
   const intlText = useMemo(() => {
     return {
       chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask a question about this workflow or about Logic Apps as a whole',
+        defaultMessage: 'Ask a question about this workflow or about Azure Logic Apps as a whole',
         description: 'Chabot input placeholder text',
       }),
       protectedMessage: intl.formatMessage({

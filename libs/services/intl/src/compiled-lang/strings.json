@@ -7809,12 +7809,6 @@
       "value": "', split on not in array."
     }
   ],
-  "mRBHC6": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Logic Apps as a whole"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7985,6 +7979,12 @@
     {
       "type": 0,
       "value": "Required. The name of the property to remove."
+    }
+  ],
+  "nUxMK9": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
     }
   ],
   "nVDG00": [
