@@ -270,6 +270,7 @@ export const Chatbot = ({
               __rawRequest: requestPayload,
               __rawResponse: error,
               reaction: undefined,
+              openFeedback: openFeedbackPanel,
             },
             ...current,
           ]);
