@@ -15,7 +15,7 @@ export const AssistantError = ({ item }: AssistantErrorProps) => {
   const intl = useIntl();
   const intlText = {
     flowCreatedDefaultMessage: intl.formatMessage({
-      defaultMessage: 'Here’s your flow.',
+      defaultMessage: "Here's your flow.",
       description: 'Chatbot report a bug button',
     }),
     technicalErrorDefaultMessage: intl.formatMessage({
@@ -27,7 +27,7 @@ export const AssistantError = ({ item }: AssistantErrorProps) => {
       description: 'Chatbot report a bug button',
     }),
     noAnswerDefaultMessage: intl.formatMessage({
-      defaultMessage: 'Sorry, I couldn’t understand your request. Please rephrase it and try again.',
+      defaultMessage: "Sorry, I couldn't understand your request. Please rephrase it and try again.",
       description: 'Chatbot report a bug button',
     }),
     flowUpdatedWithNoDiffDefaultMessage: intl.formatMessage({

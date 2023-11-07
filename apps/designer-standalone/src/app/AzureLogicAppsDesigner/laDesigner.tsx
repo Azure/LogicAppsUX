@@ -233,12 +233,13 @@ const DesignerEditor = () => {
     return serializedWorkflow;
   };
 
-  const openFeedBackPanel = () => {
-    alert('Open FeedBack Panel');
+  // This is a callback used in Azure Portal, but not supported in standalone
+  const openPanel = (s: string) => {
+    alert(s);
   };
 
   const getAuthToken = async () => {
-    return environment.armToken ?? '';
+    return `Bearer ${environment.armToken}` ?? '';
   };
 
   return (
@@ -261,9 +262,10 @@ const DesignerEditor = () => {
               <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
               {showChatBot ? (
                 <Chatbot
+                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
                   getAuthToken={getAuthToken}
                   getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={openFeedBackPanel}
+                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
                 />
               ) : null}

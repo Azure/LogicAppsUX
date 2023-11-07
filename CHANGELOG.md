@@ -1,5 +1,12 @@
 # Logic Apps Designer
 
+### [2.81.2](https://github.com/Azure/LogicAppsUX/compare/v2.81.1...v2.81.2) (2023-11-06)
+
+### Bug Fixes
+
+- **desinger:** Clean up some tokenpicker code ([#3613](https://github.com/Azure/LogicAppsUX/issues/3613)) ([fa09701](https://github.com/Azure/LogicAppsUX/commit/fa0970183288f52f1c26c4d100681005e4505a79))
+- **vscode:** Update permissions to binary func file ([#3612](https://github.com/Azure/LogicAppsUX/issues/3612)) ([d640899](https://github.com/Azure/LogicAppsUX/commit/d6408992d87d0839fe3c021f4a8d313241e6e03e))
+
 ### [2.81.1](https://github.com/Azure/LogicAppsUX/compare/v2.81.0...v2.81.1) (2023-11-06)
 
 ### Features
