@@ -137,7 +137,6 @@ export const DataMapperDesigner = ({
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
   const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
-  const [showMapOverview, setShowMapOverview] = useState(false);
   const [showGlobalView, setShowGlobalView] = useState(false);
 
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
@@ -301,7 +300,7 @@ export const DataMapperDesigner = ({
 
   const getCanvasAreaHeight = () => {
     // PropPane isn't shown when in the other views, so canvas can use full height
-    if (showMapOverview || showGlobalView) {
+    if (showGlobalView) {
       return centerViewHeight - 8;
     }
 
@@ -325,8 +324,6 @@ export const DataMapperDesigner = ({
           onUndoClick={onUndoClick}
           onRedoClick={onRedoClick}
           onTestClick={() => setTestMapPanelOpen(true)}
-          showMapOverview={showMapOverview}
-          setShowMapOverview={setShowMapOverview}
           showGlobalView={showGlobalView}
           setShowGlobalView={setShowGlobalView}
           onGenerateClick={onGenerateClick}
@@ -352,7 +349,7 @@ export const DataMapperDesigner = ({
                       backgroundColor: tokens.colorNeutralBackground4,
                     }}
                   >
-                    {!currentTargetSchemaNode || showMapOverview ? (
+                    {!currentTargetSchemaNode ? (
                       <MapOverview />
                     ) : showGlobalView ? (
                       <GlobalView />
@@ -380,7 +377,7 @@ export const DataMapperDesigner = ({
                 </Stack>
               </div>
 
-              {!(showMapOverview || showGlobalView) && (
+              {!showGlobalView && (
                 <PropertiesPane
                   selectedItemKey={selectedItemKey ?? ''}
                   isExpanded={isPropPaneExpanded}
