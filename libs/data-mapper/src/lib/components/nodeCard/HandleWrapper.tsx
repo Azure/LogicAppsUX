@@ -14,8 +14,8 @@ const useStaticStyles = makeStaticStyles({
   '.react-flow__handle': {
     // Default handle
     zIndex: 5,
-    width: '10px',
-    height: '10px',
+    width: '15px',
+    height: '15px',
     border: `${tokens.strokeWidthThick} solid ${tokens.colorCompoundBrandForeground1}`,
     backgroundColor: tokens.colorNeutralBackground1,
   },
