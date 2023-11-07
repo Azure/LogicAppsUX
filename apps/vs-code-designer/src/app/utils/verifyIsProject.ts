@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { hostFileName, localSettingsFileName } from '../../constants';
+import { extensionBundleId, hostFileName, localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { createNewProjectInternal } from '../commands/createNewProject/createNewProject';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
@@ -17,10 +17,20 @@ import type { MessageItem, WorkspaceFolder } from 'vscode';
 const projectSubpathKey = 'projectSubpath';
 
 // Use 'host.json' and 'local.settings.json' as an indicator that this is a functions project
-export async function isFunctionProject(folderPath: string): Promise<boolean> {
-  return (
-    (await fse.pathExists(path.join(folderPath, hostFileName))) && (await fse.pathExists(path.join(folderPath, localSettingsFileName)))
-  );
+export async function isLogicAppProject(folderPath: string): Promise<boolean> {
+  const hostFilePath = path.join(folderPath, hostFileName);
+  const hasHostJson: boolean = await fse.pathExists(hostFilePath);
+  const hasLocalSettingsJson: boolean = await fse.pathExists(path.join(folderPath, localSettingsFileName));
+
+  if (hasHostJson) {
+    const hostJsonData = fse.readFileSync(hostFilePath, 'utf-8');
+    const hostJson = JSON.parse(hostJsonData);
+
+    const hasWorfklowBundle = hostJson?.extensionBundle?.id === extensionBundleId;
+    return hasHostJson && hasLocalSettingsJson && hasWorfklowBundle;
+  }
+
+  return false;
 }
 
 /**
@@ -38,14 +48,14 @@ export async function tryGetFunctionProjectRoot(
   if (!subpath) {
     if (!(await fse.pathExists(folderPath))) {
       return undefined;
-    } else if (await isFunctionProject(folderPath)) {
+    } else if (await isLogicAppProject(folderPath)) {
       return folderPath;
     } else {
       const subpaths: string[] = await fse.readdir(folderPath);
       const matchingSubpaths: string[] = [];
       await Promise.all(
         subpaths.map(async (s) => {
-          if (await isFunctionProject(path.join(folderPath, s))) {
+          if (await isLogicAppProject(path.join(folderPath, s))) {
             matchingSubpaths.push(s);
           }
         })
