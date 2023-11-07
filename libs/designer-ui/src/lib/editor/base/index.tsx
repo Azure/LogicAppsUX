@@ -107,7 +107,7 @@ export const BaseEditor = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
-  const [isInTokenPicker, setIsInTokenPicker] = useState(false);
+  const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 
@@ -142,25 +142,23 @@ export const BaseEditor = ({
 
   const handleFocus = () => {
     setIsEditorFocused(true);
-    setIsInTokenPicker(false);
     onFocus?.();
+    if (isTokenPickerOpened) {
+      setIsTokenPickerOpened(false);
+    }
   };
 
   const handleBlur = () => {
     setIsEditorFocused(false);
-    if (!isInTokenPicker) {
-      setTokenPickerMode(undefined);
-      setIsInTokenPicker(false);
-      onBlur?.();
-    }
+    onBlur?.();
   };
 
   const openTokenPicker = (mode: TokenPickerMode) => {
-    setIsInTokenPicker(true);
+    setIsTokenPickerOpened(true);
     setTokenPickerMode(mode);
   };
 
-  const id = useId('deiosnoin');
+  const id = useId('msla-described-by-message');
   return (
     <div style={{ width: '100%' }}>
       <LexicalComposer initialConfig={initialConfig}>
@@ -208,10 +206,12 @@ export const BaseEditor = ({
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {toolbar && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
           {children}
-          {tokens && isInTokenPicker ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsInTokenPicker) : null}
+          {tokens && isTokenPickerOpened
+            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsTokenPickerOpened)
+            : null}
         </div>
 
-        {tokens && isEditorFocused && !isInTokenPicker ? (
+        {tokens && isEditorFocused && !isTokenPickerOpened ? (
           createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
         ) : (
           <div />

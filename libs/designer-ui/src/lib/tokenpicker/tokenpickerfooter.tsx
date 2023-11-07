@@ -25,6 +25,7 @@ interface TokenPickerFooterProps {
   expression: ExpressionEditorEvent;
   expressionToBeUpdated: NodeKey | null;
   tokenGroup: TokenGroup[];
+  closeTokenPicker: () => void;
   getValueSegmentFromToken: GetValueSegmentHandler;
   setExpressionEditorError: (error: string) => void;
 }
@@ -33,6 +34,7 @@ export function TokenPickerFooter({
   expression,
   expressionToBeUpdated,
   tokenGroup,
+  closeTokenPicker,
   getValueSegmentFromToken,
   setExpressionEditorError,
 }: TokenPickerFooterProps) {
@@ -140,6 +142,7 @@ export function TokenPickerFooter({
         });
       }
     }
+    closeTokenPicker();
   };
 
   return (

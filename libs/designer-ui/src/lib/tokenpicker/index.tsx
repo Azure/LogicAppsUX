@@ -47,7 +47,7 @@ export interface TokenPickerProps {
   expressionGroup?: TokenGroup[];
   // if initialMode is undefined, it is Legacy TokenPicker
   initialMode?: TokenPickerMode;
-  setIsInTokenpicker?: (b: boolean) => void;
+  setIsTokenPickerOpened?: (b: boolean) => void;
   // tokenClickedCallback is used for the code Editor TokenPicker(Legacy Token Picker)
   tokenClickedCallback?: (token: ValueSegment) => void;
 }
@@ -58,7 +58,7 @@ export function TokenPicker({
   filteredTokenGroup,
   expressionGroup,
   initialMode,
-  setIsInTokenpicker,
+  setIsTokenPickerOpened,
   getValueSegmentFromToken,
   tokenClickedCallback,
 }: TokenPickerProps): JSX.Element {
@@ -107,7 +107,6 @@ export function TokenPicker({
   const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
     setSelectedKey(TokenPickerMode.EXPRESSION);
-    setIsInTokenpicker?.(true);
     setExpressionToBeUpdated(n);
 
     setTimeout(() => {
@@ -163,6 +162,10 @@ export function TokenPicker({
     editor = null;
   }
 
+  const closeTokenPicker = () => {
+    setIsTokenPickerOpened?.(false);
+  };
+
   return (
     <>
       <Callout
@@ -172,9 +175,6 @@ export function TokenPicker({
         target={`#${editorId}`}
         beakWidth={beakWidth}
         directionalHint={directionalHint}
-        onMouseDown={() => {
-          setIsInTokenpicker?.(true);
-        }}
         onMouseMove={handleExpressionEditorMoveDistance}
         onMouseUp={() => {
           if (isDraggingExpressionEditor) {
@@ -184,10 +184,8 @@ export function TokenPicker({
         onDismiss={(e) => {
           if (e?.type === 'keydown' && (e as React.KeyboardEvent<HTMLElement>).key === 'Escape') {
             editor?.focus();
-          } else {
-            editor?.blur();
           }
-          setIsInTokenpicker?.(false);
+          closeTokenPicker();
         }}
         onRestoreFocus={() => {
           return;
@@ -216,7 +214,7 @@ export function TokenPicker({
               <TokenPickerHeader
                 fullScreen={fullScreen}
                 isExpression={isExpression}
-                closeTokenPicker={() => setIsInTokenpicker?.(false)}
+                closeTokenPicker={closeTokenPicker}
                 setFullScreen={setFullScreen}
                 pasteLastUsedExpression={pasteLastUsedExpression}
               />
@@ -264,6 +262,7 @@ export function TokenPicker({
               getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
               noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
+              closeTokenPicker={closeTokenPicker}
               expressionEditorCurrentHeight={expressionEditorCurrentHeight}
             />
             {isExpression ? (
@@ -273,6 +272,7 @@ export function TokenPicker({
                 expressionToBeUpdated={expressionToBeUpdated}
                 getValueSegmentFromToken={getValueSegmentFromToken}
                 setExpressionEditorError={setExpressionEditorError}
+                closeTokenPicker={closeTokenPicker}
               />
             ) : null}
           </div>
