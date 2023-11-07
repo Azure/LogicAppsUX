@@ -35,6 +35,17 @@
 
 ### Bug Fixes
 
+- **copilot:** Added extra margin for Firefox list items ([#3574](https://github.com/Azure/LogicAppsUX/issues/3574)) ([2c85de8](https://github.com/Azure/LogicAppsUX/commit/2c85de826cac19e1965ec86550b3904d5a0e08c0))
+- **Copilot:** Changing Introduction Text in Chatbot ([#3568](https://github.com/Azure/LogicAppsUX/issues/3568)) ([3e9e61e](https://github.com/Azure/LogicAppsUX/commit/3e9e61e62625882c24c47de9c74efefdd403fe52))
+- **Copilot:** Changing style of Preview tag ([#3566](https://github.com/Azure/LogicAppsUX/issues/3566)) ([8b21f0a](https://github.com/Azure/LogicAppsUX/commit/8b21f0a9544690e8ab2e592d454b91deb6ed6fb7))
+- **Data Mapper:** Find LogicApp Root & Select as Workspace ([#3569](https://github.com/Azure/LogicAppsUX/issues/3569)) ([86a27a8](https://github.com/Azure/LogicAppsUX/commit/86a27a8569426b287dacd55079cdd3438d212f11))
+- **Data Mapper:** Run XSLT function to recognize both .xslt and .xml ([#3571](https://github.com/Azure/LogicAppsUX/issues/3571)) ([e44d62c](https://github.com/Azure/LogicAppsUX/commit/e44d62cc40cbe0a8941aac4091d86f8768e1dd84))
+- **designer:** Darken border around add step button for better a11y c… ([#3556](https://github.com/Azure/LogicAppsUX/issues/3556)) ([4e0aef0](https://github.com/Azure/LogicAppsUX/commit/4e0aef0483989f3773d2a4cc1fab092063b258b7))
+- **designer:** Do not reset canvas position when reloading a workflow ([#3583](https://github.com/Azure/LogicAppsUX/issues/3583)) ([8296917](https://github.com/Azure/LogicAppsUX/commit/829691775d8f2db0dd33f4ba084369efbdbb1516))
+- **designer:** Fix a11y bug where buttons in search would not show as… ([#3561](https://github.com/Azure/LogicAppsUX/issues/3561)) ([03a321e](https://github.com/Azure/LogicAppsUX/commit/03a321ebe3ab73ddeac0659da08b83db4ea5d297))
+- **designer:** Token Picker Expression to use Extracted Value ([#3572](https://github.com/Azure/LogicAppsUX/issues/3572)) ([51727d2](https://github.com/Azure/LogicAppsUX/commit/51727d2989c422d8d0155f65bb3167d2ed736ccd))
+- **Designer:** Update Combo box to sort alphabetically. ([#3499](https://github.com/Azure/LogicAppsUX/issues/3499)) ([657db93](https://github.com/Azure/LogicAppsUX/commit/657db93fba577a2a9f3fa95200dfaddc2c957b51))
+- **designer:** Update outputs & inputs link for every loop ([#3575](https://github.com/Azure/LogicAppsUX/issues/3575)) ([210b3d3](https://github.com/Azure/LogicAppsUX/commit/210b3d37a4489c5645fcef35d3f47aef44724d9b))
 - **Copilot:** Changing from Copilot to Workflow Assistant ([#3590](https://github.com/Azure/LogicAppsUX/issues/3590)) ([3659e43](https://github.com/Azure/LogicAppsUX/commit/3659e4396cf25ee3296c643dca70a90907fbe03c))
 - **designer:** Alert error messages for required editor fields ([#3592](https://github.com/Azure/LogicAppsUX/issues/3592)) ([7a3a0ef](https://github.com/Azure/LogicAppsUX/commit/7a3a0efde1d67db2af22907b97b58cb5d97038d7))
 
