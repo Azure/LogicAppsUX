@@ -5,7 +5,7 @@
 import {
   DotnetVersion,
   Platform,
-  dependenciesPathSettingKey,
+  autoRuntimeDependenciesPathSettingKey,
   dotNetBinaryPathSettingKey,
   dotnetDependencyName,
   isolatedSdkName,
@@ -185,7 +185,7 @@ export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string
 }
 
 export async function getLocalDotNetVersionFromBinaries(): Promise<string> {
-  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const sdkVersionFolder = path.join(dotNetBinariesPath, 'sdk');
 
@@ -221,7 +221,7 @@ export function getDotNetCommand(): string {
 }
 
 export async function setDotNetCommand(): Promise<void> {
-  const binariesLocation = getGlobalSetting<string>(dependenciesPathSettingKey);
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const binariesExist = fs.existsSync(dotNetBinariesPath);
   let command = ext.dotNetCliPath;

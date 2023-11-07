@@ -183,9 +183,10 @@ export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
-export const autoBinariesInstallationSetting = 'autoBinariesInstallation';
+export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
+export const autoStartAzuriteSetting = 'autoStartAzurite';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
@@ -196,7 +197,7 @@ export const extInstallTaskName = `${func}: ${extInstallCommand}`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
-export const dependenciesPathSettingKey = 'dependenciesPath';
+export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const defaultLogicAppsFolder = '.azurelogicapps';
 export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
 export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
@@ -218,12 +219,6 @@ export enum DependencyVersion {
   funcCoreTools = '4.0.5198',
   nodeJs = '18.17.1',
 }
-
-export enum DependencyDefaultPath {
-  dotnet = 'dotnet',
-  funcCoreTools = 'func',
-  node = 'node',
-}
 export const hostFileContent = {
   version: '2.0',
   extensionBundle: {
@@ -238,6 +233,12 @@ export const hostFileContent = {
     },
   },
 };
+
+export enum DependencyDefaultPath {
+  dotnet = 'dotnet',
+  funcCoreTools = 'func',
+  node = 'node',
+}
 
 // .NET
 export enum DotnetVersion {

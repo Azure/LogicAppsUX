@@ -1,11 +1,12 @@
 import constants from '../common/constants';
+import type { RequestData } from '../common/models/Query';
 import type { Workflow } from '../common/models/workflow';
 import { isSuccessResponse } from '../core/util';
 import { CopilotPanelHeader } from './panelheader';
 import type { ITextField } from '@fluentui/react';
-import { Panel, PanelType, css, getId } from '@fluentui/react';
+import { useTheme, Panel, PanelType, css, getId } from '@fluentui/react';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/designer-client-services-logic-apps';
 import type { ConversationItem } from '@microsoft/designer-ui';
 import {
   PanelLocation,
@@ -18,30 +19,14 @@ import {
   ChatSuggestion,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
-import axios from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const chatbotPanelWidth = '360px';
 
-const inputIconButtonStyles = {
-  enabled: {
-    root: {
-      color: 'rgb(51, 51, 51)',
-      backgroundColor: 'transparent',
-    },
-  },
-  disabled: {
-    root: {
-      backgroundColor: 'transparent',
-      color: 'rgb(200, 200, 200)',
-    },
-  },
-};
-
 interface ChatbotProps {
   panelLocation?: PanelLocation;
-  endpoint?: string;
+  getAuthToken: () => Promise<string>;
   getUpdatedWorkflow: () => Promise<Workflow>;
   openFeedbackPanel: () => void; // callback when feedback panel is opened
   openAzureCopilotPanel?: (prompt?: string) => void; // callback to open Azure Copilot Panel
@@ -53,15 +38,17 @@ const QUERY_MAX_LENGTH = 2000;
 
 export const Chatbot = ({
   panelLocation = PanelLocation.Left,
-  endpoint,
+  getAuthToken,
   getUpdatedWorkflow,
   openFeedbackPanel,
   openAzureCopilotPanel,
   closeChatBot,
 }: ChatbotProps) => {
+  const { isInverted } = useTheme();
   const textInputRef = useRef<ITextField>(null);
   const chatSessionId = useRef(guid());
   const intl = useIntl();
+  const chatbotService = ChatbotService();
   const [inputQuery, setInputQuery] = useState('');
   const [collapsed, setCollapsed] = useState(false);
   const [answerGeneration, stopAnswerGeneration] = useState(true);
@@ -84,7 +71,7 @@ export const Chatbot = ({
   const intlText = useMemo(() => {
     return {
       chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask a question about this workflow or about Logic Apps as a whole',
+        defaultMessage: 'Ask a question about this workflow or about Azure Logic Apps as a whole',
         description: 'Chabot input placeholder text',
       }),
       protectedMessage: intl.formatMessage({
@@ -177,6 +164,21 @@ export const Chatbot = ({
     };
   }, [intl, selectedOperation]);
 
+  const inputIconButtonStyles = {
+    enabled: {
+      root: {
+        backgroundColor: 'transparent',
+        color: isInverted ? 'rgb(200, 200, 200)' : 'rgb(51, 51, 51)',
+      },
+    },
+    disabled: {
+      root: {
+        backgroundColor: 'transparent',
+        color: isInverted ? 'rgb(79, 79, 79)' : 'rgb(200, 200, 200)',
+      },
+    },
+  };
+
   const onSubmitInputQuery = useCallback(
     async (input: string) => {
       const query = input.trim();
@@ -192,41 +194,35 @@ export const Chatbot = ({
         ...current,
       ]);
 
-      const options = {
-        content: {
-          queryId: guid(),
-          createTime: date.toJSON(),
+      const requestPayload: RequestData = {
+        properties: {
           query,
-          workflowJson: await getUpdatedWorkflow(),
+          workflow: await getUpdatedWorkflow(),
         },
       };
       stopAnswerGeneration(false);
       try {
-        const response = await axios.post(`${endpoint}/api/query`, options.content, {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          signal,
-        });
+        const response = await chatbotService.getCopilotResponse(query, await getUpdatedWorkflow(), signal, await getAuthToken());
         if (!isSuccessResponse(response.status)) {
           throw new Error(response.statusText);
         }
-        const queryResponse: string = response.data.response;
-        const additionalParameters: string[] | undefined = response.data.additionalParameters;
+        const queryResponse: string = response.data.properties.response;
+        // commenting out usage of additionalParameters until Logic Apps backend is updated to include this response property
+        // const additionalParameters: string[] | undefined = response.data.properties.additionalParameters;
         setConversation((current) => [
           {
             type: ConversationItemType.Reply,
-            id: response.data.queryId,
+            id: response.data.properties.queryId,
             date: new Date(),
             text: queryResponse,
             isMarkdownText: false,
             correlationId: chatSessionId.current,
-            __rawRequest: options,
+            __rawRequest: requestPayload,
             __rawResponse: response,
             reaction: undefined,
             azureButtonCallback:
-              additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure) && openAzureCopilotPanel
+              /*additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure)*/ queryResponse ===
+                constants.DefaultAzureResponseCallback && openAzureCopilotPanel
                 ? () => openAzureCopilotPanel(query)
                 : undefined,
             openFeedback: openFeedbackPanel,
@@ -257,7 +253,7 @@ export const Chatbot = ({
               isMarkdownText: false,
               chatSessionId: chatSessionId.current,
               correlationId: guid(),
-              __rawRequest: options,
+              __rawRequest: requestPayload,
               __rawResponse: error,
               reaction: undefined,
               hideFooter: true,
@@ -272,9 +268,10 @@ export const Chatbot = ({
               date: new Date(),
               error: intlText.assistantErrorMessage,
               chatSessionId: chatSessionId.current,
-              __rawRequest: options,
+              __rawRequest: requestPayload,
               __rawResponse: error,
               reaction: undefined,
+              openFeedback: openFeedbackPanel,
             },
             ...current,
           ]);
@@ -287,8 +284,9 @@ export const Chatbot = ({
     },
     [
       getUpdatedWorkflow,
-      endpoint,
+      chatbotService,
       signal,
+      getAuthToken,
       openAzureCopilotPanel,
       openFeedbackPanel,
       intlText.cancelGenerationText,

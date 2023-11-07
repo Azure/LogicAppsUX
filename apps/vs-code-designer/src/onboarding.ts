@@ -5,13 +5,12 @@
 import { activateAzurite } from './app/utils/azurite/activateAzurite';
 import { promptInstallBinariesOption, validateAndInstallBinaries } from './app/utils/binaries';
 import { promptStartDesignTimeOption } from './app/utils/codeless/startDesignTimeApi';
-import { showPreviewWarning } from './app/utils/taskUtils';
 import { runWithDurationTelemetry } from './app/utils/telemetry';
 import { getGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import { validateTasksJson } from './app/utils/vsCodeConfig/tasks';
 import {
   extensionCommand,
-  autoBinariesInstallationSetting,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoStartDesignTimeSetting,
   showStartDesignTimeMessageSetting,
   showAutoStartAzuriteWarning,
@@ -26,9 +25,8 @@ import * as vscode from 'vscode';
 export const onboardBinaries = async (activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
-      const binariesInstallation = getGlobalSetting(autoBinariesInstallationSetting);
+      const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
       if (binariesInstallation) {
-        showPreviewWarning(extensionCommand.validateAndInstallBinaries);
         activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
         await validateAndInstallBinaries(actionContext);
         await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
@@ -43,22 +41,22 @@ export const onboardBinaries = async (activateContext: IActionContext) => {
  * @param {IActionContext} activateContext - Activation context.
  */
 export const startOnboarding = async (activateContext: IActionContext) => {
-  callWithTelemetryAndErrorHandling(autoBinariesInstallationSetting, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, autoBinariesInstallationSetting, async () => {
-      activateContext.telemetry.properties.lastStep = autoBinariesInstallationSetting;
+  callWithTelemetryAndErrorHandling(autoRuntimeDependenciesValidationAndInstallationSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
+      activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
       await promptInstallBinariesOption(actionContext);
     });
   });
 
   await onboardBinaries(activateContext);
 
-  callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
       await promptStartDesignTimeOption(activateContext);
     });
   });
 
-  callWithTelemetryAndErrorHandling(showAutoStartAzuriteWarning, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(showAutoStartAzuriteWarning, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showAutoStartAzuriteWarning, async () => {
       activateContext.telemetry.properties.lastStep = showAutoStartAzuriteWarning;
       activateAzurite(activateContext);

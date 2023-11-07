@@ -593,6 +593,12 @@
       "value": "Select a file to upload"
     }
   ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow assistant"
+    }
+  ],
   "2JA3gY": [
     {
       "type": 0,
@@ -2745,12 +2751,6 @@
       "value": "2"
     }
   ],
-  "FpQfZG": [
-    {
-      "type": 0,
-      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
-    }
-  ],
   "FslNgF": [
     {
       "type": 0,
@@ -4853,6 +4853,12 @@
       "value": "Heading 1"
     }
   ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Here's your flow."
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -5867,6 +5873,12 @@
       "value": "Disable Static Result"
     }
   ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -5929,12 +5941,6 @@
     {
       "type": 0,
       "value": "Shorthand for trigger().outputs.body"
-    }
-  ],
-  "ZXoHXd": [
-    {
-      "type": 0,
-      "value": "Here’s your flow."
     }
   ],
   "ZaIeDG": [
@@ -6051,12 +6057,6 @@
       "value": "Distinct Tracking id for each split-on instance"
     }
   ],
-  "ahW8Iv": [
-    {
-      "type": 0,
-      "value": "Copilot"
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -6073,12 +6073,6 @@
     {
       "type": 0,
       "value": "Add or select a source schema to use for your map."
-    }
-  ],
-  "b+4gP8": [
-    {
-      "type": 0,
-      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6453,6 +6447,12 @@
       "value": "."
     }
   ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+    }
+  ],
   "dfNjw1": [
     {
       "type": 0,
@@ -6553,6 +6553,12 @@
     {
       "type": 0,
       "value": "Required. The name of the variable whose value you want."
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
     }
   ],
   "eRvRWs": [
@@ -7803,12 +7809,6 @@
       "value": "', split on not in array."
     }
   ],
-  "mRBHC6": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Logic Apps as a whole"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7979,6 +7979,12 @@
     {
       "type": 0,
       "value": "Required. The name of the property to remove."
+    }
+  ],
+  "nUxMK9": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
     }
   ],
   "nVDG00": [
@@ -8299,6 +8305,12 @@
     {
       "type": 0,
       "value": "Triggers"
+    }
+  ],
+  "pl+hNy": [
+    {
+      "type": 0,
+      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -8659,12 +8671,6 @@
       "value": "Is successful"
     }
   ],
-  "rn5IsW": [
-    {
-      "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -8905,12 +8911,6 @@
     {
       "type": 0,
       "value": "h"
-    }
-  ],
-  "tInDJg": [
-    {
-      "type": 0,
-      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

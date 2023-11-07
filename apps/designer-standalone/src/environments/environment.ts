@@ -23,5 +23,4 @@ export interface EnvironmentVars {
 export const environment: EnvironmentVars = {
   production: false,
   armToken: getAccessToken(),
-  chatbotEndpoint: 'https://appservice-w7wn47b77a5hw.azurewebsites.net',
 };

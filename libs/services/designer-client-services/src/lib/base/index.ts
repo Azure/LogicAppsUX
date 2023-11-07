@@ -27,3 +27,6 @@ export type { BaseGatewayServiceOptions } from './gateway';
 // OAuth
 export { BaseOAuthService } from './oAuth';
 export * from './operations';
+// Chatbot
+export { BaseChatbotService } from './chatbot';
+export type { ChatbotServiceOptions } from './chatbot';

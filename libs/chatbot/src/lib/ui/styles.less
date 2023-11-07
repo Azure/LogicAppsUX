@@ -34,14 +34,13 @@
 .msla-chatbot-header-title-container {
   .msla-chatbot-header-title {
     font-weight: 600;
-    font-size: 24px;
+    font-size: 16px;
     line-height: 28px;
     margin: 0px 12px;
   }
 
   .msla-chatbot-header-subtitle {
-    margin-left: 15px;
-    padding-top: 4px;
+    margin-left: 12px;
     width: fit-content;
     font-size: 12px;
     font-weight: 400;
@@ -62,15 +61,6 @@
   background-color: rgb(234, 234, 234);
   border-radius: 20px;
   padding: 3.5px 8px;
-  line-height: 15px;
-}
-
-.msla-chatbot-header-subtitle {
-  margin-left: 14px;
-  width: fit-content;
-  font-size: 14px;
-  font-weight: 400;
-  border-radius: 20px;
   line-height: 15px;
 }
 
@@ -161,12 +151,22 @@
   .msla-chatbot-container {
     background-color: #252423;
   }
+  .msla-chatbot-header-title-container {
+    .msla-chatbot-header-subtitle {
+      color: #ffffff;
+    }
+  }
   .msla-chatbot-content {
     &::-webkit-scrollbar-thumb {
       background-color: #000000;
     }
     &::-webkit-scrollbar-track {
       background-color: #141313;
+    }
+  }
+  .msla-chatbot-header-title-container {
+    .msla-chatbot-header-subtitle {
+      color: #a9a9a9;
     }
   }
 }

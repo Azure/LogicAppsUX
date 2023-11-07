@@ -1,8 +1,46 @@
 # Logic Apps Designer
 
-## [2.80.0](https://github.com/Azure/LogicAppsUX/compare/v2.79.0...v2.80.0) (2023-11-02)
+### [2.81.2](https://github.com/Azure/LogicAppsUX/compare/v2.81.1...v2.81.2) (2023-11-06)
 
-## [2.75.0](https://github.com/Azure/LogicAppsUX/compare/v2.74.0...v2.75.0) (2023-10-19)
+### Bug Fixes
+
+- **desinger:** Clean up some tokenpicker code ([#3613](https://github.com/Azure/LogicAppsUX/issues/3613)) ([fa09701](https://github.com/Azure/LogicAppsUX/commit/fa0970183288f52f1c26c4d100681005e4505a79))
+- **vscode:** Update permissions to binary func file ([#3612](https://github.com/Azure/LogicAppsUX/issues/3612)) ([d640899](https://github.com/Azure/LogicAppsUX/commit/d6408992d87d0839fe3c021f4a8d313241e6e03e))
+
+### [2.81.1](https://github.com/Azure/LogicAppsUX/compare/v2.81.0...v2.81.1) (2023-11-06)
+
+### Features
+
+- **chatbot:** Adding Chatbot service ([#3603](https://github.com/Azure/LogicAppsUX/issues/3603)) ([ead9e16](https://github.com/Azure/LogicAppsUX/commit/ead9e1627ea10d892769a3fb95eb703ae608d99b))
+- **designer:** Add ability to get tokens from current node in token selector ([#3598](https://github.com/Azure/LogicAppsUX/issues/3598)) ([9a507eb](https://github.com/Azure/LogicAppsUX/commit/9a507eb778512f4c3fba81e5315ac5fd826cc284))
+
+### Bug Fixes
+
+- **copilot:** Changing capitalization of workflow assistant ([#3594](https://github.com/Azure/LogicAppsUX/issues/3594)) ([fbf60c0](https://github.com/Azure/LogicAppsUX/commit/fbf60c02c3b6aec5b7332fe0f530cd02f1b660d4))
+
+## [2.81.0](https://github.com/Azure/LogicAppsUX/compare/v2.80.3...v2.81.0) (2023-11-03)
+
+### Features
+
+- **Data Mapper:** uninstall legacy extension on activation of Designer extension ([#3597](https://github.com/Azure/LogicAppsUX/issues/3597)) ([437ca97](https://github.com/Azure/LogicAppsUX/commit/437ca97f9470986284f6e54f5fdefbd9376a2db6))
+
+### [2.80.3](https://github.com/Azure/LogicAppsUX/compare/v2.80.2...v2.80.3) (2023-11-03)
+
+### Features
+
+- **copilot:** adding support for staging endpoint ([#3596](https://github.com/Azure/LogicAppsUX/issues/3596)) ([c6c2a2f](https://github.com/Azure/LogicAppsUX/commit/c6c2a2f7eefee0a7f41d7591dee152e26e124306))
+- **vscode:** Introduce onboarding experience ([#3581](https://github.com/Azure/LogicAppsUX/issues/3581)) ([f28c4fa](https://github.com/Azure/LogicAppsUX/commit/f28c4fade69d032ec75d3fe0aea158d3f1b8d4cb)), closes [#2830](https://github.com/Azure/LogicAppsUX/issues/2830) [#3031](https://github.com/Azure/LogicAppsUX/issues/3031) [#3037](https://github.com/Azure/LogicAppsUX/issues/3037)
+
+### [2.80.2](https://github.com/Azure/LogicAppsUX/compare/v2.80.0...v2.80.2) (2023-11-03)
+
+### Bug Fixes
+
+- **Copilot:** Changing from Copilot to Workflow Assistant ([#3590](https://github.com/Azure/LogicAppsUX/issues/3590)) ([3659e43](https://github.com/Azure/LogicAppsUX/commit/3659e4396cf25ee3296c643dca70a90907fbe03c))
+- **designer:** Alert error messages for required editor fields ([#3592](https://github.com/Azure/LogicAppsUX/issues/3592)) ([7a3a0ef](https://github.com/Azure/LogicAppsUX/commit/7a3a0efde1d67db2af22907b97b58cb5d97038d7))
+
+### [2.80.1](https://github.com/Azure/LogicAppsUX/compare/v2.80.0...v2.80.1) (2023-11-02)
+
+## [2.80.0](https://github.com/Azure/LogicAppsUX/compare/v2.79.0...v2.80.0) (2023-11-02)
 
 ### Features
 

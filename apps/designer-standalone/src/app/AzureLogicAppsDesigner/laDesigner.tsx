@@ -25,6 +25,7 @@ import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
+  BaseChatbotService,
   BaseFunctionService,
   BaseGatewayService,
   BaseOAuthService,
@@ -135,6 +136,7 @@ const DesignerEditor = () => {
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
+
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const services = useMemo(
     () =>
@@ -231,8 +233,13 @@ const DesignerEditor = () => {
     return serializedWorkflow;
   };
 
-  const openFeedBackPanel = () => {
-    alert('Open FeedBack Panel');
+  // This is a callback used in Azure Portal, but not supported in standalone
+  const openPanel = (s: string) => {
+    alert(s);
+  };
+
+  const getAuthToken = async () => {
+    return `Bearer ${environment.armToken}` ?? '';
   };
 
   return (
@@ -255,9 +262,10 @@ const DesignerEditor = () => {
               <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
               {showChatBot ? (
                 <Chatbot
-                  endpoint={environment.chatbotEndpoint}
+                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
+                  getAuthToken={getAuthToken}
                   getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={openFeedBackPanel}
+                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
                 />
               ) : null}
@@ -467,6 +475,15 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const chatbotService = new BaseChatbotService({
+    // temporarily having brazilus as the baseUrl until deployment finishes in prod
+    baseUrl: 'https://brazilus.management.azure.com',
+    apiVersion: '2022-09-01-preview',
+    subscriptionId,
+    // temporarily hardcoding location until we have deployed to all regions
+    location: 'westcentralus',
+  });
+
   return {
     appService,
     connectionService,
@@ -481,6 +498,7 @@ const getDesignerServices = (
     functionService,
     runService,
     hostService,
+    chatbotService,
   };
 };
 

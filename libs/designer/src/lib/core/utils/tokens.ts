@@ -205,7 +205,8 @@ export const getOutputTokenSections = (
   nodeType: string,
   tokenState: TokensState,
   workflowParametersState: WorkflowParametersState,
-  replacementIds: Record<string, string>
+  replacementIds: Record<string, string>,
+  includeCurrentNodeTokens = false
 ): TokenGroup[] => {
   const workflowParameters = filterRecord(workflowParametersState.definitions, (_, defintion) => defintion.name !== '');
   const { variables, outputTokens } = tokenState;
@@ -255,6 +256,28 @@ export const getOutputTokenSections = (
         showAdvanced: false,
       };
     });
+
+    if (includeCurrentNodeTokens) {
+      let currentTokens = outputTokens[nodeId]?.tokens ?? [];
+      currentTokens = currentTokens.map((token) => {
+        return {
+          ...token,
+          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+        };
+      });
+
+      if (currentTokens.length) {
+        const currentTokensGroup = {
+          id: nodeId,
+          label: labelCase(replacementIds[nodeId] ?? nodeId),
+          tokens: currentTokens,
+          hasAdvanced: currentTokens.some((token) => token.isAdvanced),
+          showAdvanced: false,
+        };
+
+        outputTokenGroups.push(currentTokensGroup);
+      }
+    }
 
     tokenGroups.push(...(outputTokenGroups.filter((group) => !!group) as TokenGroup[]));
   }

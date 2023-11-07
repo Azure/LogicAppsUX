@@ -6,11 +6,12 @@ import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { NoWorkspaceError } from './errors';
 import { isPathEqual, isSubpath } from './fs';
+import { tryGetFunctionProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/utils-logic-apps';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 //TODO: revisit this import again (globby)
-import globby from 'globby';
+import * as globby from 'globby';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -59,10 +60,23 @@ export async function getWorkspaceFolder(context: IActionContext): Promise<vscod
   } else if (vscode.workspace.workspaceFolders.length === 1) {
     folder = vscode.workspace.workspaceFolders[0];
   } else {
-    const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
-    folder = await vscode.window.showWorkspaceFolderPick({ placeHolder });
-    if (!folder) {
-      throw new UserCancelledError();
+    const logicAppsWorkspaces = [];
+
+    for (const folder of vscode.workspace.workspaceFolders) {
+      const projectRoot = await tryGetFunctionProjectRoot(context, folder);
+      if (projectRoot) {
+        logicAppsWorkspaces.push(projectRoot);
+      }
+    }
+
+    if (logicAppsWorkspaces.length === 1) {
+      folder = logicAppsWorkspaces[0];
+    } else {
+      const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
+      folder = await vscode.window.showWorkspaceFolderPick({ placeHolder });
+      if (!folder) {
+        throw new UserCancelledError();
+      }
     }
   }
 
