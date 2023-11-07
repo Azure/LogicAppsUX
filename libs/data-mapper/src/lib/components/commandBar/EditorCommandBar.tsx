@@ -3,7 +3,7 @@ import { closeModal, openDiscardWarningModal, WarningModalState } from '../../co
 import { openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { makeStyles, shorthands, Toolbar, ToolbarButton, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
+import { makeStyles, shorthands, ToggleButton, Toolbar, ToolbarButton, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
 import {
   ArrowRedo20Regular,
   ArrowUndo20Regular,
@@ -36,6 +36,15 @@ const useStyles = makeStyles({
   button: {
     ...shorthands.padding('5px', '0px'),
     minWidth: '80px',
+  },
+  toggleButton: {
+    ...shorthands.border('0'),
+    ...shorthands.borderStyle('none'),
+    backgroundColor: 'transparent',
+  },
+  toggleButtonSelected: {
+    ...shorthands.border('0'),
+    ...shorthands.borderStyle('none'),
   },
   divider: {
     maxHeight: '25px',
@@ -189,26 +198,30 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
           {Resources.DISCARD}
         </ToolbarButton>
         <ToolbarDivider className={toolbarStyles.divider} />
-        <ToolbarButton
+        <ToggleButton
+          className={showGlobalView ? toolbarStyles.toggleButton : toolbarStyles.toggleButtonSelected}
           aria-label={Resources.CANVAS}
           icon={<Organization20Regular />}
           disabled={!bothSchemasDefined}
           onClick={() => {
             setShowGlobalView(false);
           }}
+          checked={!showGlobalView}
         >
           {Resources.CANVAS}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={showGlobalView ? Resources.CANVAS : Resources.GLOBAL_VIEW}
+        </ToggleButton>
+        <ToggleButton
+          className={showGlobalView ? toolbarStyles.toggleButtonSelected : toolbarStyles.toggleButton}
+          aria-label={Resources.GLOBAL_VIEW}
           icon={<Globe20Regular />}
           disabled={!bothSchemasDefined}
           onClick={() => {
             setShowGlobalView(true);
           }}
+          checked={showGlobalView}
         >
           {Resources.GLOBAL_VIEW}
-        </ToolbarButton>
+        </ToggleButton>
         <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton
           aria-label={Resources.SETTINGS}
