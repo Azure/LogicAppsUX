@@ -5029,12 +5029,6 @@
       "value": "Required. The length of each chunk."
     }
   ],
-  "UlyCAo": [
-    {
-      "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing."
-    }
-  ],
   "Umpr3z": [
     {
       "type": 0,
@@ -5879,6 +5873,12 @@
       "value": "Disable Static Result"
     }
   ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -6447,6 +6447,12 @@
       "value": "."
     }
   ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+    }
+  ],
   "dfNjw1": [
     {
       "type": 0,
@@ -6547,6 +6553,12 @@
     {
       "type": 0,
       "value": "Required. The name of the variable whose value you want."
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
     }
   ],
   "eRvRWs": [
@@ -6879,12 +6891,6 @@
     {
       "type": 0,
       "value": "Loading..."
-    }
-  ],
-  "gyv32Z": [
-    {
-      "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors."
     }
   ],
   "h+W3VW": [
@@ -8663,12 +8669,6 @@
     {
       "type": 0,
       "value": "Is successful"
-    }
-  ],
-  "rn5IsW": [
-    {
-      "type": 0,
-      "value": "Sorry, I couldn’t understand your request. Please rephrase it and try again."
     }
   ],
   "rsdJcV": [
