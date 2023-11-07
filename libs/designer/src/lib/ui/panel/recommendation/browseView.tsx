@@ -13,6 +13,10 @@ const defaultFilterConnector = (connector: Connector, runtimeFilter: string): bo
   return true;
 };
 
+const defaultSortConnectors = (connectors: Connector[]): Connector[] => {
+  return connectors.sort((a, b) => a.properties.displayName.localeCompare(b.properties.displayName));
+};
+
 export const BrowseView = ({
   filters,
   isLoadingOperations,
@@ -54,7 +58,8 @@ export const BrowseView = ({
 
   const sortedConnectors = useMemo(() => {
     const connectors = allConnectors?.filter(filterItems) ?? [];
-    return connectors.sort((a, b) => a.properties.displayName.localeCompare(b.properties.displayName));
+    const sortMethod = SearchService().sortConnectors?.bind(SearchService()) || defaultSortConnectors;
+    return sortMethod(connectors);
   }, [allConnectors, filterItems]);
 
   const onConnectorCardSelected = useCallback(
