@@ -39,6 +39,7 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
       onClick={() => onCardClick()}
       style={style}
       data-automation-id={`msla-op-search-result-${convertUIElementNameToAutomationId(title)}`}
+      aria-label={`${title} ${description}`}
     >
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
