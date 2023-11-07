@@ -99,6 +99,9 @@ export function TokenPickerFooter({
       setExpressionEditorError(invalidExpression);
       return;
     }
+    if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
+      window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
+    }
     // if the expression is just an output token, instead of creating an expression, we'll just insert the token
     const outputToken = getExpressionOutput(currExpression, outputTokenMap);
     if (outputToken && !expressionToBeUpdated) {

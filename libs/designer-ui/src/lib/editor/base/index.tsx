@@ -26,7 +26,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
@@ -139,15 +139,18 @@ export const BaseEditor = ({
       }),
   };
 
-  const handleFocus = () => {
+  const handleFocus = useCallback(() => {
     setIsEditorFocused(true);
     onFocus?.();
-  };
+    if (isTokenPickerOpened) {
+      setIsTokenPickerOpened(false);
+    }
+  }, [isTokenPickerOpened, onFocus]);
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setIsEditorFocused(false);
     onBlur?.();
-  };
+  }, [onBlur]);
 
   const openTokenPicker = (mode: TokenPickerMode) => {
     setIsTokenPickerOpened(true);

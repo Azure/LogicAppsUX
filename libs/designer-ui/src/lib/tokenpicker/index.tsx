@@ -78,12 +78,6 @@ export function TokenPicker({
   const isExpression = initialMode === TokenPickerMode.EXPRESSION;
 
   useEffect(() => {
-    if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
-      window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
-    }
-  }, [expression.value]);
-
-  useEffect(() => {
     function handleResize() {
       setWindowDimensions(getWindowDimensions());
     }
