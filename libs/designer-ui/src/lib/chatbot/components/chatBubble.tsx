@@ -4,7 +4,6 @@ import { ThumbsReactionButton } from './thumbsReactionButton';
 import { ActionButton, IconButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 import { useIntl } from 'react-intl';
 
 export enum ChatEntryReaction {
@@ -24,14 +23,8 @@ type ChatBubbleProps = {
   selectedReaction?: ChatEntryReaction;
   onThumbsReactionClicked?: (reaction: ChatEntryReaction) => void;
   disabled?: boolean;
+  text?: string;
 };
-
-function reactElementToText(element: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
-  const htmlString = ReactDOMServer.renderToStaticMarkup(element);
-  const parser = new DOMParser();
-  const htmlDocument = parser.parseFromString(htmlString, 'text/html');
-  return htmlDocument.body.textContent || '';
-}
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isUserMessage,
@@ -44,6 +37,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   onThumbsReactionClicked,
   disabled,
   isEmphasized,
+  text,
 }) => {
   const intl = useIntl();
   const { isInverted } = useTheme();
@@ -79,15 +73,17 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
             <div className={'msla-bubble-footer-disclaimer'}>{intlText.aIGeneratedDisclaimer}</div>
             {onThumbsReactionClicked && (
               <div className={'msla-bubble-reactions'}>
-                <IconButton
-                  className={'msla-copy-button'}
-                  title={'Copy'}
-                  iconProps={{ iconName: 'Copy' }}
-                  onClick={() => {
-                    const text = reactElementToText(children);
-                    navigator.clipboard.writeText(text);
-                  }}
-                />
+                {text && (
+                  <IconButton
+                    className={'msla-copy-button'}
+                    title={'Copy'}
+                    iconProps={{ iconName: 'Copy' }}
+                    onClick={() => {
+                      const textToCopy = text;
+                      navigator.clipboard.writeText(textToCopy);
+                    }}
+                  />
+                )}
                 <ThumbsReactionButton
                   onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
                   isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
