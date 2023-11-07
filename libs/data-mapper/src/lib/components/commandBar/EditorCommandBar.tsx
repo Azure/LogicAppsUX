@@ -174,7 +174,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         <ToolbarButton
           aria-label={Resources.GENERATE}
           icon={<ArrowExportLtr20Regular />}
-          disabled={!bothSchemasDefined}
+          disabled={!bothSchemasDefined || !isStateDirty}
           onClick={onGenerateClick}
         >
           {Resources.GENERATE}
