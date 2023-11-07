@@ -23,6 +23,4 @@ export interface EnvironmentVars {
 export const environment: EnvironmentVars = {
   production: false,
   armToken: getAccessToken(),
-  chatbotEndpoint:
-    'https://brazilus.management.azure.com/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/providers/Microsoft.Logic/locations/eastus2euap/generateCopilotResponse?api-version=2022-09-01-preview',
 };

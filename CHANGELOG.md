@@ -1,60 +1,75 @@
 # Logic Apps Designer
-## [2.81.0](https://github.com/Azure/LogicAppsUX/compare/v2.80.3...v2.81.0) (2023-11-03)
-
-
-### Features
-
-* **Data Mapper:** uninstall legacy extension on activation of Designer extension ([#3597](https://github.com/Azure/LogicAppsUX/issues/3597)) ([437ca97](https://github.com/Azure/LogicAppsUX/commit/437ca97f9470986284f6e54f5fdefbd9376a2db6))
-
-### [2.80.3](https://github.com/Azure/LogicAppsUX/compare/v2.80.2...v2.80.3) (2023-11-03)
-
-
-### Features
-
-* **copilot:** adding support for staging endpoint ([#3596](https://github.com/Azure/LogicAppsUX/issues/3596)) ([c6c2a2f](https://github.com/Azure/LogicAppsUX/commit/c6c2a2f7eefee0a7f41d7591dee152e26e124306))
-* **vscode:** Introduce onboarding experience ([#3581](https://github.com/Azure/LogicAppsUX/issues/3581)) ([f28c4fa](https://github.com/Azure/LogicAppsUX/commit/f28c4fade69d032ec75d3fe0aea158d3f1b8d4cb)), closes [#2830](https://github.com/Azure/LogicAppsUX/issues/2830) [#3031](https://github.com/Azure/LogicAppsUX/issues/3031) [#3037](https://github.com/Azure/LogicAppsUX/issues/3037)
-
-### [2.80.2](https://github.com/Azure/LogicAppsUX/compare/v2.80.0...v2.80.2) (2023-11-03)
+### [2.81.2](https://github.com/Azure/LogicAppsUX/compare/v2.81.1...v2.81.2) (2023-11-06)
 
 
 ### Bug Fixes
 
-* **Copilot:** Changing from Copilot to Workflow Assistant ([#3590](https://github.com/Azure/LogicAppsUX/issues/3590)) ([3659e43](https://github.com/Azure/LogicAppsUX/commit/3659e4396cf25ee3296c643dca70a90907fbe03c))
-* **designer:** Alert error messages for required editor fields ([#3592](https://github.com/Azure/LogicAppsUX/issues/3592)) ([7a3a0ef](https://github.com/Azure/LogicAppsUX/commit/7a3a0efde1d67db2af22907b97b58cb5d97038d7))
+* **desinger:** Clean up some tokenpicker code ([#3613](https://github.com/Azure/LogicAppsUX/issues/3613)) ([fa09701](https://github.com/Azure/LogicAppsUX/commit/fa0970183288f52f1c26c4d100681005e4505a79))
+* **vscode:** Update permissions to binary func file ([#3612](https://github.com/Azure/LogicAppsUX/issues/3612)) ([d640899](https://github.com/Azure/LogicAppsUX/commit/d6408992d87d0839fe3c021f4a8d313241e6e03e))
+
+### [2.81.1](https://github.com/Azure/LogicAppsUX/compare/v2.81.0...v2.81.1) (2023-11-06)
+
+
+### Features
+
+* **chatbot:** Adding Chatbot service ([#3603](https://github.com/Azure/LogicAppsUX/issues/3603)) ([ead9e16](https://github.com/Azure/LogicAppsUX/commit/ead9e1627ea10d892769a3fb95eb703ae608d99b))
+* **designer:** Add ability to get tokens from current node in token selector ([#3598](https://github.com/Azure/LogicAppsUX/issues/3598)) ([9a507eb](https://github.com/Azure/LogicAppsUX/commit/9a507eb778512f4c3fba81e5315ac5fd826cc284))
+
+
+### Bug Fixes
+
+* **copilot:** Changing capitalization of workflow assistant ([#3594](https://github.com/Azure/LogicAppsUX/issues/3594)) ([fbf60c0](https://github.com/Azure/LogicAppsUX/commit/fbf60c02c3b6aec5b7332fe0f530cd02f1b660d4))
+
+## [2.81.0](https://github.com/Azure/LogicAppsUX/compare/v2.80.3...v2.81.0) (2023-11-03)
+
+### Features
+
+- **Data Mapper:** uninstall legacy extension on activation of Designer extension ([#3597](https://github.com/Azure/LogicAppsUX/issues/3597)) ([437ca97](https://github.com/Azure/LogicAppsUX/commit/437ca97f9470986284f6e54f5fdefbd9376a2db6))
+
+### [2.80.3](https://github.com/Azure/LogicAppsUX/compare/v2.80.2...v2.80.3) (2023-11-03)
+
+### Features
+
+- **copilot:** adding support for staging endpoint ([#3596](https://github.com/Azure/LogicAppsUX/issues/3596)) ([c6c2a2f](https://github.com/Azure/LogicAppsUX/commit/c6c2a2f7eefee0a7f41d7591dee152e26e124306))
+- **vscode:** Introduce onboarding experience ([#3581](https://github.com/Azure/LogicAppsUX/issues/3581)) ([f28c4fa](https://github.com/Azure/LogicAppsUX/commit/f28c4fade69d032ec75d3fe0aea158d3f1b8d4cb)), closes [#2830](https://github.com/Azure/LogicAppsUX/issues/2830) [#3031](https://github.com/Azure/LogicAppsUX/issues/3031) [#3037](https://github.com/Azure/LogicAppsUX/issues/3037)
+
+### [2.80.2](https://github.com/Azure/LogicAppsUX/compare/v2.80.0...v2.80.2) (2023-11-03)
+
+### Bug Fixes
+
+- **Copilot:** Changing from Copilot to Workflow Assistant ([#3590](https://github.com/Azure/LogicAppsUX/issues/3590)) ([3659e43](https://github.com/Azure/LogicAppsUX/commit/3659e4396cf25ee3296c643dca70a90907fbe03c))
+- **designer:** Alert error messages for required editor fields ([#3592](https://github.com/Azure/LogicAppsUX/issues/3592)) ([7a3a0ef](https://github.com/Azure/LogicAppsUX/commit/7a3a0efde1d67db2af22907b97b58cb5d97038d7))
 
 ### [2.80.1](https://github.com/Azure/LogicAppsUX/compare/v2.80.0...v2.80.1) (2023-11-02)
 
 ## [2.80.0](https://github.com/Azure/LogicAppsUX/compare/v2.79.0...v2.80.0) (2023-11-02)
 
-
 ### Features
 
-* **copilot:** Adding support for redirect to Azure Copilot ([#3589](https://github.com/Azure/LogicAppsUX/issues/3589)) ([56f5759](https://github.com/Azure/LogicAppsUX/commit/56f5759cc1dcced9e1e596f3e67a30b64735e7f4))
+- **copilot:** Adding support for redirect to Azure Copilot ([#3589](https://github.com/Azure/LogicAppsUX/issues/3589)) ([56f5759](https://github.com/Azure/LogicAppsUX/commit/56f5759cc1dcced9e1e596f3e67a30b64735e7f4))
 
 ## [2.79.0](https://github.com/Azure/LogicAppsUX/compare/v2.78.0...v2.79.0) (2023-11-02)
 
-
 ### Features
 
-* **Copilot:** Adding protected pill and message into chatbox ([#3530](https://github.com/Azure/LogicAppsUX/issues/3530)) ([c4d8a84](https://github.com/Azure/LogicAppsUX/commit/c4d8a849a647d5d0b250c8fa813974c649ee2d8f))
-* **copilot:** support for dark mode in copilot ([#3565](https://github.com/Azure/LogicAppsUX/issues/3565)) ([f80ffa3](https://github.com/Azure/LogicAppsUX/commit/f80ffa3640ed09257df5ba19adba829a1862bc01))
-* **Data Mapper:** Add Data Mapper Vs Command ([#3573](https://github.com/Azure/LogicAppsUX/issues/3573)) ([96019ae](https://github.com/Azure/LogicAppsUX/commit/96019aeb2d8c63c4b066c8f3210e6ff6c7257cf6))
-* **Data Mapper:** Change Map Definition file extension to .lml ([#3580](https://github.com/Azure/LogicAppsUX/issues/3580)) ([35aabcf](https://github.com/Azure/LogicAppsUX/commit/35aabcfcfd77e1bd6e961d184b05c445132531f1))
-
+- **Copilot:** Adding protected pill and message into chatbox ([#3530](https://github.com/Azure/LogicAppsUX/issues/3530)) ([c4d8a84](https://github.com/Azure/LogicAppsUX/commit/c4d8a849a647d5d0b250c8fa813974c649ee2d8f))
+- **copilot:** support for dark mode in copilot ([#3565](https://github.com/Azure/LogicAppsUX/issues/3565)) ([f80ffa3](https://github.com/Azure/LogicAppsUX/commit/f80ffa3640ed09257df5ba19adba829a1862bc01))
+- **Data Mapper:** Add Data Mapper Vs Command ([#3573](https://github.com/Azure/LogicAppsUX/issues/3573)) ([96019ae](https://github.com/Azure/LogicAppsUX/commit/96019aeb2d8c63c4b066c8f3210e6ff6c7257cf6))
+- **Data Mapper:** Change Map Definition file extension to .lml ([#3580](https://github.com/Azure/LogicAppsUX/issues/3580)) ([35aabcf](https://github.com/Azure/LogicAppsUX/commit/35aabcfcfd77e1bd6e961d184b05c445132531f1))
 
 ### Bug Fixes
 
-* **copilot:** Added extra margin for Firefox list items ([#3574](https://github.com/Azure/LogicAppsUX/issues/3574)) ([2c85de8](https://github.com/Azure/LogicAppsUX/commit/2c85de826cac19e1965ec86550b3904d5a0e08c0))
-* **Copilot:** Changing Introduction Text in Chatbot ([#3568](https://github.com/Azure/LogicAppsUX/issues/3568)) ([3e9e61e](https://github.com/Azure/LogicAppsUX/commit/3e9e61e62625882c24c47de9c74efefdd403fe52))
-* **Copilot:** Changing style of Preview tag ([#3566](https://github.com/Azure/LogicAppsUX/issues/3566)) ([8b21f0a](https://github.com/Azure/LogicAppsUX/commit/8b21f0a9544690e8ab2e592d454b91deb6ed6fb7))
-* **Data Mapper:** Find LogicApp Root & Select as Workspace ([#3569](https://github.com/Azure/LogicAppsUX/issues/3569)) ([86a27a8](https://github.com/Azure/LogicAppsUX/commit/86a27a8569426b287dacd55079cdd3438d212f11))
-* **Data Mapper:** Run XSLT function to recognize both .xslt and .xml ([#3571](https://github.com/Azure/LogicAppsUX/issues/3571)) ([e44d62c](https://github.com/Azure/LogicAppsUX/commit/e44d62cc40cbe0a8941aac4091d86f8768e1dd84))
-* **designer:** Darken border around add step button for better a11y c… ([#3556](https://github.com/Azure/LogicAppsUX/issues/3556)) ([4e0aef0](https://github.com/Azure/LogicAppsUX/commit/4e0aef0483989f3773d2a4cc1fab092063b258b7))
-* **designer:** Do not reset canvas position when reloading a workflow ([#3583](https://github.com/Azure/LogicAppsUX/issues/3583)) ([8296917](https://github.com/Azure/LogicAppsUX/commit/829691775d8f2db0dd33f4ba084369efbdbb1516))
-* **designer:** Fix a11y bug where buttons in search would not show as… ([#3561](https://github.com/Azure/LogicAppsUX/issues/3561)) ([03a321e](https://github.com/Azure/LogicAppsUX/commit/03a321ebe3ab73ddeac0659da08b83db4ea5d297))
-* **designer:** Token Picker Expression to use Extracted Value ([#3572](https://github.com/Azure/LogicAppsUX/issues/3572)) ([51727d2](https://github.com/Azure/LogicAppsUX/commit/51727d2989c422d8d0155f65bb3167d2ed736ccd))
-* **Designer:** Update Combo box to sort alphabetically. ([#3499](https://github.com/Azure/LogicAppsUX/issues/3499)) ([657db93](https://github.com/Azure/LogicAppsUX/commit/657db93fba577a2a9f3fa95200dfaddc2c957b51))
-* **designer:** Update outputs & inputs link for every loop ([#3575](https://github.com/Azure/LogicAppsUX/issues/3575)) ([210b3d3](https://github.com/Azure/LogicAppsUX/commit/210b3d37a4489c5645fcef35d3f47aef44724d9b))
+- **copilot:** Added extra margin for Firefox list items ([#3574](https://github.com/Azure/LogicAppsUX/issues/3574)) ([2c85de8](https://github.com/Azure/LogicAppsUX/commit/2c85de826cac19e1965ec86550b3904d5a0e08c0))
+- **Copilot:** Changing Introduction Text in Chatbot ([#3568](https://github.com/Azure/LogicAppsUX/issues/3568)) ([3e9e61e](https://github.com/Azure/LogicAppsUX/commit/3e9e61e62625882c24c47de9c74efefdd403fe52))
+- **Copilot:** Changing style of Preview tag ([#3566](https://github.com/Azure/LogicAppsUX/issues/3566)) ([8b21f0a](https://github.com/Azure/LogicAppsUX/commit/8b21f0a9544690e8ab2e592d454b91deb6ed6fb7))
+- **Data Mapper:** Find LogicApp Root & Select as Workspace ([#3569](https://github.com/Azure/LogicAppsUX/issues/3569)) ([86a27a8](https://github.com/Azure/LogicAppsUX/commit/86a27a8569426b287dacd55079cdd3438d212f11))
+- **Data Mapper:** Run XSLT function to recognize both .xslt and .xml ([#3571](https://github.com/Azure/LogicAppsUX/issues/3571)) ([e44d62c](https://github.com/Azure/LogicAppsUX/commit/e44d62cc40cbe0a8941aac4091d86f8768e1dd84))
+- **designer:** Darken border around add step button for better a11y c… ([#3556](https://github.com/Azure/LogicAppsUX/issues/3556)) ([4e0aef0](https://github.com/Azure/LogicAppsUX/commit/4e0aef0483989f3773d2a4cc1fab092063b258b7))
+- **designer:** Do not reset canvas position when reloading a workflow ([#3583](https://github.com/Azure/LogicAppsUX/issues/3583)) ([8296917](https://github.com/Azure/LogicAppsUX/commit/829691775d8f2db0dd33f4ba084369efbdbb1516))
+- **designer:** Fix a11y bug where buttons in search would not show as… ([#3561](https://github.com/Azure/LogicAppsUX/issues/3561)) ([03a321e](https://github.com/Azure/LogicAppsUX/commit/03a321ebe3ab73ddeac0659da08b83db4ea5d297))
+- **designer:** Token Picker Expression to use Extracted Value ([#3572](https://github.com/Azure/LogicAppsUX/issues/3572)) ([51727d2](https://github.com/Azure/LogicAppsUX/commit/51727d2989c422d8d0155f65bb3167d2ed736ccd))
+- **Designer:** Update Combo box to sort alphabetically. ([#3499](https://github.com/Azure/LogicAppsUX/issues/3499)) ([657db93](https://github.com/Azure/LogicAppsUX/commit/657db93fba577a2a9f3fa95200dfaddc2c957b51))
+- **designer:** Update outputs & inputs link for every loop ([#3575](https://github.com/Azure/LogicAppsUX/issues/3575)) ([210b3d3](https://github.com/Azure/LogicAppsUX/commit/210b3d37a4489c5645fcef35d3f47aef44724d9b))
 
 ## [2.78.0](https://github.com/Azure/LogicAppsUX/compare/v2.77.0...v2.78.0) (2023-10-28)
 

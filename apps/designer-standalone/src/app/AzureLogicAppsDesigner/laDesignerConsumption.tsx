@@ -15,7 +15,6 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-import type { RequestData, ResponseData } from '@microsoft/chatbot';
 import { Chatbot } from '@microsoft/chatbot';
 import {
   BaseApiManagementService,
@@ -27,6 +26,7 @@ import {
   ConsumptionConnectorService,
   ConsumptionOperationManifestService,
   ConsumptionSearchService,
+  BaseChatbotService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -39,8 +39,6 @@ import {
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
 import { guid, startsWith } from '@microsoft/utils-logic-apps';
-import type { AxiosResponse } from 'axios';
-import axios from 'axios';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -165,17 +163,8 @@ const DesignerEditorConsumption = () => {
     alert('Open FeedBack Panel');
   };
 
-  // This logic will be moved into a chatbot service
-  const getWorkflowResponse = async (requestData: RequestData, signal: AbortSignal): Promise<AxiosResponse<ResponseData>> => {
-    const response = await axios.post(`${environment.chatbotEndpoint}`, requestData, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${environment.armToken}`,
-      },
-      signal,
-    });
-    return response;
+  const getAuthToken = async () => {
+    return `Bearer ${environment.armToken}` ?? '';
   };
 
   return (
@@ -201,7 +190,7 @@ const DesignerEditorConsumption = () => {
                   closeChatBot={() => {
                     dispatch(setIsChatBotEnabled(false));
                   }}
-                  getWorkflowResponse={getWorkflowResponse}
+                  getAuthToken={getAuthToken}
                 />
               ) : null}
             </div>
@@ -367,6 +356,15 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const chatbotService = new BaseChatbotService({
+    // temporarily having brazilus as the baseUrl until deployment finishes in prod
+    baseUrl: 'https://brazilus.management.azure.com',
+    apiVersion: '2022-09-01-preview',
+    subscriptionId,
+    // temporarily hardcoding location until we have deployed to all regions
+    location: 'westcentralus',
+  });
+
   return {
     appServiceService,
     connectionService,
@@ -379,6 +377,7 @@ const getDesignerServices = (
     workflowService,
     apimService,
     functionService,
+    chatbotService,
   };
 };
 
