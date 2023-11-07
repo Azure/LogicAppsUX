@@ -7,10 +7,9 @@ import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
 import DeleteTokenNode from './plugins/DeleteTokenNode';
 import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditor';
+import { FocusChangePlugin } from './plugins/FocusHandler';
 import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
-import OnBlur from './plugins/OnBlur';
-import OnFocus from './plugins/OnFocus';
 import OpenTokenPicker from './plugins/OpenTokenPicker';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
@@ -143,9 +142,6 @@ export const BaseEditor = ({
   const handleFocus = () => {
     setIsEditorFocused(true);
     onFocus?.();
-    if (isTokenPickerOpened) {
-      setIsTokenPickerOpened(false);
-    }
   };
 
   const handleBlur = () => {
@@ -197,8 +193,7 @@ export const BaseEditor = ({
               hideTokenPickerOptions={tokenPickerButtonProps?.hideButtonOptions}
             />
           ) : null}
-          <OnBlur command={handleBlur} />
-          <OnFocus command={handleFocus} />
+          <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} />
           <ReadOnly readonly={readonly} />
           {tabbable ? null : <IgnoreTab />}
           {tokens ? <InsertTokenNode /> : null}
