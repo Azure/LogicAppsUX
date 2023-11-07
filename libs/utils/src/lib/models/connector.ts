@@ -201,6 +201,8 @@ export interface ConnectorProperty {
   isCustomApi?: boolean;
   testConnectionUrl?: string;
   testConnectionOperationName?: string;
+  tags?: string[];
+  isBuiltIn?: boolean;
 }
 
 export type Connector = ArmResource<ConnectorProperty>;

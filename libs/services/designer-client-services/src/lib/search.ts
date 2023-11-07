@@ -30,6 +30,7 @@ export interface ISearchService {
   filterConnector?(connector: Connector, runtimeFilter: string): boolean;
   getOperationById?(operationId: string): Promise<DiscoveryOperation<DiscoveryResultTypes> | undefined>;
   getOperationsByConnector?(connectorId: string, actionType?: string): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  sortConnectors?(connectors: Connector[]): Connector[];
 }
 
 let service: ISearchService;
