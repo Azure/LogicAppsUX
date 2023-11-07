@@ -47,9 +47,8 @@ export async function activate(context: vscode.ExtensionContext) {
   if (legacyExtension !== undefined) {
     vscode.commands.executeCommand('workbench.extensions.uninstallExtension', legacyExtension.id);
     vscode.window.showWarningMessage(
-      'The deprecated Data Mapper extension has been uninstalled. The Data Mapper is now managed in the Logic Apps extension.'
+      'The Azure Logic Apps (Standard) extension now includes the Data Mapper capabilities. To avoid conflicts, the standalone Data Mapper extension has been removed. Please restart Visual Studio Code to complete this update.'
     );
-    vscode.window.showWarningMessage('Please restart VSCode to complete the new Data Mapper migration.');
   }
 
   ext.context = context;
