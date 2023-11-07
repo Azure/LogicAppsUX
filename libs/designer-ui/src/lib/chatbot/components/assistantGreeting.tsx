@@ -13,7 +13,7 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
       description: 'Chatbot greeting message from existing flow',
     }),
     subHeading1: intl.formatMessage({
-      defaultMessage: 'This assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.',
+      defaultMessage: "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors.",
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     subHeading2: intl.formatMessage({
@@ -37,7 +37,7 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
       description: 'Chatbot suggestion message to get the concurrency setting of the workflow',
     }),
     outroMessage: intl.formatMessage({
-      defaultMessage: 'The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing.',
+      defaultMessage: "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing.",
       description: 'Chatbot disclaimer message that workflow assistant can only provide help and not modify workflows',
     }),
   };
