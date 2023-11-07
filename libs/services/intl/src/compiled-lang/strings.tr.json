@@ -26,7 +26,7 @@
   "+3rROX": [
     {
       "type": 0,
-      "value": "Protected"
+      "value": "Korumalı"
     }
   ],
   "+FcXe9": [
@@ -157,6 +157,12 @@
     {
       "type": 0,
       "value": "True"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "Azure Copilot’u aç"
     }
   ],
   "/doURb": [
@@ -581,6 +587,12 @@
     {
       "type": 0,
       "value": "Karşıya yüklenecek bir dosya seçin"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow assistant"
     }
   ],
   "2JA3gY": [
@@ -2723,12 +2735,6 @@
       "value": "2"
     }
   ],
-  "FpQfZG": [
-    {
-      "type": 0,
-      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
-    }
-  ],
   "FslNgF": [
     {
       "type": 0,
@@ -3432,7 +3438,7 @@
   "L0hujG": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is shown"
+      "value": "Belirteç Seçici gösteriliyorsa dinamik içerik ekleme düğmesi"
     }
   ],
   "L4RJF0": [
@@ -3828,7 +3834,7 @@
   "NhJPUn": [
     {
       "type": 0,
-      "value": "How can I call an external endpoint?"
+      "value": "Dış uç nokta nasıl çağrılır?"
     }
   ],
   "NnD8gF": [
@@ -4232,7 +4238,7 @@
   "Pnt0Xj": [
     {
       "type": 0,
-      "value": "Explain how to receive files from SFTP server."
+      "value": "SFTP sunucusundan dosya alma hakkında bilgi."
     }
   ],
   "Pq+4a+": [
@@ -4831,6 +4837,12 @@
       "value": "Başlık 1"
     }
   ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Here's your flow."
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -5310,7 +5322,7 @@
   "WMX2ig": [
     {
       "type": 0,
-      "value": "What is the concurrency setting of this workflow?"
+      "value": "Bu iş akışının eşzamanlılık ayarı nedir?"
     }
   ],
   "WR1K3z": [
@@ -5830,7 +5842,7 @@
   "Yrw/Qt": [
     {
       "type": 0,
-      "value": "Your personal and company data are protected in this chat"
+      "value": "Kişisel verileriniz ve şirket verileriniz bu sohbette korunuyor"
     }
   ],
   "Yuu5CD": [
@@ -5843,6 +5855,12 @@
     {
       "type": 0,
       "value": "Statik Sonucu Devre Dışı Bırak"
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
     }
   ],
   "Z9PWl/": [
@@ -5909,12 +5927,6 @@
       "value": "trigger().outputs.body için kısayol"
     }
   ],
-  "ZXoHXd": [
-    {
-      "type": 0,
-      "value": "İşte akışınız."
-    }
-  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5948,7 +5960,7 @@
   "ZihyUf": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Kapat"
     }
   ],
   "ZkjTbp": [
@@ -6029,12 +6041,6 @@
       "value": "Her bölünmüş örnek için ayrı İzleme kimliği"
     }
   ],
-  "ahW8Iv": [
-    {
-      "type": 0,
-      "value": "Copilot"
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -6051,12 +6057,6 @@
     {
       "type": 0,
       "value": "Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin."
-    }
-  ],
-  "b+4gP8": [
-    {
-      "type": 0,
-      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6427,6 +6427,12 @@
       "value": " ile bağlantı kuruldu."
     }
   ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+    }
+  ],
   "dfNjw1": [
     {
       "type": 0,
@@ -6527,6 +6533,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
     }
   ],
   "eRvRWs": [
@@ -7396,7 +7408,7 @@
   "kEjmTx": [
     {
       "type": 0,
-      "value": "Some things you can ask:"
+      "value": "Sorabileceğiniz bazı şeyler:"
     }
   ],
   "kHcCxH": [
@@ -7773,12 +7785,6 @@
       "value": "' değerinde tür geçersiz, bölünme dizide değil."
     }
   ],
-  "mRBHC6": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Logic Apps as a whole"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7951,6 +7957,12 @@
       "value": "Gerekli. Kaldırılacak özelliğin adı."
     }
   ],
+  "nUxMK9": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
+    }
+  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8046,7 +8058,7 @@
   "o5fYVy": [
     {
       "type": 0,
-      "value": "Describe this workflow."
+      "value": "Bu iş akışını açıkla."
     }
   ],
   "o7bd1o": [
@@ -8250,7 +8262,7 @@
   "pc0FCg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is hidden"
+      "value": "Belirteç Seçici gizliyse dinamik içerik ekleme düğmesi"
     }
   ],
   "pcGqoB": [
@@ -8269,6 +8281,12 @@
     {
       "type": 0,
       "value": "Tetikleyiciler"
+    }
+  ],
+  "pl+hNy": [
+    {
+      "type": 0,
+      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -8625,12 +8643,6 @@
       "value": "Başarılı"
     }
   ],
-  "rn5IsW": [
-    {
-      "type": 0,
-      "value": "Ne yazık ki isteğinizi anlayamadım. Lütfen yeniden ifade edin ve tekrar deneyin."
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -8871,12 +8883,6 @@
     {
       "type": 0,
       "value": " sa"
-    }
-  ],
-  "tInDJg": [
-    {
-      "type": 0,
-      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

@@ -26,7 +26,7 @@
   "+3rROX": [
     {
       "type": 0,
-      "value": "Protected"
+      "value": "Védett"
     }
   ],
   "+FcXe9": [
@@ -161,6 +161,12 @@
     {
       "type": 0,
       "value": "Igaz"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "Az Azure Copilot megnyitása"
     }
   ],
   "/doURb": [
@@ -585,6 +591,12 @@
     {
       "type": 0,
       "value": "Válassza ki a feltöltendő fájlt"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow assistant"
     }
   ],
   "2JA3gY": [
@@ -2735,12 +2747,6 @@
       "value": "2"
     }
   ],
-  "FpQfZG": [
-    {
-      "type": 0,
-      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
-    }
-  ],
   "FslNgF": [
     {
       "type": 0,
@@ -3452,7 +3458,7 @@
   "L0hujG": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is shown"
+      "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a Tokenválasztó látható"
     }
   ],
   "L4RJF0": [
@@ -3848,7 +3854,7 @@
   "NhJPUn": [
     {
       "type": 0,
-      "value": "How can I call an external endpoint?"
+      "value": "Hogyan hívhatok meg egy külső végpontot?"
     }
   ],
   "NnD8gF": [
@@ -4252,7 +4258,7 @@
   "Pnt0Xj": [
     {
       "type": 0,
-      "value": "Explain how to receive files from SFTP server."
+      "value": "Ismertesd, hogyan lehet fájlokat fogadni egy SFTP-kiszolgálóról."
     }
   ],
   "Pq+4a+": [
@@ -4859,6 +4865,12 @@
       "value": "Címsor 1"
     }
   ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Here's your flow."
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -5318,7 +5330,7 @@
   "WMX2ig": [
     {
       "type": 0,
-      "value": "What is the concurrency setting of this workflow?"
+      "value": "Mi ennek a munkafolyamatnak az egyidejűségi beállítása?"
     }
   ],
   "WR1K3z": [
@@ -5838,7 +5850,7 @@
   "Yrw/Qt": [
     {
       "type": 0,
-      "value": "Your personal and company data are protected in this chat"
+      "value": "Ebben a csevegésben a személyes és a céges adatai védettek"
     }
   ],
   "Yuu5CD": [
@@ -5851,6 +5863,12 @@
     {
       "type": 0,
       "value": "Statikus eredmény letiltása"
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
     }
   ],
   "Z9PWl/": [
@@ -5917,12 +5935,6 @@
       "value": "A trigger().outputs.body rövid függvényneve."
     }
   ],
-  "ZXoHXd": [
-    {
-      "type": 0,
-      "value": "Íme a folyamat."
-    }
-  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5956,7 +5968,7 @@
   "ZihyUf": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Bezárás"
     }
   ],
   "ZkjTbp": [
@@ -6037,12 +6049,6 @@
       "value": "Különböző követési azonosító minden szétvágott példányhoz"
     }
   ],
-  "ahW8Iv": [
-    {
-      "type": 0,
-      "value": "Copilot"
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -6059,12 +6065,6 @@
     {
       "type": 0,
       "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt forrássémát."
-    }
-  ],
-  "b+4gP8": [
-    {
-      "type": 0,
-      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6439,6 +6439,12 @@
       "value": "."
     }
   ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+    }
+  ],
   "dfNjw1": [
     {
       "type": 0,
@@ -6539,6 +6545,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
     }
   ],
   "eRvRWs": [
@@ -7420,7 +7432,7 @@
   "kEjmTx": [
     {
       "type": 0,
-      "value": "Some things you can ask:"
+      "value": "Feltehető kérdések lehetnek például az alábbiak:"
     }
   ],
   "kHcCxH": [
@@ -7797,12 +7809,6 @@
       "value": "”. A felosztás nincs a tömbben."
     }
   ],
-  "mRBHC6": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Logic Apps as a whole"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7975,6 +7981,12 @@
       "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
     }
   ],
+  "nUxMK9": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
+    }
+  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8070,7 +8082,7 @@
   "o5fYVy": [
     {
       "type": 0,
-      "value": "Describe this workflow."
+      "value": "Jellemezd ezt a munkaterületet."
     }
   ],
   "o7bd1o": [
@@ -8274,7 +8286,7 @@
   "pc0FCg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is hidden"
+      "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a Tokenválasztó rejtett"
     }
   ],
   "pcGqoB": [
@@ -8293,6 +8305,12 @@
     {
       "type": 0,
       "value": "Triggerek"
+    }
+  ],
+  "pl+hNy": [
+    {
+      "type": 0,
+      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -8653,12 +8671,6 @@
       "value": "Sikeres"
     }
   ],
-  "rn5IsW": [
-    {
-      "type": 0,
-      "value": "Sajnálom, nem értem a kérését. Kérem, fogalmazza át és próbálkozzon újra."
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -8899,12 +8911,6 @@
     {
       "type": 0,
       "value": " óra"
-    }
-  ],
-  "tInDJg": [
-    {
-      "type": 0,
-      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

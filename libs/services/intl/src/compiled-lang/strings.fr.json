@@ -26,7 +26,7 @@
   "+3rROX": [
     {
       "type": 0,
-      "value": "Protected"
+      "value": "Protégé"
     }
   ],
   "+FcXe9": [
@@ -157,6 +157,12 @@
     {
       "type": 0,
       "value": "True"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "Ouvrir Azure Copilot"
     }
   ],
   "/doURb": [
@@ -581,6 +587,12 @@
     {
       "type": 0,
       "value": "Sélectionner un fichier à charger"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow assistant"
     }
   ],
   "2JA3gY": [
@@ -2757,12 +2769,6 @@
       "value": "2"
     }
   ],
-  "FpQfZG": [
-    {
-      "type": 0,
-      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
-    }
-  ],
   "FslNgF": [
     {
       "type": 0,
@@ -3477,7 +3483,7 @@
   "L0hujG": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is shown"
+      "value": "Bouton permettant d’ajouter du contenu dynamique si le sélecteur de jeton est affiché"
     }
   ],
   "L4RJF0": [
@@ -3873,7 +3879,7 @@
   "NhJPUn": [
     {
       "type": 0,
-      "value": "How can I call an external endpoint?"
+      "value": "Comment appeler un point de terminaison externe ?"
     }
   ],
   "NnD8gF": [
@@ -4277,7 +4283,7 @@
   "Pnt0Xj": [
     {
       "type": 0,
-      "value": "Explain how to receive files from SFTP server."
+      "value": "Expliquez comment recevoir des fichiers du serveur SFTP."
     }
   ],
   "Pq+4a+": [
@@ -4887,6 +4893,12 @@
       "value": "Titre 1"
     }
   ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Here's your flow."
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -5366,7 +5378,7 @@
   "WMX2ig": [
     {
       "type": 0,
-      "value": "What is the concurrency setting of this workflow?"
+      "value": "Quel est le paramètre de concurrence de ce flux de travail ?"
     }
   ],
   "WR1K3z": [
@@ -5886,7 +5898,7 @@
   "Yrw/Qt": [
     {
       "type": 0,
-      "value": "Your personal and company data are protected in this chat"
+      "value": "Vos données personnelles et de l’entreprise sont protégées dans cette conversation"
     }
   ],
   "Yuu5CD": [
@@ -5899,6 +5911,12 @@
     {
       "type": 0,
       "value": "Désactiver le résultat statique"
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
     }
   ],
   "Z9PWl/": [
@@ -5965,12 +5983,6 @@
       "value": "Raccourci pour trigger().outputs.body"
     }
   ],
-  "ZXoHXd": [
-    {
-      "type": 0,
-      "value": "Voici votre flux."
-    }
-  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -6004,7 +6016,7 @@
   "ZihyUf": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Fermer"
     }
   ],
   "ZkjTbp": [
@@ -6085,12 +6097,6 @@
       "value": "ID de suivi distinct pour chaque instance de fractionnement"
     }
   ],
-  "ahW8Iv": [
-    {
-      "type": 0,
-      "value": "Copilot"
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -6107,12 +6113,6 @@
     {
       "type": 0,
       "value": "Ajoutez ou sélectionnez un schéma source à utiliser pour votre mappage."
-    }
-  ],
-  "b+4gP8": [
-    {
-      "type": 0,
-      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6487,6 +6487,12 @@
       "value": "."
     }
   ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+    }
+  ],
   "dfNjw1": [
     {
       "type": 0,
@@ -6587,6 +6593,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la variable dont vous voulez la valeur."
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
     }
   ],
   "eRvRWs": [
@@ -7479,7 +7491,7 @@
   "kEjmTx": [
     {
       "type": 0,
-      "value": "Some things you can ask:"
+      "value": "Voici d’autres choses que vous pouvez demander :"
     }
   ],
   "kHcCxH": [
@@ -7867,12 +7879,6 @@
       "value": " », fractionnée sur not dans le tableau."
     }
   ],
-  "mRBHC6": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Logic Apps as a whole"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -8045,6 +8051,12 @@
       "value": "Obligatoire. Nom de la propriété à supprimer."
     }
   ],
+  "nUxMK9": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
+    }
+  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8140,7 +8152,7 @@
   "o5fYVy": [
     {
       "type": 0,
-      "value": "Describe this workflow."
+      "value": "Décrivez ce workflow."
     }
   ],
   "o7bd1o": [
@@ -8344,7 +8356,7 @@
   "pc0FCg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is hidden"
+      "value": "Bouton permettant d’ajouter du contenu dynamique si le sélecteur de jeton est masqué"
     }
   ],
   "pcGqoB": [
@@ -8363,6 +8375,12 @@
     {
       "type": 0,
       "value": "Déclencheurs"
+    }
+  ],
+  "pl+hNy": [
+    {
+      "type": 0,
+      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -8734,12 +8752,6 @@
       "value": "A réussi"
     }
   ],
-  "rn5IsW": [
-    {
-      "type": 0,
-      "value": "Désolé, je n’ai pas compris votre demande. Veuillez la reformuler et réessayer."
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -8980,12 +8992,6 @@
     {
       "type": 0,
       "value": " h"
-    }
-  ],
-  "tInDJg": [
-    {
-      "type": 0,
-      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

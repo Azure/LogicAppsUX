@@ -26,7 +26,7 @@
   "+3rROX": [
     {
       "type": 0,
-      "value": "Protected"
+      "value": "受保護"
     }
   ],
   "+FcXe9": [
@@ -157,6 +157,12 @@
     {
       "type": 0,
       "value": "TRUE"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "開啟 Azure Copilot"
     }
   ],
   "/doURb": [
@@ -581,6 +587,12 @@
     {
       "type": 0,
       "value": "選取要上傳的檔案"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow assistant"
     }
   ],
   "2JA3gY": [
@@ -2701,12 +2713,6 @@
       "value": "2"
     }
   ],
-  "FpQfZG": [
-    {
-      "type": 0,
-      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
-    }
-  ],
   "FslNgF": [
     {
       "type": 0,
@@ -3399,7 +3405,7 @@
   "L0hujG": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is shown"
+      "value": "當權杖選擇器顯示時新增動態內容的按鈕"
     }
   ],
   "L4RJF0": [
@@ -3795,7 +3801,7 @@
   "NhJPUn": [
     {
       "type": 0,
-      "value": "How can I call an external endpoint?"
+      "value": "如何呼叫外部端點?"
     }
   ],
   "NnD8gF": [
@@ -4195,7 +4201,7 @@
   "Pnt0Xj": [
     {
       "type": 0,
-      "value": "Explain how to receive files from SFTP server."
+      "value": "說明如何從 SFTP 伺服器接收檔案。"
     }
   ],
   "Pq+4a+": [
@@ -4783,6 +4789,12 @@
       "value": "標題 1"
     }
   ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Here's your flow."
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -5274,7 +5286,7 @@
   "WMX2ig": [
     {
       "type": 0,
-      "value": "What is the concurrency setting of this workflow?"
+      "value": "此工作流程的並行設定是什麼?"
     }
   ],
   "WR1K3z": [
@@ -5794,7 +5806,7 @@
   "Yrw/Qt": [
     {
       "type": 0,
-      "value": "Your personal and company data are protected in this chat"
+      "value": "您的個人和公司資料在此聊天中會受到保護"
     }
   ],
   "Yuu5CD": [
@@ -5807,6 +5819,12 @@
     {
       "type": 0,
       "value": "停用靜態結果"
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
     }
   ],
   "Z9PWl/": [
@@ -5873,12 +5891,6 @@
       "value": "trigger().outputs.body 的速記"
     }
   ],
-  "ZXoHXd": [
-    {
-      "type": 0,
-      "value": "這是您的流程。"
-    }
-  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5912,7 +5924,7 @@
   "ZihyUf": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "關閉"
     }
   ],
   "ZkjTbp": [
@@ -5993,12 +6005,6 @@
       "value": "每個分割執行個體的獨特追蹤識別碼"
     }
   ],
-  "ahW8Iv": [
-    {
-      "type": 0,
-      "value": "Copilot"
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -6015,12 +6021,6 @@
     {
       "type": 0,
       "value": "新增或選取要用於對應的來源結構描述。"
-    }
-  ],
-  "b+4gP8": [
-    {
-      "type": 0,
-      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6395,6 +6395,12 @@
       "value": "。"
     }
   ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+    }
+  ],
   "dfNjw1": [
     {
       "type": 0,
@@ -6495,6 +6501,12 @@
     {
       "type": 0,
       "value": "必要。您需要的值所屬變數名稱。"
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
     }
   ],
   "eRvRWs": [
@@ -7357,7 +7369,7 @@
   "kEjmTx": [
     {
       "type": 0,
-      "value": "Some things you can ask:"
+      "value": "可以要求的一些事情:"
     }
   ],
   "kHcCxH": [
@@ -7715,12 +7727,6 @@
       "value": "' 上的分割類型無效，分割不在陣列中。"
     }
   ],
-  "mRBHC6": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Logic Apps as a whole"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7893,6 +7899,12 @@
       "value": "必要。要移除的屬性之名稱。"
     }
   ],
+  "nUxMK9": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
+    }
+  ],
   "nVDG00": [
     {
       "type": 0,
@@ -7988,7 +8000,7 @@
   "o5fYVy": [
     {
       "type": 0,
-      "value": "Describe this workflow."
+      "value": "描述此工作流程。"
     }
   ],
   "o7bd1o": [
@@ -8192,7 +8204,7 @@
   "pc0FCg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is hidden"
+      "value": "當權杖選擇器隱藏時新增動態內容的按鈕"
     }
   ],
   "pcGqoB": [
@@ -8211,6 +8223,12 @@
     {
       "type": 0,
       "value": "觸發程序"
+    }
+  ],
+  "pl+hNy": [
+    {
+      "type": 0,
+      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -8560,12 +8578,6 @@
       "value": "已成功"
     }
   ],
-  "rn5IsW": [
-    {
-      "type": 0,
-      "value": "很抱歉，我無法理解您的要求。請修改後再試一次。"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -8806,12 +8818,6 @@
     {
       "type": 0,
       "value": " 小時"
-    }
-  ],
-  "tInDJg": [
-    {
-      "type": 0,
-      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [

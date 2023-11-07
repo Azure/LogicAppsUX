@@ -26,7 +26,7 @@
   "+3rROX": [
     {
       "type": 0,
-      "value": "Protected"
+      "value": "보호됨"
     }
   ],
   "+FcXe9": [
@@ -157,6 +157,12 @@
     {
       "type": 0,
       "value": "True"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "Azure Copilot 열기"
     }
   ],
   "/doURb": [
@@ -581,6 +587,12 @@
     {
       "type": 0,
       "value": "업로드할 파일 선택"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow assistant"
     }
   ],
   "2JA3gY": [
@@ -2693,12 +2705,6 @@
       "value": "2"
     }
   ],
-  "FpQfZG": [
-    {
-      "type": 0,
-      "value": "Copilot can help you learn about workflows and the Azure Logic Apps platform’s capabilities and connectors."
-    }
-  ],
   "FslNgF": [
     {
       "type": 0,
@@ -3391,7 +3397,7 @@
   "L0hujG": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is shown"
+      "value": "토큰 선택기가 표시되는 경우 동적 콘텐츠를 추가하는 단추"
     }
   ],
   "L4RJF0": [
@@ -3787,7 +3793,7 @@
   "NhJPUn": [
     {
       "type": 0,
-      "value": "How can I call an external endpoint?"
+      "value": "외부 엔드포인트를 호출하려면 어떻게 해야 하나요?"
     }
   ],
   "NnD8gF": [
@@ -4191,7 +4197,7 @@
   "Pnt0Xj": [
     {
       "type": 0,
-      "value": "Explain how to receive files from SFTP server."
+      "value": "SFTP 서버에서 파일을 받는 방법을 설명합니다."
     }
   ],
   "Pq+4a+": [
@@ -4783,6 +4789,12 @@
       "value": "제목 1"
     }
   ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Here's your flow."
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -5258,7 +5270,7 @@
   "WMX2ig": [
     {
       "type": 0,
-      "value": "What is the concurrency setting of this workflow?"
+      "value": "이 워크플로의 동시성 설정은 무엇인가요?"
     }
   ],
   "WR1K3z": [
@@ -5778,7 +5790,7 @@
   "Yrw/Qt": [
     {
       "type": 0,
-      "value": "Your personal and company data are protected in this chat"
+      "value": "개인 및 회사 데이터는 이 채팅에서 보호됩니다."
     }
   ],
   "Yuu5CD": [
@@ -5791,6 +5803,12 @@
     {
       "type": 0,
       "value": "정적 결과 사용 안 함"
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
     }
   ],
   "Z9PWl/": [
@@ -5857,12 +5875,6 @@
       "value": "trigger().outputs.body의 축약형"
     }
   ],
-  "ZXoHXd": [
-    {
-      "type": 0,
-      "value": "흐름은 다음과 같습니다."
-    }
-  ],
   "ZaIeDG": [
     {
       "type": 0,
@@ -5896,7 +5908,7 @@
   "ZihyUf": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "닫기"
     }
   ],
   "ZkjTbp": [
@@ -5977,12 +5989,6 @@
       "value": "각 분할 인스턴스에 대한 고유 추적 ID"
     }
   ],
-  "ahW8Iv": [
-    {
-      "type": 0,
-      "value": "Copilot"
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5999,12 +6005,6 @@
     {
       "type": 0,
       "value": "맵에 사용할 원본 스키마를 추가하거나 선택합니다."
-    }
-  ],
-  "b+4gP8": [
-    {
-      "type": 0,
-      "value": "Copilot is designed only to provide help and doesn’t support workflow creation or editing."
     }
   ],
   "b9/1dK": [
@@ -6375,6 +6375,12 @@
       "value": "에 연결했습니다."
     }
   ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+    }
+  ],
   "dfNjw1": [
     {
       "type": 0,
@@ -6475,6 +6481,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 원하는 값의 변수 이름입니다."
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
     }
   ],
   "eRvRWs": [
@@ -7333,7 +7345,7 @@
   "kEjmTx": [
     {
       "type": 0,
-      "value": "Some things you can ask:"
+      "value": "다음과 같은 몇 가지 사항을 요청할 수 있습니다."
     }
   ],
   "kHcCxH": [
@@ -7691,12 +7703,6 @@
       "value": "'에 대해 분할 유형이 잘못되었습니다. 분할이 배열에 없습니다."
     }
   ],
-  "mRBHC6": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Logic Apps as a whole"
-    }
-  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7869,6 +7875,12 @@
       "value": "필수 항목으로, 제거할 속성의 이름입니다."
     }
   ],
+  "nUxMK9": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
+    }
+  ],
   "nVDG00": [
     {
       "type": 0,
@@ -7964,7 +7976,7 @@
   "o5fYVy": [
     {
       "type": 0,
-      "value": "Describe this workflow."
+      "value": "이 작업 영역에 대해 설명합니다."
     }
   ],
   "o7bd1o": [
@@ -8168,7 +8180,7 @@
   "pc0FCg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if Token Picker is hidden"
+      "value": "토큰 선택기가 숨겨져 있는 경우 동적 콘텐츠를 추가하는 단추"
     }
   ],
   "pcGqoB": [
@@ -8187,6 +8199,12 @@
     {
       "type": 0,
       "value": "트리거"
+    }
+  ],
+  "pl+hNy": [
+    {
+      "type": 0,
+      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -8532,12 +8550,6 @@
       "value": "성공"
     }
   ],
-  "rn5IsW": [
-    {
-      "type": 0,
-      "value": "죄송합니다. 요청을 이해할 수 없습니다. 이름을 바꾸고 다시 시도하세요."
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -8778,12 +8790,6 @@
     {
       "type": 0,
       "value": "시간"
-    }
-  ],
-  "tInDJg": [
-    {
-      "type": 0,
-      "value": "Welcome to Copilot in Azure Logic Apps!"
     }
   ],
   "tLZ9Sh": [
