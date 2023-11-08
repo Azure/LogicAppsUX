@@ -1,4 +1,24 @@
 # Logic Apps Designer
+## [2.82.0](https://github.com/Azure/LogicAppsUX/compare/v2.81.2...v2.82.0) (2023-11-08)
+
+
+### Features
+
+* **copilot:** Adding basic telemetry in copilot feedback ([#3642](https://github.com/Azure/LogicAppsUX/issues/3642)) ([b5a94eb](https://github.com/Azure/LogicAppsUX/commit/b5a94eb3499ba89b475eeda56936e80cca6440b7))
+* **Data Mapper:** Change Command Bar UI ([#3601](https://github.com/Azure/LogicAppsUX/issues/3601)) ([522ee89](https://github.com/Azure/LogicAppsUX/commit/522ee89519d214ad7f22eea8aa5d11ce1637bc3d))
+* **designer:** Adding ability for the host to customize the sort of the connectors in the browse view ([#3616](https://github.com/Azure/LogicAppsUX/issues/3616)) ([7ed4ecf](https://github.com/Azure/LogicAppsUX/commit/7ed4ecf623971ca4c22420c86878f1287c7b4f24))
+
+
+### Bug Fixes
+
+* **copilot:** Changing placeholder text ([#3615](https://github.com/Azure/LogicAppsUX/issues/3615)) ([0799770](https://github.com/Azure/LogicAppsUX/commit/0799770bf0ffec9220eb23aae2f00b5f867cdbd9))
+* **copilot:** Dark Mode Adjustments ([#3614](https://github.com/Azure/LogicAppsUX/issues/3614)) ([5bc1c02](https://github.com/Azure/LogicAppsUX/commit/5bc1c020fef4f335ef4ae14d96d45503ff8f5c56))
+* **copilot:** Increased Contrast for DarkMode Text ([#3617](https://github.com/Azure/LogicAppsUX/issues/3617)) ([c2c2dd6](https://github.com/Azure/LogicAppsUX/commit/c2c2dd6e89f3c29e24a1042c94834b46b05342b4))
+* **Data Mapper:** added warning message content from PM team ([#3630](https://github.com/Azure/LogicAppsUX/issues/3630)) ([ee9dd90](https://github.com/Azure/LogicAppsUX/commit/ee9dd9038e2021736c9832a0497c6b3adcf1f17a))
+* **Data Mapper:** Increase the connection area at the end of a property point ([#3599](https://github.com/Azure/LogicAppsUX/issues/3599)) ([3bbfddd](https://github.com/Azure/LogicAppsUX/commit/3bbfdddcfd4c149082adbc6360a8b2cfd03fef55))
+* **designer:** Retaining Tokenpicker when navigating away in portal ([#3636](https://github.com/Azure/LogicAppsUX/issues/3636)) ([728bfca](https://github.com/Azure/LogicAppsUX/commit/728bfca8cd31f7da235ca5c4b16ae09e5593feb3))
+* **vscode:** Get workspace folder based on Logic App project ([#3618](https://github.com/Azure/LogicAppsUX/issues/3618)) ([a9f0dfe](https://github.com/Azure/LogicAppsUX/commit/a9f0dfe63df13b59c3c6d60360b994a8756eb454))
+
 ### [2.81.2](https://github.com/Azure/LogicAppsUX/compare/v2.81.1...v2.81.2) (2023-11-06)
 
 
