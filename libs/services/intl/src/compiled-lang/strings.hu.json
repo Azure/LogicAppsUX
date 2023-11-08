@@ -47,6 +47,12 @@
       "value": "Aktiválás"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -596,7 +602,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Munkafolyamat-segéd"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "Séma érvényesítése"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Konfigurálás"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "A folyamat szerkesztése a következőre:"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Áttekintés"
     }
   ],
   "8U0KPg": [
@@ -2481,6 +2475,12 @@
       "value": "” sémacsomópont bemenete eltérő típusú"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3075,12 +3075,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Egyezményes világidő-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Globális nézet"
     }
   ],
   "IA+Ogm": [
@@ -6407,12 +6401,6 @@
       "value": "Frissítés"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Létrehozás"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7631,12 +7619,6 @@
       "value": "Függvények"
     }
   ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Vissza"
-    }
-  ],
   "lX30/R": [
     {
       "type": 0,
@@ -8310,7 +8292,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "Üdvözli a munkafolyamat-segéd!"
     }
   ],
   "pozypE": [
@@ -9507,6 +9489,12 @@
       "value": "(UTC-09:30) Marquises-szigetek"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9765,6 +9753,12 @@
     {
       "type": 0,
       "value": "Nem tetszik"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [

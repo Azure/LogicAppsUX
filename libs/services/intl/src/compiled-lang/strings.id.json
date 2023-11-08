@@ -47,6 +47,12 @@
       "value": "Pemicu"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1409,12 +1415,6 @@
       "value": "Validasi Skema"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Konfigurasikan"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1587,12 +1587,6 @@
     {
       "type": 0,
       "value": "Edit alur ini untuk"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Gambaran umum"
     }
   ],
   "8U0KPg": [
@@ -2458,6 +2452,12 @@
       "value": "' memiliki input dengan tipe yang tidak cocok"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3037,12 +3037,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Waktu Universal Terkoordinasi-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Tampilan global"
     }
   ],
   "IA+Ogm": [
@@ -6359,12 +6353,6 @@
       "value": "Perbarui"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Buat"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7551,12 +7539,6 @@
     {
       "type": 0,
       "value": "Fungsi"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Kembalikan"
     }
   ],
   "lX30/R": [
@@ -9422,6 +9404,12 @@
       "value": "(UTC-09:30) Marquesas Islands"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9680,6 +9668,12 @@
     {
       "type": 0,
       "value": "Tidak suka"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [
