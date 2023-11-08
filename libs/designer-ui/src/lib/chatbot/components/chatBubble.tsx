@@ -1,7 +1,7 @@
 import constants from '../constants';
 import { animations } from './animations';
 import { ThumbsReactionButton } from './thumbsReactionButton';
-import { ActionButton, css, useTheme } from '@fluentui/react';
+import { ActionButton, IconButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -23,6 +23,7 @@ type ChatBubbleProps = {
   selectedReaction?: ChatEntryReaction;
   onThumbsReactionClicked?: (reaction: ChatEntryReaction) => void;
   disabled?: boolean;
+  text?: string;
 };
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
@@ -36,6 +37,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   onThumbsReactionClicked,
   disabled,
   isEmphasized,
+  text,
 }) => {
   const intl = useIntl();
   const { isInverted } = useTheme();
@@ -43,6 +45,10 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
     aIGeneratedDisclaimer: intl.formatMessage({
       defaultMessage: 'AI-generated content may be incorrect',
       description: 'Chatbot disclaimer message on AI-generated content potentially being incorrect',
+    }),
+    copyText: intl.formatMessage({
+      defaultMessage: 'Copy',
+      description: 'Chatbot copy button title',
     }),
   };
   return (
@@ -69,22 +75,34 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           )}
           <div className={'msla-chat-bubble-footer'}>
             <div className={'msla-bubble-footer-disclaimer'}>{intlText.aIGeneratedDisclaimer}</div>
-            {onThumbsReactionClicked && (
-              <div className={'msla-bubble-reactions'}>
-                <ThumbsReactionButton
-                  onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
-                  isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
-                  isDownvote={false}
-                  disabled={disabled}
+            <div className={'msla-bubble-reactions'}>
+              {text && (
+                <IconButton
+                  className={'msla-copy-button'}
+                  title={intlText.copyText}
+                  iconProps={{ iconName: 'Copy' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(text);
+                  }}
                 />
-                <ThumbsReactionButton
-                  onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
-                  isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
-                  isDownvote={true}
-                  disabled={disabled}
-                />
-              </div>
-            )}
+              )}
+              {onThumbsReactionClicked && (
+                <>
+                  <ThumbsReactionButton
+                    onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
+                    isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
+                    isDownvote={false}
+                    disabled={disabled}
+                  />
+                  <ThumbsReactionButton
+                    onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
+                    isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
+                    isDownvote={true}
+                    disabled={disabled}
+                  />
+                </>
+              )}
+            </div>
           </div>
         </div>
       ) : null}
