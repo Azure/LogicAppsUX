@@ -32,12 +32,12 @@ import {
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
 import { WorkerRuntime } from '@microsoft/vscode-extension';
+import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
-import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 import { Uri, window, workspace } from 'vscode';
 import type { MessageItem } from 'vscode';
@@ -141,7 +141,7 @@ async function waitForDesignTimeStartUp(url: string, initialTime: number): Promi
 
 async function isDesignTimeUp(url: string): Promise<boolean> {
   try {
-    await requestP(url);
+    await axios.get(url);
     return Promise.resolve(true);
   } catch (ex) {
     return Promise.resolve(false);
