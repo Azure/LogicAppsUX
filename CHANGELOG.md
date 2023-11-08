@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [2.83.0](https://github.com/Azure/LogicAppsUX/compare/v2.82.0...v2.83.0) (2023-11-08)
+
+
+### Features
+
+* **Copilot:** Adding copy button ([#3628](https://github.com/Azure/LogicAppsUX/issues/3628)) ([800e222](https://github.com/Azure/LogicAppsUX/commit/800e222fe8af83987666282b5b25633ddfe018cd))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fixed Data Mapper Build Error ([#3646](https://github.com/Azure/LogicAppsUX/issues/3646)) ([ecc9e83](https://github.com/Azure/LogicAppsUX/commit/ecc9e83451c5cb91fb104e4c733b02b26d73f00a))
+* **designer:** Allow copy paste of a node's connection mapping ([#3643](https://github.com/Azure/LogicAppsUX/issues/3643)) ([926c49f](https://github.com/Azure/LogicAppsUX/commit/926c49fa77487701b7f2f6729514c28479d30f69))
+
 ## [2.82.0](https://github.com/Azure/LogicAppsUX/compare/v2.81.2...v2.82.0) (2023-11-08)
 
 
