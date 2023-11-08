@@ -79,8 +79,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
                     title={'Copy'}
                     iconProps={{ iconName: 'Copy' }}
                     onClick={() => {
-                      const textToCopy = text;
-                      navigator.clipboard.writeText(textToCopy);
+                      navigator.clipboard.writeText(text);
                     }}
                   />
                 )}
