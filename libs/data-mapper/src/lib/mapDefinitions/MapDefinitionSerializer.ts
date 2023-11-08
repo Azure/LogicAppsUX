@@ -20,8 +20,8 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
+import { extend } from '@microsoft/utils-logic-apps';
 import yaml from 'js-yaml';
-import merge from 'lodash.merge';
 
 interface OutputPathItem {
   key: string;
@@ -372,7 +372,8 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
       const arrayItem: MapDefinitionEntry = {};
       applyValueAtPath(arrayItem, path.slice(pathIndex + 1));
 
-      const combinedArrayItem = merge(newArray[pathItem.arrayIndex], arrayItem);
+      const combinedArrayItem = extend({}, newArray[pathItem.arrayIndex], arrayItem);
+
       newArray[pathItem.arrayIndex] = combinedArrayItem;
       mapDefinition[curPathItem.key] = newArray;
 
