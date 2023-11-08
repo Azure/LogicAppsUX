@@ -46,6 +46,10 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       defaultMessage: 'AI-generated content may be incorrect',
       description: 'Chatbot disclaimer message on AI-generated content potentially being incorrect',
     }),
+    copyText: intl.formatMessage({
+      defaultMessage: 'Copy',
+      description: 'Chatbot copy button title',
+    }),
   };
   return (
     <div
@@ -71,32 +75,34 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           )}
           <div className={'msla-chat-bubble-footer'}>
             <div className={'msla-bubble-footer-disclaimer'}>{intlText.aIGeneratedDisclaimer}</div>
-            {onThumbsReactionClicked && (
-              <div className={'msla-bubble-reactions'}>
-                {text && (
-                  <IconButton
-                    className={'msla-copy-button'}
-                    title={'Copy'}
-                    iconProps={{ iconName: 'Copy' }}
-                    onClick={() => {
-                      navigator.clipboard.writeText(text);
-                    }}
+            <div className={'msla-bubble-reactions'}>
+              {text && (
+                <IconButton
+                  className={'msla-copy-button'}
+                  title={intlText.copyText}
+                  iconProps={{ iconName: 'Copy' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(text);
+                  }}
+                />
+              )}
+              {onThumbsReactionClicked && (
+                <>
+                  <ThumbsReactionButton
+                    onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
+                    isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
+                    isDownvote={false}
+                    disabled={disabled}
                   />
-                )}
-                <ThumbsReactionButton
-                  onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
-                  isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
-                  isDownvote={false}
-                  disabled={disabled}
-                />
-                <ThumbsReactionButton
-                  onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
-                  isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
-                  isDownvote={true}
-                  disabled={disabled}
-                />
-              </div>
-            )}
+                  <ThumbsReactionButton
+                    onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
+                    isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
+                    isDownvote={true}
+                    disabled={disabled}
+                  />
+                </>
+              )}
+            </div>
           </div>
         </div>
       ) : null}
