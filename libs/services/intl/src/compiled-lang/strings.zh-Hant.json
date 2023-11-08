@@ -47,6 +47,12 @@
       "value": "觸發程序"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "工作流程助理"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "結構描述驗證"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "設定"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "編輯此流程至"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "概觀"
     }
   ],
   "8U0KPg": [
@@ -2454,6 +2448,12 @@
       "value": "' '具有類型不相符的輸入"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3033,12 +3033,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) 國際標準時間-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "全域檢視"
     }
   ],
   "IA+Ogm": [
@@ -6363,12 +6357,6 @@
       "value": "更新"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "產生"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7557,12 +7545,6 @@
       "value": "函數"
     }
   ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "傳回"
-    }
-  ],
   "lX30/R": [
     {
       "type": 0,
@@ -8228,7 +8210,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "歡迎使用工作流程助理！"
     }
   ],
   "pozypE": [
@@ -9418,6 +9400,12 @@
       "value": "(UTC-09:30) 馬克沙斯群島"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9676,6 +9664,12 @@
     {
       "type": 0,
       "value": "倒讚"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [

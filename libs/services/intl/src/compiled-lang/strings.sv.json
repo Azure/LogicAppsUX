@@ -47,6 +47,12 @@
       "value": "Utlösare"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1421,12 +1427,6 @@
       "value": "Schemaverifiering"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Konfigurera"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1599,12 +1599,6 @@
     {
       "type": 0,
       "value": "Redigera det här flödet till"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Översikt"
     }
   ],
   "8U0KPg": [
@@ -2473,6 +2467,12 @@
       "value": " innehåller indata med en typ som inte matchar"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3071,12 +3071,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Coordinated Universal Time-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Global vy"
     }
   ],
   "IA+Ogm": [
@@ -6399,12 +6393,6 @@
       "value": "Uppdatera"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Generera"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7617,12 +7605,6 @@
     {
       "type": 0,
       "value": "Funktioner"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Returnera"
     }
   ],
   "lX30/R": [
@@ -9491,6 +9473,12 @@
       "value": "(UTC-09:30) Marquesasöarna"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9749,6 +9737,12 @@
     {
       "type": 0,
       "value": "Gillar ej"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [

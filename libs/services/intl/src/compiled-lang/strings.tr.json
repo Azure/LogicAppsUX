@@ -47,6 +47,12 @@
       "value": "Tetikleyici"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1409,12 +1415,6 @@
       "value": "Şema Doğrulama"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Yapılandır"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1587,12 +1587,6 @@
     {
       "type": 0,
       "value": "Bu akışı şunun için düzenleyin:"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Genel Bakış"
     }
   ],
   "8U0KPg": [
@@ -2469,6 +2463,12 @@
       "value": "' şema düğümü, eşleşmeyen türde bir girişe sahip"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3055,12 +3055,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Eşgüdümlü Evrensel Saat-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Genel görünüm"
     }
   ],
   "IA+Ogm": [
@@ -6399,12 +6393,6 @@
       "value": "Güncelleştir"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Oluştur"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7605,12 +7593,6 @@
     {
       "type": 0,
       "value": "İşlevler"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Dönüş"
     }
   ],
   "lX30/R": [
@@ -9479,6 +9461,12 @@
       "value": "(UTC-09:30) Marquesas Adaları"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9737,6 +9725,12 @@
     {
       "type": 0,
       "value": "Beğenme"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [

@@ -47,6 +47,12 @@
       "value": "Acionador"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Assistente de fluxo de trabalho"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "Validação de Esquema"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Configurar"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "Edite este fluxo para"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Descrição geral"
     }
   ],
   "8U0KPg": [
@@ -2488,6 +2482,12 @@
       "value": "\" tem uma entrada com um tipo sem correspondência"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3097,12 +3097,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Hora Universal Coordenada -11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Vista global"
     }
   ],
   "IA+Ogm": [
@@ -6463,12 +6457,6 @@
       "value": "Atualizar"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Gerar"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7709,12 +7697,6 @@
       "value": "Funções"
     }
   ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Voltar"
-    }
-  ],
   "lX30/R": [
     {
       "type": 0,
@@ -8388,7 +8370,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "Bem-vindo ao assistente de fluxo de trabalho!"
     }
   ],
   "pozypE": [
@@ -9600,6 +9582,12 @@
       "value": "(UTC-09:30) Ilhas Marquesas"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9858,6 +9846,12 @@
     {
       "type": 0,
       "value": "Não gosto"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [

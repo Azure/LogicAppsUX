@@ -47,6 +47,12 @@
       "value": "Desencadenador"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Asistente de flujos de trabajo"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "Validación de esquema"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Configurar"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "Editar este flujo en"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Información general"
     }
   ],
   "8U0KPg": [
@@ -2488,6 +2482,12 @@
       "value": "\" tiene una entrada con un tipo no coincidente"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3089,12 +3089,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Hora universal coordinada -11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Vista global"
     }
   ],
   "IA+Ogm": [
@@ -6455,12 +6449,6 @@
       "value": "Actualizar"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Generar"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7701,12 +7689,6 @@
       "value": "Funciones"
     }
   ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Volver"
-    }
-  ],
   "lX30/R": [
     {
       "type": 0,
@@ -8372,7 +8354,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "¡Le damos la bienvenida al asistente de flujos de trabajo!"
     }
   ],
   "pozypE": [
@@ -9584,6 +9566,12 @@
       "value": "(UTC-09:30) Islas Marquesas"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9834,6 +9822,12 @@
     {
       "type": 0,
       "value": "No me gusta"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [

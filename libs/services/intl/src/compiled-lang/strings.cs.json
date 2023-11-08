@@ -47,6 +47,12 @@
       "value": "Trigger"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1417,12 +1423,6 @@
       "value": "Ověřování schématu"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Nakonfigurovat"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "Upravit tento tok do"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Přehled"
     }
   ],
   "8U0KPg": [
@@ -2499,6 +2493,12 @@
       "value": " má vstup s neodpovídajícím typem"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3119,12 +3119,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Koordinovaný univerzální čas (UTC)-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Globální zobrazení"
     }
   ],
   "IA+Ogm": [
@@ -6499,12 +6493,6 @@
       "value": "Aktualizovat"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Vygenerovat"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7765,12 +7753,6 @@
     {
       "type": 0,
       "value": "Funkce"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Návrat"
     }
   ],
   "lX30/R": [
@@ -9661,6 +9643,12 @@
       "value": "(UTC-09:30) Souostroví Markézy"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9919,6 +9907,12 @@
     {
       "type": 0,
       "value": "To se mi nelíbí"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [
