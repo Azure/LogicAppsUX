@@ -1,4 +1,6 @@
 import { setFocusNode, type RootState } from '../..';
+import type { ReferenceKey } from '../../state/connection/connectionSlice';
+import { initCopiedConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
@@ -31,9 +33,15 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
       actionMetadata: state.operations.actionMetadata[nodeId],
       repetitionInfo: state.operations.repetitionInfos[nodeId],
     };
+    const connectionReference = state.connections.connectionsMapping[nodeId];
     window.localStorage.setItem(
       'msla-clipboard',
-      JSON.stringify({ nodeId: newNodeId, operationInfo: nodeOperationInfo, nodeData: nodeData })
+      JSON.stringify({
+        nodeId: newNodeId,
+        operationInfo: nodeOperationInfo,
+        nodeData: nodeData,
+        connectionData: connectionReference,
+      })
     );
   });
 });
@@ -43,10 +51,11 @@ interface PasteOperationPayload {
   nodeId: string;
   nodeData: NodeData;
   operationInfo: NodeOperation;
+  connectionData?: ReferenceKey;
 }
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
-  const { nodeId: actionId, relationshipIds, nodeData, operationInfo } = payload;
+  const { nodeId: actionId, relationshipIds, nodeData, operationInfo, connectionData } = payload;
   if (!actionId || !relationshipIds || !nodeData) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
   let count = 1;
   let nodeId = actionId;
@@ -70,6 +79,10 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
 
   // replace new nodeId if there exists a copy of the copied node
   dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
+
+  if (connectionData) {
+    dispatch(initCopiedConnectionMap({ nodeId, referenceKey: connectionData }));
+  }
 
   dispatch(setFocusNode(nodeId));
 });
