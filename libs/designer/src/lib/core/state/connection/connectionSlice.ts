@@ -12,7 +12,7 @@ export interface ConnectionsStoreState {
 }
 
 type NodeId = string;
-type ReferenceKey = string | null;
+export type ReferenceKey = string | null;
 export type ConnectionMapping = Record<NodeId, ReferenceKey>;
 
 export const initialConnectionsState: ConnectionsStoreState = {
@@ -67,6 +67,12 @@ export const connectionSlice = createSlice({
     initEmptyConnectionMap: (state, action: PayloadAction<NodeId>) => {
       state.connectionsMapping[action.payload] = null;
     },
+    initCopiedConnectionMap: (state, action: PayloadAction<{ nodeId: NodeId; referenceKey: ReferenceKey }>) => {
+      const { nodeId, referenceKey } = action.payload;
+      if (referenceKey && state.connectionReferences[referenceKey]) {
+        state.connectionsMapping[nodeId] = referenceKey;
+      }
+    },
     removeNodeConnectionData: (state, action: PayloadAction<{ nodeId: NodeId }>) => {
       const { nodeId } = action.payload;
       delete state.connectionsMapping[nodeId];
@@ -83,6 +89,7 @@ export const {
   initializeConnectionsMappings,
   changeConnectionMapping,
   initEmptyConnectionMap,
+  initCopiedConnectionMap,
   removeNodeConnectionData,
 } = connectionSlice.actions;
 
