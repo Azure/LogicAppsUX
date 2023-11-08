@@ -66,7 +66,11 @@ class ExportEngine {
     try {
       this.setFinalStatus('InProgress');
       this.addStatus(localize('downloadPackage', 'Downloading package ...'));
-      const flatFile = await axios.get(this.packageUrl);
+      const flatFile = await axios.get(this.packageUrl, {
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+      });
 
       const buffer = Buffer.from(flatFile.data);
       this.addStatus(localize('done', 'Done.'));
