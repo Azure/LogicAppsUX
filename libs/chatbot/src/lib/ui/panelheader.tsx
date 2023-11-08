@@ -3,6 +3,7 @@ import { FontSizes, Link } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { useIntl } from 'react-intl';
 
 interface CopilotPanelHeaderProps {
@@ -47,13 +48,20 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
             <ShieldCheckmarkRegular className="shield-checkmark-regular" />
             <Link
               className="msla-protectedmessage-link"
-              onClick={() => window.open('https://aka.ms/azurecopilot/privacystatement', '_blank')}
+              onClick={() => {
+                window.open('https://aka.ms/azurecopilot/privacystatement', '_blank');
+                LoggerService().log({
+                  level: LogEntryLevel.Verbose,
+                  area: 'chatbot',
+                  message: 'protection link opened',
+                });
+              }}
               underline={true}
             >
               {protectedPillText}
             </Link>
           </div>
-        </Tooltip>{' '}
+        </Tooltip>
       </div>
       <IconButton
         className={'msla-chatbot-collapse-button'}

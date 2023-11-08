@@ -7,7 +7,7 @@ import type { ITextField } from '@fluentui/react';
 import { useTheme, Panel, PanelType, css, getId } from '@fluentui/react';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/designer-client-services-logic-apps';
-import type { ConversationItem } from '@microsoft/designer-ui';
+import type { ConversationItem, ChatEntryReaction } from '@microsoft/designer-ui';
 import {
   PanelLocation,
   ChatInput,
@@ -179,6 +179,22 @@ export const Chatbot = ({
     },
   };
 
+  const logFeedbackVote = useCallback((reaction: ChatEntryReaction, isRemovedVote?: boolean) => {
+    if (isRemovedVote) {
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'chatbot: feedback',
+        message: `Feedback Reaction: ${reaction} removed`,
+      });
+    } else {
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'chatbot: feedback',
+        message: `Feedback Reaction: ${reaction}`,
+      });
+    }
+  }, []);
+
   const onSubmitInputQuery = useCallback(
     async (input: string) => {
       const query = input.trim();
@@ -226,6 +242,7 @@ export const Chatbot = ({
                 ? () => openAzureCopilotPanel(query)
                 : undefined,
             openFeedback: openFeedbackPanel,
+            logFeedbackVote,
           },
           ...current,
         ]);
@@ -272,6 +289,7 @@ export const Chatbot = ({
               __rawResponse: error,
               reaction: undefined,
               openFeedback: openFeedbackPanel,
+              logFeedbackVote,
             },
             ...current,
           ]);
@@ -289,6 +307,7 @@ export const Chatbot = ({
       getAuthToken,
       openAzureCopilotPanel,
       openFeedbackPanel,
+      logFeedbackVote,
       intlText.cancelGenerationText,
       intlText.assistantErrorMessage,
     ]
@@ -316,6 +335,11 @@ export const Chatbot = ({
           closeCopilot={() => {
             setCollapsed(true);
             closeChatBot?.();
+            LoggerService().log({
+              level: LogEntryLevel.Verbose,
+              area: 'chatbot',
+              message: 'workflow assistant closed',
+            });
           }}
         />
 
@@ -334,7 +358,6 @@ export const Chatbot = ({
         </div>
         <div className={'msla-chatbot-footer'}>
           <div className={'msla-protected-footer'}>
-            {' '}
             <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {intlText.protectedMessage}
           </div>
           <ChatSuggestionGroup>
