@@ -57,14 +57,19 @@ export function useFeedbackMessage(item: ReactionItem): {
   onMessageReactionClicked: (chatEntryReaction: ChatEntryReaction) => void;
   reaction: ChatEntryReaction | undefined;
 } {
-  const [reaction, setReaction] = useState(item.reaction);
+  const { id, date, reaction: itemReaction, openFeedback, logFeedbackVote } = item;
+  const [reaction, setReaction] = useState(itemReaction);
   const [askFeedback, setAskFeedback] = useState(false);
 
   const onMessageReactionClicked = (chatReaction: ChatEntryReaction) => {
+    if (reaction) {
+      logFeedbackVote?.(chatReaction, /*isRemovedVote*/ true);
+    }
     if (reaction === chatReaction) {
       setReaction(undefined);
       setAskFeedback(false);
     } else {
+      logFeedbackVote?.(chatReaction);
       setReaction(chatReaction);
       setAskFeedback(true);
     }
@@ -73,10 +78,10 @@ export function useFeedbackMessage(item: ReactionItem): {
   const feedbackMessage = useMemo(() => {
     return (
       <div>
-        <FeedbackMessage id={item.id} date={item.date} reaction={reaction} askFeedback={askFeedback} openFeedback={item.openFeedback} />
+        <FeedbackMessage id={id} date={date} reaction={reaction} askFeedback={askFeedback} openFeedback={openFeedback} />
       </div>
     );
-  }, [askFeedback, item.date, item.id, item.openFeedback, reaction]);
+  }, [askFeedback, date, id, openFeedback, reaction]);
 
   return {
     feedbackMessage,

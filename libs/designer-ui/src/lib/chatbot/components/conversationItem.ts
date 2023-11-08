@@ -35,6 +35,7 @@ type BaseConversationItem = {
 
 type BaseAssistantMessageItem = BaseConversationItem & {
   openFeedback?: () => void;
+  logFeedbackVote?: (reaction: ChatEntryReaction, isRemovedVote?: boolean) => void;
 };
 
 export enum ConversationItemType {
