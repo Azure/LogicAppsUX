@@ -18,12 +18,11 @@ import { getAccountCredentials } from '../../utils/credentials';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand, getBaseGraphApi } from '@microsoft/vscode-extension';
+import axios from 'axios';
 import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
@@ -67,14 +66,12 @@ class ExportEngine {
     try {
       this.setFinalStatus('InProgress');
       this.addStatus(localize('downloadPackage', 'Downloading package ...'));
-      const flatFile = await requestP({
-        json: false,
-        method: HTTP_METHODS.GET,
-        encoding: null,
-        uri: this.packageUrl,
+      const flatFile = await axios.get(this.packageUrl, {
+        responseType: 'arraybuffer',
+        responseEncoding: 'binary',
       });
 
-      const buffer = Buffer.from(flatFile);
+      const buffer = Buffer.from(flatFile.data);
       this.addStatus(localize('done', 'Done.'));
       this.addStatus(localize('unzipPackage', 'Unzipping package ...'));
       const zip = new AdmZip(buffer);
@@ -120,17 +117,19 @@ class ExportEngine {
 
   private async getResourceGroup(): Promise<void> {
     const uri = `${this.baseGraphUri}/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroupName}?api-version=2021-04-01`;
-    const options = {
-      method: HTTP_METHODS.GET,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-    };
 
-    return requestP(options).catch((error) => {
-      throw new Error(
-        localize('getResourceGroupFailure', 'Failed to get resource group "{0}". {1}', this.resourceGroupName, error.message ?? '')
-      );
-    });
+    return axios
+      .get(uri, {
+        headers: {
+          authorization: this.getAccessToken(),
+        },
+      })
+      .then(({ data }) => data)
+      .catch((error) => {
+        throw new Error(
+          localize('getResourceGroupFailure', 'Failed to get resource group "{0}". {1}', this.resourceGroupName, error.message ?? '')
+        );
+      });
   }
 
   private async createResourceGroup(): Promise<void> {
@@ -138,19 +137,17 @@ class ExportEngine {
     const body = {
       location: this.location,
     };
-    const options = {
-      method: HTTP_METHODS.PUT,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-      body,
-      json: true,
-    };
 
-    return requestP(options).catch((error) => {
-      throw new Error(
-        localize('resourceGroupCreateFailure', 'Failed to create resource group "{0}". {1}', this.resourceGroupName, error.message ?? '')
-      );
-    });
+    return axios
+      .put(uri, body, {
+        headers: { authorization: this.getAccessToken() },
+      })
+      .then(({ data }) => data)
+      .catch((error) => {
+        throw new Error(
+          localize('resourceGroupCreateFailure', 'Failed to create resource group "{0}". {1}', this.resourceGroupName, error.message ?? '')
+        );
+      });
   }
 
   private async deployConnectionsTemplate(connectionsTemplate: any): Promise<ConnectionsDeploymentOutput> {
@@ -163,17 +160,14 @@ class ExportEngine {
         template: connectionsTemplate,
       },
     };
-    const options = {
-      method: HTTP_METHODS.PUT,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-      body,
-      json: true,
-    };
 
-    await requestP(options).catch((error) => {
-      throw new Error(localize('templateDeploymentFailure', 'Failed to deploy connections template. {0}', error.message ?? ''));
-    });
+    await axios
+      .put(uri, body, {
+        headers: { authorization: this.getAccessToken() },
+      })
+      .catch((error) => {
+        throw new Error(localize('templateDeploymentFailure', 'Failed to deploy connections template. {0}', error.message ?? ''));
+      });
 
     return await this.getDeploymentOutput(uri);
   }
@@ -202,16 +196,12 @@ class ExportEngine {
   }
 
   private async getDeployment(uri: string): Promise<Deployment> {
-    const options = {
-      method: HTTP_METHODS.GET,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-      json: true,
-    };
-
-    return requestP(options).catch((error) => {
-      throw new Error(localize('getDeploymentFailure', 'Failed to get deployment. {1}', error.message ?? ''));
-    });
+    return axios
+      .get(uri, { headers: { authorization: this.getAccessToken() } })
+      .then(({ data }) => data)
+      .catch((error) => {
+        throw new Error(localize('getDeploymentFailure', 'Failed to get deployment. {1}', error.message ?? ''));
+      });
   }
 
   private async fetchConnectionKeys(output: ConnectionsDeploymentOutput): Promise<void> {
@@ -224,17 +214,14 @@ class ExportEngine {
   }
 
   private async getConnectionKey(connectionId: string): Promise<string> {
-    const options = {
-      method: HTTP_METHODS.POST,
-      uri: `${this.baseGraphUri}${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
-      headers: { authorization: this.getAccessToken() },
-      body: { validityTimeSpan: '7' },
-      json: true,
-    };
-
-    return requestP(options)
+    return axios
+      .post(
+        `${this.baseGraphUri}${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
+        { validityTimeSpan: '7' },
+        { headers: { authorization: this.getAccessToken() } }
+      )
       .then((response) => {
-        return response.connectionKey;
+        return response.data?.connectionKey;
       })
       .catch((error) => {
         throw new Error(
@@ -255,18 +242,17 @@ class ExportEngine {
 
   private async getSubscription(): Promise<any> {
     const uri = `${this.baseGraphUri}/subscriptions/${this.subscriptionId}/?api-version=2021-04-01`;
-    const options = {
-      method: HTTP_METHODS.GET,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-      json: true,
-    };
 
-    return requestP(options).catch((error) => {
-      throw new Error(
-        localize('getSubscriptionFailured', 'Failed to get subscription "{0}". {1}', this.subscriptionId, error.message ?? '')
-      );
-    });
+    return axios
+      .get(uri, {
+        headers: { authorization: this.getAccessToken() },
+      })
+      .then(({ data }) => data)
+      .catch((error) => {
+        throw new Error(
+          localize('getSubscriptionFailured', 'Failed to get subscription "{0}". {1}', this.subscriptionId, error.message ?? '')
+        );
+      });
   }
 
   private async updateParametersAndSettings(

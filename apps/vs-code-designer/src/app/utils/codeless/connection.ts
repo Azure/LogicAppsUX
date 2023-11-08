@@ -22,9 +22,9 @@ import type {
   ConnectionAndAppSetting,
   Parameter,
 } from '@microsoft/vscode-extension';
+import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
@@ -125,16 +125,14 @@ async function getConnectionReference(
     connection: { id: connectionId },
     connectionProperties,
   } = reference;
-  const options = {
-    json: true,
-    headers: { authorization: accessToken },
-    method: HTTP_METHODS.POST,
-    body: { validityTimeSpan: '7' },
-    uri: `${workflowBaseManagementUri}/${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
-  };
 
-  return requestP(options)
-    .then((response) => {
+  return axios
+    .post(
+      `${workflowBaseManagementUri}/${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
+      { validityTimeSpan: '7' },
+      { headers: { authorization: accessToken } }
+    )
+    .then(({ data: response }) => {
       const appSettingKey = `${referenceKey}-connectionKey`;
       settingsToAdd[appSettingKey] = response.connectionKey;
 
@@ -313,9 +311,7 @@ async function createAccessPolicyInConnection(
   const { principalId: objectId, tenantId } = identity;
   const name = `${node.site.fullName}-${objectId}`;
   const options = {
-    json: true,
     headers: { authorization: accessToken },
-    method: HTTP_METHODS.PUT,
     body: {
       name,
       type: 'Microsoft.Web/connections/accessPolicy',
@@ -330,7 +326,12 @@ async function createAccessPolicyInConnection(
     uri: `https://management.azure.com/${connectionId}/accessPolicies/${name}?api-version=2018-07-01-preview`,
   };
 
-  return requestP(options).catch((error) => {
-    throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
-  });
+  return axios
+    .put(options.uri, options.body, {
+      headers: options.headers,
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
+    });
 }
