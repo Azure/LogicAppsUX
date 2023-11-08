@@ -24,7 +24,6 @@ import { ProjectLanguage } from '@microsoft/vscode-extension';
 import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-extension';
 import * as unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
-//TODO: revisit this import again (yargsParser)
 import * as parser from 'yargs-parser';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };

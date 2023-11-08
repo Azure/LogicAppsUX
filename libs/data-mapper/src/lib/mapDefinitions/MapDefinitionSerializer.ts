@@ -21,7 +21,7 @@ import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData }
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import yaml from 'js-yaml';
-import { merge } from 'lodash';
+import merge from 'lodash.merge';
 
 interface OutputPathItem {
   key: string;
