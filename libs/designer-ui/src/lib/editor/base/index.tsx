@@ -7,10 +7,9 @@ import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
 import DeleteTokenNode from './plugins/DeleteTokenNode';
 import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditor';
+import { FocusChangePlugin } from './plugins/FocusHandler';
 import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
-import OnBlur from './plugins/OnBlur';
-import OnFocus from './plugins/OnFocus';
 import OpenTokenPicker from './plugins/OpenTokenPicker';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
@@ -27,7 +26,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
@@ -107,7 +106,7 @@ export const BaseEditor = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
-  const [isInTokenPicker, setIsInTokenPicker] = useState(false);
+  const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 
@@ -140,27 +139,25 @@ export const BaseEditor = ({
       }),
   };
 
-  const handleFocus = () => {
+  const handleFocus = useCallback(() => {
     setIsEditorFocused(true);
-    setIsInTokenPicker(false);
     onFocus?.();
-  };
-
-  const handleBlur = () => {
-    setIsEditorFocused(false);
-    if (!isInTokenPicker) {
-      setTokenPickerMode(undefined);
-      setIsInTokenPicker(false);
-      onBlur?.();
+    if (isTokenPickerOpened) {
+      setIsTokenPickerOpened(false);
     }
-  };
+  }, [isTokenPickerOpened, onFocus]);
+
+  const handleBlur = useCallback(() => {
+    setIsEditorFocused(false);
+    onBlur?.();
+  }, [onBlur]);
 
   const openTokenPicker = (mode: TokenPickerMode) => {
-    setIsInTokenPicker(true);
+    setIsTokenPickerOpened(true);
     setTokenPickerMode(mode);
   };
 
-  const id = useId('deiosnoin');
+  const id = useId('msla-described-by-message');
   return (
     <div style={{ width: '100%' }}>
       <LexicalComposer initialConfig={initialConfig}>
@@ -199,8 +196,7 @@ export const BaseEditor = ({
               hideTokenPickerOptions={tokenPickerButtonProps?.hideButtonOptions}
             />
           ) : null}
-          <OnBlur command={handleBlur} />
-          <OnFocus command={handleFocus} />
+          <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} />
           <ReadOnly readonly={readonly} />
           {tabbable ? null : <IgnoreTab />}
           {tokens ? <InsertTokenNode /> : null}
@@ -208,10 +204,12 @@ export const BaseEditor = ({
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {toolbar && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
           {children}
-          {tokens && isInTokenPicker ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsInTokenPicker) : null}
+          {tokens && isTokenPickerOpened
+            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsTokenPickerOpened)
+            : null}
         </div>
 
-        {tokens && isEditorFocused && !isInTokenPicker ? (
+        {tokens && isEditorFocused && !isTokenPickerOpened ? (
           createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
         ) : (
           <div />

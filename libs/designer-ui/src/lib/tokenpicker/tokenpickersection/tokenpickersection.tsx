@@ -10,33 +10,33 @@ import type { editor } from 'monaco-editor';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 
-interface TokenPickerSectionProps {
+export interface TokenPickerBaseProps {
   selectedKey: TokenPickerMode;
-  tokenGroup: TokenGroup[];
-  expressionGroup: TokenGroup[];
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
-  fullScreen: boolean;
-  noDynamicContent: boolean;
-  expressionEditorCurrentHeight: number;
+  closeTokenPicker: () => void;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   getValueSegmentFromToken: GetValueSegmentHandler;
   tokenClickedCallback?: (token: ValueSegment) => void;
 }
+interface TokenPickerSectionProps extends TokenPickerBaseProps {
+  tokenGroup: TokenGroup[];
+  expressionGroup: TokenGroup[];
+  fullScreen: boolean;
+  noDynamicContent: boolean;
+  expressionEditorCurrentHeight: number;
+}
+
 export const TokenPickerSection = ({
   selectedKey,
   tokenGroup,
   expressionGroup,
   searchQuery,
-  expressionEditorRef,
-  expression,
   fullScreen,
   noDynamicContent,
   expressionEditorCurrentHeight,
-  setExpression,
-  getValueSegmentFromToken,
-  tokenClickedCallback,
+  ...tokenPickerBaseProps
 }: TokenPickerSectionProps): JSX.Element => {
   const [dynamicTokenLength, setDynamicTokenLength] = useState(new Array<number>(tokenGroup.length));
   const [expressionTokenLength, setExpressionTokenLength] = useState(new Array<number>(expressionGroup.length));
@@ -80,16 +80,12 @@ export const TokenPickerSection = ({
               return (
                 <div key={`token-picker-section-${i}`} className={'msla-token-picker-section'}>
                   <TokenPickerOptions
-                    selectedKey={selectedKey}
                     section={section}
-                    searchQuery={searchQuery}
                     index={i}
                     setTokenLength={selectedKey === TokenPickerMode.EXPRESSION ? setExpressionTokenLength : setDynamicTokenLength}
-                    expressionEditorRef={expressionEditorRef}
-                    expression={expression}
-                    setExpression={setExpression}
-                    getValueSegmentFromToken={getValueSegmentFromToken}
-                    tokenClickedCallback={tokenClickedCallback}
+                    selectedKey={selectedKey}
+                    searchQuery={searchQuery}
+                    {...tokenPickerBaseProps}
                   />
                 </div>
               );
