@@ -67,8 +67,9 @@ class ExportEngine {
       this.setFinalStatus('InProgress');
       this.addStatus(localize('downloadPackage', 'Downloading package ...'));
       const flatFile = await axios.get(this.packageUrl, {
+        responseEncoding: 'binary',
         headers: {
-          'Content-Type': 'application/octet-stream',
+          'Content-Type': 'plain/text',
         },
       });
 
