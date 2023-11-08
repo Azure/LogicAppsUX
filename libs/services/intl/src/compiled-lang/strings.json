@@ -7477,6 +7477,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7961,12 +7967,6 @@
     {
       "type": 0,
       "value": "Required. The name of the property to remove."
-    }
-  ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
     }
   ],
   "nVDG00": [
