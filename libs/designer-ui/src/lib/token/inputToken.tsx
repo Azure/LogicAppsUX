@@ -7,7 +7,7 @@ import { Icon, css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
 import { mergeRegister } from '@lexical/utils';
-import { $getNodeByKey, CLICK_COMMAND, COMMAND_PRIORITY_LOW } from 'lexical';
+import { $getNodeByKey, CLICK_COMMAND, COMMAND_PRIORITY_NORMAL } from 'lexical';
 import type { NodeKey } from 'lexical';
 import { useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -52,7 +52,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
           return false;
         },
-        COMMAND_PRIORITY_LOW
+        COMMAND_PRIORITY_NORMAL
       )
     );
     return () => {
@@ -117,7 +117,10 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
     <div
       className={css('msla-token msla-input-token', isSelected && 'selected')}
       data-automation-id={`msla-token msla-input-token-${title}`}
-      onClick={handleTokenClicked}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleTokenClicked();
+      }}
       style={tokenStyle}
       ref={tokenRef}
     >
