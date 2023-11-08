@@ -69,18 +69,17 @@ export function TokenPickerHeader({
     editor?.focus();
     closeTokenPicker?.();
   };
+
   return (
     <div className="msla-token-picker-header">
       <div className="msla-token-picker-header-close" data-automation-id="msla-token-picker-header-close">
-        {closeTokenPicker ? (
-          <IconButton
-            iconProps={{ iconName: 'Cancel' }}
-            title={closeMessage}
-            ariaLabel={closeMessage}
-            onClick={handleCloseTokenPicker}
-            styles={buttonStyles}
-          />
-        ) : null}
+        <IconButton
+          iconProps={{ iconName: 'Cancel' }}
+          title={closeMessage}
+          ariaLabel={closeMessage}
+          onClick={handleCloseTokenPicker}
+          styles={buttonStyles}
+        />
       </div>
       <div className="msla-token-picker-header-expand" data-automation-id="msla-token-picker-header-expand">
         <IconButton

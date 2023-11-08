@@ -47,6 +47,12 @@
       "value": "Wyzwalacz"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1417,12 +1423,6 @@
       "value": "Weryfikacja schematu"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Konfiguruj"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "Edytuj ten przepływ, aby"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Przegląd"
     }
   ],
   "8U0KPg": [
@@ -2499,6 +2493,12 @@
       "value": "” ma dane wejściowe o niezgodnym typie"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3119,12 +3119,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Uniwersalny czas koordynowany-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Widok globalny"
     }
   ],
   "IA+Ogm": [
@@ -6511,12 +6505,6 @@
       "value": "Aktualizuj"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Generuj"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -7789,12 +7777,6 @@
     {
       "type": 0,
       "value": "Funkcje"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Powrót"
     }
   ],
   "lX30/R": [
@@ -9693,6 +9675,12 @@
       "value": "(UTC-09:30) Markizy"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9951,6 +9939,12 @@
     {
       "type": 0,
       "value": "Nie lubię"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [
