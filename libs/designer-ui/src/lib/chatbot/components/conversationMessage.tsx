@@ -58,6 +58,7 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         disabled={false} //TODO: add isBlockingOperationInProgress}
         additionalFooterActions={hideFooter ? [] : azureButtonCallback ? [azureCopilotButton] : []}
         hideFooter={hideFooter}
+        text={text}
       >
         <Markdown>{text}</Markdown>
       </ChatBubble>
