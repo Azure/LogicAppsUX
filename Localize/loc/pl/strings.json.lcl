@@ -630,15 +630,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";11xHiv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Workflow Assistant]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Asystent przepływu pracy]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";14lYtE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[18]]></Val>
@@ -869,6 +860,15 @@
           <Val><![CDATA[Select a file to upload]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wybierz plik do przekazania]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";2Gh+Gd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Workflow assistant]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Asystent przepływu pracy]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4671,15 +4671,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";KWtjOc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Welcome to Logic Apps Workflow Assistant!]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Asystent przepływu pracy Logic Apps — Zapraszamy!]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";KX1poC#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[# Cases]]></Val>
@@ -4874,15 +4865,6 @@
           <Val><![CDATA[See More]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Zobacz więcej]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";LM1O0e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[This workflow assistant can help you learn about your workflows and Azure Logic Apps platform’s capabilities and connectors.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ten asystent przepływu pracy może pomóc w poznaniu przepływów pracy oraz możliwości i łączników platformy Azure Logic Apps.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6768,6 +6750,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";TvPOXI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Here's your flow.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Twfck/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The number to multiply Multiplicand 1 with.]]></Val>
@@ -6971,15 +6959,6 @@
           <Val><![CDATA[Required. The length of each chunk.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wymagane. Długość każdego fragmentu.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";UlyCAo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[The workflow assistant is designed only to provide help and doesn’t support workflow creation or editing.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Asystent przepływu pracy jest przeznaczony tylko do zapewniania pomocy i nie obsługuje tworzenia ani edytowania przepływu pracy.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8082,6 +8061,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Z8tBFS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The workflow assistant is designed only to provide help and doesn't support workflow creation or editing.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Z9PWl/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Retry Policy count is invalid (Must be from {min} to {max})]]></Val>
@@ -8150,15 +8135,6 @@
           <Val><![CDATA[Shorthand for trigger().outputs.body]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Skrót dla trigger().outputs.body]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ZXoHXd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Here’s your flow.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Oto Twój przepływ.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8901,6 +8877,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";dfKsgg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, I couldn't understand your request. Please rephrase it and try again.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";dfNjw1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Close]]></Val>
@@ -9051,6 +9033,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wymagane. Nazwa zmiennej z żądanymi wartościami.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";eO1h/h" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -10809,15 +10797,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";mRBHC6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Ask a question about this workflow or about Logic Apps as a whole]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zadaj pytanie dotyczące tego przepływu pracy lub samej usługi Logic Apps]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";mYQFtf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.]]></Val>
@@ -11067,6 +11046,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wymagane. Nazwa właściwości do usunięcia.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";nUxMK9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ask a question about this workflow or about Azure Logic Apps as a whole]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11534,6 +11519,15 @@
           <Val><![CDATA[Triggers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wyzwalacze]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";pl+hNy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Welcome to workflow assistant!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Witamy w asystencie przepływu pracy!]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12011,15 +12005,6 @@
           <Val><![CDATA[Is successful]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[zakończone powodzeniem]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";rn5IsW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Sorry, I couldn’t understand your request. Please rephrase it and try again.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Niestety, nie udało mi się zrozumieć Twojego żądania. Sformułuj je jeszcze raz i spróbuj ponownie.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
