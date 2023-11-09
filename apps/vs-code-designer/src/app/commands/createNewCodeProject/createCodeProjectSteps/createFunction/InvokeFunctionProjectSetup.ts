@@ -19,6 +19,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     // Set the methodName and namespaceName properties from the context wizard
     const methodName = context.methodName;
     const namespace = context.namespaceName;
+    const targetFramework = context.targetFramework;
 
     // Define the functions folder path using the context property of the wizard
     const functionFolderPath = context.functionFolderPath;
@@ -27,7 +28,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     await this.createCsFile(functionFolderPath, methodName, namespace);
 
     // Create the .csproj file inside the functions folder
-    await this.createCsprojFile(functionFolderPath, methodName);
+    await this.createCsprojFile(functionFolderPath, methodName, targetFramework);
 
     // Generate the Visual Studio Code configuration files in the specified folder.
     const createConfigFiles = new FunctionConfigFile();
@@ -64,12 +65,12 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    * @param functionFolderPath The path to the folder where the .csproj file will be created.
    * @param methodName The name of the Azure Function.
    */
-  private async createCsprojFile(functionFolderPath: string, methodName: string): Promise<void> {
+  private async createCsprojFile(functionFolderPath: string, methodName: string, targetFramework: string): Promise<void> {
     const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', 'FunctionsProj');
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
-    const csprojFileContent = templateContent.replace(/<%= methodName %>/g, methodName);
+    const csprojFileContent = templateContent.replace(/<%= methodName %>/g, methodName).replace(/<%= targetFramework %>/g, targetFramework);
     await fs.writeFile(csprojFilePath, csprojFileContent);
   }
 }

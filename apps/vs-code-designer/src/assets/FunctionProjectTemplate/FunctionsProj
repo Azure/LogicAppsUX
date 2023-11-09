@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework><%= targetFramework %></TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <OutputType>Library</OutputType>
     <PlatformTarget>x64</PlatformTarget>
@@ -14,8 +14,8 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.33" />
     <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Sdk" Version="1.0.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
-         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
-          <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+          <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
   </ItemGroup>
 
 <Target Name="Task" AfterTargets="Compile">
@@ -27,16 +27,16 @@
  
   <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
     <ItemGroup>
-        <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\*.*" />
-      <CopyFiles2 Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\*.*" />
+        <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\<%= targetFramework %>\**\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\bin\$(Configuration)\<%= targetFramework %>\*.*" />
+      <CopyFiles2 Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\<%= targetFramework %>\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\%(RecursiveDir)" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(CopyFiles2)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\net472\" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(CopyFiles2)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\<%= targetFramework %>\" SkipUnchangedFiles="true" />
     <ItemGroup>
         <MoveFiles Include="..\$(LogicAppFolder)\lib\custom\bin\*.*" />
     </ItemGroup>
 
-   <Move SourceFiles="@(MoveFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\net472" />
+   <Move SourceFiles="@(MoveFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\<%= targetFramework %>" />
     <ItemGroup>
        <DirsToClean Include="..\$(LogicAppFolder)\lib\custom\bin" />
      </ItemGroup>
@@ -47,6 +47,6 @@
       <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="bin\$(Configuration)\net472\" />
+    <Folder Include="bin\$(Configuration)\<%= targetFramework %>\" />
   </ItemGroup>
 </Project>

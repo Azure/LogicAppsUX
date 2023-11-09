@@ -2,7 +2,7 @@ import type { IWorkerRuntime } from './cliFeed';
 import type { FuncVersion } from './functions';
 import type { IParsedHostJson } from './host';
 import type { ProjectLanguage } from './language';
-import type { WorkflowProjectType } from './workflow';
+import type { TargetFramework, WorkflowProjectType } from './workflow';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Uri, WorkspaceFolder } from 'vscode';
 
@@ -61,7 +61,7 @@ export interface IProjectWizardContext extends IActionContext {
   workflowProjectType?: WorkflowProjectType;
   generateFromOpenAPI?: boolean;
   openApiSpecificationFile?: Uri[];
-  targetFramework?: string | string[];
+  targetFramework?: TargetFramework;
 }
 
 export enum OpenBehavior {

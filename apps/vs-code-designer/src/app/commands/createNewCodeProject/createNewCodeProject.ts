@@ -12,6 +12,7 @@ import { FolderListStep } from '../createNewProject/createProjectSteps/FolderLis
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
 import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
 import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
+import { TargetFrameworkStep } from './createCodeProjectSteps/createFunction/TargetFrameworkStep';
 import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
 import { setNamespace } from './createCodeProjectSteps/createFunction/setNamepSpace';
 import { isString } from '@microsoft/utils-logic-apps';
@@ -73,6 +74,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
+      new TargetFrameworkStep(),
       new setMethodName(),
       new setNamespace(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),

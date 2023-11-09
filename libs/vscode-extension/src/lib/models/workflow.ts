@@ -78,6 +78,11 @@ export enum WorkflowProjectType {
   Functions = 'Functions',
 }
 
+export enum TargetFramework {
+  NetFx = 'net472',
+  Net6 = 'net6.0',
+}
+
 export interface ISettingToAdd {
   key: string;
   value: string | boolean | Record<string, any>;
