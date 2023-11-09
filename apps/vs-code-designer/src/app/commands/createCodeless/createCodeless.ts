@@ -32,7 +32,7 @@ export async function createCodeless(
   workspacePath = isString(workspacePath) ? workspacePath : undefined;
   if (workspacePath === undefined) {
     workspaceFolder = await getWorkspaceFolder(context);
-    workspacePath = workspaceFolder.uri.fsPath;
+    workspacePath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
   } else {
     workspaceFolder = getContainingWorkspace(workspacePath);
   }
