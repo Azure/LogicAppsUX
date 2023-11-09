@@ -26,7 +26,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
@@ -139,18 +139,23 @@ export const BaseEditor = ({
       }),
   };
 
-  const handleFocus = useCallback(() => {
-    setIsEditorFocused(true);
+  const handleFocus = () => {
     onFocus?.();
+    setIsEditorFocused(true);
+  };
+
+  const handleBlur = () => {
+    if (!isTokenPickerOpened) {
+      onBlur?.();
+    }
+    setIsEditorFocused(false);
+  };
+
+  const handleClick = () => {
     if (isTokenPickerOpened) {
       setIsTokenPickerOpened(false);
     }
-  }, [isTokenPickerOpened, onFocus]);
-
-  const handleBlur = useCallback(() => {
-    setIsEditorFocused(false);
-    onBlur?.();
-  }, [onBlur]);
+  };
 
   const openTokenPicker = (mode: TokenPickerMode) => {
     setIsTokenPickerOpened(true);
@@ -196,7 +201,7 @@ export const BaseEditor = ({
               hideTokenPickerOptions={tokenPickerButtonProps?.hideButtonOptions}
             />
           ) : null}
-          <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} />
+          <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} onClick={handleClick} />
           <ReadOnly readonly={readonly} />
           {tabbable ? null : <IgnoreTab />}
           {tokens ? <InsertTokenNode /> : null}
