@@ -3,6 +3,7 @@ import { animations } from './animations';
 import { ThumbsReactionButton } from './thumbsReactionButton';
 import { ActionButton, IconButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
+import { useConst } from '@fluentui/react-hooks';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -23,7 +24,7 @@ type ChatBubbleProps = {
   selectedReaction?: ChatEntryReaction;
   onThumbsReactionClicked?: (reaction: ChatEntryReaction) => void;
   disabled?: boolean;
-  text?: string;
+  textRef?: React.RefObject<HTMLDivElement>;
 };
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
@@ -37,8 +38,15 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   onThumbsReactionClicked,
   disabled,
   isEmphasized,
-  text,
+  textRef,
 }) => {
+  const copyDisabled = useConst(() => {
+    try {
+      return !document.queryCommandSupported('Copy');
+    } catch {
+      return true;
+    }
+  });
   const intl = useIntl();
   const { isInverted } = useTheme();
   const intlText = {
@@ -51,6 +59,17 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       description: 'Chatbot copy button title',
     }),
   };
+
+  const handleCopy = () => {
+    if (textRef?.current) {
+      const range = document.createRange();
+      range.selectNode(textRef.current);
+      window.getSelection()?.removeAllRanges();
+      window.getSelection()?.addRange(range);
+      document.execCommand('Copy');
+    }
+  };
+
   return (
     <div
       className={css(
@@ -76,14 +95,13 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           <div className={'msla-chat-bubble-footer'}>
             <div className={'msla-bubble-footer-disclaimer'}>{intlText.aIGeneratedDisclaimer}</div>
             <div className={'msla-bubble-reactions'}>
-              {text && (
+              {textRef && (
                 <IconButton
                   className={'msla-copy-button'}
                   title={intlText.copyText}
                   iconProps={{ iconName: 'Copy' }}
-                  onClick={() => {
-                    navigator.clipboard.writeText(text);
-                  }}
+                  onClick={handleCopy}
+                  disabled={copyDisabled}
                 />
               )}
               {onThumbsReactionClicked && (
