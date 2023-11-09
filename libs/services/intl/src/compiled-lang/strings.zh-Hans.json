@@ -598,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "工作流助手"
     }
   ],
   "2JA3gY": [
@@ -3768,6 +3768,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00)赫尔辛基，基辅，里加，索非亚，塔林，维尔纽斯"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
     }
   ],
   "NE54Uu": [
@@ -7458,6 +7464,12 @@
       "value": "(UTC+04:00)阿尔扎比，马斯喀特"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7937,12 +7949,6 @@
       "value": "必填。要删除的属性名称。"
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8274,7 +8280,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "欢迎使用工作流助手!"
     }
   ],
   "pozypE": [

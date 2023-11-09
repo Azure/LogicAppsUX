@@ -3750,6 +3750,12 @@
       "value": "(UTC+02:00) ヘルシンキ、キエフ、リガ、ソフィア、タリン、ビリニュス"
     }
   ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
+    }
+  ],
   "NE54Uu": [
     {
       "type": 0,
@@ -7394,6 +7400,12 @@
       "value": "(UTC+04:00) アブダビ、マスカット"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7859,12 +7871,6 @@
     {
       "type": 0,
       "value": "必須。削除するプロパティの名前。"
-    }
-  ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
     }
   ],
   "nVDG00": [

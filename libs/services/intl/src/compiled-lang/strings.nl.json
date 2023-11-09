@@ -598,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Werkstroomassistent"
     }
   ],
   "2JA3gY": [
@@ -3797,6 +3797,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
     }
   ],
   "NE54Uu": [
@@ -7473,6 +7479,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7959,12 +7971,6 @@
       "value": "Vereist. De naam van de eigenschap die moet worden verwijderd."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8288,7 +8294,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "Welkom bij de werkstroomassistent."
     }
   ],
   "pozypE": [

@@ -598,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "İş akışı yardımcısı"
     }
   ],
   "2JA3gY": [
@@ -3781,6 +3781,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
     }
   ],
   "NE54Uu": [
@@ -7453,6 +7459,12 @@
       "value": "(UTC+04:00) Abu Dabi, Muskat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7939,12 +7951,6 @@
       "value": "Gerekli. Kaldırılacak özelliğin adı."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8268,7 +8274,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "İş akışı yardımcısına hoş geldiniz!"
     }
   ],
   "pozypE": [

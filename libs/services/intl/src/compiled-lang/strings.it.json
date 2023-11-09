@@ -3812,6 +3812,12 @@
       "value": "(UTC + 2.00 h) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
+    }
+  ],
   "NE54Uu": [
     {
       "type": 0,
@@ -7520,6 +7526,12 @@
       "value": "(UTC + 4.00 h) Abu Dhabi, Mascate"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -8011,12 +8023,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della proprietà da rimuovere."
-    }
-  ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
     }
   ],
   "nVDG00": [
