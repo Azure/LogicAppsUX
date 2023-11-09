@@ -1,4 +1,14 @@
 # Logic Apps Designer
+### [2.83.1](https://github.com/Azure/LogicAppsUX/compare/v2.83.0...v2.83.1) (2023-11-09)
+
+
+### Bug Fixes
+
+* **copilot:** Adding ellipses to placeholder text ([#3648](https://github.com/Azure/LogicAppsUX/issues/3648)) ([c142514](https://github.com/Azure/LogicAppsUX/commit/c142514492745123090c1a5babb4c66f5bbd7357))
+* **Data Mapper:** Added Binary Depencency Call & Fixed Build Error from Lodash ([#3649](https://github.com/Azure/LogicAppsUX/issues/3649)) ([dc305cd](https://github.com/Azure/LogicAppsUX/commit/dc305cd5c9c5c2d746aa210142f49c0f7d79ef9d))
+* **designer:** Fixed an issue where when selecting an expression token opens tokenpicker ([#3650](https://github.com/Azure/LogicAppsUX/issues/3650)) ([549515f](https://github.com/Azure/LogicAppsUX/commit/549515fa26ffcdcfec148a6163490fae0f96bd9b))
+* **designer:** Update dependencies and use axios instead of request-p ([#3645](https://github.com/Azure/LogicAppsUX/issues/3645)) ([c3b65a0](https://github.com/Azure/LogicAppsUX/commit/c3b65a059d65b4b94fadee2b2627acebc60bcd5f))
+
 ## [2.83.0](https://github.com/Azure/LogicAppsUX/compare/v2.82.0...v2.83.0) (2023-11-08)
 
 
