@@ -3800,6 +3800,12 @@
       "value": "(UTC+02:00) Helsinque, Kiev, Riga, Sófia, Tallinn, Vilnius"
     }
   ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
+    }
+  ],
   "NE54Uu": [
     {
       "type": 0,
@@ -4858,7 +4864,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Aqui está seu fluxo."
     }
   ],
   "Twfck/": [
@@ -5878,7 +5884,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "O assistente de fluxo de trabalho foi projetado apenas para fornecer ajuda e não dá suporte à criação ou edição de fluxos de trabalho."
     }
   ],
   "Z9PWl/": [
@@ -6446,7 +6452,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Desculpe, não entendi sua solicitação. Reformule e tente novamente."
     }
   ],
   "dfNjw1": [
@@ -6554,7 +6560,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Esse assistente pode ajudar você a aprender sobre seus fluxos de trabalho e as funcionalidades e conectores da plataforma Aplicativos Lógicos do Azure."
     }
   ],
   "eRvRWs": [
@@ -7504,6 +7510,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Mascate"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7999,12 +8011,6 @@
     {
       "type": 0,
       "value": "Necessário. O nome da propriedade a ser removida."
-    }
-  ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
     }
   ],
   "nVDG00": [

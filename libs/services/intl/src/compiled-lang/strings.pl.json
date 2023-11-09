@@ -598,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Asystent przepływu pracy"
     }
   ],
   "2JA3gY": [
@@ -3867,6 +3867,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kijów, Ryga, Sofia, Tallin, Wilno"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
     }
   ],
   "NE54Uu": [
@@ -7599,6 +7605,12 @@
       "value": "(UTC+04:00) Abu Zabi, Maskat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -8123,12 +8135,6 @@
       "value": "Wymagane. Nazwa właściwości do usunięcia."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8452,7 +8458,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "Witamy w asystencie przepływu pracy!"
     }
   ],
   "pozypE": [
