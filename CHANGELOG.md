@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.81.3](https://github.com/Azure/LogicAppsUX/compare/v2.81.2...v2.81.3) (2023-11-09)
+
+
+### Bug Fixes
+
+* **vscode:** Fixes for ignite vsix ([#3653](https://github.com/Azure/LogicAppsUX/issues/3653)) ([bd9eed9](https://github.com/Azure/LogicAppsUX/commit/bd9eed952180868a31ee3e1af0c8541cc4724f18)), closes [#3618](https://github.com/Azure/LogicAppsUX/issues/3618) [#3646](https://github.com/Azure/LogicAppsUX/issues/3646) [#3649](https://github.com/Azure/LogicAppsUX/issues/3649)
+* **vscode:** Hotfix for ignite ([#3661](https://github.com/Azure/LogicAppsUX/issues/3661)) ([ebe05eb](https://github.com/Azure/LogicAppsUX/commit/ebe05eb714462f938e1d9625df54e0b0fad8ee82)), closes [#3601](https://github.com/Azure/LogicAppsUX/issues/3601) [#3651](https://github.com/Azure/LogicAppsUX/issues/3651) [#3658](https://github.com/Azure/LogicAppsUX/issues/3658)
+
 ### [2.81.2](https://github.com/Azure/LogicAppsUX/compare/v2.81.1...v2.81.2) (2023-11-06)
 
 
