@@ -1,4 +1,4 @@
-import LogicApps from '../images/LogicApps.svg';
+import Workflow from '../images/Workflow.svg';
 import { FontSizes, Link } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
@@ -36,7 +36,7 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
   return (
     <div className={'msla-chatbot-header'}>
       <div className={'msla-chatbot-header-icon'}>
-        <img src={LogicApps} alt="Logic Apps" />
+        <img src={Workflow} alt="Logic Apps" />
       </div>
       <div className={'msla-chatbot-header-title-container'}>
         <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
