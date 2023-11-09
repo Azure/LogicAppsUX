@@ -602,7 +602,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Arbetsflödesassistenten"
     }
   ],
   "2JA3gY": [
@@ -3799,6 +3799,12 @@
       "value": "(UTC+02:00) Helsingfors, Kyiv, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
+    }
+  ],
   "NE54Uu": [
     {
       "type": 0,
@@ -4838,7 +4844,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Här är ditt flöde."
     }
   ],
   "Twfck/": [
@@ -5854,7 +5860,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "Arbetsflödesassistenten är endast utformad som hjälp och kan inte användas för att skapa eller redigera arbetsflöden."
     }
   ],
   "Z9PWl/": [
@@ -6422,7 +6428,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Jag förstod tyvärr inte din fråga. Formulera om den och försök igen."
     }
   ],
   "dfNjw1": [
@@ -6530,7 +6536,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Den här assistenten kan hjälpa dig att lära dig mer om dina arbetsflöden och Azure Logic Apps-plattformens funktioner och anslutningsprogram."
     }
   ],
   "eRvRWs": [
@@ -7465,6 +7471,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muskat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7951,12 +7963,6 @@
       "value": "Obligatoriskt. Namnet på den egenskap som ska tas bort."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8280,7 +8286,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "Välkommen till arbetsflödesassistenten!"
     }
   ],
   "pozypE": [

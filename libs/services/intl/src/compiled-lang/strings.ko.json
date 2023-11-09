@@ -598,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "워크플로 도우미"
     }
   ],
   "2JA3gY": [
@@ -3742,6 +3742,12 @@
       "value": "(UTC+02:00) 헬싱키, 키예프, 리가, 소피아, 탈린, 빌뉴스"
     }
   ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
+    }
+  ],
   "NE54Uu": [
     {
       "type": 0,
@@ -4786,7 +4792,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "흐름은 다음과 같습니다."
     }
   ],
   "Twfck/": [
@@ -5802,7 +5808,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "워크플로 도우미는 도움말만 제공하도록 설계되었으며 워크플로 만들기 또는 편집은 지원하지 않습니다."
     }
   ],
   "Z9PWl/": [
@@ -6366,7 +6372,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "죄송합니다. 요청을 이해할 수 없습니다. 문구를 바꾸고 다시 시도하세요."
     }
   ],
   "dfNjw1": [
@@ -6474,7 +6480,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "이 도우미를 사용하면 워크플로와 Azure Logic Apps 플랫폼의 기능과 커넥터에 대해 알아볼 수 있습니다."
     }
   ],
   "eRvRWs": [
@@ -7390,6 +7396,12 @@
       "value": "(UTC+04:00) 아부다비, 무스카트"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7857,12 +7869,6 @@
       "value": "필수 항목으로, 제거할 속성의 이름입니다."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8186,7 +8192,7 @@
   "pl+hNy": [
     {
       "type": 0,
-      "value": "Welcome to workflow assistant!"
+      "value": "워크플로 도우미를 시작합니다."
     }
   ],
   "pozypE": [
