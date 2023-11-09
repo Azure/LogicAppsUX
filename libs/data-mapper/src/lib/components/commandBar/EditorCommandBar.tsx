@@ -3,15 +3,16 @@ import { closeModal, openDiscardWarningModal, WarningModalState } from '../../co
 import { openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { makeStyles, shorthands, Toolbar, ToolbarButton, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
+import { makeStyles, shorthands, ToggleButton, Toolbar, ToolbarButton, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
 import {
   ArrowRedo20Regular,
   ArrowUndo20Regular,
   Dismiss20Regular,
   Globe20Regular,
-  OrganizationHorizontal20Regular,
+  Organization20Regular,
   Play20Regular,
   Save20Regular,
+  ArrowExportLtr20Regular,
   Settings20Regular,
 } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -23,8 +24,6 @@ export interface EditorCommandBarProps {
   onUndoClick: () => void;
   onRedoClick: () => void;
   onTestClick: () => void;
-  showMapOverview: boolean;
-  setShowMapOverview: (showMapOverview: boolean) => void;
   showGlobalView: boolean;
   setShowGlobalView: (showGlobalView: boolean) => void;
   onGenerateClick: () => void;
@@ -38,6 +37,15 @@ const useStyles = makeStyles({
     ...shorthands.padding('5px', '0px'),
     minWidth: '80px',
   },
+  toggleButton: {
+    ...shorthands.border('0'),
+    ...shorthands.borderStyle('none'),
+    backgroundColor: 'transparent',
+  },
+  toggleButtonSelected: {
+    ...shorthands.border('0'),
+    ...shorthands.borderStyle('none'),
+  },
   divider: {
     maxHeight: '25px',
     marginTop: '4px',
@@ -48,17 +56,7 @@ const useStyles = makeStyles({
 });
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const {
-    onSaveClick,
-    onUndoClick,
-    onRedoClick,
-    onTestClick,
-    showMapOverview,
-    setShowMapOverview,
-    showGlobalView,
-    setShowGlobalView,
-    onGenerateClick,
-  } = props;
+  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showGlobalView, setShowGlobalView, onGenerateClick } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -95,8 +93,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         description: 'Button text for save the changes',
       }),
       GENERATE: intl.formatMessage({
-        defaultMessage: 'Generate',
-        description: 'Button text for generate the map',
+        defaultMessage: 'Generate XSLT',
+        description: 'Button text for generate the map xslt',
       }),
       UNDO: intl.formatMessage({
         defaultMessage: 'Undo',
@@ -122,9 +120,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Test',
         description: 'Button text for running test',
       }),
-      CONFIGURATION: intl.formatMessage({
-        defaultMessage: 'Configure',
-        description: 'Button text for opening the configuration',
+      SETTINGS: intl.formatMessage({
+        defaultMessage: 'Settings',
+        description: 'Button text for opening the settings',
       }),
       TOUR_TUTORIAL: intl.formatMessage({
         defaultMessage: 'Tour',
@@ -142,17 +140,13 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Publish',
         description: 'Button text for publish',
       }),
-      MAP_OVERVIEW: intl.formatMessage({
-        defaultMessage: 'Overview',
-        description: 'Button text for overview',
-      }),
       GLOBAL_VIEW: intl.formatMessage({
-        defaultMessage: 'Global view',
+        defaultMessage: 'Overview',
         description: 'Button text for whole overview',
       }),
-      RETURN: intl.formatMessage({
-        defaultMessage: 'Return',
-        description: 'Button text for returning to the canvas',
+      CANVAS: intl.formatMessage({
+        defaultMessage: 'Canvas',
+        description: 'Button text for showing the canvas view',
       }),
       DIVIDER: intl.formatMessage({
         defaultMessage: 'Divider',
@@ -177,6 +171,18 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         >
           {Resources.SAVE}
         </ToolbarButton>
+        <ToolbarButton
+          aria-label={Resources.GENERATE}
+          icon={<ArrowExportLtr20Regular />}
+          disabled={!bothSchemasDefined}
+          onClick={onGenerateClick}
+        >
+          {Resources.GENERATE}
+        </ToolbarButton>
+        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
+          {Resources.RUN_TEST}
+        </ToolbarButton>
+        <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={onUndoClick}>
           {Resources.UNDO}
         </ToolbarButton>
@@ -192,34 +198,33 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
           {Resources.DISCARD}
         </ToolbarButton>
         <ToolbarDivider className={toolbarStyles.divider} />
-        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
-          {Resources.RUN_TEST}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={showMapOverview ? Resources.RETURN : Resources.MAP_OVERVIEW}
-          icon={<OrganizationHorizontal20Regular />}
+        <ToggleButton
+          className={showGlobalView ? toolbarStyles.toggleButton : toolbarStyles.toggleButtonSelected}
+          aria-label={Resources.CANVAS}
+          icon={<Organization20Regular />}
           disabled={!bothSchemasDefined}
           onClick={() => {
-            setShowMapOverview(!showMapOverview);
             setShowGlobalView(false);
           }}
+          checked={!showGlobalView}
         >
-          {showMapOverview ? Resources.RETURN : Resources.MAP_OVERVIEW}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={showGlobalView ? Resources.RETURN : Resources.GLOBAL_VIEW}
+          {Resources.CANVAS}
+        </ToggleButton>
+        <ToggleButton
+          className={showGlobalView ? toolbarStyles.toggleButtonSelected : toolbarStyles.toggleButton}
+          aria-label={Resources.GLOBAL_VIEW}
           icon={<Globe20Regular />}
           disabled={!bothSchemasDefined}
           onClick={() => {
-            setShowMapOverview(false);
-            setShowGlobalView(!showGlobalView);
+            setShowGlobalView(true);
           }}
+          checked={showGlobalView}
         >
-          {showGlobalView ? Resources.RETURN : Resources.GLOBAL_VIEW}
-        </ToolbarButton>
+          {Resources.GLOBAL_VIEW}
+        </ToggleButton>
         <ToolbarDivider className={toolbarStyles.divider} />
         <ToolbarButton
-          aria-label={Resources.CONFIGURATION}
+          aria-label={Resources.SETTINGS}
           icon={<Settings20Regular />}
           disabled={!bothSchemasDefined}
           onClick={() => {
@@ -230,12 +235,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
             });
           }}
         >
-          {Resources.CONFIGURATION}
-        </ToolbarButton>
-      </ToolbarGroup>
-      <ToolbarGroup style={{ marginRight: '40px' }}>
-        <ToolbarButton aria-label={Resources.GENERATE} appearance="primary" disabled={!bothSchemasDefined} onClick={onGenerateClick}>
-          {Resources.GENERATE}
+          {Resources.SETTINGS}
         </ToolbarButton>
       </ToolbarGroup>
     </Toolbar>
