@@ -1,10 +1,11 @@
 import { designerStartApi, hostFileContent, hostFileName, localSettingsFileName, workflowDesignTimeDir } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl, dataMapLoadTimeout, settingsFileContent } from './extensionConfig';
+import { extend } from '@microsoft/utils-logic-apps';
 import * as cp from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
-import merge from 'lodash.merge';
 import fetch from 'node-fetch';
 import * as os from 'os';
 import * as path from 'path';
@@ -45,7 +46,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
         await createJsonFile(runtimeWorkingDir, hostFileName, hostFileContent);
         await createJsonFile(runtimeWorkingDir, localSettingsFileName, modifiedSettingsFileContent);
 
-        startBackendRuntimeProcess(runtimeWorkingDir, 'func', 'host', 'start', '--port', `${ext.dataMapperRuntimePort}`);
+        startBackendRuntimeProcess(runtimeWorkingDir, getFunctionsCommand(), 'host', 'start', '--port', `${ext.dataMapperRuntimePort}`);
 
         await waitForBackendRuntimeStartUp(url, new Date().getTime());
       } else {
@@ -83,7 +84,7 @@ async function createJsonFile(
   else {
     const fileJson = JSON.parse(await fs.readFile(filePath.fsPath, 'utf-8'));
 
-    await fs.writeFile(filePath.fsPath, JSON.stringify(merge(fileJson, fileContent), null, 2), 'utf-8');
+    await fs.writeFile(filePath.fsPath, JSON.stringify(extend({}, fileJson, fileContent), null, 2), 'utf-8');
   }
 }
 
