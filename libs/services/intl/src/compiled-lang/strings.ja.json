@@ -50,7 +50,7 @@
   "+M72+a": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "概要"
     }
   ],
   "+Uvo/p": [
@@ -2455,7 +2455,7 @@
   "E7NzDN": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "設定"
     }
   ],
   "E8iqLl": [
@@ -4796,7 +4796,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "フローは次のとおりです。"
     }
   ],
   "Twfck/": [
@@ -5812,7 +5812,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "ワークフロー アシスタントは、専らヘルプを提供するために設計されており、ワークフローの作成または編集をサポートしていません。"
     }
   ],
   "Z9PWl/": [
@@ -6376,7 +6376,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "申し訳ございません。要求を解釈できませんでした。言い換えて、もう一度お試しください。"
     }
   ],
   "dfNjw1": [
@@ -6484,7 +6484,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "このアシスタントは、ワークフローと Azure Logic Apps プラットフォームの機能とコネクタについて学習するのに役立ちます。"
     }
   ],
   "eRvRWs": [
