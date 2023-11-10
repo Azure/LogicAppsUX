@@ -131,6 +131,22 @@ export const toHex = (value: string): string => {
   return '#000000';
 };
 
+export const lighten = (rgb: RGB, amount: number): RGB => {
+  const { red, green, blue } = rgb;
+
+  const lightenColor = (color: number): number => {
+    const diff = 255 - color;
+    const adjustBy = diff * amount;
+    return Math.round(color + adjustBy);
+  };
+
+  return {
+    blue: lightenColor(blue),
+    green: lightenColor(green),
+    red: lightenColor(red),
+  };
+};
+
 export const dropDownActiveClass = (active: boolean) => {
   if (active) return 'active msla-dropdown-item-active';
   else return '';

@@ -3,6 +3,7 @@ import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
+import { hex2rgb, lighten } from '../../html/plugins/toolbar/helper/util';
 import { convertUIElementNameToAutomationId } from '../../utils';
 import type { Token, TokenGroup } from '../models/token';
 import type { TokenPickerBaseProps } from './tokenpickersection';
@@ -159,11 +160,18 @@ export const TokenPickerOptions = ({
     return section?.tokens[0]?.brandColor ?? '#e8eae7';
   };
 
+  const sectionBrandColorRgb = hex2rgb(getSectionBrandColor());
+  const sectionHeaderColorRgb = lighten(sectionBrandColorRgb, 0.9);
+  const sectionHeaderColorCss = `rgb(${sectionHeaderColorRgb.red}, ${sectionHeaderColorRgb.green}, ${sectionHeaderColorRgb.blue})`;
+
   return (
     <>
       {(searchQuery && filteredTokens.length > 0) || !searchQuery ? (
         <>
-          <div className="msla-token-picker-section-header" style={{ backgroundColor: setOpacity(getSectionBrandColor(), 0.1) }}>
+          <div
+            className="msla-token-picker-section-header"
+            style={{ backgroundColor: sectionHeaderColorCss }}
+          >
             <img src={getSectionIcon()} alt="token icon" />
             {getSectionSecurity() ? (
               <div className="msla-token-picker-secure-token">
@@ -213,11 +221,7 @@ export const TokenPickerOptions = ({
     </>
   );
 };
+
 function hasAdvanced(tokens: OutputToken[]): boolean {
   return tokens.some((token) => token.isAdvanced);
 }
-
-const setOpacity = (hex: string, alpha: number) =>
-  `${hex}${Math.floor(alpha * 255)
-    .toString(16)
-    .padStart(2, '0')}`;
