@@ -140,7 +140,7 @@ export const TokenPickerOptions = ({
         title,
         icon,
         value,
-        data: { ...segment, value: value ?? segment.value },
+        data: segment,
       });
       closeTokenPicker();
     }

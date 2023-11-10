@@ -88,7 +88,7 @@ export function TokenPickerFooter({
   const insertOutputToken = async (outputToken: TokenGroupToken) => {
     const { brandColor, icon, title, description, value } = outputToken;
     const segment = await getValueSegmentFromToken(outputToken, false);
-    insertToken({ brandColor, description, title, icon, value, data: { ...segment, value: value ?? segment.value } });
+    insertToken({ brandColor, description, title, icon, value, data: segment });
   };
 
   const onUpdateOrAddClicked = () => {
