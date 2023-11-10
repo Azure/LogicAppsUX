@@ -77,7 +77,7 @@ export enum workflowType {
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
-export const workflowDesignerLoadTimeout = 300000;
+export const designerApiLoadTimeout = 300000;
 
 // Commands
 export enum extensionCommand {

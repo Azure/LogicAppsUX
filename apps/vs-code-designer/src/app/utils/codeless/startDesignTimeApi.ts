@@ -14,7 +14,7 @@ import {
   localSettingsFileName,
   logicAppKind,
   showStartDesignTimeMessageSetting,
-  workflowDesignerLoadTimeout,
+  designerApiLoadTimeout,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -128,8 +128,8 @@ async function createJsonFile(directory: Uri, fileName: string, fileContent: any
   }
 }
 
-async function waitForDesignTimeStartUp(url: string, initialTime: number): Promise<void> {
-  while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < workflowDesignerLoadTimeout) {
+export async function waitForDesignTimeStartUp(url: string, initialTime: number): Promise<void> {
+  while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < designerApiLoadTimeout) {
     await delay(2000);
   }
   if (await isDesignTimeUp(url)) {

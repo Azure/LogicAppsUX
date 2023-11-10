@@ -1,10 +1,9 @@
 import { designTimeDirectoryName, designerStartApi, hostFileContent, hostFileName, localSettingsFileName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getOrCreateDesignTimeDirectory, isDesignTimeUp } from '../../utils/codeless/startDesignTimeApi';
+import { getOrCreateDesignTimeDirectory, isDesignTimeUp, waitForDesignTimeStartUp } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
-import { backendRuntimeBaseUrl, dataMapLoadTimeout, settingsFileContent } from './extensionConfig';
-import { delay } from '@azure/ms-rest-js';
+import { backendRuntimeBaseUrl, settingsFileContent } from './extensionConfig';
 import { extend } from '@microsoft/utils-logic-apps';
 import * as cp from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
@@ -15,10 +14,6 @@ import { ProgressLocation, Uri, window } from 'vscode';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder
-
-// NOTE (9/12/2022): It's expected that user will already have the Logic Apps
-// (Standard) VS Code extension and that it will already automatically install
-// Azure Functions Core Tools (so no need to repeat here)
 
 export async function startBackendRuntime(projectPath: string): Promise<void> {
   const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
@@ -48,7 +43,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
 
         startBackendRuntimeProcess(designTimeDirectory.fsPath, getFunctionsCommand(), 'host', 'start', '--port', `${ext.designTimePort}`);
 
-        await waitForBackendRuntimeStartUp(url, new Date().getTime());
+        await waitForDesignTimeStartUp(url, new Date().getTime());
       } else {
         throw new Error("Workflow folder doesn't exist");
       }
@@ -77,18 +72,6 @@ async function createJsonFile(
     const fileJson = JSON.parse(await fs.readFile(filePath.fsPath, 'utf-8'));
 
     await fs.writeFile(filePath.fsPath, JSON.stringify(extend({}, fileJson, fileContent), null, 2), 'utf-8');
-  }
-}
-
-async function waitForBackendRuntimeStartUp(url: string, initialTime: number): Promise<void> {
-  while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < dataMapLoadTimeout) {
-    await delay(1000); // Re-poll every X ms
-  }
-
-  if (await isDesignTimeUp(url)) {
-    return Promise.resolve();
-  } else {
-    return Promise.reject();
   }
 }
 
