@@ -7,6 +7,7 @@ import {
   ProjectDirectoryPath,
   autoStartDesignTimeSetting,
   defaultVersionRange,
+  designTimeDirectoryName,
   designerStartApi,
   extensionBundleId,
   hostFileName,
@@ -46,7 +47,6 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
     actionContext.telemetry.properties.startDesignTimeApi = 'false';
 
-    const designTimeDirectoryName = 'workflow-designtime';
     const hostFileContent: any = {
       version: '2.0',
       extensionBundle: {
@@ -112,7 +112,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
   });
 }
 
-async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
+export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
   const directory: string = designTimeDirectory + path.sep;
   const designTimeDirectoryUri: Uri = Uri.file(path.join(projectRoot, directory));
   if (!fs.existsSync(designTimeDirectoryUri.fsPath)) {
@@ -139,7 +139,7 @@ async function waitForDesignTimeStartUp(url: string, initialTime: number): Promi
   }
 }
 
-async function isDesignTimeUp(url: string): Promise<boolean> {
+export async function isDesignTimeUp(url: string): Promise<boolean> {
   try {
     await axios.get(url);
     return Promise.resolve(true);
@@ -165,8 +165,9 @@ function startDesignTimeProcess(
   ext.designChildProcess = cp.spawn(command, args, options);
 
   if (outputChannel) {
-    outputChannel.appendLog(`charlis ${ext.designChildProcess.pid}`);
-    outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
+    outputChannel.appendLog(
+      localize('runningCommand', 'Running command: "{0} {1}" with pid: "{2}"...', command, formattedArgs, ext.designChildProcess.pid)
+    );
   }
 
   ext.designChildProcess.stdout.on('data', (data: string | Buffer) => {

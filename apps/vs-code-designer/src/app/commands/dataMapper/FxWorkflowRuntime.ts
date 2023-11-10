@@ -1,13 +1,13 @@
-import { designerStartApi, hostFileContent, hostFileName, localSettingsFileName, workflowDesignTimeDir } from '../../../constants';
+import { designTimeDirectoryName, designerStartApi, hostFileContent, hostFileName, localSettingsFileName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { getOrCreateDesignTimeDirectory, isDesignTimeUp } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl, dataMapLoadTimeout, settingsFileContent } from './extensionConfig';
 import { delay } from '@azure/ms-rest-js';
 import { extend } from '@microsoft/utils-logic-apps';
 import * as cp from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
-import fetch from 'node-fetch';
 import * as os from 'os';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
@@ -21,7 +21,7 @@ import { ProgressLocation, Uri, window } from 'vscode';
 // Azure Functions Core Tools (so no need to repeat here)
 
 export async function startBackendRuntime(projectPath: string): Promise<void> {
-  const runtimeWorkingDir = path.join(projectPath, workflowDesignTimeDir);
+  const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
 
   if (!ext.designTimePort) {
     ext.designTimePort = await portfinder.getPortPromise();
@@ -33,7 +33,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
 
-    if (await isBackendRuntimeUp(url)) {
+    if (await isDesignTimeUp(url)) {
       ext.log(localize('RuntimeAlreadyRunning', 'Backend runtime is already running'));
       return;
     }
@@ -42,12 +42,11 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
     modifiedSettingsFileContent.Values.ProjectDirectoryPath = projectPath;
 
     try {
-      if (runtimeWorkingDir) {
-        await createDesignTimeDirectory(runtimeWorkingDir);
-        await createJsonFile(runtimeWorkingDir, hostFileName, hostFileContent);
-        await createJsonFile(runtimeWorkingDir, localSettingsFileName, modifiedSettingsFileContent);
+      if (designTimeDirectory) {
+        await createJsonFile(designTimeDirectory.fsPath, hostFileName, hostFileContent);
+        await createJsonFile(designTimeDirectory.fsPath, localSettingsFileName, modifiedSettingsFileContent);
 
-        startBackendRuntimeProcess(runtimeWorkingDir, getFunctionsCommand(), 'host', 'start', '--port', `${ext.designTimePort}`);
+        startBackendRuntimeProcess(designTimeDirectory.fsPath, getFunctionsCommand(), 'host', 'start', '--port', `${ext.designTimePort}`);
 
         await waitForBackendRuntimeStartUp(url, new Date().getTime());
       } else {
@@ -60,14 +59,6 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
       ext.log(localize('RuntimeFailedToStart', `Backend runtime failed to start: "{0}"`, errMsg));
     }
   });
-}
-
-async function createDesignTimeDirectory(path: string): Promise<void> {
-  // Check if directory exists at path, and create it if it doesn't
-  if (!fileExists(path)) {
-    // Create directory
-    await fs.mkdir(path, { recursive: true });
-  }
 }
 
 async function createJsonFile(
@@ -90,41 +81,39 @@ async function createJsonFile(
 }
 
 async function waitForBackendRuntimeStartUp(url: string, initialTime: number): Promise<void> {
-  while (!(await isBackendRuntimeUp(url)) && new Date().getTime() - initialTime < dataMapLoadTimeout) {
+  while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < dataMapLoadTimeout) {
     await delay(1000); // Re-poll every X ms
   }
 
-  if (await isBackendRuntimeUp(url)) {
+  if (await isDesignTimeUp(url)) {
     return Promise.resolve();
   } else {
     return Promise.reject();
   }
 }
 
-async function isBackendRuntimeUp(url: string): Promise<boolean> {
-  try {
-    await fetch(url);
-    return Promise.resolve(true);
-  } catch (ex) {
-    return Promise.resolve(false);
-  }
-}
-
 function startBackendRuntimeProcess(workingDirectory: string | undefined, command: string, ...args: string[]): void {
   const formattedArgs: string = args.join(' ');
+  let cmdOutput = '';
+  let cmdOutputIncludingStderr = '';
   const options: cp.SpawnOptions = {
     cwd: workingDirectory || os.tmpdir(),
     shell: true,
   };
 
-  ext.log(localize('RunningCommand', `Running command: ""{0}" "{1}""...`, command, formattedArgs));
   ext.designChildProcess = cp.spawn(command, args, options);
+  ext.log(localize('runningCommand', 'Running command: "{0} {1}" with pid: "{2}"...', command, formattedArgs, ext.designChildProcess.pid));
 
-  ext.designChildProcess.stdout?.on('data', (data: string | Buffer) => {
+  ext.designChildProcess.stdout.on('data', (data: string | Buffer) => {
+    data = data.toString();
+    cmdOutput = cmdOutput.concat(data);
+    cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
     ext.outputChannel.append(data.toString());
   });
 
-  ext.designChildProcess.stderr?.on('data', (data: string | Buffer) => {
+  ext.designChildProcess.stderr.on('data', (data: string | Buffer) => {
+    data = data.toString();
+    cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
     ext.outputChannel.append(data.toString());
   });
 }

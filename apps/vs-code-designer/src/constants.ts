@@ -21,7 +21,7 @@ export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 
 // Folder names
-export const workflowDesignTimeDir = '/workflow-designtime';
+export const designTimeDirectoryName = 'workflow-designtime';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
