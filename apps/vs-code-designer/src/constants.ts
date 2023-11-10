@@ -139,6 +139,7 @@ export enum extensionCommand {
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
   validateAndInstallBinaries = 'azureLogicAppsStandard.validateAndInstallBinaries',
+  resetValidateAndInstallBinaries = 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
   azureAzuriteStart = 'azurite.start',
   loadDataMapFile = 'azureLogicAppsStandard.dataMap.loadDataMapFile',
   dataMapAddSchemaFromFile = 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
