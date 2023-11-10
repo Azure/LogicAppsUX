@@ -1,13 +1,16 @@
 import { designTimeDirectoryName, designerStartApi, hostFileContent, hostFileName, localSettingsFileName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getOrCreateDesignTimeDirectory, isDesignTimeUp, waitForDesignTimeStartUp } from '../../utils/codeless/startDesignTimeApi';
+import {
+  getOrCreateDesignTimeDirectory,
+  isDesignTimeUp,
+  startDesignTimeProcess,
+  waitForDesignTimeStartUp,
+} from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl, settingsFileContent } from './extensionConfig';
 import { extend } from '@microsoft/utils-logic-apps';
-import * as cp from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
-import * as os from 'os';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import { ProgressLocation, Uri, window } from 'vscode';
@@ -41,7 +44,9 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
         await createJsonFile(designTimeDirectory.fsPath, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory.fsPath, localSettingsFileName, modifiedSettingsFileContent);
 
-        startBackendRuntimeProcess(designTimeDirectory.fsPath, getFunctionsCommand(), 'host', 'start', '--port', `${ext.designTimePort}`);
+        const cwd: string = designTimeDirectory.fsPath;
+        const portArgs = `--port ${ext.designTimePort}`;
+        startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
 
         await waitForDesignTimeStartUp(url, new Date().getTime());
       } else {
@@ -73,30 +78,4 @@ async function createJsonFile(
 
     await fs.writeFile(filePath.fsPath, JSON.stringify(extend({}, fileJson, fileContent), null, 2), 'utf-8');
   }
-}
-
-function startBackendRuntimeProcess(workingDirectory: string | undefined, command: string, ...args: string[]): void {
-  const formattedArgs: string = args.join(' ');
-  let cmdOutput = '';
-  let cmdOutputIncludingStderr = '';
-  const options: cp.SpawnOptions = {
-    cwd: workingDirectory || os.tmpdir(),
-    shell: true,
-  };
-
-  ext.designChildProcess = cp.spawn(command, args, options);
-  ext.log(localize('runningCommand', 'Running command: "{0} {1}" with pid: "{2}"...', command, formattedArgs, ext.designChildProcess.pid));
-
-  ext.designChildProcess.stdout.on('data', (data: string | Buffer) => {
-    data = data.toString();
-    cmdOutput = cmdOutput.concat(data);
-    cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
-    ext.outputChannel.append(data.toString());
-  });
-
-  ext.designChildProcess.stderr.on('data', (data: string | Buffer) => {
-    data = data.toString();
-    cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
-    ext.outputChannel.append(data.toString());
-  });
 }

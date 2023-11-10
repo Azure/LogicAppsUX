@@ -148,7 +148,7 @@ export async function isDesignTimeUp(url: string): Promise<boolean> {
   }
 }
 
-function startDesignTimeProcess(
+export function startDesignTimeProcess(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   command: string,
@@ -157,11 +157,12 @@ function startDesignTimeProcess(
   let cmdOutput = '';
   let cmdOutputIncludingStderr = '';
   const formattedArgs: string = args.join(' ');
-  workingDirectory = workingDirectory || os.tmpdir();
+
   const options: cp.SpawnOptions = {
-    cwd: workingDirectory,
+    cwd: workingDirectory || os.tmpdir(),
     shell: true,
   };
+
   ext.designChildProcess = cp.spawn(command, args, options);
 
   if (outputChannel) {
