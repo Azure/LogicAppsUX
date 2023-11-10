@@ -3,6 +3,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl, dataMapLoadTimeout, settingsFileContent } from './extensionConfig';
+import { delay } from '@azure/ms-rest-js';
 import { extend } from '@microsoft/utils-logic-apps';
 import * as cp from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
@@ -100,12 +101,6 @@ async function waitForBackendRuntimeStartUp(url: string, initialTime: number): P
   }
 }
 
-/// there might be a commond
-
-async function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 async function isBackendRuntimeUp(url: string): Promise<boolean> {
   try {
     await fetch(url);
@@ -133,20 +128,3 @@ function startBackendRuntimeProcess(workingDirectory: string | undefined, comman
     ext.outputChannel.append(data.toString());
   });
 }
-
-// Note: Per node, child processes may not be killed - if this is an issue in the future, a workaround is needed
-// HOWEVER - killing the parent process (the VS Code instance?) kills the child process for sure
-export function stopDataMapperBackend(): void {
-  if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
-    return;
-  }
-
-  if (os.platform() === 'win32') {
-    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /T /F');
-  } else {
-    ext.designChildProcess.kill();
-  }
-  ext.designChildProcess = undefined;
-}
-
-/// there might be a commnd code
