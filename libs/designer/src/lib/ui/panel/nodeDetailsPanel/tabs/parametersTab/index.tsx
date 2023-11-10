@@ -381,7 +381,11 @@ const ParameterSection = ({
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
-            parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '',
+            parameterValueToString(
+              { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
+              false,
+              idReplacements
+            ) ?? '',
           getTokenPicker: (
             editorId: string,
             labelId: string,
