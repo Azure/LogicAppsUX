@@ -287,7 +287,9 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
   const isConditionEditor = editor === Constants.EDITOR.CONDITION && !editorOptions?.isOldFormat;
   const errors: string[] = [];
   const value = isConditionEditor
-    ? JSON.stringify(recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true, errors))
+    ? JSON.stringify(
+        recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true, undefined /* idReplacements*/, errors)
+      )
     : parameterValueToJSONString(parameterValue, false, true);
 
   if (editor === Constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
