@@ -3268,63 +3268,6 @@ export function remapValueSegmentsWithNewIds(
   return { value, didRemap };
 }
 
-export const remapEditorViewModelWithNewIds = (
-  editor: string,
-  editorViewModel: any,
-  idReplacements: Record<string, string>
-): { editorViewModel: any; didRemap: boolean } => {
-  let didRemapEditorViewModel = false;
-  switch (editor) {
-    case 'table':
-    case 'dictionary':
-      const editorViewModelDictionayItems: DictionaryEditorItemProps[] | undefined = editorViewModel?.items;
-      const newEditorViewModelDictionaryItems = editorViewModelDictionayItems?.map((item) => {
-        const newItem: DictionaryEditorItemProps = { ...item };
-        if (item.key) {
-          const { value: result, didRemap } = remapValueSegmentsWithNewIds(item.key, idReplacements);
-          didRemapEditorViewModel = didRemap;
-          newItem.key = result;
-        }
-        if (item.value) {
-          const { value: result, didRemap } = remapValueSegmentsWithNewIds(item.value, idReplacements);
-          didRemapEditorViewModel = didRemap;
-          newItem.value = result;
-        }
-        return newItem;
-      });
-      return { editorViewModel: { ...editorViewModel, items: newEditorViewModelDictionaryItems }, didRemap: didRemapEditorViewModel };
-    case 'array':
-      const editorViewModelArrayUncastedValue: ValueSegment[] = editorViewModel?.uncastedValue;
-      const { value: newEditorViewModelUncastedValue, didRemap } = remapValueSegmentsWithNewIds(
-        editorViewModelArrayUncastedValue,
-        idReplacements
-      );
-      didRemapEditorViewModel = didRemap;
-      return { editorViewModel: { ...editorViewModel, uncastedValue: newEditorViewModelUncastedValue }, didRemap: didRemapEditorViewModel };
-    case 'conditon':
-      if (editorViewModel.isOldFormat) {
-        const editorViewModelSimpleQueryBuilder: ValueSegment[] | undefined = editorViewModel?.itemValue;
-        if (!editorViewModelSimpleQueryBuilder) {
-          return {
-            editorViewModel,
-            didRemap: didRemapEditorViewModel,
-          };
-        }
-        const { value: newEditorViewModelUncastedValue, didRemap } = remapValueSegmentsWithNewIds(
-          editorViewModelSimpleQueryBuilder,
-          idReplacements
-        );
-        didRemapEditorViewModel = didRemap;
-        return {
-          editorViewModel: { ...editorViewModel, uncastedValue: newEditorViewModelUncastedValue },
-          didRemap: didRemapEditorViewModel,
-        };
-      } else {
-        //
-      }
-  }
-};
-
 export function remapTokenSegmentValue(
   segment: ValueSegment,
   idReplacements: Record<string, string>
