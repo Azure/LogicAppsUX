@@ -314,7 +314,7 @@
       },
       {
         "command": "azureLogicAppsStandard.resetValidateAndInstallBinaries",
-        "title": "Reset validation and installation of dependency binaries settings",
+        "title": "Reset binaries dependency settings",
         "preview": true,
         "category": "Azure Logic Apps"
       },

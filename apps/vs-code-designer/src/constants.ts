@@ -187,6 +187,11 @@ export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRunt
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
+export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
+export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
+export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
+export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
+export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
@@ -197,14 +202,9 @@ export const extInstallTaskName = `${func}: ${extInstallCommand}`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
-export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const defaultLogicAppsFolder = '.azurelogicapps';
 export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
 export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
-export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
-export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
-export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
-export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
