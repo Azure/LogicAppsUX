@@ -93,7 +93,7 @@ export default class DataMapperPanel {
     switch (msg.command) {
       case 'webviewLoaded':
         // Send runtime port to webview
-        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${ext.dataMapperRuntimePort}` });
+        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${ext.workflowDesignTimePort}` });
 
         // If loading a data map, handle that + xslt filename
         this.handleLoadMapDefinitionIfAny();

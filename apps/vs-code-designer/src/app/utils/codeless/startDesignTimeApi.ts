@@ -165,6 +165,7 @@ function startDesignTimeProcess(
   ext.workflowDesignChildProcess = cp.spawn(command, args, options);
 
   if (outputChannel) {
+    outputChannel.appendLog(`charlis ${ext.workflowDesignChildProcess.pid}`);
     outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
   }
 
