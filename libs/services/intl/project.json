@@ -3,56 +3,29 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/services/intl/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/services/intl",
-        "tsConfig": "libs/services/intl/tsconfig.lib.json",
-        "project": "libs/services/intl/package.json",
-        "entryFile": "libs/services/intl/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "buildableProjectDepsInPackageJsonType": "dependencies",
-        "format": ["cjs", "esm"],
-        "assets": [
-          {
-            "glob": "libs/services/intl/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
-      }
-    },
-    "yalcpush": {
-      "executor": "nx:run-script",
-      "outputs": ["{options.outputPath}"],
-      "dependsOn": [
-        {
-          "target": "build",
-          "projects": "self"
-        }
-      ],
-      "options": {
-        "script": "yalcpush"
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/services/intl/**/*.{ts,tsx,js,jsx}"]
+        "outputPath": "dist/libs/services-intl"
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/services/intl"],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "jestConfig": "libs/services/intl/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/libs/services-intl"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/services/intl/**/*.ts", "libs/services/intl/**/*.tsx", "libs/services/intl/package.json"]
       }
     }
-  }
+  },
+  "tags": []
 }

@@ -1,7 +1,14 @@
 {
   "name": "@microsoft/parsers-logic-apps",
-  "version": "2.83.1",
-  "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/parsers"
-  }
+  "version": "0.0.1",
+  "dependencies": {
+    "@apidevtools/swagger-parser": "10.0.3"
+  },
+  "peerDependencies": {
+    "@microsoft/utils-logic-apps": "*",
+    "@microsoft/intl-logic-apps": "*"
+  },
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
 }

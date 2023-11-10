@@ -1,7 +1,8 @@
 {
   "name": "@microsoft/utils-logic-apps",
-  "version": "2.83.1",
-  "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/utils"
-  }
+  "version": "0.0.1",
+  "dependencies": {},
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
 }

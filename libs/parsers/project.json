@@ -5,52 +5,32 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/parsers",
-        "main": "libs/parsers/src/index.ts",
-        "tsConfig": "libs/parsers/tsconfig.lib.json",
-        "project": "libs/parsers/package.json",
-        "entryFile": "libs/parsers/src/index.ts",
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "buildableProjectDepsInPackageJsonType": "dependencies",
-        "format": ["cjs", "esm"],
-        "assets": [
-          {
-            "glob": "libs/parsers/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
+        "outputPath": "dist/libs/parsers"
       }
     },
-    "yalcpush": {
-      "executor": "nx:run-script",
-      "outputs": ["{options.outputPath}"],
-      "dependsOn": [
-        {
-          "target": "build",
-          "projects": "self"
-        }
-      ],
+    "publish": {
+      "command": "node tools/scripts/publish.mjs parsers {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "script": "yalcpush"
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/libs/parsers"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/parsers/**/*.ts"]
-      }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/parsers"],
-      "options": {
-        "jestConfig": "libs/parsers/jest.config.ts",
-        "passWithNoTests": true
+        "lintFilePatterns": [
+          "libs/parsers/**/*.ts",
+          "libs/parsers/package.json"
+        ]
       }
     }
   },
