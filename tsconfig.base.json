@@ -16,6 +16,7 @@
     "resolveJsonModule": true,
     "downlevelIteration": true,
     "noImplicitReturns": false,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "jsx": "react-jsx",
     "paths": {

@@ -1,10 +1,10 @@
-import type { IEditorParameterInfo } from '../editor';
-import { EditorService, InitEditorService } from '../editor';
+import type { IEditorParameterInfo } from './editor';
+import { EditorService, InitEditorService } from './editor';
 
 describe('lib/designer-client-services/editor', () => {
   it('should call "getEditor" with initialized service instance', () => {
     const editorService = {
-      getEditor: jest.fn(),
+      getEditor: vi.fn(),
     };
 
     expect(EditorService()).toBeUndefined();

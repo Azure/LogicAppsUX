@@ -2,12 +2,12 @@ import {
   ConnectionParameterEditorService,
   InitConnectionParameterEditorService,
   type IConnectionParameterInfo,
-} from '../connectionParameterEditor';
+} from './connectionParameterEditor';
 
 describe('lib/designer-client-services/connectionParameterEditor', () => {
   it('should call "getConnectionParameterEditor" with initialized service instance', () => {
     const service = {
-      getConnectionParameterEditor: jest.fn(),
+      getConnectionParameterEditor: vi.fn(),
     };
 
     expect(ConnectionParameterEditorService()).toBeUndefined();
