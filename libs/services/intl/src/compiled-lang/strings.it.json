@@ -50,7 +50,7 @@
   "+M72+a": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "Informazioni generali"
     }
   ],
   "+Uvo/p": [
@@ -2469,7 +2469,7 @@
   "E7NzDN": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "Impostazioni"
     }
   ],
   "E8iqLl": [
@@ -4888,7 +4888,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Ecco il flusso."
     }
   ],
   "Twfck/": [
@@ -5908,7 +5908,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "L'assistente del flusso di lavoro è progettato solo per fornire assistenza e non supporta la creazione o la modifica di flussi di lavoro."
     }
   ],
   "Z9PWl/": [
@@ -6476,7 +6476,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Non sono riuscito a comprendere la richiesta. Riformularla e riprovare."
     }
   ],
   "dfNjw1": [
@@ -6584,7 +6584,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Questo assistente consente di ottenere informazioni sui flussi di lavoro e sulle funzionalità e i connettori della piattaforma App per la logica di Azure."
     }
   ],
   "eRvRWs": [
@@ -9563,7 +9563,7 @@
   "ww1mN/": [
     {
       "type": 0,
-      "value": "Canvas"
+      "value": "Area di disegno"
     }
   ],
   "wxaQwD": [
@@ -9829,7 +9829,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "Genera XSLT"
     }
   ],
   "yoCi15": [

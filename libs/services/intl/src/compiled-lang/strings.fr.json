@@ -50,7 +50,7 @@
   "+M72+a": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "Vue d’ensemble"
     }
   ],
   "+Uvo/p": [
@@ -2485,7 +2485,7 @@
   "E7NzDN": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "Paramètres"
     }
   ],
   "E8iqLl": [
@@ -9583,7 +9583,7 @@
   "ww1mN/": [
     {
       "type": 0,
-      "value": "Canvas"
+      "value": "Panneau canevas"
     }
   ],
   "wxaQwD": [
@@ -9849,7 +9849,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "Générer XSLT"
     }
   ],
   "yoCi15": [

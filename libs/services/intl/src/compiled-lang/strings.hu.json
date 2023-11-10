@@ -50,7 +50,7 @@
   "+M72+a": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "Áttekintés"
     }
   ],
   "+Uvo/p": [
@@ -2478,7 +2478,7 @@
   "E7NzDN": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "Beállítások"
     }
   ],
   "E8iqLl": [
@@ -4868,7 +4868,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Íme a folyamat."
     }
   ],
   "Twfck/": [
@@ -5868,7 +5868,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "A munkafolyamat-segéd kizárólag segítségnyújtásra terveztük, és nem támogatja a munkafolyamatok létrehozását és szerkesztését."
     }
   ],
   "Z9PWl/": [
@@ -6436,7 +6436,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Sajnálom, nem értem a kérését. Kérem, fogalmazza át és próbálkozzon újra."
     }
   ],
   "dfNjw1": [
@@ -6544,7 +6544,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Ez a segéd segít megismerni a munkafolyamatokat és az Azure Logic Apps platform képességeit és összekötőit."
     }
   ],
   "eRvRWs": [
@@ -9498,7 +9498,7 @@
   "ww1mN/": [
     {
       "type": 0,
-      "value": "Canvas"
+      "value": "Vászon"
     }
   ],
   "wxaQwD": [
@@ -9764,7 +9764,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "XSLT létrehozása"
     }
   ],
   "yoCi15": [

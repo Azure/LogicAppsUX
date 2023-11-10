@@ -50,7 +50,7 @@
   "+M72+a": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "Overzicht"
     }
   ],
   "+Uvo/p": [
@@ -2474,7 +2474,7 @@
   "E7NzDN": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "Instellingen"
     }
   ],
   "E8iqLl": [
@@ -4848,7 +4848,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Dit is uw stroom."
     }
   ],
   "Twfck/": [
@@ -5868,7 +5868,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "De werkstroomassistent is alleen ontworpen om hulp te bieden en biedt geen ondersteuning voor het maken of bewerken van werkstromen."
     }
   ],
   "Z9PWl/": [
@@ -6436,7 +6436,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Sorry, ik begrijp uw vraag niet. Formuleer het op een andere manier en probeer het opnieuw."
     }
   ],
   "dfNjw1": [
@@ -6544,7 +6544,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Deze assistent kan u helpen meer te weten te komen over uw werkstromen en de platformmogelijkheden en connectors van Azure Logic Apps."
     }
   ],
   "eRvRWs": [
@@ -9752,7 +9752,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "XSLT genereren"
     }
   ],
   "yoCi15": [
