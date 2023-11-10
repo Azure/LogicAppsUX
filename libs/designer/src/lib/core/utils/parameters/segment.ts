@@ -337,7 +337,14 @@ export function isOutputToken(token: Token): token is Token {
  * @arg {string} [value] - The value.
  * @return {Token}
  */
-export function createOutputToken(key: string, actionName: string | undefined, source: string, name: string, required: boolean): Token {
+export function createOutputToken(
+  key: string,
+  actionName: string | undefined,
+  source: string,
+  name: string,
+  required: boolean,
+  value: string
+): Token {
   const token: Token = {
     actionName,
     source,
@@ -346,7 +353,7 @@ export function createOutputToken(key: string, actionName: string | undefined, s
     required,
     tokenType: TokenType.OUTPUTS,
     title: name,
-    value: name,
+    value,
   };
 
   return token;
@@ -375,10 +382,10 @@ export function createExpressionToken(expression: Expression): Token {
  * @arg {string} variableName - The variable name.
  * @return {Token}
  */
-export function createVariableToken(variableName: string): Token {
+export function createVariableToken(variableName: string, expression: string): Token {
   return {
     description: variableName,
-    value: variableName,
+    value: expression,
     key: variableName,
     title: variableName,
     name: variableName,

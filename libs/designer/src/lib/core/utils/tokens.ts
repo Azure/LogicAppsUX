@@ -296,10 +296,11 @@ export const createValueSegmentFromToken = async (
 ): Promise<ValueSegment> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
   const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
-  const tokenValueSegment = convertTokenToValueSegment(token, nodeType);
+  const idReplacements = rootState.workflow.idReplacements;
+  const tokenValueSegment = convertTokenToValueSegment(token, nodeType, idReplacements);
 
   if (addLatestActionName && tokenValueSegment.token?.actionName) {
-    const newActionId = rootState.workflow.idReplacements[tokenValueSegment.token.actionName];
+    const newActionId = idReplacements[tokenValueSegment.token.actionName];
     if (newActionId && newActionId !== tokenValueSegment.token.actionName) {
       tokenValueSegment.token.actionName = newActionId;
     }
@@ -385,7 +386,7 @@ const getTokenValueSegmentTokenType = (token: OutputToken, nodeType: string): To
   return TokenType.OUTPUTS;
 };
 
-const convertTokenToValueSegment = (token: OutputToken, nodeType: string): ValueSegment => {
+const convertTokenToValueSegment = (token: OutputToken, nodeType: string, replacementIds: Record<string, string>): ValueSegment => {
   const tokenType = getTokenValueSegmentTokenType(token, nodeType);
   const { key, brandColor, icon, title, description, name, type, outputInfo } = token;
   const { actionName, required, format, source, isSecure, arrayDetails, schema } = outputInfo;
@@ -411,7 +412,7 @@ const convertTokenToValueSegment = (token: OutputToken, nodeType: string): Value
         }
       : undefined,
     schema,
-    value: getExpressionValueForOutputToken(token, nodeType),
+    value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
   };
 
   return createTokenValueSegment(segmentToken, segmentToken.value as string, format);

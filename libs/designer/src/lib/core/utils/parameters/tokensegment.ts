@@ -27,16 +27,16 @@ export class TokenSegmentConvertor {
       const name = this._getTokenName(expression, source);
       const outputKey = this._getOutputKey(expression);
       const required = !!this._isTokenRequired(expression, source);
-
-      return createTokenValueSegment(createOutputToken(outputKey, step, source, name, required), value);
+      const outputToken = createOutputToken(outputKey, step, source, name, required, value);
+      return createTokenValueSegment(outputToken, value);
     } else if (this._isParameterToken(expression)) {
       const parameterName = (expression.arguments[0] as ExpressionLiteral).value;
 
       return createTokenValueSegment(createParameterToken(parameterName), value);
     } else if (TokenSegmentConvertor.isVariableToken(expression)) {
       const variableName = (expression.arguments[0] as ExpressionLiteral).value;
-
-      return createTokenValueSegment(createVariableToken(variableName), value);
+      const variableToken = createVariableToken(variableName, expression.expression);
+      return createTokenValueSegment(variableToken, value);
     } else if (TokenSegmentConvertor.isItemToken(expression)) {
       const source = this._getTokenSource(expression);
       const name = this._getTokenName(expression, source);
