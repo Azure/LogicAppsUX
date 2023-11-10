@@ -50,7 +50,7 @@
   "+M72+a": [
     {
       "type": 0,
-      "value": "Overview"
+      "value": "Přehled"
     }
   ],
   "+Uvo/p": [
@@ -2496,7 +2496,7 @@
   "E7NzDN": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "Nastavení"
     }
   ],
   "E8iqLl": [
@@ -4940,7 +4940,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Tady je váš tok."
     }
   ],
   "Twfck/": [
@@ -5960,7 +5960,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "Asistent pracovního postupu je navržený jenom tak, aby poskytoval nápovědu, a nepodporuje vytváření ani úpravy pracovního postupu."
     }
   ],
   "Z9PWl/": [
@@ -6528,7 +6528,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Omlouvám se, ale nerozuměl jsem vašemu požadavku. Přeformulujte ho prosím a zkuste to znovu."
     }
   ],
   "dfNjw1": [
@@ -6636,7 +6636,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Tento asistent vám může pomoct získat informace o pracovních postupech a možnostech a konektorech platformy Azure Logic Apps."
     }
   ],
   "eRvRWs": [
@@ -9652,7 +9652,7 @@
   "ww1mN/": [
     {
       "type": 0,
-      "value": "Canvas"
+      "value": "Plátno"
     }
   ],
   "wxaQwD": [
@@ -9918,7 +9918,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "Generovat XSLT"
     }
   ],
   "yoCi15": [
