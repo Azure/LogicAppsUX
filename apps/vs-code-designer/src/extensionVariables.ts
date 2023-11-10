@@ -20,8 +20,8 @@ type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == d
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ext {
   export let context: ExtensionContext;
-  export let workflowDesignTimePort: number;
-  export let workflowDesignChildProcess: cp.ChildProcess | undefined;
+  export let designTimePort: number;
+  export let designChildProcess: cp.ChildProcess | undefined;
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let logicAppWorkspace: string;
