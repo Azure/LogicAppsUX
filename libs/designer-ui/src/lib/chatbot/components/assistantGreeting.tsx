@@ -9,7 +9,7 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
   const intl = useIntl();
   const intlText = {
     greetingMessageFromOpenedFlow: intl.formatMessage({
-      defaultMessage: 'Welcome to workflow assistant!',
+      defaultMessage: 'Welcome to the workflow assistant!',
       description: 'Chatbot greeting message from existing flow',
     }),
     subHeading1: intl.formatMessage({
