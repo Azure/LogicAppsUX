@@ -1,9 +1,8 @@
 import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
-import { isTemplateExpression } from '@microsoft/logic-apps-designer';
+import { isTemplateExpression , hasInvalidChars, startsWith, equals, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-designer';
 import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-designer';
-import { hasInvalidChars, startsWith, equals, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-designer';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
 export const isRootNodeInGraph = (nodeId: string, graphId: string, nodesMetadata: NodesMetadata): boolean => {

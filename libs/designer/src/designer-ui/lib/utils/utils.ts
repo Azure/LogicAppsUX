@@ -1,6 +1,5 @@
 import Constants from '../constants';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import { equals, isBuiltInConnector, isCustomConnector } from '@microsoft/logic-apps-designer';
+import { getIntl , equals, isBuiltInConnector, isCustomConnector } from '@microsoft/logic-apps-designer';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)

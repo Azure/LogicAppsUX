@@ -3,8 +3,7 @@ import type {
   InputDependencies,
   ParameterDeserializationOptions,
   ParameterSerializationOptions,
-} from '@microsoft/logic-apps-designer';
-import type { Exception, OpenAPIV2 } from '@microsoft/logic-apps-designer';
+ Exception, OpenAPIV2 } from '@microsoft/logic-apps-designer';
 
 export interface ParameterInfo {
   alternativeKey?: string;

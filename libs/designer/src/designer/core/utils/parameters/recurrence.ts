@@ -1,9 +1,7 @@
 import constants from '../../../common/constants';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
-import type { ParameterInfo } from '@microsoft/logic-apps-designer';
-import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/logic-apps-designer';
-import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/logic-apps-designer';
-import { map, RecurrenceType } from '@microsoft/logic-apps-designer';
+import type { ParameterInfo , OpenAPIV2, RecurrenceSetting } from '@microsoft/logic-apps-designer';
+import { OutputMapKey, SchemaProcessor, toInputParameter , map, RecurrenceType } from '@microsoft/logic-apps-designer';
 
 export interface Recurrence {
   frequency: string | undefined;

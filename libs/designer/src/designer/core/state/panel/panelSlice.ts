@@ -1,8 +1,7 @@
 import constants from '../../../common/constants';
 import type { RelationshipIds, PanelState } from './panelInterfaces';
-import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-designer';
+import { LogEntryLevel, LoggerService , PanelLocation } from '@microsoft/logic-apps-designer';
 import type { PanelTab } from '@microsoft/logic-apps-designer';
-import { PanelLocation } from '@microsoft/logic-apps-designer';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

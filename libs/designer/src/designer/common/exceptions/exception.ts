@@ -1,6 +1,5 @@
-import { getIntl } from '@microsoft/logic-apps-designer';
+import { getIntl , isException } from '@microsoft/logic-apps-designer';
 import type { Exception } from '@microsoft/logic-apps-designer';
-import { isException } from '@microsoft/logic-apps-designer';
 
 export function includeInnerExceptionMessage(error: Error | Exception): string {
   const intl = getIntl();

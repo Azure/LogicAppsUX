@@ -19,12 +19,13 @@ import {
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/logic-apps-designer';
-import type { ParameterInfo } from '@microsoft/logic-apps-designer';
-import { UIConstants } from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type { Segment } from '@microsoft/logic-apps-designer';
 import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
+  UIConstants,
+  getIntl,
   create,
   removeConnectionPrefix,
   cleanIndexedValue,
@@ -33,9 +34,6 @@ import {
   SegmentType,
   DeserializationType,
   PropertySerializationType,
-} from '@microsoft/logic-apps-designer';
-import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-designer';
-import {
   SerializationErrorCode,
   SerializationException,
   clone,
@@ -57,6 +55,7 @@ import {
   filterRecord,
   excludePathValueFromTarget,
 } from '@microsoft/logic-apps-designer';
+import type { ParameterInfo , Segment , LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-designer';
 import merge from 'lodash.merge';
 
 export interface SerializeOptions {

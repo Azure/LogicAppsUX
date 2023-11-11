@@ -1,11 +1,8 @@
 import Constants from '../../../common/constants';
 import { getNormalizedName } from './helper';
 import { createOutputToken, createParameterToken, createTokenValueSegment, createVariableToken } from './segment';
-import { TokenType } from '@microsoft/logic-apps-designer';
-import type { ValueSegment } from '@microsoft/logic-apps-designer';
-import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource } from '@microsoft/logic-apps-designer';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-designer';
-import { equals } from '@microsoft/logic-apps-designer';
+import { TokenType , encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource , equals } from '@microsoft/logic-apps-designer';
+import type { ValueSegment , Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-designer';
 
 /**
  * The token segment convertor.

@@ -4,9 +4,7 @@ import type { RootState } from '../../store';
 import { getConnectionId } from '../../utils/connectors/connections';
 import { useConnector, useConnectorAndSwagger } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
-import { OperationManifestService } from '@microsoft/logic-apps-designer';
-import { SwaggerParser } from '@microsoft/logic-apps-designer';
-import { getObjectPropertyValue } from '@microsoft/logic-apps-designer';
+import { OperationManifestService , SwaggerParser , getObjectPropertyValue } from '@microsoft/logic-apps-designer';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 

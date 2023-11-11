@@ -8,10 +8,8 @@ import {
   toArrayViewModelSchema,
   toHybridConditionViewModel,
 } from '../helper';
-import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/logic-apps-designer';
-import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/logic-apps-designer';
-import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-designer';
-import { DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-designer';
+import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken , DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-designer';
+import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType , DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-designer';
 
 describe('core/utils/parameters/helper', () => {
   describe('parameterValueToJSONString', () => {

@@ -1,5 +1,4 @@
-import type { DynamicTreeExtension } from '@microsoft/logic-apps-designer';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-designer';
+import type { DynamicTreeExtension , OpenAPIV2 } from '@microsoft/logic-apps-designer';
 import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-designer';
 
 export interface ListDynamicValue {

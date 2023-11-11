@@ -11,9 +11,8 @@ import {
   getParameterDynamicSchema,
   getParameterDynamicValues,
 } from './helpers/utils';
-import { getIntl } from '@microsoft/logic-apps-designer';
+import { getIntl , aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft/logic-apps-designer';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-designer';
-import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft/logic-apps-designer';
 
 type Schema = OpenAPIV2.Schema;
 type SchemaObject = OpenAPIV2.SchemaObject;

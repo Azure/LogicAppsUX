@@ -3,9 +3,8 @@ import { isDynamicTreeExtension, isLegacyDynamicValuesTreeExtension, DynamicSche
 import * as Constants from '../constants';
 import { OutputKeys } from '../constants';
 import { parseEx } from './keysutility';
-import { getIntl } from '@microsoft/logic-apps-designer';
+import { getIntl , equals, isNullOrUndefined } from '@microsoft/logic-apps-designer';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-designer';
-import { equals, isNullOrUndefined } from '@microsoft/logic-apps-designer';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 type Parameter = OpenAPIV2.ParameterObject;

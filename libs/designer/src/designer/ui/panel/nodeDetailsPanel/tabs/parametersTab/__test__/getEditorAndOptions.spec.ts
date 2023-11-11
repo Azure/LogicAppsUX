@@ -1,8 +1,7 @@
 import { getEditorAndOptions } from '..';
 import type { VariableDeclaration } from '../../../../../../core/state/tokens/tokensSlice';
 import { InitEditorService } from '@microsoft/logic-apps-designer';
-import type { ParameterInfo } from '@microsoft/logic-apps-designer';
-import type { OperationInfo } from '@microsoft/logic-apps-designer';
+import type { ParameterInfo , OperationInfo } from '@microsoft/logic-apps-designer';
 
 describe('getEditorAndOptions', () => {
   const operationInfo: OperationInfo = {

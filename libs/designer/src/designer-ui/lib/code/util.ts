@@ -1,9 +1,7 @@
 import constants from '../constants';
 import type { Token } from '../editor';
 import { TokenType } from '../editor';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import { decodePropertySegment, OutputKeys } from '@microsoft/logic-apps-designer';
-import { ArgumentException, endsWith, equals, UnsupportedException } from '@microsoft/logic-apps-designer';
+import { getIntl , decodePropertySegment, OutputKeys , ArgumentException, endsWith, equals, UnsupportedException } from '@microsoft/logic-apps-designer';
 
 enum OperationCategory {
   Actions = 'actions',

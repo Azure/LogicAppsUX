@@ -1,7 +1,6 @@
 import { StaticResultRootSchema } from './baseactionresult';
-import { getIntl } from '@microsoft/logic-apps-designer';
+import { getIntl , clone } from '@microsoft/logic-apps-designer';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-designer';
-import { clone } from '@microsoft/logic-apps-designer';
 
 type Schema = OpenAPIV2.Schema;
 

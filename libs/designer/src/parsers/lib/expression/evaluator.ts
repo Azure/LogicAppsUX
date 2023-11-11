@@ -2,8 +2,7 @@ import { isFunction, isStringLiteral, isStringInterpolation } from '../common/he
 import type { ExpressionEvaluationContext } from '../models/expression';
 import { ExpressionFunctionNames } from '../models/expression';
 import { ExpressionParser } from './parser';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import { BaseException } from '@microsoft/logic-apps-designer';
+import { getIntl , BaseException } from '@microsoft/logic-apps-designer';
 
 /**
  * The expression evaluator exception name.

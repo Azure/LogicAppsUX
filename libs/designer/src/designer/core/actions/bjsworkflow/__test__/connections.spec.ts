@@ -7,15 +7,12 @@ import {
 } from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operation/operationMetadataSlice';
 import type { RootState } from '../../../store';
-import type { IHttpClient } from '@microsoft/logic-apps-designer';
+import type { IHttpClient , LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-designer';
 import {
   InitOperationManifestService,
   StandardOperationManifestService,
   OperationManifestService,
-} from '@microsoft/logic-apps-designer';
-import { createItem } from '@microsoft/logic-apps-designer';
-import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-designer';
-import { ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-designer';
+ createItem , ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-designer';
 
 class MockHttpClient implements IHttpClient {
   dispose() {

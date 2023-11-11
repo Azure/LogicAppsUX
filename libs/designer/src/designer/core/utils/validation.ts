@@ -2,22 +2,24 @@ import Constants from '../../common/constants';
 import { getTitleOrSummary } from './openapi/schema';
 import { isParameterRequired, parameterValueToJSONString, recurseSerializeCondition } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
-import {
+import type { Expression, ExpressionLiteral ,
   type FloatingActionMenuOutputViewModel,
   type ParameterInfo,
-  type ValueSegment,
-  FloatingActionMenuKind,
+  type ValueSegment
 } from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type { Expression, ExpressionLiteral } from '@microsoft/logic-apps-designer';
 import {
+  getIntl,
   ExpressionParser,
   ExpressionType,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/logic-apps-designer';
-import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/logic-apps-designer';
+  capitalizeFirstLetter,
+  endsWith,
+  equals,
+  startsWith,
+
+  FloatingActionMenuKind} from '@microsoft/logic-apps-designer';
 
 const regex = {
   datetime:

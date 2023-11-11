@@ -3,8 +3,7 @@ import { isEmpty } from '../../../dictionary/util/helper';
 import { ValueSegmentType, type ValueSegment } from '../../models/parameter';
 import { insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';
-import { isNumber } from '@microsoft/logic-apps-designer';
-import { guid, isBoolean } from '@microsoft/logic-apps-designer';
+import { isNumber , guid, isBoolean } from '@microsoft/logic-apps-designer';
 
 export interface KeyValueItem {
   id: string;

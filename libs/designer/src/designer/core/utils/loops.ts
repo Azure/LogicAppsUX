@@ -26,11 +26,10 @@ import {
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
 import { getSplitOnValue } from './setting';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft/logic-apps-designer';
-import type { OutputToken, Token } from '@microsoft/logic-apps-designer';
-import { TokenType } from '@microsoft/logic-apps-designer';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/logic-apps-designer';
 import {
+  foreachOperationInfo,
+  OperationManifestService,
+  TokenType,
   OutputKeys,
   containsWildIndexSegment,
   convertToStringLiteral,
@@ -44,9 +43,12 @@ import {
   isTemplateExpression,
   parseEx,
   SegmentType,
+  clone,
+  equals,
+  first,
+  isNullOrUndefined,
 } from '@microsoft/logic-apps-designer';
-import type { OperationManifest } from '@microsoft/logic-apps-designer';
-import { clone, equals, first, isNullOrUndefined } from '@microsoft/logic-apps-designer';
+import type { OutputToken, Token , Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment , OperationManifest } from '@microsoft/logic-apps-designer';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 interface ImplicitForeachArrayDetails {

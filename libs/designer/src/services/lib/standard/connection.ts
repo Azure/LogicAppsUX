@@ -8,9 +8,7 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/logic-apps-designer';
-import {
+import { getIntl ,
   ArgumentException,
   AssertionErrorCode,
   AssertionException,
@@ -24,6 +22,7 @@ import {
   safeSetObjectPropertyValue,
   createCopy,
 } from '@microsoft/logic-apps-designer';
+import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/logic-apps-designer';
 
 interface ConnectionAcl {
   id: string;

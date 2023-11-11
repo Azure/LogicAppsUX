@@ -36,6 +36,16 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
+  OutputToken,
+  ParameterInfo,
+  SchemaProperty,
+  InputParameter,
+  SwaggerParser,
+  OutputParameter,
+  CustomSwaggerServiceDetails,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
 } from '@microsoft/logic-apps-designer';
 import {
   WorkflowService,
@@ -44,11 +54,7 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
-} from '@microsoft/logic-apps-designer';
-import type { OutputToken, ParameterInfo } from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/logic-apps-designer';
-import {
+  getIntl,
   isDynamicListExtension,
   isDynamicPropertiesExtension,
   isDynamicSchemaExtension,
@@ -58,14 +64,6 @@ import {
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
-} from '@microsoft/logic-apps-designer';
-import type {
-  CustomSwaggerServiceDetails,
-  OperationInfo,
-  OperationManifest,
-  OperationManifestProperties,
-} from '@microsoft/logic-apps-designer';
-import {
   CustomSwaggerServiceNames,
   UnsupportedException,
   clone,

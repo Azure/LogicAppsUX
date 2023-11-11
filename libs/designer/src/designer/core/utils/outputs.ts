@@ -18,17 +18,11 @@ import {
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
-import { OperationManifestService } from '@microsoft/logic-apps-designer';
-import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type {
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  OutputParameter,
-  OutputParameters,
-} from '@microsoft/logic-apps-designer';
 import {
+  OperationManifestService,
+  generateSchemaFromJsonString,
+  ValueSegmentType,
+  getIntl,
   create,
   OutputKeys,
   OutputSource,
@@ -37,9 +31,6 @@ import {
   isTemplateExpression,
   isFunction,
   isStringLiteral,
-} from '@microsoft/logic-apps-designer';
-import type { OpenAPIV2, OperationManifest } from '@microsoft/logic-apps-designer';
-import {
   ConnectionReferenceKeyFormat,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
@@ -48,6 +39,15 @@ import {
   AssertionException,
   clone,
   equals,
+} from '@microsoft/logic-apps-designer';
+import type {
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  OutputParameter,
+  OutputParameters,
+  OpenAPIV2,
+  OperationManifest,
 } from '@microsoft/logic-apps-designer';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -117,7 +117,8 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
       defaultMessage: `Invalid split on format in '{splitOn}'.`,
       description: 'Error message for invalid split on value.',
     },
-    { splitOn }
+    // eslint-disable-next-line formatjs/enforce-placeholders
+    { splitOn: splitOn }
   );
 
   if (splitOn === undefined) {

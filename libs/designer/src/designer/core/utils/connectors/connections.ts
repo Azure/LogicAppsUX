@@ -10,10 +10,8 @@ import {
   OperationManifestService,
   WorkflowService,
   isServiceProviderOperation,
-} from '@microsoft/logic-apps-designer';
-import type { AssistedConnectionProps } from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type {
+ getIntl , ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType, getResourceName } from '@microsoft/logic-apps-designer';
+import type { AssistedConnectionProps ,
   Connection,
   ConnectionParameterSet,
   ConnectionParameterSets,
@@ -21,7 +19,6 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/logic-apps-designer';
-import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType, getResourceName } from '@microsoft/logic-apps-designer';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   const { connectionsMapping, connectionReferences } = state;

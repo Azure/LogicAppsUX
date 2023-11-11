@@ -5,8 +5,7 @@ import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { setTabError } from '../../../core/state/panel/panelSlice';
 import { setValidationError } from '../../../core/state/setting/settingSlice';
 import { isISO8601 } from '../../../core/utils/validation';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import { isTemplateExpression } from '@microsoft/logic-apps-designer';
+import { getIntl , isTemplateExpression } from '@microsoft/logic-apps-designer';
 
 export enum ValidationErrorKeys {
   CHUNK_SIZE_INVALID = 'ChunkSizeInvalid',

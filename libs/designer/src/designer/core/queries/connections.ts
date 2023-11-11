@@ -1,8 +1,6 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { ConnectionService } from '@microsoft/logic-apps-designer';
-import { SwaggerParser } from '@microsoft/logic-apps-designer';
+import { ConnectionService , SwaggerParser , equals } from '@microsoft/logic-apps-designer';
 import type { Connector } from '@microsoft/logic-apps-designer';
-import { equals } from '@microsoft/logic-apps-designer';
 import { useQuery } from 'react-query';
 
 const connectionKey = 'connections';

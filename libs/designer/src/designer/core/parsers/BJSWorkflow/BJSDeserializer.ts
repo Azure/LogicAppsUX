@@ -4,11 +4,7 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
-import { LoggerService, Status } from '@microsoft/logic-apps-designer';
-import { getDurationStringPanelMode } from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-designer';
-import {
+import { LoggerService, Status , getDurationStringPanelMode , getIntl ,
   containsIdTag,
   WORKFLOW_NODE_TYPES,
   WORKFLOW_EDGE_TYPES,
@@ -18,6 +14,7 @@ import {
   isNullOrUndefined,
   getUniqueName,
 } from '@microsoft/logic-apps-designer';
+import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-designer';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;

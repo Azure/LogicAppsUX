@@ -3,8 +3,7 @@ import type { NodeInputs } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens, VariableDeclaration } from '../state/tokens/tokensSlice';
 import { ParameterGroupKeys } from './parameters/helper';
 import type { OutputToken as Token } from '@microsoft/logic-apps-designer';
-import { TokenType } from '@microsoft/logic-apps-designer';
-import { aggregate } from '@microsoft/logic-apps-designer';
+import { TokenType , aggregate } from '@microsoft/logic-apps-designer';
 
 let variableIcon = '';
 let variableBrandColor = '';

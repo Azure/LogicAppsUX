@@ -7,9 +7,8 @@ import { convertStringToSegments } from '../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../editor/base/utils/helper';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
-import { getIntl } from '@microsoft/logic-apps-designer';
+import { getIntl , guid, equals, ResourceIdentityType } from '@microsoft/logic-apps-designer';
 import type { ManagedIdentity } from '@microsoft/logic-apps-designer';
-import { guid, equals, ResourceIdentityType } from '@microsoft/logic-apps-designer';
 import { $getRoot } from 'lexical';
 import type { LexicalEditor } from 'lexical';
 

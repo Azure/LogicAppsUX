@@ -1,7 +1,6 @@
 import type { DynamicallyAddedParameterTypeType } from '../dynamicallyaddedparameter';
 import { DynamicallyAddedParameterType } from '../dynamicallyaddedparameter';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import { generateUniqueName } from '@microsoft/logic-apps-designer';
+import { getIntl , generateUniqueName } from '@microsoft/logic-apps-designer';
 
 export type DynamicallyAddedParameterIcon = string;
 

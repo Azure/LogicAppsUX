@@ -3,10 +3,16 @@ import type { NodeOperation, NodeOutputs } from '../../state/operation/operation
 import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
-import { TokenType } from '@microsoft/logic-apps-designer';
-import type { SwaggerParser } from '@microsoft/logic-apps-designer';
-import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/logic-apps-designer';
-import type {
+import { TokenType , convertToStringLiteral, getSplitOnArrayAliasMetadata ,
+  equals,
+  getObjectPropertyValue,
+  getPropertyValue,
+  OperationOptions,
+  SettingScope,
+  ValidationErrorCode,
+  ValidationException,
+} from '@microsoft/logic-apps-designer';
+import type { SwaggerParser ,
   DownloadChunkMetadata,
   LogicApps,
   LogicAppsV2,
@@ -15,15 +21,6 @@ import type {
   OperationManifestSettings,
   SecureDataOptions,
   UploadChunkMetadata,
-} from '@microsoft/logic-apps-designer';
-import {
-  equals,
-  getObjectPropertyValue,
-  getPropertyValue,
-  OperationOptions,
-  SettingScope,
-  ValidationErrorCode,
-  ValidationException,
 } from '@microsoft/logic-apps-designer';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;

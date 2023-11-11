@@ -55,12 +55,8 @@ import {
   LoggerService,
   OperationManifestService,
   StaticResultService,
-} from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type { InputParameter, OutputParameter } from '@microsoft/logic-apps-designer';
-import { ManifestParser } from '@microsoft/logic-apps-designer';
-import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-designer';
-import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/logic-apps-designer';
+ getIntl , ManifestParser , isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/logic-apps-designer';
+import type { InputParameter, OutputParameter , LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-designer';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithOperationMetadata extends NodeData {

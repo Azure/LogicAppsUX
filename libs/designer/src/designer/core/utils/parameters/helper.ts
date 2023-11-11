@@ -55,21 +55,9 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { OperationManifestService, WorkflowService } from '@microsoft/logic-apps-designer';
-import type {
-  AuthProps,
-  ComboboxItem,
-  DictionaryEditorItemProps,
-  FloatingActionMenuOutputViewModel,
-  GroupItemProps,
-  OutputToken,
-  ParameterInfo,
-  RowItemProps,
-  Token as SegmentToken,
-  Token,
-  ValueSegment,
-} from '@microsoft/logic-apps-designer';
 import {
+  OperationManifestService,
+  WorkflowService,
   removeQuotes,
   ArrayType,
   FloatingActionMenuKind,
@@ -83,23 +71,7 @@ import {
   ValueSegmentType,
   TokenType,
   AuthenticationOAuthType,
-} from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import type {
-  DependentParameterInfo,
-  DynamicParameters,
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  InputParameter,
-  OutputParameter,
-  ResolvedParameter,
-  SchemaProcessorOptions,
-  SchemaProperty,
-  Segment,
-  SwaggerParser,
-} from '@microsoft/logic-apps-designer';
-import {
+  getIntl,
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
   DeserializationType,
@@ -123,9 +95,6 @@ import {
   SegmentType,
   Visibility,
   PropertyName,
-} from '@microsoft/logic-apps-designer';
-import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/logic-apps-designer';
-import {
   createCopy,
   deleteObjectProperties,
   deleteObjectProperty,
@@ -150,6 +119,35 @@ import {
   ValidationErrorCode,
   ValidationException,
   nthLastIndexOf,
+} from '@microsoft/logic-apps-designer';
+import type {
+  AuthProps,
+  ComboboxItem,
+  DictionaryEditorItemProps,
+  FloatingActionMenuOutputViewModel,
+  GroupItemProps,
+  OutputToken,
+  ParameterInfo,
+  RowItemProps,
+  Token as SegmentToken,
+  Token,
+  ValueSegment,
+  DependentParameterInfo,
+  DynamicParameters,
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  InputParameter,
+  OutputParameter,
+  ResolvedParameter,
+  SchemaProcessorOptions,
+  SchemaProperty,
+  Segment,
+  SwaggerParser,
+  Exception,
+  OpenAPIV2,
+  OperationManifest,
+  RecurrenceSetting,
 } from '@microsoft/logic-apps-designer';
 import type { Dispatch } from '@reduxjs/toolkit';
 

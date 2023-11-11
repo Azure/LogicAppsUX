@@ -29,17 +29,14 @@ import {
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
-import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/logic-apps-designer';
-import type { SwaggerParser } from '@microsoft/logic-apps-designer';
-import { ManifestParser } from '@microsoft/logic-apps-designer';
-import type {
+import { ConnectionService, OperationManifestService, StaticResultService , ManifestParser , equals } from '@microsoft/logic-apps-designer';
+import type { SwaggerParser ,
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
 } from '@microsoft/logic-apps-designer';
-import { equals } from '@microsoft/logic-apps-designer';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';

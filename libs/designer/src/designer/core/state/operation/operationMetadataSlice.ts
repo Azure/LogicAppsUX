@@ -5,9 +5,7 @@ import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-designer';
-import type { ParameterInfo } from '@microsoft/logic-apps-designer';
-import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-designer';
-import type { OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-designer';
+import type { ParameterInfo , FilePickerInfo, InputParameter, OutputParameter, SwaggerParser , OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-designer';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

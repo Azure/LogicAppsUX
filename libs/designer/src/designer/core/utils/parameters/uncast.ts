@@ -1,6 +1,5 @@
 import type { Expression, ExpressionFunction } from '@microsoft/logic-apps-designer';
-import { isFunction, isStringLiteral } from '@microsoft/logic-apps-designer';
-import { equals } from '@microsoft/logic-apps-designer';
+import { isFunction, isStringLiteral , equals } from '@microsoft/logic-apps-designer';
 
 export interface UncastResult {
   expression: Expression;

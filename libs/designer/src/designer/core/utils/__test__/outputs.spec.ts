@@ -1,7 +1,6 @@
 import { getUpdatedManifestForSplitOn } from '../outputs';
-import { onNewEmail } from '@microsoft/logic-apps-designer';
+import { onNewEmail , ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-designer';
 import type { OperationManifest } from '@microsoft/logic-apps-designer';
-import { ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-designer';
 
 describe('Outputs Utilities', () => {
   describe('getUpdatedManifestForSpiltOn', () => {

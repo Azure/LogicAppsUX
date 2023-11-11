@@ -1,5 +1,4 @@
-import { ChangeHandler, ParameterInfo, ValueSegment } from '@microsoft/logic-apps-designer';
-import type { OperationInfo } from '@microsoft/logic-apps-designer';
+import type { ChangeHandler, ParameterInfo, ValueSegment , OperationInfo } from '@microsoft/logic-apps-designer';
 
 export type IRenderDefaultEditorParams = {
   editor?: string;

@@ -2,18 +2,22 @@ import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helpe
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
-import { TokenType, ValueSegmentType } from '@microsoft/logic-apps-designer';
-import type { Token, ValueSegment } from '@microsoft/logic-apps-designer';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-designer';
 import {
+  TokenType,
+  ValueSegmentType,
   ExpressionParser,
   ExpressionType,
   isFunction,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
+  format,
+  guid,
+  isNullOrUndefined,
+  startsWith,
+  UnsupportedException,
 } from '@microsoft/logic-apps-designer';
-import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/logic-apps-designer';
+import type { Token, ValueSegment , Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-designer';
 
 /**
  * The options for value segment convertor.

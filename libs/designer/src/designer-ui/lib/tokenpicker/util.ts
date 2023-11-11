@@ -1,7 +1,6 @@
 import type { Token } from './models/token';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-designer';
-import { ExpressionType } from '@microsoft/logic-apps-designer';
-import { UnsupportedException } from '@microsoft/logic-apps-designer';
+import { ExpressionType , UnsupportedException } from '@microsoft/logic-apps-designer';
 
 export function getExpressionTokenTitle(expression: Expression): string {
   switch (expression.type) {

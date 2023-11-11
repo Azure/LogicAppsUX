@@ -27,12 +27,11 @@ import {
   toParameterInfoMap,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/logic-apps-designer';
-import { OperationManifestService } from '@microsoft/logic-apps-designer';
-import type { ParameterInfo } from '@microsoft/logic-apps-designer';
-import { TokenType, ValueSegmentType } from '@microsoft/logic-apps-designer';
-import { getIntl } from '@microsoft/logic-apps-designer';
 import type {
+  ListDynamicValue,
+  ManagedIdentityRequestProperties,
+  TreeDynamicValue,
+  ParameterInfo,
   DynamicParameters,
   ExpressionEvaluatorOptions,
   InputParameter,
@@ -41,8 +40,17 @@ import type {
   ResolvedParameter,
   SchemaProcessorOptions,
   SwaggerParser,
+  Connection,
+  Connector,
+  OpenAPIV2,
+  OperationInfo,
+  OperationManifest,
 } from '@microsoft/logic-apps-designer';
 import {
+  OperationManifestService,
+  TokenType,
+  ValueSegmentType,
+  getIntl,
   ExpressionEvaluator,
   isTemplateExpression,
   isLegacyDynamicValuesTreeExtension,
@@ -62,9 +70,6 @@ import {
   SchemaProcessor,
   WildIndexSegment,
   replaceSubsegmentSeparator,
-} from '@microsoft/logic-apps-designer';
-import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/logic-apps-designer';
-import {
   first,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,

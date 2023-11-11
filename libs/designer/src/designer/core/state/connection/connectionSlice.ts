@@ -1,8 +1,7 @@
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState } from '../global';
-import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-designer';
-import { deepCompareObjects, equals, getUniqueName } from '@microsoft/logic-apps-designer';
+import { LogEntryLevel, LoggerService , deepCompareObjects, equals, getUniqueName } from '@microsoft/logic-apps-designer';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

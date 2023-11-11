@@ -1,8 +1,7 @@
 import { convertToStringLiteral, isStringInterpolation, isStringLiteral } from '../common/helpers/expression';
 import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '../models/expression';
 import { ExpressionType } from '../models/expression';
-import { getIntl } from '@microsoft/logic-apps-designer';
-import { BaseException } from '@microsoft/logic-apps-designer';
+import { getIntl , BaseException } from '@microsoft/logic-apps-designer';
 
 /**
  * The expression builder exception name.

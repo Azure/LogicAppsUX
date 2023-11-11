@@ -9,7 +9,8 @@ import {
 } from '../../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
-import { OpenAPIV2, guid } from '@microsoft/logic-apps-designer';
+import type { OpenAPIV2} from '@microsoft/logic-apps-designer';
+import { guid } from '@microsoft/logic-apps-designer';
 
 type Schema = OpenAPIV2.Schema;
 

@@ -1,7 +1,6 @@
 import { InvalidJsonSchemaTypeException } from '../exceptions/invalidjsonschematype';
-import { isTemplateExpression } from '@microsoft/logic-apps-designer';
+import { isTemplateExpression , createCopy, clone } from '@microsoft/logic-apps-designer';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-designer';
-import { createCopy, clone } from '@microsoft/logic-apps-designer';
 
 const Types = {
   object: 'object',
