@@ -21,16 +21,16 @@ describe('lib/panel/panelHeader/main', () => {
       headerLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
       includeTitle: true,
-      toggleCollapse: jest.fn(),
-      onTitleChange: jest.fn(),
-      commentChange: jest.fn(),
+      toggleCollapse: vi.fn(),
+      onTitleChange: vi.fn(),
+      commentChange: vi.fn(),
     };
     minimalWithHeader = {
       nodeId: '',
       horizontalPadding: '',
       isCollapsed: false,
-      onTitleChange: jest.fn(),
-      commentChange: jest.fn(),
+      onTitleChange: vi.fn(),
+      commentChange: vi.fn(),
       panelHeaderMenu: [
         {
           disabled: false,
@@ -39,7 +39,7 @@ describe('lib/panel/panelHeader/main', () => {
           iconName: 'Comment',
           key: 'Comment',
           title: 'Add a comment',
-          onClick: jest.fn(),
+          onClick: vi.fn(),
         },
         {
           disabled: false,
@@ -48,13 +48,13 @@ describe('lib/panel/panelHeader/main', () => {
           iconName: 'Delete',
           key: 'Delete',
           title: 'Delete',
-          onClick: jest.fn(),
+          onClick: vi.fn(),
         },
       ],
       headerLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
       includeTitle: true,
-      toggleCollapse: jest.fn(),
+      toggleCollapse: vi.fn(),
     };
     shallow = ReactShallowRenderer.createRenderer();
     initializeIcons();

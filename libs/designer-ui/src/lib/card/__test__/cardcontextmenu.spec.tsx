@@ -12,7 +12,7 @@ describe('lib/card/cardcontextmenu', () => {
       contextMenuLocation: undefined,
       showContextMenu: false,
       title: 'title',
-      onSetShowContextMenu: jest.fn(),
+      onSetShowContextMenu: vi.fn(),
     };
     renderer = ShallowRenderer.createRenderer();
   });
@@ -31,7 +31,7 @@ describe('lib/card/cardcontextmenu', () => {
           key: 'Delete',
           title: 'Delete',
           type: MenuItemType.Normal,
-          onClick: jest.fn(),
+          onClick: vi.fn(),
         },
       ],
       showContextMenu: true,

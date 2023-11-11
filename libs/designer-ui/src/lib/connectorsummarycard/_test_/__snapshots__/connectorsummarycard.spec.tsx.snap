@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`recommendation panel renders connector card 1`] = `
+exports[`recommendation panel > renders connector card 1`] = `
 <button
   className="msla-connector-summary-card"
   onClick={[Function]}

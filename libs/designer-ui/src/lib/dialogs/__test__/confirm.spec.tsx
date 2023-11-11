@@ -12,8 +12,8 @@ describe('ui/dialogs/_confirm', () => {
       hidden: false,
       message: 'Message',
       title: 'Title',
-      onConfirm: jest.fn(),
-      onDismiss: jest.fn(),
+      onConfirm: vi.fn(),
+      onDismiss: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

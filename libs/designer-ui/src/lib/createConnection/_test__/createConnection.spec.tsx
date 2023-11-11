@@ -118,7 +118,7 @@ describe('ui/createConnection', () => {
     const props: CreateConnectionProps = {
       connectorId: 'myConnectorId',
       connectorDisplayName: 'My Connector',
-      checkOAuthCallback: jest.fn(),
+      checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnection = renderer.getRenderOutput();
@@ -139,7 +139,7 @@ describe('ui/createConnection', () => {
       connectorId: 'myConnectorId',
       connectorDisplayName: 'My Connector',
       connectionParameters: getConnectionParameters(),
-      checkOAuthCallback: jest.fn(),
+      checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnection = renderer.getRenderOutput();
@@ -165,7 +165,7 @@ describe('ui/createConnection', () => {
       connectorId: 'myConnectorId',
       connectorDisplayName: 'My Connector',
       connectionParameterSets: getConnectionParameterSets(),
-      checkOAuthCallback: jest.fn(),
+      checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnection = renderer.getRenderOutput();
@@ -195,7 +195,7 @@ describe('ui/createConnection', () => {
     const CustomConnectionParameter = () => <div>Custom Connection Parameter</div>;
 
     const connectionParameterEditorService = {
-      getConnectionParameterEditor: jest.fn(({ parameterKey }: IConnectionParameterInfo) => {
+      getConnectionParameterEditor: vi.fn(({ parameterKey }: IConnectionParameterInfo) => {
         if (parameterKey === 'parameterA') {
           return {
             EditorComponent: CustomConnectionParameter,
@@ -219,7 +219,7 @@ describe('ui/createConnection', () => {
         connectorId: 'myConnectorId',
         connectorDisplayName: 'My Connector',
         connectionParameters: getConnectionParameters(),
-        checkOAuthCallback: jest.fn(),
+        checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnection = renderer.getRenderOutput();
@@ -253,7 +253,7 @@ describe('ui/createConnection', () => {
       const CustomConnectionParameter = () => <div>Custom Connection Parameter</div>;
 
       const connectionParameterEditorService: IConnectionParameterEditorService = {
-        getConnectionParameterEditor: jest.fn(({ parameterKey }) => {
+        getConnectionParameterEditor: vi.fn(({ parameterKey }) => {
           if (parameterKey === 'parameterA') {
             return {
               EditorComponent: CustomConnectionParameter,
@@ -268,7 +268,7 @@ describe('ui/createConnection', () => {
         connectorId: 'myConnectorId',
         connectorDisplayName: 'My Connector',
         connectionParameterSets: getConnectionParameterSets(),
-        checkOAuthCallback: jest.fn(),
+        checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnection = renderer.getRenderOutput();

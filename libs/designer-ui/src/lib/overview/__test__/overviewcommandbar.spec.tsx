@@ -14,8 +14,8 @@ describe('lib/overview/overviewcommandbar', () => {
 
   beforeEach(() => {
     minimal = {
-      onRefresh: jest.fn(),
-      onRunTrigger: jest.fn(),
+      onRefresh: vi.fn(),
+      onRunTrigger: vi.fn(),
     };
   });
 

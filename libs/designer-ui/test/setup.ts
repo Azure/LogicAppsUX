@@ -1,7 +1,9 @@
-import messages from '../services/intl/src/compiled-lang/strings.json';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import messages from '../../services/intl/src/compiled-lang/strings.json';
 import { initializeIcons } from '@fluentui/react';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
+import { vi } from 'vitest';
 
 initializeIcons();
 
@@ -19,4 +21,4 @@ const intl = createIntl(
   cache
 );
 
-jest.spyOn(Intl, 'useIntl').mockImplementation(() => intl);
+vi.spyOn(Intl, 'useIntl').mockImplementation(() => intl);

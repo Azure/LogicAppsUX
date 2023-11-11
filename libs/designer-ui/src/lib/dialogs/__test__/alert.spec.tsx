@@ -11,7 +11,7 @@ describe('ui/dialogs/_alert', () => {
       hidden: false,
       message: 'Message',
       title: 'Title',
-      onDismiss: jest.fn(),
+      onDismiss: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

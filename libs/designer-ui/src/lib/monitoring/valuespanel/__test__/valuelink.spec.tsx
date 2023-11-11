@@ -10,7 +10,7 @@ describe('lib/monitoring/valuespanel/valuelink', () => {
     minimal = {
       linkText: 'link-text',
       visible: true,
-      onLinkClick: jest.fn(),
+      onLinkClick: vi.fn(),
     };
     renderer = ShallowRenderer.createRenderer();
   });

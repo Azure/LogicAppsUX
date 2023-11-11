@@ -1,9 +1,10 @@
 {
-  "presets": [
+  "plugins": [
     [
-      "@nx/js/babel",
+      "formatjs",
       {
-        "useBuiltIns": "usage"
+        "idInterpolationPattern": "[sha512:contenthash:base64:6]",
+        "ast": true
       }
     ]
   ]

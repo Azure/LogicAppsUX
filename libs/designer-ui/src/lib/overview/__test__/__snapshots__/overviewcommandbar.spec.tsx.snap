@@ -1,12 +1,12 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/overview/overviewcommandbar renders 1`] = `
+exports[`lib/overview/overviewcommandbar > renders 1`] = `
 <div
   data-testid="msla-overview-command-bar"
 >
   <div
     style={
-      Object {
+      {
         "position": "relative",
       }
     }
@@ -14,7 +14,7 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
     <div
       data-automation-id="visibleContent"
       style={
-        Object {
+        {
           "position": "fixed",
           "visibility": "hidden",
         }
@@ -59,7 +59,7 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
                   className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Refresh"
                   style={
-                    Object {
+                    {
                       "fontFamily": "\\"FabricMDL2Icons-0\\"",
                     }
                   }
@@ -86,13 +86,13 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
 </div>
 `;
 
-exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
+exports[`lib/overview/overviewcommandbar > renders with Run trigger button 1`] = `
 <div
   data-testid="msla-overview-command-bar"
 >
   <div
     style={
-      Object {
+      {
         "position": "relative",
       }
     }
@@ -100,7 +100,7 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
     <div
       data-automation-id="visibleContent"
       style={
-        Object {
+        {
           "position": "fixed",
           "visibility": "hidden",
         }
@@ -145,7 +145,7 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
                   className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Refresh"
                   style={
-                    Object {
+                    {
                       "fontFamily": "\\"FabricMDL2Icons-0\\"",
                     }
                   }
@@ -192,7 +192,7 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
                   className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Play"
                   style={
-                    Object {
+                    {
                       "fontFamily": "\\"FabricMDL2Icons-0\\"",
                     }
                   }

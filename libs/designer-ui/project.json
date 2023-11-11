@@ -1,58 +1,34 @@
 {
   "name": "designer-ui",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/designer-ui/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/designer-ui",
-        "tsConfig": "libs/designer-ui/tsconfig.lib.json",
-        "project": "libs/designer-ui/package.json",
-        "entryFile": "libs/designer-ui/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "buildableProjectDepsInPackageJsonType": "dependencies",
-        "format": ["cjs", "esm"],
-        "assets": [
-          {
-            "glob": "libs/designer-ui/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
-      }
-    },
-    "yalcpush": {
-      "executor": "nx:run-script",
-      "outputs": ["{options.outputPath}"],
-      "dependsOn": [
-        {
-          "target": "build",
-          "projects": "self"
-        }
-      ],
-      "options": {
-        "script": "yalcpush"
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/designer-ui/**/*.{ts,tsx,js,jsx}"]
+        "outputPath": "dist/libs/designer-ui"
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/designer-ui"],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "jestConfig": "libs/designer-ui/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "reportsDirectory": "../../../coverage/libs/designer-ui"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/designer-ui/**/*.ts",
+          "libs/designer-ui/package.json"
+        ]
       }
     }
-  }
+  },
+  "tags": []
 }

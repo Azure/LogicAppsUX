@@ -17,11 +17,11 @@ describe('ui/workflowparameters/workflowparameter', () => {
       tabs: {},
       title: 'test title',
       width: '630px',
-      onCommentChange: jest.fn(),
-      trackEvent: jest.fn(),
-      setSelectedTab: jest.fn(),
-      toggleCollapse: jest.fn(),
-      onTitleChange: jest.fn(),
+      onCommentChange: vi.fn(),
+      trackEvent: vi.fn(),
+      setSelectedTab: vi.fn(),
+      toggleCollapse: vi.fn(),
+      onTitleChange: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

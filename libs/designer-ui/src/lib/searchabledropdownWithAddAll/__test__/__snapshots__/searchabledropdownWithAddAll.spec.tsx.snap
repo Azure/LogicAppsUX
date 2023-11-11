@@ -1,36 +1,51 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/searchabledropdownwithaddall should create a dropdown with an add all and remove all buttons 1`] = `
+exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add all and remove all buttons 1`] = `
 <div
   className="ms-Stack css-109"
 >
-  <Dropdown
-    className="msla-searchable-dropdown-with-buttons"
-    multiSelect={true}
-    onChange={[Function]}
-    onDismiss={[Function]}
-    onRenderItem={[Function]}
-    options={
-      Array [
-        Object {
-          "key": "foo",
-          "text": "Foo",
-        },
-        Object {
-          "key": "bar",
-          "text": "Bar",
-        },
-        Object {
-          "key": "baz",
-          "text": "Baz",
-        },
-      ]
-    }
-    placeholder="Select an option"
-    selectedKeys={Array []}
-  />
   <div
-    className="ms-TooltipHost root-110"
+    className="ms-Dropdown-container msla-searchable-dropdown-with-buttons"
+  >
+    <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      className="ms-Dropdown dropdown-110"
+      data-is-focusable={true}
+      data-ktp-target={true}
+      id="Dropdown0"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      role="combobox"
+      tabIndex={0}
+    >
+      <span
+        aria-invalid={false}
+        className="ms-Dropdown-title ms-Dropdown-titleIsPlaceHolder title-111"
+        id="Dropdown0-option"
+      >
+        Select an option
+      </span>
+      <span
+        className="ms-Dropdown-caretDownWrapper caretDownWrapper-112"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Dropdown-caretDown caretDown-130"
+          data-icon-name="ChevronDown"
+        >
+          
+        </i>
+      </span>
+    </div>
+  </div>
+  <div
+    className="ms-TooltipHost root-131"
     onBlurCapture={[Function]}
     onFocusCapture={[Function]}
     onKeyDown={[Function]}
@@ -40,7 +55,7 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
   >
     <button
       aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-111"
+      className="ms-Link msla-dropdown-control-button root-132"
       data-automation-id="msla-add-all-button"
       disabled={false}
       onClick={[Function]}
@@ -50,9 +65,9 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     </button>
     <div
       hidden={true}
-      id="tooltip0"
+      id="tooltip1"
       style={
-        Object {
+        {
           "border": 0,
           "height": 1,
           "margin": -1,
@@ -68,7 +83,7 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     </div>
   </div>
   <div
-    className="ms-TooltipHost root-110"
+    className="ms-TooltipHost root-131"
     onBlurCapture={[Function]}
     onFocusCapture={[Function]}
     onKeyDown={[Function]}
@@ -78,7 +93,7 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
   >
     <button
       aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-111"
+      className="ms-Link msla-dropdown-control-button root-132"
       data-automation-id="msla-remove-all-button"
       disabled={false}
       onClick={[Function]}
@@ -88,9 +103,9 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     </button>
     <div
       hidden={true}
-      id="tooltip1"
+      id="tooltip2"
       style={
-        Object {
+        {
           "border": 0,
           "height": 1,
           "margin": -1,
@@ -108,37 +123,52 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
 </div>
 `;
 
-exports[`lib/searchabledropdownwithaddall should create a dropdown with an add all only 1`] = `
+exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add all only 1`] = `
 <div
   className="ms-Stack css-109"
 >
-  <Dropdown
-    className="msla-searchable-dropdown-with-buttons"
-    multiSelect={true}
-    onChange={[Function]}
-    onDismiss={[Function]}
-    onRenderItem={[Function]}
-    options={
-      Array [
-        Object {
-          "key": "foo",
-          "text": "Foo",
-        },
-        Object {
-          "key": "bar",
-          "text": "Bar",
-        },
-        Object {
-          "key": "baz",
-          "text": "Baz",
-        },
-      ]
-    }
-    placeholder="Select an option"
-    selectedKeys={Array []}
-  />
   <div
-    className="ms-TooltipHost root-110"
+    className="ms-Dropdown-container msla-searchable-dropdown-with-buttons"
+  >
+    <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      className="ms-Dropdown dropdown-110"
+      data-is-focusable={true}
+      data-ktp-target={true}
+      id="Dropdown3"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      role="combobox"
+      tabIndex={0}
+    >
+      <span
+        aria-invalid={false}
+        className="ms-Dropdown-title ms-Dropdown-titleIsPlaceHolder title-111"
+        id="Dropdown3-option"
+      >
+        Select an option
+      </span>
+      <span
+        className="ms-Dropdown-caretDownWrapper caretDownWrapper-112"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Dropdown-caretDown caretDown-130"
+          data-icon-name="ChevronDown"
+        >
+          
+        </i>
+      </span>
+    </div>
+  </div>
+  <div
+    className="ms-TooltipHost root-131"
     onBlurCapture={[Function]}
     onFocusCapture={[Function]}
     onKeyDown={[Function]}
@@ -148,7 +178,7 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
   >
     <button
       aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-111"
+      className="ms-Link msla-dropdown-control-button root-132"
       data-automation-id="msla-add-all-button"
       disabled={false}
       onClick={[Function]}
@@ -158,9 +188,9 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     </button>
     <div
       hidden={true}
-      id="tooltip2"
+      id="tooltip4"
       style={
-        Object {
+        {
           "border": 0,
           "height": 1,
           "margin": -1,

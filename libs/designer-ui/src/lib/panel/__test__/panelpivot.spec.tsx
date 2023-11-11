@@ -9,8 +9,8 @@ describe('ui/workflowparameters/workflowparameter', () => {
       nodeId: '',
       isCollapsed: false,
       tabs: {},
-      onTabChange: jest.fn(),
-      trackEvent: jest.fn(),
+      onTabChange: vi.fn(),
+      trackEvent: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

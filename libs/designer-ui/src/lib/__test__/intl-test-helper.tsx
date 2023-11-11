@@ -4,7 +4,7 @@
  * These helper functions aim to address that and wrap a valid,
  * English-locale intl context around them.
  */
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import messages from '../../../../services/intl/src/compiled-lang/strings.json';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
@@ -24,7 +24,7 @@ const intl = createIntl(
 );
 
 export const mockUseIntl = () => {
-  jest.spyOn(Intl, 'useIntl').mockImplementation(() => intl);
+  vi.spyOn(Intl, 'useIntl').mockImplementation(() => intl);
 };
 
 export const getTestIntl = () => {

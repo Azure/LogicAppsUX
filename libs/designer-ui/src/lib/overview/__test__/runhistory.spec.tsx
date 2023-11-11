@@ -14,7 +14,7 @@ describe('lib/overview/runhistory', () => {
   beforeEach(() => {
     minimal = {
       items: [],
-      onOpenRun: jest.fn(),
+      onOpenRun: vi.fn(),
     };
   });
 

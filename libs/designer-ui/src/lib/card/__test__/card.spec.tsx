@@ -53,7 +53,7 @@ describe('lib/card', () => {
         key: 'Delete',
         title: 'Delete',
         type: MenuItemType.Normal,
-        onClick: jest.fn(),
+        onClick: vi.fn(),
       },
     ];
     const tree = renderer.create(<Card {...minimal} contextMenuOptions={contextMenuOptions} />).toJSON();

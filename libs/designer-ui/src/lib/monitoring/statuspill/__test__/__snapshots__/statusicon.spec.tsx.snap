@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Aborted, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Aborted, has retries = false) 1`] = `
 <svg
   fill="none"
   height="28"
@@ -27,7 +27,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Aborted, has ret
 </svg>
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Cancelled, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Cancelled, has retries = false) 1`] = `
 <svg
   fill="none"
   height="24"
@@ -54,7 +54,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Cancelled, has r
 </svg>
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Failed, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Failed, has retries = false) 1`] = `
 <svg
   fill="none"
   height="24"
@@ -75,7 +75,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Failed, has retr
 </svg>
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Running, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Running, has retries = false) 1`] = `
 <div
   className="ms-Spinner root-110"
 >
@@ -85,7 +85,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Running, has ret
 </div>
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Skipped, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Skipped, has retries = false) 1`] = `
 <svg
   fill="none"
   height="24"
@@ -106,10 +106,10 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Skipped, has ret
 </svg>
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Succeeded, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Succeeded, has retries = false) 1`] = `
 <div
   style={
-    Object {
+    {
       "opacity": "100%",
     }
   }
@@ -135,10 +135,10 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Succeeded, has r
 </div>
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Succeeded, has retries = true) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Succeeded, has retries = true) 1`] = `
 <div
   style={
-    Object {
+    {
       "opacity": "100%",
     }
   }
@@ -164,7 +164,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Succeeded, has r
 </div>
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = TimedOut, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = TimedOut, has retries = false) 1`] = `
 <svg
   fill="none"
   height="24"
@@ -185,7 +185,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = TimedOut, has re
 </svg>
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Unknown, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Unknown, has retries = false) 1`] = `
 <img
   alt=""
   role="presentation"
@@ -193,7 +193,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Unknown, has ret
 />
 `;
 
-exports[`lib/monitoring/statuspill/statusicon renders (status = Waiting, has retries = false) 1`] = `
+exports[`lib/monitoring/statuspill/statusicon > renders (status = Waiting, has retries = false) 1`] = `
 <svg
   fill="none"
   height="24"

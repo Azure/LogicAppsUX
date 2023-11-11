@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/actionbuttonv2 should render 1`] = `
+exports[`lib/actionbuttonv2 > should render 1`] = `
 <div
   className="ms-TooltipHost root-109"
   onBlurCapture={[Function]}
@@ -33,7 +33,7 @@ exports[`lib/actionbuttonv2 should render 1`] = `
     hidden={true}
     id="tooltip0"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,
@@ -50,7 +50,7 @@ exports[`lib/actionbuttonv2 should render 1`] = `
 </div>
 `;
 
-exports[`lib/actionbuttonv2 should render disabled 1`] = `
+exports[`lib/actionbuttonv2 > should render disabled 1`] = `
 <div
   className="ms-TooltipHost root-109"
   onBlurCapture={[Function]}
@@ -83,7 +83,7 @@ exports[`lib/actionbuttonv2 should render disabled 1`] = `
     hidden={true}
     id="tooltip2"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,
@@ -100,7 +100,7 @@ exports[`lib/actionbuttonv2 should render disabled 1`] = `
 </div>
 `;
 
-exports[`lib/actionbuttonv2 should render with a CSS class 1`] = `
+exports[`lib/actionbuttonv2 > should render with a CSS class 1`] = `
 <div
   className="ms-TooltipHost root-109"
   onBlurCapture={[Function]}
@@ -133,7 +133,7 @@ exports[`lib/actionbuttonv2 should render with a CSS class 1`] = `
     hidden={true}
     id="tooltip1"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,
@@ -150,7 +150,7 @@ exports[`lib/actionbuttonv2 should render with a CSS class 1`] = `
 </div>
 `;
 
-exports[`lib/actionbuttonv2 should render with a ref 1`] = `
+exports[`lib/actionbuttonv2 > should render with a ref 1`] = `
 <div
   className="ms-TooltipHost root-109"
   onBlurCapture={[Function]}
@@ -183,7 +183,7 @@ exports[`lib/actionbuttonv2 should render with a ref 1`] = `
     hidden={true}
     id="tooltip3"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,

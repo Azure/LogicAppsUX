@@ -60,8 +60,8 @@ describe('lib/pager', () => {
   });
 
   it('should render with failed iteration buttons', () => {
-    const onClickNext = jest.fn();
-    const onClickPrevious = jest.fn();
+    const onClickNext = vi.fn();
+    const onClickPrevious = vi.fn();
     const failedIterationProps = {
       max: 0,
       min: 0,

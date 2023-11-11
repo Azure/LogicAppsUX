@@ -48,7 +48,7 @@ export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & 
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
+  override componentDidCatch(error: Error, info: React.ErrorInfo) {
     this.props.onError?.(error, info);
   }
 
@@ -56,11 +56,11 @@ export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & 
     registerOnThemeChangeCallback(this._handleThemeChange);
   }
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     removeOnThemeChangeCallback(this._handleThemeChange);
   }
 
-  render() {
+  override render() {
     const { children, className, fallback, intl } = this.props;
     const { hasError, isInverted } = this.state;
 

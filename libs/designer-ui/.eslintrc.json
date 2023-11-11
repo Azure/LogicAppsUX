@@ -1,16 +1,7 @@
 {
-  "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
+  "extends": ["../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
-  "rules": {
-    "react/jsx-no-literals": [2]
-  },
   "overrides": [
-    {
-      "files": ["*.test.ts", "*.test.tsx", "*.spec.tsx", "*.spec.ts"],
-      "rules": {
-        "react/jsx-no-literals": "off"
-      }
-    },
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {}
@@ -22,6 +13,18 @@
     {
       "files": ["*.js", "*.jsx"],
       "rules": {}
+    },
+    {
+      "files": ["*.json"],
+      "parser": "jsonc-eslint-parser",
+      "rules": {
+        "@nx/dependency-checks": [
+          "error",
+          {
+            "ignoredFiles": ["{projectRoot}/vite.config.{js,ts,mjs,mts}"]
+          }
+        ]
+      }
     }
   ]
 }

@@ -100,7 +100,7 @@ describe('ui/tip', () => {
 
   describe('onDismiss', () => {
     it('should set the onDismiss prop on the callout when onDismiss is set', () => {
-      const onDismiss = jest.fn();
+      const onDismiss = vi.fn();
       renderer.render(<Tip {...minimal} onDismiss={onDismiss} />);
 
       const callout = renderer.getRenderOutput();
