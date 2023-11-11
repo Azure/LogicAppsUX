@@ -5,7 +5,7 @@
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { ResolutionService } from '@microsoft/parsers-logic-apps';
+import { ResolutionService } from '@microsoft/logic-apps-designer';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';

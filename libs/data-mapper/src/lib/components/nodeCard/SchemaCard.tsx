@@ -33,8 +33,8 @@ import {
   Important12Filled,
   bundleIcon,
 } from '@fluentui/react-icons';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
+import type { MenuItemOption } from '@microsoft/logic-apps-designer';
+import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/logic-apps-designer';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

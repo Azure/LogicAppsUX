@@ -1,4 +1,4 @@
-import { BaseException } from '@microsoft/utils-logic-apps';
+import { BaseException } from '@microsoft/logic-apps-designer';
 
 export enum InvalidFormatExceptionCode {
   MISSING_MAPPINGS_PARAM = 'MissingMappingParam',

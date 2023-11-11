@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { HttpRequestOptions, IHttpClient } from '@microsoft/designer-client-services-logic-apps';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import type { HttpRequestOptions, IHttpClient } from '@microsoft/logic-apps-designer';
+import { HTTP_METHODS } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 
 export interface HttpOptions {

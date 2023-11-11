@@ -13,7 +13,7 @@ import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
 import { SchemaFileFormat } from '@microsoft/logic-apps-data-mapper';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { Theme as ThemeType } from '@microsoft/logic-apps-designer';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

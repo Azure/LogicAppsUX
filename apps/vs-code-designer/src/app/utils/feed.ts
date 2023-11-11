@@ -5,7 +5,7 @@
 import { parseJson } from './parseJson';
 import { sendRequestWithExtTimeout } from './requestUtils';
 import type { HttpOperationResponse } from '@azure/ms-rest-js';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/logic-apps-designer';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 

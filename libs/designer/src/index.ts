@@ -1,4 +1,9 @@
-import './lib/ui/styles.less';
+import './designer/ui/styles.less';
 
-export * from './lib';
+export * from './designer';
 export * from './chatbot';
+export * from './designer-ui';
+export * from './parsers';
+export * from './services';
+export * from './intl';
+export * from './utils';

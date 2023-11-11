@@ -2,7 +2,7 @@ import { commonCodeEditorProps } from '../testMapPanel/TestMapPanel';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import { EditorLanguage, MonacoEditor } from '@microsoft/logic-apps-designer';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

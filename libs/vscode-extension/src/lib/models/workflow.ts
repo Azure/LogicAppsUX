@@ -1,6 +1,6 @@
 import type { Artifacts, FileDetails } from './artifact';
 import type { Parameter } from './parameter';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-designer';
 
 export interface ILocalSettingsJson {
   IsEncrypted?: boolean;

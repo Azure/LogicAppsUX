@@ -3,11 +3,11 @@ import messages from '../../../../../libs/services/intl/src/compiled-lang/string
 import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { OnErrorFn } from '@formatjs/intl';
-import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
-import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
-import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
-import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import type { Runs } from '@microsoft/utils-logic-apps';
+import { StandardRunService } from '@microsoft/logic-apps-designer';
+import type { CallbackInfo } from '@microsoft/logic-apps-designer';
+import type { OverviewPropertiesProps } from '@microsoft/logic-apps-designer';
+import { Overview, isRunError, mapToRunItem } from '@microsoft/logic-apps-designer';
+import type { Runs } from '@microsoft/logic-apps-designer';
 import { HttpClient } from '@microsoft/vscode-extension';
 import { useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';

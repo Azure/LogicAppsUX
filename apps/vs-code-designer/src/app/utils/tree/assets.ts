@@ -1,5 +1,5 @@
 import { ext } from '../../../extensionVariables';
-import { Theme } from '@microsoft/utils-logic-apps';
+import { Theme } from '@microsoft/logic-apps-designer';
 import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 

@@ -2,7 +2,7 @@ import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
-import { TrafficLightDot } from '@microsoft/designer-ui';
+import { TrafficLightDot } from '@microsoft/logic-apps-designer';
 import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -18,7 +18,7 @@ import {
   validateParameter,
   updateParameterValidation,
 } from '@microsoft/logic-apps-designer';
-import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
+import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';

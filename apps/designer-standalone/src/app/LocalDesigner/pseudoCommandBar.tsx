@@ -1,7 +1,7 @@
 import './pseudoCommandBar.less';
 import type { IModalStyles } from '@fluentui/react';
 import { ActionButton, Modal } from '@fluentui/react';
-import { MonacoEditor, EditorLanguage } from '@microsoft/designer-ui';
+import { MonacoEditor, EditorLanguage } from '@microsoft/logic-apps-designer';
 import type { Workflow, AppDispatch } from '@microsoft/logic-apps-designer';
 import {
   useIsDesignerDirty,

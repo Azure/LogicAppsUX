@@ -1,5 +1,5 @@
 import { environment } from '../../../environments/environment';
-import type { HttpRequestOptions, IHttpClient } from '@microsoft/designer-client-services-logic-apps';
+import type { HttpRequestOptions, IHttpClient } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 

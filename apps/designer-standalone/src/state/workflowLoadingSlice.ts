@@ -2,7 +2,7 @@
 import { getStateHistory, setStateHistory } from './historyHelpers';
 import type { RootState } from './store';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-designer';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 

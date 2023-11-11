@@ -1,6 +1,6 @@
 import TreeBranch from './TreeBranch';
 import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
-import type { MenuItemOption } from '@microsoft/designer-ui';
+import type { MenuItemOption } from '@microsoft/logic-apps-designer';
 import type { ReactNode } from 'react';
 
 export interface ITreeNode<T> {

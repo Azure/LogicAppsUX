@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { isOpenApiSchemaVersion } from '@microsoft/logic-apps-designer';
-import { clone } from '@microsoft/utils-logic-apps';
+import { clone } from '@microsoft/logic-apps-designer';
 
 ///////////////////////////////////////////////////////////////////////////////
 // This was mostly copied straight from what we have in portal

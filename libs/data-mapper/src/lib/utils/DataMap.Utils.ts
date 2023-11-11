@@ -30,7 +30,7 @@ import {
 } from './Function.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid } from '@microsoft/utils-logic-apps';
+import { isAGuid } from '@microsoft/logic-apps-designer';
 
 export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 

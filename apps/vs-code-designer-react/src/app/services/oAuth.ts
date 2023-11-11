@@ -1,5 +1,5 @@
 import { JwtTokenConstants, JwtTokenHelper } from './JwtHelper';
-import type { IOAuthPopup, IOAuthService, OAuthPopupOptions } from '@microsoft/designer-client-services-logic-apps';
+import type { IOAuthPopup, IOAuthService, OAuthPopupOptions } from '@microsoft/logic-apps-designer';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 
 export interface LoginResult {

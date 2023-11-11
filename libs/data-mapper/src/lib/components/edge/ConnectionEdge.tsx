@@ -16,8 +16,8 @@ import {
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, Tooltip, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
+import type { MenuItemOption } from '@microsoft/logic-apps-designer';
+import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/logic-apps-designer';
 import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

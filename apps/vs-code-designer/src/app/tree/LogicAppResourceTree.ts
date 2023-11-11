@@ -16,7 +16,7 @@ import type { SlotTreeItem } from './slotsTree/SlotTreeItem';
 import { SlotsTreeItem } from './slotsTree/SlotsTreeItem';
 import { ArtifactsTreeItem } from './slotsTree/artifactsTree/ArtifactsTreeItem';
 import type { Site, SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-designer';
 import {
   DeleteLastServicePlanStep,
   DeleteSiteStep,

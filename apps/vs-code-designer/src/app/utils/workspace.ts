@@ -7,7 +7,7 @@ import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteW
 import { NoWorkspaceError } from './errors';
 import { isPathEqual, isSubpath } from './fs';
 import { tryGetFunctionProjectRoot } from './verifyIsProject';
-import { isNullOrUndefined, isString } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined, isString } from '@microsoft/logic-apps-designer';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as globby from 'globby';

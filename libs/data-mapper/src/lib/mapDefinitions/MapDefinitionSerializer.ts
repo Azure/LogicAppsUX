@@ -20,7 +20,7 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
-import { extend } from '@microsoft/utils-logic-apps';
+import { extend } from '@microsoft/logic-apps-designer';
 import yaml from 'js-yaml';
 
 interface OutputPathItem {

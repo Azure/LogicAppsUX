@@ -1,7 +1,7 @@
 import type { FunctionManifest } from '../../../models/Function';
 import type { DataMapperApiServiceOptions } from './DataMapperApiService';
 import { DataMapperApiService } from './DataMapperApiService';
-import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-designer';
 
 let service: IDataMapperApiService;
 

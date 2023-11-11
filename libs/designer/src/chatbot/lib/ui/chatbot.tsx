@@ -6,8 +6,8 @@ import { CopilotPanelHeader } from './panelheader';
 import type { ITextField } from '@fluentui/react';
 import { useTheme, Panel, PanelType, css, getId } from '@fluentui/react';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/designer-client-services-logic-apps';
-import type { ConversationItem, ChatEntryReaction } from '@microsoft/designer-ui';
+import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/logic-apps-designer';
+import type { ConversationItem, ChatEntryReaction } from '@microsoft/logic-apps-designer';
 import {
   PanelLocation,
   ChatInput,
@@ -17,8 +17,8 @@ import {
   ProgressCardWithStopButton,
   ChatSuggestionGroup,
   ChatSuggestion,
-} from '@microsoft/designer-ui';
-import { guid } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-designer';
+import { guid } from '@microsoft/logic-apps-designer';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 

@@ -1,5 +1,5 @@
 // TODO: Move this out to a common library so that we can share it between the designer and the chatbot.
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-designer';
 
 export interface Workflow {
   definition: LogicAppsV2.WorkflowDefinition;

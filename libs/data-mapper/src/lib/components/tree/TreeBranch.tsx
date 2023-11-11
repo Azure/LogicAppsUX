@@ -4,7 +4,7 @@ import { Stack } from '@fluentui/react';
 import { Button, mergeClasses } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import { bundleIcon, ChevronDown12Regular, ChevronDown12Filled, ChevronRight12Regular, ChevronRight12Filled } from '@fluentui/react-icons';
-import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/logic-apps-designer';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 

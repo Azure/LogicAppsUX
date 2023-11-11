@@ -3,7 +3,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl, dataMapLoadTimeout, settingsFileContent } from './extensionConfig';
-import { extend } from '@microsoft/utils-logic-apps';
+import { extend } from '@microsoft/logic-apps-designer';
 import * as cp from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import fetch from 'node-fetch';

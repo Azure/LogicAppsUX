@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../localize';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { isEmptyString } from '@microsoft/logic-apps-designer';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { pathRelativeFunc } from '@microsoft/vscode-extension';

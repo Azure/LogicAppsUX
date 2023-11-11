@@ -1,4 +1,4 @@
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { Theme as ThemeType } from '@microsoft/logic-apps-designer';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

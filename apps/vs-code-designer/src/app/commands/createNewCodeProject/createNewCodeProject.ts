@@ -14,7 +14,7 @@ import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectT
 import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
 import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
 import { setNamespace } from './createCodeProjectSteps/createFunction/setNamepSpace';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-designer';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension';

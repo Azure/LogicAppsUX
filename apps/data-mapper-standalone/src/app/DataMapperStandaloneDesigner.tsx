@@ -14,7 +14,7 @@ import {
   defaultDataMapperApiServiceOptions,
   getFunctions,
 } from '@microsoft/logic-apps-data-mapper';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { Theme as ThemeType } from '@microsoft/logic-apps-designer';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

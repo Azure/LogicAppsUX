@@ -18,7 +18,7 @@ import type { LayoutNode, RootLayoutNode } from './Layout.Utils';
 import { applyCustomLayout, convertDataMapNodesToLayoutTree, convertWholeDataMapToLayoutTree } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-designer';
 import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
 import { Position } from 'reactflow';
