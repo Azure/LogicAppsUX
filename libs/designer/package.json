@@ -1,11 +1,42 @@
 {
   "name": "@microsoft/logic-apps-designer",
   "version": "2.83.1",
-  "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/designer"
+  "dependencies": {
+    "@microsoft/utils-logic-apps": "*",
+    "@fluentui/react": "^8.106.7",
+    "@fluentui/react-icons": "2.0.196",
+    "@microsoft/designer-client-services-logic-apps": "*",
+    "@microsoft/designer-ui": "*",
+    "react-intl": "6.3.0",
+    "@fluentui/react-components": "^9.18.2",
+    "@microsoft/intl-logic-apps": "*",
+    "to-title-case": "1.0.0",
+    "@reduxjs/toolkit": "1.8.5",
+    "react-redux": "8.0.2",
+    "@fluentui/azure-themes": "8.5.70",
+    "@formatjs/intl": "2.6.7",
+    "react-query": "3.39.3",
+    "@microsoft/parsers-logic-apps": "*",
+    "lodash.merge": "^4.6.2",
+    "elkjs": "^0.8.2",
+    "reactflow": "^11.8.2",
+    "yocto-queue": "0.1.0",
+    "react-dnd": "16.0.1",
+    "react-dnd-accessible-backend": "^1.0.1",
+    "react-dnd-html5-backend": "16.0.1",
+    "react-dnd-multi-backend": "^8.0.0",
+    "react-hotkeys-hook": "^4.3.8",
+    "@fluentui/utilities": "8.13.16",
+    "fuse.js": "6.6.2",
+    "@microsoft/applicationinsights-core-js": "2.8.9",
+    "@react-hookz/web": "22.0.0",
+    "@fluentui/react-hooks": "8.6.20",
+    "util": "^0.12.5"
   },
   "peerDependencies": {
-    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
-  }
+    "react": "^16.4.0 || ^17.0.0 || ^18.0.0"
+  },
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
 }

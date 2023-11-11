@@ -1,63 +1,34 @@
 {
   "name": "designer",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/designer/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/designer",
-        "tsConfig": "libs/designer/tsconfig.lib.json",
-        "project": "libs/designer/package.json",
-        "entryFile": "libs/designer/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "buildableProjectDepsInPackageJsonType": "dependencies",
-        "extractCss": true,
-        "format": ["cjs", "esm"],
-        "assets": [
-          {
-            "glob": "libs/designer/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
-      },
-      "configurations": {
-        "vscode": {
-          "outputPath": "dist/apps/vs-code-designer/designer"
-        }
-      }
-    },
-    "yalcpush": {
-      "executor": "nx:run-script",
-      "outputs": ["{options.outputPath}"],
-      "dependsOn": [
-        {
-          "target": "build",
-          "projects": "self"
-        }
-      ],
-      "options": {
-        "script": "yalcpush"
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/designer/**/*.{ts,tsx,js,jsx}"]
+        "outputPath": "dist/libs/designer"
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/designer"],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "jestConfig": "libs/designer/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "reportsDirectory": "../../../coverage/libs/designer"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/designer/**/*.ts",
+          "libs/designer/package.json"
+        ]
       }
     }
-  }
+  },
+  "tags": []
 }
