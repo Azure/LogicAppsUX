@@ -36,16 +36,14 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
       >
         <i
           aria-hidden={true}
-          className="ms-Dropdown-caretDown caretDown-130"
+          className="ms-Dropdown-caretDown caretDown-128"
           data-icon-name="ChevronDown"
-        >
-          
-        </i>
+        />
       </span>
     </div>
   </div>
   <div
-    className="ms-TooltipHost root-131"
+    className="ms-TooltipHost root-129"
     onBlurCapture={[Function]}
     onFocusCapture={[Function]}
     onKeyDown={[Function]}
@@ -55,7 +53,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
   >
     <button
       aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-132"
+      className="ms-Link msla-dropdown-control-button root-130"
       data-automation-id="msla-add-all-button"
       disabled={false}
       onClick={[Function]}
@@ -83,7 +81,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
     </div>
   </div>
   <div
-    className="ms-TooltipHost root-131"
+    className="ms-TooltipHost root-129"
     onBlurCapture={[Function]}
     onFocusCapture={[Function]}
     onKeyDown={[Function]}
@@ -93,7 +91,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
   >
     <button
       aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-132"
+      className="ms-Link msla-dropdown-control-button root-130"
       data-automation-id="msla-remove-all-button"
       disabled={false}
       onClick={[Function]}
@@ -159,16 +157,14 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
       >
         <i
           aria-hidden={true}
-          className="ms-Dropdown-caretDown caretDown-130"
+          className="ms-Dropdown-caretDown caretDown-128"
           data-icon-name="ChevronDown"
-        >
-          
-        </i>
+        />
       </span>
     </div>
   </div>
   <div
-    className="ms-TooltipHost root-131"
+    className="ms-TooltipHost root-129"
     onBlurCapture={[Function]}
     onFocusCapture={[Function]}
     onKeyDown={[Function]}
@@ -178,7 +174,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
   >
     <button
       aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-132"
+      className="ms-Link msla-dropdown-control-button root-130"
       data-automation-id="msla-add-all-button"
       disabled={false}
       onClick={[Function]}

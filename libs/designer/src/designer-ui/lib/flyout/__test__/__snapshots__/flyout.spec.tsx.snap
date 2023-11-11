@@ -22,7 +22,7 @@ exports[`ui/flyout > should render 1`] = `
       className="msla-flyout-icon"
       draggable={false}
       role="presentation"
-      src="/src/lib/card/images/information_tiny.svg"
+      src="/src/designer-ui/lib/card/images/information_tiny.svg"
     />
   </button>
   <div
@@ -66,7 +66,7 @@ exports[`ui/flyout > should render with a non-zero tab index 1`] = `
       className="msla-flyout-icon"
       draggable={false}
       role="presentation"
-      src="/src/lib/card/images/information_tiny.svg"
+      src="/src/designer-ui/lib/card/images/information_tiny.svg"
     />
   </button>
   <div
@@ -110,7 +110,7 @@ exports[`ui/flyout > should render with a title 1`] = `
       className="msla-flyout-icon"
       draggable={false}
       role="presentation"
-      src="/src/lib/card/images/information_tiny.svg"
+      src="/src/designer-ui/lib/card/images/information_tiny.svg"
     />
   </button>
   <div
@@ -154,7 +154,7 @@ exports[`ui/flyout > should render with an ARIA label 1`] = `
       className="msla-flyout-icon"
       draggable={false}
       role="presentation"
-      src="/src/lib/card/images/information_tiny.svg"
+      src="/src/designer-ui/lib/card/images/information_tiny.svg"
     />
   </button>
   <div

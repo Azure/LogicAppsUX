@@ -42,16 +42,14 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
           >
             <i
               aria-hidden={true}
-              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              className="ms-Icon root-105 ms-Button-icon icon-112"
               data-icon-name="SelectAll"
               style={
                 {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                  "fontFamily": undefined,
                 }
               }
-            >
-              
-            </i>
+            />
           </span>
         </button>
         <button
@@ -72,16 +70,14 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
           >
             <i
               aria-hidden={true}
-              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              className="ms-Icon root-105 ms-Button-icon icon-112"
               data-icon-name="Copy"
               style={
                 {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                  "fontFamily": undefined,
                 }
               }
-            >
-              
-            </i>
+            />
           </span>
         </button>
       </div>
@@ -155,16 +151,14 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
           >
             <i
               aria-hidden={true}
-              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              className="ms-Icon root-105 ms-Button-icon icon-112"
               data-icon-name="SelectAll"
               style={
                 {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                  "fontFamily": undefined,
                 }
               }
-            >
-              
-            </i>
+            />
           </span>
         </button>
         <button
@@ -185,16 +179,14 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
           >
             <i
               aria-hidden={true}
-              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              className="ms-Icon root-105 ms-Button-icon icon-112"
               data-icon-name="Copy"
               style={
                 {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                  "fontFamily": undefined,
                 }
               }
-            >
-              
-            </i>
+            />
           </span>
         </button>
       </div>
