@@ -10317,6 +10317,9 @@
       <Item ItemId=";kXn5e0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Ask a question about this workflow or about Azure Logic Apps as a whole ...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[询问关于此工作流或整个 Azure 逻辑应用的问题...]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
