@@ -34,11 +34,12 @@ export interface FlatFileEncodingInputs extends ContentAndSchemaInputs {
   emptyNodeGenerationMode?: EmptyNodeGenerationMode;
 }
 
-const enum EmptyNodeGenerationMode {
-  ForcedDisabled,
-  HonorSchemaNodeProperty,
-  ForcedEnabled,
-}
+const EmptyNodeGenerationMode = {
+  ForcedDisabled: 'ForcedDisabled',
+  HonorSchemaNodeProperty: 'HonorSchemaNodeProperty',
+  ForcedEnabled: 'ForcedEnabled',
+};
+type EmptyNodeGenerationMode = (typeof EmptyNodeGenerationMode)[keyof typeof EmptyNodeGenerationMode];
 
 /* Flat file decoding action types */
 
