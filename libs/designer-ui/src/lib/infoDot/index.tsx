@@ -6,7 +6,7 @@ export const InfoDot = (props: any) => {
 
   const tooltipProps = {
     onRenderContent: () => (
-      <div className="msla-info-dot-tooltip-content">
+      <div className="msla-info-dot-tooltip-content" aria-hidden="true">
         <Text block variant="xLarge" style={{ marginBottom: '8px' }}>
           {title}
         </Text>
