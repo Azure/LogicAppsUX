@@ -26,10 +26,11 @@ const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.leftCenter,
 };
 
-export enum MoveOption {
-  UP = 'up',
-  DOWN = 'down',
-}
+export const MoveOption = {
+  UP: 'up',
+  DOWN: 'down',
+};
+export type MoveOption = (typeof MoveOption)[keyof typeof MoveOption];
 
 interface GroupProps {
   readonly?: boolean;

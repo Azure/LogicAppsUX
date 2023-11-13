@@ -5,10 +5,11 @@ import { getIntl } from '@microsoft/intl-logic-apps';
 import { decodePropertySegment, OutputKeys } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, endsWith, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 
-enum OperationCategory {
-  Actions = 'actions',
-  Trigger = 'trigger',
-}
+const OperationCategory = {
+  Actions: 'actions',
+  Trigger: 'trigger',
+} as const;
+export type OperationCategory = (typeof OperationCategory)[keyof typeof OperationCategory];
 
 export function buildInlineCodeTextFromToken(inputToken: Token, language: string): string {
   const intl = getIntl();

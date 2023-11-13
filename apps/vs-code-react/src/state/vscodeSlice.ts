@@ -1,4 +1,4 @@
-import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, ProjectName, WorkflowsList } from '../run-service';
+import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, WorkflowsList } from '../run-service';
 import { AdvancedOptionsTypes } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -11,16 +11,17 @@ export interface InitializePayload {
   accessToken?: string;
   cloudHost?: string;
   workflowProperties: OverviewPropertiesProps;
-  project: ProjectName;
+  project: string;
   reviewContent?: IValidationData;
   hostVersion?: string;
 }
 
-export enum Status {
-  InProgress = 'InProgress',
-  Succeeded = 'Succeeded',
-  Failed = 'Failed',
-}
+export const Status = {
+  InProgress: 'InProgress',
+  Succeeded: 'Succeeded',
+  Failed: 'Failed',
+};
+export type Status = (typeof Status)[keyof typeof Status];
 
 export interface InitializedVscodeState {
   initialized: true;
@@ -30,7 +31,7 @@ export interface InitializedVscodeState {
   apiVersion: string;
   baseUrl: string;
   workflowProperties: OverviewPropertiesProps;
-  project: ProjectName;
+  project: string;
   exportData: ExportData;
   statuses?: string[];
   finalStatus?: Status;

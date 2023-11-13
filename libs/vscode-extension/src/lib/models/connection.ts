@@ -71,10 +71,11 @@ export interface ConnectionAndSettings {
   settings: Record<string, string>;
 }
 
-export enum StorageOptions {
-  AzureStorage = 'Azure Storage',
-  SQL = 'SQL',
-}
+export const StorageOptions = {
+  AzureStorage: 'Azure Storage',
+  SQL: 'SQL',
+} as const;
+export type StorageOptions = (typeof StorageOptions)[keyof typeof StorageOptions];
 
 export interface IConnectionsFileContent {
   name: string;

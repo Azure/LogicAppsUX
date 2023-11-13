@@ -24,10 +24,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export enum ToolboxPanelTabs {
-  sourceSchemaTree = 'sourceSchemaTree',
-  functionsList = 'functionsList',
-}
+export const ToolboxPanelTabs = {
+  sourceSchemaTree: 'sourceSchemaTree',
+  functionsList: 'functionsList',
+} as const;
+export type ToolboxPanelTabs = (typeof ToolboxPanelTabs)[keyof typeof ToolboxPanelTabs];
 
 const generalToolboxPanelProps = {
   xPos: '16px',

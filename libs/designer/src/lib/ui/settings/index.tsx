@@ -29,14 +29,15 @@ export type TextChangeHandler = (newVal: string) => void;
 export type NumberChangeHandler = (newVal: number) => void;
 export type DropdownSelectionChangeHandler = (selectedOption: IDropdownOption) => void;
 
-export enum SettingSectionName {
-  DATAHANDLING = 'datahandling',
-  GENERAL = 'general',
-  NETWORKING = 'networking',
-  RUNAFTER = 'runafter',
-  SECURITY = 'security',
-  TRACKING = 'tracking',
-}
+export const SettingSectionName = {
+  DATAHANDLING: 'datahandling',
+  GENERAL: 'general',
+  NETWORKING: 'networking',
+  RUNAFTER: 'runafter',
+  SECURITY: 'security',
+  TRACKING: 'tracking',
+} as const;
+export type SettingSectionName = (typeof SettingSectionName)[keyof typeof SettingSectionName];
 
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;

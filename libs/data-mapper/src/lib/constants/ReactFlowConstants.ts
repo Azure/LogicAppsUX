@@ -6,15 +6,17 @@ export const checkerboardBackgroundImage = `repeating-linear-gradient(45deg, ${t
 export const defaultCanvasZoom = 1.25;
 export const reactFlowFitViewOptions = { maxZoom: defaultCanvasZoom, includeHiddenNodes: true };
 
-export enum ReactFlowNodeType {
-  SchemaNode = 'schemaNode',
-  FunctionNode = 'functionNode',
-  FunctionPlaceholder = 'functionPlaceholder',
-}
+export const ReactFlowNodeType = {
+  SchemaNode: 'schemaNode',
+  FunctionNode: 'functionNode',
+  FunctionPlaceholder: 'functionPlaceholder',
+} as const;
+export type ReactFlowNodeType = (typeof ReactFlowNodeType)[keyof typeof ReactFlowNodeType];
 
-export enum ReactFlowEdgeType {
-  ConnectionEdge = 'connectionEdge',
-}
+export const ReactFlowEdgeType = {
+  ConnectionEdge: 'connectionEdge',
+} as const;
+export type ReactFlowEdgeType = (typeof ReactFlowEdgeType)[keyof typeof ReactFlowEdgeType];
 
 export const sourcePrefix = `${SchemaType.Source}-`;
 export const targetPrefix = `${SchemaType.Target}-`;

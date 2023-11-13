@@ -18,12 +18,13 @@ export type SignatureHelpProvider = languages.SignatureHelpProvider;
 type SignatureInformation = languages.SignatureInformation;
 type SignatureHelpResult = languages.SignatureHelpResult;
 
-const enum tokenNames {
-  FUNCTION = 'function-name',
-  KEYWORD = 'keywords',
-  NUMBER = 'number-literal',
-  STRING = 'string-literal',
-}
+const tokenNames = {
+  FUNCTION: 'function-name',
+  KEYWORD: 'keywords',
+  NUMBER: 'number-literal',
+  STRING: 'string-literal',
+} as const;
+export type TokenNames = (typeof tokenNames)[keyof typeof tokenNames];
 
 export const CompletionItemKind = {
   Method: 0,

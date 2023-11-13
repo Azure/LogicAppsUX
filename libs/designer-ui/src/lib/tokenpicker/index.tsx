@@ -18,11 +18,12 @@ import type { editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum TokenPickerMode {
-  TOKEN = 'token',
-  TOKEN_EXPRESSION = 'tokenExpression',
-  EXPRESSION = 'expression',
-}
+export const TokenPickerMode = {
+  TOKEN: 'token',
+  TOKEN_EXPRESSION: 'tokenExpression',
+  EXPRESSION: 'expression',
+} as const;
+export type TokenPickerMode = (typeof TokenPickerMode)[keyof typeof TokenPickerMode];
 
 export type { Token as OutputToken } from './models/token';
 
@@ -215,7 +216,7 @@ export function TokenPicker({
             ) : null}
 
             {isExpression ? (
-              <>
+              <div className="msla-token-picker-expression-subheader">
                 <ExpressionEditor
                   initialValue={expression.value}
                   editorRef={expressionEditorRef}
@@ -229,7 +230,7 @@ export function TokenPicker({
                 />
                 <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
                 <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
-              </>
+              </div>
             ) : null}
             <div className="msla-token-picker-search-container">
               <SearchBox

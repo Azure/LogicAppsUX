@@ -8,11 +8,11 @@ import { $isRangeSelection, $getSelection } from 'lexical';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum FontDropDownType {
-  FONTFAMILY = 'font-family',
-  FONTSIZE = 'font-size',
-}
-
+export const FontDropDownType = {
+  FONTFAMILY: 'font-family',
+  FONTSIZE: 'font-size',
+} as const;
+export type FontDropDownType = (typeof FontDropDownType)[keyof typeof FontDropDownType];
 interface FontDropdownProps {
   editor: LexicalEditor;
   value: string;
