@@ -1,6 +1,7 @@
+import type { ComboboxItem } from '../combobox';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps, CastHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler, CastHandler } from '../editor/base';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedComplexArray } from './expandedcomplexarray';
@@ -55,6 +56,11 @@ export interface ArrayEditorProps extends BaseEditorProps {
   itemSchema: ArrayItemSchema;
   arrayType: ArrayType;
   castParameter: CastHandler;
+  // Props for dynamic options
+  isLoading?: boolean;
+  options?: ComboboxItem[];
+  errorDetails?: { message: string };
+  onMenuOpen?: CallbackHandler;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({

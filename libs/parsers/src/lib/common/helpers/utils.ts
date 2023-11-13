@@ -97,9 +97,12 @@ export function getEnum(parameter: SchemaObject, required: boolean | undefined):
 }
 
 export function getParameterDynamicValues(parameter: SchemaObject): ParameterDynamicValues | undefined {
-  const parameterDynamicListExtension = parameter[Constants.ExtensionProperties.DynamicList];
-  const parameterDynamicValuesExtension = parameter[Constants.ExtensionProperties.DynamicValues];
-  const parameterDynamicTreeExtension = parameter[Constants.ExtensionProperties.DynamicTree];
+  const parameterDynamicListExtension =
+    parameter[Constants.ExtensionProperties.DynamicList] ?? parameter?.items?.[Constants.ExtensionProperties.DynamicList];
+  const parameterDynamicValuesExtension =
+    parameter[Constants.ExtensionProperties.DynamicValues] ?? parameter?.items?.[Constants.ExtensionProperties.DynamicValues];
+  const parameterDynamicTreeExtension =
+    parameter[Constants.ExtensionProperties.DynamicTree] ?? parameter?.items?.[Constants.ExtensionProperties.DynamicTree];
 
   if (parameterDynamicValuesExtension) {
     return {
@@ -182,11 +185,10 @@ export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, 
 }
 
 export function getEditorForParameter(parameter: SchemaObject, dynamicValues: ParameterDynamicValues | undefined): string | undefined {
-  return dynamicValues
-    ? isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)
-      ? 'filepicker'
-      : 'combobox'
-    : parameter[Constants.ExtensionProperties.Editor];
+  if (!dynamicValues) return parameter[Constants.ExtensionProperties.Editor];
+  if (parameter?.type === Constants.Types.Array) return undefined; // If the parameter is in an array, break out so we render the array editor
+  if (isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)) return 'filepicker';
+  return 'combobox';
 }
 
 type MakeDefinitionReducer = (previous: Record<string, any>, current: string) => Record<string, any>;
