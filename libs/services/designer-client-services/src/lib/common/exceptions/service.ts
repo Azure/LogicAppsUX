@@ -2,23 +2,24 @@ import { BaseException } from '@microsoft/utils-logic-apps';
 
 export const ServiceExceptionName = 'Host.ServiceException';
 
-export enum ServiceExceptionCode {
-  API_MANAGEMENT_ARM_RESOURCE_FETCH_FAILED = 'ApiManagementArmResourceFetchFailed',
-  AUTHORIZATION_FAILED = 'AuthorizationFailed',
-  FETCH_SWAGGER_FAILED = 'FetchSwaggerFailed',
-  FETCH_AZURE_BLOB_CONNECTION_PARAMETERS_FAILED = 'FetchAzureBlobConnectionParametersFailed',
-  FETCH_AZURE_TABLE_CONNECTION_PARAMETERS_FAILED = 'FetchAzureTableConnectionParametersFailed',
-  FETCH_EVENT_HUB_CONNECTION_PARAMETERS_FAILED = 'FetchEventHubConnectionParametersFailed',
-  FETCH_DOCUMENT_DB_CONNECTION_PARAMETERS_FAILED = 'FetchDocumentDBConnectionParametersFailed',
-  FETCH_INTEGRATION_ACCOUNT_CONNECTION_PARAMETERS_FAILED = 'FetchIntegrationAccountConnectionParametersFailed',
-  FETCH_SERVICE_BUS_CONNECTION_PARAMETERS_FAILED = 'FetchServiceBusConnectionParametersFailed',
-  GET_CALL_FAILED = 'GetCallFailed',
-  POST_CALL_FAILED = 'PostCallFailed',
-  RESPONSE_BODY_ERROR_NOT_DEFINED = 'ResponseBodyErrorNotDefined',
-  RESPONSE_BODY_ERROR_MESSAGE_NOT_DEFINED = 'ResponseBodyErrorMessageNotDefined',
-  RESPONSE_BODY_NOT_DEFINED = 'ResponseBodyNotDefined',
-  RESPONSE_NOT_DEFINED = 'ResponseNotDefined',
-}
+export const ServiceExceptionCode = {
+  API_MANAGEMENT_ARM_RESOURCE_FETCH_FAILED: 'ApiManagementArmResourceFetchFailed',
+  AUTHORIZATION_FAILED: 'AuthorizationFailed',
+  FETCH_SWAGGER_FAILED: 'FetchSwaggerFailed',
+  FETCH_AZURE_BLOB_CONNECTION_PARAMETERS_FAILED: 'FetchAzureBlobConnectionParametersFailed',
+  FETCH_AZURE_TABLE_CONNECTION_PARAMETERS_FAILED: 'FetchAzureTableConnectionParametersFailed',
+  FETCH_EVENT_HUB_CONNECTION_PARAMETERS_FAILED: 'FetchEventHubConnectionParametersFailed',
+  FETCH_DOCUMENT_DB_CONNECTION_PARAMETERS_FAILED: 'FetchDocumentDBConnectionParametersFailed',
+  FETCH_INTEGRATION_ACCOUNT_CONNECTION_PARAMETERS_FAILED: 'FetchIntegrationAccountConnectionParametersFailed',
+  FETCH_SERVICE_BUS_CONNECTION_PARAMETERS_FAILED: 'FetchServiceBusConnectionParametersFailed',
+  GET_CALL_FAILED: 'GetCallFailed',
+  POST_CALL_FAILED: 'PostCallFailed',
+  RESPONSE_BODY_ERROR_NOT_DEFINED: 'ResponseBodyErrorNotDefined',
+  RESPONSE_BODY_ERROR_MESSAGE_NOT_DEFINED: 'ResponseBodyErrorMessageNotDefined',
+  RESPONSE_BODY_NOT_DEFINED: 'ResponseBodyNotDefined',
+  RESPONSE_NOT_DEFINED: 'ResponseNotDefined',
+} as const;
+export type ServiceExceptionCode = (typeof ServiceExceptionCode)[keyof typeof ServiceExceptionCode];
 
 export class ServiceException extends BaseException {
   constructor(message: string, code?: string, data?: Record<string, any>) {

@@ -49,11 +49,11 @@ interface BasePropertyEditorItemProps {
 }
 
 interface SchemaPropertyEditorValue {
-  propertyValueType: 'OBJECT';
+  propertyValueType: typeof SchemaPropertyValueType.OBJECT;
   propertyValue: OpenAPIV2.SchemaObject;
 }
 interface StringPropertyEditorValue {
-  propertyValueType: 'STRING';
+  propertyValueType: typeof SchemaPropertyValueType.STRING;
   propertyValue: string;
 }
 

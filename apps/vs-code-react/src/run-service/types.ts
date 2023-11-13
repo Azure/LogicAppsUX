@@ -204,33 +204,33 @@ export const StyledWorkflowPart = {
 export type StyledWorkflowPart = (typeof StyledWorkflowPart)[keyof typeof StyledWorkflowPart];
 
 export interface InjectValuesMessage {
-  command: ExtensionCommand.initialize_frame;
+  command: typeof ExtensionCommand.initialize_frame;
   data: InitializePayload;
 }
 
 export interface UpdateAccessTokenMessage {
-  command: ExtensionCommand.update_access_token;
+  command: typeof ExtensionCommand.update_access_token;
   data: {
     accessToken?: string;
   };
 }
 
 export interface UpdateExportPathMessage {
-  command: ExtensionCommand.update_export_path;
+  command: typeof ExtensionCommand.update_export_path;
   data: {
     targetDirectory: ITargetDirectory;
   };
 }
 
 export interface AddStatusMessage {
-  command: ExtensionCommand.add_status;
+  command: typeof ExtensionCommand.add_status;
   data: {
     status: string;
   };
 }
 
 export interface SetFinalStatusMessage {
-  command: ExtensionCommand.set_final_status;
+  command: typeof ExtensionCommand.set_final_status;
   data: {
     status: Status;
   };

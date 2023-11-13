@@ -61,8 +61,8 @@ export namespace ext {
     monitoring: 'monitoring',
     export: 'export',
     overview: 'overview',
-  };
-  export type WebViewKey = keyof typeof webViewKey;
+  } as const;
+  export type webViewKey = keyof typeof webViewKey;
 
   export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
     [webViewKey.designerLocal]: {},

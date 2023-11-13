@@ -22,14 +22,16 @@ import { useIntl } from 'react-intl';
 
 export { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 
-export enum AuthenticationType {
-  NONE = 'None',
-  BASIC = 'Basic',
-  CERTIFICATE = 'ClientCertificate',
-  OAUTH = 'ActiveDirectoryOAuth',
-  RAW = 'Raw',
-  MSI = 'ManagedServiceIdentity',
-}
+export const AuthenticationType = {
+  NONE: 'None',
+  BASIC: 'Basic',
+  CERTIFICATE: 'ClientCertificate',
+  OAUTH: 'ActiveDirectoryOAuth',
+  RAW: 'Raw',
+  MSI: 'ManagedServiceIdentity',
+} as const;
+export type AuthenticationType = (typeof AuthenticationType)[keyof typeof AuthenticationType];
+
 export interface BasicProps {
   basicUsername?: ValueSegment[];
   basicPassword?: ValueSegment[];

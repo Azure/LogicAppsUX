@@ -9,7 +9,8 @@ export const Capabilities = {
   cloud: 'cloud',
   vnetgateway: 'vnetgateway',
   general: 'general',
-};
+} as const;
+export type Capabilities = (typeof Capabilities)[keyof typeof Capabilities];
 
 export const ConnectionParameterTypes = {
   array: 'array',

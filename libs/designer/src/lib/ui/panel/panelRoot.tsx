@@ -38,7 +38,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   usePanelTabs(); // This initializes tabs for the node details panel, can't be run twice so it lives here instead of in the panel
 
-  const [width, setWidth] = useState(PanelSize.Auto);
+  const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
 
   useEffect(() => {
     setWidth(collapsed ? PanelSize.Auto : PanelSize.Medium);
