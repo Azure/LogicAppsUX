@@ -3872,7 +3872,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopiuj"
     }
   ],
   "NE54Uu": [
@@ -5963,6 +5963,12 @@
       "value": "Pomniejsz"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7608,7 +7614,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Zadaj pytanie dotyczące tego przepływu pracy lub samej usługi Logic Apps..."
     }
   ],
   "kZCX7t": [
@@ -8453,12 +8459,6 @@
     {
       "type": 0,
       "value": "Wyzwalacze"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Witamy w asystencie przepływu pracy!"
     }
   ],
   "pozypE": [
@@ -9950,7 +9950,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "Generuj XSLT"
     }
   ],
   "yoCi15": [

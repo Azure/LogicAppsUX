@@ -3745,7 +3745,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "복사"
     }
   ],
   "NE54Uu": [
@@ -5799,6 +5799,12 @@
       "value": "축소"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7399,7 +7405,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "이 워크플로 또는 전체 Azure Logic Apps에 관해 질문하기 ..."
     }
   ],
   "kZCX7t": [
@@ -8187,12 +8193,6 @@
     {
       "type": 0,
       "value": "트리거"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "워크플로 도우미를 시작합니다."
     }
   ],
   "pozypE": [
@@ -9639,7 +9639,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "XSLT 생성"
     }
   ],
   "yoCi15": [

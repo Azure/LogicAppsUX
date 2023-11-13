@@ -3830,7 +3830,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopieren"
     }
   ],
   "NE54Uu": [
@@ -5915,6 +5915,12 @@
       "value": "Verkleinern"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7542,7 +7548,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Stellen Sie eine Frage zu diesem Workflow oder zu Azure Logic Apps als Ganzes ..."
     }
   ],
   "kZCX7t": [
@@ -8353,12 +8359,6 @@
     {
       "type": 0,
       "value": "Trigger"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Willkommen beim Workflow-Assistenten!"
     }
   ],
   "pozypE": [

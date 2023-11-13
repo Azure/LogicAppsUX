@@ -3757,7 +3757,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Salin"
     }
   ],
   "NE54Uu": [
@@ -5811,6 +5811,12 @@
       "value": "Perkecil tampilan"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7419,7 +7425,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Ajukan pertanyaan tentang alur kerja ini atau tentang Azure Logic Apps secara keseluruhan ..."
     }
   ],
   "kZCX7t": [
@@ -8215,12 +8221,6 @@
     {
       "type": 0,
       "value": "Pemicu"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Selamat datang di asisten alur kerja!"
     }
   ],
   "pozypE": [

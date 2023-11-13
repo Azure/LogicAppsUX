@@ -3802,7 +3802,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopiera"
     }
   ],
   "NE54Uu": [
@@ -5851,6 +5851,12 @@
       "value": "Zooma ut"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7474,7 +7480,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Ställ en fråga om det här arbetsflödet eller om Azure Logic Apps som helhet..."
     }
   ],
   "kZCX7t": [
@@ -8281,12 +8287,6 @@
     {
       "type": 0,
       "value": "Utlösare"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Välkommen till arbetsflödesassistenten!"
     }
   ],
   "pozypE": [
@@ -9748,7 +9748,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "Generera XSLT"
     }
   ],
   "yoCi15": [

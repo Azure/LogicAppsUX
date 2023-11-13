@@ -3872,7 +3872,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Копировать"
     }
   ],
   "NE54Uu": [
@@ -5959,6 +5959,12 @@
       "value": "Уменьшить"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7604,7 +7610,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Задайте вопрос об этом рабочем процессе или Azure Logic Apps в целом..."
     }
   ],
   "kZCX7t": [
@@ -8437,12 +8443,6 @@
     {
       "type": 0,
       "value": "Триггеры"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Добро пожаловать в помощник по рабочим процессам!"
     }
   ],
   "pozypE": [
