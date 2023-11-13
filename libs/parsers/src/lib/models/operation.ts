@@ -49,12 +49,13 @@ export interface DynamicParameter {
   required: boolean;
 }
 
-export enum DynamicValuesType {
-  NotSpecified,
-  LegacyDynamicValues,
-  DynamicList,
-  DynamicTree,
-}
+export const DynamicValuesType = {
+  NotSpecified: 'NotSpecified',
+  LegacyDynamicValues: 'LegacyDynamicValues',
+  DynamicList: 'DynamicList',
+  DynamicTree: 'DynamicTree',
+};
+export type DynamicValuesType = (typeof DynamicValuesType)[keyof typeof DynamicValuesType];
 
 export function isLegacyDynamicValuesExtension(extension: ParameterDynamicValues): extension is LegacyDynamicValues {
   return extension.type === DynamicValuesType.LegacyDynamicValues;
@@ -143,11 +144,12 @@ export interface DynamicTree {
 
 export type ParameterDynamicValues = LegacyDynamicValues | DynamicTree | DynamicList;
 
-export enum DynamicSchemaType {
-  NotSpecified,
-  LegacyDynamicSchema,
-  DynamicProperties,
-}
+export const DynamicSchemaType = {
+  NotSpecified: 'NotSpecified',
+  LegacyDynamicSchema: 'LegacyDynamicSchema',
+  DynamicProperties: 'DynamicProperties',
+};
+export type DynamicSchemaType = (typeof DynamicSchemaType)[keyof typeof DynamicSchemaType];
 
 export function isDynamicSchemaExtension(extension: ParameterDynamicSchema): extension is LegacyDynamicSchema {
   return extension.type === DynamicSchemaType.LegacyDynamicSchema;
@@ -180,11 +182,12 @@ export interface DynamicProperties {
 
 export type ParameterDynamicSchema = LegacyDynamicSchema | DynamicProperties;
 
-export enum DeserializationType {
-  ParentObjectProperties = 'parentobjectproperties',
-  PathTemplateProperties = 'pathtemplateproperties',
-  SwaggerOperationId = 'swaggeroperationid',
-}
+export const DeserializationType = {
+  ParentObjectProperties: 'parentobjectproperties',
+  PathTemplateProperties: 'pathtemplateproperties',
+  SwaggerOperationId: 'swaggeroperationid',
+};
+export type DeserializationType = (typeof DeserializationType)[keyof typeof DeserializationType];
 
 export interface ParameterDeserializationOptions {
   type: DeserializationType;
@@ -198,11 +201,12 @@ export interface ParameterDeserializationOptions {
   };
 }
 
-export enum PropertySerializationType {
-  ParentObject = 'parentobject',
-  PathTemplate = 'pathtemplate',
-  SwaggerUrl = 'swaggerurl',
-}
+export const PropertySerializationType = {
+  ParentObject: 'parentobject',
+  PathTemplate: 'pathtemplate',
+  SwaggerUrl: 'swaggerurl',
+};
+export type PropertySerializationType = (typeof PropertySerializationType)[keyof typeof PropertySerializationType];
 
 export interface ParameterSerializationOptions {
   skip?: boolean;
@@ -289,10 +293,10 @@ export interface InputParameters {
 
 export type Operations = Record<string, Operation>;
 
-export enum OperationInputType {
-  NOTSPECIFIED,
-  HEADERS,
-}
+export const OperationInputType = {
+  NOTSPECIFIED: 'NOTSPECIFIED',
+  HEADERS: 'HEADERS',
+};
 
 /**
  * Convert from a SchemaProperty object to an InputParameter object.

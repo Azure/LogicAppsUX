@@ -1,14 +1,16 @@
-enum Modes {
-  Literal,
-  LeftBrace,
-  Variable,
-  RightBrace,
-}
+export const Modes = {
+  Literal: 'Literal',
+  LeftBrace: 'LeftBrace',
+  Variable: 'Variable',
+  RightBrace: 'RightBrace',
+};
+export type Modes = (typeof Modes)[keyof typeof Modes];
 
-export enum Types {
-  Literal,
-  Variable,
-}
+export const Types = {
+  Literal: 'Literal',
+  Variable: 'Variable',
+} as const;
+export type Types = (typeof Types)[keyof typeof Types];
 
 export type Segment = LiteralSegment | VariableSegment;
 
@@ -62,7 +64,7 @@ export class UriTemplateParser {
             mode = Modes.Variable;
             pos++;
           } else {
-            throw new Error(`unexpected character '${ch}', mode ${Modes[mode]}, position ${pos}`);
+            throw new Error(`unexpected character '${ch}', mode ${Modes.LeftBrace}, position ${pos}`);
           }
           break;
 
@@ -71,7 +73,7 @@ export class UriTemplateParser {
           if (ch === '}') {
             mode = Modes.RightBrace;
           } else if (ch === '/') {
-            throw new Error(`unexpected character '${ch}', mode ${Modes[mode]}, position ${pos}`);
+            throw new Error(`unexpected character '${ch}', mode ${Modes.Variable}, position ${pos}`);
           } else {
             variable += ch;
             pos++;
@@ -88,7 +90,7 @@ export class UriTemplateParser {
             mode = Modes.Literal;
             pos++;
           } else {
-            throw new Error(`unexpected character '${ch}', mode ${Modes[mode]}, position ${pos}`);
+            throw new Error(`unexpected character '${ch}', mode ${Modes.RightBrace}, position ${pos}`);
           }
           break;
 
@@ -108,7 +110,7 @@ export class UriTemplateParser {
         break;
 
       default:
-        throw new Error(`unexpected mode ${Modes[mode]} at end of template`);
+        throw new Error(`unexpected mode ${mode} at end of template`);
     }
 
     return segments;

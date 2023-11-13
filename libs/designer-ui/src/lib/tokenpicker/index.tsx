@@ -18,11 +18,12 @@ import type { editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum TokenPickerMode {
-  TOKEN = 'token',
-  TOKEN_EXPRESSION = 'tokenExpression',
-  EXPRESSION = 'expression',
-}
+export const TokenPickerMode = {
+  TOKEN: 'token',
+  TOKEN_EXPRESSION: 'tokenExpression',
+  EXPRESSION: 'expression',
+} as const;
+export type TokenPickerMode = (typeof TokenPickerMode)[keyof typeof TokenPickerMode];
 
 export type { Token as OutputToken } from './models/token';
 

@@ -11,10 +11,11 @@ import { getOneDimensionalSchema, initializeComplexArrayItems, initializeSimpleA
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum ArrayType {
-  COMPLEX = 'complex',
-  SIMPLE = 'simple',
-}
+export const ArrayType = {
+  COMPLEX: 'complex',
+  SIMPLE: 'simple',
+} as const;
+export type ArrayType = (typeof ArrayType)[keyof typeof ArrayType];
 
 export interface ArrayItemSchema {
   type: string;

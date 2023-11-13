@@ -9,10 +9,11 @@ import type { CSSProperties } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-export const enum SidePanelTabValue {
-  OutputTree = 'outputTree',
-  MapChecker = 'mapChecker',
-}
+export const SidePanelTabValue = {
+  OutputTree: 'outputTree',
+  MapChecker: 'mapChecker',
+} as const;
+export type SidePanelTabValue = (typeof SidePanelTabValue)[keyof typeof SidePanelTabValue];
 
 const useStyles = makeStyles({
   outputPane: {

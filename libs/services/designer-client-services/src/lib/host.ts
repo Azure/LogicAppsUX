@@ -1,9 +1,10 @@
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
-export enum ContentType {
-  Inputs,
-  Outputs,
-}
+export const ContentType = {
+  Inputs: 'inputs',
+  Outputs: 'outputs',
+} as const;
+export type ContentType = (typeof ContentType)[keyof typeof ContentType];
 
 export interface IHostService {
   fetchAndDisplayContent(title: string, url: string, type: ContentType): void;

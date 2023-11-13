@@ -1,9 +1,10 @@
 import type { ArmResource } from '@microsoft/utils-logic-apps';
 
-export enum WorkflowState {
-  Disabled = 'Disabled',
-  Enabled = 'Enabled',
-}
+export const WorkflowState = {
+  Disabled: 'Disabled',
+  Enabled: 'Enabled',
+};
+export type WorkflowState = (typeof WorkflowState)[keyof typeof WorkflowState];
 
 export interface TriggerType {
   type: string;
@@ -49,10 +50,11 @@ export interface WorkflowJson {
   };
 }
 
-export enum ConnectionType {
-  Function,
-  ServiceProvider,
-}
+export const ConnectionType = {
+  Function: 'Function',
+  ServiceProvider: 'ServiceProvider',
+};
+export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 
 export interface FunctionConnectionModel {
   function: {
