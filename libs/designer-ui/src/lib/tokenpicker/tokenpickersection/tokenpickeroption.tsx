@@ -219,9 +219,6 @@ export const TokenPickerOptions = ({
                         {token.description}
                       </div>
                     </div>
-                    {/* {token.type && token.outputInfo?.type !== TokenType.FX ? (
-                      <div className="msla-token-picker-option-type">{token.type}</div>
-                    ) : null} */}
                   </div>
                 </button>
               );
