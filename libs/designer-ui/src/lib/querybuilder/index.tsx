@@ -18,12 +18,13 @@ export interface GroupedItems {
 
 export type GroupItems = GroupItemProps | RowItemProps;
 
-export enum GroupType {
-  ROW = 'row',
-  GROUP = 'group',
-}
+export const GroupType = {
+  ROW: 'row',
+  GROUP: 'group',
+} as const;
+export type GroupType = (typeof GroupType)[keyof typeof GroupType];
 export interface RowItemProps {
-  type: GroupType.ROW;
+  type: typeof GroupType.ROW;
   checked?: boolean;
   operand1: ValueSegment[];
   operator: string;
@@ -31,7 +32,7 @@ export interface RowItemProps {
 }
 
 export interface GroupItemProps {
-  type: GroupType.GROUP;
+  type: typeof GroupType.GROUP;
   checked?: boolean;
   condition?: GroupDropdownOptions;
   items: GroupItems[];

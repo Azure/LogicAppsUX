@@ -29,10 +29,11 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
   wrapper: { width: '100%', alignItems: 'center', paddingBottom: 14 },
 };
 
-export enum SchemaPropertyValueType {
-  STRING = 'string',
-  OBJECT = 'schemaObject',
-}
+export const SchemaPropertyValueType = {
+  STRING: 'string',
+  OBJECT: 'schemaObject',
+} as const;
+export type SchemaPropertyValueType = (typeof SchemaPropertyValueType)[keyof typeof SchemaPropertyValueType];
 
 interface BasePropertyEditorItemProps {
   schema?: OpenAPIV2.SchemaObject;
@@ -48,11 +49,11 @@ interface BasePropertyEditorItemProps {
 }
 
 interface SchemaPropertyEditorValue {
-  propertyValueType: SchemaPropertyValueType.OBJECT;
+  propertyValueType: 'OBJECT';
   propertyValue: OpenAPIV2.SchemaObject;
 }
 interface StringPropertyEditorValue {
-  propertyValueType: SchemaPropertyValueType.STRING;
+  propertyValueType: 'STRING';
   propertyValue: string;
 }
 
