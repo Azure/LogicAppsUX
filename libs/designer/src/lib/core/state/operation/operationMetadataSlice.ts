@@ -38,12 +38,13 @@ export interface OutputInfo {
   alias?: string;
 }
 
-export enum DynamicLoadStatus {
-  NOTSTARTED,
-  STARTED,
-  FAILED,
-  SUCCEEDED,
-}
+export const DynamicLoadStatus = {
+  NOTSTARTED: 'NotStarted',
+  STARTED: 'Started',
+  FAILED: 'Failed',
+  SUCCEEDED: 'Succeeded',
+} as const;
+export type DynamicLoadStatus = (typeof DynamicLoadStatus)[keyof typeof DynamicLoadStatus];
 
 export interface NodeInputs {
   dynamicLoadStatus?: DynamicLoadStatus;
@@ -81,13 +82,14 @@ export interface OperationMetadata {
   brandColor: string;
 }
 
-export enum ErrorLevel {
-  Critical = 0,
-  Connection = 1,
-  DynamicInputs = 2,
-  DynamicOutputs = 3,
-  Default = 4,
-}
+export const ErrorLevel = {
+  Critical: 0,
+  Connection: 1,
+  DynamicInputs: 2,
+  DynamicOutputs: 3,
+  Default: 4,
+} as const;
+export type ErrorLevel = (typeof ErrorLevel)[keyof typeof ErrorLevel];
 
 export interface ErrorInfo {
   error?: any;

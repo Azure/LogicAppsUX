@@ -12,10 +12,11 @@ import { useSelector } from 'react-redux';
 
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
-export enum UploadSchemaTypes {
-  UploadNew = 'upload-new',
-  SelectFrom = 'select-from',
-}
+export const UploadSchemaTypes = {
+  UploadNew: 'upload-new',
+  SelectFrom: 'select-from',
+} as const;
+export type UploadSchemaTypes = (typeof UploadSchemaTypes)[keyof typeof UploadSchemaTypes];
 
 export interface FileWithVsCodePath extends File {
   path?: string;

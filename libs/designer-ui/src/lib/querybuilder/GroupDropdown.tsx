@@ -4,10 +4,11 @@ import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { guid } from '@microsoft/utils-logic-apps';
 
-export enum GroupDropdownOptions {
-  AND = 'and',
-  OR = 'or',
-}
+export const GroupDropdownOptions = {
+  AND: 'and',
+  OR: 'or',
+} as const;
+export type GroupDropdownOptions = (typeof GroupDropdownOptions)[keyof typeof GroupDropdownOptions];
 
 interface GroupDropdownProps {
   condition?: GroupDropdownOptions;

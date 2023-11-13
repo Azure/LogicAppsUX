@@ -12,14 +12,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-enum PanelPivotItems {
-  Input = 'input',
-  Output = 'output',
-}
+const PanelPivotItems = {
+  Input: 'input',
+  Output: 'output',
+} as const;
+export type PanelPivotItems = (typeof PanelPivotItems)[keyof typeof PanelPivotItems];
 
-enum InputDataOptions {
-  PasteSample = 'pasteSample',
-}
+const InputDataOptions = {
+  PasteSample: 'pasteSample',
+} as const;
+export type InputDataOptions = (typeof InputDataOptions)[keyof typeof InputDataOptions];
 
 export const commonCodeEditorProps: Partial<MonacoProps> = {
   lineNumbers: 'on',

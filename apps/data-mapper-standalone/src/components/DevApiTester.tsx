@@ -17,13 +17,13 @@ import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import { generateDataMapXslt, getFunctions, getSelectedSchema, testDataMap } from '@microsoft/logic-apps-data-mapper';
 import { useState } from 'react';
 
-enum RequestTab {
-  SchemaTree = 'schemaTree',
-  FunctionManifest = 'functionManifest',
-  TestMap = 'testMap',
-  GenerateXslt = 'generateXslt',
-}
-
+const RequestTab = {
+  SchemaTree: 'schemaTree',
+  FunctionManifest: 'functionManifest',
+  TestMap: 'testMap',
+  GenerateXslt: 'generateXslt',
+};
+export type RequestTab = (typeof RequestTab)[keyof typeof RequestTab];
 const commonCodeEditorProps: Partial<MonacoProps> = {
   lineNumbers: 'on',
   scrollbar: { horizontal: 'auto', vertical: 'auto' },

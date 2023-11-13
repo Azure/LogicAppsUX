@@ -32,7 +32,12 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
       <div className="msla-connector-summary-header">
         {isCard ? <ConnectorImage /> : null}
         <Text className="msla-connector-summary-title">{connectorName}</Text>
-        <InfoDot title={connectorName} description={description} style={!isCard ? { marginRight: '8px' } : undefined} />
+        <InfoDot
+          title={connectorName}
+          description={description}
+          style={!isCard ? { marginRight: '8px' } : undefined}
+          innerAriaHidden="true"
+        />
       </div>
       {displayRuntimeInfo ? (
         <div className="msla-connector-summary-labels">{isBuiltIn ? <Text className="msla-psuedo-badge">{category}</Text> : null}</div>
@@ -42,7 +47,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
 
   if (isCard)
     return (
-      <button className="msla-connector-summary-card" onClick={handleClick}>
+      <button className="msla-connector-summary-card" onClick={handleClick} aria-label={`${connectorName} ${description}`}>
         <Content />
       </button>
     );

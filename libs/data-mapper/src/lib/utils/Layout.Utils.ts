@@ -14,12 +14,12 @@ import { LogCategory, LogService } from './Logging.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, functionPlaceholderPosition } from './ReactFlow.Util';
 
 const rootLayoutNodeId = 'root';
-enum LayoutContainer {
-  SourceSchema = 'sourceSchemaBlock',
-  Functions = 'functionsBlock',
-  TargetSchema = 'targetSchemaBlock',
-}
-
+const LayoutContainer = {
+  SourceSchema: 'sourceSchemaBlock',
+  Functions: 'functionsBlock',
+  TargetSchema: 'targetSchemaBlock',
+} as const;
+type LayoutContainer = (typeof LayoutContainer)[keyof typeof LayoutContainer];
 type GraphCoord = [number, number]; // [x, y]
 
 export interface LayoutEdge {

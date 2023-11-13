@@ -13,11 +13,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-enum PropertiesPaneTabs {
-  Properties = 1,
-  Code,
-  Test,
-}
+const PropertiesPaneTabs = {
+  Properties: 1,
+  Code: 2,
+  Test: 3,
+} as const;
+export type PropertiesPaneTabs = (typeof PropertiesPaneTabs)[keyof typeof PropertiesPaneTabs];
 
 export const canvasAreaAndPropPaneMargin = 8;
 export const propPaneTopBarHeight = 48;

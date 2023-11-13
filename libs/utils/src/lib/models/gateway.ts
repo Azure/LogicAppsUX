@@ -10,11 +10,12 @@ export interface GatewayProperties {
 
 export type Gateway = ArmResource<GatewayProperties>;
 
-export enum GatewayType {
-  VirtualNetwork = 'VirtualNetwork',
-  Resource = 'Resource',
-  Personal = 'Personal',
-}
+export const GatewayType = {
+  VirtualNetwork: 'VirtualNetwork',
+  Resource: 'Resource',
+  Personal: 'Personal',
+};
+export type GatewayType = (typeof GatewayType)[keyof typeof GatewayType];
 
 export interface ApiToGatewayMapping {
   apiName: string;

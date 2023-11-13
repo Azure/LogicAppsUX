@@ -113,7 +113,7 @@ const initialState: DataMapState = {
 
 export interface InitialSchemaAction {
   schema: SchemaExtended;
-  schemaType: SchemaType.Source | SchemaType.Target;
+  schemaType: typeof SchemaType.Source | typeof SchemaType.Target;
 }
 
 export interface InitialDataMapAction {
