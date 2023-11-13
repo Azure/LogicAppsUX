@@ -62,14 +62,17 @@ export const TokenPickerOptions = ({
     });
   }, [index, searchQuery, section.tokens, setTokenLength]);
 
-  const buttonTextMore = intl.formatMessage({
-    defaultMessage: 'See More',
-    description: 'Click to view more token options',
-  });
+  const buttonTextMore = intl.formatMessage(
+    {
+      defaultMessage: 'See More ({count})',
+      description: 'Click to view more token options. {count} indicates the number of total tokens.',
+    },
+    { count: section.tokens.length }
+  );
 
   const buttonTextLess = intl.formatMessage({
     defaultMessage: 'See Less',
-    description: 'Click to view less token options',
+    description: 'Click to view less token options.',
   });
 
   const handleMoreLess = () => {
