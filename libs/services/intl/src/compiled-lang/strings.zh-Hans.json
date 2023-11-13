@@ -3773,7 +3773,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "复制"
     }
   ],
   "NE54Uu": [
@@ -5847,6 +5847,12 @@
       "value": "缩小"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7467,7 +7473,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "询问关于此工作流或整个 Azure 逻辑应用的问题..."
     }
   ],
   "kZCX7t": [
@@ -8275,12 +8281,6 @@
     {
       "type": 0,
       "value": "触发器"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "欢迎使用工作流助手!"
     }
   ],
   "pozypE": [

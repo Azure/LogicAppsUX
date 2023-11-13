@@ -3806,7 +3806,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Másolás"
     }
   ],
   "NE54Uu": [
@@ -5859,6 +5859,12 @@
       "value": "Kicsinyítés"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7486,7 +7492,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Kérdés feltevése a munkafolyamatról vagy az Azure Logic Apps egészéről ..."
     }
   ],
   "kZCX7t": [
@@ -8293,12 +8299,6 @@
     {
       "type": 0,
       "value": "Triggerek"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Üdvözli a munkafolyamat-segéd!"
     }
   ],
   "pozypE": [

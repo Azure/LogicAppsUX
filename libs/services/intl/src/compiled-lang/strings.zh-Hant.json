@@ -3753,7 +3753,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "複製"
     }
   ],
   "NE54Uu": [
@@ -5815,6 +5815,12 @@
       "value": "縮小"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7423,7 +7429,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "詢問關於此工作流程或 Azure Logic Apps 的整體問題..."
     }
   ],
   "kZCX7t": [
@@ -8211,12 +8217,6 @@
     {
       "type": 0,
       "value": "觸發程序"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "歡迎使用工作流程助理！"
     }
   ],
   "pozypE": [
@@ -9675,7 +9675,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "產生 XSLT"
     }
   ],
   "yoCi15": [

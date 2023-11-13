@@ -3868,7 +3868,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopírovat"
     }
   ],
   "NE54Uu": [
@@ -5951,6 +5951,12 @@
       "value": "Oddálit"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7600,7 +7606,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Zeptejte se na tento pracovní postup nebo na Azure Logic Apps obecně..."
     }
   ],
   "kZCX7t": [
@@ -8429,12 +8435,6 @@
     {
       "type": 0,
       "value": "Triggery"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Vítá vás asistent pracovního postupu!"
     }
   ],
   "pozypE": [
