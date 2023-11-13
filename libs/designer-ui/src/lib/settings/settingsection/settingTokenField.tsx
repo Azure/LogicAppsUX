@@ -207,7 +207,10 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={(editorOptions?.options?.value ?? editorOptions?.options)?.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+          }))}
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}

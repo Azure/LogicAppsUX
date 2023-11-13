@@ -186,7 +186,7 @@ export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, 
 
 export function getEditorForParameter(parameter: SchemaObject, dynamicValues: ParameterDynamicValues | undefined): string | undefined {
   if (!dynamicValues) return parameter[Constants.ExtensionProperties.Editor];
-  if (parameter?.type === Constants.Types.Array) return undefined; // If the parameter is in an array, break out so we render the array editor
+  if (parameter?.type === Constants.Types.Array) return parameter[Constants.ExtensionProperties.Editor]; // If the parameter is in an array, break out so we render the array editor
   if (isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)) return 'filepicker';
   return 'combobox';
 }
