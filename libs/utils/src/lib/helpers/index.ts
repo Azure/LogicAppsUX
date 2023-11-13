@@ -1,3 +1,4 @@
+export * from './color';
 export * from './connections';
 export * from './functions';
 export * from './guid';

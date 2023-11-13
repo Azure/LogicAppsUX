@@ -1,15 +1,16 @@
 @import (reference) '../variables.less';
 
 .msla-expression-editor-container {
-  background-color: #fafafa;
   position: relative;
-  padding: 10px 20px;
+  padding: 12px 16px 4px;
 
-  & > div {
+  & > .msla-monaco {
     height: 100%;
 
     .monaco-editor {
-      border: 1px solid @defaultBorderColor;
+      border: 2px solid @defaultBorderColor;
+      border-radius: 2px;
+      border-width: 2px;
       .monaco-scrollable-element {
         left: 10px;
       }

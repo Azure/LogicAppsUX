@@ -215,7 +215,7 @@ export function TokenPicker({
             ) : null}
 
             {isExpression ? (
-              <>
+              <div className="msla-token-picker-expression-subheader">
                 <ExpressionEditor
                   initialValue={expression.value}
                   editorRef={expressionEditorRef}
@@ -229,7 +229,7 @@ export function TokenPicker({
                 />
                 <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
                 <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
-              </>
+              </div>
             ) : null}
             <div className="msla-token-picker-search-container">
               <SearchBox
