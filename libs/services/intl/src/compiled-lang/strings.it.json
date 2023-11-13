@@ -3815,7 +3815,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Copia"
     }
   ],
   "NE54Uu": [
@@ -5899,6 +5899,12 @@
       "value": "Zoom indietro"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7529,7 +7535,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Porre una domanda su questo flusso di lavoro o sulle App per la logica di Azure nel suo complesso..."
     }
   ],
   "kZCX7t": [
@@ -8343,12 +8349,6 @@
     {
       "type": 0,
       "value": "Trigger"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Benvenuti nella assistente del flusso di lavoro"
     }
   ],
   "pozypE": [

@@ -3753,7 +3753,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "コピー"
     }
   ],
   "NE54Uu": [
@@ -5803,6 +5803,12 @@
       "value": "縮小"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7403,7 +7409,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "このワークフローか、Azure Logic Apps 全般について質問してください..."
     }
   ],
   "kZCX7t": [
@@ -8191,12 +8197,6 @@
     {
       "type": 0,
       "value": "トリガー"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "ワークフロー アシスタントへようこそ!"
     }
   ],
   "pozypE": [
@@ -9377,7 +9377,7 @@
   "ww1mN/": [
     {
       "type": 0,
-      "value": "Canvas"
+      "value": "キャンバス"
     }
   ],
   "wxaQwD": [
@@ -9643,7 +9643,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "XSLT の生成"
     }
   ],
   "yoCi15": [

@@ -25,4 +25,3 @@ export const settingsFileContent = {
 };
 
 export const backendRuntimeBaseUrl = 'http://localhost:';
-export const dataMapLoadTimeout = 60000;

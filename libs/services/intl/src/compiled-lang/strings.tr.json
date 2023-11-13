@@ -3786,7 +3786,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopyala"
     }
   ],
   "NE54Uu": [
@@ -5851,6 +5851,12 @@
       "value": "Uzaklaştır"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -7462,7 +7468,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Bu iş akışı veya genel olarak Azure Logic Apps hakkında soru sorun..."
     }
   ],
   "kZCX7t": [
@@ -8269,12 +8275,6 @@
     {
       "type": 0,
       "value": "Tetikleyiciler"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "İş akışı yardımcısına hoş geldiniz!"
     }
   ],
   "pozypE": [
@@ -9736,7 +9736,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "XSLT oluştur"
     }
   ],
   "yoCi15": [
