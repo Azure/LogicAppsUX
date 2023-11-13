@@ -23,6 +23,14 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.overview}`, { replace: true });
           break;
         }
+        case ProjectName.designer: {
+          navigate(`/${ProjectName.designer}`, { replace: true });
+          break;
+        }
+        case ProjectName.dataMapper: {
+          navigate(`/${ProjectName.dataMapper}`, { replace: true });
+          break;
+        }
         default: {
           break;
         }

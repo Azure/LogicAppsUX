@@ -32,6 +32,8 @@ export const ProjectName = {
   export: 'export',
   overview: 'overview',
   review: 'review',
+  designer: 'designer',
+  dataMapper: 'dataMapper',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
 
