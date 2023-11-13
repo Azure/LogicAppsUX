@@ -18,10 +18,11 @@ import { guid } from '@microsoft/utils-logic-apps';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
-enum Mode {
-  Default,
-  Custom,
-}
+const Mode = {
+  Default: 'Default',
+  Custom: 'Custom',
+} as const;
+type Mode = (typeof Mode)[keyof typeof Mode];
 
 const comboboxStyles: Partial<IComboBoxStyles> = {
   root: {

@@ -398,18 +398,22 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   return constructedSourceKey;
 };
 
-export enum Separators {
-  OpenParenthesis = '(',
-  CloseParenthesis = ')',
-  Comma = ',',
-  Dollar = '$',
-}
+export const Separators = {
+  OpenParenthesis: '(',
+  CloseParenthesis: ')',
+  Comma: ',',
+  Dollar: '$',
+} as const;
+export type Separators = (typeof Separators)[keyof typeof Separators];
+
 export const separators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma, Separators.Dollar];
 
-export enum ReservedToken {
-  for = 'for',
-  if = 'if',
-}
+export const ReservedToken = {
+  for: 'for',
+  if: 'if',
+} as const;
+export type ReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
+
 export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if];
 
 export const lexThisThing = (targetKey: string): string[] => {

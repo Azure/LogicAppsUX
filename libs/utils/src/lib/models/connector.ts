@@ -1,29 +1,31 @@
 import type { ArmResource } from './armresource';
 import type { Badge } from './operationmanifest';
 
-export enum Capabilities {
-  blob,
-  composite,
-  tabular,
-  gateway,
-  cloud,
-  vnetgateway,
-  general,
-}
+export const Capabilities = {
+  blob: 'blob',
+  composite: 'composite',
+  tabular: 'tabular',
+  gateway: 'gateway',
+  cloud: 'cloud',
+  vnetgateway: 'vnetgateway',
+  general: 'general',
+} as const;
+export type Capabilities = (typeof Capabilities)[keyof typeof Capabilities];
 
-export enum ConnectionParameterTypes {
-  array,
-  bool,
-  connection,
-  gatewaySetting,
-  int,
-  managedIdentity,
-  oauthSetting,
-  object,
-  secureObject,
-  secureString,
-  string,
-}
+export const ConnectionParameterTypes = {
+  array: 'array',
+  bool: 'bool',
+  connection: 'connection',
+  gatewaySetting: 'gatewaySetting',
+  int: 'int',
+  managedIdentity: 'managedIdentity',
+  oauthSetting: 'oauthSetting',
+  object: 'object',
+  secureObject: 'secureObject',
+  secureString: 'secureString',
+  string: 'string',
+};
+export type ConnectionParameterTypes = (typeof ConnectionParameterTypes)[keyof typeof ConnectionParameterTypes];
 
 export interface ConnectionParameterAllowedValue {
   text?: string;
@@ -116,10 +118,10 @@ export interface ConnectionParameterMetadata {
   sourceType?: string;
 }
 
-export enum ConnectionParameterSource {
-  AppConfiguration = 'AppConfiguration',
-}
-
+export const ConnectionParameterSource = {
+  AppConfiguration: 'AppConfiguration',
+};
+export type ConnectionParameterSource = (typeof ConnectionParameterSource)[keyof typeof ConnectionParameterSource];
 export interface ConnectionParameter {
   type: string;
   metadata?: ConnectionParameterMetadata;
@@ -130,13 +132,15 @@ export interface ConnectionParameter {
   parameterSource?: ConnectionParameterSource;
 }
 
-export enum ConnectionParameterSchemaType {
-  string = 'string',
-}
+export const ConnectionParameterSchemaType = {
+  string: 'string',
+};
+export type ConnectionParameterSchemaType = (typeof ConnectionParameterSchemaType)[keyof typeof ConnectionParameterSchemaType];
 
-export enum ConnectionParameterSchemaFormat {
-  azureAdTenantId = 'azureadtenantid',
-}
+export const ConnectionParameterSchemaFormat = {
+  azureAdTenantId: 'azureadtenantid',
+};
+export type ConnectionParameterSchemaFormat = (typeof ConnectionParameterSchemaFormat)[keyof typeof ConnectionParameterSchemaFormat];
 
 export interface ConnectionParameterSetParameter {
   type: string;

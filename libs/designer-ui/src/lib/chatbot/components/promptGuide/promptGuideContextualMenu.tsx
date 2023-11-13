@@ -4,18 +4,19 @@ import { ContextualMenu, ContextualMenuItemType, DirectionalHint, IconButton } f
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum PromptGuideItemKey {
-  CreateFlow = 'CreateFlow',
-  CreateFlowExample1 = 'CreateFlowExample1',
-  CreateFlowExample2 = 'CreateFlowExample2',
-  CreateFlowExample3 = 'CreateFlowExample3',
-  Question = 'Question',
-  AddAction = 'AddAction',
-  ReplaceAction = 'ReplaceAction',
-  ExplainAction = 'ExplainAction',
-  EditFlow = 'EditFlow',
-  ExplainFlow = 'ExplainFlow',
-}
+export const PromptGuideItemKey = {
+  CreateFlow: 'CreateFlow',
+  CreateFlowExample1: 'CreateFlowExample1',
+  CreateFlowExample2: 'CreateFlowExample2',
+  CreateFlowExample3: 'CreateFlowExample3',
+  Question: 'Question',
+  AddAction: 'AddAction',
+  ReplaceAction: 'ReplaceAction',
+  ExplainAction: 'ExplainAction',
+  EditFlow: 'EditFlow',
+  ExplainFlow: 'ExplainFlow',
+} as const;
+export type PromptGuideItemKey = (typeof PromptGuideItemKey)[keyof typeof PromptGuideItemKey];
 
 export type IPromptGuideContextualMenuProps = {
   target?: Target;
@@ -24,12 +25,13 @@ export type IPromptGuideContextualMenuProps = {
   initialMenu?: PromptGuideMenuKey;
 };
 
-export enum PromptGuideMenuKey {
-  FromBlank = 'FromBlank',
-  CreateFlow = 'CreateFlow',
-  FlowWithAction = 'FlowWithAction',
-  DefaultFlow = 'DefaultFlow',
-}
+export const PromptGuideMenuKey = {
+  FromBlank: 'FromBlank',
+  CreateFlow: 'CreateFlow',
+  FlowWithAction: 'FlowWithAction',
+  DefaultFlow: 'DefaultFlow',
+} as const;
+export type PromptGuideMenuKey = (typeof PromptGuideMenuKey)[keyof typeof PromptGuideMenuKey];
 
 export type PromptGuideItem = {
   menuKey: PromptGuideMenuKey;

@@ -60,7 +60,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const graphNode = useWorkflowNode(selectedNode) as WorkflowNode;
 
-  const [width, setWidth] = useState(PanelSize.Auto);
+  const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
 
   const registeredTabs = useRegisteredPanelTabs();
   const selectedPanelTab = useSelectedPanelTabName();

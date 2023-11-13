@@ -31,20 +31,22 @@ export interface IBindingSetting {
   validateSetting(value: string | undefined): string | undefined;
 }
 
-export enum ResourceType {
-  DocumentDB = 'DocumentDB',
-  Storage = 'Storage',
-  EventHub = 'EventHub',
-  ServiceBus = 'ServiceBus',
-}
+export const ResourceType = {
+  DocumentDB: 'DocumentDB',
+  Storage: 'Storage',
+  EventHub: 'EventHub',
+  ServiceBus: 'ServiceBus',
+} as const;
+export type ResourceType = (typeof ResourceType)[keyof typeof ResourceType];
 
-export enum ValueType {
-  string = 'string',
-  boolean = 'boolean',
-  enum = 'enum',
-  checkBoxList = 'checkBoxList',
-  int = 'int',
-}
+export const ValueType = {
+  string: 'string',
+  boolean: 'boolean',
+  enum: 'enum',
+  checkBoxList: 'checkBoxList',
+  int: 'int',
+} as const;
+export type ValueType = (typeof ValueType)[keyof typeof ValueType];
 
 export interface IEnumValue {
   value: string;

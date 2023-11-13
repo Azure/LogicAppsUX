@@ -17,10 +17,12 @@ const actionButtonStyles: IButtonStyles = {
   },
 };
 
-export enum StaticResultOption {
-  ENABLED = 'Enabled',
-  DISABLED = 'Disabled',
-}
+export const StaticResultOption = {
+  ENABLED: 'Enabled',
+  DISABLED: 'Disabled',
+} as const;
+export type StaticResultOption = (typeof StaticResultOption)[keyof typeof StaticResultOption];
+
 export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) => void;
 
 export interface StaticResultContainerProps {

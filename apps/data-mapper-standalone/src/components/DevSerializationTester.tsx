@@ -25,10 +25,11 @@ import {
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-enum SerializationTab {
-  Deserialization = 'Deserialization',
-  Serialization = 'Serialization',
-}
+const SerializationTab = {
+  Deserialization: 'Deserialization',
+  Serialization: 'Serialization',
+} as const;
+type SerializationTab = (typeof SerializationTab)[keyof typeof SerializationTab];
 
 const commonCodeEditorProps: Partial<MonacoProps> = {
   lineNumbers: 'on',

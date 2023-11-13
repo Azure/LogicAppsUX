@@ -1,25 +1,29 @@
 import type { IntlShape } from 'react-intl';
 
-export enum PanelLocation {
-  Left = 'LEFT',
-  Right = 'RIGHT',
-}
+export const PanelLocation = {
+  Left: 'LEFT',
+  Right: 'RIGHT',
+} as const;
+export type PanelLocation = (typeof PanelLocation)[keyof typeof PanelLocation];
 
 export interface CustomPanelLocation {
   panelLocation: PanelLocation;
   panelMode: string;
 }
 
-export enum PanelScope {
-  AppLevel = 'APP_LEVEL',
-  CardLevel = 'CARD_LEVEL',
-}
+export const PanelScope = {
+  AppLevel: 'APP_LEVEL',
+  CardLevel: 'CARD_LEVEL',
+} as const;
+export type PanelScope = (typeof PanelScope)[keyof typeof PanelScope];
 
-export enum PanelSize {
-  Auto = 'auto',
-  Small = '300px',
-  Medium = '630px',
-}
+export const PanelSize = {
+  Auto: 'auto',
+  Small: '300px',
+  Medium: '630px',
+} as const;
+export type PanelSize = (typeof PanelSize)[keyof typeof PanelSize];
+
 export type PanelTabFn = (intl: IntlShape) => PanelTab;
 export interface PanelTab {
   name: string;

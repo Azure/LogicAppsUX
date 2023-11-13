@@ -13,10 +13,11 @@ export const ExpressionEvaluatorExceptionName = 'Workflow.ExpressionEvaluatorExc
 /**
  * The expression evaluator error code.
  */
-export enum ExpressionEvaluatorErrorCode {
-  UNRECOGNIZED_EXPRESSION = 'UnrecognizedExpression',
-  EMPTY_VALUE = 'EmptyValue',
-}
+export const ExpressionEvaluatorErrorCode = {
+  UNRECOGNIZED_EXPRESSION: 'UnrecognizedExpression',
+  EMPTY_VALUE: 'EmptyValue',
+} as const;
+export type ExpressionEvaluatorErrorCode = (typeof ExpressionEvaluatorErrorCode)[keyof typeof ExpressionEvaluatorErrorCode];
 
 /**
  * The expression evaluator exception.

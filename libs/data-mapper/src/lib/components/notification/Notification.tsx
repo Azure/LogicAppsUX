@@ -7,20 +7,21 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { ActionCreators } from 'redux-undo';
 
-export enum NotificationTypes {
-  GenerateFailed = 'generateFailed',
-  MapHasErrorsAtSave = 'mapHasErrorsAtSave',
-  SourceNodeRemoved = 'sourceNodeRemoved',
-  SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
-  TargetNodeCannotDelete = 'targetNodeCannotDelete',
-  RepeatingConnectionCannotDelete = 'repeatingConnectionCannotDelete',
-  FunctionNodePartiallyDeleted = 'functionNodePartiallyDeleted',
-  FunctionNodeDeleted = 'functionNodeDeleted',
-  ConnectionDeleted = 'connectionDeleted',
-  ArrayConnectionAdded = 'arrayConnectionAdded',
-  CircularLogicError = 'circularLogicError',
-  ElementsAndMappingsRemoved = 'elementsMappingsRemoved',
-}
+export const NotificationTypes = {
+  GenerateFailed: 'generateFailed',
+  MapHasErrorsAtSave: 'mapHasErrorsAtSave',
+  SourceNodeRemoved: 'sourceNodeRemoved',
+  SourceNodeRemoveFailed: 'sourceNodeRemoveFailed',
+  TargetNodeCannotDelete: 'targetNodeCannotDelete',
+  RepeatingConnectionCannotDelete: 'repeatingConnectionCannotDelete',
+  FunctionNodePartiallyDeleted: 'functionNodePartiallyDeleted',
+  FunctionNodeDeleted: 'functionNodeDeleted',
+  ConnectionDeleted: 'connectionDeleted',
+  ArrayConnectionAdded: 'arrayConnectionAdded',
+  CircularLogicError: 'circularLogicError',
+  ElementsAndMappingsRemoved: 'elementsMappingsRemoved',
+} as const;
+export type NotificationTypes = (typeof NotificationTypes)[keyof typeof NotificationTypes];
 
 export interface NotificationData {
   type: NotificationTypes;

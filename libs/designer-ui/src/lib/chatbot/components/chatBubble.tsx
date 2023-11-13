@@ -7,10 +7,11 @@ import { useConst } from '@fluentui/react-hooks';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-export enum ChatEntryReaction {
-  thumbsUp = 'thumbsUp',
-  thumbsDown = 'thumbsDown',
-}
+export const ChatEntryReaction = {
+  thumbsUp: 'thumbsUp',
+  thumbsDown: 'thumbsDown',
+} as const;
+export type ChatEntryReaction = (typeof ChatEntryReaction)[keyof typeof ChatEntryReaction];
 
 type ChatBubbleProps = {
   isUserMessage?: boolean;

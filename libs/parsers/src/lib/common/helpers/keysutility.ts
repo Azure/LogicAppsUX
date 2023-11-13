@@ -18,10 +18,11 @@ const _codeBook = [
 
 export const WildIndexSegment = '[*]';
 
-export enum SegmentType {
-  Property = 0,
-  Index,
-}
+export const SegmentType = {
+  Property: 0,
+  Index: 1,
+} as const;
+export type SegmentType = (typeof SegmentType)[keyof typeof SegmentType];
 
 export interface Segment {
   type: SegmentType;

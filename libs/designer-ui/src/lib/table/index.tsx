@@ -36,10 +36,11 @@ const dropdownStyles: Partial<IDropdownStyles> = {
   },
 };
 
-export enum ColumnMode {
-  Automatic = 'Automatic',
-  Custom = 'Custom',
-}
+export const ColumnMode = {
+  Automatic: 'Automatic',
+  Custom: 'Custom',
+} as const;
+export type ColumnMode = (typeof ColumnMode)[keyof typeof ColumnMode];
 
 export const TableEditor: React.FC<TableEditorProps> = ({
   initialItems,

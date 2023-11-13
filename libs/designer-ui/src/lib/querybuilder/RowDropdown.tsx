@@ -10,20 +10,22 @@ interface RowDropdownProps {
   onChange: ChangeHandler;
 }
 
-export enum RowDropdownOptions {
-  CONTAINS = 'contains',
-  NOTCONTAINS = 'notcontains',
-  EQUALS = 'equals',
-  NOTEQUALS = 'notequals',
-  GREATER = 'greater',
-  GREATEROREQUALS = 'greaterOrEquals',
-  LESS = 'less',
-  LESSOREQUALS = 'lessOrEquals',
-  STARTSWITH = 'startsWith',
-  NOTSTARTSWITH = 'notstartsWith',
-  ENDSWITH = 'endsWith',
-  NOTENDSWITH = 'notendsWith',
-}
+export const RowDropdownOptions = {
+  CONTAINS: 'contains',
+  NOTCONTAINS: 'notcontains',
+  EQUALS: 'equals',
+  NOTEQUALS: 'notequals',
+  GREATER: 'greater',
+  GREATEROREQUALS: 'greaterOrEquals',
+  LESS: 'less',
+  LESSOREQUALS: 'lessOrEquals',
+  STARTSWITH: 'startsWith',
+  NOTSTARTSWITH: 'notstartsWith',
+  ENDSWITH: 'endsWith',
+  NOTENDSWITH: 'notendsWith',
+} as const;
+export type RowDropdownOptions = (typeof RowDropdownOptions)[keyof typeof RowDropdownOptions];
+
 
 const items: DropdownItem[] = [
   { key: RowDropdownOptions.CONTAINS, displayName: 'contains', value: RowDropdownOptions.CONTAINS },

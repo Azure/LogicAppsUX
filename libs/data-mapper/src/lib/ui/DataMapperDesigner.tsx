@@ -136,7 +136,7 @@ export const DataMapperDesigner = ({
   const [codeViewExpandedWidth, setCodeViewExpandedWidth] = useState(minCodeViewWidth);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
-  const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
+  const [sidePaneTab, setSidePaneTab] = useState<SidePanelTabValue>(SidePanelTabValue.OutputTree);
   const [showGlobalView, setShowGlobalView] = useState(false);
 
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);

@@ -16,12 +16,12 @@ import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-enum VsCodeThemeType {
-  VsCodeLight = 'vscode-light',
-  VsCodeDark = 'vscode-dark',
-  VsCodeHighContrast = 'vscode-high-contrast',
-}
-
+const VsCodeThemeType = {
+  VsCodeLight: 'vscode-light',
+  VsCodeDark: 'vscode-dark',
+  VsCodeHighContrast: 'vscode-high-contrast',
+};
+type VsCodeThemeType = keyof typeof VsCodeThemeType;
 interface SchemaFile {
   path: string;
   type: SchemaType;

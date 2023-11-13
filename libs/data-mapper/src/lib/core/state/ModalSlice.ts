@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // NOTE: Currently, modal is just used for discard data map changes warning
-export enum WarningModalState {
-  DiscardWarning = 'discard',
-}
-
+export const WarningModalState = {
+  DiscardWarning: 'discard',
+} as const;
+export type WarningModalState = (typeof WarningModalState)[keyof typeof WarningModalState];
 export interface ModalState {
   isWarningModalOpen: boolean;
   warningModalType?: WarningModalState;

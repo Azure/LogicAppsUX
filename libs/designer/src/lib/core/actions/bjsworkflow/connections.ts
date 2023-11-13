@@ -112,9 +112,7 @@ export const getConnectionProperties = (connector: Connector, userAssignedIdenti
   let additionalAudiences: string[] | undefined;
   if (WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()) {
     const isMultiAuth = connector.properties.connectionParameterSets !== undefined;
-    const parameterType = isMultiAuth
-      ? ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]
-      : ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting];
+    const parameterType = isMultiAuth ? ConnectionParameterTypes.managedIdentity : ConnectionParameterTypes.oauthSetting;
     const parameters = getConnectionParametersWithType(connector, parameterType);
 
     if (isMultiAuth) {
@@ -296,26 +294,25 @@ export function needsOAuth(connectionParameters: Record<string, ConnectionParame
     Object.keys(connectionParameters || {})
       .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
       .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
-      .filter((connectionParameter) => equals(connectionParameter.type, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]))
-      .length > 0
+      .filter((connectionParameter) => equals(connectionParameter.type, ConnectionParameterTypes.oauthSetting)).length > 0
   );
 }
 
 // This only checks if this connector has any OAuth connection, it can be just part of Multi Auth
 function needsAuth(connector?: Connector): boolean {
   if (!connector) return false;
-  return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]).length > 0;
+  return getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting).length > 0;
 }
 
 export function getAuthRedirect(connector?: Connector): string | undefined {
   if (!connector) return undefined;
-  const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
+  const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
   if (authParameters?.[0]) return authParameters?.[0].oAuthSettings?.redirectUrl;
   return undefined;
 }
 
 export function isFirstPartyConnector(connector: Connector): boolean {
-  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
+  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
 
   return (
     !!oauthParameters &&
@@ -354,7 +351,7 @@ function _getConnectionParameterSetParametersUsingType(connector: Connector, par
 }
 
 export function hasPrerequisiteConnection(connector: Connector): boolean {
-  return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.connection]).length > 0;
+  return getConnectionParametersWithType(connector, ConnectionParameterTypes.connection).length > 0;
 }
 
 export function needsSimpleConnection(connector: Connector): boolean {
@@ -404,7 +401,7 @@ export const SupportedConfigConnectionParameterTypes = [
 export function isConfigConnectionParameter(connectionParameter: ConnectionParameter): boolean {
   if (connectionParameter && connectionParameter.type) {
     return SupportedConfigConnectionParameterTypes.some((connectionParameterType) => {
-      return equals(connectionParameter.type, ConnectionParameterTypes[connectionParameterType]);
+      return equals(connectionParameter.type, connectionParameterType);
     });
   }
 

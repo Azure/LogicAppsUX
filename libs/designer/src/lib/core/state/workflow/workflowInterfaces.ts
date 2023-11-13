@@ -17,10 +17,12 @@ export interface NodesMetadata {
 }
 export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
 
-export enum WorkflowKind {
-  STATEFUL = 'stateful',
-  STATELESS = 'stateless',
-}
+export const WorkflowKind = {
+  STATEFUL: 'stateful',
+  STATELESS: 'stateless',
+} as const;
+export type WorkflowKind = typeof WorkflowKind[keyof typeof WorkflowKind];
+
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph: WorkflowNode | null;

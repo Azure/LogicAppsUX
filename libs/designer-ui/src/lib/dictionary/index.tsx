@@ -9,10 +9,11 @@ import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum DictionaryType {
-  DEFAULT = 'default',
-  TABLE = 'table',
-}
+export const DictionaryType = {
+  DEFAULT: 'default',
+  TABLE: 'table',
+} as const;
+export type DictionaryType = (typeof DictionaryType)[keyof typeof DictionaryType];
 export interface DictionaryEditorItemProps {
   id: string;
   key: ValueSegment[];

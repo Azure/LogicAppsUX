@@ -69,10 +69,11 @@ export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
 
-export enum workflowType {
-  stateful = 'Stateful-Codeless',
-  stateless = 'Stateless-Codeless',
-}
+export const workflowType = {
+  stateful: 'Stateful-Codeless',
+  stateless: 'Stateless-Codeless',
+} as const;
+export type workflowType = (typeof workflowType)[keyof typeof workflowType];
 
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
@@ -80,75 +81,76 @@ export const designerStartApi = '/runtime/webhooks/workflow/api/management/opera
 export const designerApiLoadTimeout = 300000;
 
 // Commands
-export enum extensionCommand {
-  openDesigner = 'azureLogicAppsStandard.openDesigner',
-  activate = 'azureLogicAppsStandard.activate',
-  viewContent = 'azureLogicAppsStandard.viewContent',
-  openFile = 'azureLogicAppsStandard.openFile',
-  createNewProject = 'azureLogicAppsStandard.createNewProject',
-  createNewCodeProject = 'azureLogicAppsStandard.createNewCodeProject',
-  createNewDataMap = 'azureLogicAppsStandard.dataMap.createNewDataMap',
-  createCodeless = 'azureLogicAppsStandard.createCodeless',
-  createLogicApp = 'azureLogicAppsStandard.createLogicApp',
-  createLogicAppAdvanced = 'azureLogicAppsStandard.createLogicAppAdvanced',
-  deploy = 'azureLogicAppsStandard.deploy',
-  deploySlot = 'azureLogicAppsStandard.deploySlot',
-  redeploy = 'azureLogicAppsStandard.redeploy',
-  showOutputChannel = 'azureLogicAppsStandard.showOutputChannel',
-  startLogicApp = 'azureLogicAppsStandard.startLogicApp',
-  stopLogicApp = 'azureLogicAppsStandard.stopLogicApp',
-  restartLogicApp = 'azureLogicAppsStandard.restartLogicApp',
-  pickProcess = 'azureLogicAppsStandard.pickProcess',
-  getDebugSymbolDll = 'azureLogicAppsStandard.getDebugSymbolDll',
-  deleteLogicApp = 'azureLogicAppsStandard.deleteLogicApp',
-  switchToDotnetProject = 'azureLogicAppsStandard.switchToDotnetProject',
-  openInPortal = 'azureLogicAppsStandard.openInPortal',
-  azureFunctionsOpenFile = 'azureFunctions.openFile',
-  azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
-  azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
-  azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
-  openOverview = 'azureLogicAppsStandard.openOverview',
-  exportLogicApp = 'azureLogicAppsStandard.exportLogicApp',
-  reviewValidation = 'azureLogicAppsStandard.reviewValidation',
-  browseWebsite = 'azureLogicAppsStandard.browseWebsite',
-  viewProperties = 'azureLogicAppsStandard.viewProperties',
-  createSlot = 'azureLogicAppsStandard.createSlot',
-  deleteSlot = 'azureLogicAppsStandard.deleteSlot',
-  swapSlot = 'azureLogicAppsStandard.swapSlot',
-  startStreamingLogs = 'azureLogicAppsStandard.startStreamingLogs',
-  stopStreamingLogs = 'azureLogicAppsStandard.stopStreamingLogs',
-  viewDeploymentLogs = 'azureLogicAppsStandard.viewDeploymentLogs',
-  appSettingsAdd = 'azureLogicAppsStandard.appSettings.add',
-  appSettingsDelete = 'azureLogicAppsStandard.appSettings.delete',
-  appSettingsDownload = 'azureLogicAppsStandard.appSettings.download',
-  appSettingsEdit = 'azureLogicAppsStandard.appSettings.edit',
-  appSettingsRename = 'azureLogicAppsStandard.appSettings.rename',
-  appSettingsUpload = 'azureLogicAppsStandard.appSettings.upload',
-  appSettingsToggleSlotSetting = 'azureLogicAppsStandard.appSettings.toggleSlotSetting',
-  toggleAppSettingVisibility = 'azureLogicAppsStandard.toggleAppSettingVisibility',
-  useSQLStorage = 'azureLogicAppsStandard.useSQLStorage',
-  switchDebugMode = 'azureLogicAppsStandard.switchDebugMode',
-  connectToGitHub = 'azureLogicAppsStandard.connectToGitHub',
-  disconnectRepo = 'azureLogicAppsStandard.disconnectRepo',
-  viewCommitInGitHub = 'azureLogicAppsStandard.viewCommitInGitHub',
-  enableAzureConnectors = 'azureLogicAppsStandard.enableAzureConnectors',
-  configureWebhookRedirectEndpoint = 'azureLogicAppsStandard.configureWebhookRedirectEndpoint',
-  initProjectForVSCode = 'azureLogicAppsStandard.initProjectForVSCode',
-  configureDeploymentSource = 'azureLogicAppsStandard.configureDeploymentSource',
-  startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
-  validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
-  reportIssue = 'azureLogicAppsStandard.reportIssue',
-  validateAndInstallBinaries = 'azureLogicAppsStandard.validateAndInstallBinaries',
-  azureAzuriteStart = 'azurite.start',
-  loadDataMapFile = 'azureLogicAppsStandard.dataMap.loadDataMapFile',
-  dataMapAddSchemaFromFile = 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
-  dataMapAttemptToResolveMissingSchemaFile = 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
-  dataMapSetSupportedDataMapDefinitionFileExts = 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
-  dataMapSetSupportedSchemaFileExts = 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
-  dataMapSetSupportedFileExts = 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
-  dataMapSaveMapDefinition = 'azureLogicAppsStandard.dataMap.saveMapDefinition',
-  dataMapSaveMapXslt = 'azureLogicAppsStandard.dataMap.saveMapXslt',
-}
+export const extensionCommand = {
+  openDesigner: 'azureLogicAppsStandard.openDesigner',
+  activate: 'azureLogicAppsStandard.activate',
+  viewContent: 'azureLogicAppsStandard.viewContent',
+  openFile: 'azureLogicAppsStandard.openFile',
+  createNewProject: 'azureLogicAppsStandard.createNewProject',
+  createNewCodeProject: 'azureLogicAppsStandard.createNewCodeProject',
+  createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
+  createCodeless: 'azureLogicAppsStandard.createCodeless',
+  createLogicApp: 'azureLogicAppsStandard.createLogicApp',
+  createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
+  deploy: 'azureLogicAppsStandard.deploy',
+  deploySlot: 'azureLogicAppsStandard.deploySlot',
+  redeploy: 'azureLogicAppsStandard.redeploy',
+  showOutputChannel: 'azureLogicAppsStandard.showOutputChannel',
+  startLogicApp: 'azureLogicAppsStandard.startLogicApp',
+  stopLogicApp: 'azureLogicAppsStandard.stopLogicApp',
+  restartLogicApp: 'azureLogicAppsStandard.restartLogicApp',
+  pickProcess: 'azureLogicAppsStandard.pickProcess',
+  getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
+  deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
+  switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
+  openInPortal: 'azureLogicAppsStandard.openInPortal',
+  azureFunctionsOpenFile: 'azureFunctions.openFile',
+  azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
+  azureFunctionsAppSettingsEncrypt: 'azureFunctions.appSettings.encrypt',
+  azureFunctionsAppSettingsDecrypt: 'azureFunctions.appSettings.decrypt',
+  openOverview: 'azureLogicAppsStandard.openOverview',
+  exportLogicApp: 'azureLogicAppsStandard.exportLogicApp',
+  reviewValidation: 'azureLogicAppsStandard.reviewValidation',
+  browseWebsite: 'azureLogicAppsStandard.browseWebsite',
+  viewProperties: 'azureLogicAppsStandard.viewProperties',
+  createSlot: 'azureLogicAppsStandard.createSlot',
+  deleteSlot: 'azureLogicAppsStandard.deleteSlot',
+  swapSlot: 'azureLogicAppsStandard.swapSlot',
+  startStreamingLogs: 'azureLogicAppsStandard.startStreamingLogs',
+  stopStreamingLogs: 'azureLogicAppsStandard.stopStreamingLogs',
+  viewDeploymentLogs: 'azureLogicAppsStandard.viewDeploymentLogs',
+  appSettingsAdd: 'azureLogicAppsStandard.appSettings.add',
+  appSettingsDelete: 'azureLogicAppsStandard.appSettings.delete',
+  appSettingsDownload: 'azureLogicAppsStandard.appSettings.download',
+  appSettingsEdit: 'azureLogicAppsStandard.appSettings.edit',
+  appSettingsRename: 'azureLogicAppsStandard.appSettings.rename',
+  appSettingsUpload: 'azureLogicAppsStandard.appSettings.upload',
+  appSettingsToggleSlotSetting: 'azureLogicAppsStandard.appSettings.toggleSlotSetting',
+  toggleAppSettingVisibility: 'azureLogicAppsStandard.toggleAppSettingVisibility',
+  useSQLStorage: 'azureLogicAppsStandard.useSQLStorage',
+  switchDebugMode: 'azureLogicAppsStandard.switchDebugMode',
+  connectToGitHub: 'azureLogicAppsStandard.connectToGitHub',
+  disconnectRepo: 'azureLogicAppsStandard.disconnectRepo',
+  viewCommitInGitHub: 'azureLogicAppsStandard.viewCommitInGitHub',
+  enableAzureConnectors: 'azureLogicAppsStandard.enableAzureConnectors',
+  configureWebhookRedirectEndpoint: 'azureLogicAppsStandard.configureWebhookRedirectEndpoint',
+  initProjectForVSCode: 'azureLogicAppsStandard.initProjectForVSCode',
+  configureDeploymentSource: 'azureLogicAppsStandard.configureDeploymentSource',
+  startRemoteDebug: 'azureLogicAppsStandard.startRemoteDebug',
+  validateLogicAppProjects: 'azureLogicAppsStandard.validateFunctionProjects',
+  reportIssue: 'azureLogicAppsStandard.reportIssue',
+  validateAndInstallBinaries: 'azureLogicAppsStandard.validateAndInstallBinaries',
+  azureAzuriteStart: 'azurite.start',
+  loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
+  dataMapAddSchemaFromFile: 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
+  dataMapAttemptToResolveMissingSchemaFile: 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
+  dataMapSetSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
+  dataMapSetSupportedSchemaFileExts: 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
+  dataMapSetSupportedFileExts: 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
+  dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
+  dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
+} as const;
+export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
 // Context
 export const contextValuePrefix = 'azLogicApps';
@@ -213,11 +215,13 @@ export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Work
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 
 // Fallback Dependency Versions
-export enum DependencyVersion {
-  dotnet6 = '6.0.413',
-  funcCoreTools = '4.0.5198',
-  nodeJs = '18.17.1',
-}
+export const DependencyVersion = {
+  dotnet6: '6.0.413',
+  funcCoreTools: '4.0.5198',
+  nodeJs: '18.17.1',
+} as const;
+export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
+
 export const hostFileContent = {
   version: '2.0',
   extensionBundle: {
@@ -233,33 +237,36 @@ export const hostFileContent = {
   },
 };
 
-export enum DependencyDefaultPath {
-  dotnet = 'dotnet',
-  funcCoreTools = 'func',
-  node = 'node',
-}
-
+export const DependencyDefaultPath = {
+  dotnet: 'dotnet',
+  funcCoreTools: 'func',
+  node: 'node',
+} as const;
+export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof DependencyDefaultPath];
 // .NET
-export enum DotnetVersion {
-  net6 = 'net6.0',
-  net3 = 'netcoreapp3.1',
-  net2 = 'netcoreapp2.1',
-  net48 = 'net48',
-}
+export const DotnetVersion = {
+  net6: 'net6.0',
+  net3: 'netcoreapp3.1',
+  net2: 'netcoreapp2.1',
+  net48: 'net48',
+} as const;
+export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
+
 export const dotnetExtensionId = 'ms-dotnettools.csharp';
 
 // Packages Manager
-export enum PackageManager {
-  npm = 'npm',
-  brew = 'brew',
-}
-
+export const PackageManager = {
+  npm: 'npm',
+  brew: 'brew',
+} as const;
+export type PackageManager = (typeof PackageManager)[keyof typeof PackageManager];
 // Operating System Platforms
-export enum Platform {
-  windows = 'win32',
-  mac = 'darwin',
-  linux = 'linux',
-}
+export const Platform = {
+  windows: 'win32',
+  mac: 'darwin',
+  linux: 'linux',
+} as const;
+export type Platform = (typeof Platform)[keyof typeof Platform];
 
 // Resources
 export const kubernetesKind = 'kubernetes';

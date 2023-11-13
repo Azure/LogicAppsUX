@@ -1,31 +1,34 @@
-export enum ExpressionType {
-  NullLiteral = 'NullLiteral',
-  BooleanLiteral = 'BooleanLiteral',
-  NumberLiteral = 'NumberLiteral',
-  StringLiteral = 'StringLiteral',
-  Function = 'Function',
-  StringInterpolation = 'StringInterpolation',
-}
+export const ExpressionType = {
+  NullLiteral: 'NullLiteral',
+  BooleanLiteral: 'BooleanLiteral',
+  NumberLiteral: 'NumberLiteral',
+  StringLiteral: 'StringLiteral',
+  Function: 'Function',
+  StringInterpolation: 'StringInterpolation',
+} as const;
+export type ExpressionType = (typeof ExpressionType)[keyof typeof ExpressionType];
 
-export enum ExpressionFunctionNames {
-  PARAMETERS = 'PARAMETERS',
-  APPSETTING = 'APPSETTING',
-}
+export const ExpressionFunctionNames = {
+  PARAMETERS: 'PARAMETERS',
+  APPSETTING: 'APPSETTING',
+} as const;
+export type ExpressionFunctionNames = (typeof ExpressionFunctionNames)[keyof typeof ExpressionFunctionNames];
 
-export enum ExpressionTokenType {
-  Dot = 'Dot',
-  Comma = 'Comma',
-  LeftParenthesis = 'LeftParenthesis',
-  RightParenthesis = 'RightParenthesis',
-  LeftSquareBracket = 'LeftSquareBracket',
-  RightSquareBracket = 'RightSquareBracket',
-  QuestionMark = 'QuestionMark',
-  StringLiteral = 'StringLiteral',
-  IntegerLiteral = 'IntegerLiteral',
-  FloatLiteral = 'FloatLiteral',
-  Identifier = 'Identifier',
-  EndOfData = 'EndOfData',
-}
+export const ExpressionTokenType = {
+  Dot: 'Dot',
+  Comma: 'Comma',
+  LeftParenthesis: 'LeftParenthesis',
+  RightParenthesis: 'RightParenthesis',
+  LeftSquareBracket: 'LeftSquareBracket',
+  RightSquareBracket: 'RightSquareBracket',
+  QuestionMark: 'QuestionMark',
+  StringLiteral: 'StringLiteral',
+  IntegerLiteral: 'IntegerLiteral',
+  FloatLiteral: 'FloatLiteral',
+  Identifier: 'Identifier',
+  EndOfData: 'EndOfData',
+} as const;
+export type ExpressionTokenType = (typeof ExpressionTokenType)[keyof typeof ExpressionTokenType];
 
 export interface Dereference {
   isSafe: boolean;

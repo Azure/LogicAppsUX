@@ -11,11 +11,12 @@ import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type NodeToggledStateDictionary = { [key: string]: ItemToggledState };
-export enum ItemToggledState {
-  Completed = 'Completed',
-  InProgress = 'InProgress',
-  NotStarted = 'NotStarted',
-}
+export const ItemToggledState = {
+  Completed: 'Completed',
+  InProgress: 'InProgress',
+  NotStarted: 'NotStarted',
+} as const;
+export type ItemToggledState = (typeof ItemToggledState)[keyof typeof ItemToggledState];
 
 interface TargetSchemaTreeItemProps {
   node: SchemaNodeExtended;

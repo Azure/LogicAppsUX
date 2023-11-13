@@ -72,11 +72,12 @@ export interface ICallbackUrlResponse {
   queries?: Record<string, any>;
 }
 
-export enum WorkflowProjectType {
-  Nuget = 'Nuget',
-  Bundle = 'Bundle',
-  Functions = 'Functions',
-}
+export const WorkflowProjectType = {
+  Nuget: 'Nuget',
+  Bundle: 'Bundle',
+  Functions: 'Functions',
+} as const;
+export type WorkflowProjectType = (typeof WorkflowProjectType)[keyof typeof WorkflowProjectType];
 
 export interface ISettingToAdd {
   key: string;
@@ -90,19 +91,20 @@ export interface IWorkflowStateTypeStepOptions {
   triggerSettings: { [key: string]: string | undefined } | undefined;
 }
 
-export enum MismatchBehavior {
+export const MismatchBehavior = {
   /**
    * Asks the user if they want to overwrite
    */
-  Prompt,
+  Prompt: 'Prompt',
 
   /**
    * Overwrites without prompting
    */
-  Overwrite,
+  Overwrite: 'Overwrite',
 
   /**
    * Returns without changing anything
    */
-  DontChange,
-}
+  DontChange: 'DontChange',
+} as const;
+export type MismatchBehavior = (typeof MismatchBehavior)[keyof typeof MismatchBehavior];

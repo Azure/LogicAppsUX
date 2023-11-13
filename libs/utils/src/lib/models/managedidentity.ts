@@ -10,9 +10,11 @@ export interface ManagedIdentity {
   userAssignedIdentities?: Record<string, ManagedIdentityData>;
 }
 
-export enum ResourceIdentityType {
-  SYSTEM_ASSIGNED = 'SystemAssigned',
-  USER_ASSIGNED = 'UserAssigned',
-  SYSTEM_ASSIGNED_USER_ASSIGNED = 'SystemAssigned, UserAssigned',
-  NONE = 'None',
-}
+export const ResourceIdentityType = {
+  SYSTEM_ASSIGNED: 'SystemAssigned',
+  USER_ASSIGNED: 'UserAssigned',
+  SYSTEM_ASSIGNED_USER_ASSIGNED: 'SystemAssigned, UserAssigned',
+  NONE: 'None',
+};
+
+export type ResourceIdentityType = (typeof ResourceIdentityType)[keyof typeof ResourceIdentityType];

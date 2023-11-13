@@ -4,10 +4,11 @@ import type { IIconStyles } from '@fluentui/react';
 import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import { useIntl } from 'react-intl';
 
-export enum PickerItemType {
-  FOLDER = 'folder',
-  FILE = 'file',
-}
+export const PickerItemType = {
+  FOLDER: 'folder',
+  FILE: 'file',
+} as const;
+export type PickerItemType = (typeof PickerItemType)[keyof typeof PickerItemType];
 
 const iconInfo = {
   file: {

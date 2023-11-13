@@ -8,10 +8,12 @@ import { guid } from '@microsoft/utils-logic-apps';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum ExpandedDictionaryEditorType {
-  KEY = 'key',
-  VALUE = 'value',
-}
+export const ExpandedDictionaryEditorType = {
+  KEY: 'key',
+  VALUE: 'value',
+} as const;
+export type ExpandedDictionaryEditorType = (typeof ExpandedDictionaryEditorType)[keyof typeof ExpandedDictionaryEditorType];
+
 export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   readonly?: boolean;

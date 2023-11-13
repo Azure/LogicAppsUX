@@ -73,11 +73,12 @@ export interface CreateConnectionProps {
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
-enum LegacyMultiAuthOptions {
-  oauth = 0,
-  servicePrincipal = 1,
-  managedIdentity = 2,
-}
+const LegacyMultiAuthOptions = {
+  oauth: 0,
+  servicePrincipal: 1,
+  managedIdentity: 2,
+} as const;
+type LegacyMultiAuthOptions = (typeof LegacyMultiAuthOptions)[keyof typeof LegacyMultiAuthOptions];
 
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const {
@@ -132,10 +133,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
 
   const hasOnlyOnPremGateway = useMemo(
-    () =>
-      (connectorCapabilities?.includes(Capabilities[Capabilities.gateway]) &&
-        !connectorCapabilities?.includes(Capabilities[Capabilities.cloud])) ??
-      false,
+    () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
     [connectorCapabilities]
   );
 
@@ -195,8 +193,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
       const dependentParam = constraints?.dependentParameter;
       if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) return false;
-      if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
-      if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) return false;
+      if (parameter.type === ConnectionParameterTypes.oauthSetting) return false;
+      if (parameter.type === ConnectionParameterTypes.managedIdentity) return false;
       return true;
     },
     [parameterValues, servicePrincipalSelected, legacyManagedIdentitySelected]
@@ -236,7 +234,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const capabilityEnabledParameters = useMemo(() => {
     let output: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = parametersByCapability['general'];
     Object.entries(parametersByCapability).forEach(([capabilityText, parameters]) => {
-      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText))
+      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText as any))
         output = {
           ...output,
           ...parameters,

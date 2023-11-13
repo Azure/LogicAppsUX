@@ -6,10 +6,11 @@ import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-export enum LoadingMethod {
-  File = 'file',
-  Arm = 'arm',
-}
+export const LoadingMethod = {
+  File: 'file',
+  Arm: 'arm',
+} as const;
+export type LoadingMethod = (typeof LoadingMethod)[keyof typeof LoadingMethod];
 
 export interface DataMapLoadingState {
   theme: ThemeType;

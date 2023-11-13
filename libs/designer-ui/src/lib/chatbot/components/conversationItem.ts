@@ -1,13 +1,15 @@
 import type { OperationInfo } from './flowDiffPreview';
 
-export enum FlowOrigin {
-  Default = 'default',
-}
+export const FlowOrigin = {
+  Default: 'default',
+} as const;
+export type FlowOrigin = (typeof FlowOrigin)[keyof typeof FlowOrigin];
 
-export enum ChatEntryReaction {
-  thumbsUp = 'thumbsUp',
-  thumbsDown = 'thumbsDown',
-}
+export const ChatEntryReaction = {
+  thumbsUp: 'thumbsUp',
+  thumbsDown: 'thumbsDown',
+} as const;
+export type ChatEntryReaction = (typeof ChatEntryReaction)[keyof typeof ChatEntryReaction];
 
 export type ConversationItem = //TODO: Add other types of items
 
@@ -38,18 +40,19 @@ type BaseAssistantMessageItem = BaseConversationItem & {
   logFeedbackVote?: (reaction: ChatEntryReaction, isRemovedVote?: boolean) => void;
 };
 
-export enum ConversationItemType {
-  Query = 'query',
-  Reply = 'reply',
-  ReplyWithFlow = 'replyWithFlow',
-  ReplyError = 'replyError',
-  ConnectionsSetup = 'connectionsSetup',
-  Greeting = 'greeting',
-  OperationsNeedingAttention = 'operationsNeedingAttention',
-}
+export const ConversationItemType = {
+  Query: 'query',
+  Reply: 'reply',
+  ReplyWithFlow: 'replyWithFlow',
+  ReplyError: 'replyError',
+  ConnectionsSetup: 'connectionsSetup',
+  Greeting: 'greeting',
+  OperationsNeedingAttention: 'operationsNeedingAttention',
+} as const;
+export type ConversationItemType = (typeof ConversationItemType)[keyof typeof ConversationItemType];
 
 export type UserQueryItem = BaseConversationItem & {
-  type: ConversationItemType.Query;
+  type: typeof ConversationItemType.Query;
   text: string;
 };
 
@@ -58,13 +61,13 @@ export function isUserQueryItem(item: ConversationItem): item is UserQueryItem {
 }
 
 export type AssistantGreetingItem = BaseAssistantMessageItem & {
-  type: ConversationItemType.Greeting;
+  type: typeof ConversationItemType.Greeting;
   origin: FlowOrigin;
   reaction: ChatEntryReaction | undefined;
 };
 
 export type AssistantErrorItem = BaseAssistantMessageItem & {
-  type: ConversationItemType.ReplyError;
+  type: typeof ConversationItemType.ReplyError;
   error: any;
   reaction: ChatEntryReaction | undefined;
   chatSessionId: string;
@@ -73,7 +76,7 @@ export type AssistantErrorItem = BaseAssistantMessageItem & {
 };
 
 export type AssistantReplyItem = BaseAssistantMessageItem & {
-  type: ConversationItemType.Reply;
+  type: typeof ConversationItemType.Reply;
   text: string;
   reaction: ChatEntryReaction | undefined;
   isMarkdownText: boolean;
@@ -85,7 +88,7 @@ export type AssistantReplyItem = BaseAssistantMessageItem & {
 };
 
 export type ConnectionsSetupItem = BaseAssistantMessageItem & {
-  type: ConversationItemType.ConnectionsSetup;
+  type: typeof ConversationItemType.ConnectionsSetup;
   // connectionReferences: ConnectionReference[]; // TODO: Later change this to Record<string, ConnectionReference>
   // connectionReferencesNeedingSetup: string[];
   reaction: ChatEntryReaction | undefined;
@@ -95,7 +98,7 @@ export type ConnectionsSetupItem = BaseAssistantMessageItem & {
 };
 
 export type AssistantReplyWithFlowItem = BaseAssistantMessageItem & {
-  type: ConversationItemType.ReplyWithFlow;
+  type: typeof ConversationItemType.ReplyWithFlow;
   text: string;
   reaction: ChatEntryReaction | undefined;
   undoStatus: UndoStatus;
@@ -104,19 +107,22 @@ export type AssistantReplyWithFlowItem = BaseAssistantMessageItem & {
   __rawResponse: any;
 };
 
-export enum UndoStatus {
-  Unavailable = 0,
-  UndoAvailable,
-  Undone,
-}
+export const UndoStatus = {
+  Unavailable: 0,
+  UndoAvailable: 1,
+  Undone: 2,
+} as const;
+export type UndoStatus = (typeof UndoStatus)[keyof typeof UndoStatus];
 
-export enum OperationsNeedingAttentionOnUserAction {
-  editing = 1,
-  saving,
-}
+export const OperationsNeedingAttentionOnUserAction = {
+  editing: 1,
+  saving: 2,
+} as const;
+export type OperationsNeedingAttentionOnUserAction =
+  (typeof OperationsNeedingAttentionOnUserAction)[keyof typeof OperationsNeedingAttentionOnUserAction];
 
 export type OperationsNeedingAttentionItem = BaseAssistantMessageItem & {
-  type: ConversationItemType.OperationsNeedingAttention;
+  type: typeof ConversationItemType.OperationsNeedingAttention;
   userAction: OperationsNeedingAttentionOnUserAction;
   operationsNeedingAttention: OperationInfo[];
   reaction: ChatEntryReaction | undefined;

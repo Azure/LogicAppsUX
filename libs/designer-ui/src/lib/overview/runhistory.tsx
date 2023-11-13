@@ -10,18 +10,18 @@ export interface RunHistoryProps {
   onOpenRun(run: RunDisplayItem): void;
 }
 
-enum ContextMenuKeys {
-  SHOW_RUN = 'SHOW_RUN',
-}
-
-enum RunHistoryColumnKeys {
-  CONTEXT_MENU = 'contextMenu',
-  DURATION = 'duration',
-  IDENTIFIER = 'identifier',
-  START_TIME = 'startTime',
-  STATUS = 'status',
-}
-
+const ContextMenuKeys = {
+  SHOW_RUN: 'SHOW_RUN',
+} as const;
+type ContextMenuKeys = (typeof ContextMenuKeys)[keyof typeof ContextMenuKeys];
+const RunHistoryColumnKeys = {
+  CONTEXT_MENU: 'contextMenu',
+  DURATION: 'duration',
+  IDENTIFIER: 'identifier',
+  START_TIME: 'startTime',
+  STATUS: 'status',
+} as const;
+export type RunHistoryColumnKeys = (typeof RunHistoryColumnKeys)[keyof typeof RunHistoryColumnKeys];
 const options: FormatDateOptions = {
   day: 'numeric',
   hour: 'numeric',

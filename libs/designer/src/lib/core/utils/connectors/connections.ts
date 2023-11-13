@@ -214,7 +214,7 @@ export function isConnectionMultiAuthManagedIdentityType(connection: Connection 
     )[0];
     const parameters = parameterValueSetWithSameName?.parameters || {};
     for (const parameter of Object.keys(parameters)) {
-      if (parameters[parameter].type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) {
+      if (parameters[parameter].type === ConnectionParameterTypes.managedIdentity) {
         return true;
       }
     }
@@ -236,7 +236,7 @@ function containsManagedIdentityParameter(parameterSet: ConnectionParameterSet):
   const { parameters } = parameterSet;
   return Object.keys(parameters).some(
     (parameter) =>
-      parameters[parameter].type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity] ||
+      parameters[parameter].type === ConnectionParameterTypes.managedIdentity ||
       equals(parameters[parameter].uiDefinition?.constraints?.default, 'managedserviceidentity')
   );
 }

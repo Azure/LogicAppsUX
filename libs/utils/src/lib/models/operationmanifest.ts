@@ -22,34 +22,39 @@ export interface SecureDataOptions {
   outputsMode?: OutputSecureDataMode;
 }
 
-export enum OutputSecureDataMode {
-  Disabled = 'disabled',
-  LinkedToInputs = 'linkedtoinputs',
-}
+export const OutputSecureDataMode = {
+  Disabled: 'disabled',
+  LinkedToInputs: 'linkedtoinputs',
+};
+export type OutputSecureDataMode = (typeof OutputSecureDataMode)[keyof typeof OutputSecureDataMode];
 
-export enum SettingScope {
-  Trigger = 'trigger',
-  Action = 'action',
-}
+export const SettingScope = {
+  Trigger: 'trigger',
+  Action: 'action',
+};
+export type SettingScope = (typeof SettingScope)[keyof typeof SettingScope];
 
-export enum ExecutionOrder {
-  Parallel = 'parallel',
-  Sequential = 'sequential',
-}
+export const ExecutionOrder = {
+  Parallel: 'parallel',
+  Sequential: 'sequential',
+};
+export type ExecutionOrder = (typeof ExecutionOrder)[keyof typeof ExecutionOrder];
 
-export enum OperationOptions {
-  Asynchronous = 'Asynchronous',
-  DisableAsyncPattern = 'DisableAsyncPattern',
-  DisableAutomaticDecompression = 'DisableAutomaticDecompression',
-  EnableSchemaValidation = 'EnableSchemaValidation',
-  SuppressWorkflowHeaders = 'SuppressWorkflowHeaders',
-  SuppressWorkflowHeadersOnResponse = 'SuppressWorkflowHeadersOnResponse',
-}
+export const OperationOptions = {
+  Asynchronous: 'Asynchronous',
+  DisableAsyncPattern: 'DisableAsyncPattern',
+  DisableAutomaticDecompression: 'DisableAutomaticDecompression',
+  EnableSchemaValidation: 'EnableSchemaValidation',
+  SuppressWorkflowHeaders: 'SuppressWorkflowHeaders',
+  SuppressWorkflowHeadersOnResponse: 'SuppressWorkflowHeadersOnResponse',
+};
+export type OperationOptions = (typeof OperationOptions)[keyof typeof OperationOptions];
 
-export enum CustomSwaggerServiceNames {
-  Function = 'function',
-  ApiManagement = 'apimanagement',
-}
+export const CustomSwaggerServiceNames = {
+  Function: 'function',
+  ApiManagement: 'apimanagement',
+};
+export type CustomSwaggerServiceNames = (typeof CustomSwaggerServiceNames)[keyof typeof CustomSwaggerServiceNames];
 
 export interface CustomSwaggerServiceDetails {
   name: CustomSwaggerServiceNames;
@@ -62,20 +67,22 @@ export interface CustomSwaggerServiceDetails {
   >;
 }
 
-export enum ConnectionType {
-  Function = 'function',
-  ServiceProvider = 'serviceprovider',
-  ApiManagement = 'apimanagement',
-}
+export const ConnectionType = {
+  Function: 'function',
+  ServiceProvider: 'serviceprovider',
+  ApiManagement: 'apimanagement',
+};
+export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 
-export enum ConnectionReferenceKeyFormat {
-  ApiManagement = 'apimanagement',
-  Function = 'function',
-  OpenApi = 'openapi',
-  OpenApiConnection = 'openapiconnection', // TODO: This can change when backend fixes a value, right now this is not used by any manifest.
-  ServiceProvider = 'serviceprovider',
-  HybridTrigger = 'hybridtrigger',
-}
+export const ConnectionReferenceKeyFormat = {
+  ApiManagement: 'apimanagement',
+  Function: 'function',
+  OpenApi: 'openapi',
+  OpenApiConnection: 'openapiconnection', // TODO: This can change when backend fixes a value, right now this is not used by any manifest.
+  ServiceProvider: 'serviceprovider',
+  HybridTrigger: 'hybridtrigger',
+};
+export type ConnectionReferenceKeyFormat = (typeof ConnectionReferenceKeyFormat)[keyof typeof ConnectionReferenceKeyFormat];
 
 export interface ActionSetting {
   allowedOperations?: OperationInfo[];
@@ -126,11 +133,12 @@ export interface BuiltInOutput {
   required: boolean;
 }
 
-export enum RecurrenceType {
-  None = 'none',
-  Basic = 'basic',
-  Advanced = 'advanced',
-}
+export const RecurrenceType = {
+  None: 'none',
+  Basic: 'basic',
+  Advanced: 'advanced',
+};
+export type RecurrenceType = (typeof RecurrenceType)[keyof typeof RecurrenceType];
 
 export interface RecurrenceSetting {
   type: RecurrenceType;
@@ -253,12 +261,13 @@ export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
   UNTIL_DO: 'UNTIL_DO',
 };
 
-export enum RUN_AFTER_STATUS {
-  SUCCEEDED = 'SUCCEEDED',
-  FAILED = 'FAILED',
-  SKIPPED = 'SKIPPED',
-  TIMEDOUT = 'TIMEDOUT',
-}
+export const RUN_AFTER_STATUS = {
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED',
+  TIMEDOUT: 'TIMEDOUT',
+};
+export type RUN_AFTER_STATUS = (typeof RUN_AFTER_STATUS)[keyof typeof RUN_AFTER_STATUS];
 
 export const RUN_AFTER_COLORS = {
   light: {
