@@ -1,3 +1,4 @@
+import { designTimeDirectoryName } from '../../../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fs from 'fs-extra';
@@ -18,7 +19,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
     const folderPath = context.logicAppFolderPath;
     // Create the necessary files and folders for Visual Studio Code under the logic app folder path
     await fs.ensureDir(folderPath);
-    const configPath: string = path.join(folderPath, 'workflow-designtime');
+    const configPath: string = path.join(folderPath, designTimeDirectoryName);
     await fs.ensureDir(configPath);
 
     // Generate the host.json file
@@ -75,6 +76,6 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
    * @returns True if the user has not yet generated the Visual Studio Code configuration files, false otherwise.
    */
   public shouldPrompt(context: IProjectWizardContext): boolean {
-    return !fs.existsSync(path.join(context.logicAppFolderPath, 'workflow-designtime'));
+    return !fs.existsSync(path.join(context.logicAppFolderPath, designTimeDirectoryName));
   }
 }

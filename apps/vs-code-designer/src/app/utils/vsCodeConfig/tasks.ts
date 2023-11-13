@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { ProjectFile } from '../dotnet/dotnet';
 import { getDotnetDebugSubpath, getProjFiles, getTargetFramework } from '../dotnet/dotnet';
@@ -86,36 +87,42 @@ function getTasksConfig(folder: WorkspaceFolder): WorkspaceConfiguration {
 export async function validateTasksJson(context: IActionContext, folders: ReadonlyArray<WorkspaceFolder> | undefined): Promise<void> {
   context.telemetry.properties.lastStep = 'validateTasksJson';
   let overwrite = false;
-  if (folders) {
-    for (const folder of folders) {
-      const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, folder);
-      context.telemetry.properties.projectPath = projectPath;
-      if (projectPath) {
-        const tasksJsonPath: string = path.join(projectPath, '.vscode', 'tasks.json');
 
-        if (!fse.existsSync(tasksJsonPath)) {
-          throw new Error(localize('noTaskJson', `Failed to find: ${tasksJsonPath}`));
+  try {
+    if (folders) {
+      for (const folder of folders) {
+        const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, folder);
+        context.telemetry.properties.projectPath = projectPath;
+        if (projectPath) {
+          const tasksJsonPath: string = path.join(projectPath, '.vscode', 'tasks.json');
+
+          if (!fse.existsSync(tasksJsonPath)) {
+            throw new Error(localize('noTaskJson', `Failed to find: ${tasksJsonPath}`));
+          }
+
+          const taskJsonData = fse.readFileSync(tasksJsonPath, 'utf-8');
+          const taskJson = JSON.parse(taskJsonData);
+          const tasks: TaskDefinition[] = taskJson.tasks;
+
+          if (tasks && Array.isArray(tasks)) {
+            tasks.forEach((task) => {
+              const command: string = task.command;
+              if (!command.startsWith('${config:azureLogicAppsStandard')) {
+                context.telemetry.properties.overwrite = 'true';
+                overwrite = true;
+              }
+            });
+          }
         }
 
-        const taskJsonData = fse.readFileSync(tasksJsonPath, 'utf-8');
-        const taskJson = JSON.parse(taskJsonData);
-        const tasks: TaskDefinition[] = taskJson.tasks;
-
-        if (tasks && Array.isArray(tasks)) {
-          tasks.forEach((task) => {
-            const command: string = task.command;
-            if (!command.startsWith('${config:azureLogicAppsStandard')) {
-              context.telemetry.properties.overwrite = 'true';
-              overwrite = true;
-            }
-          });
+        if (overwrite) {
+          await overwriteTasksJson(context, projectPath);
         }
-      }
-
-      if (overwrite) {
-        await overwriteTasksJson(context, projectPath);
       }
     }
+  } catch (error) {
+    ext.outputChannel.appendLine(error.message);
+    context.telemetry.properties.error = error.message;
   }
 }
 

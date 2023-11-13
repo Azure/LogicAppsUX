@@ -21,7 +21,7 @@ export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 
 // Folder names
-export const workflowDesignTimeDir = '/workflow-designtime';
+export const designTimeDirectoryName = 'workflow-designtime';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
@@ -77,7 +77,7 @@ export enum workflowType {
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
-export const workflowDesignerLoadTimeout = 300000;
+export const designerApiLoadTimeout = 300000;
 
 // Commands
 export enum extensionCommand {
