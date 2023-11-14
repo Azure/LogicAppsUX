@@ -17,17 +17,12 @@ import {
   getFunctions,
   getSelectedSchema,
 } from '@microsoft/logic-apps-data-mapper';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import type { Theme } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const VsCodeThemeType = {
-  VsCodeLight: 'vscode-light',
-  VsCodeDark: 'vscode-dark',
-  VsCodeHighContrast: 'vscode-high-contrast',
-};
-type VsCodeThemeType = keyof typeof VsCodeThemeType;
 interface SchemaFile {
   path: string;
   type: SchemaType;
@@ -36,10 +31,7 @@ interface SchemaFile {
 export const DataMapperApp = () => {
   const dispatch = useDispatch<AppDispatch>();
   const vscode = useContext(VSCodeContext);
-
-  const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
-  const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
-
+  const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
@@ -158,15 +150,9 @@ export const DataMapperApp = () => {
   }, [sendMsgToVsix]);
 
   // Monitor document.body for VS Code theme changes
-  useEffect(() => {
-    const themeMutationObserver = new MutationObserver(() => {
-      setVsCodeTheme(getVscodeTheme());
-    });
-
-    themeMutationObserver.observe(document.body, { attributes: true });
-
-    return () => themeMutationObserver.disconnect();
-  }, []);
+  useThemeObserver(document.body, theme, setTheme, {
+    attributes: true,
+  });
 
   // Init runtime API service and make calls
   useEffect(() => {
@@ -214,11 +200,7 @@ export const DataMapperApp = () => {
   }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename, handleRscLoadError]);
 
   return (
-    <DataMapperDesignerProvider
-      locale="en-US"
-      theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
-      options={{}}
-    >
+    <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
       <DataMapDataProvider
         dataMapMetadata={mapMetadata}
         xsltFilename={xsltFilename}
@@ -230,7 +212,7 @@ export const DataMapperApp = () => {
         customXsltPaths={customXsltPathsList}
         fetchedFunctions={fetchedFunctions}
         // Passed in here too so it can be managed in the Redux store so components can track the current theme
-        theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
+        theme={theme}
       >
         <DataMapperDesigner
           saveMapDefinitionCall={saveMapDefinitionCall}
