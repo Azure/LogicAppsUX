@@ -109,9 +109,15 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         );
       } catch (error) {
         ext.outputChannel.appendLog(
-          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', error)
+          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', error?.message)
         );
-        context.telemetry.properties.dependenciesError = error;
+        vscode.window.showErrorMessage(
+          localize(
+            'binariesTroubleshoot',
+            'The Validation and Installation of Runtime Dependencies encountered an error. To resolve this issue, please click [here](https://aka.ms/lastandard/onboarding/troubleshoot) to access our troubleshooting documentation for step-by-step instructions.'
+          )
+        );
+        context.telemetry.properties.dependenciesError = error?.message;
       }
     }
   );

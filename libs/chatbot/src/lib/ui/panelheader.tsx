@@ -1,8 +1,9 @@
-import LogicApps from '../images/LogicApps.svg';
+import Workflow from '../images/Workflow.svg';
 import { FontSizes, Link } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { useIntl } from 'react-intl';
 
 interface CopilotPanelHeaderProps {
@@ -35,7 +36,7 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
   return (
     <div className={'msla-chatbot-header'}>
       <div className={'msla-chatbot-header-icon'}>
-        <img src={LogicApps} alt="Logic Apps" />
+        <img src={Workflow} alt="Logic Apps" />
       </div>
       <div className={'msla-chatbot-header-title-container'}>
         <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
@@ -47,13 +48,20 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
             <ShieldCheckmarkRegular className="shield-checkmark-regular" />
             <Link
               className="msla-protectedmessage-link"
-              onClick={() => window.open('https://aka.ms/azurecopilot/privacystatement', '_blank')}
+              onClick={() => {
+                window.open('https://aka.ms/azurecopilot/privacystatement', '_blank');
+                LoggerService().log({
+                  level: LogEntryLevel.Verbose,
+                  area: 'chatbot',
+                  message: 'protection link opened',
+                });
+              }}
               underline={true}
             >
               {protectedPillText}
             </Link>
           </div>
-        </Tooltip>{' '}
+        </Tooltip>
       </div>
       <IconButton
         className={'msla-chatbot-collapse-button'}

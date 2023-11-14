@@ -47,6 +47,12 @@
       "value": "トリガー"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "概要"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "ワークフロー アシスタント"
     }
   ],
   "2JA3gY": [
@@ -1409,12 +1415,6 @@
       "value": "スキーマ検証"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "構成"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1587,12 +1587,6 @@
     {
       "type": 0,
       "value": "このフローを次のものに編集してください"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "概要"
     }
   ],
   "8U0KPg": [
@@ -2458,6 +2452,12 @@
       "value": "' の入力の型が一致しません"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "設定"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3033,12 +3033,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) 協定世界時-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "グローバル ビュー"
     }
   ],
   "IA+Ogm": [
@@ -3754,6 +3748,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) ヘルシンキ、キエフ、リガ、ソフィア、タリン、ビリニュス"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "コピー"
     }
   ],
   "NE54Uu": [
@@ -4796,7 +4796,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "フローは次のとおりです。"
     }
   ],
   "Twfck/": [
@@ -5803,6 +5803,12 @@
       "value": "縮小"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5812,7 +5818,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "ワークフロー アシスタントは、専らヘルプを提供するために設計されており、ワークフローの作成または編集をサポートしていません。"
     }
   ],
   "Z9PWl/": [
@@ -6351,12 +6357,6 @@
       "value": "更新"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "生成"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6382,7 +6382,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "申し訳ございません。要求を解釈できませんでした。言い換えて、もう一度お試しください。"
     }
   ],
   "dfNjw1": [
@@ -6490,7 +6490,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "このアシスタントは、ワークフローと Azure Logic Apps プラットフォームの機能とコネクタについて学習するのに役立ちます。"
     }
   ],
   "eRvRWs": [
@@ -7406,6 +7406,12 @@
       "value": "(UTC+04:00) アブダビ、マスカット"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "このワークフローか、Azure Logic Apps 全般について質問してください..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7535,12 +7541,6 @@
     {
       "type": 0,
       "value": "関数"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "返す"
     }
   ],
   "lX30/R": [
@@ -7879,12 +7879,6 @@
       "value": "必須。削除するプロパティの名前。"
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8203,12 +8197,6 @@
     {
       "type": 0,
       "value": "トリガー"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9386,6 +9374,12 @@
       "value": "(UTC-09:30) マルキーズ諸島"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "キャンバス"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9644,6 +9638,12 @@
     {
       "type": 0,
       "value": "不満"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "XSLT の生成"
     }
   ],
   "yoCi15": [

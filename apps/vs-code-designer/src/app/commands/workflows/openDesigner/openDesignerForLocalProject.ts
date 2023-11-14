@@ -27,10 +27,10 @@ import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, FileSystemConnectionInfo, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
+import axios from 'axios';
 import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
-import * as requestP from 'request-promise';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 
@@ -90,7 +90,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await startDesignTimeApi(this.projectPath);
 
-    this.baseUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}`;
+    this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -288,7 +288,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * @param {any} workflow - Workflow schema to validate.
    */
   private async validateWorkflow(workflow: any): Promise<void> {
-    const url = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
+    const url = `http://localhost:${ext.designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
     try {
       await sendRequest(this.context, {
         url,
@@ -372,34 +372,26 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   }
 
   private _getMigrationOptions(baseUrl: string): Promise<Record<string, any>> {
-    const flatFileEncodingPromise = requestP({
-      json: true,
-      method: HTTP_METHODS.GET,
-      uri: `${baseUrl}/operationGroups/flatFileOperations/operations/flatFileEncoding?api-version=2019-10-01-edge-preview&$expand=properties/manifest`,
-    });
-    const liquidJsonToJsonPromise = requestP({
-      json: true,
-      method: HTTP_METHODS.GET,
-      uri: `${baseUrl}/operationGroups/liquidOperations/operations/liquidJsonToJson?api-version=2019-10-01-edge-preview&$expand=properties/manifest`,
-    });
-    const xmlValidationPromise = requestP({
-      json: true,
-      method: HTTP_METHODS.GET,
-      uri: `${baseUrl}/operationGroups/xmlOperations/operations/xmlValidation?api-version=2019-10-01-edge-preview&$expand=properties/manifest`,
-    });
-    const xsltPromise = requestP({
-      json: true,
-      method: HTTP_METHODS.GET,
-      uri: `${baseUrl}/operationGroups/xmlOperations/operations/xmlTransform?api-version=2019-10-01-edge-preview&$expand=properties/manifest`,
-    });
+    const flatFileEncodingPromise = axios.get(
+      `${baseUrl}/operationGroups/flatFileOperations/operations/flatFileEncoding?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
+    );
+    const liquidJsonToJsonPromise = axios.get(
+      `${baseUrl}/operationGroups/liquidOperations/operations/liquidJsonToJson?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
+    );
+    const xmlValidationPromise = axios.get(
+      `${baseUrl}/operationGroups/xmlOperations/operations/xmlValidation?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
+    );
+    const xsltPromise = axios.get(
+      `${baseUrl}/operationGroups/xmlOperations/operations/xmlTransform?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
+    );
 
     return Promise.all([flatFileEncodingPromise, liquidJsonToJsonPromise, xmlValidationPromise, xsltPromise]).then(
       ([ff, liquid, xmlvalidation, xslt]) => {
         return {
-          flatFileEncoding: ff.properties.manifest,
-          liquidJsonToJson: liquid.properties.manifest,
-          xmlValidation: xmlvalidation.properties.manifest,
-          xslt: xslt.properties.manifest,
+          flatFileEncoding: ff.data.properties.manifest,
+          liquidJsonToJson: liquid.data.properties.manifest,
+          xmlValidation: xmlvalidation.data.properties.manifest,
+          xslt: xslt.data.properties.manifest,
         };
       }
     );

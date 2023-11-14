@@ -47,6 +47,12 @@
       "value": "트리거"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "개요"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "워크플로 도우미"
     }
   ],
   "2JA3gY": [
@@ -1409,12 +1415,6 @@
       "value": "스키마 유효성 검사"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "구성"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1587,12 +1587,6 @@
     {
       "type": 0,
       "value": "다음으로 이 흐름 편집"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "개요"
     }
   ],
   "8U0KPg": [
@@ -2450,6 +2444,12 @@
       "value": "'에 형식이 일치하지 않는 입력이 있습니다"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "설정"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3025,12 +3025,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) 협정 세계시-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "전역 뷰"
     }
   ],
   "IA+Ogm": [
@@ -3746,6 +3740,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 헬싱키, 키예프, 리가, 소피아, 탈린, 빌뉴스"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "복사"
     }
   ],
   "NE54Uu": [
@@ -4792,7 +4792,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "흐름은 다음과 같습니다."
     }
   ],
   "Twfck/": [
@@ -5799,6 +5799,12 @@
       "value": "축소"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5808,7 +5814,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "워크플로 도우미는 도움말만 제공하도록 설계되었으며 워크플로 만들기 또는 편집은 지원하지 않습니다."
     }
   ],
   "Z9PWl/": [
@@ -6347,12 +6353,6 @@
       "value": "업데이트"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "생성"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6378,7 +6378,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "죄송합니다. 요청을 이해할 수 없습니다. 문구를 바꾸고 다시 시도하세요."
     }
   ],
   "dfNjw1": [
@@ -6486,7 +6486,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "이 도우미를 사용하면 워크플로와 Azure Logic Apps 플랫폼의 기능과 커넥터에 대해 알아볼 수 있습니다."
     }
   ],
   "eRvRWs": [
@@ -7402,6 +7402,12 @@
       "value": "(UTC+04:00) 아부다비, 무스카트"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "이 워크플로 또는 전체 Azure Logic Apps에 관해 질문하기 ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7531,12 +7537,6 @@
     {
       "type": 0,
       "value": "함수"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "반환"
     }
   ],
   "lX30/R": [
@@ -7875,12 +7875,6 @@
       "value": "필수 항목으로, 제거할 속성의 이름입니다."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8199,12 +8193,6 @@
     {
       "type": 0,
       "value": "트리거"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9382,6 +9370,12 @@
       "value": "(UTC-09:30) 마키저스 제도"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "캔버스"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9640,6 +9634,12 @@
     {
       "type": 0,
       "value": "싫어요"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "XSLT 생성"
     }
   ],
   "yoCi15": [

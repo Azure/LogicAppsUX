@@ -20,12 +20,10 @@ type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == d
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ext {
   export let context: ExtensionContext;
-  export let workflowDesignTimePort: number;
-  export let workflowDesignChildProcess: cp.ChildProcess | undefined;
+  export let designTimePort: number;
+  export let designChildProcess: cp.ChildProcess | undefined;
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
-  export let dataMapperRuntimePort: number;
-  export let dataMapperChildProcess: cp.ChildProcess | undefined;
   export let logicAppWorkspace: string;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
@@ -55,13 +53,14 @@ export namespace ext {
   export const npmCliPath: string = npm;
 
   // WebViews
-  export enum webViewKey {
-    designerLocal = 'designerLocal',
-    designerAzure = 'designerAzure',
-    monitoring = 'monitoring',
-    export = 'export',
-    overview = 'overview',
-  }
+  export const webViewKey = {
+    designerLocal: 'designerLocal',
+    designerAzure: 'designerAzure',
+    monitoring: 'monitoring',
+    export: 'export',
+    overview: 'overview',
+  } as const;
+  export type webViewKey = keyof typeof webViewKey;
 
   export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
     [webViewKey.designerLocal]: {},
@@ -87,15 +86,16 @@ export namespace ext {
   };
 }
 
-export enum ExtensionCommand {
-  select_folder = 'select-folder',
-  initialize = 'initialize',
-  loadRun = 'LoadRun',
-  dispose = 'dispose',
-  initialize_frame = 'initialize-frame',
-  update_access_token = 'update-access-token',
-  update_export_path = 'update-export-path',
-  export_package = 'export-package',
-  add_status = 'add-status',
-  set_final_status = 'set-final-status',
-}
+export const ExtensionCommand = {
+  select_folder: 'select-folder',
+  initialize: 'initialize',
+  loadRun: 'LoadRun',
+  dispose: 'dispose',
+  initialize_frame: 'initialize-frame',
+  update_access_token: 'update-access-token',
+  update_export_path: 'update-export-path',
+  export_package: 'export-package',
+  add_status: 'add-status',
+  set_final_status: 'set-final-status',
+};
+export type ExtensionCommand = keyof typeof ExtensionCommand;

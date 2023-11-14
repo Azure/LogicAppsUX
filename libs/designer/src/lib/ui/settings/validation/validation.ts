@@ -8,23 +8,26 @@ import { isISO8601 } from '../../../core/utils/validation';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
 
-export enum ValidationErrorKeys {
-  CHUNK_SIZE_INVALID = 'ChunkSizeInvalid',
-  PAGING_COUNT = 'PagingCount',
-  RETRY_COUNT_INVALID = 'RetryCountInvalid',
-  RETRY_INTERVAL_INVALID = 'RetryIntervalInvalid',
-  SINGLE_INSTANCE_SPLITON = 'SingleInstanceSplitOn',
-  TRIGGER_CONDITION_EMPTY = 'TriggerConditionEmpty',
-  TIMEOUT_VALUE_INVALID = 'TimeoutValueInvalid',
-  CANNOT_DELETE_LAST_ACTION = 'CannotDeleteLastAction',
-  CANNOT_DELETE_LAST_STATUS = 'CannotDeleteLastStatus',
-}
+export const ValidationErrorKeys = {
+  CHUNK_SIZE_INVALID: 'ChunkSizeInvalid',
+  PAGING_COUNT: 'PagingCount',
+  RETRY_COUNT_INVALID: 'RetryCountInvalid',
+  RETRY_INTERVAL_INVALID: 'RetryIntervalInvalid',
+  SINGLE_INSTANCE_SPLITON: 'SingleInstanceSplitOn',
+  TRIGGER_CONDITION_EMPTY: 'TriggerConditionEmpty',
+  TIMEOUT_VALUE_INVALID: 'TimeoutValueInvalid',
+  CANNOT_DELETE_LAST_ACTION: 'CannotDeleteLastAction',
+  CANNOT_DELETE_LAST_STATUS: 'CannotDeleteLastStatus',
+} as const;
+export type ValidationErrorKeys = (typeof ValidationErrorKeys)[keyof typeof ValidationErrorKeys];
 
-export enum ValidationErrorType {
-  WARNING = 'Warning',
-  ERROR = 'Error',
-  INFO = 'Info',
-}
+export const ValidationErrorType = {
+  WARNING: 'Warning',
+  ERROR: 'Error',
+  INFO: 'Info',
+} as const;
+export type ValidationErrorType = (typeof ValidationErrorType)[keyof typeof ValidationErrorType];
+
 export interface ValidationError {
   key: ValidationErrorKeys;
   errorType: ValidationErrorType;

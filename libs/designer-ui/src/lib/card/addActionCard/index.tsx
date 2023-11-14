@@ -5,10 +5,11 @@ import AddNodeIcon from './addNodeIcon.svg';
 import { TooltipHost, DirectionalHint, css } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-export enum ADD_CARD_TYPE {
-  TRIGGER = 'Trigger',
-  ACTION = 'Action',
-}
+export const ADD_CARD_TYPE = {
+  TRIGGER: 'Trigger',
+  ACTION: 'Action',
+} as const;
+export type ADD_CARD_TYPE = (typeof ADD_CARD_TYPE)[keyof typeof ADD_CARD_TYPE];
 
 export interface AddActionCardProps {
   addCardType: ADD_CARD_TYPE;

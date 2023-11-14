@@ -1,9 +1,10 @@
-export enum MenuItemType {
-  Normal = 0,
-  Divider = 1,
-  Header = 2,
-  Advanced = 3,
-}
+export const MenuItemType = {
+  Normal: 0,
+  Divider: 1,
+  Header: 2,
+  Advanced: 3,
+} as const;
+export type MenuItemType = (typeof MenuItemType)[keyof typeof MenuItemType];
 
 export interface CommentBoxProps {
   brandColor: string;

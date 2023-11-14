@@ -10,10 +10,11 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum AuthenticationOAuthType {
-  SECRET = 'Secret',
-  CERTIFICATE = 'Certificate',
-}
+export const AuthenticationOAuthType = {
+  SECRET: 'Secret',
+  CERTIFICATE: 'Certificate',
+} as const;
+export type AuthenticationOAuthType = (typeof AuthenticationOAuthType)[keyof typeof AuthenticationOAuthType];
 
 interface ActiveDirectoryAuthenticationProps {
   OauthProps: OAuthProps;

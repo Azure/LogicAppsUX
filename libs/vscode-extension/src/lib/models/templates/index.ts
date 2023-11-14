@@ -10,20 +10,22 @@ export interface ITemplatesRelease {
   resources: string;
 }
 
-export enum TemplatePromptResult {
-  skipForNow = 'skipForNow',
-}
+export const TemplatePromptResult = {
+  skipForNow: 'skipForNow',
+} as const;
+export type TemplatePromptResult = (typeof TemplatePromptResult)[keyof typeof TemplatePromptResult];
 
 export interface ITemplates {
   workflowTemplates: IWorkflowTemplate[];
   bindingTemplates: IBindingTemplate[];
 }
 
-export enum TemplateType {
-  Script = 'Script',
-  ScriptBundle = 'ScriptBundle',
-  Dotnet = '.NET',
-}
+export const TemplateType = {
+  Script: 'Script',
+  ScriptBundle: 'ScriptBundle',
+  Dotnet: '.NET',
+} as const;
+export type TemplateType = (typeof TemplateType)[keyof typeof TemplateType];
 
 /**
  * Describes a dotnet template before it has been parsed

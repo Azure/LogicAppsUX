@@ -28,9 +28,10 @@ export interface Impersonation {
   objectId?: string;
 }
 
-export enum ImpersonationSource {
-  Invoker = 'invoker',
-}
+export const ImpersonationSource = {
+  Invoker: 'invoker',
+};
+export type ImpersonationSource = (typeof ImpersonationSource)[keyof typeof ImpersonationSource];
 
 type ReferenceKey = string;
 export type ConnectionReferences = Record<ReferenceKey, ConnectionReference>;

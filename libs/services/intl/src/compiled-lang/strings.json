@@ -47,6 +47,12 @@
       "value": "Trigger"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -1421,12 +1427,6 @@
       "value": "Schema Validation"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Configure"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1599,12 +1599,6 @@
     {
       "type": 0,
       "value": "Edit this flow to"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -2481,6 +2475,12 @@
       "value": "' has an input with a mismatched type"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3071,12 +3071,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Coordinated Universal Time-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Global view"
     }
   ],
   "IA+Ogm": [
@@ -3803,6 +3797,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copy"
     }
   ],
   "NE54Uu": [
@@ -5867,6 +5867,12 @@
       "value": "Zoom out"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -6413,12 +6419,6 @@
     {
       "type": 0,
       "value": "Update"
-    }
-  ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -7489,6 +7489,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7629,12 +7635,6 @@
     {
       "type": 0,
       "value": "Functions"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Return"
     }
   ],
   "lX30/R": [
@@ -7981,12 +7981,6 @@
       "value": "Required. The name of the property to remove."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8305,12 +8299,6 @@
     {
       "type": 0,
       "value": "Triggers"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9511,6 +9499,12 @@
       "value": "(UTC-09:30) Marquesas Islands"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9769,6 +9763,12 @@
     {
       "type": 0,
       "value": "Dislike"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generate XSLT"
     }
   ],
   "yoCi15": [

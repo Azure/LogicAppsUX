@@ -20,10 +20,11 @@ const expressionButtonProps: IIconProps = {
   iconName: 'Variable',
 };
 
-export enum TokenPickerButtonLocation {
-  Left = 'left',
-  Right = 'right',
-}
+export const TokenPickerButtonLocation = {
+  Left: 'left',
+  Right: 'right',
+} as const;
+export type TokenPickerButtonLocation = (typeof TokenPickerButtonLocation)[keyof typeof TokenPickerButtonLocation];
 
 export interface hideButtonOptions {
   hideDynamicContent?: boolean;

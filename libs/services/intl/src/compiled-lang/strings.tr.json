@@ -47,6 +47,12 @@
       "value": "Tetikleyici"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Genel Bakış"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "İş akışı yardımcısı"
     }
   ],
   "2JA3gY": [
@@ -1409,12 +1415,6 @@
       "value": "Şema Doğrulama"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Yapılandır"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1587,12 +1587,6 @@
     {
       "type": 0,
       "value": "Bu akışı şunun için düzenleyin:"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Genel Bakış"
     }
   ],
   "8U0KPg": [
@@ -2469,6 +2463,12 @@
       "value": "' şema düğümü, eşleşmeyen türde bir girişe sahip"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Ayarlar"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3055,12 +3055,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Eşgüdümlü Evrensel Saat-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Genel görünüm"
     }
   ],
   "IA+Ogm": [
@@ -3787,6 +3781,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Kopyala"
     }
   ],
   "NE54Uu": [
@@ -4840,7 +4840,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "İşte akışınız."
     }
   ],
   "Twfck/": [
@@ -5851,6 +5851,12 @@
       "value": "Uzaklaştır"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5860,7 +5866,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "İş akışı yardımcısı yalnızca yardım sağlamak üzere tasarlanmıştır ve iş akışı oluşturmayı veya düzenlemeyi desteklemez."
     }
   ],
   "Z9PWl/": [
@@ -6399,12 +6405,6 @@
       "value": "Güncelleştir"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Oluştur"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6430,7 +6430,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Ne yazık ki isteğinizi anlayamadım. Lütfen yeniden ifade edin ve tekrar deneyin."
     }
   ],
   "dfNjw1": [
@@ -6538,7 +6538,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Bu yardımcı, iş akışlarınız ve Azure Logic Apps platformunun özellikleri ve bağlayıcıları hakkında bilgi edinmenize yardımcı olabilir."
     }
   ],
   "eRvRWs": [
@@ -7465,6 +7465,12 @@
       "value": "(UTC+04:00) Abu Dabi, Muskat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Bu iş akışı veya genel olarak Azure Logic Apps hakkında soru sorun..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7605,12 +7611,6 @@
     {
       "type": 0,
       "value": "İşlevler"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Dönüş"
     }
   ],
   "lX30/R": [
@@ -7957,12 +7957,6 @@
       "value": "Gerekli. Kaldırılacak özelliğin adı."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8281,12 +8275,6 @@
     {
       "type": 0,
       "value": "Tetikleyiciler"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9479,6 +9467,12 @@
       "value": "(UTC-09:30) Marquesas Adaları"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Tuval"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9737,6 +9731,12 @@
     {
       "type": 0,
       "value": "Beğenme"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "XSLT oluştur"
     }
   ],
   "yoCi15": [

@@ -47,6 +47,12 @@
       "value": "Trigger"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Přehled"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Asistent pracovního postupu"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "Ověřování schématu"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Nakonfigurovat"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "Upravit tento tok do"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Přehled"
     }
   ],
   "8U0KPg": [
@@ -2499,6 +2493,12 @@
       "value": " má vstup s neodpovídajícím typem"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Nastavení"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3119,12 +3119,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Koordinovaný univerzální čas (UTC)-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Globální zobrazení"
     }
   ],
   "IA+Ogm": [
@@ -3869,6 +3863,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinky, Kyjev, Riga, Sofie, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Kopírovat"
     }
   ],
   "NE54Uu": [
@@ -4940,7 +4940,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Tady je váš tok."
     }
   ],
   "Twfck/": [
@@ -5951,6 +5951,12 @@
       "value": "Oddálit"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5960,7 +5966,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "Asistent pracovního postupu je navržený jenom tak, aby poskytoval nápovědu, a nepodporuje vytváření ani úpravy pracovního postupu."
     }
   ],
   "Z9PWl/": [
@@ -6499,12 +6505,6 @@
       "value": "Aktualizovat"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Vygenerovat"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6534,7 +6534,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Omlouvám se, ale nerozuměl jsem vašemu požadavku. Přeformulujte ho prosím a zkuste to znovu."
     }
   ],
   "dfNjw1": [
@@ -6642,7 +6642,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Tento asistent vám může pomoct získat informace o pracovních postupech a možnostech a konektorech platformy Azure Logic Apps."
     }
   ],
   "eRvRWs": [
@@ -7603,6 +7603,12 @@
       "value": "(UTC+04:00) Abú Dhabi, Maskat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Zeptejte se na tento pracovní postup nebo na Azure Logic Apps obecně..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7765,12 +7771,6 @@
     {
       "type": 0,
       "value": "Funkce"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Návrat"
     }
   ],
   "lX30/R": [
@@ -8117,12 +8117,6 @@
       "value": "Povinné. Název vlastnosti, která se odebere"
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8441,12 +8435,6 @@
     {
       "type": 0,
       "value": "Triggery"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9661,6 +9649,12 @@
       "value": "(UTC-09:30) Souostroví Markézy"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Plátno"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9919,6 +9913,12 @@
     {
       "type": 0,
       "value": "To se mi nelíbí"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generovat XSLT"
     }
   ],
   "yoCi15": [

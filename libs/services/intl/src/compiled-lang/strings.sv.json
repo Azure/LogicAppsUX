@@ -47,6 +47,12 @@
       "value": "Utlösare"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Översikt"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -596,7 +602,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Arbetsflödesassistenten"
     }
   ],
   "2JA3gY": [
@@ -1421,12 +1427,6 @@
       "value": "Schemaverifiering"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Konfigurera"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1599,12 +1599,6 @@
     {
       "type": 0,
       "value": "Redigera det här flödet till"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Översikt"
     }
   ],
   "8U0KPg": [
@@ -2473,6 +2467,12 @@
       "value": " innehåller indata med en typ som inte matchar"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Inställningar"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3071,12 +3071,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Coordinated Universal Time-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Global vy"
     }
   ],
   "IA+Ogm": [
@@ -3803,6 +3797,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsingfors, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Kopiera"
     }
   ],
   "NE54Uu": [
@@ -4844,7 +4844,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Här är ditt flöde."
     }
   ],
   "Twfck/": [
@@ -5851,6 +5851,12 @@
       "value": "Zooma ut"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5860,7 +5866,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "Arbetsflödesassistenten är endast utformad som hjälp och kan inte användas för att skapa eller redigera arbetsflöden."
     }
   ],
   "Z9PWl/": [
@@ -6399,12 +6405,6 @@
       "value": "Uppdatera"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Generera"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6434,7 +6434,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Jag förstod tyvärr inte din fråga. Formulera om den och försök igen."
     }
   ],
   "dfNjw1": [
@@ -6542,7 +6542,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Den här assistenten kan hjälpa dig att lära dig mer om dina arbetsflöden och Azure Logic Apps-plattformens funktioner och anslutningsprogram."
     }
   ],
   "eRvRWs": [
@@ -7477,6 +7477,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muskat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ställ en fråga om det här arbetsflödet eller om Azure Logic Apps som helhet..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7617,12 +7623,6 @@
     {
       "type": 0,
       "value": "Funktioner"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Returnera"
     }
   ],
   "lX30/R": [
@@ -7969,12 +7969,6 @@
       "value": "Obligatoriskt. Namnet på den egenskap som ska tas bort."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8293,12 +8287,6 @@
     {
       "type": 0,
       "value": "Utlösare"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9491,6 +9479,12 @@
       "value": "(UTC-09:30) Marquesasöarna"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Arbetsyta"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9749,6 +9743,12 @@
     {
       "type": 0,
       "value": "Gillar ej"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generera XSLT"
     }
   ],
   "yoCi15": [

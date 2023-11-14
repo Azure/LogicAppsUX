@@ -47,6 +47,12 @@
       "value": "Desencadenador"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Información general"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Asistente de flujos de trabajo"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "Validación de esquema"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Configurar"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "Editar este flujo en"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Información general"
     }
   ],
   "8U0KPg": [
@@ -2488,6 +2482,12 @@
       "value": "\" tiene una entrada con un tipo no coincidente"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Configuración"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3089,12 +3089,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Hora universal coordinada -11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Vista global"
     }
   ],
   "IA+Ogm": [
@@ -3832,6 +3826,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofía, Tallin, Vilna"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copiar"
     }
   ],
   "NE54Uu": [
@@ -4896,7 +4896,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Este es su flujo."
     }
   ],
   "Twfck/": [
@@ -5907,6 +5907,12 @@
       "value": "Alejar"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5916,7 +5922,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "El asistente de flujos de trabajo está diseñado solo para proporcionar ayuda y no admite la creación o edición de flujos de trabajo."
     }
   ],
   "Z9PWl/": [
@@ -6455,12 +6461,6 @@
       "value": "Actualizar"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Generar"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6490,7 +6490,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Lo siento, no he podido entender su solicitud. Vuelva a formularla e inténtelo de nuevo."
     }
   ],
   "dfNjw1": [
@@ -6598,7 +6598,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Este asistente puede ayudarle a obtener información sobre sus flujos de trabajo y las capacidades y conectores de la plataforma Azure Logic Apps."
     }
   ],
   "eRvRWs": [
@@ -7548,6 +7548,12 @@
       "value": "(UTC+04:00) Abu Dabi, Mascate"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Formule una pregunta sobre este flujo de trabajo o sobre Azure Logic Apps en su conjunto..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7699,12 +7705,6 @@
     {
       "type": 0,
       "value": "Funciones"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Volver"
     }
   ],
   "lX30/R": [
@@ -8043,12 +8043,6 @@
       "value": "Obligatorio. Nombre de la propiedad que se quitará."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8367,12 +8361,6 @@
     {
       "type": 0,
       "value": "Desencadenadores"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9584,6 +9572,12 @@
       "value": "(UTC-09:30) Islas Marquesas"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9834,6 +9828,12 @@
     {
       "type": 0,
       "value": "No me gusta"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generar XSLT"
     }
   ],
   "yoCi15": [

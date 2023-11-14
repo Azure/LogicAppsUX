@@ -50,10 +50,11 @@ export interface PanelHeaderProps {
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
 }
-export enum PanelHeaderControlType {
-  DISMISS_BUTTON,
-  MENU,
-}
+export const PanelHeaderControlType = {
+  DISMISS_BUTTON: 'DISMISS_BUTTON',
+  MENU: 'MENU',
+} as const;
+export type PanelHeaderControlType = (typeof PanelHeaderControlType)[keyof typeof PanelHeaderControlType];
 
 const collapseIconStyle: IButtonStyles = {
   icon: {

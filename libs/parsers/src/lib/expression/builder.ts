@@ -12,9 +12,10 @@ export const ExpressionBuilderExceptionName = 'Workflow.ExpressionBuilderExcepti
 /**
  * The expression builder error code.
  */
-export enum ExpressionBuilderErrorCode {
-  INVALID_TYPE = 'InvalidType',
-}
+export const ExpressionBuilderErrorCode = {
+  INVALID_TYPE: 'InvalidType',
+} as const;
+export type ExpressionBuilderErrorCode = (typeof ExpressionBuilderErrorCode)[keyof typeof ExpressionBuilderErrorCode];
 
 /**
  * The expression builder exception.

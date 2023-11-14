@@ -7,13 +7,14 @@ import {
   ProjectDirectoryPath,
   autoStartDesignTimeSetting,
   defaultVersionRange,
+  designTimeDirectoryName,
   designerStartApi,
   extensionBundleId,
   hostFileName,
   localSettingsFileName,
   logicAppKind,
   showStartDesignTimeMessageSetting,
-  workflowDesignerLoadTimeout,
+  designerApiLoadTimeout,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -32,12 +33,12 @@ import {
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
 import { WorkerRuntime } from '@microsoft/vscode-extension';
+import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
-import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 import { Uri, window, workspace } from 'vscode';
 import type { MessageItem } from 'vscode';
@@ -46,7 +47,6 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
     actionContext.telemetry.properties.startDesignTimeApi = 'false';
 
-    const designTimeDirectoryName = 'workflow-designtime';
     const hostFileContent: any = {
       version: '2.0',
       extensionBundle: {
@@ -69,11 +69,11 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         APP_KIND: logicAppKind,
       },
     };
-    if (!ext.workflowDesignTimePort) {
-      ext.workflowDesignTimePort = await portfinder.getPortPromise();
+    if (!ext.designTimePort) {
+      ext.designTimePort = await portfinder.getPortPromise();
     }
 
-    const url = `http://localhost:${ext.workflowDesignTimePort}${designerStartApi}`;
+    const url = `http://localhost:${ext.designTimePort}${designerStartApi}`;
     if (await isDesignTimeUp(url)) {
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
       return;
@@ -93,7 +93,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
         await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
         const cwd: string = designTimeDirectory.fsPath;
-        const portArgs = `--port ${ext.workflowDesignTimePort}`;
+        const portArgs = `--port ${ext.designTimePort}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
         await waitForDesignTimeStartUp(url, new Date().getTime());
         actionContext.telemetry.properties.startDesignTimeApi = 'true';
@@ -112,7 +112,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
   });
 }
 
-async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
+export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
   const directory: string = designTimeDirectory + path.sep;
   const designTimeDirectoryUri: Uri = Uri.file(path.join(projectRoot, directory));
   if (!fs.existsSync(designTimeDirectoryUri.fsPath)) {
@@ -128,8 +128,8 @@ async function createJsonFile(directory: Uri, fileName: string, fileContent: any
   }
 }
 
-async function waitForDesignTimeStartUp(url: string, initialTime: number): Promise<void> {
-  while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < workflowDesignerLoadTimeout) {
+export async function waitForDesignTimeStartUp(url: string, initialTime: number): Promise<void> {
+  while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < designerApiLoadTimeout) {
     await delay(2000);
   }
   if (await isDesignTimeUp(url)) {
@@ -139,16 +139,16 @@ async function waitForDesignTimeStartUp(url: string, initialTime: number): Promi
   }
 }
 
-async function isDesignTimeUp(url: string): Promise<boolean> {
+export async function isDesignTimeUp(url: string): Promise<boolean> {
   try {
-    await requestP(url);
+    await axios.get(url);
     return Promise.resolve(true);
   } catch (ex) {
     return Promise.resolve(false);
   }
 }
 
-function startDesignTimeProcess(
+export function startDesignTimeProcess(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   command: string,
@@ -157,18 +157,21 @@ function startDesignTimeProcess(
   let cmdOutput = '';
   let cmdOutputIncludingStderr = '';
   const formattedArgs: string = args.join(' ');
-  workingDirectory = workingDirectory || os.tmpdir();
+
   const options: cp.SpawnOptions = {
-    cwd: workingDirectory,
+    cwd: workingDirectory || os.tmpdir(),
     shell: true,
   };
-  ext.workflowDesignChildProcess = cp.spawn(command, args, options);
+
+  ext.designChildProcess = cp.spawn(command, args, options);
 
   if (outputChannel) {
-    outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
+    outputChannel.appendLog(
+      localize('runningCommand', 'Running command: "{0} {1}" with pid: "{2}"...', command, formattedArgs, ext.designChildProcess.pid)
+    );
   }
 
-  ext.workflowDesignChildProcess.stdout.on('data', (data: string | Buffer) => {
+  ext.designChildProcess.stdout.on('data', (data: string | Buffer) => {
     data = data.toString();
     cmdOutput = cmdOutput.concat(data);
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
@@ -177,7 +180,7 @@ function startDesignTimeProcess(
     }
   });
 
-  ext.workflowDesignChildProcess.stderr.on('data', (data: string | Buffer) => {
+  ext.designChildProcess.stderr.on('data', (data: string | Buffer) => {
     data = data.toString();
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
     if (outputChannel) {
@@ -187,16 +190,16 @@ function startDesignTimeProcess(
 }
 
 export function stopDesignTimeApi(): void {
-  if (ext.workflowDesignChildProcess === null || ext.workflowDesignChildProcess === undefined) {
+  if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
     return;
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec('taskkill /pid ' + `${ext.workflowDesignChildProcess.pid}` + ' /T /F');
+    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /T /F');
   } else {
-    ext.workflowDesignChildProcess.kill();
+    ext.designChildProcess.kill();
   }
-  ext.workflowDesignChildProcess = undefined;
+  ext.designChildProcess = undefined;
 }
 
 export async function promptStartDesignTimeOption(context: IActionContext) {

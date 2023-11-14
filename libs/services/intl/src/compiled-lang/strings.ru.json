@@ -47,6 +47,12 @@
       "value": "Триггер"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Обзор"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Помощник по рабочим процессам"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "Проверка схемы"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Настройка"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "Изменить этот поток на"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Общие сведения"
     }
   ],
   "8U0KPg": [
@@ -2499,6 +2493,12 @@
       "value": "' имеют с несоответствующий тип"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Параметры"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3119,12 +3119,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Время в формате UTC-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Глобальное представление"
     }
   ],
   "IA+Ogm": [
@@ -3873,6 +3867,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Хельсинки, Киев, Рига, София, Таллинн, Вильнюс"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Копировать"
     }
   ],
   "NE54Uu": [
@@ -4948,7 +4948,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Вот ваш поток."
     }
   ],
   "Twfck/": [
@@ -5959,6 +5959,12 @@
       "value": "Уменьшить"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5968,7 +5974,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "Помощник по рабочим процессам предназначен только для предоставления справки и не поддерживает создание и изменение рабочего процесса."
     }
   ],
   "Z9PWl/": [
@@ -6507,12 +6513,6 @@
       "value": "Обновить"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Создать"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6542,7 +6542,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "К сожалению, мне не удалось понять ваш вопрос. Перефразируйте его и повторите попытку."
     }
   ],
   "dfNjw1": [
@@ -6650,7 +6650,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Этот помощник позволит вам узнать о ваших рабочих процессах, возможностях и соединителях платформы Azure Logic Apps."
     }
   ],
   "eRvRWs": [
@@ -7607,6 +7607,12 @@
       "value": "(UTC+04:00) Абу-Даби, Маскат"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Задайте вопрос об этом рабочем процессе или Azure Logic Apps в целом..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7773,12 +7779,6 @@
     {
       "type": 0,
       "value": "Функции"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Вернуться"
     }
   ],
   "lX30/R": [
@@ -8125,12 +8125,6 @@
       "value": "Требуется. Имя удаляемого свойства."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8449,12 +8443,6 @@
     {
       "type": 0,
       "value": "Триггеры"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9677,6 +9665,12 @@
       "value": "(UTC –09:30) Маркизские острова"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Холст"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9935,6 +9929,12 @@
     {
       "type": 0,
       "value": "Не нравится"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Создать XSLT"
     }
   ],
   "yoCi15": [

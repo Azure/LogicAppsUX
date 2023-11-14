@@ -112,9 +112,10 @@ export type TelemetryEvent = {
   readonly data?: any;
 };
 
-export enum Status {
-  Success = 'Success',
-  Failure = 'Failure',
-  Warning = 'Warning',
-  Completed = 'Complete',
-}
+export const Status = {
+  Success: 'Success',
+  Failure: 'Failure',
+  Warning: 'Warning',
+  Completed: 'Complete',
+} as const;
+export type Status = (typeof Status)[keyof typeof Status];

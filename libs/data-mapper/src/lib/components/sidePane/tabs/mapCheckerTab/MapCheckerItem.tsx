@@ -9,12 +9,13 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-export enum MapCheckerItemSeverity {
-  Error,
-  Warning,
-  Info,
-  Unknown,
-}
+export const MapCheckerItemSeverity = {
+  Error: 'Error',
+  Warning: 'Warning',
+  Info: 'Info',
+  Unknown: 'Unknown',
+} as const;
+export type MapCheckerItemSeverity = (typeof MapCheckerItemSeverity)[keyof typeof MapCheckerItemSeverity];
 
 export interface MapCheckerEntry {
   title: IntlMessage;

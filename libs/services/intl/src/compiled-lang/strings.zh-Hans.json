@@ -47,6 +47,12 @@
       "value": "触发器"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "概述"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "工作流助手"
     }
   ],
   "2JA3gY": [
@@ -1421,12 +1427,6 @@
       "value": "架构验证"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "配置"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1599,12 +1599,6 @@
     {
       "type": 0,
       "value": "将此流编辑到"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "概述"
     }
   ],
   "8U0KPg": [
@@ -2474,6 +2468,12 @@
       "value": "\" 具有类型不匹配的输入"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "设置"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3053,12 +3053,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00)协调世界时-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "全局视图"
     }
   ],
   "IA+Ogm": [
@@ -3774,6 +3768,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00)赫尔辛基，基辅，里加，索非亚，塔林，维尔纽斯"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "复制"
     }
   ],
   "NE54Uu": [
@@ -4824,7 +4824,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "这是你的流。"
     }
   ],
   "Twfck/": [
@@ -5847,6 +5847,12 @@
       "value": "缩小"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5856,7 +5862,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "工作流助手仅用于提供帮助，不支持创建或编辑工作流。"
     }
   ],
   "Z9PWl/": [
@@ -6395,12 +6401,6 @@
       "value": "更新"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "生成"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6430,7 +6430,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "抱歉，我无法理解你的请求。请重新描述，然后重试。"
     }
   ],
   "dfNjw1": [
@@ -6538,7 +6538,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "此助手可帮助你了解工作流以及 Azure 逻辑应用平台的功能和连接器。"
     }
   ],
   "eRvRWs": [
@@ -7470,6 +7470,12 @@
       "value": "(UTC+04:00)阿尔扎比，马斯喀特"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "询问关于此工作流或整个 Azure 逻辑应用的问题..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7603,12 +7609,6 @@
     {
       "type": 0,
       "value": "函数"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "返回"
     }
   ],
   "lX30/R": [
@@ -7955,12 +7955,6 @@
       "value": "必填。要删除的属性名称。"
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8287,12 +8281,6 @@
     {
       "type": 0,
       "value": "触发器"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9478,6 +9466,12 @@
       "value": "(UTC-09:30) 马克萨斯群岛"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "画布"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9736,6 +9730,12 @@
     {
       "type": 0,
       "value": "踩"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "生成 XSLT"
     }
   ],
   "yoCi15": [
