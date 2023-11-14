@@ -18,6 +18,7 @@ import {
   getSelectedSchema,
 } from '@microsoft/logic-apps-data-mapper';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -70,51 +71,51 @@ export const DataMapperApp = () => {
 
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
     sendMsgToVsix({
-      command: 'addSchemaFromFile',
+      command: ExtensionCommand.addSchemaFromFile,
       data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
     });
   };
 
   const readLocalSchemaFileOptions = useCallback(() => {
     sendMsgToVsix({
-      command: 'readLocalSchemaFileOptions',
+      command: ExtensionCommand.readLocalSchemaFileOptions,
     });
   }, [sendMsgToVsix]);
 
   const readLocalxsltFileOptions = useCallback(() => {
     sendMsgToVsix({
-      command: 'readLocalCustomXsltFileOptions',
+      command: ExtensionCommand.readLocalCustomXsltFileOptions,
     });
   }, [sendMsgToVsix]);
 
   const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     sendMsgToVsix({
-      command: 'saveDataMapDefinition',
+      command: ExtensionCommand.saveDataMapDefinition,
       data: dataMapDefinition,
     });
     sendMsgToVsix({
-      command: 'saveDataMapMetadata',
+      command: ExtensionCommand.saveDataMapMetadata,
       data: mapMetadata,
     });
   };
 
   const saveXsltCall = (dataMapXslt: string) => {
     sendMsgToVsix({
-      command: 'saveDataMapXslt',
+      command: ExtensionCommand.saveDataMapXslt,
       data: dataMapXslt,
     });
   };
 
   const saveDraftDataMapDefinition = (dataMapDefinition: string) => {
     sendMsgToVsix({
-      command: 'saveDraftDataMapDefinition',
+      command: ExtensionCommand.saveDraftDataMapDefinition,
       data: dataMapDefinition,
     });
   };
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
     sendMsgToVsix({
-      command: 'setIsMapStateDirty',
+      command: ExtensionCommand.setIsMapStateDirty,
       data: isMapStateDirty,
     });
   };
@@ -136,7 +137,7 @@ export const DataMapperApp = () => {
       }
 
       sendMsgToVsix({
-        command: 'webviewRscLoadError',
+        command: ExtensionCommand.webviewRscLoadError,
         data: errorMsg,
       });
     },
@@ -145,14 +146,14 @@ export const DataMapperApp = () => {
 
   useEffect(() => {
     sendMsgToVsix({
-      command: 'getFunctionDisplayExpanded',
+      command: ExtensionCommand.getFunctionDisplayExpanded,
     });
   }, [sendMsgToVsix]);
 
   // Notify VS Code that webview is loaded
   useEffect(() => {
     sendMsgToVsix({
-      command: 'webviewLoaded',
+      command: ExtensionCommand.webviewLoaded,
     });
   }, [sendMsgToVsix]);
 
