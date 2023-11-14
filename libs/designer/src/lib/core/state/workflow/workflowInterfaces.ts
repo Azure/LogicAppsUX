@@ -21,7 +21,7 @@ export const WorkflowKind = {
   STATEFUL: 'stateful',
   STATELESS: 'stateless',
 } as const;
-export type WorkflowKind = typeof WorkflowKind[keyof typeof WorkflowKind];
+export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
