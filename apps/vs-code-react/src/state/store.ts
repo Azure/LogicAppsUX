@@ -1,10 +1,14 @@
 // eslint-disable-next-line import/no-named-as-default
-import vscodeSlice from './vscodeSlice';
+import { dataMapDataLoaderSlice } from './DataMapDataLoader';
+import { designerSlice } from './DesignerSlice';
+import { vscodeSlice } from './vscodeSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
-    vscode: vscodeSlice,
+    vscode: vscodeSlice.reducer,
+    designer: designerSlice.reducer,
+    dataMapDataLoader: dataMapDataLoaderSlice.reducer,
   },
 });
 
