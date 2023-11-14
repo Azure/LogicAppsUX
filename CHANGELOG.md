@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.81.4](https://github.com/Azure/LogicAppsUX/compare/v2.81.3...v2.81.4) (2023-11-14)
+
+
+### Bug Fixes
+
+* **vscode:** Add troubleshoot dependencies message ([#3691](https://github.com/Azure/LogicAppsUX/issues/3691)) ([e3db454](https://github.com/Azure/LogicAppsUX/commit/e3db4541f4e7ad8228bdb3d5f6d479b48aa8a09c)), closes [#3687](https://github.com/Azure/LogicAppsUX/issues/3687) [#3690](https://github.com/Azure/LogicAppsUX/issues/3690)
+
 ### [2.81.3](https://github.com/Azure/LogicAppsUX/compare/v2.81.2...v2.81.3) (2023-11-09)
 
 
