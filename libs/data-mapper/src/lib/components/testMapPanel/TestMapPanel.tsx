@@ -13,14 +13,14 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
 const PanelPivotItems = {
-  Input : 'input',
-  Output : 'output',
-} as const
+  Input: 'input',
+  Output: 'output',
+} as const;
 export type PanelPivotItems = (typeof PanelPivotItems)[keyof typeof PanelPivotItems];
 
 const InputDataOptions = {
-  PasteSample : 'pasteSample',
-} as const
+  PasteSample: 'pasteSample',
+} as const;
 export type InputDataOptions = (typeof InputDataOptions)[keyof typeof InputDataOptions];
 
 export const commonCodeEditorProps: Partial<MonacoProps> = {

@@ -26,7 +26,6 @@ export const RowDropdownOptions = {
 } as const;
 export type RowDropdownOptions = (typeof RowDropdownOptions)[keyof typeof RowDropdownOptions];
 
-
 const items: DropdownItem[] = [
   { key: RowDropdownOptions.CONTAINS, displayName: 'contains', value: RowDropdownOptions.CONTAINS },
   { key: RowDropdownOptions.NOTCONTAINS, displayName: 'does not contain', value: RowDropdownOptions.NOTCONTAINS },
