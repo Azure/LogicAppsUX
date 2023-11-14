@@ -5,8 +5,8 @@ import type {
   AddStatusMessage,
   SetFinalStatusMessage,
 } from './run-service';
+import { initialize, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/WorkflowSlice';
 import type { AppDispatch } from './state/store';
-import { initialize, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/vscodeSlice';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import useEventListener from '@use-it/event-listener';
 import type { ReactNode } from 'react';

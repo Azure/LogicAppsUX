@@ -1,7 +1,7 @@
 import { RouteName, ValidationStatus } from '../../../run-service';
+import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
+import { Status } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { Status } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
@@ -16,9 +16,9 @@ export const Navigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const vscodeState = useSelector((state: RootState) => state.vscode) as InitializedVscodeState;
-  const { exportData } = vscodeState;
-  const { finalStatus } = vscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow) as InitializedWorkflowState;
+  const { exportData } = workflowState;
+  const { finalStatus } = workflowState;
   const {
     selectedSubscription,
     selectedIse,

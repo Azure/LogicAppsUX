@@ -1,4 +1,4 @@
-import type { InitializePayload, Status } from '../state/vscodeSlice';
+import type { InitializePayload, Status } from '../state/WorkflowSlice';
 import type { ExtensionCommand } from '@microsoft/vscode-extension';
 
 export interface IApiService {

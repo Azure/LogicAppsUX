@@ -23,7 +23,7 @@ export const Status = {
 };
 export type Status = (typeof Status)[keyof typeof Status];
 
-export interface InitializedVscodeState {
+export interface InitializedWorkflowState {
   initialized: true;
   accessToken?: string;
   cloudHost?: string;
@@ -39,26 +39,26 @@ export interface InitializedVscodeState {
   hostVersion?: string;
 }
 
-interface UninitializedVscodeState {
+interface UninitializedWorkflowState {
   initialized: false;
   accessToken?: string;
 }
 
-export type VscodeState = UninitializedVscodeState | InitializedVscodeState;
+export type WorkflowState = UninitializedWorkflowState | InitializedWorkflowState;
 
-const initialState: VscodeState = {
+const initialState: WorkflowState = {
   initialized: false,
 };
 
-export const vscodeSlice = createSlice({
+export const workflowSlice = createSlice({
   name: 'vscode',
-  initialState: initialState as VscodeState,
+  initialState: initialState as WorkflowState,
   reducers: {
-    initialize: (state: VscodeState, action: PayloadAction<InitializePayload>) => {
+    initialize: (state: WorkflowState, action: PayloadAction<InitializePayload>) => {
       const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project, reviewContent, cloudHost, hostVersion } =
         action.payload;
       state.initialized = true;
-      const initializedState = state as InitializedVscodeState;
+      const initializedState = state as InitializedWorkflowState;
       initializedState.project = project;
       initializedState.accessToken = accessToken;
       initializedState.cloudHost = cloudHost;
@@ -87,56 +87,59 @@ export const vscodeSlice = createSlice({
       };
       initializedState.hostVersion = hostVersion;
     },
-    updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
+    updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
-    updateSelectedWorkFlows: (state: VscodeState, action: PayloadAction<{ selectedWorkflows: Array<WorkflowsList> }>) => {
+    updateSelectedWorkFlows: (state: WorkflowState, action: PayloadAction<{ selectedWorkflows: Array<WorkflowsList> }>) => {
       const { selectedWorkflows } = action.payload;
-      (state as InitializedVscodeState).exportData.selectedWorkflows = selectedWorkflows;
+      (state as InitializedWorkflowState).exportData.selectedWorkflows = selectedWorkflows;
     },
-    updateSelectedSubscripton: (state: VscodeState, action: PayloadAction<{ selectedSubscription: string }>) => {
+    updateSelectedSubscripton: (state: WorkflowState, action: PayloadAction<{ selectedSubscription: string }>) => {
       const { selectedSubscription } = action.payload;
-      (state as InitializedVscodeState).exportData.selectedSubscription = selectedSubscription;
-      (state as InitializedVscodeState).exportData.selectedIse = '';
-      (state as InitializedVscodeState).exportData.selectedWorkflows = [];
+      (state as InitializedWorkflowState).exportData.selectedSubscription = selectedSubscription;
+      (state as InitializedWorkflowState).exportData.selectedIse = '';
+      (state as InitializedWorkflowState).exportData.selectedWorkflows = [];
     },
-    updateSelectedLocation: (state: VscodeState, action: PayloadAction<{ selectedIse: string; location: string }>) => {
+    updateSelectedLocation: (state: WorkflowState, action: PayloadAction<{ selectedIse: string; location: string }>) => {
       const { selectedIse, location } = action.payload;
-      (state as InitializedVscodeState).exportData.selectedIse = selectedIse;
-      (state as InitializedVscodeState).exportData.location = location;
-      (state as InitializedVscodeState).exportData.selectedWorkflows = [];
+      (state as InitializedWorkflowState).exportData.selectedIse = selectedIse;
+      (state as InitializedWorkflowState).exportData.location = location;
+      (state as InitializedWorkflowState).exportData.selectedWorkflows = [];
     },
-    updateValidationState: (state: VscodeState, action: PayloadAction<{ validationState: string }>) => {
+    updateValidationState: (state: WorkflowState, action: PayloadAction<{ validationState: string }>) => {
       const { validationState } = action.payload;
-      (state as InitializedVscodeState).exportData.validationState = validationState;
+      (state as InitializedWorkflowState).exportData.validationState = validationState;
     },
-    updateTargetDirectory: (state: VscodeState, action: PayloadAction<{ targetDirectory: ITargetDirectory }>) => {
+    updateTargetDirectory: (state: WorkflowState, action: PayloadAction<{ targetDirectory: ITargetDirectory }>) => {
       const { targetDirectory } = action.payload;
-      (state as InitializedVscodeState).exportData.targetDirectory = targetDirectory;
+      (state as InitializedWorkflowState).exportData.targetDirectory = targetDirectory;
     },
-    updatePackageUrl: (state: VscodeState, action: PayloadAction<{ packageUrl: string }>) => {
+    updatePackageUrl: (state: WorkflowState, action: PayloadAction<{ packageUrl: string }>) => {
       const { packageUrl } = action.payload;
-      (state as InitializedVscodeState).exportData.packageUrl = packageUrl;
+      (state as InitializedWorkflowState).exportData.packageUrl = packageUrl;
     },
-    updateManagedConnections: (state: VscodeState, action: PayloadAction<ManagedConnections>) => {
-      (state as InitializedVscodeState).exportData.managedConnections = action.payload;
+    updateManagedConnections: (state: WorkflowState, action: PayloadAction<ManagedConnections>) => {
+      (state as InitializedWorkflowState).exportData.managedConnections = action.payload;
     },
-    addStatus: (state: VscodeState, action: PayloadAction<{ status: string }>): void => {
+    addStatus: (state: WorkflowState, action: PayloadAction<{ status: string }>): void => {
       const { status } = action.payload;
-      const initializedState = state as InitializedVscodeState;
+      const initializedState = state as InitializedWorkflowState;
       initializedState.statuses = [...(initializedState.statuses ?? []), status];
     },
-    setFinalStatus: (state: VscodeState, action: PayloadAction<{ status: Status }>): void => {
+    setFinalStatus: (state: WorkflowState, action: PayloadAction<{ status: Status }>): void => {
       const { status } = action.payload;
-      const initializedState = state as InitializedVscodeState;
+      const initializedState = state as InitializedWorkflowState;
       initializedState.finalStatus = status;
       if (status === Status.InProgress) {
         initializedState.statuses = [];
       }
     },
-    updateSelectedAdvanceOptions: (state: VscodeState, action: PayloadAction<{ selectedAdvanceOptions: Array<AdvancedOptionsTypes> }>) => {
+    updateSelectedAdvanceOptions: (
+      state: WorkflowState,
+      action: PayloadAction<{ selectedAdvanceOptions: Array<AdvancedOptionsTypes> }>
+    ) => {
       const { selectedAdvanceOptions } = action.payload;
-      (state as InitializedVscodeState).exportData.selectedAdvanceOptions = selectedAdvanceOptions;
+      (state as InitializedWorkflowState).exportData.selectedAdvanceOptions = selectedAdvanceOptions;
     },
   },
 });
@@ -155,6 +158,6 @@ export const {
   addStatus,
   setFinalStatus,
   updateSelectedAdvanceOptions,
-} = vscodeSlice.actions;
+} = workflowSlice.actions;
 
-export default vscodeSlice.reducer;
+export default workflowSlice.reducer;

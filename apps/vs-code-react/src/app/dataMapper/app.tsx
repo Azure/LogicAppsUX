@@ -1,9 +1,4 @@
-import {
-  changeFetchedFunctions,
-  changeSourceSchema,
-  changeTargetSchema,
-  changeUseExpandedFunctionCards,
-} from '../../state/DataMapDataLoader';
+import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeUseExpandedFunctionCards } from '../../state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
