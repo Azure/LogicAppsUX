@@ -472,6 +472,7 @@ export class SchemaProcessor {
     const contentHint = schema[SwaggerConstants.ExtensionProperties.ContentHint];
     const description = schema.description;
     const dynamicallyAdded = schema[SwaggerConstants.ExtensionProperties.DynamicallyAdded];
+    const dynamicSchema = getParameterDynamicSchema(schema);
     const dynamicValues = getParameterDynamicValues(schema);
     const editor = getEditorForParameter(schema, dynamicValues);
     const editorOptions = dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions];
@@ -508,15 +509,19 @@ export class SchemaProcessor {
       title = 'Body';
     }
 
+    const dependencies = schema[SwaggerConstants.ExtensionProperties.InputDependencies];
+    const serialization = schema[SwaggerConstants.ExtensionProperties.Serialization];
+    const deserialization = schema[SwaggerConstants.ExtensionProperties.Deserialization];
+
     return {
       alias,
       contentHint,
       default: $default,
       description,
       dynamicallyAdded,
-      dynamicSchema: getParameterDynamicSchema(schema),
-      dynamicValues: getParameterDynamicValues(schema),
-      dependencies: schema[SwaggerConstants.ExtensionProperties.InputDependencies],
+      dynamicSchema,
+      dynamicValues,
+      dependencies,
       editor,
       editorOptions,
       encode,
@@ -535,8 +540,8 @@ export class SchemaProcessor {
       recommended,
       required,
       schema,
-      serialization: schema[SwaggerConstants.ExtensionProperties.Serialization],
-      deserialization: schema[SwaggerConstants.ExtensionProperties.Deserialization],
+      serialization,
+      deserialization,
       summary,
       title,
       type,

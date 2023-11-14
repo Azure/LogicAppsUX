@@ -54,7 +54,7 @@ export const ConnectionType = {
   ApiManagement: 'ApiManagement',
   Function: 'Function',
   ServiceProvider: 'ServiceProvider',
-}
+};
 export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 
 interface APIManagementConnectionModel {

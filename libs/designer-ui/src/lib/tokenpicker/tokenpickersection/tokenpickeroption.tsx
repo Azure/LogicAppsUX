@@ -167,10 +167,7 @@ export const TokenPickerOptions = ({
     <>
       {(searchQuery && filteredTokens.length > 0) || !searchQuery ? (
         <>
-          <div
-            className="msla-token-picker-section-header"
-            style={{ backgroundColor: sectionHeaderColorCss }}
-          >
+          <div className="msla-token-picker-section-header" style={{ backgroundColor: sectionHeaderColorCss }}>
             <img src={getSectionIcon()} alt="token icon" />
             {getSectionSecurity() ? (
               <div className="msla-token-picker-secure-token">
