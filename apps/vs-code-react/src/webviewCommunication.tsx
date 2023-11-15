@@ -11,6 +11,9 @@ import type {
   SetRuntimePortMessage,
   GetConfigurationSettingMessage,
   InjectValuesMessage,
+  UpdatePanelMetadataMessage,
+  CompleteFileSystemConnectionMessage,
+  ReceiveCallbackMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -24,7 +27,7 @@ import {
   changeXsltContent,
   changeXsltFilename,
 } from './state/DataMapSlice';
-import { initializeDesigner } from './state/DesignerSlice';
+import { initializeDesigner, updateCallbackUrl, updateFileSystemConnection, updatePanelMetadata } from './state/DesignerSlice';
 import type { InitializePayload } from './state/WorkflowSlice';
 import {
   initialize as initializeWorkflow,
@@ -46,6 +49,7 @@ import type { WebviewApi } from 'vscode-webview';
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
 
+type DesignerMessageType = ReceiveCallbackMessage | CompleteFileSystemConnectionMessage | UpdatePanelMetadataMessage;
 type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
@@ -55,7 +59,7 @@ type DataMapperMessageType =
   | SetRuntimePortMessage
   | GetConfigurationSettingMessage;
 type WorkflowMessageType = UpdateAccessTokenMessage | UpdateExportPathMessage | AddStatusMessage | SetFinalStatusMessage;
-type MessageType = InjectValuesMessage | DataMapperMessageType | WorkflowMessageType;
+type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessageType | WorkflowMessageType;
 
 export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ children }) => {
   const dispatch: AppDispatch = useDispatch();
@@ -72,6 +76,15 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         switch (message.command) {
           case ExtensionCommand.initialize_frame:
             dispatch(initializeDesigner(message.data));
+            break;
+          case ExtensionCommand.receiveCallback:
+            dispatch(updateCallbackUrl(message.data));
+            break;
+          case ExtensionCommand.completeFileSystemConnection:
+            dispatch(updateFileSystemConnection(message.data));
+            break;
+          case ExtensionCommand.update_panel_metadata:
+            dispatch(updatePanelMetadata(message.data));
             break;
           default:
             throw new Error('Unknown post message received');

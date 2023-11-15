@@ -1,6 +1,7 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
+import type { ApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
 import type { MapDefinitionData, SchemaType } from '@microsoft/logic-apps-data-mapper';
-import type { ExtensionCommand } from '@microsoft/vscode-extension';
+import type { ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 
 export interface IApiService {
   getWorkflows(subscriptionId: string, iseId?: string, location?: string): Promise<WorkflowsList[]>;
@@ -244,6 +245,26 @@ export interface SetRuntimePortMessage {
 export interface GetConfigurationSettingMessage {
   command: typeof ExtensionCommand.getConfigurationSetting;
   data: boolean;
+}
+
+// Designer Message Interfaces
+export interface ReceiveCallbackMessage {
+  command: typeof ExtensionCommand.receiveCallback;
+  data: any;
+}
+
+export interface CompleteFileSystemConnectionMessage {
+  command: typeof ExtensionCommand.completeFileSystemConnection;
+  data: { connectionName: string; connection: any; error: string };
+}
+
+export interface UpdatePanelMetadataMessage {
+  command: typeof ExtensionCommand.update_panel_metadata;
+  data: {
+    panelMetadata: IDesignerPanelMetadata;
+    connectionData: ConnectionsData;
+    apiHubServiceDetails: ApiHubServiceDetails;
+  };
 }
 
 // Rest of Message Interfaces
