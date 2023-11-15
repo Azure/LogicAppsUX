@@ -313,6 +313,12 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.resetValidateAndInstallBinaries",
+        "title": "Reset binaries dependency settings",
+        "preview": true,
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
         "title": "Data Mapper: Create new data map",
         "icon": "$(add)"
