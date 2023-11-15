@@ -215,20 +215,20 @@ async function callStandardResourcesApi(
 ): Promise<Buffer> {
   try {
     ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
-    if (!ext.workflowDesignTimePort) {
+    if (!ext.designTimePort) {
       ext.outputChannel.appendLog(
         localize(
           'connectionAttemptFailed',
           'Connection attempt failed. Workflow designer port not set. Trying to find an available port...'
         )
       );
-      ext.workflowDesignTimePort = await portfinder.getPortPromise();
+      ext.designTimePort = await portfinder.getPortPromise();
       ext.outputChannel.appendLog(
-        localize('newPortSet', `New workflow designer port set to ${ext.workflowDesignTimePort}. Retrying API connection.`)
+        localize('newPortSet', `New workflow designer port set to ${ext.designTimePort}. Retrying API connection.`)
       );
     }
 
-    const apiUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
+    const apiUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
     ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
 
     // Construct the request body based on the parameters
