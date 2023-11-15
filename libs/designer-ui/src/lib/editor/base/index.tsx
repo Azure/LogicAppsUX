@@ -25,6 +25,7 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
+import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -163,6 +164,8 @@ export const BaseEditor = ({
   };
 
   const id = useId('msla-described-by-message');
+  const TextPlugin = toolbar ? RichTextPlugin : PlainTextPlugin;
+
   return (
     <div style={{ width: '100%' }}>
       <LexicalComposer initialConfig={initialConfig}>
@@ -174,7 +177,7 @@ export const BaseEditor = ({
           title={placeholder}
         >
           {toolbar ? <Toolbar readonly={readonly} /> : null}
-          <RichTextPlugin
+          <TextPlugin
             contentEditable={
               <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
             }
