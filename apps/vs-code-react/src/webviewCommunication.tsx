@@ -5,7 +5,15 @@ import type {
   AddStatusMessage,
   SetFinalStatusMessage,
 } from './run-service';
-import { initialize, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/WorkflowSlice';
+import { initializeDesigner } from './state/DesignerSlice';
+import {
+  initialize as initializeWorkflow,
+  updateAccessToken,
+  updateTargetDirectory,
+  addStatus,
+  setFinalStatus,
+} from './state/WorkflowSlice';
+import { initialize } from './state/projectSlice';
 import type { AppDispatch } from './state/store';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import useEventListener from '@use-it/event-listener';
@@ -25,7 +33,15 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     const message = event.data; // The JSON data our extension sent
     switch (message.command) {
       case ExtensionCommand.initialize_frame:
-        dispatch(initialize(message.data));
+        dispatch(initialize(message.data.project));
+        if (message.data.project === 'dataMap') {
+          // nothing. dataMap doesn't have initialize actions
+        } else if (message.data.project === 'designer') {
+          dispatch(initializeDesigner(message.data));
+        } else {
+          // TODO - Elaina : regular ones. maybe we want to take our initialized / projectName from this slice.
+          dispatch(initializeWorkflow(message.data));
+        }
         break;
       case ExtensionCommand.update_access_token:
         dispatch(updateAccessToken(message.data.accessToken));

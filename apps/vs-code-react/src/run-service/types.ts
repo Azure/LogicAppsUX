@@ -152,6 +152,7 @@ export const RouteName = {
   status: 'status',
   review: 'review',
 };
+
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
 export const ValidationStatus = {
   succeeded: 'Succeeded',

@@ -18,6 +18,11 @@ export const ProjectAccess = {
 } as const;
 export type ProjectAccess = (typeof ProjectAccess)[keyof typeof ProjectAccess];
 
+export const ProjectName = {
+  designer: 'designer',
+  dataMapper: 'dataMap',
+};
+
 export const ProjectResource = {
   Functions: 'Functions',
   Function: 'Function',

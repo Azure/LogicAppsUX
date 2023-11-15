@@ -51,7 +51,7 @@ const initialState: WorkflowState = {
 };
 
 export const workflowSlice = createSlice({
-  name: 'vscode',
+  name: 'workflow',
   initialState: initialState as WorkflowState,
   reducers: {
     initialize: (state: WorkflowState, action: PayloadAction<InitializePayload>) => {

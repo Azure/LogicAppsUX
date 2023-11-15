@@ -2,6 +2,7 @@ import type { MapDefinitionEntry } from './MapDefinition';
 import type { MapMetadata } from './MapMetadata';
 import type { SchemaType } from './Schema';
 
+type InitializeData = { project: string };
 type FetchSchemaData = { fileName: string; type: SchemaType };
 type SchemaPathData = { path: string; type: SchemaType };
 
@@ -14,6 +15,7 @@ export type MapDefinitionData = {
 export type XsltData = { filename: string; fileContents: string };
 
 export type MessageToWebview =
+  | { command: 'initialize-frame'; data: InitializeData }
   | { command: 'fetchSchema'; data: FetchSchemaData }
   | { command: 'loadDataMap'; data: MapDefinitionData }
   | { command: 'showAvailableSchemas'; data: string[] }
@@ -32,7 +34,7 @@ export type MessageToVsix =
       data: string;
     }
   | {
-      command: 'webviewLoaded' | 'readLocalSchemaFileOptions' | 'readLocalCustomXsltFileOptions';
+      command: 'initialize' | 'webviewLoaded' | 'readLocalSchemaFileOptions' | 'readLocalCustomXsltFileOptions';
     }
   | {
       command: 'webviewRscLoadError';
