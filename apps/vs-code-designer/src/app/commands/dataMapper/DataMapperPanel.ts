@@ -103,7 +103,7 @@ export default class DataMapperPanel {
       }
       case 'webviewLoaded':
         // Send runtime port to webview
-        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${ext.designTimePort}` });
+        this.sendMsgToWebview({ command: ExtensionCommand.setRuntimePort, data: `${ext.designTimePort}` });
 
         // If loading a data map, handle that + xslt filename
         this.handleLoadMapDefinitionIfAny();
@@ -172,7 +172,7 @@ export default class DataMapperPanel {
     if (this.mapDefinitionData) {
       const mapMetadata = this.readMapMetadataFile();
       this.sendMsgToWebview({
-        command: 'loadDataMap',
+        command: ExtensionCommand.loadDataMap,
         data: { ...this.mapDefinitionData, metadata: mapMetadata },
       });
 
@@ -200,17 +200,21 @@ export default class DataMapperPanel {
   }
 
   public handleReadSchemaFileOptions() {
-    return this.getFilesForPath(schemasPath, 'showAvailableSchemas', supportedSchemaFileExts);
+    return this.getFilesForPath(schemasPath, ExtensionCommand.showAvailableSchemas, supportedSchemaFileExts);
   }
 
   public handleReadAvailableFunctionPaths() {
     const absoluteFolderPath = path.join(ext.logicAppWorkspace, customXsltPath);
     if (fileExistsSync(absoluteFolderPath)) {
-      return this.getFilesForPath(customXsltPath, 'getAvailableCustomXsltPaths', supportedCustomXsltFileExts);
+      return this.getFilesForPath(customXsltPath, ExtensionCommand.getAvailableCustomXsltPaths, supportedCustomXsltFileExts);
     }
   }
 
-  private getFilesForPath(folderPath: string, command: 'showAvailableSchemas' | 'getAvailableCustomXsltPaths', fileTypes: string[]) {
+  private getFilesForPath(
+    folderPath: string,
+    command: typeof ExtensionCommand.showAvailableSchemas | typeof ExtensionCommand.getAvailableCustomXsltPaths,
+    fileTypes: string[]
+  ) {
     fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
@@ -266,7 +270,7 @@ export default class DataMapperPanel {
         }
 
         this.sendMsgToWebview({
-          command: 'fetchSchema',
+          command: ExtensionCommand.fetchSchema,
           data: { fileName: primarySchemaFileName, type: schemaType as SchemaType },
         });
       });
@@ -391,7 +395,7 @@ export default class DataMapperPanel {
     if (fileExistsSync(expectedXsltPath)) {
       fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
         this.sendMsgToWebview({
-          command: 'setXsltData',
+          command: ExtensionCommand.setXsltData,
           data: {
             filename: this.dataMapName,
             fileContents,
@@ -407,7 +411,7 @@ export default class DataMapperPanel {
     const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
     const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
     this.sendMsgToWebview({
-      command: 'getConfigurationSetting',
+      command: ExtensionCommand.getConfigurationSetting,
       data: configValue,
     });
   }
