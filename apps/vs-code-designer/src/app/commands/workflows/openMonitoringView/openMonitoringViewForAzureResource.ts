@@ -21,7 +21,7 @@ import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { ViewColumn } from 'vscode';
@@ -106,7 +106,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
-            project: ProjectName.designer,
+            project: 'designer',
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             workflowDetails: this.workflowDetails,

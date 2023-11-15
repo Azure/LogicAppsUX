@@ -16,7 +16,7 @@ import {
 import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import {
   copyFileSync,
   existsSync as fileExistsSync,
@@ -96,7 +96,7 @@ export default class DataMapperPanel {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
-            project: ProjectName.dataMapper,
+            project: 'dataMapper',
           },
         });
         break;

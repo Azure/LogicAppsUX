@@ -13,7 +13,7 @@ import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerBase } from './openDesignerBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
@@ -84,7 +84,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
-            project: ProjectName.designer,
+            project: 'designer',
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             baseUrl: this.baseUrl,
