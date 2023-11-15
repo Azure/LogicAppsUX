@@ -1,9 +1,9 @@
 import { QueryKeys } from '../../../run-service';
 import type { IValidationData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
+import { updateValidationState } from '../../../state/WorkflowSlice';
+import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { updateValidationState } from '../../../state/vscodeSlice';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
 import { MessageBar, MessageBarType, Text } from '@fluentui/react';
@@ -13,8 +13,8 @@ import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const Validation: React.FC = () => {
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const { baseUrl, accessToken, exportData, cloudHost } = workflowState as InitializedWorkflowState;
   const { selectedWorkflows, location, selectedSubscription, selectedAdvanceOptions } = exportData;
 
   const dispatch: AppDispatch = useDispatch();

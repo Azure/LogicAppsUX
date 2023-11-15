@@ -1,7 +1,7 @@
 import { AdvancedOptionsTypes } from '../../../run-service';
+import { updateSelectedAdvanceOptions } from '../../../state/WorkflowSlice';
+import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { updateSelectedAdvanceOptions } from '../../../state/vscodeSlice';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getAdvanceOptionsSelection, isCloneConnectionsAvailable } from './helper';
 import { Text } from '@fluentui/react';
@@ -11,8 +11,8 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const AdvancedOptions: React.FC = () => {
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { exportData } = vscodeState as InitializedVscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const { exportData } = workflowState as InitializedWorkflowState;
   const { selectedAdvanceOptions } = exportData;
 
   const intl = useIntl();

@@ -1,4 +1,5 @@
 export const ExtensionCommand = {
+  addSchemaFromFile: 'addSchemaFromFile',
   select_folder: 'select-folder',
   initialize: 'initialize',
   loadRun: 'LoadRun',
@@ -8,10 +9,18 @@ export const ExtensionCommand = {
   update_export_path: 'update-export-path',
   update_panel_metadata: 'update-panel-metadata',
   export_package: 'export-package',
+  getFunctionDisplayExpanded: 'getFunctionDisplayExpanded',
   add_status: 'add-status',
+  saveDataMapDefinition: 'saveDataMapDefinition',
+  saveDataMapMetadata: 'saveDataMapMetadata',
+  saveDataMapXslt: 'saveDataMapXslt',
+  saveDraftDataMapDefinition: 'saveDraftDataMapDefinition',
   set_final_status: 'set-final-status',
+  setIsMapStateDirty: 'setIsMapStateDirty',
   save: 'Save',
   showContent: 'ShowContent',
+  readLocalCustomXsltFileOptions: 'readLocalCustomXsltFileOptions',
+  readLocalSchemaFileOptions: 'readLocalSchemaFileOptions',
   resubmitRun: 'ResubmitRun',
   addConnection: 'add-connection',
   createFileSystemConnection: 'create-file-system-connection',
@@ -20,6 +29,8 @@ export const ExtensionCommand = {
   receiveCallback: 'ReceiveCallback',
   openOauthLoginPopup: 'OpenLoginPopup',
   completeOauthLogin: 'CompleteOauthLogin',
+  webviewLoaded: 'webviewLoaded',
+  webviewRscLoadError: 'webviewRscLoadError',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

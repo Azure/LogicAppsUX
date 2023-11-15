@@ -7,23 +7,23 @@ import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 export const OverviewApp: React.FC = () => {
-  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
 
-  return vscodeState.initialized ? (
+  return workflowState.initialized ? (
     <App
-      apiVersion={vscodeState.apiVersion}
-      baseUrl={vscodeState.baseUrl}
+      apiVersion={workflowState.apiVersion}
+      baseUrl={workflowState.baseUrl}
       onOpenRun={(run: RunDisplayItem) => {
         vscode.postMessage({
           command: ExtensionCommand.loadRun,
           item: run,
         });
       }}
-      workflowProperties={vscodeState.workflowProperties}
-      accessToken={vscodeState.accessToken}
-      corsNotice={vscodeState.corsNotice}
-      hostVersion={vscodeState.hostVersion}
+      workflowProperties={workflowState.workflowProperties}
+      accessToken={workflowState.accessToken}
+      corsNotice={workflowState.corsNotice}
+      hostVersion={workflowState.hostVersion}
     ></App>
   ) : null;
 };

@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 });
 
 export const ExportApp: React.FC = () => {
-  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const vscodeState = useSelector((state: RootState) => state.workflow);
 
   const handleError: OnErrorFn = useCallback((err) => {
     if (err.code !== 'MISSING_TRANSLATION') {

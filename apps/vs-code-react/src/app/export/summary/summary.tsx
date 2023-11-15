@@ -1,9 +1,9 @@
 import { QueryKeys } from '../../../run-service';
 import type { ISummaryData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
+import { updatePackageUrl } from '../../../state/WorkflowSlice';
+import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { updatePackageUrl } from '../../../state/vscodeSlice';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
 import { ManagedConnections } from './managedConnections';
@@ -18,8 +18,8 @@ export const Summary: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const { baseUrl, accessToken, exportData, cloudHost } = workflowState as InitializedWorkflowState;
   const { selectedWorkflows, location, selectedSubscription, targetDirectory, packageUrl, selectedAdvanceOptions } = exportData;
 
   const intlText = {

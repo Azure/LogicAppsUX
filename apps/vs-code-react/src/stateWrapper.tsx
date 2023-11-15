@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 
 export const StateWrapper: React.FC = () => {
   const navigate = useNavigate();
-  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const workflowState = useSelector((state: RootState) => state.workflow);
 
   useEffect(() => {
-    if (vscodeState.initialized) {
-      switch (vscodeState.project) {
+    if (workflowState.initialized) {
+      switch (workflowState.project) {
         case ProjectName.export: {
           navigate(`/${ProjectName.export}/instance-selection`, { replace: true });
           break;
@@ -23,12 +23,20 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.overview}`, { replace: true });
           break;
         }
+        case ProjectName.designer: {
+          navigate(`/${ProjectName.designer}`, { replace: true });
+          break;
+        }
+        case ProjectName.dataMapper: {
+          navigate(`/${ProjectName.dataMapper}`, { replace: true });
+          break;
+        }
         default: {
           break;
         }
       }
     }
-  }, [vscodeState, navigate]);
+  }, [workflowState, navigate]);
 
   return null;
 };

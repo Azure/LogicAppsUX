@@ -2,9 +2,9 @@ import WarningIcon from '../../../resources/Caution.svg';
 import { QueryKeys } from '../../../run-service';
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
+import { updateSelectedWorkFlows } from '../../../state/WorkflowSlice';
+import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
 import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups, updateSelectedItems } from './helper';
@@ -17,8 +17,8 @@ import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const WorkflowsSelection: React.FC = () => {
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const { baseUrl, accessToken, exportData, cloudHost } = workflowState as InitializedWorkflowState;
   const { selectedSubscription, selectedIse, selectedWorkflows, location } = exportData;
 
   const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList> | null>(null);

@@ -1,4 +1,4 @@
-import type { InitializePayload, Status } from '../state/vscodeSlice';
+import type { InitializePayload, Status } from '../state/WorkflowSlice';
 import type { ExtensionCommand } from '@microsoft/vscode-extension';
 
 export interface IApiService {
@@ -32,6 +32,8 @@ export const ProjectName = {
   export: 'export',
   overview: 'overview',
   review: 'review',
+  designer: 'designer',
+  dataMapper: 'dataMapper',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
 
