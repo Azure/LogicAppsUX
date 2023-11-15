@@ -4,6 +4,7 @@ import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import { $createTokenNode } from '../nodes/tokenNode';
+import { convertStringToSegments } from './editorToSegement';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
 import { $generateNodesFromDOM } from '@lexical/html';
 import type { LinkNode } from '@lexical/link';
@@ -44,7 +45,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
       currNode.getChildren().forEach((childNode) => {
         // LinkNodes are a special case because they are within a paragraph node
         if ($isLinkNode(childNode)) {
-          const linkNode = $createLinkNode(childNode.getURL());
+          const linkNode = $createLinkNode(getURL(childNode, tokensEnabled, nodeMap));
           childNode.getChildren().forEach((listItemChildNode) => {
             appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled);
           });
@@ -78,6 +79,14 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   root.append(paragraph);
 
   return root;
+};
+
+const getURL = (node: LinkNode, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): string => {
+  const valueUrl = node.getURL();
+  const urlSegments = convertStringToSegments(valueUrl, tokensEnabled, nodeMap);
+  return urlSegments
+    .map((segment) => (segment.type === ValueSegmentType.LITERAL ? segment.value : `@{${segment.value}}`))
+    .reduce((accumulator, current) => accumulator + current);
 };
 
 // Appends the children Nodes while parsing for TokenNodes
