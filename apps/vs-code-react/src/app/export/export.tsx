@@ -25,7 +25,8 @@ const queryClient = new QueryClient({
 });
 
 export const ExportApp: React.FC = () => {
-  const vscodeState = useSelector((state: RootState) => state.workflow);
+  const projectState = useSelector((state: RootState) => state.project);
+  const workflowState = useSelector((state: RootState) => state.workflow);
 
   const handleError: OnErrorFn = useCallback((err) => {
     if (err.code !== 'MISSING_TRANSLATION') {
@@ -33,7 +34,7 @@ export const ExportApp: React.FC = () => {
     }
   }, []);
 
-  return vscodeState.initialized ? (
+  return projectState.initialized ? (
     <QueryClientProvider client={queryClient}>
       <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
         <div className="msla-export">
@@ -42,8 +43,8 @@ export const ExportApp: React.FC = () => {
           </Text>
           <Outlet
             context={{
-              baseUrl: vscodeState.baseUrl,
-              accessToken: vscodeState.accessToken,
+              baseUrl: workflowState.baseUrl,
+              accessToken: workflowState.accessToken,
             }}
           />
           <Navigation />

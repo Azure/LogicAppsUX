@@ -1,5 +1,4 @@
 import type { WorkflowsList } from '../../../run-service';
-import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
 import { IconButton, Shimmer, Text } from '@fluentui/react';
 import type { IIconProps } from '@fluentui/react';
@@ -15,7 +14,7 @@ export interface ISelectedListProps {
 export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselectWorkflow }) => {
   const intl = useIntl();
   const workflowState = useSelector((state: RootState) => state.workflow);
-  const { exportData } = workflowState as InitializedWorkflowState;
+  const { exportData } = workflowState;
   const { selectedWorkflows } = exportData;
 
   const intlText = {

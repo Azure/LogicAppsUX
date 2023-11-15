@@ -2,7 +2,6 @@ import { QueryKeys } from '../../../run-service';
 import type { IValidationData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import { updateValidationState } from '../../../state/WorkflowSlice';
-import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
@@ -14,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const Validation: React.FC = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
-  const { baseUrl, accessToken, exportData, cloudHost } = workflowState as InitializedWorkflowState;
+  const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedWorkflows, location, selectedSubscription, selectedAdvanceOptions } = exportData;
 
   const dispatch: AppDispatch = useDispatch();

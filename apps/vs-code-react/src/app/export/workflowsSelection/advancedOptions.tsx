@@ -1,6 +1,5 @@
 import { AdvancedOptionsTypes } from '../../../run-service';
 import { updateSelectedAdvanceOptions } from '../../../state/WorkflowSlice';
-import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getAdvanceOptionsSelection, isCloneConnectionsAvailable } from './helper';
@@ -12,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const AdvancedOptions: React.FC = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
-  const { exportData } = workflowState as InitializedWorkflowState;
+  const { exportData } = workflowState;
   const { selectedAdvanceOptions } = exportData;
 
   const intl = useIntl();

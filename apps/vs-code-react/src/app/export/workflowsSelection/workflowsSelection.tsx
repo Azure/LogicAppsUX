@@ -3,7 +3,6 @@ import { QueryKeys } from '../../../run-service';
 import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
 import { updateSelectedWorkFlows } from '../../../state/WorkflowSlice';
-import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
@@ -18,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const WorkflowsSelection: React.FC = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
-  const { baseUrl, accessToken, exportData, cloudHost } = workflowState as InitializedWorkflowState;
+  const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, selectedWorkflows, location } = exportData;
 
   const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList> | null>(null);
