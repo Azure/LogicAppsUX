@@ -5,9 +5,10 @@
 import type { IFunctionWizardContext } from '../functions';
 import type { IBindingSetting } from './IBindingTemplate';
 
-export enum TemplateCategory {
-  Core = '$temp_category_core',
-}
+export const TemplateCategory = {
+  Core: '$temp_category_core',
+} as const;
+export type TemplateCategory = (typeof TemplateCategory)[keyof typeof TemplateCategory];
 
 export interface IWorkflowTemplate {
   id: string;

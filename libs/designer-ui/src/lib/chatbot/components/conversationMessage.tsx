@@ -7,6 +7,7 @@ import { ConnectionsSetupMessage } from './connectionsSetupMessage';
 import { ConversationItemType } from './conversationItem';
 import type { ConversationItem, UserQueryItem, AssistantReplyItem } from './conversationItem';
 import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMessage';
+import { useRef } from 'react';
 import Markdown from 'react-markdown';
 
 type ConversationMessageProps = {
@@ -46,6 +47,7 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
   const { id, text, hideFooter, date, azureButtonCallback } = item;
   const azureCopilotButton = useAzureCopilotButton(azureButtonCallback);
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
+  const textRef = useRef<HTMLDivElement | null>(null);
   return (
     <div>
       <ChatBubble
@@ -58,8 +60,11 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         disabled={false} //TODO: add isBlockingOperationInProgress}
         additionalFooterActions={hideFooter ? [] : azureButtonCallback ? [azureCopilotButton] : []}
         hideFooter={hideFooter}
+        textRef={textRef}
       >
-        <Markdown>{text}</Markdown>
+        <div ref={textRef}>
+          <Markdown>{text}</Markdown>
+        </div>
       </ChatBubble>
       {feedbackMessage}
     </div>

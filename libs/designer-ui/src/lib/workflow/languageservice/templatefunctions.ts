@@ -580,6 +580,22 @@ const Resources = {
     defaultMessage: 'Required. A base64 input string.',
     description: 'Required base64 string parameter to be decoded using decodeBase64 function',
   }),
+  TOKEN_FUNCTION_FUNCTION_UTF8LENGTH: intl.formatMessage({
+    defaultMessage: 'Returns the UTF-8 byte length of an input string',
+    description: 'Label for description of custom utf8Length Function',
+  }),
+  TOKEN_PARAMETER_UTF8LENGTH_VALUE: intl.formatMessage({
+    defaultMessage: 'Required. The string to calculate UTF-8 length from.',
+    description: 'Required string parameter to be sized using utf8Length function',
+  }),
+  TOKEN_FUNCTION_FUNCTION_UTF16LENGTH: intl.formatMessage({
+    defaultMessage: 'Returns the UTF-16 byte length of an input string',
+    description: 'Label for description of custom utf16Length Function',
+  }),
+  TOKEN_PARAMETER_UTF16LENGTH_VALUE: intl.formatMessage({
+    defaultMessage: 'Required. The string to calculate UTF-16 length from.',
+    description: 'Required string parameter to be sized using utf16Length function',
+  }),
   TOKEN_FUNCTION_CONVERSION_ENCODEURICOMPONENT: intl.formatMessage({
     defaultMessage: 'Url encodes the input string',
     description: 'Label for description of custom encodeUriComponent Function',
@@ -2349,6 +2365,42 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
               {
                 name: 'value',
                 documentation: Resources.TOKEN_PARAMETER_DECODEBASE64_VALUE,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
+      },
+      {
+        name: 'utf8Length',
+        defaultSignature: 'utf8Length(value)',
+        description: Resources.TOKEN_FUNCTION_FUNCTION_UTF8LENGTH,
+        signatures: [
+          {
+            definition: `utf8Length(value: string)`,
+            documentation: Resources.TOKEN_FUNCTION_FUNCTION_UTF8LENGTH,
+            parameters: [
+              {
+                name: 'value',
+                documentation: Resources.TOKEN_PARAMETER_UTF8LENGTH_VALUE,
+              },
+            ],
+          },
+        ],
+        isAdvanced: true,
+      },
+      {
+        name: 'utf16Length',
+        defaultSignature: 'utf16Length(value)',
+        description: Resources.TOKEN_FUNCTION_FUNCTION_UTF16LENGTH,
+        signatures: [
+          {
+            definition: `utf16Length(value: string)`,
+            documentation: Resources.TOKEN_FUNCTION_FUNCTION_UTF16LENGTH,
+            parameters: [
+              {
+                name: 'value',
+                documentation: Resources.TOKEN_PARAMETER_UTF16LENGTH_VALUE,
               },
             ],
           },

@@ -7,7 +7,6 @@ import {
   DependencyVersion,
   Platform,
   autoRuntimeDependenciesValidationAndInstallationSetting,
-  defaultDependencyPathValue,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dotNetBinaryPathSettingKey,
@@ -20,20 +19,12 @@ import {
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { onboardBinaries } from '../../onboarding';
-import { validateDotNetIsLatest } from '../commands/dotnet/validateDotNetIsLatest';
-import { validateFuncCoreToolsIsLatest } from '../commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
-import { validateNodeJsIsLatest } from '../commands/nodeJs/validateNodeJsIsLatest';
-import { getDependenciesVersion } from './bundleFeed';
-import { setDotNetCommand } from './dotnet/dotnet';
 import { executeCommand } from './funcCoreTools/cpUtils';
-import { setFunctionsCommand } from './funcCoreTools/funcVersion';
-import { getNpmCommand, setNodeJsCommand } from './nodeJs/nodeJsVersion';
-import { runWithDurationTelemetry } from './telemetry';
-import { timeout } from './timeout';
+import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IBundleDependencyFeed, IGitHubReleaseInfo } from '@microsoft/vscode-extension';
+import type { IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -43,79 +34,6 @@ import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
 import request = require('request');
-
-export async function validateAndInstallBinaries(context: IActionContext) {
-  await vscode.window.withProgress(
-    {
-      location: vscode.ProgressLocation.Notification, // Location of the progress indicator
-      title: 'Validating Runtime Dependency', // Title displayed in the progress notification
-      cancellable: false, // Allow the user to cancel the task
-    },
-    async (progress, token) => {
-      token.onCancellationRequested(() => {
-        // Handle cancellation logic
-        executeCommand(ext.outputChannel, undefined, 'echo', 'validateAndInstallBinaries was canceled');
-      });
-
-      context.telemetry.properties.lastStep = 'getGlobalSetting';
-      progress.report({ increment: 10, message: `Get Settings` });
-
-      const dependencyTimeout = (await getDependencyTimeout()) * 1000;
-
-      context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
-      if (!getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey)) {
-        await updateGlobalSetting(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
-        context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
-      }
-
-      context.telemetry.properties.lastStep = 'getDependenciesVersion';
-      progress.report({ increment: 10, message: `Get dependency version from CDN` });
-      let dependenciesVersions: IBundleDependencyFeed;
-      try {
-        dependenciesVersions = await getDependenciesVersion(context);
-        context.telemetry.properties.dependenciesVersions = JSON.stringify(dependenciesVersions);
-      } catch (error) {
-        // Unable to get dependency.json, will default to fallback versions
-        console.log(error);
-      }
-
-      context.telemetry.properties.lastStep = 'validateNodeJsIsLatest';
-
-      try {
-        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
-          progress.report({ increment: 20, message: `NodeJS` });
-          await timeout(validateNodeJsIsLatest, dependencyTimeout, dependenciesVersions?.nodejs);
-          await setNodeJsCommand();
-        });
-
-        context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
-        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
-          progress.report({ increment: 20, message: `Functions Runtime` });
-          await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, dependenciesVersions?.funcCoreTools);
-          await setFunctionsCommand();
-        });
-
-        context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
-        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
-          progress.report({ increment: 20, message: `.NET SDK` });
-          await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
-          await setDotNetCommand();
-        });
-        ext.outputChannel.appendLog(
-          localize(
-            'azureLogicApsBinariesSucessfull',
-            'Azure Logic Apps Standard Runtime Dependencies validation and installation completed successfully.'
-          )
-        );
-      } catch (error) {
-        ext.outputChannel.appendLog(
-          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', error)
-        );
-        context.telemetry.properties.dependenciesError = error;
-      }
-    }
-  );
-}
 
 /**
  * Download and Extracts Binaries zip.
@@ -402,7 +320,7 @@ function cleanupContainerFolder(targetFolder: string) {
  * @param {IActionContext} context - Command context.
  * @returns {number} Timeout value in seconds.
  */
-function getDependencyTimeout(): number {
+export function getDependencyTimeout(): number {
   const dependencyTimeoutValue: number | undefined = getWorkspaceSetting<number>(dependencyTimeoutSettingKey);
   const timeoutInSeconds = Number(dependencyTimeoutValue);
   if (isNaN(timeoutInSeconds)) {

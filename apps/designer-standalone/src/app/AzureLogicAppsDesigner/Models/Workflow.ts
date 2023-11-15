@@ -1,9 +1,10 @@
 import type { ArmResource } from './Arm';
 
-export enum WorkflowState {
-  Disabled = 'Disabled',
-  Enabled = 'Enabled',
-}
+export const WorkflowState = {
+  Disabled: 'Disabled',
+  Enabled: 'Enabled',
+};
+export type WorkflowState = (typeof WorkflowState)[keyof typeof WorkflowState];
 
 export interface TriggerType {
   type: string;
@@ -49,11 +50,12 @@ export interface WorkflowJson {
   };
 }
 
-export enum ConnectionType {
-  ApiManagement,
-  Function,
-  ServiceProvider,
-}
+export const ConnectionType = {
+  ApiManagement: 'ApiManagement',
+  Function: 'Function',
+  ServiceProvider: 'ServiceProvider',
+};
+export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 
 interface APIManagementConnectionModel {
   apiId: string;

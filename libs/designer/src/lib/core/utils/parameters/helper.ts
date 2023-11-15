@@ -2192,7 +2192,11 @@ function showErrorWhenDependenciesNotReady(
   );
 }
 
-function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefinitionValue: boolean): string | undefined {
+function getStringifiedValueFromEditorViewModel(
+  parameter: ParameterInfo,
+  isDefinitionValue: boolean,
+  idReplacements?: Record<string, string>
+): string | undefined {
   const { editor, editorOptions, editorViewModel } = parameter;
   switch (editor?.toLowerCase()) {
     case constants.EDITOR.TABLE:
@@ -2203,8 +2207,16 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
 
         // We do not parse here, since the type is string for table columns [assumed currently may change later]
         for (const item of editorViewModel.items) {
-          const keyValue = parameterValueToString({ type: types[0], value: item.key, ...commonProperties } as any, isDefinitionValue);
-          const valueValue = parameterValueToString({ type: types[1], value: item.value, ...commonProperties } as any, isDefinitionValue);
+          const keyValue = parameterValueToString(
+            { type: types[0], value: item.key, ...commonProperties } as any,
+            isDefinitionValue,
+            idReplacements
+          );
+          const valueValue = parameterValueToString(
+            { type: types[1], value: item.value, ...commonProperties } as any,
+            isDefinitionValue,
+            idReplacements
+          );
 
           if (keyValue || valueValue) {
             value.push({ [keys[0]]: keyValue, [keys[1]]: valueValue });
@@ -2216,8 +2228,8 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       return undefined;
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat)
-        : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
+        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat, idReplacements)
+        : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue, idReplacements));
     case constants.EDITOR.FLOATINGACTIONMENU:
       if (!editorViewModel || editorOptions?.menuKind !== FloatingActionMenuKind.outputs) {
         return undefined;
@@ -2266,14 +2278,19 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
   return JSON.stringify(value);
 };
 
-const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat: boolean): string | undefined => {
+const iterateSimpleQueryBuilderEditor = (
+  itemValue: ValueSegment[],
+  isRowFormat: boolean,
+  idReplacements?: Record<string, string>
+): string | undefined => {
   // if it is in advanced mode, we use loadParameterValue to get the value
   if (!isRowFormat) {
     return undefined;
   }
+  const { value: remappedItemValue } = idReplacements ? remapValueSegmentsWithNewIds(itemValue, idReplacements) : { value: itemValue };
   // otherwise we iterate through row items and concatenate the values
   let stringValue = '';
-  itemValue.forEach((segment) => {
+  remappedItemValue.forEach((segment) => {
     stringValue += segment.value;
   });
   return stringValue;
@@ -2283,6 +2300,7 @@ export const recurseSerializeCondition = (
   parameter: ParameterInfo,
   editorViewModel: any,
   isDefinitionValue: boolean,
+  idReplacements?: Record<string, string>,
   errors?: string[]
 ): any => {
   const returnVal: any = {};
@@ -2299,8 +2317,16 @@ export const recurseSerializeCondition = (
       operator = RowDropdownOptions.EQUALS;
     }
 
-    const operand1String = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
-    const operand2String = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
+    const operand1String = parameterValueToString(
+      { type: 'any', value: operand1, ...commonProperties } as any,
+      isDefinitionValue,
+      idReplacements
+    );
+    const operand2String = parameterValueToString(
+      { type: 'any', value: operand2, ...commonProperties } as any,
+      isDefinitionValue,
+      idReplacements
+    );
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
       if (!operand1String) {
         errors.push(
@@ -2335,7 +2361,7 @@ export const recurseSerializeCondition = (
       ];
     }
     returnVal[condition] = items.map((item: any) => {
-      return recurseSerializeCondition(parameter, item, isDefinitionValue, errors);
+      return recurseSerializeCondition(parameter, item, isDefinitionValue, idReplacements, errors);
     });
   }
   return returnVal;
@@ -3061,7 +3087,7 @@ export function parameterValueToString(
     }
   }
 
-  const valueFromEditor = getStringifiedValueFromEditorViewModel(remappedParameterInfo, isDefinitionValue);
+  const valueFromEditor = getStringifiedValueFromEditorViewModel(remappedParameterInfo, isDefinitionValue, idReplacements);
   if (valueFromEditor !== undefined) {
     return valueFromEditor;
   }

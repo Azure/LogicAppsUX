@@ -47,6 +47,12 @@
       "value": "Aktiválás"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Áttekintés"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -596,7 +602,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Munkafolyamat-segéd"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "Séma érvényesítése"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Konfigurálás"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "A folyamat szerkesztése a következőre:"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Áttekintés"
     }
   ],
   "8U0KPg": [
@@ -2481,6 +2475,12 @@
       "value": "” sémacsomópont bemenete eltérő típusú"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Beállítások"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3075,12 +3075,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Egyezményes világidő-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Globális nézet"
     }
   ],
   "IA+Ogm": [
@@ -3807,6 +3801,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kijev, Riga, Szófia, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Másolás"
     }
   ],
   "NE54Uu": [
@@ -4868,7 +4868,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Íme a folyamat."
     }
   ],
   "Twfck/": [
@@ -5859,6 +5859,12 @@
       "value": "Kicsinyítés"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5868,7 +5874,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "A munkafolyamat-segéd kizárólag segítségnyújtásra terveztük, és nem támogatja a munkafolyamatok létrehozását és szerkesztését."
     }
   ],
   "Z9PWl/": [
@@ -6407,12 +6413,6 @@
       "value": "Frissítés"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Létrehozás"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6442,7 +6442,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Sajnálom, nem értem a kérését. Kérem, fogalmazza át és próbálkozzon újra."
     }
   ],
   "dfNjw1": [
@@ -6550,7 +6550,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Ez a segéd segít megismerni a munkafolyamatokat és az Azure Logic Apps platform képességeit és összekötőit."
     }
   ],
   "eRvRWs": [
@@ -7489,6 +7489,12 @@
       "value": "(UTC+04:00) Abu-Dzabi, Maszkat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Kérdés feltevése a munkafolyamatról vagy az Azure Logic Apps egészéről ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7629,12 +7635,6 @@
     {
       "type": 0,
       "value": "Függvények"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Vissza"
     }
   ],
   "lX30/R": [
@@ -7981,12 +7981,6 @@
       "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8305,12 +8299,6 @@
     {
       "type": 0,
       "value": "Triggerek"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9507,6 +9495,12 @@
       "value": "(UTC-09:30) Marquises-szigetek"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Vászon"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9765,6 +9759,12 @@
     {
       "type": 0,
       "value": "Nem tetszik"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "XSLT létrehozása"
     }
   ],
   "yoCi15": [

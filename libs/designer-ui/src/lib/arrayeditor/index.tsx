@@ -1,6 +1,7 @@
+import type { ComboboxItem } from '../combobox';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps, CastHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler, CastHandler } from '../editor/base';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedComplexArray } from './expandedcomplexarray';
@@ -11,10 +12,11 @@ import { getOneDimensionalSchema, initializeComplexArrayItems, initializeSimpleA
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum ArrayType {
-  COMPLEX = 'complex',
-  SIMPLE = 'simple',
-}
+export const ArrayType = {
+  COMPLEX: 'complex',
+  SIMPLE: 'simple',
+} as const;
+export type ArrayType = (typeof ArrayType)[keyof typeof ArrayType];
 
 export interface ArrayItemSchema {
   type: string;
@@ -55,6 +57,11 @@ export interface ArrayEditorProps extends BaseEditorProps {
   itemSchema: ArrayItemSchema;
   arrayType: ArrayType;
   castParameter: CastHandler;
+  // Props for dynamic options
+  isLoading?: boolean;
+  options?: ComboboxItem[];
+  errorDetails?: { message: string };
+  onMenuOpen?: CallbackHandler;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({

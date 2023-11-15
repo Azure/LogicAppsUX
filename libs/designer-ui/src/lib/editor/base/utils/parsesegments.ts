@@ -4,6 +4,7 @@ import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import { $createTokenNode } from '../nodes/tokenNode';
+import { convertStringToSegments } from './editorToSegement';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
 import { $generateNodesFromDOM } from '@lexical/html';
 import type { LinkNode } from '@lexical/link';
@@ -44,7 +45,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
       currNode.getChildren().forEach((childNode) => {
         // LinkNodes are a special case because they are within a paragraph node
         if ($isLinkNode(childNode)) {
-          const linkNode = $createLinkNode(childNode.getURL());
+          const linkNode = $createLinkNode(getURL(childNode, tokensEnabled, nodeMap));
           childNode.getChildren().forEach((listItemChildNode) => {
             appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled);
           });
@@ -78,6 +79,14 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   root.append(paragraph);
 
   return root;
+};
+
+const getURL = (node: LinkNode, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): string => {
+  const valueUrl = node.getURL();
+  const urlSegments = convertStringToSegments(valueUrl, tokensEnabled, nodeMap);
+  return urlSegments
+    .map((segment) => (segment.type === ValueSegmentType.LITERAL ? segment.value : `@{${segment.value}}`))
+    .reduce((accumulator, current) => accumulator + current);
 };
 
 // Appends the children Nodes while parsing for TokenNodes
@@ -129,11 +138,11 @@ export const appendStringSegment = (
           if (tokenType === TokenType.FX) {
             const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
             const token = $createTokenNode({
-              title: getExpressionTokenTitle(expressionValue) ?? segmentValue ?? title,
+              title: getExpressionTokenTitle(expressionValue) ?? title,
               data: tokenSegment,
               brandColor,
-              icon: icon,
-              value: segmentValue,
+              icon,
+              value,
             });
             tokensEnabled && paragraph.append(token);
           }
@@ -143,8 +152,8 @@ export const appendStringSegment = (
               title: title ?? name,
               data: tokenSegment,
               brandColor,
-              icon: icon,
-              value: segmentValue ?? value,
+              icon,
+              value,
             });
             tokensEnabled && paragraph.append(token);
           } else {
@@ -162,7 +171,7 @@ export const appendStringSegment = (
   }
 };
 
-export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
+export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boolean): RootNode => {
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -173,18 +182,19 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
     paragraph = $createParagraphNode();
   }
 
-  value.forEach((segment) => {
+  // iterate through the segments and create the appropriate node
+  valueSegments.forEach((segment) => {
     const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
       const { brandColor, icon, title, name, value, tokenType } = segment.token;
       if (tokenType === TokenType.FX) {
         const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
         const token = $createTokenNode({
-          title: getExpressionTokenTitle(expressionValue) ?? segmentValue ?? title,
+          title: getExpressionTokenTitle(expressionValue) ?? title,
           data: segment,
           brandColor,
-          icon: icon,
-          value: segmentValue ?? value,
+          icon,
+          value,
         });
         tokensEnabled && paragraph.append(token);
       } else if (title || name) {
@@ -192,14 +202,15 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
           title: title ?? name,
           data: segment,
           brandColor,
-          icon: icon,
-          value: segmentValue ?? value,
+          icon,
+          value,
         });
         tokensEnabled && paragraph.append(token);
       } else {
         throw new Error('Token Node is missing title or name');
       }
     } else {
+      // there are some cases where segmentValue comes in as a JSON
       if (typeof segmentValue === 'string') {
         const splitSegment = segmentValue.split('\n');
         paragraph.append($createTextNode(splitSegment[0]));
@@ -223,11 +234,9 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
     if (segment.type === ValueSegmentType.LITERAL) {
       text += segment.value;
     } else if (segment.token) {
-      const segmentValue = segment.value;
-      // segment.token.value are not unique, so we'll need to use segment value instead
-      const { title, brandColor } = segment.token;
-      // get a unique identifier for the token
-      const string = `$[${title},${segmentValue},${brandColor}]$`;
+      const { title, brandColor, value } = segment.token;
+      // get a text-identifiable unique id for the token
+      const string = `$[${title},${value},${brandColor}]$`;
       text += string;
       nodeMap?.set(string, segment);
     }

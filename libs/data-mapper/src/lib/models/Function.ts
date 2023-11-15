@@ -36,16 +36,17 @@ export interface FunctionInput {
 }
 
 // NOTE: These values must be in alphabetical order (used in sorting within FunctionsList) with the exception of 'Custom' which goes at the bottom
-export enum FunctionCategory {
-  Collection = 'Collection',
-  Conversion = 'Conversion',
-  DateTime = 'Date time',
-  Logical = 'Logical',
-  Math = 'Math',
-  String = 'String',
-  Utility = 'Utilities',
-  Custom = 'Custom',
-}
+export const FunctionCategory = {
+  Collection: 'Collection',
+  Conversion: 'Conversion',
+  DateTime: 'Date time',
+  Logical: 'Logical',
+  Math: 'Math',
+  String: 'String',
+  Utility: 'Utilities',
+  Custom: 'Custom',
+} as const;
+export type FunctionCategory = (typeof FunctionCategory)[keyof typeof FunctionCategory];
 
 export interface CreatedFunction {
   // Should be the target schema to display this on

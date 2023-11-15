@@ -302,7 +302,7 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     editorType?: string,
     isCodeEditor?: boolean,
-    setIsInTokenPicker?: (b: boolean) => void,
+    setIsTokenPickerOpened?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
@@ -336,7 +336,7 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
-        setIsInTokenpicker={setIsInTokenPicker}
+        setIsTokenPickerOpened={setIsTokenPickerOpened}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
@@ -361,7 +361,6 @@ const ParameterSection = ({
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
       const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
-
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -381,7 +380,11 @@ const ParameterSection = ({
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
-            parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '',
+            parameterValueToString(
+              { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
+              false,
+              idReplacements
+            ) ?? '',
           getTokenPicker: (
             editorId: string,
             labelId: string,

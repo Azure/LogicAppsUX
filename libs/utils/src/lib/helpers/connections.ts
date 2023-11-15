@@ -73,13 +73,13 @@ export const isSharedManagedConnectorFromPApps = (connectorId: string) => {
 
 export function getAuthRedirect(connector?: Connector): string | undefined {
   if (!connector) return undefined;
-  const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
+  const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
   if (authParameters?.[0]) return authParameters?.[0].oAuthSettings?.redirectUrl;
   return undefined;
 }
 
 export function isFirstPartyConnector(connector: Connector): boolean {
-  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
+  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
 
   return (
     !!oauthParameters &&

@@ -6,27 +6,30 @@ import type { WorkflowProjectType } from './workflow';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Uri, WorkspaceFolder } from 'vscode';
 
-export enum ProjectSource {
-  Remote = 'Remote',
-  Local = 'Local',
-}
+export const ProjectSource = {
+  Remote: 'Remote',
+  Local: 'Local',
+} as const;
+export type ProjectSource = (typeof ProjectSource)[keyof typeof ProjectSource];
 
-export enum ProjectAccess {
-  ReadOnly = 'ReadOnly',
-  ReadWrite = 'ReadWrite',
-}
+export const ProjectAccess = {
+  ReadOnly: 'ReadOnly',
+  ReadWrite: 'ReadWrite',
+} as const;
+export type ProjectAccess = (typeof ProjectAccess)[keyof typeof ProjectAccess];
 
-export enum ProjectResource {
-  Functions = 'Functions',
-  Function = 'Function',
-  Workflows = 'Workflows',
-  Workflow = 'Workflow',
-  Configurations = 'Configurations',
-  Connections = 'Connections',
-  Connection = 'Connection',
-  Parameters = 'Parameters',
-  Parameter = 'Parameter',
-}
+export const ProjectResource = {
+  Functions: 'Functions',
+  Function: 'Function',
+  Workflows: 'Workflows',
+  Workflow: 'Workflow',
+  Configurations: 'Configurations',
+  Connections: 'Connections',
+  Connection: 'Connection',
+  Parameters: 'Parameters',
+  Parameter: 'Parameter',
+} as const;
+export type ProjectResource = (typeof ProjectResource)[keyof typeof ProjectResource];
 
 export type ProjectVersion = '~1' | '~2' | '~3' | '~4';
 
@@ -68,10 +71,11 @@ export interface IProjectWizardContext extends IActionContext {
   logicAppName?: string;
 }
 
-export enum OpenBehavior {
-  addToWorkspace = 'AddToWorkspace',
-  openInNewWindow = 'OpenInNewWindow',
-  openInCurrentWindow = 'OpenInCurrentWindow',
-  alreadyOpen = 'AlreadyOpen',
-  dontOpen = 'DontOpen',
-}
+export const OpenBehavior = {
+  addToWorkspace: 'AddToWorkspace',
+  openInNewWindow: 'OpenInNewWindow',
+  openInCurrentWindow: 'OpenInCurrentWindow',
+  alreadyOpen: 'AlreadyOpen',
+  dontOpen: 'DontOpen',
+} as const;
+export type OpenBehavior = (typeof OpenBehavior)[keyof typeof OpenBehavior];

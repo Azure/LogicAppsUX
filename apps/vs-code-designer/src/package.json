@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.81.2",
+  "version": "2.84.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -315,6 +315,12 @@
       {
         "command": "azureLogicAppsStandard.validateAndInstallBinaries",
         "title": "Validate and install dependency binaries",
+        "preview": true,
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.resetValidateAndInstallBinaries",
+        "title": "Reset binaries dependency settings",
         "preview": true,
         "category": "Azure Logic Apps"
       },

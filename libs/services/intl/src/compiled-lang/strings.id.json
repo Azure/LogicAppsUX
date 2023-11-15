@@ -47,6 +47,12 @@
       "value": "Pemicu"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Gambaran Umum"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Asisten alur kerja"
     }
   ],
   "2JA3gY": [
@@ -1409,12 +1415,6 @@
       "value": "Validasi Skema"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Konfigurasikan"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1587,12 +1587,6 @@
     {
       "type": 0,
       "value": "Edit alur ini untuk"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Gambaran umum"
     }
   ],
   "8U0KPg": [
@@ -2458,6 +2452,12 @@
       "value": "' memiliki input dengan tipe yang tidak cocok"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Pengaturan"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3037,12 +3037,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Waktu Universal Terkoordinasi-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Tampilan global"
     }
   ],
   "IA+Ogm": [
@@ -3758,6 +3752,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Salin"
     }
   ],
   "NE54Uu": [
@@ -4800,7 +4800,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Berikut adalah alur Anda."
     }
   ],
   "Twfck/": [
@@ -5811,6 +5811,12 @@
       "value": "Perkecil tampilan"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5820,7 +5826,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "Asisten alur kerja didesain hanya untuk memberikan bantuan dan tidak mendukung pembuatan atau pengeditan alur kerja."
     }
   ],
   "Z9PWl/": [
@@ -6359,12 +6365,6 @@
       "value": "Perbarui"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Buat"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6394,7 +6394,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Maaf, saya tidak dapat memahami permintaan Anda. Susun ulang kata-kata permintaan Anda dan coba lagi."
     }
   ],
   "dfNjw1": [
@@ -6502,7 +6502,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Asisten ini dapat membantu Anda mempelajari alur kerja serta kemampuan dan konektor platform Azure Logic Apps."
     }
   ],
   "eRvRWs": [
@@ -7422,6 +7422,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Ajukan pertanyaan tentang alur kerja ini atau tentang Azure Logic Apps secara keseluruhan ..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7551,12 +7557,6 @@
     {
       "type": 0,
       "value": "Fungsi"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Kembalikan"
     }
   ],
   "lX30/R": [
@@ -7903,12 +7903,6 @@
       "value": "Diperlukan. Nama properti yang akan dihapus."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8227,12 +8221,6 @@
     {
       "type": 0,
       "value": "Pemicu"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9422,6 +9410,12 @@
       "value": "(UTC-09:30) Marquesas Islands"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9680,6 +9674,12 @@
     {
       "type": 0,
       "value": "Tidak suka"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Buat XSLT"
     }
   ],
   "yoCi15": [

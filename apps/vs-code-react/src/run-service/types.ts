@@ -28,11 +28,12 @@ export interface RunDisplayItem {
   status: string;
 }
 
-export enum ProjectName {
-  export = 'export',
-  overview = 'overview',
-  review = 'review',
-}
+export const ProjectName = {
+  export: 'export',
+  overview: 'overview',
+  review: 'review',
+} as const;
+export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
 
 export interface Workflow {
   id: string;
@@ -66,16 +67,18 @@ export interface OutletContext {
   selectedWorkflows: Array<WorkflowsList>;
 }
 
-export enum QueryKeys {
-  workflowsData = 'workflowsData',
-  subscriptionData = 'subscriptionData',
-  runsData = 'runsData',
-  iseData = 'iseData',
-  regionData = 'regionData',
-  validation = 'validation',
-  summary = 'summary',
-  resourceGroupsData = 'resourceGroupsData',
-}
+export const QueryKeys = {
+  workflowsData: 'workflowsData',
+  subscriptionData: 'subscriptionData',
+  runsData: 'runsData',
+  iseData: 'iseData',
+  regionData: 'regionData',
+  validation: 'validation',
+  summary: 'summary',
+  resourceGroupsData: 'resourceGroupsData',
+} as const;
+
+export type QueryKeysType = (typeof QueryKeys)[keyof typeof QueryKeys];
 
 export interface ISubscription {
   id: string;
@@ -101,12 +104,13 @@ export type ExportData = {
   selectedAdvanceOptions: Array<AdvancedOptionsTypes>;
 };
 
-export enum ResourceType {
-  workflows = 'workflows',
-  subscriptions = 'subscriptions',
-  ise = 'ise',
-  resourcegroups = 'resourcegroups',
-}
+export const ResourceType = {
+  workflows: 'workflows',
+  subscriptions: 'subscriptions',
+  ise: 'ise',
+  resourcegroups: 'resourcegroups',
+};
+export type ResourceType = (typeof ResourceType)[keyof typeof ResourceType];
 
 export interface IIse {
   id: string;
@@ -136,22 +140,23 @@ export interface IResourceGroup {
   text?: string;
 }
 
-export enum RouteName {
-  export = 'export',
-  instance_selection = 'instance-selection',
-  workflows_selection = 'workflows-selection',
-  validation = 'validation',
-  overview = 'overview',
-  summary = 'summary',
-  status = 'status',
-  review = 'review',
-}
-
-export enum ValidationStatus {
-  succeeded = 'Succeeded',
-  succeeded_with_warnings = 'SucceededWithWarning',
-  failed = 'Failed',
-}
+export const RouteName = {
+  export: 'export',
+  instance_selection: 'instance-selection',
+  workflows_selection: 'workflows-selection',
+  validation: 'validation',
+  overview: 'overview',
+  summary: 'summary',
+  status: 'status',
+  review: 'review',
+};
+export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
+export const ValidationStatus = {
+  succeeded: 'Succeeded',
+  succeeded_with_warnings: 'SucceededWithWarning',
+  failed: 'Failed',
+};
+export type ValidationStatusType = (typeof ValidationStatus)[keyof typeof ValidationStatus];
 
 export interface IWorkflowValidation {
   validationState: string;
@@ -183,48 +188,49 @@ export interface IGroupedItem {
   message: string;
 }
 
-export enum WorkflowPart {
-  workflowOperations = 'workflowOperations',
-  connections = 'connections',
-  parameters = 'parameters',
-  workflow = 'details',
-}
-
-export enum StyledWorkflowPart {
-  workflowOperations = 'Operations',
-  connections = 'Connections',
-  parameters = 'Parameters',
-  workflow = 'Workflow',
-}
+export const WorkflowPart = {
+  workflowOperations: 'workflowOperations',
+  connections: 'connections',
+  parameters: 'parameters',
+  workflow: 'details',
+};
+export type WorkflowPart = (typeof WorkflowPart)[keyof typeof WorkflowPart];
+export const StyledWorkflowPart = {
+  workflowOperations: 'Operations',
+  connections: 'Connections',
+  parameters: 'Parameters',
+  workflow: 'Workflow',
+};
+export type StyledWorkflowPart = (typeof StyledWorkflowPart)[keyof typeof StyledWorkflowPart];
 
 export interface InjectValuesMessage {
-  command: ExtensionCommand.initialize_frame;
+  command: typeof ExtensionCommand.initialize_frame;
   data: InitializePayload;
 }
 
 export interface UpdateAccessTokenMessage {
-  command: ExtensionCommand.update_access_token;
+  command: typeof ExtensionCommand.update_access_token;
   data: {
     accessToken?: string;
   };
 }
 
 export interface UpdateExportPathMessage {
-  command: ExtensionCommand.update_export_path;
+  command: typeof ExtensionCommand.update_export_path;
   data: {
     targetDirectory: ITargetDirectory;
   };
 }
 
 export interface AddStatusMessage {
-  command: ExtensionCommand.add_status;
+  command: typeof ExtensionCommand.add_status;
   data: {
     status: string;
   };
 }
 
 export interface SetFinalStatusMessage {
-  command: ExtensionCommand.set_final_status;
+  command: typeof ExtensionCommand.set_final_status;
   data: {
     status: Status;
   };
@@ -248,15 +254,16 @@ export interface ISummaryData {
   };
 }
 
-export enum DetailCategory {
-  requiredStep = 'RequiredStep',
-  information = 'Information',
-}
-
-export enum StyledDetailCategory {
-  requiredStep = 'Required Step',
-  information = 'Information',
-}
+export const DetailCategory = {
+  requiredStep: 'RequiredStep',
+  information: 'Information',
+};
+export type DetailCategory = (typeof DetailCategory)[keyof typeof DetailCategory];
+export const StyledDetailCategory = {
+  requiredStep: 'Required Step',
+  information: 'Information',
+};
+export type StyledDetailCategory = (typeof StyledDetailCategory)[keyof typeof StyledDetailCategory];
 
 export interface ITargetDirectory {
   fsPath: string;
@@ -274,8 +281,9 @@ export interface INamingValidation {
   validName: boolean;
 }
 
-export enum AdvancedOptionsTypes {
-  off = 'Off',
-  cloneConnections = 'cloneConnections',
-  generateInfrastructureTemplates = 'generateInfrastructureTemplates',
-}
+export const AdvancedOptionsTypes = {
+  off: 'Off',
+  cloneConnections: 'cloneConnections',
+  generateInfrastructureTemplates: 'generateInfrastructureTemplates',
+};
+export type AdvancedOptionsTypes = (typeof AdvancedOptionsTypes)[keyof typeof AdvancedOptionsTypes];

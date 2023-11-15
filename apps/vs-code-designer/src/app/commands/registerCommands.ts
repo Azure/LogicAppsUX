@@ -6,12 +6,13 @@ import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
-import { validateAndInstallBinaries } from '../utils/binaries';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
 import { editAppSetting } from './appSettings/editAppSetting';
 import { renameAppSetting } from './appSettings/renameAppSetting';
 import { toggleSlotSetting } from './appSettings/toggleSlotSetting';
 import { uploadAppSettings } from './appSettings/uploadAppSettings';
+import { resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
+import { validateAndInstallBinaries } from './binaries/validateAndInstallBinaries';
 import { browseWebsite } from './browseWebsite';
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
@@ -133,6 +134,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, async (context: IActionContext) =>
     validateAndInstallBinaries(context)
   );
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));

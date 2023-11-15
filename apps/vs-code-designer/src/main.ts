@@ -1,6 +1,5 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import { stopDataMapperBackend } from './app/commands/dataMapper/FxWorkflowRuntime';
 import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -47,9 +46,8 @@ export async function activate(context: vscode.ExtensionContext) {
   if (legacyExtension !== undefined) {
     vscode.commands.executeCommand('workbench.extensions.uninstallExtension', legacyExtension.id);
     vscode.window.showWarningMessage(
-      'The deprecated Data Mapper extension has been uninstalled. The Data Mapper is now managed in the Logic Apps extension.'
+      'The Azure Logic Apps (Standard) extension now includes the Data Mapper capabilities. To avoid conflicts, the standalone Data Mapper extension has been removed. Please restart Visual Studio Code to complete this update.'
     );
-    vscode.window.showWarningMessage('Please restart VSCode to complete the new Data Mapper migration.');
   }
 
   ext.context = context;
@@ -105,7 +103,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate(): Promise<any> {
   stopDesignTimeApi();
-  stopDataMapperBackend();
   return undefined;
 }
 

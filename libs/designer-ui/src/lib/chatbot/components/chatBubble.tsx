@@ -1,15 +1,17 @@
 import constants from '../constants';
 import { animations } from './animations';
 import { ThumbsReactionButton } from './thumbsReactionButton';
-import { ActionButton, css, useTheme } from '@fluentui/react';
+import { ActionButton, IconButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
+import { useConst } from '@fluentui/react-hooks';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-export enum ChatEntryReaction {
-  thumbsUp = 'thumbsUp',
-  thumbsDown = 'thumbsDown',
-}
+export const ChatEntryReaction = {
+  thumbsUp: 'thumbsUp',
+  thumbsDown: 'thumbsDown',
+} as const;
+export type ChatEntryReaction = (typeof ChatEntryReaction)[keyof typeof ChatEntryReaction];
 
 type ChatBubbleProps = {
   isUserMessage?: boolean;
@@ -23,6 +25,7 @@ type ChatBubbleProps = {
   selectedReaction?: ChatEntryReaction;
   onThumbsReactionClicked?: (reaction: ChatEntryReaction) => void;
   disabled?: boolean;
+  textRef?: React.RefObject<HTMLDivElement>;
 };
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
@@ -36,7 +39,15 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   onThumbsReactionClicked,
   disabled,
   isEmphasized,
+  textRef,
 }) => {
+  const copyDisabled = useConst(() => {
+    try {
+      return !document.queryCommandSupported('Copy');
+    } catch {
+      return true;
+    }
+  });
   const intl = useIntl();
   const { isInverted } = useTheme();
   const intlText = {
@@ -44,7 +55,22 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       defaultMessage: 'AI-generated content may be incorrect',
       description: 'Chatbot disclaimer message on AI-generated content potentially being incorrect',
     }),
+    copyText: intl.formatMessage({
+      defaultMessage: 'Copy',
+      description: 'Chatbot copy button title',
+    }),
   };
+
+  const handleCopy = () => {
+    if (textRef?.current) {
+      const range = document.createRange();
+      range.selectNode(textRef.current);
+      window.getSelection()?.removeAllRanges();
+      window.getSelection()?.addRange(range);
+      document.execCommand('Copy');
+    }
+  };
+
   return (
     <div
       className={css(
@@ -69,22 +95,33 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           )}
           <div className={'msla-chat-bubble-footer'}>
             <div className={'msla-bubble-footer-disclaimer'}>{intlText.aIGeneratedDisclaimer}</div>
-            {onThumbsReactionClicked && (
-              <div className={'msla-bubble-reactions'}>
-                <ThumbsReactionButton
-                  onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
-                  isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
-                  isDownvote={false}
-                  disabled={disabled}
+            <div className={'msla-bubble-reactions'}>
+              {textRef && (
+                <IconButton
+                  className={'msla-copy-button'}
+                  title={intlText.copyText}
+                  iconProps={{ iconName: 'Copy' }}
+                  onClick={handleCopy}
+                  disabled={copyDisabled}
                 />
-                <ThumbsReactionButton
-                  onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
-                  isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
-                  isDownvote={true}
-                  disabled={disabled}
-                />
-              </div>
-            )}
+              )}
+              {onThumbsReactionClicked && (
+                <>
+                  <ThumbsReactionButton
+                    onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsUp)}
+                    isVoted={selectedReaction === ChatEntryReaction.thumbsUp}
+                    isDownvote={false}
+                    disabled={disabled}
+                  />
+                  <ThumbsReactionButton
+                    onClick={() => onThumbsReactionClicked(ChatEntryReaction.thumbsDown)}
+                    isVoted={selectedReaction === ChatEntryReaction.thumbsDown}
+                    isDownvote={true}
+                    disabled={disabled}
+                  />
+                </>
+              )}
+            </div>
           </div>
         </div>
       ) : null}

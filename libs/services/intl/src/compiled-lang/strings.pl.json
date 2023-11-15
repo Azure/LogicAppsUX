@@ -47,6 +47,12 @@
       "value": "Wyzwalacz"
     }
   ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Przegląd"
+    }
+  ],
   "+Uvo/p": [
     {
       "type": 0,
@@ -592,7 +598,7 @@
   "2Gh+Gd": [
     {
       "type": 0,
-      "value": "Workflow assistant"
+      "value": "Asystent przepływu pracy"
     }
   ],
   "2JA3gY": [
@@ -1417,12 +1423,6 @@
       "value": "Weryfikacja schematu"
     }
   ],
-  "7WVgiU": [
-    {
-      "type": 0,
-      "value": "Konfiguruj"
-    }
-  ],
   "7ZR1xr": [
     {
       "type": 0,
@@ -1595,12 +1595,6 @@
     {
       "type": 0,
       "value": "Edytuj ten przepływ, aby"
-    }
-  ],
-  "8SxNQC": [
-    {
-      "type": 0,
-      "value": "Przegląd"
     }
   ],
   "8U0KPg": [
@@ -2499,6 +2493,12 @@
       "value": "” ma dane wejściowe o niezgodnym typie"
     }
   ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Ustawienia"
+    }
+  ],
   "E8iqLl": [
     {
       "type": 0,
@@ -3119,12 +3119,6 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Uniwersalny czas koordynowany-11"
-    }
-  ],
-  "I7/+er": [
-    {
-      "type": 0,
-      "value": "Widok globalny"
     }
   ],
   "IA+Ogm": [
@@ -3873,6 +3867,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Helsinki, Kijów, Ryga, Sofia, Tallin, Wilno"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Kopiuj"
     }
   ],
   "NE54Uu": [
@@ -4952,7 +4952,7 @@
   "TvPOXI": [
     {
       "type": 0,
-      "value": "Here's your flow."
+      "value": "Oto Twój przepływ."
     }
   ],
   "Twfck/": [
@@ -5963,6 +5963,12 @@
       "value": "Pomniejsz"
     }
   ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welcome to the workflow assistant!"
+    }
+  ],
   "Yw7Nfl": [
     {
       "type": 0,
@@ -5972,7 +5978,7 @@
   "Z8tBFS": [
     {
       "type": 0,
-      "value": "The workflow assistant is designed only to provide help and doesn't support workflow creation or editing."
+      "value": "Asystent przepływu pracy jest przeznaczony tylko do udzielania pomocy i nie obsługuje tworzenia ani edytowania przepływu pracy."
     }
   ],
   "Z9PWl/": [
@@ -6511,12 +6517,6 @@
       "value": "Aktualizuj"
     }
   ],
-  "dPa7+6": [
-    {
-      "type": 0,
-      "value": "Generuj"
-    }
-  ],
   "dQmi91": [
     {
       "type": 0,
@@ -6546,7 +6546,7 @@
   "dfKsgg": [
     {
       "type": 0,
-      "value": "Sorry, I couldn't understand your request. Please rephrase it and try again."
+      "value": "Niestety, nie udało mi się zrozumieć Twojego żądania. Sformułuj je jeszcze raz i spróbuj ponownie."
     }
   ],
   "dfNjw1": [
@@ -6654,7 +6654,7 @@
   "eO1h/h": [
     {
       "type": 0,
-      "value": "This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors."
+      "value": "Ten asystent może pomóc w pozyskaniu informacji o przepływach pracy oraz możliwościach i łącznikach platformy w usłudze Azure Logic Apps."
     }
   ],
   "eRvRWs": [
@@ -7611,6 +7611,12 @@
       "value": "(UTC+04:00) Abu Zabi, Maskat"
     }
   ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Zadaj pytanie dotyczące tego przepływu pracy lub samej usługi Logic Apps..."
+    }
+  ],
   "kZCX7t": [
     {
       "type": 0,
@@ -7789,12 +7795,6 @@
     {
       "type": 0,
       "value": "Funkcje"
-    }
-  ],
-  "lUm6fl": [
-    {
-      "type": 0,
-      "value": "Powrót"
     }
   ],
   "lX30/R": [
@@ -8141,12 +8141,6 @@
       "value": "Wymagane. Nazwa właściwości do usunięcia."
     }
   ],
-  "nUxMK9": [
-    {
-      "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole"
-    }
-  ],
   "nVDG00": [
     {
       "type": 0,
@@ -8465,12 +8459,6 @@
     {
       "type": 0,
       "value": "Wyzwalacze"
-    }
-  ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welcome to workflow assistant!"
     }
   ],
   "pozypE": [
@@ -9693,6 +9681,12 @@
       "value": "(UTC-09:30) Markizy"
     }
   ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Kanwa"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -9951,6 +9945,12 @@
     {
       "type": 0,
       "value": "Nie lubię"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Generuj XSLT"
     }
   ],
   "yoCi15": [
