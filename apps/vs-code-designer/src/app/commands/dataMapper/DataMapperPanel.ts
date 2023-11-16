@@ -101,7 +101,7 @@ export default class DataMapperPanel {
         });
         break;
       }
-      case 'webviewLoaded':
+      case ExtensionCommand.webviewLoaded:
         // Send runtime port to webview
         this.sendMsgToWebview({ command: ExtensionCommand.setRuntimePort, data: `${ext.designTimePort}` });
 
@@ -109,45 +109,45 @@ export default class DataMapperPanel {
         this.handleLoadMapDefinitionIfAny();
 
         break;
-      case 'webviewRscLoadError':
+      case ExtensionCommand.webviewRscLoadError:
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
         ext.showError(localize('WebviewRscLoadError', `Error loading Data Mapper resource: "{0}"`, msg.data));
         break;
-      case 'addSchemaFromFile': {
+      case ExtensionCommand.addSchemaFromFile: {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
-      case 'readLocalSchemaFileOptions': {
+      case ExtensionCommand.readLocalSchemaFileOptions: {
         this.handleReadSchemaFileOptions();
         break;
       }
-      case 'readLocalCustomXsltFileOptions': {
+      case ExtensionCommand.readLocalCustomXsltFileOptions: {
         this.handleReadAvailableFunctionPaths();
         break;
       }
-      case 'saveDataMapDefinition': {
+      case ExtensionCommand.saveDataMapDefinition: {
         this.saveMapDefinition(msg.data);
         break;
       }
-      case 'saveDataMapMetadata': {
+      case ExtensionCommand.saveDataMapMetadata: {
         this.saveMapMetadata(msg.data);
         break;
       }
-      case 'saveDataMapXslt': {
+      case ExtensionCommand.saveDataMapXslt: {
         this.saveMapXslt(msg.data);
         break;
       }
-      case 'saveDraftDataMapDefinition': {
+      case ExtensionCommand.saveDraftDataMapDefinition: {
         if (this.dataMapStateIsDirty) {
           this.saveDraftDataMapDefinition(msg.data);
         }
         break;
       }
-      case 'setIsMapStateDirty': {
+      case ExtensionCommand.setIsMapStateDirty: {
         this.handleUpdateMapDirtyState(msg.data);
         break;
       }
-      case 'getFunctionDisplayExpanded': {
+      case ExtensionCommand.getFunctionDisplayExpanded: {
         this.getConfigurationSetting('useExpandedFunctionCards');
         break;
       }
