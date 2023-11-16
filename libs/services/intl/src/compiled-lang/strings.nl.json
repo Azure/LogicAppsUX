@@ -4221,6 +4221,12 @@
       "value": "Schema-URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4325,6 +4331,12 @@
     {
       "type": 0,
       "value": "Negeren"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5862,7 +5874,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Welkom bij de werkstroomassistent!"
     }
   ],
   "Yw7Nfl": [
@@ -8327,6 +8339,12 @@
       "value": "Hiermee wordt een XML-knooppunt, knooppuntenset of waarde als JSON geretourneerd uit de opgegeven XPath-expressie"
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9221,6 +9239,12 @@
     {
       "type": 0,
       "value": "Elke actie moet een of meer uitvoeringen hebben na configuraties"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [

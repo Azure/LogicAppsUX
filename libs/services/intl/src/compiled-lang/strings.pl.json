@@ -4291,6 +4291,12 @@
       "value": "Identyfikator URI schematu"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4395,6 +4401,12 @@
     {
       "type": 0,
       "value": "Odrzuć"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5966,7 +5978,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Witamy w asystencie przepływu pracy!"
     }
   ],
   "Yw7Nfl": [
@@ -8491,6 +8503,12 @@
       "value": "Zwraca węzeł, zestaw węzłów lub wartość XML jako kod JSON na podstawie podanego wyrażenia XPath"
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9419,6 +9437,12 @@
     {
       "type": 0,
       "value": "Każda akcja musi mieć co najmniej jeden przebieg po konfiguracji"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [

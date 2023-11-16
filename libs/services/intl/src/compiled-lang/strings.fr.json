@@ -4250,6 +4250,12 @@
       "value": "URI de schéma"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4354,6 +4360,12 @@
     {
       "type": 0,
       "value": "Abandonner"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5910,7 +5922,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Bienvenue dans l’assistant de workflow !"
     }
   ],
   "Yw7Nfl": [
@@ -8401,6 +8413,12 @@
       "value": "Retourne un nœud XML, un jeu de nœuds ou une valeur au format JSON à partir de l'expression XPath fournie"
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9318,6 +9336,12 @@
     {
       "type": 0,
       "value": "Chaque action doit avoir une ou plusieurs exécutions après les configurations"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [

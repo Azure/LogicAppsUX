@@ -4242,6 +4242,12 @@
       "value": "URI schema"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4346,6 +4352,12 @@
     {
       "type": 0,
       "value": "Rimuovi"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5902,7 +5914,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Ti diamo il benvenuto nell'assistente del flusso di lavoro."
     }
   ],
   "Yw7Nfl": [
@@ -8381,6 +8393,12 @@
       "value": "Restituisce un valore, un set di nodi o un nodo XML come JSON dall'espressione XPath specificata"
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9298,6 +9316,12 @@
     {
       "type": 0,
       "value": "Per ogni azione è necessario eseguire una o più operazioni dopo le configurazioni"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [
