@@ -4217,6 +4217,12 @@
       "value": "Schemat-URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4321,6 +4327,12 @@
     {
       "type": 0,
       "value": "Ignorera"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5854,7 +5866,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Välkommen till arbetsflödesassistenten!"
     }
   ],
   "Yw7Nfl": [
@@ -8319,6 +8331,12 @@
       "value": "Rerturnerar en XML-nod, en noduppsättning eller ett värde som JSON från det tillhandahållna XPath-uttrycket"
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9217,6 +9235,12 @@
     {
       "type": 0,
       "value": "Varje åtgärd måste köras en eller flera gånger efter konfiguration"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [

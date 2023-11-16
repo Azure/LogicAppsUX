@@ -4172,6 +4172,12 @@
       "value": "スキーマ URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4276,6 +4282,12 @@
     {
       "type": 0,
       "value": "破棄"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5806,7 +5818,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "ワークフロー アシスタントへようこそ!"
     }
   ],
   "Yw7Nfl": [
@@ -8229,6 +8241,12 @@
       "value": "指定された XPath 式から XML ノード、ノードセット、または値を JSON として返します"
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9116,6 +9134,12 @@
     {
       "type": 0,
       "value": "各アクションは、構成後に 1 回以上の実行を必要とします"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [

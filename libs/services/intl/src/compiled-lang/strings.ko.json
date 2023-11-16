@@ -4164,6 +4164,12 @@
       "value": "스키마 URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4268,6 +4274,12 @@
     {
       "type": 0,
       "value": "취소"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5802,7 +5814,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "워크플로 도우미를 시작합니다!"
     }
   ],
   "Yw7Nfl": [
@@ -8225,6 +8237,12 @@
       "value": "XML 노드, 노드 집합 또는 값을 제공된 XPath 식의 JSON으로 반환합니다."
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9112,6 +9130,12 @@
     {
       "type": 0,
       "value": "각 작업은 구성 후 하나 이상의 실행이 있어야 합니다."
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [

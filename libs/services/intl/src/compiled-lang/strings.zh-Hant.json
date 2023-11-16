@@ -4168,6 +4168,12 @@
       "value": "結構描述 URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4276,6 +4282,12 @@
     {
       "type": 0,
       "value": "捨棄"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5818,7 +5830,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "歡迎使用工作流程助理！"
     }
   ],
   "Yw7Nfl": [
@@ -8249,6 +8261,12 @@
       "value": "從提供的 XPath 運算式以 JSON 格式傳回 XML 節點、節點集或值"
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9144,6 +9162,12 @@
     {
       "type": 0,
       "value": "每個動作在設定之後必須執行一或多個"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [

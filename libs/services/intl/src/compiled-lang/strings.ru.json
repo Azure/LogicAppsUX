@@ -4291,6 +4291,12 @@
       "value": "URI схемы"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-8 byte length of an input string"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4395,6 +4401,12 @@
     {
       "type": 0,
       "value": "Отменить"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-16 length from."
     }
   ],
   "Q5w4Do": [
@@ -5962,7 +5974,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Добро пожаловать в помощник по рабочим процессам!"
     }
   ],
   "Yw7Nfl": [
@@ -8475,6 +8487,12 @@
       "value": "Возвращает узел XML, набор узлов или значение JSON из предоставленного выражения XPath"
     }
   ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Required. The string to calculate UTF-8 length from."
+    }
+  ],
   "q1gfIs": [
     {
       "type": 0,
@@ -9403,6 +9421,12 @@
     {
       "type": 0,
       "value": "Каждое действие должно иметь одно или несколько выполнений после конфигурации"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returns the UTF-16 byte length of an input string"
     }
   ],
   "vEBhDX": [
