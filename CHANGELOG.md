@@ -1,4 +1,18 @@
 # Logic Apps Designer
+### [2.84.1](https://github.com/Azure/LogicAppsUX/compare/v2.84.0...v2.84.1) (2023-11-10)
+
+
+### Bug Fixes
+
+* **copilot:** Adding "the" to the greeting message ([#3674](https://github.com/Azure/LogicAppsUX/issues/3674)) ([b6c22a4](https://github.com/Azure/LogicAppsUX/commit/b6c22a4f8a59dabcd2e2979a57305c1a5ce89735))
+* **copilot:** Changing icon in header ([#3663](https://github.com/Azure/LogicAppsUX/issues/3663)) ([a0f0eb1](https://github.com/Azure/LogicAppsUX/commit/a0f0eb1ee7c22e21bd9b8ff03192c7c15908e5db))
+* **copilot:** Support for copilot copy in portal ([#3662](https://github.com/Azure/LogicAppsUX/issues/3662)) ([7c330ee](https://github.com/Azure/LogicAppsUX/commit/7c330eef0277cc169a99955f384e71baf96e18b4))
+* **Data Mapper:** Reenabled Generate On Clean State ([#3651](https://github.com/Azure/LogicAppsUX/issues/3651)) ([b3f44e9](https://github.com/Azure/LogicAppsUX/commit/b3f44e909b0ae22fa3f352fe937d5268b1d0f9b1))
+* **designer:** Fixes an issue where after inserting a token, token picker button doesn't appear  ([#3660](https://github.com/Azure/LogicAppsUX/issues/3660)) ([1b945e6](https://github.com/Azure/LogicAppsUX/commit/1b945e6cf8a8b404a052e0c5e70e6323422c0f2b))
+* **designer:** Update Downstream Tokens in EditorViewModel ([#3673](https://github.com/Azure/LogicAppsUX/issues/3673)) ([767cc5d](https://github.com/Azure/LogicAppsUX/commit/767cc5d24ca044217b8129c9a1e5b26fd0f920c2))
+* **designer:** Using segment values instead of token values, which fails in the Condition Editors ([#3664](https://github.com/Azure/LogicAppsUX/issues/3664)) ([7c79bff](https://github.com/Azure/LogicAppsUX/commit/7c79bff52c2e514214e6ab83c4f625a2f3c5a0d1))
+* **vscode:** Add validation of func command ([#3658](https://github.com/Azure/LogicAppsUX/issues/3658)) ([d17f195](https://github.com/Azure/LogicAppsUX/commit/d17f1955d00f94c8bbd56bb0df94932310e670fb))
+
 ## [2.84.0](https://github.com/Azure/LogicAppsUX/compare/v2.83.1...v2.84.0) (2023-11-09)
 
 ### [2.83.1](https://github.com/Azure/LogicAppsUX/compare/v2.83.0...v2.83.1) (2023-11-09)
