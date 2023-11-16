@@ -1,4 +1,32 @@
 # Logic Apps Designer
+## [2.85.0](https://github.com/Azure/LogicAppsUX/compare/v2.84.0...v2.85.0) (2023-11-16)
+
+
+### Features
+
+* **designer-ui:** Add "See More" to all token picker sections ([#3689](https://github.com/Azure/LogicAppsUX/issues/3689)) ([87fddfd](https://github.com/Azure/LogicAppsUX/commit/87fddfd43612047e4ba9f7ed24d7316cd69422c8))
+* **designer-ui:** Improve token picker styling ([#3675](https://github.com/Azure/LogicAppsUX/issues/3675)) ([53976f0](https://github.com/Azure/LogicAppsUX/commit/53976f0c1cbf5b9395084776ca8bad0ecbd09b4d))
+* **Designer:** Added support for dynamic data in the array editor ([#3686](https://github.com/Azure/LogicAppsUX/issues/3686)) ([b633488](https://github.com/Azure/LogicAppsUX/commit/b633488ea6d90d9d53072e41a8000476e5664d8a))
+* **Designer:** Added token expressions `utf8Length` and `utf16Length` ([#3696](https://github.com/Azure/LogicAppsUX/issues/3696)) ([c5404d0](https://github.com/Azure/LogicAppsUX/commit/c5404d0c7cf548ee205c26c70253871b5140b53e))
+
+
+### Bug Fixes
+
+* **copilot:** Adding "the" to the greeting message ([#3674](https://github.com/Azure/LogicAppsUX/issues/3674)) ([b6c22a4](https://github.com/Azure/LogicAppsUX/commit/b6c22a4f8a59dabcd2e2979a57305c1a5ce89735))
+* **copilot:** Changing icon in header ([#3663](https://github.com/Azure/LogicAppsUX/issues/3663)) ([a0f0eb1](https://github.com/Azure/LogicAppsUX/commit/a0f0eb1ee7c22e21bd9b8ff03192c7c15908e5db))
+* **copilot:** Support for copilot copy in portal ([#3662](https://github.com/Azure/LogicAppsUX/issues/3662)) ([7c330ee](https://github.com/Azure/LogicAppsUX/commit/7c330eef0277cc169a99955f384e71baf96e18b4))
+* **Data Mapper:** Reenabled Generate On Clean State ([#3651](https://github.com/Azure/LogicAppsUX/issues/3651)) ([b3f44e9](https://github.com/Azure/LogicAppsUX/commit/b3f44e909b0ae22fa3f352fe937d5268b1d0f9b1))
+* **designer-ui:** Prevent text formatting in non-HTML inputs ([#3702](https://github.com/Azure/LogicAppsUX/issues/3702)) ([4403da8](https://github.com/Azure/LogicAppsUX/commit/4403da833c6bb103f984c548ad1598f04e03b720))
+* **designer:** Add aria label to operation search card ([#3631](https://github.com/Azure/LogicAppsUX/issues/3631)) ([3a3ea00](https://github.com/Azure/LogicAppsUX/commit/3a3ea00d8615ac4f275392b73d801a885dc13969))
+* **designer:** fix links in html editor when they have tokens ([#3697](https://github.com/Azure/LogicAppsUX/issues/3697)) ([a60222c](https://github.com/Azure/LogicAppsUX/commit/a60222c8915e99e9c0968e3b9348d6f07f2d4886))
+* **designer:** Fixes an issue where after inserting a token, token picker button doesn't appear  ([#3660](https://github.com/Azure/LogicAppsUX/issues/3660)) ([1b945e6](https://github.com/Azure/LogicAppsUX/commit/1b945e6cf8a8b404a052e0c5e70e6323422c0f2b))
+* **designer:** Update Downstream Tokens in EditorViewModel ([#3673](https://github.com/Azure/LogicAppsUX/issues/3673)) ([767cc5d](https://github.com/Azure/LogicAppsUX/commit/767cc5d24ca044217b8129c9a1e5b26fd0f920c2))
+* **designer:** Using segment values instead of token values, which fails in the Condition Editors ([#3664](https://github.com/Azure/LogicAppsUX/issues/3664)) ([7c79bff](https://github.com/Azure/LogicAppsUX/commit/7c79bff52c2e514214e6ab83c4f625a2f3c5a0d1))
+* **vscode:**  Add reset binaries dependencies command ([#3676](https://github.com/Azure/LogicAppsUX/issues/3676)) ([b0aec33](https://github.com/Azure/LogicAppsUX/commit/b0aec33da02624df483e353dd34c1e88c8fc108e))
+* **vscode:** Add troubleshoot dependencies message ([#3687](https://github.com/Azure/LogicAppsUX/issues/3687)) ([b5c11f5](https://github.com/Azure/LogicAppsUX/commit/b5c11f50281c70d21130086b90bbd38bf5bac0f4))
+* **vscode:** Add validation of func command ([#3658](https://github.com/Azure/LogicAppsUX/issues/3658)) ([d17f195](https://github.com/Azure/LogicAppsUX/commit/d17f1955d00f94c8bbd56bb0df94932310e670fb))
+* **vscode:** Fix nullish setting when getting user settings ([#3690](https://github.com/Azure/LogicAppsUX/issues/3690)) ([dfaef25](https://github.com/Azure/LogicAppsUX/commit/dfaef25368a3b4f7f36e9b08c79106ed41565103))
+* **vscode:** Use same ports and child proccess in designer and data mapper extension ([#3672](https://github.com/Azure/LogicAppsUX/issues/3672)) ([583f0c2](https://github.com/Azure/LogicAppsUX/commit/583f0c25a5937d0098440828963020d8c8119909))
 
 ## [2.84.0](https://github.com/Azure/LogicAppsUX/compare/v2.83.1...v2.84.0) (2023-11-09)
 
