@@ -57,6 +57,7 @@ const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
 const DesignerEditor = () => {
+  console.log('test');
   const { id: workflowId } = useSelector((state: RootState) => ({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
@@ -258,6 +259,10 @@ const DesignerEditor = () => {
                 location={canonicalLocation}
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
+                rightShift={showChatBot ? chatbotPanelWidth : undefined}
+                enableCopilot={async () => {
+                  dispatch(setIsChatBotEnabled(!showChatBot));
+                }}
               />
               <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
               {showChatBot ? (

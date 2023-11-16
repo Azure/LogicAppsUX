@@ -407,10 +407,9 @@ export const workflowSlice = createSlice({
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
 
       // Only interested in behavior like centering canvas when it is the first load of the workflow
-      state.focusedCanvasNodeId = isFirstLoad ?
-        Object.entries(deserializedWorkflow?.actionData ?? {}).find(
-          ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
-        )?.[0] : undefined;
+      state.focusedCanvasNodeId = isFirstLoad
+        ? Object.entries(deserializedWorkflow?.actionData ?? {}).find(([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter)?.[0]
+        : undefined;
     });
     builder.addCase(updateNodeParameters, (state, action) => {
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
