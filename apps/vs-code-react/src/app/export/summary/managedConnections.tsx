@@ -1,7 +1,6 @@
 import { QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import { updateManagedConnections } from '../../../state/WorkflowSlice';
-import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
@@ -18,7 +17,7 @@ export const ManagedConnections: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [isConnectionsChecked, setConnectionsChecked] = useState(false);
   const workflowState = useSelector((state: RootState) => state.workflow);
-  const { baseUrl, accessToken, exportData, cloudHost } = workflowState as InitializedWorkflowState;
+  const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, managedConnections } = exportData;
   const { isManaged, resourceGroup: selectedResourceGroup, resourceGroupLocation } = managedConnections;
 

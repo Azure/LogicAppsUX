@@ -1,4 +1,3 @@
-import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import { Status as FinalStatus } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
 import { Text, List } from '@fluentui/react';
@@ -7,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 export const Status: React.FC = () => {
   const intl = useIntl();
-  const workflowState = useSelector((state: RootState) => state.workflow) as InitializedWorkflowState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
   const statuses = workflowState.statuses ?? [];
 
   const intlText = {
@@ -34,7 +33,7 @@ export const Status: React.FC = () => {
 
 const FinalStatusGadget: React.FC = () => {
   const intl = useIntl();
-  const workflowState = useSelector((state: RootState) => state.workflow) as InitializedWorkflowState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
   const status = workflowState.finalStatus;
   const { targetDirectory } = workflowState.exportData;
 

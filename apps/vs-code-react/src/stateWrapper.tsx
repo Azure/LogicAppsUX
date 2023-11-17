@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 
 export const StateWrapper: React.FC = () => {
   const navigate = useNavigate();
-  const workflowState = useSelector((state: RootState) => state.workflow);
+  const projectState = useSelector((state: RootState) => state.project);
 
   useEffect(() => {
-    if (workflowState.initialized) {
-      switch (workflowState.project) {
+    if (projectState.initialized) {
+      switch (projectState.project) {
         case ProjectName.export: {
           navigate(`/${ProjectName.export}/instance-selection`, { replace: true });
           break;
@@ -36,7 +36,7 @@ export const StateWrapper: React.FC = () => {
         }
       }
     }
-  }, [workflowState, navigate]);
+  }, [projectState, navigate]);
 
   return null;
 };

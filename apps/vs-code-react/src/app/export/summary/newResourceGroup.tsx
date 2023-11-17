@@ -1,5 +1,4 @@
 import type { INamingRules } from '../../../run-service';
-import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
 import { isNameValid } from './helper';
 import { Callout, Link, PrimaryButton, Text, TextField } from '@fluentui/react';
@@ -26,7 +25,7 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const [name, setName] = useState<string>('');
   const workflowState = useSelector((state: RootState) => state.workflow);
-  const { exportData } = workflowState as InitializedWorkflowState;
+  const { exportData } = workflowState;
   const { location } = exportData;
 
   const intlText = {

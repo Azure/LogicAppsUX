@@ -102,6 +102,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
+            project: 'designer',
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             workflowDetails: this.workflowDetails,

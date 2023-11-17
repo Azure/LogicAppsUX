@@ -1,5 +1,4 @@
 import { RouteName, ValidationStatus } from '../../../run-service';
-import type { InitializedWorkflowState } from '../../../state/WorkflowSlice';
 import { Status } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
@@ -16,7 +15,7 @@ export const Navigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const workflowState = useSelector((state: RootState) => state.workflow) as InitializedWorkflowState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
   const { exportData } = workflowState;
   const { finalStatus } = workflowState;
   const {

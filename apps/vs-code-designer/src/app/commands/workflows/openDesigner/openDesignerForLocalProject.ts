@@ -166,6 +166,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
+            project: 'designer',
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             baseUrl: this.baseUrl,

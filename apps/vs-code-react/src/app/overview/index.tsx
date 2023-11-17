@@ -7,10 +7,11 @@ import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 export const OverviewApp: React.FC = () => {
+  const projectState = useSelector((state: RootState) => state.project);
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
 
-  return workflowState.initialized ? (
+  return projectState.initialized ? (
     <App
       apiVersion={workflowState.apiVersion}
       baseUrl={workflowState.baseUrl}

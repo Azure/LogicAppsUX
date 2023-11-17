@@ -1,5 +1,7 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
-import type { ExtensionCommand } from '@microsoft/vscode-extension';
+import type { ApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
+import type { MapDefinitionData, SchemaType } from '@microsoft/logic-apps-data-mapper';
+import type { ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 
 export interface IApiService {
   getWorkflows(subscriptionId: string, iseId?: string, location?: string): Promise<WorkflowsList[]>;
@@ -152,6 +154,7 @@ export const RouteName = {
   status: 'status',
   review: 'review',
 };
+
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
 export const ValidationStatus = {
   succeeded: 'Succeeded',
@@ -205,9 +208,72 @@ export const StyledWorkflowPart = {
 };
 export type StyledWorkflowPart = (typeof StyledWorkflowPart)[keyof typeof StyledWorkflowPart];
 
+type FetchSchemaData = { fileName: string; type: SchemaType };
+export type XsltData = { filename: string; fileContents: string };
+
+// Data Mapper Message Interfaces
+export interface FetchSchemaMessage {
+  command: typeof ExtensionCommand.fetchSchema;
+  data: FetchSchemaData;
+}
+
+export interface LoadDataMapMessage {
+  command: typeof ExtensionCommand.loadDataMap;
+  data: MapDefinitionData;
+}
+
+export interface ShowAvailableSchemasMessage {
+  command: typeof ExtensionCommand.showAvailableSchemas;
+  data: string[];
+}
+
+export interface GetAvailableCustomXsltPathsMessage {
+  command: typeof ExtensionCommand.getAvailableCustomXsltPaths;
+  data: string[];
+}
+
+export interface SetXsltDataMessage {
+  command: typeof ExtensionCommand.setXsltData;
+  data: XsltData;
+}
+
+export interface SetRuntimePortMessage {
+  command: typeof ExtensionCommand.setRuntimePort;
+  data: string;
+}
+
+export interface GetConfigurationSettingMessage {
+  command: typeof ExtensionCommand.getConfigurationSetting;
+  data: boolean;
+}
+
+// Designer Message Interfaces
+export interface ReceiveCallbackMessage {
+  command: typeof ExtensionCommand.receiveCallback;
+  data: any;
+}
+
+export interface CompleteFileSystemConnectionMessage {
+  command: typeof ExtensionCommand.completeFileSystemConnection;
+  data: { connectionName: string; connection: any; error: string };
+}
+
+export interface UpdatePanelMetadataMessage {
+  command: typeof ExtensionCommand.update_panel_metadata;
+  data: {
+    panelMetadata: IDesignerPanelMetadata;
+    connectionData: ConnectionsData;
+    apiHubServiceDetails: ApiHubServiceDetails;
+  };
+}
+
+// Rest of Message Interfaces
 export interface InjectValuesMessage {
   command: typeof ExtensionCommand.initialize_frame;
-  data: InitializePayload;
+  data:
+    | InitializePayload & {
+        project: string;
+      };
 }
 
 export interface UpdateAccessTokenMessage {
