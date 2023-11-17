@@ -2839,12 +2839,6 @@
       "value": "Memulai"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Lihat Lebih Sedikit"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3440,12 +3434,6 @@
     {
       "type": 0,
       "value": "Saran alur berikutnya"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Lihat Lainnya"
     }
   ],
   "LMB8am": [
@@ -8091,6 +8079,12 @@
       "value": "Apakah Anda ingin membuang semua perubahan yang tidak disimpan?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9014,6 +9008,20 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk dievaluasi. Sebuah objek yang muncul di koleksi juga muncul dalam hasil."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [

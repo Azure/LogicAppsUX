@@ -2921,12 +2921,6 @@
       "value": "Začínáme"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Zobrazit méně"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3551,12 +3545,6 @@
     {
       "type": 0,
       "value": "Další návrh toku"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Zobrazit více"
     }
   ],
   "LMB8am": [
@@ -8305,6 +8293,12 @@
       "value": "Chcete zahodit všechny neuložené změny?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9253,6 +9247,20 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce k vyhodnocení. Objekt, který se zobrazí v libovolné kolekci, se také zobrazí ve výsledku."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [

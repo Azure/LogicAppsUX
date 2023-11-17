@@ -2891,12 +2891,6 @@
       "value": "Démarrer"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Afficher moins"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3514,12 +3508,6 @@
     {
       "type": 0,
       "value": "Suggestion de flux suivante"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Afficher plus"
     }
   ],
   "LMB8am": [
@@ -8239,6 +8227,12 @@
       "value": "Voulez-vous ignorer les modifications non enregistrées ?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9184,6 +9178,20 @@
     {
       "type": 0,
       "value": "Obligatoire. Collections à évaluer. Un objet qui apparaît dans une des collections s'affiche également dans le résultat."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [

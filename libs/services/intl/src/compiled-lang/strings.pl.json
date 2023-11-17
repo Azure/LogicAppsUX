@@ -2921,12 +2921,6 @@
       "value": "Rozpocznij"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Zobacz mniej"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3555,12 +3549,6 @@
     {
       "type": 0,
       "value": "Następna sugestia dotycząca przepływu"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Zobacz więcej"
     }
   ],
   "LMB8am": [
@@ -8329,6 +8317,12 @@
       "value": "Czy na pewno chcesz odrzucić wszystkie niezapisane zmiany?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9285,6 +9279,20 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcje do wyliczenia wartości. Obiekt, który pojawia się w dowolnej kolekcji, pojawia się również w wyniku."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [

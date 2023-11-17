@@ -2875,12 +2875,6 @@
       "value": "Attività iniziali"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Mostra meno"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3498,12 +3492,6 @@
     {
       "type": 0,
       "value": "Suggerimento flusso successivo"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Visualizza dettagli"
     }
   ],
   "LMB8am": [
@@ -8219,6 +8207,12 @@
       "value": "Annullare tutte le modifiche non salvate?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9164,6 +9158,20 @@
     {
       "type": 0,
       "value": "Obbligatorio. Raccolte da valutare. Un oggetto presente in qualsiasi raccolta verrà visualizzato anche nel risultato."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [
