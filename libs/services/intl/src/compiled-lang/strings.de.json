@@ -2897,12 +2897,6 @@
       "value": "Erste Schritte"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Weniger anzeigen"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3513,12 +3507,6 @@
     {
       "type": 0,
       "value": "Nächster Flowvorschlag"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Mehr anzeigen"
     }
   ],
   "LMB8am": [
@@ -8229,6 +8217,12 @@
       "value": "Möchten Sie alle nicht gespeicherten Änderungen verwerfen?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9163,6 +9157,20 @@
     {
       "type": 0,
       "value": "Erforderlich. Die auszuwertenden Sammlungen. Ein Objekt, das sich in einer Sammlung befindet, wird auch im Ergebnis angezeigt."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [

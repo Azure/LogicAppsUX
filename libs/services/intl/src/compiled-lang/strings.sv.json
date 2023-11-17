@@ -2873,12 +2873,6 @@
       "value": "Kom igång"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Visa mindre"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3485,12 +3479,6 @@
     {
       "type": 0,
       "value": "Nästa flödesförslag"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Visa mer"
     }
   ],
   "LMB8am": [
@@ -8157,6 +8145,12 @@
       "value": "Vill du ta bort alla ändringar som inte har sparats?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9083,6 +9077,20 @@
     {
       "type": 0,
       "value": "Obligatoriskt. De samlingar som ska utvärderas. Ett objekt som visas i någon av samlingarna visas också i resultatet."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [

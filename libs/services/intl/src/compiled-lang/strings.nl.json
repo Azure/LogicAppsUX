@@ -2877,12 +2877,6 @@
       "value": "Aan de slag"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Minder weergeven"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3485,12 +3479,6 @@
     {
       "type": 0,
       "value": "Volgende stroomsuggestie"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Meer weergeven"
     }
   ],
   "LMB8am": [
@@ -8165,6 +8153,12 @@
       "value": "Wilt u alle niet-opgeslagen wijzigingen negeren?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9087,6 +9081,20 @@
     {
       "type": 0,
       "value": "Vereist. De verzamelingen die moeten worden geëvalueerd. Een object dat in een van de verzamelingen wordt weergegeven, wordt ook in het resultaat weergegeven."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [

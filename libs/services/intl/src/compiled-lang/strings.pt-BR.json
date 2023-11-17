@@ -2863,12 +2863,6 @@
       "value": "Introdução"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Ver Menos"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3486,12 +3480,6 @@
     {
       "type": 0,
       "value": "Próxima sugestão de fluxo"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Ver Mais"
     }
   ],
   "LMB8am": [
@@ -8207,6 +8195,12 @@
       "value": "Deseja descartar todas as alterações não salvas?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -9152,6 +9146,20 @@
     {
       "type": 0,
       "value": "Necessário. As coleções a serem avaliadas. Um objeto que aparece em qualquer uma das coleções também aparece no resultado."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "See More ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "uUlBZ8": [
