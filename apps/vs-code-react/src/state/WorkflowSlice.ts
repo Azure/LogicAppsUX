@@ -66,7 +66,7 @@ export const workflowSlice = createSlice({
   name: 'workflow',
   initialState: initialState as WorkflowState,
   reducers: {
-    initialize: (state: WorkflowState, action: PayloadAction<InitializePayload>) => {
+    initializeWorkflow: (state: WorkflowState, action: PayloadAction<InitializePayload>) => {
       const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, reviewContent, cloudHost, hostVersion } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
@@ -155,7 +155,7 @@ export const workflowSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  initialize,
+  initializeWorkflow,
   updateAccessToken,
   updateSelectedWorkFlows,
   updateSelectedSubscripton,

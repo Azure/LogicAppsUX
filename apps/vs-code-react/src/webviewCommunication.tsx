@@ -30,13 +30,7 @@ import {
 } from './state/DataMapSlice';
 import { initializeDesigner, updateCallbackUrl, updateFileSystemConnection, updatePanelMetadata } from './state/DesignerSlice';
 import type { InitializePayload } from './state/WorkflowSlice';
-import {
-  initialize as initializeWorkflow,
-  updateAccessToken,
-  updateTargetDirectory,
-  addStatus,
-  setFinalStatus,
-} from './state/WorkflowSlice';
+import { initializeWorkflow, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/WorkflowSlice';
 import { initialize } from './state/projectSlice';
 import type { AppDispatch, RootState } from './state/store';
 import { SchemaType } from '@microsoft/logic-apps-data-mapper';
@@ -124,8 +118,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             dispatch(changeUseExpandedFunctionCards(message.data));
             break;
           default:
-            console.warn(`Unexpected message received:`);
-            console.warn(message);
+            throw new Error('Unknown post message received');
         }
         break;
       default:
