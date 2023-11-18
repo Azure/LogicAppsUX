@@ -5886,6 +5886,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Pa+UkC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Returns the UTF-8 byte length of an input string]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Возвращает длину входной строки UTF-8 в байтах]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Peg6ZT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Setting errors]]></Val>
@@ -6035,6 +6044,15 @@
           <Val><![CDATA[Discard]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Отменить]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Q5Fh2R" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required. The string to calculate UTF-16 length from.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Обязательно. Строка для вычисления длины UTF-16.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11574,6 +11592,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";q/DRBW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required. The string to calculate UTF-8 length from.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Обязательно. Строка для вычисления длины UTF-8.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";q1gfIs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add a trigger]]></Val>
@@ -12812,6 +12839,15 @@
           <Val><![CDATA[Each action must have one or more run after configurations]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Каждое действие должно иметь одно или несколько выполнений после конфигурации]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vDYFIF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Returns the UTF-16 byte length of an input string]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Возвращает длину входной строки UTF-16 в байтах]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
