@@ -66,7 +66,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       dispatch(initialize(message.data.project));
     }
 
-    switch (projectState?.project) {
+    switch (projectState?.project ?? message?.data?.project) {
       case ProjectName.designer:
         switch (message.command) {
           case ExtensionCommand.initialize_frame:
@@ -144,6 +144,8 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     }
   });
   useEffect(() => {
+    console.log('---vscode.postmessage initialize');
+
     vscode.postMessage({
       command: ExtensionCommand.initialize,
     });

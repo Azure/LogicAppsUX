@@ -83,7 +83,7 @@ export default class DataMapperPanel {
   }
 
   private async _setWebviewHtml() {
-    this.panel.webview.html = await getWebViewHTML('vs-code-data-mapper', this.panel);
+    this.panel.webview.html = await getWebViewHTML('vs-code-react', this.panel);
   }
 
   public sendMsgToWebview(msg: MessageToWebview) {
@@ -91,6 +91,7 @@ export default class DataMapperPanel {
   }
 
   private _handleWebviewMsg(msg: MessageToVsix) {
+    console.log('--Elaina: dataMapperPanel handleWebviewMsg ', msg.command);
     switch (msg.command) {
       case ExtensionCommand.initialize: {
         this.sendMsgToWebview({

@@ -24,6 +24,22 @@ export const Router: React.FC = () => {
         </Route>
         <Route path={`/${RouteName.review}`} element={<ReviewApp />} />
         <Route path={`/${RouteName.overview}`} element={<OverviewApp />} />
+        <Route
+          path={`/${RouteName.dataMapper}`}
+          element={
+            <div>
+              <h1>data mapper placeholder</h1>
+            </div>
+          }
+        />
+        <Route
+          path={`/${RouteName.dataMapper}`}
+          element={
+            <div>
+              <h1>designer placeholder</h1>
+            </div>
+          }
+        />
       </Routes>
     </MemoryRouter>
   );
