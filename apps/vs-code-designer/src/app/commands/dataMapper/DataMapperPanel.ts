@@ -91,7 +91,6 @@ export default class DataMapperPanel {
   }
 
   private _handleWebviewMsg(msg: MessageToVsix) {
-    console.log('--Elaina: dataMapperPanel handleWebviewMsg ', msg.command);
     switch (msg.command) {
       case ExtensionCommand.initialize: {
         this.sendMsgToWebview({

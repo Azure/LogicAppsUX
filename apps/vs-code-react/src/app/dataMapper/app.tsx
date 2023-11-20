@@ -209,17 +209,19 @@ export const DataMapperApp = () => {
         // Passed in here too so it can be managed in the Redux store so components can track the current theme
         theme={theme}
       >
-        <DataMapperDesigner
-          saveMapDefinitionCall={saveMapDefinitionCall}
-          saveXsltCall={saveXsltCall}
-          saveDraftStateCall={saveDraftDataMapDefinition}
-          addSchemaFromFile={addSchemaFromFile}
-          readCurrentSchemaOptions={readLocalSchemaFileOptions}
-          readCurrentCustomXsltPathOptions={readLocalxsltFileOptions}
-          setIsMapStateDirty={setIsMapStateDirty}
-          setFunctionDisplayExpanded={setFunctionDisplayExpanded}
-          useExpandedFunctionCards={useExpandedFunctionCards}
-        />
+        <div style={{ height: '100vh', overflow: 'hidden' }}>
+          <DataMapperDesigner
+            saveMapDefinitionCall={saveMapDefinitionCall}
+            saveXsltCall={saveXsltCall}
+            saveDraftStateCall={saveDraftDataMapDefinition}
+            addSchemaFromFile={addSchemaFromFile}
+            readCurrentSchemaOptions={readLocalSchemaFileOptions}
+            readCurrentCustomXsltPathOptions={readLocalxsltFileOptions}
+            setIsMapStateDirty={setIsMapStateDirty}
+            setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+            useExpandedFunctionCards={useExpandedFunctionCards}
+          />
+        </div>
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
   );
