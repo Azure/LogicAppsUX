@@ -1,6 +1,7 @@
 import type { ValueSegment } from '../../../../editor';
 import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
+import { cleanHtmlString } from './util';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
@@ -44,10 +45,7 @@ const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSeg
     }
 
     // Get the cleaned HTML string
-    let cleanedHtmlString = tempElement.innerHTML;
-    cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
-    // remove when issue is fixed: https://github.com/facebook/lexical/issues/3879#issuecomment-1640215777
-    cleanedHtmlString = cleanedHtmlString.replace(/<(p|h[1-4]|span)>(<br>|\n)<\/\1>/g, '<br>');
+    const cleanedHtmlString = cleanHtmlString(tempElement.innerHTML);
 
     // Regular expression pattern to match <span id="..."></span>
     const spanIdPattern = /<span id="(.*?)"><\/span>/g;
