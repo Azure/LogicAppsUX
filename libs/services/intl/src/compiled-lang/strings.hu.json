@@ -4216,7 +4216,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Egy bemeneti sztring UTF-8 bájtos hosszát adja vissza"
     }
   ],
   "Peg6ZT": [
@@ -4332,7 +4332,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Kötelező. Az UTF-16 hosszának kiszámításához szükséges sztring."
     }
   ],
   "Q5w4Do": [
@@ -8160,7 +8160,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Kevesebb megjelenítése"
     }
   ],
   "oZMhX/": [
@@ -8340,7 +8340,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Kötelező. Az UTF-8 hosszának kiszámításához szükséges sztring."
     }
   ],
   "q1gfIs": [
@@ -9098,7 +9098,7 @@
   "uTnqzQ": [
     {
       "type": 0,
-      "value": "See More ("
+      "value": "Több megjelenítése ("
     },
     {
       "type": 1,
@@ -9264,7 +9264,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Egy bemeneti sztring UTF-16 bájtos hosszát adja vissza"
     }
   ],
   "vEBhDX": [

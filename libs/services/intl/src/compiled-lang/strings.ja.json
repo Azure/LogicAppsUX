@@ -4163,7 +4163,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "入力文字列の UTF-8 バイト長を返します"
     }
   ],
   "Peg6ZT": [
@@ -4275,7 +4275,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "必須。UTF-16 の長さを計算する対象の文字列。"
     }
   ],
   "Q5w4Do": [
@@ -8058,7 +8058,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "表示数を減らす"
     }
   ],
   "oZMhX/": [
@@ -8238,7 +8238,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "必須。UTF-8 の長さを計算する対象の文字列。"
     }
   ],
   "q1gfIs": [
@@ -9147,7 +9147,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "入力文字列の UTF-16 バイト長を返します"
     }
   ],
   "vEBhDX": [

@@ -4155,7 +4155,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "입력 문자열의 UTF-8 바이트 길이를 반환합니다."
     }
   ],
   "Peg6ZT": [
@@ -4267,7 +4267,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "필수 항목입니다. UTF-16 길이를 계산할 문자열입니다."
     }
   ],
   "Q5w4Do": [
@@ -8054,7 +8054,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "간단히 보기"
     }
   ],
   "oZMhX/": [
@@ -8234,7 +8234,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "필수 항목입니다. UTF-8 길이를 계산할 문자열입니다."
     }
   ],
   "q1gfIs": [
@@ -8977,7 +8977,7 @@
   "uTnqzQ": [
     {
       "type": 0,
-      "value": "See More ("
+      "value": "더 보기("
     },
     {
       "type": 1,
@@ -9143,7 +9143,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "입력 문자열의 UTF-16 바이트 길이를 반환합니다."
     }
   ],
   "vEBhDX": [

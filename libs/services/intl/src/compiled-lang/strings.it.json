@@ -4233,7 +4233,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Restituisce la lunghezza in byte di UTF-8 di una stringa di input"
     }
   ],
   "Peg6ZT": [
@@ -4345,7 +4345,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Obbligatorio. Stringa da cui calcolare la lunghezza di UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -8210,7 +8210,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Vedi meno"
     }
   ],
   "oZMhX/": [
@@ -8390,7 +8390,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Obbligatorio. Stringa da cui calcolare la lunghezza di UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9163,7 +9163,7 @@
   "uTnqzQ": [
     {
       "type": 0,
-      "value": "See More ("
+      "value": "Vedi altri ("
     },
     {
       "type": 1,
@@ -9329,7 +9329,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Restituisce la lunghezza in byte di UTF-16 di una stringa di input"
     }
   ],
   "vEBhDX": [

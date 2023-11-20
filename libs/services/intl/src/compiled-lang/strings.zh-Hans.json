@@ -4183,7 +4183,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "返回输入字符串的 UTF-8 字节长度"
     }
   ],
   "Peg6ZT": [
@@ -4299,7 +4299,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "必需。要从中计算 UTF-16 长度的字符串。"
     }
   ],
   "Q5w4Do": [
@@ -8142,7 +8142,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "查看更少"
     }
   ],
   "oZMhX/": [
@@ -8322,7 +8322,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "必需。要从中计算 UTF-8 长度的字符串。"
     }
   ],
   "q1gfIs": [
@@ -9069,7 +9069,7 @@
   "uTnqzQ": [
     {
       "type": 0,
-      "value": "See More ("
+      "value": "查看更多("
     },
     {
       "type": 1,
@@ -9077,7 +9077,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": " 个)"
     }
   ],
   "uUlBZ8": [
@@ -9235,7 +9235,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "返回输入字符串的 UTF-16 字节长度"
     }
   ],
   "vEBhDX": [
