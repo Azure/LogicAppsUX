@@ -9,7 +9,7 @@ import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { ActionButton, Callout, DirectionalHint, FocusZone } from '@fluentui/react';
 import { css } from '@fluentui/utilities';
-import { ActionButtonV2 } from '@microsoft/designer-ui';
+import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
 import { containsIdTag, guid, removeIdTag } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useDrop } from 'react-dnd';
@@ -148,7 +148,9 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     setShowCallout(!showCallout);
   };
 
-  const buttonId = `msla-edge-button-${parentId}-${childId}`.replace(/\W/g, '-');
+  const buttonId = `msla-edge-button-${convertUIElementNameToAutomationId(parentName)}-${
+    convertUIElementNameToAutomationId(childName) || 'undefined'
+  }`.replace(/\W/g, '-');
 
   const showParallelBranchButton = !isLeaf && parentId;
 
@@ -169,7 +171,9 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             id={buttonId}
             title={tooltipText}
             onClick={actionButtonClick}
-            dataAutomationId={`msla-plus-button-${parentId}-${childId}`.replace(/\W/g, '-')}
+            dataAutomationId={`msla-plus-button-${convertUIElementNameToAutomationId(parentName)}-${
+              convertUIElementNameToAutomationId(childName) || 'undefined'
+            }`.replace(/\W/g, '-')}
           />
           {showCallout && (
             <Callout
@@ -186,7 +190,9 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
                   <ActionButton
                     iconProps={{ imageProps: { src: AddNodeIcon } }}
                     onClick={openAddNodePanel}
-                    data-automation-id={`msla-add-action-${parentId}-${childId}`.replace(/\W/g, '-')}
+                    data-automation-id={`msla-add-action-${convertUIElementNameToAutomationId(parentName)}-${
+                      convertUIElementNameToAutomationId(childName) || 'undefined'
+                    }`.replace(/\W/g, '-')}
                   >
                     {newActionText}
                   </ActionButton>
@@ -194,7 +200,9 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
                     <ActionButton
                       iconProps={{ imageProps: { src: AddBranchIcon } }}
                       onClick={addParallelBranch}
-                      data-automation-id={`msla-add-parallel-branch-${parentId}-${childId}`.replace(/\W/g, '-')}
+                      data-automation-id={`msla-add-parallel-branch-${convertUIElementNameToAutomationId(parentName)}-${
+                        convertUIElementNameToAutomationId(childName) || 'undefined'
+                      }`.replace(/\W/g, '-')}
                     >
                       {newBranchText}
                     </ActionButton>
