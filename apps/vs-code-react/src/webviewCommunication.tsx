@@ -143,8 +143,6 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     }
   });
   useEffect(() => {
-    console.log('---vscode.postmessage initialize');
-
     vscode.postMessage({
       command: ExtensionCommand.initialize,
     });
