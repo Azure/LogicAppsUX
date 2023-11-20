@@ -4282,7 +4282,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Возвращает длину входной строки UTF-8 в байтах"
     }
   ],
   "Peg6ZT": [
@@ -4394,7 +4394,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Обязательно. Строка для вычисления длины UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -8304,7 +8304,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Показать меньше"
     }
   ],
   "oZMhX/": [
@@ -8484,7 +8484,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Обязательно. Строка для вычисления длины UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9268,7 +9268,7 @@
   "uTnqzQ": [
     {
       "type": 0,
-      "value": "See More ("
+      "value": "Показать больше ("
     },
     {
       "type": 1,
@@ -9434,7 +9434,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Возвращает длину входной строки UTF-16 в байтах"
     }
   ],
   "vEBhDX": [

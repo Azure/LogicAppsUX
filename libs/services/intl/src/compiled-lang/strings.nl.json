@@ -4212,7 +4212,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Retourneert de UTF-8-bytelengte van een invoertekenreeks"
     }
   ],
   "Peg6ZT": [
@@ -4324,7 +4324,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Vereist. De tekenreeks waaruit UTF-16-lengte moet worden berekend."
     }
   ],
   "Q5w4Do": [
@@ -8156,7 +8156,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Minder weergeven"
     }
   ],
   "oZMhX/": [
@@ -8336,7 +8336,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Vereist. De tekenreeks waaruit UTF-8-lengte moet worden berekend."
     }
   ],
   "q1gfIs": [
@@ -9086,7 +9086,7 @@
   "uTnqzQ": [
     {
       "type": 0,
-      "value": "See More ("
+      "value": "Meer weergeven ("
     },
     {
       "type": 1,
@@ -9252,7 +9252,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Retourneert de UTF-16-bytelengte van een invoertekenreeks"
     }
   ],
   "vEBhDX": [
