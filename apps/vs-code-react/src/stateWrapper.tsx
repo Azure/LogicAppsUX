@@ -1,5 +1,5 @@
-import { ProjectName } from './run-service';
 import type { RootState } from './state/store';
+import { ProjectName } from '@microsoft/vscode-extension';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
