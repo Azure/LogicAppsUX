@@ -4208,7 +4208,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Returnerar UTF-8-längden i byte för en indatasträng"
     }
   ],
   "Peg6ZT": [
@@ -4320,7 +4320,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Obligatoriskt. Den sträng som UTF-16-längden ska beräknas från."
     }
   ],
   "Q5w4Do": [
@@ -8148,7 +8148,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Visa mindre"
     }
   ],
   "oZMhX/": [
@@ -8328,7 +8328,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Obligatoriskt. Den sträng som UTF-8-längden ska beräknas från."
     }
   ],
   "q1gfIs": [
@@ -9082,7 +9082,7 @@
   "uTnqzQ": [
     {
       "type": 0,
-      "value": "See More ("
+      "value": "Visa mer ("
     },
     {
       "type": 1,
@@ -9248,7 +9248,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Returnerar UTF-16-längden i byte för en indatasträng"
     }
   ],
   "vEBhDX": [

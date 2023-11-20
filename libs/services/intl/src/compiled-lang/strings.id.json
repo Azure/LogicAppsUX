@@ -4167,7 +4167,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Menghasilkan panjang byte UTF-8 dari string input"
     }
   ],
   "Peg6ZT": [
@@ -4279,7 +4279,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Diperlukan. String untuk menghitung panjang UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -8082,7 +8082,7 @@
   "oWGaw9": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Lihat Lebih Sedikit"
     }
   ],
   "oZMhX/": [
@@ -8262,7 +8262,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Diperlukan. String untuk menghitung panjang UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9013,7 +9013,7 @@
   "uTnqzQ": [
     {
       "type": 0,
-      "value": "See More ("
+      "value": "Lihat ("
     },
     {
       "type": 1,
@@ -9021,7 +9021,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": ") Lainnya"
     }
   ],
   "uUlBZ8": [
@@ -9179,7 +9179,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Menghasilkan panjang byte UTF-16 dari string input"
     }
   ],
   "vEBhDX": [
