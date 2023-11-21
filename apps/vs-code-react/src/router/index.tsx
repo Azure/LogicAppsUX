@@ -6,7 +6,7 @@ import { Status } from '../app/export/status/status';
 import { Summary } from '../app/export/summary/summary';
 import { Validation } from '../app/export/validation/validation';
 import { WorkflowsSelection } from '../app/export/workflowsSelection/workflowsSelection';
-import { OverviewApp } from '../app/overview/index';
+import { OverviewApp } from '../app/overview/app';
 import { ReviewApp } from '../app/review';
 import { RouteName } from '../run-service';
 import { StateWrapper } from '../stateWrapper';
