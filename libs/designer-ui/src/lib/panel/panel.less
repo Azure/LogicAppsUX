@@ -216,10 +216,27 @@
   }
 }
 
-.connection-info {
+.connection-info-container {
   display: flex;
   margin: 8px 0px;
   gap: 8px;
+
+  .connection-info {
+    display: flex;
+    column-gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .connection-info-error {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #a80000;
+
+    .connection-info-error-text {
+      text-wrap: nowrap;
+    }
+  }
 }
 
 .msla-theme-light {
