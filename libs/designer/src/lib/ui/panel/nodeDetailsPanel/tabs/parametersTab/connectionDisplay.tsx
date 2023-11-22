@@ -65,7 +65,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   if (isLoading)
     return (
-      <div className="connection-info-container">
+      <div className="connection-display">
         <Spinner size={SpinnerSize.small} label={loadingText} style={{ padding: '4px 0px' }} labelPosition="right" />
       </div>
     );
@@ -76,7 +76,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   });
 
   return (
-    <div className="connection-info-container">
+    <div className="connection-display">
       <div className="connection-info">
         {connectionName && <Label className="label">{connectionDisplayText}</Label>}
         <Link id="change-connection-button" onClick={openChangeConnectionCallback} disabled={readOnly}>
