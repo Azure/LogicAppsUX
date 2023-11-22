@@ -68,15 +68,18 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
 
   // This is to enable copy to clipboard, even though there are some cases where @{} isn't needed, for the time being it's easier to always include it when copying
   getTextContent(_includeInert?: boolean | undefined, _includeDirectionless?: false | undefined): string {
-    return `@{${this.__data.value}}` ?? '';
+    return `@{${this.__data.value}}`;
   }
 
   toString(): string {
-    return `$[${this.__title},${this.__value},${this.__brandColor}]$`;
+    return `$[${this.__title},${this.getEncodedValue()},${this.__brandColor}]$`;
   }
 
   convertToSegment(): ValueSegment {
-    return this.__data;
+    return {
+      ...this.__data,
+      value: encodeURIComponent(this.__data.value),
+    };
   }
 
   updateContent(props: updateTokenProps, data: ValueSegment): void {
@@ -109,7 +112,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   decorate() {
     return (
       <InputToken
-        value={this.__value}
+        value={this.getEncodedValue()}
         icon={this.__icon}
         title={this.__title}
         brandColor={this.__brandColor ?? 'black'}
@@ -118,6 +121,10 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         description={this.__description}
       />
     );
+  }
+
+  private getEncodedValue(): typeof this.__value {
+    return this.__value ? encodeURIComponent(this.__value) : undefined;
   }
 }
 
