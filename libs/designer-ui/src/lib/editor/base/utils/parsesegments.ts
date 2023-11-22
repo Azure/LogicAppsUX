@@ -5,6 +5,7 @@ import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import { $createTokenNode } from '../nodes/tokenNode';
 import { convertStringToSegments } from './editorToSegement';
+import { decodeSegmentValue } from './helper';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
 import { $generateNodesFromDOM } from '@lexical/html';
 import type { LinkNode } from '@lexical/link';
@@ -132,7 +133,7 @@ export const appendStringSegment = (
       if (nodeMap && tokensEnabled) {
         const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
         if (tokenSegment && tokenSegment.token) {
-          const segmentValue = getDecodedSegmentValue(tokenSegment);
+          const segmentValue = decodeSegmentValue(tokenSegment.value);
           const { brandColor, icon, title, name, value, tokenType } = tokenSegment.token;
           // Expression token handling
           if (tokenType === TokenType.FX) {
@@ -184,7 +185,7 @@ export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boo
 
   // iterate through the segments and create the appropriate node
   valueSegments.forEach((segment) => {
-    const segmentValue = getDecodedSegmentValue(segment);
+    const segmentValue = decodeSegmentValue(segment.value);
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
       const { brandColor, icon, title, name, value, tokenType } = segment.token;
       if (tokenType === TokenType.FX) {
@@ -242,8 +243,4 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
     }
   });
   return text;
-};
-
-const getDecodedSegmentValue = (segment: ValueSegment): string => {
-  return decodeURIComponent(segment.value);
 };

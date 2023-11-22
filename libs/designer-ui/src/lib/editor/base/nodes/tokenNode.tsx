@@ -1,6 +1,7 @@
 import { InputToken } from '../../../token/inputToken';
 import type { updateTokenProps } from '../../../tokenpicker/plugins/UpdateTokenNode';
 import type { ValueSegment } from '../../models/parameter';
+import { encodeSegmentValue } from '../utils/helper';
 import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 
@@ -78,7 +79,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   convertToSegment(): ValueSegment {
     return {
       ...this.__data,
-      value: encodeURIComponent(this.__data.value),
+      value: encodeSegmentValue(this.__data.value),
     };
   }
 
@@ -124,7 +125,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   private getEncodedValue(): typeof this.__value {
-    return this.__value ? encodeURIComponent(this.__value) : undefined;
+    return this.__value ? encodeSegmentValue(this.__value) : undefined;
   }
 }
 
