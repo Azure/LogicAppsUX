@@ -134,6 +134,7 @@ export const ParametersTab = () => {
           nodeId={selectedNodeId}
           isLoading={connectionName.isLoading}
           readOnly={!!readOnly}
+          hasError={errorInfo?.level === ErrorLevel.Connection}
         />
       ) : null}
       {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
