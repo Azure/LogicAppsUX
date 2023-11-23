@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.86.0](https://github.com/Azure/LogicAppsUX/compare/v2.85.0...v2.86.0) (2023-11-23)
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix '\n' being deleted by Lexical ([#3726](https://github.com/Azure/LogicAppsUX/issues/3726)) ([b098884](https://github.com/Azure/LogicAppsUX/commit/b0988848c6626af451ec90a75290f7a4e1294846))
+
 ## [2.85.0](https://github.com/Azure/LogicAppsUX/compare/v2.84.0...v2.85.0) (2023-11-16)
 
 
