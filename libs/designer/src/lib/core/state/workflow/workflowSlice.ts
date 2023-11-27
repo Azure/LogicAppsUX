@@ -109,7 +109,8 @@ export const workflowSlice = createSlice({
       const currentNodeToBeReplaced = getWorkflowNodeFromGraphState(state, nodeId) as WorkflowNode;
       const graphId = state.nodesMetadata[nodeId].graphId;
       const currentGraph = (graphId === 'root' ? state.graph : getWorkflowNodeFromGraphState(state, graphId)) as WorkflowNode;
-      const parentId = getImmediateSourceNodeIds(currentGraph, nodeId)[0];
+      const parentIds = getImmediateSourceNodeIds(currentGraph, nodeId);
+      const parentId = parentIds.length > 1 ? undefined : parentIds[0];
       addNodeToWorkflow(
         { nodeId: foreachNodeId, relationshipIds: { graphId, parentId, childId: nodeId }, operation },
         currentGraph,
@@ -407,10 +408,9 @@ export const workflowSlice = createSlice({
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
 
       // Only interested in behavior like centering canvas when it is the first load of the workflow
-      state.focusedCanvasNodeId = isFirstLoad ?
-        Object.entries(deserializedWorkflow?.actionData ?? {}).find(
-          ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
-        )?.[0] : undefined;
+      state.focusedCanvasNodeId = isFirstLoad
+        ? Object.entries(deserializedWorkflow?.actionData ?? {}).find(([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter)?.[0]
+        : undefined;
     });
     builder.addCase(updateNodeParameters, (state, action) => {
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
