@@ -1,4 +1,4 @@
-import { VSCodeContext } from '../../webviewCommunication';
+import { VSCodeContext } from '../../../webviewCommunication';
 import { FontIcon, mergeStyles, mergeStyleSets, Spinner, SpinnerSize, CommandBar } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react';
 import { TrafficLightDot } from '@microsoft/designer-ui';

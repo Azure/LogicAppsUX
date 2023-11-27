@@ -1,16 +1,16 @@
-import { ProjectName } from './run-service';
 import type { RootState } from './state/store';
+import { ProjectName } from '@microsoft/vscode-extension';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export const StateWrapper: React.FC = () => {
   const navigate = useNavigate();
-  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const projectState = useSelector((state: RootState) => state.project);
 
   useEffect(() => {
-    if (vscodeState.initialized) {
-      switch (vscodeState.project) {
+    if (projectState.initialized) {
+      switch (projectState.project) {
         case ProjectName.export: {
           navigate(`/${ProjectName.export}/instance-selection`, { replace: true });
           break;
@@ -23,12 +23,20 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.overview}`, { replace: true });
           break;
         }
+        case ProjectName.designer: {
+          navigate(`/${ProjectName.designer}`, { replace: true });
+          break;
+        }
+        case ProjectName.dataMapper: {
+          navigate(`/${ProjectName.dataMapper}`, { replace: true });
+          break;
+        }
         default: {
           break;
         }
       }
     }
-  }, [vscodeState, navigate]);
+  }, [projectState, navigate]);
 
   return null;
 };
