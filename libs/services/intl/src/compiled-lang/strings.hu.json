@@ -2877,12 +2877,6 @@
       "value": "Első lépések"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Kevesebb megjelenítése"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3489,12 +3483,6 @@
     {
       "type": 0,
       "value": "Következő folyamatjavaslat"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Több megjelenítése"
     }
   ],
   "LMB8am": [
@@ -4225,6 +4213,12 @@
       "value": "Séma URI-azonosítója"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Egy bemeneti sztring UTF-8 bájtos hosszát adja vissza"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4333,6 +4327,12 @@
     {
       "type": 0,
       "value": "Elvetés"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Kötelező. Az UTF-16 hosszának kiszámításához szükséges sztring."
     }
   ],
   "Q5w4Do": [
@@ -5862,7 +5862,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Üdvözli a munkafolyamat-segéd!"
     }
   ],
   "Yw7Nfl": [
@@ -8157,6 +8157,12 @@
       "value": "Biztosan elveti az összes nem mentett módosítást?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Kevesebb megjelenítése"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8329,6 +8335,12 @@
     {
       "type": 0,
       "value": "Egy XML-csomópontot, -csomópontkészlet vagy értéket ad vissza JSON formájában a megadott XPath-kifejezés alapján"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Kötelező. Az UTF-8 hosszának kiszámításához szükséges sztring."
     }
   ],
   "q1gfIs": [
@@ -9083,6 +9095,20 @@
       "value": "Kötelező megadni. A kiértékelendő gyűjtemények. Az eredményben minden olyan objektum megjelenik, mely a gyűjtemények bármelyikében szerepel."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Több megjelenítése ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9233,6 +9259,12 @@
     {
       "type": 0,
       "value": "Minden műveletnek egy vagy több futtatás utáni konfigurációval kell rendelkeznie"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Egy bemeneti sztring UTF-16 bájtos hosszát adja vissza"
     }
   ],
   "vEBhDX": [

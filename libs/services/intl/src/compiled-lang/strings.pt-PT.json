@@ -2899,12 +2899,6 @@
       "value": "Começar"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Ver Menos"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3522,12 +3516,6 @@
     {
       "type": 0,
       "value": "Sugestão de fluxo seguinte"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Ver Mais"
     }
   ],
   "LMB8am": [
@@ -4258,6 +4246,12 @@
       "value": "URI de esquema"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Devolve o comprimento de bytes UTF-8 de uma cadeia de entrada"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4362,6 +4356,12 @@
     {
       "type": 0,
       "value": "Eliminar"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a partir de onde calcular o comprimento UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -5918,7 +5918,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Damos-lhe as boas-vindas ao assistente de fluxo de trabalho!"
     }
   ],
   "Yw7Nfl": [
@@ -8235,6 +8235,12 @@
       "value": "Pretende eliminar todas as alterações não guardadas?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Ver Menos"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8407,6 +8413,12 @@
     {
       "type": 0,
       "value": "Devolve um nó XML, conjunto de nós ou valor como JSON a partir da expressão XPath fornecida"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a partir de onde calcular o comprimento UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9176,6 +9188,20 @@
       "value": "Obrigatório. As coleções a avaliar. Um objeto que apareça em qualquer uma das coleções também aparece no resultado."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Ver Mais ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9326,6 +9352,12 @@
     {
       "type": 0,
       "value": "Cada ação tem de ter uma ou mais execução após as configurações"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Devolve o comprimento de bytes UTF-16 de uma cadeia de entrada"
     }
   ],
   "vEBhDX": [

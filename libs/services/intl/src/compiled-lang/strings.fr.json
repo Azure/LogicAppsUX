@@ -2891,12 +2891,6 @@
       "value": "Démarrer"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Afficher moins"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3514,12 +3508,6 @@
     {
       "type": 0,
       "value": "Suggestion de flux suivante"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Afficher plus"
     }
   ],
   "LMB8am": [
@@ -4250,6 +4238,12 @@
       "value": "URI de schéma"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Retourne la longueur en octets UTF-8 d’une chaîne d’entrée"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4354,6 +4348,12 @@
     {
       "type": 0,
       "value": "Abandonner"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à partir de laquelle calculer la longueur UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -5910,7 +5910,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Bienvenue dans l’assistant de workflow !"
     }
   ],
   "Yw7Nfl": [
@@ -8227,6 +8227,12 @@
       "value": "Voulez-vous ignorer les modifications non enregistrées ?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Afficher moins"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8399,6 +8405,12 @@
     {
       "type": 0,
       "value": "Retourne un nœud XML, un jeu de nœuds ou une valeur au format JSON à partir de l'expression XPath fournie"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à partir de laquelle calculer la longueur UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9168,6 +9180,20 @@
       "value": "Obligatoire. Collections à évaluer. Un objet qui apparaît dans une des collections s'affiche également dans le résultat."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Afficher plus ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9318,6 +9344,12 @@
     {
       "type": 0,
       "value": "Chaque action doit avoir une ou plusieurs exécutions après les configurations"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Retourne la longueur en octets UTF-16 d’une chaîne d’entrée"
     }
   ],
   "vEBhDX": [

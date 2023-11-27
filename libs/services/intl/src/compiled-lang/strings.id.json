@@ -2839,12 +2839,6 @@
       "value": "Memulai"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Lihat Lebih Sedikit"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3440,12 +3434,6 @@
     {
       "type": 0,
       "value": "Saran alur berikutnya"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Lihat Lainnya"
     }
   ],
   "LMB8am": [
@@ -4176,6 +4164,12 @@
       "value": "Uri Skema"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Menghasilkan panjang byte UTF-8 dari string input"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4280,6 +4274,12 @@
     {
       "type": 0,
       "value": "Buang"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String untuk menghitung panjang UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -5814,7 +5814,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "Selamat datang di asisten alur kerja!"
     }
   ],
   "Yw7Nfl": [
@@ -8079,6 +8079,12 @@
       "value": "Apakah Anda ingin membuang semua perubahan yang tidak disimpan?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Lihat Lebih Sedikit"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8251,6 +8257,12 @@
     {
       "type": 0,
       "value": "Menghasilkan node XML, kumpulan node atau nilai sebagai JSON dari ekspresi JalurX yang disediakan"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Diperlukan. String untuk menghitung panjang UTF-8."
     }
   ],
   "q1gfIs": [
@@ -8998,6 +9010,20 @@
       "value": "Harus diisi. Koleksi untuk dievaluasi. Sebuah objek yang muncul di koleksi juga muncul dalam hasil."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Lihat ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ") Lainnya"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9148,6 +9174,12 @@
     {
       "type": 0,
       "value": "Setiap tindakan harus memiliki satu atau beberapa operasi setelah konfigurasi"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Menghasilkan panjang byte UTF-16 dari string input"
     }
   ],
   "vEBhDX": [
