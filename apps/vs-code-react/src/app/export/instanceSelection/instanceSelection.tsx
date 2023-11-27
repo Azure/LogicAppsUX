@@ -1,8 +1,7 @@
 import { QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
+import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/vscodeSlice';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseData, parseRegionData, parseSubscriptionsData } from './helper';
 import { Text, DropdownMenuItemType } from '@fluentui/react';
@@ -14,8 +13,8 @@ import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, location } = exportData;
 
   const intl = useIntl();

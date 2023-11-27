@@ -20,7 +20,7 @@ import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import { promises, readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -102,6 +102,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
+            project: ProjectName.designer,
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             workflowDetails: this.workflowDetails,

@@ -31,15 +31,7 @@ You're all set! See the section on usage/functionality at the bottom to help you
 
 ### Build (Dev/Debug)
 
-To build, run the following commands _in order_ (from the root of the repo folder):
-
-```bash
-nx build vs-code-data-mapper
-```
-
-```bash
-nx build vs-code-data-mapper-react
-```
+**NOTE:** As of 11/16/2022, Data Mapper's API endpoints are in the public workflow extension bundle, so no further action needs to be taken to build DM
 
 ### Run (Dev/Debug)
 

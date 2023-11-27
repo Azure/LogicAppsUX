@@ -3,7 +3,7 @@ import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } fr
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-export interface designerState {
+export interface DesignerState {
   panelMetaData: IDesignerPanelMetadata | null;
   connectionData: ConnectionsData;
   baseUrl: string;
@@ -20,7 +20,7 @@ export interface designerState {
   hostVersion: string;
 }
 
-const initialState: designerState = {
+const initialState: DesignerState = {
   panelMetaData: null,
   baseUrl: '/url',
   apiVersion: '2018-11-01',

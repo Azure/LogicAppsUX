@@ -1,6 +1,6 @@
-import { VSCodeContext } from '../WebViewMsgHandler';
-import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeUseExpandedFunctionCards } from '../state/DataMapDataLoader';
-import type { AppDispatch, RootState } from '../state/Store';
+import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeUseExpandedFunctionCards } from '../../state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../state/store';
+import { VSCodeContext } from '../../webviewCommunication';
 import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
   getFileNameAndPath,
@@ -12,28 +12,21 @@ import {
   getFunctions,
   getSelectedSchema,
 } from '@microsoft/logic-apps-data-mapper';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import type { Theme } from '@microsoft/utils-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const VsCodeThemeType = {
-  VsCodeLight: 'vscode-light',
-  VsCodeDark: 'vscode-dark',
-  VsCodeHighContrast: 'vscode-high-contrast',
-};
-type VsCodeThemeType = keyof typeof VsCodeThemeType;
 interface SchemaFile {
   path: string;
   type: SchemaType;
 }
 
-export const App = () => {
+export const DataMapperApp = () => {
   const dispatch = useDispatch<AppDispatch>();
   const vscode = useContext(VSCodeContext);
-
-  const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
-  const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
-
+  const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
@@ -65,51 +58,51 @@ export const App = () => {
 
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
     sendMsgToVsix({
-      command: 'addSchemaFromFile',
+      command: ExtensionCommand.addSchemaFromFile,
       data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
     });
   };
 
   const readLocalSchemaFileOptions = useCallback(() => {
     sendMsgToVsix({
-      command: 'readLocalSchemaFileOptions',
+      command: ExtensionCommand.readLocalSchemaFileOptions,
     });
   }, [sendMsgToVsix]);
 
   const readLocalxsltFileOptions = useCallback(() => {
     sendMsgToVsix({
-      command: 'readLocalCustomXsltFileOptions',
+      command: ExtensionCommand.readLocalCustomXsltFileOptions,
     });
   }, [sendMsgToVsix]);
 
   const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     sendMsgToVsix({
-      command: 'saveDataMapDefinition',
+      command: ExtensionCommand.saveDataMapDefinition,
       data: dataMapDefinition,
     });
     sendMsgToVsix({
-      command: 'saveDataMapMetadata',
+      command: ExtensionCommand.saveDataMapMetadata,
       data: mapMetadata,
     });
   };
 
   const saveXsltCall = (dataMapXslt: string) => {
     sendMsgToVsix({
-      command: 'saveDataMapXslt',
+      command: ExtensionCommand.saveDataMapXslt,
       data: dataMapXslt,
     });
   };
 
   const saveDraftDataMapDefinition = (dataMapDefinition: string) => {
     sendMsgToVsix({
-      command: 'saveDraftDataMapDefinition',
+      command: ExtensionCommand.saveDraftDataMapDefinition,
       data: dataMapDefinition,
     });
   };
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
     sendMsgToVsix({
-      command: 'setIsMapStateDirty',
+      command: ExtensionCommand.setIsMapStateDirty,
       data: isMapStateDirty,
     });
   };
@@ -131,7 +124,7 @@ export const App = () => {
       }
 
       sendMsgToVsix({
-        command: 'webviewRscLoadError',
+        command: ExtensionCommand.webviewRscLoadError,
         data: errorMsg,
       });
     },
@@ -140,27 +133,21 @@ export const App = () => {
 
   useEffect(() => {
     sendMsgToVsix({
-      command: 'getFunctionDisplayExpanded',
+      command: ExtensionCommand.getFunctionDisplayExpanded,
     });
   }, [sendMsgToVsix]);
 
   // Notify VS Code that webview is loaded
   useEffect(() => {
     sendMsgToVsix({
-      command: 'webviewLoaded',
+      command: ExtensionCommand.webviewLoaded,
     });
   }, [sendMsgToVsix]);
 
   // Monitor document.body for VS Code theme changes
-  useEffect(() => {
-    const themeMutationObserver = new MutationObserver(() => {
-      setVsCodeTheme(getVscodeTheme());
-    });
-
-    themeMutationObserver.observe(document.body, { attributes: true });
-
-    return () => themeMutationObserver.disconnect();
-  }, []);
+  useThemeObserver(document.body, theme, setTheme, {
+    attributes: true,
+  });
 
   // Init runtime API service and make calls
   useEffect(() => {
@@ -208,11 +195,7 @@ export const App = () => {
   }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename, handleRscLoadError]);
 
   return (
-    <DataMapperDesignerProvider
-      locale="en-US"
-      theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
-      options={{}}
-    >
+    <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
       <DataMapDataProvider
         dataMapMetadata={mapMetadata}
         xsltFilename={xsltFilename}
@@ -224,19 +207,21 @@ export const App = () => {
         customXsltPaths={customXsltPathsList}
         fetchedFunctions={fetchedFunctions}
         // Passed in here too so it can be managed in the Redux store so components can track the current theme
-        theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
+        theme={theme}
       >
-        <DataMapperDesigner
-          saveMapDefinitionCall={saveMapDefinitionCall}
-          saveXsltCall={saveXsltCall}
-          saveDraftStateCall={saveDraftDataMapDefinition}
-          addSchemaFromFile={addSchemaFromFile}
-          readCurrentSchemaOptions={readLocalSchemaFileOptions}
-          readCurrentCustomXsltPathOptions={readLocalxsltFileOptions}
-          setIsMapStateDirty={setIsMapStateDirty}
-          setFunctionDisplayExpanded={setFunctionDisplayExpanded}
-          useExpandedFunctionCards={useExpandedFunctionCards}
-        />
+        <div style={{ height: '100vh', overflow: 'hidden' }}>
+          <DataMapperDesigner
+            saveMapDefinitionCall={saveMapDefinitionCall}
+            saveXsltCall={saveXsltCall}
+            saveDraftStateCall={saveDraftDataMapDefinition}
+            addSchemaFromFile={addSchemaFromFile}
+            readCurrentSchemaOptions={readLocalSchemaFileOptions}
+            readCurrentCustomXsltPathOptions={readLocalxsltFileOptions}
+            setIsMapStateDirty={setIsMapStateDirty}
+            setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+            useExpandedFunctionCards={useExpandedFunctionCards}
+          />
+        </div>
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
   );

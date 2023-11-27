@@ -62,15 +62,9 @@ Host all the code needed to run the Visual Studio Code extension.
 
 For more information, see [Extensions API](https://code.visualstudio.com/api) and [Extensions anatomy](https://code.visualstudio.com/api/get-started/extension-anatomy).
 
-### vs-code-designer-react
-
-Host React project exclusively for remote and local desginer webviews. Webview is triggered by the `openDesigner` command.
-
-For more information, see [Visual Studio Code webviews](https://code.visualstudio.com/api/extension-guides/webview).
-
 ### vs-code-react
 
-Host React project for the extension's webviews. Webviews are triggered by the `openOverview`, `exportLogicApp` and `reviewValidation` commands.
+Host React project for remote and local designer webviews and the extension's webviews. Webviews are triggered by the `openDesigner`, `openOverview`, `exportLogicApp` and `reviewValidation` commands.
 
 For more information, see [Visual Studio Code webviews](https://code.visualstudio.com/api/extension-guides/webview).
 

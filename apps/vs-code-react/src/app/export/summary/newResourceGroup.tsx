@@ -1,6 +1,5 @@
 import type { INamingRules } from '../../../run-service';
 import type { RootState } from '../../../state/store';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { isNameValid } from './helper';
 import { Callout, Link, PrimaryButton, Text, TextField } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -25,8 +24,8 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   const intl = useIntl();
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const [name, setName] = useState<string>('');
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { exportData } = vscodeState as InitializedVscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const { exportData } = workflowState;
   const { location } = exportData;
 
   const intlText = {

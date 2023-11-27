@@ -24,7 +24,7 @@ import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
@@ -125,7 +125,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             corsNotice,
             accessToken: accessToken,
             workflowProperties: workflowProps,
-            project: 'overview',
+            project: ProjectName.overview,
             hostVersion: ext.extensionVersion,
           },
         });
