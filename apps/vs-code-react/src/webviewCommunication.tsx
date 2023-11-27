@@ -14,7 +14,6 @@ import {
   type UpdatePanelMetadataMessage,
   type CompleteFileSystemConnectionMessage,
   type ReceiveCallbackMessage,
-  ProjectName,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -34,7 +33,7 @@ import { initializeWorkflow, updateAccessToken, updateTargetDirectory, addStatus
 import { initialize } from './state/projectSlice';
 import type { AppDispatch, RootState } from './state/store';
 import { SchemaType } from '@microsoft/logic-apps-data-mapper';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import useEventListener from '@use-it/event-listener';
 import type { ReactNode } from 'react';
 import React, { useEffect } from 'react';
@@ -66,7 +65,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       dispatch(initialize(message.data.project));
     }
 
-    switch (projectState?.project) {
+    switch (projectState?.project ?? message?.data?.project) {
       case ProjectName.designer:
         switch (message.command) {
           case ExtensionCommand.initialize_frame:

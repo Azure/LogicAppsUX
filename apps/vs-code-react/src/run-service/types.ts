@@ -30,15 +30,6 @@ export interface RunDisplayItem {
   status: string;
 }
 
-export const ProjectName = {
-  export: 'export',
-  overview: 'overview',
-  review: 'review',
-  designer: 'designer',
-  dataMapper: 'dataMapper',
-} as const;
-export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
-
 export interface Workflow {
   id: string;
   name: string;
@@ -153,6 +144,8 @@ export const RouteName = {
   summary: 'summary',
   status: 'status',
   review: 'review',
+  designer: 'designer',
+  dataMapper: 'dataMapper',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];

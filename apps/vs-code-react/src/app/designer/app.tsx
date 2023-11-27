@@ -18,7 +18,7 @@ import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const App = () => {
+export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
