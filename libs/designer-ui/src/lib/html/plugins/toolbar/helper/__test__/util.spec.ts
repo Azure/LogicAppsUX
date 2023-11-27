@@ -1,6 +1,5 @@
 import {
   cleanHtmlString,
-  decodeHtmlEntities,
   decodeSegmentValue,
   encodeSegmentValue,
 } from "../util";
@@ -23,20 +22,6 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ],
     ])('should properly convert HTML: %p', (input, expected) => {
       expect(cleanHtmlString(input)).toBe(expected);
-    });
-  });
-
-  describe('decodeHtmlEntities', () => {
-    it.each([
-      ["plain text", "plain text"],
-      ["text with &lt;&gt;", "text with <>"],
-      ["text with &noIdeaWhatThisIs;", "text with &noIdeaWhatThisIs;"],
-      ["text with &#60;&gt;", "text with <>"],
-      ["text with &amp;lt;&amp;gt;", "text with &lt;&gt;"],
-      ["$[concat(...),concat('abc'),#AD008C]$", "$[concat(...),concat('abc'),#AD008C]$"],
-      ["$[concat(...),concat('&amp;lt;'),#AD008C]$", "$[concat(...),concat('&lt;'),#AD008C]$"],
-    ])('should properly decode entities in HTML: %p', (input, expected) => {
-      expect(decodeHtmlEntities(input)).toBe(expected);
     });
   });
 
