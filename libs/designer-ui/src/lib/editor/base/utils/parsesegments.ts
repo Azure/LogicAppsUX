@@ -1,4 +1,5 @@
 import { processNodeType } from '../../../html/plugins/toolbar/helper/functions';
+import { decodeSegmentValue, encodeSegmentValue } from '../../../html/plugins/toolbar/helper/util';
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
 import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
@@ -33,7 +34,11 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const dom = parser.parseFromString(stringValue, 'text/html');
+  const encodedStringValue = tokensEnabled ? stringValue.replace(/\$\[(.*?)\]\$/g, (_match, content) => {
+    return `$[${encodeSegmentValue(content)}]$`;
+  }) : stringValue;
+
+  const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
   nodes.forEach((currNode) => {
     if ($isParagraphNode(currNode) || $isListNode(currNode) || $isHeadingNode(currNode)) {
@@ -99,12 +104,20 @@ const appendChildrenNode = (
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
+    const decodedTextContent = tokensEnabled ? decodeSegmentValue(textContent) : textContent;
     const childNodeStyles = childNode.getStyle();
     const childNodeFormat = childNode.getFormat();
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
     // and we'll need to use the ExtendedTextNode to apply the styles and format
-    appendStringSegment(paragraph, textContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled);
+    appendStringSegment(
+      paragraph,
+      decodedTextContent,
+      childNodeStyles,
+      childNodeFormat,
+      nodeMap,
+      tokensEnabled
+    );
   } else {
     paragraph.append(childNode);
   }
