@@ -1,4 +1,9 @@
-import { cleanHtmlString } from "../util";
+import {
+  cleanHtmlString,
+  decodeHtmlEntities,
+  decodeSegmentValue,
+  encodeSegmentValue,
+} from "../util";
 
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
@@ -12,8 +17,56 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
         "<span id=\"$[abc,variables('abc'),#770bd6]$\">text</span>",
         "<span id=\"$[abc,variables('abc'),#770bd6]$\">text</span>",
       ],
+      [
+        "<span id=\"$[concat('&lt;'),#ad008c]$\">text</span>",
+        "<span id=\"$[concat('&lt;'),#ad008c]$\">text</span>",
+      ],
     ])('should properly convert HTML: %p', (input, expected) => {
       expect(cleanHtmlString(input)).toBe(expected);
+    });
+  });
+
+  describe('decodeHtmlEntities', () => {
+    it.each([
+      ["plain text", "plain text"],
+      ["text with &lt;&gt;", "text with <>"],
+      ["text with &noIdeaWhatThisIs;", "text with &noIdeaWhatThisIs;"],
+      ["text with &#60;&gt;", "text with <>"],
+      ["text with &amp;lt;&amp;gt;", "text with &lt;&gt;"],
+      ["$[concat(...),concat('abc'),#AD008C]$", "$[concat(...),concat('abc'),#AD008C]$"],
+      ["$[concat(...),concat('&amp;lt;'),#AD008C]$", "$[concat(...),concat('&lt;'),#AD008C]$"],
+    ])('should properly decode entities in HTML: %p', (input, expected) => {
+      expect(decodeHtmlEntities(input)).toBe(expected);
+    });
+  });
+
+  describe('decodeSegmentValue', () => {
+    it.each([
+      ["plain text", "plain text"],
+      ["text with %26lt;%26gt;", "text with &lt;&gt;"],
+      ["text with %26noIdeaWhatThisIs;", "text with &noIdeaWhatThisIs;"],
+      ["text with %26#60;%26gt;", "text with &#60;&gt;"],
+      ["text with %26amp;lt;%26amp;gt;", "text with &amp;lt;&amp;gt;"],
+      ["$[concat(...),concat('abc'),#AD008C]$", "$[concat(...),concat('abc'),#AD008C]$"],
+      ["$[concat(...),concat('%26lt;'),#AD008C]$", "$[concat(...),concat('&lt;'),#AD008C]$"],
+      ["$[concat(...),concat('%26amp;lt;'),#AD008C]$", "$[concat(...),concat('&amp;lt;'),#AD008C]$"],
+    ])('should properly decode segments in: %p', (input, expected) => {
+      expect(decodeSegmentValue(input)).toBe(expected);
+    });
+  });
+
+  describe('encodeSegmentValue', () => {
+    it.each([
+      ["plain text", "plain text"],
+      ["text with &lt;&gt;", "text with %26lt;%26gt;"],
+      ["text with &noIdeaWhatThisIs;", "text with %26noIdeaWhatThisIs;"],
+      ["text with &#60;&gt;", "text with %26#60;%26gt;"],
+      ["text with &amp;lt;&amp;gt;", "text with %26amp;lt;%26amp;gt;"],
+      ["$[concat(...),concat('abc'),#AD008C]$", "$[concat(...),concat('abc'),#AD008C]$"],
+      ["$[concat(...),concat('&lt;'),#AD008C]$", "$[concat(...),concat('%26lt;'),#AD008C]$"],
+      ["$[concat(...),concat('&amp;lt;'),#AD008C]$", "$[concat(...),concat('%26amp;lt;'),#AD008C]$"],
+    ])('should properly encode segments in: %p', (input, expected) => {
+      expect(encodeSegmentValue(input)).toBe(expected);
     });
   });
 });

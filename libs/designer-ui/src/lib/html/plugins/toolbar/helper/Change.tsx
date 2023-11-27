@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../../../../editor';
 import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
-import { cleanHtmlString } from './util';
+import { cleanHtmlString, decodeSegmentValue, encodeSegmentValue } from './util';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
@@ -41,6 +41,11 @@ const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSeg
           if (attribute.name !== 'id' && attribute.name !== 'style' && attribute.name !== 'href') {
             element.removeAttribute(attribute.name);
           }
+          if (attribute.name === 'id') {
+            const idValue = element.getAttribute('id') ?? ''; // e.g., "$[concat(...),concat('&lt;'),#AD008C]$"
+            const encodedIdValue = encodeSegmentValue(idValue); // e.g., "$[concat(...),concat('%26lt;'),#AD008C]$"
+            element.setAttribute('id', encodedIdValue);
+          }
         }
       }
 
@@ -51,8 +56,9 @@ const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSeg
       const spanIdPattern = /<span id="(.*?)"><\/span>/g;
       // Replace <span id="..."></span> with the captured "id" value if it is found in the viable ids map
       const removeTokenTags = cleanedHtmlString.replace(spanIdPattern, (match, idValue) => {
-        if (nodeMap.get(idValue)) {
-          return idValue;
+        const decodedIdValue = decodeSegmentValue(idValue);
+        if (nodeMap.get(decodedIdValue)) {
+          return decodedIdValue;
         } else {
           return match;
         }

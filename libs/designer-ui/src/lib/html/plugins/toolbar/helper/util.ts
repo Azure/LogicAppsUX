@@ -1,3 +1,10 @@
+const knownHtmlEntityMap: Record<string, string> = {
+  'lt': '<',
+  'gt': '>',
+  'amp': '&',
+  'quot': '"',
+};
+
 export interface Position {
   x: number;
   y: number;
@@ -20,6 +27,32 @@ export const cleanHtmlString = (html: string): string => {
   cleanedHtmlString = cleanedHtmlString.replace(/((<br>)+)(<\/p>)/g, (_match, brs, _br, tag) => `${tag}${brs}`);
 
   return cleanedHtmlString;
+};
+
+export const decodeHtmlEntities = (html: string): string => {
+  return html.replace(/&(([a-z]+)|#([0-9]+));/gi, (match, ...matches) => {
+    const textEntity = matches[1];
+    const numericEntity = matches[2];
+
+    if (textEntity && textEntity in knownHtmlEntityMap) {
+      return knownHtmlEntityMap[textEntity];
+    }
+
+    if (numericEntity) {
+      const characterCode = parseInt(numericEntity, 10);
+      return String.fromCharCode(characterCode);
+    }
+
+    return match;
+  });
+};
+
+export const decodeSegmentValue = (value: string): string => {
+  return value.replace(/%26/g, '&');
+};
+
+export const encodeSegmentValue = (value: string): string => {
+  return value.replace(/&/g, '%26');
 };
 
 export const dropDownActiveClass = (active: boolean) => {
