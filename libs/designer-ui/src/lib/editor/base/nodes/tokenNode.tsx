@@ -125,7 +125,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   private getEncodedValue(): typeof this.__value {
-    return this.__value ? encodeSegmentValue(this.__value) : undefined;
+    return this.__value;
   }
 }
 

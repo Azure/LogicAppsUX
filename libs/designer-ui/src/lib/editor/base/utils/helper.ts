@@ -108,11 +108,3 @@ export const removeQuotes = (s: string): string => {
   }
   return s;
 };
-
-export const encodeSegmentValue = (value: string): string => {
-  return value.replace(/&/g, '%26');
-};
-
-export const decodeSegmentValue = (value: string): string => {
-  return value.replace(/%26/g, '&');
-};
