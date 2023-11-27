@@ -478,15 +478,16 @@ const rewriteValueId = (id: string, value: string, replacementIds: Record<string
 const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
   const callbackUrlToken: OutputToken = {
     brandColor: httpWebhookBrandColor,
-    key: `${Constants.KEY_SEGMENTS.SYSTEM}.${Constants.DEFAULT_KEY_PREFIX}.${Constants.KEY_SEGMENTS.FUNCTION}.${Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`,
+    key: Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY,
     title: getIntl().formatMessage({
       defaultMessage: 'Callback url',
       description: 'Callback url token title',
     }),
-    type: Constants.SWAGGER.TYPE.OBJECT,
+    type: Constants.SWAGGER.TYPE.STRING,
     icon: httpWebhookIcon,
     name: Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME,
     value: Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME,
+    isAdvanced: false,
     outputInfo: {
       type: TokenType.OUTPUTS,
       required: false,

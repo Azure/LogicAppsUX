@@ -931,6 +931,10 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
     name,
     outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments },
   } = token;
+  // custom logic for http webhook list callback url
+  if (key === constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY) {
+    return constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME;
+  }
   let method: string;
   switch (tokenType) {
     case TokenType.PARAMETER:
@@ -966,7 +970,6 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
 
     default:
       method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName);
-
       return generateExpressionFromKey(method, key, actionName, !!arrayDetails, !!required);
   }
 }
