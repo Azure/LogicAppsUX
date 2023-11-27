@@ -72,7 +72,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   toString(): string {
-    return `$[${this.__title},${this.getEncodedValue()},${this.__brandColor}]$`;
+    return `$[${this.__title},${this.__value},${this.__brandColor}]$`;
   }
 
   convertToSegment(): ValueSegment {
@@ -109,7 +109,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   decorate() {
     return (
       <InputToken
-        value={this.getEncodedValue()}
+        value={this.__value}
         icon={this.__icon}
         title={this.__title}
         brandColor={this.__brandColor ?? 'black'}
@@ -118,10 +118,6 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         description={this.__description}
       />
     );
-  }
-
-  private getEncodedValue(): typeof this.__value {
-    return this.__value;
   }
 }
 
