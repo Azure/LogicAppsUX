@@ -931,7 +931,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
     name,
     outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments },
   } = token;
-  // custom logic for http webhook list callback url
+  // get the expression value for webhook list callback url
   if (key === constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY) {
     return constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME;
   }
