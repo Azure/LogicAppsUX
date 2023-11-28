@@ -1,3 +1,13 @@
+const unsafeCharacters = ['&', '"'];
+const unsafeCharacterEncodingMap: Record<string, string> = unsafeCharacters.reduce(
+  (acc, key) => ({ ...acc, [key]: encodeURIComponent(key) }),
+  {}
+);
+const unsafeCharacterDecodingMap: Record<string, string> = unsafeCharacters.reduce(
+  (acc, key) => ({ ...acc, [encodeURIComponent(key)]: key }),
+  {}
+);
+
 export interface Position {
   x: number;
   y: number;
@@ -20,6 +30,19 @@ export const cleanHtmlString = (html: string): string => {
   cleanedHtmlString = cleanedHtmlString.replace(/((<br>)+)(<\/p>)/g, (_match, brs, _br, tag) => `${tag}${brs}`);
 
   return cleanedHtmlString;
+};
+
+export const decodeSegmentValue = (value: string): string => encodeOrDecodeSegmentValue(value, 'decode');
+
+export const encodeSegmentValue = (value: string): string => encodeOrDecodeSegmentValue(value, 'encode');
+
+const encodeOrDecodeSegmentValue = (value: string, direction: 'encode' | 'decode'): string => {
+  const map = direction === 'encode' ? unsafeCharacterEncodingMap : unsafeCharacterDecodingMap;
+  let newValue = value;
+  Object.keys(map).forEach((key) => {
+    newValue = newValue.replaceAll(key, map[key]);
+  });
+  return newValue;
 };
 
 export const dropDownActiveClass = (active: boolean) => {
