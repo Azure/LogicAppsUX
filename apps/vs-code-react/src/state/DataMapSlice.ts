@@ -2,7 +2,7 @@ import type { FunctionData, MapDefinitionEntry, MapMetadata, Schema } from '@mic
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-export interface DataMapLoadingState {
+export interface DataMapState {
   runtimePort?: string;
   armToken?: string;
   loadingMethod: 'file' | 'arm';
@@ -21,14 +21,14 @@ export interface DataMapLoadingState {
   useExpandedFunctionCards: boolean;
 }
 
-const initialState: DataMapLoadingState = {
+const initialState: DataMapState = {
   loadingMethod: 'file',
   xsltFilename: '',
   xsltContent: '',
   useExpandedFunctionCards: true,
 };
 
-export const dataMapDataLoaderSlice = createSlice({
+export const dataMapSlice = createSlice({
   name: 'dataMapDataLoader',
   initialState,
   reducers: {
@@ -97,6 +97,6 @@ export const {
   changeCustomXsltPathList,
   changeFetchedFunctions,
   changeUseExpandedFunctionCards,
-} = dataMapDataLoaderSlice.actions;
+} = dataMapSlice.actions;
 
-export default dataMapDataLoaderSlice.reducer;
+export default dataMapSlice.reducer;
