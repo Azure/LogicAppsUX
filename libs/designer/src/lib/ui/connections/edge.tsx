@@ -82,13 +82,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     [operationData?.runAfter]
   );
   const numRunAfters = Object.keys(filteredRunAfters).length;
-
-  // const raIndex = useMemo(() => Object.keys(filteredRunAfters).findIndex((key) => {
-  //   return key === source;
-  // }), [filteredRunAfters, source]);
-  //TODO elaina double check this raIndexByNodePosition to use instead of raIndex.
   const raIndex: number = useWorkflowNodeIndex(source, Object.keys(filteredRunAfters));
-  console.log('---Elaina: raIndexByNodePosition', raIndex);
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
   const showRunAfter = runAfterStatuses.length;
@@ -173,6 +167,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           )}
         </>
       ) : null}
+
       {/* RUN AFTER INDICATOR */}
       {showRunAfter ? (
         <foreignObject

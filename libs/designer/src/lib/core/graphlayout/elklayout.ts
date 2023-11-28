@@ -162,20 +162,16 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
   useThrottledEffect(
     () => {
       if (!workflowGraph) return;
-
       const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
-
       const traceId = LoggerService().startTrace({
         action: 'useLayout',
         actionModifier: 'run Elk Layout',
         name: 'Elk Layout',
         source: 'elklayout.ts',
       });
-
       elkLayout(elkGraph, readOnly)
         .then((g) => {
           const [n, e, s] = convertElkGraphToReactFlow(g);
-
           setReactFlowNodes(n);
           setReactFlowEdges(e);
           setReactFlowSize(s);

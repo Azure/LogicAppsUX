@@ -119,16 +119,14 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 };
 
 export const getWorkflowNodeIndexFromGraphLevel = (
-  workflowGraphNodes: {
-    [hi: string]: WorkflowNode;
-  },
+  workflowGraphNodes: Record<string, WorkflowNode>,
   runAfters: string[],
   actionId: string
 ) => {
   const sortedRunAfters = runAfters.slice(0).sort(function compareFn(id1, id2) {
-    const workflowNode1 = workflowGraphNodes?.[id1]?.position?.x ?? 0;
-    const workflowNode2 = workflowGraphNodes?.[id2]?.position?.x ?? 0;
-    return workflowNode2 - workflowNode1;
+    const workflowNode1PositionX = workflowGraphNodes?.[id1]?.position?.x ?? 0;
+    const workflowNode2PositionX = workflowGraphNodes?.[id2]?.position?.x ?? 0;
+    return workflowNode2PositionX - workflowNode1PositionX;
   });
 
   return sortedRunAfters?.findIndex((key) => key === actionId);
@@ -153,19 +151,15 @@ export const useWorkflowNode = (actionId?: string) => {
 
 export const useWorkflowNodeIndex = (actionId: string, runAfters: string[]): number => {
   return useSelector((state: RootState) => {
-    if (!actionId) {
+    if (!actionId || !state?.workflow?.graph?.children) {
       return 0;
     }
 
-    const workflowGraphNodes:
-      | {
-          [hi: string]: WorkflowNode;
-        }
-      | undefined = state?.workflow?.graph?.children?.reduce((obj, cur) => ({ ...obj, [cur.id]: cur }), {});
+    const workflowGraphNodes: Record<string, WorkflowNode> = state?.workflow?.graph?.children?.reduce(
+      (obj, val) => ({ ...obj, [val.id]: val }),
+      {}
+    );
 
-    if (!workflowGraphNodes) {
-      return 0;
-    }
     return getWorkflowNodeIndexFromGraphLevel(workflowGraphNodes, runAfters, actionId);
   });
 };

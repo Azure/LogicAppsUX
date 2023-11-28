@@ -143,21 +143,17 @@ export const Designer = (props: DesignerProps) => {
     [dispatch, nodes]
   );
 
-  // const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
-  const nodesWithPlaceholder = useMemo(() => {
-    const emptyWorkflowPlaceholderNodes = [
-      {
-        id: 'newWorkflowTrigger',
-        position: { x: 0, y: 0 },
-        data: { label: 'newWorkflowTrigger' },
-        parentNode: undefined,
-        type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
-        style: DEFAULT_NODE_SIZE,
-      },
-    ];
-
-    return !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
-  }, [isEmpty, nodes, isReadOnly]);
+  const emptyWorkflowPlaceholderNodes = [
+    {
+      id: 'newWorkflowTrigger',
+      position: { x: 0, y: 0 },
+      data: { label: 'newWorkflowTrigger' },
+      parentNode: undefined,
+      type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
+      style: DEFAULT_NODE_SIZE,
+    },
+  ];
+  const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
