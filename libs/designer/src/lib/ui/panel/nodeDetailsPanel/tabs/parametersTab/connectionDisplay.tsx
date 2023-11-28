@@ -3,7 +3,7 @@ import { useIsOperationMissingConnection } from '../../../../../core/state/conne
 import { useIsXrmConnectionReferenceMode } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import { isolateTab } from '../../../../../core/state/panel/panelSlice';
 import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
-import { Label, Link, Spinner, SpinnerSize } from '@fluentui/react';
+import { Icon, Label, Link, Spinner, SpinnerSize } from '@fluentui/react';
 import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -13,6 +13,7 @@ interface ConnectionDisplayProps {
   nodeId: string;
   readOnly: boolean;
   isLoading?: boolean;
+  hasError: boolean;
 }
 
 export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
@@ -64,17 +65,30 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   if (isLoading)
     return (
-      <div className="connection-info">
+      <div className="connection-display">
         <Spinner size={SpinnerSize.small} label={loadingText} style={{ padding: '4px 0px' }} labelPosition="right" />
       </div>
     );
 
+  const connectionErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid connection',
+    description: 'Text to show when there is an error with the connection',
+  });
+
   return (
-    <div className="connection-info">
-      {connectionName && <Label className="label">{connectionDisplayText}</Label>}
-      <Link id="change-connection-button" onClick={openChangeConnectionCallback} disabled={readOnly}>
-        {openChangeConnectionText}
-      </Link>
+    <div className="connection-display">
+      <div className="connection-info">
+        {connectionName && <Label className="label">{connectionDisplayText}</Label>}
+        <Link id="change-connection-button" onClick={openChangeConnectionCallback} disabled={readOnly}>
+          {openChangeConnectionText}
+        </Link>
+      </div>
+      {props.hasError ? (
+        <div className="connection-info-error">
+          <Icon iconName="Error" styles={{ root: { position: 'relative', top: 2 } }} />
+          <div className="connection-info-error-text">{connectionErrorText}</div>
+        </div>
+      ) : null}
     </div>
   );
 };
