@@ -34,9 +34,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const encodedStringValue = tokensEnabled ? stringValue.replace(/\$\[(.*?)\]\$/g, (_match, content) => {
-    return `$[${encodeSegmentValue(content)}]$`;
-  }) : stringValue;
+  const encodedStringValue = encodeStringSegments(stringValue, tokensEnabled);
 
   const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
@@ -255,4 +253,33 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
     }
   });
   return text;
+};
+
+export const encodeStringSegments = (value: string, tokensEnabled: boolean | undefined): string => {
+  if (!tokensEnabled) {
+    return value;
+  }
+
+  let newValue = "";
+
+  for (let i = 0; i < value.length; i++) {
+    if (value.substring(i, i + 2) === '$[') {
+      const startIndex = i;
+      const endIndex = value.indexOf(']$', startIndex);
+      if (endIndex === -1) {
+        break;
+      }
+
+      const tokenSegment = value.substring(startIndex + 2, endIndex);
+      const encodedTokenSegment = `$[${encodeSegmentValue(tokenSegment)}]$`;
+      newValue += encodedTokenSegment;
+
+      i = endIndex + 1; // Skip the ']', and i++ will skip the '$'.
+      continue;
+    }
+
+    newValue += value[i];
+  }
+
+  return newValue;
 };
