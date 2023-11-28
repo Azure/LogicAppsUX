@@ -42,8 +42,8 @@ const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSeg
             element.removeAttribute(attribute.name);
           }
           if (attribute.name === 'id') {
-            const idValue = element.getAttribute('id') ?? ''; // e.g., "$[concat(...),concat('&lt;'),#AD008C]$"
-            const encodedIdValue = encodeSegmentValue(idValue); // e.g., "$[concat(...),concat('%26lt;'),#AD008C]$"
+            const idValue = element.getAttribute('id') ?? ''; // e.g., "$[concat(...),concat('&lt;', '"'),#AD008C]$"
+            const encodedIdValue = encodeSegmentValue(idValue); // e.g., "$[concat(...),concat('%26lt;', '%22'),#AD008C]$"
             element.setAttribute('id', encodedIdValue);
           }
         }
