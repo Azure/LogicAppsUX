@@ -118,6 +118,22 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
   return traverseGraph(graph);
 };
 
+export const getWorkflowNodeIndexFromGraphLevel = (
+  workflowGraphNodes: {
+    [hi: string]: WorkflowNode;
+  },
+  runAfters: string[],
+  actionId: string
+) => {
+  const sortedRunAfters = runAfters.slice(0).sort(function compareFn(id1, id2) {
+    const workflowNode1 = workflowGraphNodes?.[id1]?.position?.x ?? 0;
+    const workflowNode2 = workflowGraphNodes?.[id2]?.position?.x ?? 0;
+    return workflowNode2 - workflowNode1;
+  });
+
+  return sortedRunAfters?.findIndex((key) => key === actionId);
+};
+
 export const useNodeEdgeTargets = (nodeId?: string): string[] =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
@@ -132,6 +148,25 @@ export const useWorkflowNode = (actionId?: string) => {
       return undefined;
     }
     return getWorkflowNodeFromGraphState(state.workflow, actionId);
+  });
+};
+
+export const useWorkflowNodeIndex = (actionId: string, runAfters: string[]): number => {
+  return useSelector((state: RootState) => {
+    if (!actionId) {
+      return 0;
+    }
+
+    const workflowGraphNodes:
+      | {
+          [hi: string]: WorkflowNode;
+        }
+      | undefined = state?.workflow?.graph?.children?.reduce((obj, cur) => ({ ...obj, [cur.id]: cur }), {});
+
+    if (!workflowGraphNodes) {
+      return 0;
+    }
+    return getWorkflowNodeIndexFromGraphLevel(workflowGraphNodes, runAfters, actionId);
   });
 };
 

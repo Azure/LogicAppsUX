@@ -5,7 +5,7 @@ import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
-import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { buildEdgeIdsBySource, clearFocusNode, updateNodeInfo } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import Controls from './Controls';
@@ -138,23 +138,26 @@ export const Designer = (props: DesignerProps) => {
   const dispatch = useDispatch();
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      dispatch(updateNodeSizes(changes));
+      dispatch(updateNodeInfo({ nodeChanges: changes, nodes }));
     },
-    [dispatch]
+    [dispatch, nodes]
   );
 
-  const emptyWorkflowPlaceholderNodes = [
-    {
-      id: 'newWorkflowTrigger',
-      position: { x: 0, y: 0 },
-      data: { label: 'newWorkflowTrigger' },
-      parentNode: undefined,
-      type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
-      style: DEFAULT_NODE_SIZE,
-    },
-  ];
+  // const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
+  const nodesWithPlaceholder = useMemo(() => {
+    const emptyWorkflowPlaceholderNodes = [
+      {
+        id: 'newWorkflowTrigger',
+        position: { x: 0, y: 0 },
+        data: { label: 'newWorkflowTrigger' },
+        parentNode: undefined,
+        type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
+        style: DEFAULT_NODE_SIZE,
+      },
+    ];
 
-  const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
+    return !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
+  }, [isEmpty, nodes, isReadOnly]);
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);

@@ -108,6 +108,8 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       id: node.id,
       height: node.height,
       width: node.width,
+      x: node.position?.x,
+      y: node.position?.y,
       edges: undefined, // node has no edges
       children: node.children?.map(convertWorkflowGraphToElkGraph),
       layoutOptions: {
@@ -120,6 +122,8 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       id: node.id,
       height: node.height,
       width: node.width,
+      x: node.position?.x,
+      y: node.position?.y,
       children,
       edges:
         node.edges?.map((edge) => ({
@@ -153,22 +157,25 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
   const [reactFlowSize, setReactFlowSize] = useState<number[]>([0, 0]);
   const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
-
   const readOnly = useReadOnly();
 
   useThrottledEffect(
     () => {
       if (!workflowGraph) return;
+
       const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
+
       const traceId = LoggerService().startTrace({
         action: 'useLayout',
         actionModifier: 'run Elk Layout',
         name: 'Elk Layout',
         source: 'elklayout.ts',
       });
+
       elkLayout(elkGraph, readOnly)
         .then((g) => {
           const [n, e, s] = convertElkGraphToReactFlow(g);
+
           setReactFlowNodes(n);
           setReactFlowEdges(e);
           setReactFlowSize(s);

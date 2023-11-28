@@ -29,7 +29,7 @@ import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { NodeChange, NodeDimensionChange } from 'reactflow';
+import type { Node, NodeChange, NodeDimensionChange } from 'reactflow';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -223,8 +223,8 @@ export const workflowSlice = createSlice({
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
     },
-    updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
-      const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
+    updateNodeInfo: (state: WorkflowState, action: PayloadAction<{ nodeChanges: NodeChange[]; nodes: Node[] }>) => {
+      const dimensionChanges = action.payload.nodeChanges.filter((x) => x.type === 'dimensions');
       if (!state.graph) {
         return;
       }
@@ -240,11 +240,33 @@ export const workflowSlice = createSlice({
       }, {});
       while (stack.length) {
         const node = stack.shift();
+
         const change = dimensionChangesById[node?.id ?? ''];
         if (change && node && isWorkflowNode(node)) {
           const c = change as NodeDimensionChange;
           node.height = c.dimensions?.height ?? 0;
           node.width = c.dimensions?.width ?? 0;
+        }
+        !!node?.children?.length && stack.push(...node.children);
+      }
+
+      const positionChangesById = action.payload.nodes.reduce<Record<string, Node>>((acc, val) => {
+        if (!val.position) {
+          return acc;
+        }
+        return {
+          ...acc,
+          [val.id]: val,
+        };
+      }, {});
+      stack.push(state.graph);
+
+      while (stack.length) {
+        const node = stack.shift();
+        const change = positionChangesById[node?.id ?? ''];
+        const nodePosition = change?.position;
+        if (node && nodePosition) {
+          node.position = nodePosition;
         }
         !!node?.children?.length && stack.push(...node.children);
       }
@@ -453,7 +475,7 @@ export const {
   moveNode,
   deleteNode,
   deleteSwitchCase,
-  updateNodeSizes,
+  updateNodeInfo,
   setNodeDescription,
   setCollapsedGraphIds,
   toggleCollapsedGraphId,
