@@ -1,5 +1,10 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata, useWorkflowNodeIndex } from '../../core/state/workflow/workflowSelectors';
+import {
+  useActionMetadata,
+  useNodeEdgeTargets,
+  useNodeMetadata,
+  useRunAfterIndexBySource,
+} from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { RunAfterIndicator } from './runAfterIndicator';
@@ -82,7 +87,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     [operationData?.runAfter]
   );
   const numRunAfters = Object.keys(filteredRunAfters).length;
-  const raIndex: number = useWorkflowNodeIndex(source, Object.keys(filteredRunAfters));
+  const raIndex: number = useRunAfterIndexBySource(source, Object.keys(filteredRunAfters));
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
   const showRunAfter = runAfterStatuses.length;

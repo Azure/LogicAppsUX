@@ -123,11 +123,9 @@ export const getWorkflowNodeIndexFromGraphLevel = (
   runAfters: string[],
   actionId: string
 ) => {
-  const sortedRunAfters = runAfters.slice(0).sort(function compareFn(id1, id2) {
-    const workflowNode1PositionX = workflowGraphNodes?.[id1]?.position?.x ?? 0;
-    const workflowNode2PositionX = workflowGraphNodes?.[id2]?.position?.x ?? 0;
-    return workflowNode2PositionX - workflowNode1PositionX;
-  });
+  const sortedRunAfters = runAfters
+    .slice(0)
+    .sort((id1, id2) => (workflowGraphNodes?.[id2]?.position?.x ?? 0) - (workflowGraphNodes?.[id1]?.position?.x ?? 0));
 
   return sortedRunAfters?.findIndex((key) => key === actionId);
 };
@@ -149,7 +147,7 @@ export const useWorkflowNode = (actionId?: string) => {
   });
 };
 
-export const useWorkflowNodeIndex = (actionId: string, runAfters: string[]): number => {
+export const useRunAfterIndexBySource = (actionId: string, runAfters: string[]): number => {
   return useSelector((state: RootState) => {
     if (!actionId || !state?.workflow?.graph?.children) {
       return 0;

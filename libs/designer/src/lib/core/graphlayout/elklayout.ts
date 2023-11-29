@@ -158,8 +158,8 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
   const [reactFlowSize, setReactFlowSize] = useState<number[]>([0, 0]);
   const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
-  const readOnly = useReadOnly();
   const dispatch = useDispatch();
+  const readOnly = useReadOnly();
 
   useThrottledEffect(
     () => {
