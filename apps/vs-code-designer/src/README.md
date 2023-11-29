@@ -4,6 +4,10 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
+## Azure Logic Apps - improved onboarding experience
+
+Starting with version 2.81.5, the Azure Logic Apps (Standard) extension for Visual Studio Code includes a dependency installer that automatically installs all the required dependencies in a new binary folder and leaves any existing dependencies unchanged. For more information, see [Get started more easily with the Azure Logic Apps (Standard) extension for Visual Studio Code](https://techcommunity.microsoft.com/t5/azure-integration-services-blog/making-it-easy-to-get-started-with-the-azure-logic-apps-standard/ba-p/3979643).
+
 ## Azure Logic Apps - Data Mapper for Visual Studio Code
 
 In Visual Studio Code, you can graphically describe transformations by mapping relationships between data types in a source schema and a target schema. After you install the Azure Logic Apps - Data Mapper, you can create direct basic relationships and more complex transformations using functions, handling any translation between supported schema types in the backend. For more information, see [Create maps to transform data in Azure Logic Apps with Visual Studio Code (preview)](https://go.microsoft.com/fwlink/?linkid=2234193).
