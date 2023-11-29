@@ -29,7 +29,7 @@ export const AuthenticationProperty = ({ initialValue = [], AuthProperty, onBlur
           className="msla-authentication-editor-expanded-editor"
           initialValue={initialValue}
           placeholder={AuthProperty.placeHolder}
-          BasePlugins={{ tokens: true }}
+          basePlugins={{ tokens: true }}
           editorBlur={onBlur}
         />
       </div>

@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps, CallbackHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { Change } from '../editor/base/plugins/Change';
 import type {
   IButtonStyles,
@@ -234,11 +234,11 @@ export const Combobox = ({
     <div className="msla-combobox-container">
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
-          <BaseEditor
+          <EditorWrapper
             labelId={labelId}
             readonly={baseEditorProps.readonly}
             className="msla-combobox-editor"
-            BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
+            basePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
             onBlur={handleBlur}
             getTokenPicker={baseEditorProps.getTokenPicker}
@@ -246,7 +246,7 @@ export const Combobox = ({
             dataAutomationId={baseEditorProps.dataAutomationId}
           >
             <Change setValue={setValue} />
-          </BaseEditor>
+          </EditorWrapper>
           <TooltipHost content={clearEditor} calloutProps={calloutProps} styles={hostStyles}>
             <IconButton styles={buttonStyles} iconProps={clearIcon} aria-label={clearEditor} onClick={() => handleClearClick()} />
           </TooltipHost>

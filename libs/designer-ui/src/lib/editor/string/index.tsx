@@ -1,5 +1,5 @@
 import type { BaseEditorProps, ChangeHandler } from '../base';
-import { BaseEditor } from '../base';
+import { EditorWrapper } from '../base/EditorWrapper';
 import { Change } from '../base/plugins/Change';
 import type { ValueSegment } from '../models/parameter';
 import SingleLine from './stringPlugins/SingleLine';
@@ -31,19 +31,19 @@ export const StringEditor = ({
   };
 
   return (
-    <BaseEditor
+    <EditorWrapper
       {...baseEditorProps}
       initialValue={initialValue}
-      BasePlugins={{
-        tokens: baseEditorProps.BasePlugins?.tokens ?? true,
+      basePlugins={{
+        tokens: baseEditorProps.basePlugins?.tokens ?? true,
         clearEditor: clearEditorOnTokenInsertion,
         singleValueSegment: clearEditorOnTokenInsertion,
-        ...baseEditorProps.BasePlugins,
+        ...baseEditorProps.basePlugins,
       }}
       onBlur={handleBlur}
     >
       {singleLine ? <SingleLine /> : null}
       <Change setValue={onValueChange} />
-    </BaseEditor>
+    </EditorWrapper>
   );
 };

@@ -2798,12 +2798,14 @@ export function updateTokenMetadata(
       token.brandColor = ParameterBrandColor;
       token.icon = ParameterIcon;
       token.type = convertWorkflowParameterTypeToSwaggerType(workflowParameters[token.title]?.type);
+      token.value = valueSegment.value;
       return valueSegment;
 
     case TokenType.FX:
       token.brandColor = FxBrandColor;
       token.icon = FxIcon;
       token.title = getExpressionTokenTitle(token.expression as Expression);
+      token.value = valueSegment.value;
       return valueSegment;
 
     case TokenType.ITERATIONINDEX:

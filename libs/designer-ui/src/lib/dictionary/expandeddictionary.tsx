@@ -82,7 +82,7 @@ export const ExpandedDictionary = ({
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
-                BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
+                basePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 onFocus={() => addItem(index)}
                 valueType={keyType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.KEY)}
@@ -94,7 +94,7 @@ export const ExpandedDictionary = ({
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
-                BasePlugins={{ tokens: true, autoFocus: false }}
+                basePlugins={{ tokens: true, autoFocus: false }}
                 onFocus={() => addItem(index)}
                 valueType={valueType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.VALUE)}

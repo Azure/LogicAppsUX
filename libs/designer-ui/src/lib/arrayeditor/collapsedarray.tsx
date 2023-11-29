@@ -1,7 +1,7 @@
 import type { SimpleArrayItem, ComplexArrayItems, ArrayItemSchema } from '.';
 import type { ValueSegment } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
@@ -56,10 +56,10 @@ export const CollapsedArray = ({
     <div className="msla-array-container msla-array-editor-collapsed">
       {labelProps ? renderLabel() : null}
       <div className="msla-array-content">
-        <BaseEditor
+        <EditorWrapper
           {...props}
           className="msla-collapsed-editor-container"
-          BasePlugins={{
+          basePlugins={{
             tokens: true,
             tabbable: true,
           }}
@@ -75,7 +75,7 @@ export const CollapsedArray = ({
             setIsValid={setIsValid}
             setItems={setItems}
           />
-        </BaseEditor>
+        </EditorWrapper>
       </div>
     </div>
   );
