@@ -254,28 +254,23 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return;
       }
-      const stack: WorkflowNode[] = [state.graph];
 
-      const positionChangesById = action.payload.reduce<Record<string, Node>>((acc, val) => {
-        if (!val.position) {
-          return acc;
-        }
-        return {
+      const positionChangesById = action.payload.reduce<Record<string, Node>>(
+        (acc, val) => ({
           ...acc,
           [val.id]: val,
-        };
-      }, {});
-      stack.push(state.graph);
+        }),
+        {}
+      );
 
-      while (stack.length) {
-        const node = stack.shift();
-        const change = positionChangesById[node?.id ?? ''];
-        const nodePosition = change?.position;
-        if (node && nodePosition) {
-          node.position = nodePosition;
+      const updateNodePosition = (node: WorkflowNode) => {
+        // eslint-disable-next-line no-param-reassign
+        node.position = positionChangesById?.[node?.id ?? '']?.position;
+        for (const child of node.children ?? []) {
+          updateNodePosition(child);
         }
-        !!node?.children?.length && stack.push(...node.children);
-      }
+      };
+      updateNodePosition(state.graph);
     },
     setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
       state.collapsedGraphIds = action.payload;
