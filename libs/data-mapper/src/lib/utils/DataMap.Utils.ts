@@ -175,11 +175,17 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
   return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
 };
 
+const isQuotedString = (value: string): boolean => {
+  return (
+    value.length > 0 && ((value[0] === '"' && value[value.length - 1] === '"') || (value[0] === "'" && value[value.length - 1] === "'"))
+  );
+};
+
 export const amendSourceKeyForDirectAccessIfNeeded = (sourceKey: string): [string, string] => {
   // Parse the outermost Direct Access (if present) into the typical Function format
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [sourceKey.indexOf('['), sourceKey.lastIndexOf(']')];
-  if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
+  if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1 && !isQuotedString(sourceKey)) {
     // Need to isolate the singular key the DA is apart of as it could be wrapped in a function, etc.
     let keyWithDaStartIdx = 0;
     let keyWithDaEndIdx = sourceKey.length;
@@ -198,19 +204,17 @@ export const amendSourceKeyForDirectAccessIfNeeded = (sourceKey: string): [strin
       }
     }
 
-    mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
-    mockDirectAccessFnKey += `${sourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
-    mockDirectAccessFnKey += `${sourceKey.substring(keyWithDaStartIdx, daOpenBracketIdx)}, `; // Scope (source loop element)
-    mockDirectAccessFnKey += `${sourceKey.substring(keyWithDaStartIdx, daOpenBracketIdx)}${sourceKey.substring(
-      daClosedBracketIdx + 1,
-      keyWithDaEndIdx
-    )}`; // Output value
-    mockDirectAccessFnKey += ')';
+    // Only amend DA if the expression is not wrapped in a function, etc.
+    // Otherwise a bracket in one parameter may be matched with a bracked in another parameter.
+    if (keyWithDaStartIdx == 0 && keyWithDaEndIdx == sourceKey.length) {
+      mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
+      mockDirectAccessFnKey += `${sourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
+      mockDirectAccessFnKey += `${sourceKey.substring(0, daOpenBracketIdx)}, `; // Scope (source loop element)
+      mockDirectAccessFnKey += `${sourceKey.substring(0, daOpenBracketIdx)}${sourceKey.substring(daClosedBracketIdx + 1)}`; // Output value
+      mockDirectAccessFnKey += ')';
 
-    return [
-      sourceKey.substring(0, keyWithDaStartIdx) + mockDirectAccessFnKey + sourceKey.substring(keyWithDaEndIdx),
-      mockDirectAccessFnKey,
-    ];
+      return [mockDirectAccessFnKey, mockDirectAccessFnKey];
+    }
   }
 
   return [sourceKey, ''];
