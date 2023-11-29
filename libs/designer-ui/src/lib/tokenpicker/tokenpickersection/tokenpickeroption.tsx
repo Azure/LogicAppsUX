@@ -24,6 +24,8 @@ interface TokenPickerOptionsProps extends TokenPickerBaseProps {
   setTokenLength: Dispatch<SetStateAction<number[]>>;
 }
 
+const maxTokensPerSection = 6;
+
 export const TokenPickerOptions = ({
   selectedKey,
   section,
@@ -62,14 +64,17 @@ export const TokenPickerOptions = ({
     });
   }, [index, searchQuery, section.tokens, setTokenLength]);
 
-  const buttonTextMore = intl.formatMessage({
-    defaultMessage: 'See More',
-    description: 'Click to view more token options',
-  });
+  const buttonTextMore = intl.formatMessage(
+    {
+      defaultMessage: 'See More ({count})',
+      description: 'Click to view more token options. {count} indicates the number of total tokens.',
+    },
+    { count: section.tokens.length }
+  );
 
   const buttonTextLess = intl.formatMessage({
     defaultMessage: 'See Less',
-    description: 'Click to view less token options',
+    description: 'Click to view less token options.',
   });
 
   const handleMoreLess = () => {
@@ -163,56 +168,57 @@ export const TokenPickerOptions = ({
   const sectionHeaderColorRgb = lighten(sectionBrandColorRgb, 0.9);
   const sectionHeaderColorCss = `rgb(${sectionHeaderColorRgb.red}, ${sectionHeaderColorRgb.green}, ${sectionHeaderColorRgb.blue})`;
 
+  const maxRowsShown = selectedKey === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
+  const showSeeMoreOrLessButton = !searchQuery && (
+    hasAdvanced(section.tokens) ||
+    section.tokens.length > maxRowsShown
+  );
+
   return (
     <>
       {(searchQuery && filteredTokens.length > 0) || !searchQuery ? (
         <>
-          <div
-            className="msla-token-picker-section-header"
-            style={{ backgroundColor: sectionHeaderColorCss }}
-          >
+          <div className="msla-token-picker-section-header" style={{ backgroundColor: sectionHeaderColorCss }}>
             <img src={getSectionIcon()} alt="token icon" />
             {getSectionSecurity() ? (
               <div className="msla-token-picker-secure-token">
                 <Icon iconName="LockSolid" />
               </div>
             ) : null}
-            <span> {section.label}</span>
-            {searchQuery || !hasAdvanced(section.tokens) ? null : (
+            <span>{section.label}</span>
+            {!showSeeMoreOrLessButton ? null : (
               <button
                 className="msla-token-picker-section-header-button"
                 onClick={handleMoreLess}
                 data-automation-id={`msla-token-picker-section-header-button-${convertUIElementNameToAutomationId(section.label)}`}
               >
-                <span> {moreOptions ? buttonTextMore : buttonTextLess}</span>
+                <span>{moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>
             )}
           </div>
           <div className="msla-token-picker-section-options">
             {(!searchQuery ? section.tokens : filteredTokens).map((token, j) => {
-              if (!token.isAdvanced || !moreOptions || searchQuery) {
-                return (
-                  <button
-                    className="msla-token-picker-section-option"
-                    data-automation-id={`msla-token-picker-section-option-${j}`}
-                    key={`token-picker-option-${j}`}
-                    onClick={() => handleTokenClicked(token)}
-                  >
-                    <div className="msla-token-picker-section-option-text">
-                      <div className="msla-token-picker-option-inner">
-                        <div className="msla-token-picker-option-title">{token.title}</div>
-                        <div className="msla-token-picker-option-description" title={token.description}>
-                          {token.description}
-                        </div>
-                      </div>
-                      {/* {token.type && token.outputInfo?.type !== TokenType.FX ? (
-                        <div className="msla-token-picker-option-type">{token.type}</div>
-                      ) : null} */}
-                    </div>
-                  </button>
-                );
+              if ((token.isAdvanced || j >= maxRowsShown) && moreOptions && !searchQuery) {
+                return null;
               }
-              return null;
+
+              return (
+                <button
+                  className="msla-token-picker-section-option"
+                  data-automation-id={`msla-token-picker-section-option-${j}`}
+                  key={`token-picker-option-${j}`}
+                  onClick={() => handleTokenClicked(token)}
+                >
+                  <div className="msla-token-picker-section-option-text">
+                    <div className="msla-token-picker-option-inner">
+                      <div className="msla-token-picker-option-title">{token.title}</div>
+                      <div className="msla-token-picker-option-description" title={token.description}>
+                        {token.description}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              );
             })}
           </div>
         </>

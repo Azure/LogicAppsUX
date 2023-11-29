@@ -2857,12 +2857,6 @@
       "value": "Kullanmaya başlayın"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Daha Az Göster"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3469,12 +3463,6 @@
     {
       "type": 0,
       "value": "Sonraki akış önerisi"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Daha Fazlasını Göster"
     }
   ],
   "LMB8am": [
@@ -4205,6 +4193,12 @@
       "value": "Şema URI'si"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Bir giriş dizesinin UTF-8 bayt uzunluğunu döndürür"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4309,6 +4303,12 @@
     {
       "type": 0,
       "value": "At"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Gerekli. UTF-16 uzunluğunun hesaplandığı dize."
     }
   ],
   "Q5w4Do": [
@@ -5854,7 +5854,7 @@
   "Yuxprm": [
     {
       "type": 0,
-      "value": "Welcome to the workflow assistant!"
+      "value": "İş akışı yardımcısına hoş geldiniz!"
     }
   ],
   "Yw7Nfl": [
@@ -7541,6 +7541,12 @@
       "value": "Geçerli bir json girin."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8133,6 +8139,12 @@
       "value": "Kaydedilmeyen tüm değişiklikleri atmak istiyor musunuz?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Daha Az Göster"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8305,6 +8317,12 @@
     {
       "type": 0,
       "value": "Bir XML düğümünü, düğüm kümesini veya değeri, sağlanan XPath ifadesinden JSON olarak döndürür"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Gerekli. UTF-8 uzunluğunun hesaplandığı dize."
     }
   ],
   "q1gfIs": [
@@ -9059,6 +9077,20 @@
       "value": "Gerekli. Değerlendirilecek koleksiyonlar. Koleksiyonların herhangi birinde görünen bir nesne sonuçta da görüntülenir."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Daha Fazla Göster ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9209,6 +9241,12 @@
     {
       "type": 0,
       "value": "Her eylem bir veya daha fazla “sonrasında çalıştır” yapılandırması içermelidir"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Bir giriş dizesinin UTF-16 bayt uzunluğunu döndürür"
     }
   ],
   "vEBhDX": [

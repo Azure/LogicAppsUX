@@ -1,69 +1,116 @@
 # Logic Apps Designer
+## [2.87.0](https://github.com/Azure/LogicAppsUX/compare/v2.86.0...v2.87.0) (2023-11-29)
+
+
+### Features
+
+* **designer:** Adding an additional callout in parameters tab when connections are invalid ([#3739](https://github.com/Azure/LogicAppsUX/issues/3739)) ([040092f](https://github.com/Azure/LogicAppsUX/commit/040092fcf08a39001f73256c6085c668e91b953f))
+* **Vs Code:** Merged Vs-code-react to one folder for Designer, DM, Workflow, etc ([#3757](https://github.com/Azure/LogicAppsUX/issues/3757)) ([7e26cd2](https://github.com/Azure/LogicAppsUX/commit/7e26cd207102be0d80bbb2c2e40a6235dc85e9f7)), closes [#3692](https://github.com/Azure/LogicAppsUX/issues/3692) [#3701](https://github.com/Azure/LogicAppsUX/issues/3701) [#3719](https://github.com/Azure/LogicAppsUX/issues/3719) [#3756](https://github.com/Azure/LogicAppsUX/issues/3756)
+
+
+### Bug Fixes
+
+* **Data Mapper:** amending source key with directAccess when brackets are in a string ([#3715](https://github.com/Azure/LogicAppsUX/issues/3715)) ([207b9cf](https://github.com/Azure/LogicAppsUX/commit/207b9cff105a85898880d92abba55f56f0169a94))
+* **designer-ui:** Ensure `convertEditorState` returns a non-empty value ([#3742](https://github.com/Azure/LogicAppsUX/issues/3742)) ([449fbc6](https://github.com/Azure/LogicAppsUX/commit/449fbc6d30aee76f69f39294ee62e4fdff34a30e))
+* **designer-ui:** Prevent expressions using `&...;` syntax disappearing from HTML editor ([#3760](https://github.com/Azure/LogicAppsUX/issues/3760)) ([b7b7aaa](https://github.com/Azure/LogicAppsUX/commit/b7b7aaa393bc0ca81b278f17c81532e46ee3de26))
+* **designer:** Fix implicit foreach when added after a branch ([#3713](https://github.com/Azure/LogicAppsUX/issues/3713)) ([75f2c75](https://github.com/Azure/LogicAppsUX/commit/75f2c75fbcc3d6dedd0e41f40d665d86cd89a2c7))
+* **designer:** Fix Padding in action search  ([#3764](https://github.com/Azure/LogicAppsUX/issues/3764)) ([b75f328](https://github.com/Azure/LogicAppsUX/commit/b75f328036bede51ad7327c6b75fac2cd0e477c4))
+* **designer:** Get correct expression value for callbackUrl ([#3753](https://github.com/Azure/LogicAppsUX/issues/3753)) ([82f0495](https://github.com/Azure/LogicAppsUX/commit/82f0495a1e3299aa4189ee4fe2d452b79502cc89))
+* **designer:** Update dropzone automation ids to use node names and align with card … ([#3729](https://github.com/Azure/LogicAppsUX/issues/3729)) ([d567972](https://github.com/Azure/LogicAppsUX/commit/d567972b9f750536e2ab8025ca493db62ce60b4a))
+
+## [2.86.0](https://github.com/Azure/LogicAppsUX/compare/v2.85.0...v2.86.0) (2023-11-23)
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix '\n' being deleted by Lexical ([#3726](https://github.com/Azure/LogicAppsUX/issues/3726)) ([b098884](https://github.com/Azure/LogicAppsUX/commit/b0988848c6626af451ec90a75290f7a4e1294846))
+
+## [2.85.0](https://github.com/Azure/LogicAppsUX/compare/v2.84.0...v2.85.0) (2023-11-16)
+
+
+### Features
+
+* **designer-ui:** Add "See More" to all token picker sections ([#3689](https://github.com/Azure/LogicAppsUX/issues/3689)) ([87fddfd](https://github.com/Azure/LogicAppsUX/commit/87fddfd43612047e4ba9f7ed24d7316cd69422c8))
+* **designer-ui:** Improve token picker styling ([#3675](https://github.com/Azure/LogicAppsUX/issues/3675)) ([53976f0](https://github.com/Azure/LogicAppsUX/commit/53976f0c1cbf5b9395084776ca8bad0ecbd09b4d))
+* **Designer:** Added support for dynamic data in the array editor ([#3686](https://github.com/Azure/LogicAppsUX/issues/3686)) ([b633488](https://github.com/Azure/LogicAppsUX/commit/b633488ea6d90d9d53072e41a8000476e5664d8a))
+* **Designer:** Added token expressions `utf8Length` and `utf16Length` ([#3696](https://github.com/Azure/LogicAppsUX/issues/3696)) ([c5404d0](https://github.com/Azure/LogicAppsUX/commit/c5404d0c7cf548ee205c26c70253871b5140b53e))
+
+
+### Bug Fixes
+
+* **copilot:** Adding "the" to the greeting message ([#3674](https://github.com/Azure/LogicAppsUX/issues/3674)) ([b6c22a4](https://github.com/Azure/LogicAppsUX/commit/b6c22a4f8a59dabcd2e2979a57305c1a5ce89735))
+* **copilot:** Changing icon in header ([#3663](https://github.com/Azure/LogicAppsUX/issues/3663)) ([a0f0eb1](https://github.com/Azure/LogicAppsUX/commit/a0f0eb1ee7c22e21bd9b8ff03192c7c15908e5db))
+* **copilot:** Support for copilot copy in portal ([#3662](https://github.com/Azure/LogicAppsUX/issues/3662)) ([7c330ee](https://github.com/Azure/LogicAppsUX/commit/7c330eef0277cc169a99955f384e71baf96e18b4))
+* **Data Mapper:** Reenabled Generate On Clean State ([#3651](https://github.com/Azure/LogicAppsUX/issues/3651)) ([b3f44e9](https://github.com/Azure/LogicAppsUX/commit/b3f44e909b0ae22fa3f352fe937d5268b1d0f9b1))
+* **designer-ui:** Prevent text formatting in non-HTML inputs ([#3702](https://github.com/Azure/LogicAppsUX/issues/3702)) ([4403da8](https://github.com/Azure/LogicAppsUX/commit/4403da833c6bb103f984c548ad1598f04e03b720))
+* **designer:** Add aria label to operation search card ([#3631](https://github.com/Azure/LogicAppsUX/issues/3631)) ([3a3ea00](https://github.com/Azure/LogicAppsUX/commit/3a3ea00d8615ac4f275392b73d801a885dc13969))
+* **designer:** fix links in html editor when they have tokens ([#3697](https://github.com/Azure/LogicAppsUX/issues/3697)) ([a60222c](https://github.com/Azure/LogicAppsUX/commit/a60222c8915e99e9c0968e3b9348d6f07f2d4886))
+* **designer:** Fixes an issue where after inserting a token, token picker button doesn't appear  ([#3660](https://github.com/Azure/LogicAppsUX/issues/3660)) ([1b945e6](https://github.com/Azure/LogicAppsUX/commit/1b945e6cf8a8b404a052e0c5e70e6323422c0f2b))
+* **designer:** Update Downstream Tokens in EditorViewModel ([#3673](https://github.com/Azure/LogicAppsUX/issues/3673)) ([767cc5d](https://github.com/Azure/LogicAppsUX/commit/767cc5d24ca044217b8129c9a1e5b26fd0f920c2))
+* **designer:** Using segment values instead of token values, which fails in the Condition Editors ([#3664](https://github.com/Azure/LogicAppsUX/issues/3664)) ([7c79bff](https://github.com/Azure/LogicAppsUX/commit/7c79bff52c2e514214e6ab83c4f625a2f3c5a0d1))
+* **vscode:**  Add reset binaries dependencies command ([#3676](https://github.com/Azure/LogicAppsUX/issues/3676)) ([b0aec33](https://github.com/Azure/LogicAppsUX/commit/b0aec33da02624df483e353dd34c1e88c8fc108e))
+* **vscode:** Add troubleshoot dependencies message ([#3687](https://github.com/Azure/LogicAppsUX/issues/3687)) ([b5c11f5](https://github.com/Azure/LogicAppsUX/commit/b5c11f50281c70d21130086b90bbd38bf5bac0f4))
+* **vscode:** Add validation of func command ([#3658](https://github.com/Azure/LogicAppsUX/issues/3658)) ([d17f195](https://github.com/Azure/LogicAppsUX/commit/d17f1955d00f94c8bbd56bb0df94932310e670fb))
+* **vscode:** Fix nullish setting when getting user settings ([#3690](https://github.com/Azure/LogicAppsUX/issues/3690)) ([dfaef25](https://github.com/Azure/LogicAppsUX/commit/dfaef25368a3b4f7f36e9b08c79106ed41565103))
+* **vscode:** Use same ports and child proccess in designer and data mapper extension ([#3672](https://github.com/Azure/LogicAppsUX/issues/3672)) ([583f0c2](https://github.com/Azure/LogicAppsUX/commit/583f0c25a5937d0098440828963020d8c8119909))
+
 ## [2.84.0](https://github.com/Azure/LogicAppsUX/compare/v2.83.1...v2.84.0) (2023-11-09)
 
 ### [2.83.1](https://github.com/Azure/LogicAppsUX/compare/v2.83.0...v2.83.1) (2023-11-09)
 
-
 ### Bug Fixes
 
-* **copilot:** Adding ellipses to placeholder text ([#3648](https://github.com/Azure/LogicAppsUX/issues/3648)) ([c142514](https://github.com/Azure/LogicAppsUX/commit/c142514492745123090c1a5babb4c66f5bbd7357))
-* **Data Mapper:** Added Binary Depencency Call & Fixed Build Error from Lodash ([#3649](https://github.com/Azure/LogicAppsUX/issues/3649)) ([dc305cd](https://github.com/Azure/LogicAppsUX/commit/dc305cd5c9c5c2d746aa210142f49c0f7d79ef9d))
-* **designer:** Fixed an issue where when selecting an expression token opens tokenpicker ([#3650](https://github.com/Azure/LogicAppsUX/issues/3650)) ([549515f](https://github.com/Azure/LogicAppsUX/commit/549515fa26ffcdcfec148a6163490fae0f96bd9b))
-* **designer:** Update dependencies and use axios instead of request-p ([#3645](https://github.com/Azure/LogicAppsUX/issues/3645)) ([c3b65a0](https://github.com/Azure/LogicAppsUX/commit/c3b65a059d65b4b94fadee2b2627acebc60bcd5f))
+- **copilot:** Adding ellipses to placeholder text ([#3648](https://github.com/Azure/LogicAppsUX/issues/3648)) ([c142514](https://github.com/Azure/LogicAppsUX/commit/c142514492745123090c1a5babb4c66f5bbd7357))
+- **Data Mapper:** Added Binary Depencency Call & Fixed Build Error from Lodash ([#3649](https://github.com/Azure/LogicAppsUX/issues/3649)) ([dc305cd](https://github.com/Azure/LogicAppsUX/commit/dc305cd5c9c5c2d746aa210142f49c0f7d79ef9d))
+- **designer:** Fixed an issue where when selecting an expression token opens tokenpicker ([#3650](https://github.com/Azure/LogicAppsUX/issues/3650)) ([549515f](https://github.com/Azure/LogicAppsUX/commit/549515fa26ffcdcfec148a6163490fae0f96bd9b))
+- **designer:** Update dependencies and use axios instead of request-p ([#3645](https://github.com/Azure/LogicAppsUX/issues/3645)) ([c3b65a0](https://github.com/Azure/LogicAppsUX/commit/c3b65a059d65b4b94fadee2b2627acebc60bcd5f))
 
 ## [2.83.0](https://github.com/Azure/LogicAppsUX/compare/v2.82.0...v2.83.0) (2023-11-08)
 
-
 ### Features
 
-* **Copilot:** Adding copy button ([#3628](https://github.com/Azure/LogicAppsUX/issues/3628)) ([800e222](https://github.com/Azure/LogicAppsUX/commit/800e222fe8af83987666282b5b25633ddfe018cd))
-
+- **Copilot:** Adding copy button ([#3628](https://github.com/Azure/LogicAppsUX/issues/3628)) ([800e222](https://github.com/Azure/LogicAppsUX/commit/800e222fe8af83987666282b5b25633ddfe018cd))
 
 ### Bug Fixes
 
-* **Data Mapper:** Fixed Data Mapper Build Error ([#3646](https://github.com/Azure/LogicAppsUX/issues/3646)) ([ecc9e83](https://github.com/Azure/LogicAppsUX/commit/ecc9e83451c5cb91fb104e4c733b02b26d73f00a))
-* **designer:** Allow copy paste of a node's connection mapping ([#3643](https://github.com/Azure/LogicAppsUX/issues/3643)) ([926c49f](https://github.com/Azure/LogicAppsUX/commit/926c49fa77487701b7f2f6729514c28479d30f69))
+- **Data Mapper:** Fixed Data Mapper Build Error ([#3646](https://github.com/Azure/LogicAppsUX/issues/3646)) ([ecc9e83](https://github.com/Azure/LogicAppsUX/commit/ecc9e83451c5cb91fb104e4c733b02b26d73f00a))
+- **designer:** Allow copy paste of a node's connection mapping ([#3643](https://github.com/Azure/LogicAppsUX/issues/3643)) ([926c49f](https://github.com/Azure/LogicAppsUX/commit/926c49fa77487701b7f2f6729514c28479d30f69))
 
 ## [2.82.0](https://github.com/Azure/LogicAppsUX/compare/v2.81.2...v2.82.0) (2023-11-08)
 
-
 ### Features
 
-* **copilot:** Adding basic telemetry in copilot feedback ([#3642](https://github.com/Azure/LogicAppsUX/issues/3642)) ([b5a94eb](https://github.com/Azure/LogicAppsUX/commit/b5a94eb3499ba89b475eeda56936e80cca6440b7))
-* **Data Mapper:** Change Command Bar UI ([#3601](https://github.com/Azure/LogicAppsUX/issues/3601)) ([522ee89](https://github.com/Azure/LogicAppsUX/commit/522ee89519d214ad7f22eea8aa5d11ce1637bc3d))
-* **designer:** Adding ability for the host to customize the sort of the connectors in the browse view ([#3616](https://github.com/Azure/LogicAppsUX/issues/3616)) ([7ed4ecf](https://github.com/Azure/LogicAppsUX/commit/7ed4ecf623971ca4c22420c86878f1287c7b4f24))
-
+- **copilot:** Adding basic telemetry in copilot feedback ([#3642](https://github.com/Azure/LogicAppsUX/issues/3642)) ([b5a94eb](https://github.com/Azure/LogicAppsUX/commit/b5a94eb3499ba89b475eeda56936e80cca6440b7))
+- **Data Mapper:** Change Command Bar UI ([#3601](https://github.com/Azure/LogicAppsUX/issues/3601)) ([522ee89](https://github.com/Azure/LogicAppsUX/commit/522ee89519d214ad7f22eea8aa5d11ce1637bc3d))
+- **designer:** Adding ability for the host to customize the sort of the connectors in the browse view ([#3616](https://github.com/Azure/LogicAppsUX/issues/3616)) ([7ed4ecf](https://github.com/Azure/LogicAppsUX/commit/7ed4ecf623971ca4c22420c86878f1287c7b4f24))
 
 ### Bug Fixes
 
-* **copilot:** Changing placeholder text ([#3615](https://github.com/Azure/LogicAppsUX/issues/3615)) ([0799770](https://github.com/Azure/LogicAppsUX/commit/0799770bf0ffec9220eb23aae2f00b5f867cdbd9))
-* **copilot:** Dark Mode Adjustments ([#3614](https://github.com/Azure/LogicAppsUX/issues/3614)) ([5bc1c02](https://github.com/Azure/LogicAppsUX/commit/5bc1c020fef4f335ef4ae14d96d45503ff8f5c56))
-* **copilot:** Increased Contrast for DarkMode Text ([#3617](https://github.com/Azure/LogicAppsUX/issues/3617)) ([c2c2dd6](https://github.com/Azure/LogicAppsUX/commit/c2c2dd6e89f3c29e24a1042c94834b46b05342b4))
-* **Data Mapper:** added warning message content from PM team ([#3630](https://github.com/Azure/LogicAppsUX/issues/3630)) ([ee9dd90](https://github.com/Azure/LogicAppsUX/commit/ee9dd9038e2021736c9832a0497c6b3adcf1f17a))
-* **Data Mapper:** Increase the connection area at the end of a property point ([#3599](https://github.com/Azure/LogicAppsUX/issues/3599)) ([3bbfddd](https://github.com/Azure/LogicAppsUX/commit/3bbfdddcfd4c149082adbc6360a8b2cfd03fef55))
-* **designer:** Retaining Tokenpicker when navigating away in portal ([#3636](https://github.com/Azure/LogicAppsUX/issues/3636)) ([728bfca](https://github.com/Azure/LogicAppsUX/commit/728bfca8cd31f7da235ca5c4b16ae09e5593feb3))
-* **vscode:** Get workspace folder based on Logic App project ([#3618](https://github.com/Azure/LogicAppsUX/issues/3618)) ([a9f0dfe](https://github.com/Azure/LogicAppsUX/commit/a9f0dfe63df13b59c3c6d60360b994a8756eb454))
+- **copilot:** Changing placeholder text ([#3615](https://github.com/Azure/LogicAppsUX/issues/3615)) ([0799770](https://github.com/Azure/LogicAppsUX/commit/0799770bf0ffec9220eb23aae2f00b5f867cdbd9))
+- **copilot:** Dark Mode Adjustments ([#3614](https://github.com/Azure/LogicAppsUX/issues/3614)) ([5bc1c02](https://github.com/Azure/LogicAppsUX/commit/5bc1c020fef4f335ef4ae14d96d45503ff8f5c56))
+- **copilot:** Increased Contrast for DarkMode Text ([#3617](https://github.com/Azure/LogicAppsUX/issues/3617)) ([c2c2dd6](https://github.com/Azure/LogicAppsUX/commit/c2c2dd6e89f3c29e24a1042c94834b46b05342b4))
+- **Data Mapper:** added warning message content from PM team ([#3630](https://github.com/Azure/LogicAppsUX/issues/3630)) ([ee9dd90](https://github.com/Azure/LogicAppsUX/commit/ee9dd9038e2021736c9832a0497c6b3adcf1f17a))
+- **Data Mapper:** Increase the connection area at the end of a property point ([#3599](https://github.com/Azure/LogicAppsUX/issues/3599)) ([3bbfddd](https://github.com/Azure/LogicAppsUX/commit/3bbfdddcfd4c149082adbc6360a8b2cfd03fef55))
+- **designer:** Retaining Tokenpicker when navigating away in portal ([#3636](https://github.com/Azure/LogicAppsUX/issues/3636)) ([728bfca](https://github.com/Azure/LogicAppsUX/commit/728bfca8cd31f7da235ca5c4b16ae09e5593feb3))
+- **vscode:** Get workspace folder based on Logic App project ([#3618](https://github.com/Azure/LogicAppsUX/issues/3618)) ([a9f0dfe](https://github.com/Azure/LogicAppsUX/commit/a9f0dfe63df13b59c3c6d60360b994a8756eb454))
 
 ### [2.81.2](https://github.com/Azure/LogicAppsUX/compare/v2.81.1...v2.81.2) (2023-11-06)
 
-
 ### Bug Fixes
 
-* **desinger:** Clean up some tokenpicker code ([#3613](https://github.com/Azure/LogicAppsUX/issues/3613)) ([fa09701](https://github.com/Azure/LogicAppsUX/commit/fa0970183288f52f1c26c4d100681005e4505a79))
-* **vscode:** Update permissions to binary func file ([#3612](https://github.com/Azure/LogicAppsUX/issues/3612)) ([d640899](https://github.com/Azure/LogicAppsUX/commit/d6408992d87d0839fe3c021f4a8d313241e6e03e))
+- **desinger:** Clean up some tokenpicker code ([#3613](https://github.com/Azure/LogicAppsUX/issues/3613)) ([fa09701](https://github.com/Azure/LogicAppsUX/commit/fa0970183288f52f1c26c4d100681005e4505a79))
+- **vscode:** Update permissions to binary func file ([#3612](https://github.com/Azure/LogicAppsUX/issues/3612)) ([d640899](https://github.com/Azure/LogicAppsUX/commit/d6408992d87d0839fe3c021f4a8d313241e6e03e))
 
 ### [2.81.1](https://github.com/Azure/LogicAppsUX/compare/v2.81.0...v2.81.1) (2023-11-06)
 
-
 ### Features
 
-* **chatbot:** Adding Chatbot service ([#3603](https://github.com/Azure/LogicAppsUX/issues/3603)) ([ead9e16](https://github.com/Azure/LogicAppsUX/commit/ead9e1627ea10d892769a3fb95eb703ae608d99b))
-* **designer:** Add ability to get tokens from current node in token selector ([#3598](https://github.com/Azure/LogicAppsUX/issues/3598)) ([9a507eb](https://github.com/Azure/LogicAppsUX/commit/9a507eb778512f4c3fba81e5315ac5fd826cc284))
-
+- **chatbot:** Adding Chatbot service ([#3603](https://github.com/Azure/LogicAppsUX/issues/3603)) ([ead9e16](https://github.com/Azure/LogicAppsUX/commit/ead9e1627ea10d892769a3fb95eb703ae608d99b))
+- **designer:** Add ability to get tokens from current node in token selector ([#3598](https://github.com/Azure/LogicAppsUX/issues/3598)) ([9a507eb](https://github.com/Azure/LogicAppsUX/commit/9a507eb778512f4c3fba81e5315ac5fd826cc284))
 
 ### Bug Fixes
 
-* **copilot:** Changing capitalization of workflow assistant ([#3594](https://github.com/Azure/LogicAppsUX/issues/3594)) ([fbf60c0](https://github.com/Azure/LogicAppsUX/commit/fbf60c02c3b6aec5b7332fe0f530cd02f1b660d4))
+- **copilot:** Changing capitalization of workflow assistant ([#3594](https://github.com/Azure/LogicAppsUX/issues/3594)) ([fbf60c0](https://github.com/Azure/LogicAppsUX/commit/fbf60c02c3b6aec5b7332fe0f530cd02f1b660d4))
 
 ## [2.81.0](https://github.com/Azure/LogicAppsUX/compare/v2.80.3...v2.81.0) (2023-11-03)
 

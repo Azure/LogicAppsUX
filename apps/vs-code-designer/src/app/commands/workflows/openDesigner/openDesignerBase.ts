@@ -107,7 +107,7 @@ export abstract class OpenDesignerBase {
     this.mapArtifacts = mapArtifacts;
     this.schemaArtifacts = artifacts.schemas;
 
-    return await getWebViewHTML('webview', this.panel);
+    return await getWebViewHTML('vs-code-react', this.panel);
   }
 
   private addCurlyBraces(root: string) {

@@ -1,9 +1,11 @@
 import { processNodeType } from '../../../html/plugins/toolbar/helper/functions';
+import { decodeSegmentValue, encodeSegmentValue } from '../../../html/plugins/toolbar/helper/util';
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
 import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import { $createTokenNode } from '../nodes/tokenNode';
+import { convertStringToSegments } from './editorToSegement';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
 import { $generateNodesFromDOM } from '@lexical/html';
 import type { LinkNode } from '@lexical/link';
@@ -32,7 +34,9 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const dom = parser.parseFromString(stringValue, 'text/html');
+  const encodedStringValue = encodeStringSegments(stringValue, tokensEnabled);
+
+  const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
   nodes.forEach((currNode) => {
     if ($isParagraphNode(currNode) || $isListNode(currNode) || $isHeadingNode(currNode)) {
@@ -44,7 +48,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
       currNode.getChildren().forEach((childNode) => {
         // LinkNodes are a special case because they are within a paragraph node
         if ($isLinkNode(childNode)) {
-          const linkNode = $createLinkNode(childNode.getURL());
+          const linkNode = $createLinkNode(getURL(childNode, tokensEnabled, nodeMap));
           childNode.getChildren().forEach((listItemChildNode) => {
             appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled);
           });
@@ -80,6 +84,14 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   return root;
 };
 
+const getURL = (node: LinkNode, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): string => {
+  const valueUrl = node.getURL();
+  const urlSegments = convertStringToSegments(valueUrl, tokensEnabled, nodeMap);
+  return urlSegments
+    .map((segment) => (segment.type === ValueSegmentType.LITERAL ? segment.value : `@{${segment.value}}`))
+    .reduce((accumulator, current) => accumulator + current);
+};
+
 // Appends the children Nodes while parsing for TokenNodes
 const appendChildrenNode = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
@@ -90,12 +102,20 @@ const appendChildrenNode = (
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
+    const decodedTextContent = tokensEnabled ? decodeSegmentValue(textContent) : textContent;
     const childNodeStyles = childNode.getStyle();
     const childNodeFormat = childNode.getFormat();
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
     // and we'll need to use the ExtendedTextNode to apply the styles and format
-    appendStringSegment(paragraph, textContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled);
+    appendStringSegment(
+      paragraph,
+      decodedTextContent,
+      childNodeStyles,
+      childNodeFormat,
+      nodeMap,
+      tokensEnabled
+    );
   } else {
     paragraph.append(childNode);
   }
@@ -233,4 +253,33 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
     }
   });
   return text;
+};
+
+export const encodeStringSegments = (value: string, tokensEnabled: boolean | undefined): string => {
+  if (!tokensEnabled) {
+    return value;
+  }
+
+  let newValue = "";
+
+  for (let i = 0; i < value.length; i++) {
+    if (value.substring(i, i + 2) === '$[') {
+      const startIndex = i;
+      const endIndex = value.indexOf(']$', startIndex);
+      if (endIndex === -1) {
+        break;
+      }
+
+      const tokenSegment = value.substring(startIndex + 2, endIndex);
+      const encodedTokenSegment = `$[${encodeSegmentValue(tokenSegment)}]$`;
+      newValue += encodedTokenSegment;
+
+      i = endIndex + 1; // Skip the ']', and i++ will skip the '$'.
+      continue;
+    }
+
+    newValue += value[i];
+  }
+
+  return newValue;
 };

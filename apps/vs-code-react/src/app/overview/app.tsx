@@ -1,69 +1,43 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
 import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
-import type { OnErrorFn } from '@formatjs/intl';
+import type { RootState } from '../../state/store';
+import { VSCodeContext } from '../../webviewCommunication';
 import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
 import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
-import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import type { Runs } from '@microsoft/utils-logic-apps';
-import { HttpClient } from '@microsoft/vscode-extension';
-import { useCallback, useMemo } from 'react';
-import { IntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider, useInfiniteQuery, useMutation } from 'react-query';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
+import { useCallback, useContext, useMemo } from 'react';
+import { useInfiniteQuery, useMutation } from 'react-query';
+import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchInterval: false,
-      refetchIntervalInBackground: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: true,
-    },
-  },
-});
+export const OverviewApp = () => {
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const vscode = useContext(VSCodeContext);
 
-export interface AppProps {
-  apiVersion: string;
-  baseUrl: string;
-  workflowProperties: OverviewPropertiesProps;
-  corsNotice?: string;
-  accessToken?: string;
-  onOpenRun(run: RunDisplayItem): void;
-  hostVersion?: string;
-}
-
-export const App: React.FC<AppProps> = (props) => {
-  const handleError: OnErrorFn = useCallback((err) => {
-    if (err.code !== 'MISSING_TRANSLATION') {
-      throw err;
-    }
-  }, []);
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
-        <OverviewApp {...props} />
-      </IntlProvider>
-    </QueryClientProvider>
-  );
-};
-
-const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseUrl, accessToken, onOpenRun, corsNotice, hostVersion }) => {
   const runService = useMemo(() => {
-    const httpClient = new HttpClient({ accessToken: accessToken, baseUrl, apiHubBaseUrl: '', hostVersion });
+    const httpClient = new HttpClient({
+      accessToken: workflowState.accessToken,
+      baseUrl: workflowState.baseUrl,
+      apiHubBaseUrl: '',
+      hostVersion: workflowState.hostVersion,
+    });
 
     return new StandardRunService({
-      baseUrl,
-      apiVersion,
-      accessToken,
-      workflowName: workflowProperties.name,
+      baseUrl: workflowState.baseUrl,
+      apiVersion: workflowState.apiVersion,
+      accessToken: workflowState.accessToken,
+      workflowName: workflowState.workflowProperties.name,
       httpClient,
     });
-  }, [baseUrl, apiVersion, accessToken, workflowProperties.name, hostVersion]);
+  }, [
+    workflowState.baseUrl,
+    workflowState.apiVersion,
+    workflowState.accessToken,
+    workflowState.workflowProperties.name,
+    workflowState.hostVersion,
+  ]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
     if (pageParam) {
@@ -95,8 +69,8 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
     isLoading: runTriggerLoading,
     error: runTriggerError,
   } = useMutation(async () => {
-    invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-    await runService.runTrigger(workflowProperties.callbackInfo as CallbackInfo);
+    invariant(workflowState.workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
+    await runService.runTrigger(workflowState.workflowProperties.callbackInfo as CallbackInfo);
     return refetch();
   });
 
@@ -131,16 +105,21 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
 
   return (
     <Overview
-      corsNotice={corsNotice}
+      corsNotice={workflowState.corsNotice}
       errorMessage={errorMessage}
       hasMoreRuns={hasNextPage}
       loading={isLoading || runTriggerLoading}
       runItems={runItems ?? []}
-      workflowProperties={workflowProperties}
+      workflowProperties={workflowState.workflowProperties}
       isRefreshing={isRefetching}
       onLoadMoreRuns={fetchNextPage}
       onLoadRuns={refetch}
-      onOpenRun={onOpenRun}
+      onOpenRun={(run: RunDisplayItem) => {
+        vscode.postMessage({
+          command: ExtensionCommand.loadRun,
+          item: run,
+        });
+      }}
       onRunTrigger={runTriggerCall}
       onVerifyRunId={onVerifyRunId}
     />
