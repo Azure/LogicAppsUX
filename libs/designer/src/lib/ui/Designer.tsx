@@ -5,7 +5,7 @@ import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
-import { buildEdgeIdsBySource, clearFocusNode, updateNodeInfo } from '../core/state/workflow/workflowSlice';
+import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import Controls from './Controls';
@@ -138,9 +138,9 @@ export const Designer = (props: DesignerProps) => {
   const dispatch = useDispatch();
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      dispatch(updateNodeInfo({ nodeChanges: changes, nodes }));
+      dispatch(updateNodeSizes(changes));
     },
-    [dispatch, nodes]
+    [dispatch]
   );
 
   const emptyWorkflowPlaceholderNodes = [

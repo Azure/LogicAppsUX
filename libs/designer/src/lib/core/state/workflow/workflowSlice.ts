@@ -223,8 +223,8 @@ export const workflowSlice = createSlice({
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
     },
-    updateNodeInfo: (state: WorkflowState, action: PayloadAction<{ nodeChanges: NodeChange[]; nodes: Node[] }>) => {
-      const dimensionChanges = action.payload.nodeChanges.filter((x) => x.type === 'dimensions');
+    updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
+      const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
       if (!state.graph) {
         return;
       }
@@ -249,8 +249,14 @@ export const workflowSlice = createSlice({
         }
         !!node?.children?.length && stack.push(...node.children);
       }
+    },
+    updateNodePositions: (state: WorkflowState, action: PayloadAction<Node[]>) => {
+      if (!state.graph) {
+        return;
+      }
+      const stack: WorkflowNode[] = [state.graph];
 
-      const positionChangesById = action.payload.nodes.reduce<Record<string, Node>>((acc, val) => {
+      const positionChangesById = action.payload.reduce<Record<string, Node>>((acc, val) => {
         if (!val.position) {
           return acc;
         }
@@ -475,7 +481,8 @@ export const {
   moveNode,
   deleteNode,
   deleteSwitchCase,
-  updateNodeInfo,
+  updateNodeSizes,
+  updateNodePositions,
   setNodeDescription,
   setCollapsedGraphIds,
   toggleCollapsedGraphId,
