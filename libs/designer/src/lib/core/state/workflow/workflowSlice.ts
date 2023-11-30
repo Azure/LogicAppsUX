@@ -5,7 +5,7 @@ import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addSwitchCaseToWorkflow, addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
-import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import type { ReactFlowNodeInfo, WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
@@ -29,6 +29,7 @@ import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { ElkNode } from 'elkjs';
 import type { Node, NodeChange, NodeDimensionChange } from 'reactflow';
 
 export interface AddImplicitForeachPayload {
@@ -41,6 +42,7 @@ export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
   workflowKind: WorkflowKind.STATELESS,
   graph: null,
+  reactFlowNodeInfoDictionary: null,
   runInstance: null,
   operations: {},
   nodesMetadata: {},
@@ -250,27 +252,23 @@ export const workflowSlice = createSlice({
         !!node?.children?.length && stack.push(...node.children);
       }
     },
-    updateNodePositions: (state: WorkflowState, action: PayloadAction<Node[]>) => {
+    updateNodeInfo: (state: WorkflowState, action: PayloadAction<{ nodes: Node[]; elkNodes?: ElkNode[] }>) => {
       if (!state.graph) {
         return;
       }
-
-      const positionChangesById = action.payload.reduce<Record<string, Node>>(
-        (acc, val) => ({
+      const reactFlowNodeInfoById = action.payload.nodes.reduce<Record<string, ReactFlowNodeInfo>>(
+        (acc, val, ind) => ({
           ...acc,
-          [val.id]: val,
+          [val.id]: {
+            height: action.payload.elkNodes?.[ind]?.height,
+            width: action.payload.elkNodes?.[ind]?.width,
+            position: val?.position,
+          },
         }),
         {}
       );
 
-      const updateNodePosition = (node: WorkflowNode) => {
-        // eslint-disable-next-line no-param-reassign
-        node.position = positionChangesById?.[node?.id ?? '']?.position;
-        for (const child of node.children ?? []) {
-          updateNodePosition(child);
-        }
-      };
-      updateNodePosition(state.graph);
+      state.reactFlowNodeInfoDictionary = reactFlowNodeInfoById;
     },
     setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
       state.collapsedGraphIds = action.payload;
@@ -477,7 +475,7 @@ export const {
   deleteNode,
   deleteSwitchCase,
   updateNodeSizes,
-  updateNodePositions,
+  updateNodeInfo,
   setNodeDescription,
   setCollapsedGraphIds,
   toggleCollapsedGraphId,

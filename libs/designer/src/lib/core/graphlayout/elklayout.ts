@@ -2,7 +2,7 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
-import { updateNodePositions } from '../state/workflow/workflowSlice';
+import { updateNodeInfo } from '../state/workflow/workflowSlice';
 import { LogEntryLevel, LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
@@ -109,8 +109,6 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       id: node.id,
       height: node.height,
       width: node.width,
-      x: node.position?.x,
-      y: node.position?.y,
       edges: undefined, // node has no edges
       children: node.children?.map(convertWorkflowGraphToElkGraph),
       layoutOptions: {
@@ -123,8 +121,6 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       id: node.id,
       height: node.height,
       width: node.width,
-      x: node.position?.x,
-      y: node.position?.y,
       children,
       edges:
         node.edges?.map((edge) => ({
@@ -175,7 +171,7 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
         .then((g) => {
           const [n, e, s] = convertElkGraphToReactFlow(g);
           setReactFlowNodes(n);
-          dispatch(updateNodePositions(n));
+          dispatch(updateNodeInfo({ nodes: n, elkNodes: elkGraph?.children }));
           setReactFlowEdges(e);
           setReactFlowSize(s);
           LoggerService().endTrace(traceId, { status: Status.Success });

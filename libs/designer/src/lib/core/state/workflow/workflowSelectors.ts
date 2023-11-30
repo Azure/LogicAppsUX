@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
+import type { ReactFlowNodeInfo, WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
@@ -118,14 +118,14 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
   return traverseGraph(graph);
 };
 
-export const getWorkflowNodeIndexFromGraphLevel = (
-  workflowGraphNodes: Record<string, WorkflowNode>,
+export const getRunAfterIndexFromGraphLevel = (
+  reactFlowNodeInfoDictionary: Record<string, ReactFlowNodeInfo>,
   runAfters: string[],
   actionId: string
-) => {
+): number => {
   const sortedRunAfters = runAfters
     .slice(0)
-    .sort((id1, id2) => (workflowGraphNodes?.[id2]?.position?.x ?? 0) - (workflowGraphNodes?.[id1]?.position?.x ?? 0));
+    .sort((id1, id2) => (reactFlowNodeInfoDictionary?.[id2]?.position?.x ?? 0) - (reactFlowNodeInfoDictionary?.[id1]?.position?.x ?? 0));
 
   return sortedRunAfters?.findIndex((key) => key === actionId);
 };
@@ -149,16 +149,11 @@ export const useWorkflowNode = (actionId?: string) => {
 
 export const useRunAfterIndexBySource = (actionId: string, runAfters: string[]): number => {
   return useSelector((state: RootState) => {
-    if (!actionId || !state?.workflow?.graph?.children) {
+    if (!actionId || !state?.workflow?.reactFlowNodeInfoDictionary) {
       return 0;
     }
 
-    const workflowGraphNodes: Record<string, WorkflowNode> = state?.workflow?.graph?.children?.reduce(
-      (obj, val) => ({ ...obj, [val.id]: val }),
-      {}
-    );
-
-    return getWorkflowNodeIndexFromGraphLevel(workflowGraphNodes, runAfters, actionId);
+    return getRunAfterIndexFromGraphLevel(state?.workflow?.reactFlowNodeInfoDictionary, runAfters, actionId);
   });
 };
 
