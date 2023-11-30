@@ -76,7 +76,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
           progress.report({ increment: 20, message: `.NET SDK` });
           await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
-          await setDotNetCommand();
+          await setDotNetCommand(context);
         });
         ext.outputChannel.appendLog(
           localize(
