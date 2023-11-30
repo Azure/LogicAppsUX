@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [2.88.0](https://github.com/Azure/LogicAppsUX/compare/v2.87.0...v2.88.0) (2023-11-30)
+
+
+### Bug Fixes
+
+* **designer:** Custom Code Workspace fix empty lib folder ([#3769](https://github.com/Azure/LogicAppsUX/issues/3769)) ([549f800](https://github.com/Azure/LogicAppsUX/commit/549f8002324b881fb9ae1d284ba4d0981dda129e))
+* **designer:** Inconsistency in IGatewayService interface ([#3774](https://github.com/Azure/LogicAppsUX/issues/3774)) ([dbcdec2](https://github.com/Azure/LogicAppsUX/commit/dbcdec28472a9857872016f1026d59fcac60c146))
+* **Designer:** Standalone - Errors command bar button now behaves as it does in portal ([#3771](https://github.com/Azure/LogicAppsUX/issues/3771)) ([83f155c](https://github.com/Azure/LogicAppsUX/commit/83f155c2f2fbd31b540de0f0a4b61c7fa36b108a))
+
 ## [2.87.0](https://github.com/Azure/LogicAppsUX/compare/v2.86.0...v2.87.0) (2023-11-29)
 
 
