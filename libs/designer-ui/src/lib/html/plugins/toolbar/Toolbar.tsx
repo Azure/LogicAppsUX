@@ -17,7 +17,11 @@ import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
 import {
+  $createParagraphNode,
+  $createTextNode,
+  $getRoot,
   $getSelection,
+  $insertNodes,
   $isRangeSelection,
   $isRootOrShadowRoot,
   CAN_REDO_COMMAND,
@@ -26,9 +30,12 @@ import {
   COMMAND_PRIORITY_NORMAL,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  UNDO_COMMAND,
+  UNDO_COMMAND
 } from 'lexical';
+import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { useCallback, useEffect, useState } from 'react';
+import { getChildrenNodes } from '../../../editor/base/utils/helper';
+import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 
 export const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -46,11 +53,13 @@ export const blockTypeToBlockName = {
 } as const;
 export type blockTypeToBlockName = (typeof blockTypeToBlockName)[keyof typeof blockTypeToBlockName];
 
-interface toolbarProps {
+interface ToolbarProps {
+  isRawText?: boolean;
   readonly?: boolean;
+  setIsRawText?: (newValue: boolean) => void;
 }
 
-export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
+export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
@@ -206,6 +215,52 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
       <Format activeEditor={activeEditor} readonly={readonly} />
       <ListPlugin />
       <LinkPlugin />
+      {setIsRawText ? (
+        <button
+          aria-label="Raw HTML toggle"
+          className="toolbar-item"
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
+          onClick={() => {
+            const enterHtml = () => {
+              const root = $getRoot();
+              const newHtmlString = $generateHtmlFromNodes(editor, null);
+              const paragraphNode = $createParagraphNode();
+              const textNode = $createTextNode(newHtmlString);
+        
+              paragraphNode.append(textNode);
+        
+              root.clear();
+              root.append(paragraphNode);
+            };
+          
+            const exitHtml = () => {
+              const parser = new DOMParser();
+              const newHtmlString = $getRoot().getTextContent();
+              const dom = parser.parseFromString(newHtmlString, 'text/html');
+              const nodes = $generateNodesFromDOM(editor, dom);
+              $getRoot().clear().select();
+              $insertNodes(nodes);
+            };
+
+            activeEditor.update(() => {
+              const nodeMap = new Map<string, ValueSegment>();
+              activeEditor.getEditorState().read(() => {
+                getChildrenNodes($getRoot(), nodeMap);
+              });
+              isRawText
+                ? exitHtml()
+                : enterHtml();
+              setIsRawText(!isRawText);
+            });
+          }}
+          style={{ background: isRawText ? '#8f8' : '#f88' }} // TODO REMOVE: For testing only.
+          title={'Toggle raw HTML view'}
+        >
+          {'</>'}
+        </button>
+      ) : null}
     </div>
   );
 };

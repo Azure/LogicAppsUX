@@ -110,6 +110,7 @@ export const BaseEditor = ({
   const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+  const [isForcedPlainText, setIsForcedPlainText] = useState(false);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
@@ -164,7 +165,7 @@ export const BaseEditor = ({
   };
 
   const id = useId('msla-described-by-message');
-  const TextPlugin = toolbar ? RichTextPlugin : PlainTextPlugin;
+  const TextPlugin = toolbar && !isForcedPlainText ? RichTextPlugin : PlainTextPlugin;
 
   return (
     <div style={{ width: '100%' }}>
@@ -176,7 +177,9 @@ export const BaseEditor = ({
           data-automation-id={dataAutomationId}
           title={placeholder}
         >
-          {toolbar ? <Toolbar readonly={readonly} /> : null}
+          {toolbar
+            ? <Toolbar isRawText={isForcedPlainText} readonly={readonly} setIsRawText={setIsForcedPlainText} />
+            : null}
           <TextPlugin
             contentEditable={
               <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
