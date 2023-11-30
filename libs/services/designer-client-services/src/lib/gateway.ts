@@ -16,7 +16,7 @@ export interface IGatewayService {
   /**
    * Gets configuration values for GatewayService.
    */
-  getConfig?(): Promise<GatewayServiceConfig>;
+  getConfig?(): GatewayServiceConfig;
 }
 
 export interface GatewayServiceConfig {
