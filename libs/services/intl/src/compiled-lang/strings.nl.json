@@ -2877,12 +2877,6 @@
       "value": "Aan de slag"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Minder weergeven"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3485,12 +3479,6 @@
     {
       "type": 0,
       "value": "Volgende stroomsuggestie"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Meer weergeven"
     }
   ],
   "LMB8am": [
@@ -4224,7 +4212,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Retourneert de UTF-8-bytelengte van een invoertekenreeks"
     }
   ],
   "Peg6ZT": [
@@ -4336,7 +4324,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Vereist. De tekenreeks waaruit UTF-16-lengte moet worden berekend."
     }
   ],
   "Q5w4Do": [
@@ -7573,6 +7561,12 @@
       "value": "Voer een geldige JSON in."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8165,6 +8159,12 @@
       "value": "Wilt u alle niet-opgeslagen wijzigingen negeren?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Minder weergeven"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8342,7 +8342,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Vereist. De tekenreeks waaruit UTF-8-lengte moet worden berekend."
     }
   ],
   "q1gfIs": [
@@ -9089,6 +9089,20 @@
       "value": "Vereist. De verzamelingen die moeten worden geëvalueerd. Een object dat in een van de verzamelingen wordt weergegeven, wordt ook in het resultaat weergegeven."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Meer weergeven ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9244,7 +9258,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Retourneert de UTF-16-bytelengte van een invoertekenreeks"
     }
   ],
   "vEBhDX": [

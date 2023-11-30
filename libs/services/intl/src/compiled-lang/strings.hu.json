@@ -2877,12 +2877,6 @@
       "value": "Első lépések"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Kevesebb megjelenítése"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3489,12 +3483,6 @@
     {
       "type": 0,
       "value": "Következő folyamatjavaslat"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Több megjelenítése"
     }
   ],
   "LMB8am": [
@@ -4228,7 +4216,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Egy bemeneti sztring UTF-8 bájtos hosszát adja vissza"
     }
   ],
   "Peg6ZT": [
@@ -4344,7 +4332,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Kötelező. Az UTF-16 hosszának kiszámításához szükséges sztring."
     }
   ],
   "Q5w4Do": [
@@ -7577,6 +7565,12 @@
       "value": "Érvényes JSON-t adjon meg."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8169,6 +8163,12 @@
       "value": "Biztosan elveti az összes nem mentett módosítást?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Kevesebb megjelenítése"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8346,7 +8346,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Kötelező. Az UTF-8 hosszának kiszámításához szükséges sztring."
     }
   ],
   "q1gfIs": [
@@ -9101,6 +9101,20 @@
       "value": "Kötelező megadni. A kiértékelendő gyűjtemények. Az eredményben minden olyan objektum megjelenik, mely a gyűjtemények bármelyikében szerepel."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Több megjelenítése ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9256,7 +9270,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Egy bemeneti sztring UTF-16 bájtos hosszát adja vissza"
     }
   ],
   "vEBhDX": [

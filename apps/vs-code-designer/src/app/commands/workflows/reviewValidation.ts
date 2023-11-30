@@ -7,6 +7,7 @@ import { localize } from '../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { ProjectName } from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
 import * as vscode from 'vscode';
 
@@ -54,7 +55,7 @@ export async function reviewValidation(_context: IActionContext, node: vscode.Ur
             panel.webview.postMessage({
               command: ExtensionCommand.initialize_frame,
               data: {
-                project: 'review',
+                project: ProjectName.review,
                 reviewContent,
                 hostVersion: ext.extensionVersion,
               },

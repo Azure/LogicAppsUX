@@ -2835,12 +2835,6 @@
       "value": "開始"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "查看較少內容"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3436,12 +3430,6 @@
     {
       "type": 0,
       "value": "下一個流程建議"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "查看更多"
     }
   ],
   "LMB8am": [
@@ -4171,7 +4159,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "傳回輸入字串的 UTF-8 位元組長度"
     }
   ],
   "Peg6ZT": [
@@ -4287,7 +4275,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "必填。要從中計算 UTF-16 長度的字串。"
     }
   ],
   "Q5w4Do": [
@@ -7503,6 +7491,12 @@
       "value": "請輸入有效的 JSON。"
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8087,6 +8081,12 @@
       "value": "要捨棄所有未儲存的變更嗎?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "查看較少內容"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8264,7 +8264,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "必填。要從中計算 UTF-8 長度的字串。"
     }
   ],
   "q1gfIs": [
@@ -9012,6 +9012,20 @@
       "value": "必要。要評估的集合。出現於任一集合中的物件，也會出現於結果中。"
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "查看更多内容 ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9167,7 +9181,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "傳回輸入字串的 UTF-16 位元組長度"
     }
   ],
   "vEBhDX": [

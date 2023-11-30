@@ -13,6 +13,7 @@ import {
   removeSequenceFunction,
   splitKeyIntoChildren,
   isValidToMakeMapDefinition,
+  amendSourceKeyForDirectAccessIfNeeded,
 } from '../DataMap.Utils';
 import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
@@ -946,6 +947,36 @@ describe('utils/DataMap', () => {
       expect(result[8]).toEqual('/ns0:PersonOrigin/LastName');
       expect(result[9]).toEqual(Separators.CloseParenthesis);
       expect(result[10]).toEqual(Separators.CloseParenthesis);
+    });
+  });
+
+  describe('amendSourceKeyForDirectAccessIfNeeded', () => {
+    it('returns unchanged source key for single quoted string expression with block quotes', () => {
+      const result = amendSourceKeyForDirectAccessIfNeeded("'[Y0001]-[M01]-[D01]'");
+      expect(result).toEqual(["'[Y0001]-[M01]-[D01]'", '']);
+    });
+
+    it('returns unchanged source key for double quoted string expression with block quotes', () => {
+      const result = amendSourceKeyForDirectAccessIfNeeded('"[Y0001]-[M01]-[D01]"');
+      expect(result).toEqual(['"[Y0001]-[M01]-[D01]"', '']);
+    });
+
+    it('returns unchanged source key for expression without direct access', () => {
+      const result = amendSourceKeyForDirectAccessIfNeeded('/root/Array/*/Property');
+      expect(result).toEqual(['/root/Array/*/Property', '']);
+    });
+
+    it('returns unchanged source key for expression with direct access embedded in a function', () => {
+      const result = amendSourceKeyForDirectAccessIfNeeded('concat(/root/Array/*[1]/Property, /root/Array/*[1]/Property)');
+      expect(result).toEqual(['concat(/root/Array/*[1]/Property, /root/Array/*[1]/Property)', '']);
+    });
+
+    it('amends source key for an expression with direct access', () => {
+      const result = amendSourceKeyForDirectAccessIfNeeded('/root/Array/*[/root/Array2/*[1]]/Property');
+      expect(result).toEqual([
+        'directAccess(/root/Array2/*[1], /root/Array/*, /root/Array/*/Property)',
+        'directAccess(/root/Array2/*[1], /root/Array/*, /root/Array/*/Property)',
+      ]);
     });
   });
 });

@@ -10,3 +10,5 @@ const normalizeApiId = (id?: string) => id?.replace(/\s+/, '').toLowerCase();
 export const areApiIdsEqual = (id1?: string, id2?: string) => normalizeApiId(id1) === normalizeApiId(id2);
 
 export const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+export const normalizeAutomationId = (s: string) => s.replace(/\W/g, '-');

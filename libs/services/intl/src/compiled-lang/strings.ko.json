@@ -2827,12 +2827,6 @@
       "value": "시작"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "간단히 보기"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3428,12 +3422,6 @@
     {
       "type": 0,
       "value": "다음 흐름 제안"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "자세히 보기"
     }
   ],
   "LMB8am": [
@@ -4167,7 +4155,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "입력 문자열의 UTF-8 바이트 길이를 반환합니다."
     }
   ],
   "Peg6ZT": [
@@ -4279,7 +4267,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "필수 항목입니다. UTF-16 길이를 계산할 문자열입니다."
     }
   ],
   "Q5w4Do": [
@@ -7479,6 +7467,12 @@
       "value": "올바른 JSON을 입력하세요."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8063,6 +8057,12 @@
       "value": "저장되지 않은 모든 변경 내용을 삭제하시겠습니까?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "간단히 보기"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8240,7 +8240,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "필수 항목입니다. UTF-8 길이를 계산할 문자열입니다."
     }
   ],
   "q1gfIs": [
@@ -8980,6 +8980,20 @@
       "value": "필수 항목으로, 평가할 컬렉션입니다. 컬렉션에 나타나는 개체는 결과에도 나타납니다."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "더 보기("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9135,7 +9149,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "입력 문자열의 UTF-16 바이트 길이를 반환합니다."
     }
   ],
   "vEBhDX": [

@@ -2835,12 +2835,6 @@
       "value": "はじめましょう"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "表示数を減らす"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3436,12 +3430,6 @@
     {
       "type": 0,
       "value": "次のフローの提案"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "表示数を増やす"
     }
   ],
   "LMB8am": [
@@ -4175,7 +4163,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "入力文字列の UTF-8 バイト長を返します"
     }
   ],
   "Peg6ZT": [
@@ -4287,7 +4275,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "必須。UTF-16 の長さを計算する対象の文字列。"
     }
   ],
   "Q5w4Do": [
@@ -7483,6 +7471,12 @@
       "value": "有効な JSON を入力してください。"
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8067,6 +8061,12 @@
       "value": "保存されていないすべての変更を破棄しますか?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "表示数を減らす"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8244,7 +8244,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "必須。UTF-8 の長さを計算する対象の文字列。"
     }
   ],
   "q1gfIs": [
@@ -8984,6 +8984,20 @@
       "value": "必須。評価するコレクション。コレクションのいずれかに存在するオブジェクトは、結果にも含まれます。"
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "表示数を増やす ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " 件)"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9139,7 +9153,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "入力文字列の UTF-16 バイト長を返します"
     }
   ],
   "vEBhDX": [

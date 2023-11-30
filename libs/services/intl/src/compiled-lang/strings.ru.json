@@ -2921,12 +2921,6 @@
       "value": "Начать"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Показать меньше"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3555,12 +3549,6 @@
     {
       "type": 0,
       "value": "Следующее предложение потока"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Дополнительные сведения"
     }
   ],
   "LMB8am": [
@@ -4294,7 +4282,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Возвращает длину входной строки UTF-8 в байтах"
     }
   ],
   "Peg6ZT": [
@@ -4406,7 +4394,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Обязательно. Строка для вычисления длины UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -7721,6 +7709,12 @@
       "value": "Введите допустимый код JSON."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8313,6 +8307,12 @@
       "value": "Вы хотите отменить все несохраненные изменения?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Показать меньше"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8490,7 +8490,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Обязательно. Строка для вычисления длины UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9271,6 +9271,20 @@
       "value": "Обязательное поле. Коллекции для обработки. Чтобы объект появился в результате, он должен входить в любую из этих коллекций."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Показать больше ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9426,7 +9440,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Возвращает длину входной строки UTF-16 в байтах"
     }
   ],
   "vEBhDX": [

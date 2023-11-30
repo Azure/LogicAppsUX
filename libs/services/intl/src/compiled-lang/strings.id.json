@@ -2839,12 +2839,6 @@
       "value": "Memulai"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Lihat Lebih Sedikit"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3440,12 +3434,6 @@
     {
       "type": 0,
       "value": "Saran alur berikutnya"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Lihat Lainnya"
     }
   ],
   "LMB8am": [
@@ -4179,7 +4167,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Menghasilkan panjang byte UTF-8 dari string input"
     }
   ],
   "Peg6ZT": [
@@ -4291,7 +4279,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Diperlukan. String untuk menghitung panjang UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -7499,6 +7487,12 @@
       "value": "Masukkan json yang valid."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8091,6 +8085,12 @@
       "value": "Apakah Anda ingin membuang semua perubahan yang tidak disimpan?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Lihat Lebih Sedikit"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8268,7 +8268,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Diperlukan. String untuk menghitung panjang UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9016,6 +9016,20 @@
       "value": "Harus diisi. Koleksi untuk dievaluasi. Sebuah objek yang muncul di koleksi juga muncul dalam hasil."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Lihat ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ") Lainnya"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9171,7 +9185,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Menghasilkan panjang byte UTF-16 dari string input"
     }
   ],
   "vEBhDX": [

@@ -1,6 +1,6 @@
-import { createFileSystemConnection } from '../state/DesignerSlice';
-import type { AppDispatch, RootState } from '../state/Store';
-import { VSCodeContext } from '../webviewCommunication';
+import { createFileSystemConnection } from '../../state/DesignerSlice';
+import type { AppDispatch, RootState } from '../../state/store';
+import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import './app.less';
 import { getDesignerServices } from './servicesHelper';
@@ -18,7 +18,7 @@ import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const App = () => {
+export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);

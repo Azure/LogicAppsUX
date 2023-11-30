@@ -2875,12 +2875,6 @@
       "value": "Attività iniziali"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Mostra meno"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3498,12 +3492,6 @@
     {
       "type": 0,
       "value": "Suggerimento flusso successivo"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Visualizza dettagli"
     }
   ],
   "LMB8am": [
@@ -4245,7 +4233,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Restituisce la lunghezza in byte di UTF-8 di una stringa di input"
     }
   ],
   "Peg6ZT": [
@@ -4357,7 +4345,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Obbligatorio. Stringa da cui calcolare la lunghezza di UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -7631,6 +7619,12 @@
       "value": "Immetti un JSON valido."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8219,6 +8213,12 @@
       "value": "Annullare tutte le modifiche non salvate?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Vedi meno"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8396,7 +8396,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Obbligatorio. Stringa da cui calcolare la lunghezza di UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9166,6 +9166,20 @@
       "value": "Obbligatorio. Raccolte da valutare. Un oggetto presente in qualsiasi raccolta verrà visualizzato anche nel risultato."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Vedi altri ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9321,7 +9335,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Restituisce la lunghezza in byte di UTF-16 di una stringa di input"
     }
   ],
   "vEBhDX": [

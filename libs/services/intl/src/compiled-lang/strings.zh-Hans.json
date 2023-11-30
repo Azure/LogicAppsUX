@@ -2855,12 +2855,6 @@
       "value": "开始"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "查看更少"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3456,12 +3450,6 @@
     {
       "type": 0,
       "value": "下一个流建议"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "查看更多"
     }
   ],
   "LMB8am": [
@@ -4195,7 +4183,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "返回输入字符串的 UTF-8 字节长度"
     }
   ],
   "Peg6ZT": [
@@ -4311,7 +4299,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "必需。要从中计算 UTF-16 长度的字符串。"
     }
   ],
   "Q5w4Do": [
@@ -7551,6 +7539,12 @@
       "value": "输入有效的 JSON。"
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8151,6 +8145,12 @@
       "value": "是否要放弃所有未保存的更改?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "查看更少"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8328,7 +8328,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "必需。要从中计算 UTF-8 长度的字符串。"
     }
   ],
   "q1gfIs": [
@@ -9072,6 +9072,20 @@
       "value": "必需。要计算的集合。在任一集合中显示的对象也将在结果中显示。"
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "查看更多("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " 个)"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9227,7 +9241,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "返回输入字符串的 UTF-16 字节长度"
     }
   ],
   "vEBhDX": [

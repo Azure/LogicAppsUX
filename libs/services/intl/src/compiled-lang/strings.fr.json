@@ -2891,12 +2891,6 @@
       "value": "Démarrer"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Afficher moins"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3514,12 +3508,6 @@
     {
       "type": 0,
       "value": "Suggestion de flux suivante"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Afficher plus"
     }
   ],
   "LMB8am": [
@@ -4253,7 +4241,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Retourne la longueur en octets UTF-8 d’une chaîne d’entrée"
     }
   ],
   "Peg6ZT": [
@@ -4365,7 +4353,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Obligatoire. Chaîne à partir de laquelle calculer la longueur UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -7647,6 +7635,12 @@
       "value": "Entrez un code JSON valide."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8239,6 +8233,12 @@
       "value": "Voulez-vous ignorer les modifications non enregistrées ?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Afficher moins"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8416,7 +8416,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Obligatoire. Chaîne à partir de laquelle calculer la longueur UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9186,6 +9186,20 @@
       "value": "Obligatoire. Collections à évaluer. Un objet qui apparaît dans une des collections s'affiche également dans le résultat."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Afficher plus ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9341,7 +9355,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Retourne la longueur en octets UTF-16 d’une chaîne d’entrée"
     }
   ],
   "vEBhDX": [

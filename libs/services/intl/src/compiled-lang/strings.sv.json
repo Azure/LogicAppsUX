@@ -2873,12 +2873,6 @@
       "value": "Kom igång"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Visa mindre"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3485,12 +3479,6 @@
     {
       "type": 0,
       "value": "Nästa flödesförslag"
-    }
-  ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Visa mer"
     }
   ],
   "LMB8am": [
@@ -4220,7 +4208,7 @@
   "Pa+UkC": [
     {
       "type": 0,
-      "value": "Returns the UTF-8 byte length of an input string"
+      "value": "Returnerar UTF-8-längden i byte för en indatasträng"
     }
   ],
   "Peg6ZT": [
@@ -4332,7 +4320,7 @@
   "Q5Fh2R": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-16 length from."
+      "value": "Obligatoriskt. Den sträng som UTF-16-längden ska beräknas från."
     }
   ],
   "Q5w4Do": [
@@ -7565,6 +7553,12 @@
       "value": "Ange en giltig JSON."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Invalid connection"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -8157,6 +8151,12 @@
       "value": "Vill du ta bort alla ändringar som inte har sparats?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Visa mindre"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8334,7 +8334,7 @@
   "q/DRBW": [
     {
       "type": 0,
-      "value": "Required. The string to calculate UTF-8 length from."
+      "value": "Obligatoriskt. Den sträng som UTF-8-längden ska beräknas från."
     }
   ],
   "q1gfIs": [
@@ -9085,6 +9085,20 @@
       "value": "Obligatoriskt. De samlingar som ska utvärderas. Ett objekt som visas i någon av samlingarna visas också i resultatet."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Visa mer ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9240,7 +9254,7 @@
   "vDYFIF": [
     {
       "type": 0,
-      "value": "Returns the UTF-16 byte length of an input string"
+      "value": "Returnerar UTF-16-längden i byte för en indatasträng"
     }
   ],
   "vEBhDX": [
