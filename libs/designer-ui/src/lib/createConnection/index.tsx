@@ -472,12 +472,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
   const showConfigParameters = useMemo(() => !resourceSelectedProps, [resourceSelectedProps]);
 
-  // Connection parameters mapping allows grouping several parameters into one custom editor.
-  // Keep track of encountered and active mappings to avoid rendering the same mapping multiple times, or rendering the included parameters.
-  const allParameterMappings = new Set<string>();
-  const activeParameterMappings = new Set<string>();
-
-  const renderParameter = (key: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
+  const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
     const connectionParameterProps: ConnectionParameterProps = {
       parameterKey: key,
       parameter,
@@ -501,6 +496,51 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     }
 
     return <UniversalConnectionParameter key={key} {...connectionParameterProps} />;
+  };
+
+  // Connection parameters mapping allows grouping several parameters into one custom editor.
+  // Keep track of encountered and active mappings to avoid rendering the same mapping multiple times, or rendering the included parameters.
+  const allParameterMappings = new Set<string>();
+  const activeParameterMappings = new Set<string>();
+  const renderCredentialsMappingParameter = (mappingName: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
+    if (!allParameterMappings.has(mappingName)) {
+      allParameterMappings.add(mappingName);
+      // This is the first time this mapping has been encountered,
+      // we need to check if there is an Editor for it - overriding each included parameters.
+      const parameters = fromPairs(
+        Object.entries(capabilityEnabledParameters).filter(
+          ([_, parameter]) => parameter.uiDefinition?.credentialMapping?.mappingName === mappingName
+        )
+      );
+
+      const credentialMappingOptions = ConnectionParameterEditorService()?.getCredentialMappingEditorOptions?.({
+        connectorId,
+        mappingName,
+        parameters,
+      });
+
+      if (credentialMappingOptions) {
+        activeParameterMappings.add(mappingName);
+        const CredentialsMappingEditorComponent = credentialMappingOptions.EditorComponent;
+        const props: IConnectionCredentialMappingEditorProps = {
+          connectorId,
+          mappingName,
+          parameters,
+          setParameterValues,
+          renderParameter: renderConnectionParameter,
+        };
+        return <CredentialsMappingEditorComponent key={`mapping:${mappingName}`} {...props} />;
+      }
+    }
+
+    // If we encounter an already active mapping,
+    // we skip the parameter rendering since an Editor was already found and rendered.
+    if (activeParameterMappings.has(mappingName)) {
+      return null;
+    }
+
+    // Default case: render the parameter. No custom Editor was found for this mapping.
+    return renderConnectionParameter(mappingName, parameter);
   };
 
   // RENDER
@@ -617,45 +657,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
               const mappingName = parameter?.uiDefinition?.credentialMapping?.mappingName;
               if (mappingName) {
-                // This parameter belongs to a mapping.
-                if (!allParameterMappings.has(mappingName)) {
-                  allParameterMappings.add(mappingName);
-                  // This is the first time this mapping has been encountered,
-                  // we need to check if there is an Editor for it - overriding each included parameters.
-                  const parameters = fromPairs(
-                    Object.entries(capabilityEnabledParameters).filter(
-                      ([_, parameter]) => parameter.uiDefinition?.credentialMapping?.mappingName === mappingName
-                    )
-                  );
-
-                  const credentialMappingOptions = ConnectionParameterEditorService()?.getCredentialMappingEditorOptions?.({
-                    connectorId,
-                    mappingName,
-                    parameters,
-                  });
-
-                  if (credentialMappingOptions) {
-                    activeParameterMappings.add(mappingName);
-                    const CredentialsMappingEditorComponent = credentialMappingOptions.EditorComponent;
-                    const props: IConnectionCredentialMappingEditorProps = {
-                      connectorId,
-                      mappingName,
-                      parameters,
-                      setParameterValues,
-                      renderParameter,
-                    };
-                    return <CredentialsMappingEditorComponent key={mappingName} {...props} />;
-                  }
-                }
-
-                // If we encounter an already active mapping,
-                // we skip the parameter rendering since an Editor was already found and rendered.
-                if (activeParameterMappings.has(mappingName)) {
-                  return null;
-                }
+                // This parameter belongs to a mapping - try to render a custom editor if supported.
+                return renderCredentialsMappingParameter(mappingName, parameter);
               }
 
-              return renderParameter(key, parameter);
+              return renderConnectionParameter(key, parameter);
             }
           )}
 

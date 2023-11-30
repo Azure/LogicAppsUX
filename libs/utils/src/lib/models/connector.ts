@@ -93,8 +93,8 @@ export interface ParameterCredentialMappingUIDefinition {
    * Name (identifier) of the mapping, parameters with the same mappingName belong to the same credentials item.
    */
   mappingName: string;
-  displayName?: string | null | undefined;
-  tooltip?: string | null | undefined;
+  displayName?: string | null;
+  tooltip?: string | null;
   values: ParameterCredentialMapping[];
 }
 
