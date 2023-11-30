@@ -1,4 +1,32 @@
 # Logic Apps Designer
+## [2.88.0](https://github.com/Azure/LogicAppsUX/compare/v2.87.0...v2.88.0) (2023-11-30)
+
+
+### Bug Fixes
+
+* **designer:** Custom Code Workspace fix empty lib folder ([#3769](https://github.com/Azure/LogicAppsUX/issues/3769)) ([549f800](https://github.com/Azure/LogicAppsUX/commit/549f8002324b881fb9ae1d284ba4d0981dda129e))
+* **designer:** Inconsistency in IGatewayService interface ([#3774](https://github.com/Azure/LogicAppsUX/issues/3774)) ([dbcdec2](https://github.com/Azure/LogicAppsUX/commit/dbcdec28472a9857872016f1026d59fcac60c146))
+* **Designer:** Standalone - Errors command bar button now behaves as it does in portal ([#3771](https://github.com/Azure/LogicAppsUX/issues/3771)) ([83f155c](https://github.com/Azure/LogicAppsUX/commit/83f155c2f2fbd31b540de0f0a4b61c7fa36b108a))
+
+## [2.87.0](https://github.com/Azure/LogicAppsUX/compare/v2.86.0...v2.87.0) (2023-11-29)
+
+
+### Features
+
+* **designer:** Adding an additional callout in parameters tab when connections are invalid ([#3739](https://github.com/Azure/LogicAppsUX/issues/3739)) ([040092f](https://github.com/Azure/LogicAppsUX/commit/040092fcf08a39001f73256c6085c668e91b953f))
+* **Vs Code:** Merged Vs-code-react to one folder for Designer, DM, Workflow, etc ([#3757](https://github.com/Azure/LogicAppsUX/issues/3757)) ([7e26cd2](https://github.com/Azure/LogicAppsUX/commit/7e26cd207102be0d80bbb2c2e40a6235dc85e9f7)), closes [#3692](https://github.com/Azure/LogicAppsUX/issues/3692) [#3701](https://github.com/Azure/LogicAppsUX/issues/3701) [#3719](https://github.com/Azure/LogicAppsUX/issues/3719) [#3756](https://github.com/Azure/LogicAppsUX/issues/3756)
+
+
+### Bug Fixes
+
+* **Data Mapper:** amending source key with directAccess when brackets are in a string ([#3715](https://github.com/Azure/LogicAppsUX/issues/3715)) ([207b9cf](https://github.com/Azure/LogicAppsUX/commit/207b9cff105a85898880d92abba55f56f0169a94))
+* **designer-ui:** Ensure `convertEditorState` returns a non-empty value ([#3742](https://github.com/Azure/LogicAppsUX/issues/3742)) ([449fbc6](https://github.com/Azure/LogicAppsUX/commit/449fbc6d30aee76f69f39294ee62e4fdff34a30e))
+* **designer-ui:** Prevent expressions using `&...;` syntax disappearing from HTML editor ([#3760](https://github.com/Azure/LogicAppsUX/issues/3760)) ([b7b7aaa](https://github.com/Azure/LogicAppsUX/commit/b7b7aaa393bc0ca81b278f17c81532e46ee3de26))
+* **designer:** Fix implicit foreach when added after a branch ([#3713](https://github.com/Azure/LogicAppsUX/issues/3713)) ([75f2c75](https://github.com/Azure/LogicAppsUX/commit/75f2c75fbcc3d6dedd0e41f40d665d86cd89a2c7))
+* **designer:** Fix Padding in action search  ([#3764](https://github.com/Azure/LogicAppsUX/issues/3764)) ([b75f328](https://github.com/Azure/LogicAppsUX/commit/b75f328036bede51ad7327c6b75fac2cd0e477c4))
+* **designer:** Get correct expression value for callbackUrl ([#3753](https://github.com/Azure/LogicAppsUX/issues/3753)) ([82f0495](https://github.com/Azure/LogicAppsUX/commit/82f0495a1e3299aa4189ee4fe2d452b79502cc89))
+* **designer:** Update dropzone automation ids to use node names and align with card … ([#3729](https://github.com/Azure/LogicAppsUX/issues/3729)) ([d567972](https://github.com/Azure/LogicAppsUX/commit/d567972b9f750536e2ab8025ca493db62ce60b4a))
+
 ## [2.86.0](https://github.com/Azure/LogicAppsUX/compare/v2.85.0...v2.86.0) (2023-11-23)
 
 
