@@ -82,6 +82,31 @@ export interface ConnectionParameterUIDefinitionBase {
     requiresConnectionNamePrefix?: string;
   };
   tooltip?: string;
+  /**
+   * Describes if the parameter belongs to a credentials mapping.
+   */
+  credentialMapping?: ParameterCredentialMappingUIDefinition;
+}
+
+export interface ParameterCredentialMappingUIDefinition {
+  /**
+   * Name (identifier) of the mapping, parameters with the same mappingName belong to the same credentials item.
+   */
+  mappingName: string;
+  displayName?: string | null;
+  tooltip?: string | null;
+  values: ParameterCredentialMapping[];
+}
+
+export interface ParameterCredentialMapping {
+  /**
+   * The type of credential supported by this parameter.
+   */
+  type: string;
+  /**
+   * The key used to read the expected value from the credential for this parameter.
+   */
+  credentialKeyName: string;
 }
 
 export interface ConnectionParameterSetUIDefinition {
