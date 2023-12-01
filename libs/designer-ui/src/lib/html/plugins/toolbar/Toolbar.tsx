@@ -250,6 +250,7 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
                 const nodes = $generateNodesFromDOM(editor, dom);
                 $getRoot().clear().select();
                 $insertNodes(nodes);
+                setIsRawText(false);
               });
             };
 
