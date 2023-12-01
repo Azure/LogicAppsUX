@@ -22,7 +22,7 @@ export const Change = ({ setValue }: ChangeProps) => {
   return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
 
-const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSegment>): Promise<ValueSegment[]> => {
+export const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSegment>): Promise<ValueSegment[]> => {
   return new Promise((resolve) => {
     const valueSegments: ValueSegment[] = [];
     editor.update(() => {

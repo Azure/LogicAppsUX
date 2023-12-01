@@ -1,3 +1,5 @@
+import { getChildrenNodes } from '../../../editor/base/utils/helper';
+import { convertSegmentsToString, encodeStringSegments, parseSegments } from '../../../editor/base/utils/parsesegments';
 import { isApple } from '../../../helper';
 import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
 import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
@@ -5,9 +7,11 @@ import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
 import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
+import { convertEditorState } from './helper/Change';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
 import { useTheme } from '@fluentui/react';
+import { $generateNodesFromDOM } from '@lexical/html';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -16,9 +20,8 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
+import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 import {
-  $createParagraphNode,
-  $createTextNode,
   $getRoot,
   $getSelection,
   $insertNodes,
@@ -30,12 +33,9 @@ import {
   COMMAND_PRIORITY_NORMAL,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  UNDO_COMMAND
+  UNDO_COMMAND,
 } from 'lexical';
-import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { useCallback, useEffect, useState } from 'react';
-import { getChildrenNodes } from '../../../editor/base/utils/helper';
-import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 
 export const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -223,40 +223,40 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
             e.preventDefault();
           }}
           onClick={() => {
-            const enterHtml = () => {
-              activeEditor.update(() => {
-                const root = $getRoot();
-                const newHtmlString = $generateHtmlFromNodes(editor, null);
-                const paragraphNode = $createParagraphNode();
-                const textNode = $createTextNode(newHtmlString);
-
-                paragraphNode.append(textNode);
-
-                root.clear();
-                root.append(paragraphNode);
-                setIsRawText(true);
+            const enterRawHtmlMode = () => {
+              const nodeMap = new Map<string, ValueSegment>();
+              activeEditor.getEditorState().read(() => {
+                getChildrenNodes($getRoot(), nodeMap);
+              });
+              convertEditorState(activeEditor, nodeMap).then((valueSegments) => {
+                activeEditor.update(() => {
+                  $getRoot().clear().select();
+                  parseSegments(valueSegments, true);
+                  setIsRawText(true);
+                });
               });
             };
 
-            const exitHtml = () => {
+            const exitRawHtmlMode = () => {
               const nodeMap = new Map<string, ValueSegment>();
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
               const parser = new DOMParser();
-              activeEditor.update(() => {
-                const newHtmlString = $getRoot().getTextContent();
-                const dom = parser.parseFromString(newHtmlString, 'text/html');
-                const nodes = $generateNodesFromDOM(editor, dom);
-                $getRoot().clear().select();
-                $insertNodes(nodes);
-                setIsRawText(false);
+              convertEditorState(activeEditor, nodeMap).then((valueSegments) => {
+                activeEditor.update(() => {
+                  const stringValue = convertSegmentsToString(valueSegments, nodeMap);
+                  const encodedStringValue = encodeStringSegments(stringValue, true);
+                  const dom = parser.parseFromString(encodedStringValue, 'text/html');
+                  const nodes = $generateNodesFromDOM(editor, dom);
+                  $getRoot().clear().select();
+                  $insertNodes(nodes);
+                  setIsRawText(false);
+                });
               });
             };
 
-            isRawText
-              ? exitHtml()
-              : enterHtml();
+            isRawText ? exitRawHtmlMode() : enterRawHtmlMode();
           }}
           style={{ background: isRawText ? '#8f8' : '#f88' }} // TODO REMOVE: For testing only.
           title={'Toggle raw HTML view'}

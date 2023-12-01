@@ -22,7 +22,7 @@ import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, 
 export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
-  const root = $getRoot();
+  const root = $getRoot().clear();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode | HeadingNode | ListNode;
 
@@ -66,7 +66,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
         else if (!$isLineBreakNode(childNode)) {
           appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled);
         }
-        // // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
+        // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
         else if ($isLineBreakNode(childNode)) {
           paragraph.append($createTextNode('\n'));
         }
@@ -108,14 +108,7 @@ const appendChildrenNode = (
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
     // and we'll need to use the ExtendedTextNode to apply the styles and format
-    appendStringSegment(
-      paragraph,
-      decodedTextContent,
-      childNodeStyles,
-      childNodeFormat,
-      nodeMap,
-      tokensEnabled
-    );
+    appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled);
   } else {
     paragraph.append(childNode);
   }
@@ -260,7 +253,7 @@ export const encodeStringSegments = (value: string, tokensEnabled: boolean | und
     return value;
   }
 
-  let newValue = "";
+  let newValue = '';
 
   for (let i = 0; i < value.length; i++) {
     if (value.substring(i, i + 2) === '$[') {
