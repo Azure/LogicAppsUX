@@ -80,7 +80,7 @@ export enum WorkflowProjectType {
 
 export enum TargetFramework {
   NetFx = 'net472',
-  Net6 = 'net60',
+  Net6 = 'net6',
 }
 
 export interface ISettingToAdd {
