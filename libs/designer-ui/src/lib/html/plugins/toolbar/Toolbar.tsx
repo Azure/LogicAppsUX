@@ -224,36 +224,38 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
           }}
           onClick={() => {
             const enterHtml = () => {
-              const root = $getRoot();
-              const newHtmlString = $generateHtmlFromNodes(editor, null);
-              const paragraphNode = $createParagraphNode();
-              const textNode = $createTextNode(newHtmlString);
-        
-              paragraphNode.append(textNode);
-        
-              root.clear();
-              root.append(paragraphNode);
-            };
-          
-            const exitHtml = () => {
-              const parser = new DOMParser();
-              const newHtmlString = $getRoot().getTextContent();
-              const dom = parser.parseFromString(newHtmlString, 'text/html');
-              const nodes = $generateNodesFromDOM(editor, dom);
-              $getRoot().clear().select();
-              $insertNodes(nodes);
+              activeEditor.update(() => {
+                const root = $getRoot();
+                const newHtmlString = $generateHtmlFromNodes(editor, null);
+                const paragraphNode = $createParagraphNode();
+                const textNode = $createTextNode(newHtmlString);
+
+                paragraphNode.append(textNode);
+
+                root.clear();
+                root.append(paragraphNode);
+                setIsRawText(true);
+              });
             };
 
-            activeEditor.update(() => {
+            const exitHtml = () => {
               const nodeMap = new Map<string, ValueSegment>();
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              isRawText
-                ? exitHtml()
-                : enterHtml();
-              setIsRawText(!isRawText);
-            });
+              const parser = new DOMParser();
+              activeEditor.update(() => {
+                const newHtmlString = $getRoot().getTextContent();
+                const dom = parser.parseFromString(newHtmlString, 'text/html');
+                const nodes = $generateNodesFromDOM(editor, dom);
+                $getRoot().clear().select();
+                $insertNodes(nodes);
+              });
+            };
+
+            isRawText
+              ? exitHtml()
+              : enterHtml();
           }}
           style={{ background: isRawText ? '#8f8' : '#f88' }} // TODO REMOVE: For testing only.
           title={'Toggle raw HTML view'}
