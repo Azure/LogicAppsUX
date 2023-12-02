@@ -17,16 +17,22 @@ export const Change = ({ setValue }: ChangeProps) => {
     editorState.read(() => {
       getChildrenNodes($getRoot(), nodeMap);
     });
-    convertEditorState(editor, nodeMap).then(setValue);
+    convertEditorState(editor, nodeMap, { asPlainText: false }).then(setValue);
   };
   return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
 
-export const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSegment>): Promise<ValueSegment[]> => {
+export const convertEditorState = (
+  editor: LexicalEditor,
+  nodeMap: Map<string, ValueSegment>,
+  options: { asPlainText: boolean }
+): Promise<ValueSegment[]> => {
+  const { asPlainText } = options;
+
   return new Promise((resolve) => {
     const valueSegments: ValueSegment[] = [];
     editor.update(() => {
-      const htmlEditorString = $generateHtmlFromNodes(editor);
+      const htmlEditorString = asPlainText ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
       // Create a temporary DOM element to parse the HTML string
       const tempElement = document.createElement('div');
       tempElement.innerHTML = htmlEditorString;

@@ -1,5 +1,5 @@
 import { getChildrenNodes } from '../../../editor/base/utils/helper';
-import { convertSegmentsToString, encodeStringSegments, parseSegments } from '../../../editor/base/utils/parsesegments';
+import { parseHtmlSegments, parseSegments } from '../../../editor/base/utils/parsesegments';
 import { isApple } from '../../../helper';
 import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
 import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
@@ -11,7 +11,6 @@ import { convertEditorState } from './helper/Change';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
 import { useTheme } from '@fluentui/react';
-import { $generateNodesFromDOM } from '@lexical/html';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -24,7 +23,6 @@ import type { ValueSegment } from '@microsoft/designer-client-services-logic-app
 import {
   $getRoot,
   $getSelection,
-  $insertNodes,
   $isRangeSelection,
   $isRootOrShadowRoot,
   CAN_REDO_COMMAND,
@@ -228,7 +226,7 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              convertEditorState(activeEditor, nodeMap).then((valueSegments) => {
+              convertEditorState(activeEditor, nodeMap, { asPlainText: false }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
                   parseSegments(valueSegments, true);
@@ -242,15 +240,10 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              const parser = new DOMParser();
-              convertEditorState(activeEditor, nodeMap).then((valueSegments) => {
+              convertEditorState(activeEditor, nodeMap, { asPlainText: true }).then((valueSegments) => {
                 activeEditor.update(() => {
-                  const stringValue = convertSegmentsToString(valueSegments, nodeMap);
-                  const encodedStringValue = encodeStringSegments(stringValue, true);
-                  const dom = parser.parseFromString(encodedStringValue, 'text/html');
-                  const nodes = $generateNodesFromDOM(editor, dom);
                   $getRoot().clear().select();
-                  $insertNodes(nodes);
+                  parseHtmlSegments(valueSegments, true);
                   setIsRawText(false);
                 });
               });
