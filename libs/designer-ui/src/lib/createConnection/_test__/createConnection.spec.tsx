@@ -294,6 +294,242 @@ describe('ui/createConnection', () => {
     });
   });
 
+  describe('custom credential mapping editor', () => {
+    const getConnectionParameterSetsWithCredentialMapping = (): ConnectionParameterSets => ({
+      uiDefinition: {
+        description: '',
+        displayName: '',
+      },
+      values: [
+        {
+          name: 'parameterSetA',
+          uiDefinition: {
+            description: '',
+            displayName: 'first parameter set',
+          },
+          parameters: {
+            parameterA: {
+              type: 'string',
+              uiDefinition: {
+                description: '',
+                displayName: '',
+                credentialMapping: {
+                  mappingName: 'myCredentialMapping',
+                  values: [
+                    {
+                      credentialKeyName: 'myCredentialPasswordKey',
+                      type: 'UserPassword',
+                    },
+                  ],
+                },
+              },
+            },
+            parameterB: {
+              type: 'string',
+              uiDefinition: {
+                description: '',
+                displayName: '',
+                credentialMapping: {
+                  mappingName: 'myCredentialMapping',
+                  values: [
+                    {
+                      credentialKeyName: 'myCredentialUserKey',
+                      type: 'UserPassword',
+                    },
+                  ],
+                },
+              },
+            },
+            hiddenParameterC: {
+              type: 'string',
+              uiDefinition: {
+                description: '',
+                displayName: '',
+                constraints: {
+                  hideInUI: 'true',
+                },
+              },
+            },
+            parameterD: {
+              type: 'string',
+              uiDefinition: {
+                description: '',
+                displayName: '',
+              },
+            },
+          },
+        },
+        {
+          name: 'parameterSetB',
+          uiDefinition: {
+            description: '',
+            displayName: 'second parameter set',
+          },
+          parameters: {
+            parameterE: {
+              type: 'string',
+              uiDefinition: {
+                description: '',
+                displayName: '',
+                credentialMapping: {
+                  mappingName: 'myOtherCredentialMapping',
+                  values: [
+                    {
+                      credentialKeyName: 'myCredentialPasswordKey',
+                      type: 'UserPassword',
+                    },
+                  ],
+                },
+              },
+            },
+            parameterF: {
+              type: 'string',
+              uiDefinition: {
+                description: '',
+                displayName: '',
+                credentialMapping: {
+                  mappingName: 'myOtherCredentialMapping',
+                  values: [
+                    {
+                      credentialKeyName: 'myCredentialPasswordKey',
+                      type: 'UserPassword',
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      ],
+    });
+
+    const CustomCredentialMappingEditor = () => <div>Custom CRedential Mapping Editor</div>;
+
+    let connectionParameterEditorService: IConnectionParameterEditorService;
+    beforeEach(() => {
+      connectionParameterEditorService = {
+        getConnectionParameterEditor: jest.fn(),
+        getCredentialMappingEditorOptions: jest.fn(({ connectorId }) => {
+          if (connectorId !== 'myConnectorId') {
+            return undefined;
+          }
+
+          return {
+            EditorComponent: CustomCredentialMappingEditor,
+          };
+        }),
+      };
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jest.mocked(connectionParameterEditorService.getCredentialMappingEditorOptions!).mockClear();
+      InitConnectionParameterEditorService(connectionParameterEditorService);
+    });
+
+    afterEach(() => {
+      InitConnectionParameterEditorService(undefined);
+    });
+
+    it('should not render CustomCredentialMappingEditor when connector has no mapping metadata', () => {
+      const connectionParameterSets = getConnectionParameterSets();
+      const props: CreateConnectionProps = {
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets,
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnection = renderer.getRenderOutput();
+
+      expect(connectionParameterEditorService.getCredentialMappingEditorOptions).not.toHaveBeenCalled();
+
+      const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
+      expect(parameters).toHaveLength(2);
+
+      const mappingEditors = findParameterComponents(createConnection, CustomCredentialMappingEditor);
+      expect(mappingEditors).toHaveLength(0);
+    });
+
+    it('should render CustomCredentialMappingEditor when connector has mapping metadata', () => {
+      const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
+      const props: CreateConnectionProps = {
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets,
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnection = renderer.getRenderOutput();
+
+      expect(connectionParameterEditorService.getCredentialMappingEditorOptions).toHaveBeenCalledTimes(1);
+      expect(connectionParameterEditorService.getCredentialMappingEditorOptions).toHaveBeenLastCalledWith({
+        connectorId: 'myConnectorId',
+        mappingName: 'myCredentialMapping',
+        parameters: {
+          parameterA: connectionParameterSets.values[0].parameters['parameterA'],
+          parameterB: connectionParameterSets.values[0].parameters['parameterB'],
+        },
+      });
+
+      const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
+      expect(parameters).toHaveLength(1);
+      expect(parameters[0].type).toEqual(UniversalConnectionParameter);
+      expect(parameters[0].props.parameterKey).toEqual('parameterD');
+
+      const mappingEditors = findParameterComponents(createConnection, CustomCredentialMappingEditor);
+      expect(mappingEditors).toHaveLength(1);
+      expect(mappingEditors[0].type).toEqual(CustomCredentialMappingEditor);
+      expect(mappingEditors[0].props).toEqual({
+        connectorId: 'myConnectorId',
+        mappingName: 'myCredentialMapping',
+        parameters: {
+          parameterA: connectionParameterSets.values[0].parameters['parameterA'],
+          parameterB: connectionParameterSets.values[0].parameters['parameterB'],
+        },
+        setParameterValues: expect.any(Function),
+        renderParameter: expect.any(Function),
+      });
+    });
+
+    it.each([
+      [
+        'service method returns undefined',
+        () => {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          jest.mocked(connectionParameterEditorService.getCredentialMappingEditorOptions!).mockReturnValue(undefined);
+        },
+      ],
+      [
+        'service method is not implemented',
+        () => {
+          delete connectionParameterEditorService.getCredentialMappingEditorOptions;
+        },
+      ],
+      [
+        'service is not implemented',
+        () => {
+          InitConnectionParameterEditorService(undefined);
+        },
+      ],
+    ])(`should not render CustomCredentialMappingEditor when %s`, (_, setup) => {
+      setup();
+
+      const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
+      const props: CreateConnectionProps = {
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets,
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnection = renderer.getRenderOutput();
+
+      const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
+      expect(parameters).toHaveLength(3);
+
+      const mappingEditors = findParameterComponents(createConnection, CustomCredentialMappingEditor);
+      expect(mappingEditors).toHaveLength(0);
+    });
+  });
+
   function findConnectionsParamContainer(createConnection: ReactElement) {
     return React.Children.toArray(createConnection.props.children).find(
       (child) => (child as ReactElement)?.props.className === 'connection-params-container'

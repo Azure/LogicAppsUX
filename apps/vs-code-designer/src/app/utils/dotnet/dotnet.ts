@@ -14,8 +14,9 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
-import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
-import { findFiles } from '../workspace';
+import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
+import { findFiles, getWorkspaceFolder } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import type { IWorkerRuntime } from '@microsoft/vscode-extension';
@@ -220,7 +221,7 @@ export function getDotNetCommand(): string {
   return command;
 }
 
-export async function setDotNetCommand(): Promise<void> {
+export async function setDotNetCommand(context: IActionContext): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const binariesExist = fs.existsSync(dotNetBinariesPath);
@@ -235,31 +236,36 @@ export async function setDotNetCommand(): Promise<void> {
     fs.chmodSync(dotNetBinariesPath, 0o777);
 
     try {
-      const terminalConfig = vscode.workspace.getConfiguration();
-      const pathEnv = {
-        PATH: newPath,
-      };
+      if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+        const workspaceFolder = await getWorkspaceFolder(context);
+        const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
 
-      // Required for dotnet cli in VSCode Terminal
-      switch (process.platform) {
-        case Platform.windows: {
-          terminalConfig.update('terminal.integrated.env.windows', pathEnv, vscode.ConfigurationTarget.Workspace);
-          break;
-        }
+        if (projectPath) {
+          const pathEnv = {
+            PATH: newPath,
+          };
 
-        case Platform.linux: {
-          terminalConfig.update('terminal.integrated.env.linux', pathEnv, vscode.ConfigurationTarget.Workspace);
-          break;
-        }
+          // Required for dotnet cli in VSCode Terminal
+          switch (process.platform) {
+            case Platform.windows: {
+              await updateWorkspaceSetting('integrated.env.windows', pathEnv, projectPath, 'terminal');
+              break;
+            }
 
-        case Platform.mac: {
-          terminalConfig.update('terminal.integrated.env.osx', pathEnv, vscode.ConfigurationTarget.Workspace);
-          break;
+            case Platform.linux: {
+              await updateWorkspaceSetting('integrated.env.linux', pathEnv, projectPath, 'terminal');
+              break;
+            }
+
+            case Platform.mac: {
+              await updateWorkspaceSetting('integrated.env.osx', pathEnv, projectPath, 'terminal');
+              break;
+            }
+          }
+          // Required for CoreClr
+          await updateWorkspaceSetting('dotNetCliPaths', [dotNetBinariesPath], projectPath, 'omnisharp');
         }
       }
-
-      // Required for CoreClr
-      terminalConfig.update('omnisharp.dotNetCliPaths', [dotNetBinariesPath], vscode.ConfigurationTarget.Workspace);
     } catch (error) {
       console.log(error);
     }

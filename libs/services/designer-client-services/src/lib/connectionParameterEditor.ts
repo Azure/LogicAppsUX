@@ -1,4 +1,4 @@
-import type { ConnectionParameter } from '@microsoft/utils-logic-apps';
+import type { ConnectionParameter, ConnectionParameterSetParameter } from '@microsoft/utils-logic-apps';
 
 export interface IConnectionParameterInfo {
   connectorId: string;
@@ -23,8 +23,34 @@ export interface IConnectionParameterEditorOptions {
   EditorComponent: React.FunctionComponent<IConnectionParameterEditorProps>;
 }
 
+export interface IConnectionCredentialMappingInfo {
+  connectorId: string;
+  mappingName: string;
+  parameters: {
+    [key: string]: ConnectionParameterSetParameter | ConnectionParameter;
+  };
+}
+
+export interface IConnectionCredentialMappingEditorProps {
+  connectorId: string;
+  mappingName: string;
+  parameters: {
+    [key: string]: ConnectionParameterSetParameter | ConnectionParameter;
+  };
+  setParameterValues: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
+  renderParameter: (key: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => JSX.Element;
+}
+
+export interface IConnectionCredentialMappingOptions {
+  /**
+   * The component to render for the Credential Mapping editor.
+   */
+  EditorComponent: React.FunctionComponent<IConnectionCredentialMappingEditorProps>;
+}
+
 export interface IConnectionParameterEditorService {
   getConnectionParameterEditor(parameter: IConnectionParameterInfo): undefined | IConnectionParameterEditorOptions;
+  getCredentialMappingEditorOptions?(mappingParams: IConnectionCredentialMappingInfo): undefined | IConnectionCredentialMappingOptions;
 }
 
 let service: IConnectionParameterEditorService | undefined;
