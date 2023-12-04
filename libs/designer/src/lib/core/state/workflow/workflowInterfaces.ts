@@ -1,4 +1,4 @@
-import type { ReactFlowNodeInfo, WorkflowNode } from '../../parsers/models/workflowNode';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
 
 export type SpecTypes = 'BJS' | 'CNCF';
@@ -26,7 +26,6 @@ export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph: WorkflowNode | null;
-  reactFlowNodeInfoDictionary: Record<string, ReactFlowNodeInfo> | null;
   operations: Operations;
   focusedCanvasNodeId?: string;
   nodesMetadata: NodesMetadata;

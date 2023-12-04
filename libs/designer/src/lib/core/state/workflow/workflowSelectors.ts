@@ -7,8 +7,6 @@ import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
-import type { ReactFlowInstance } from 'reactflow';
-import { useReactFlow } from 'reactflow';
 import Queue from 'yocto-queue';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
@@ -120,18 +118,6 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
   return traverseGraph(graph);
 };
 
-export const getRunAfterIndexFromGraphLevel = (
-  reactFlowInstance: ReactFlowInstance<any, any>,
-  runAfters: string[],
-  actionId: string
-): number => {
-  const sortedRunAfters = runAfters
-    .slice(0)
-    .sort((id1, id2) => (reactFlowInstance.getNode(id2)?.position?.x ?? 0) - (reactFlowInstance.getNode(id1)?.position?.x ?? 0));
-
-  return sortedRunAfters?.findIndex((key) => key === actionId);
-};
-
 export const useNodeEdgeTargets = (nodeId?: string): string[] =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
@@ -149,14 +135,6 @@ export const useWorkflowNode = (actionId?: string) => {
   });
 };
 
-export const useRunAfterIndexBySource = (actionId?: string, runAfters?: string[]): number => {
-  const reactFlow = useReactFlow();
-  if (!actionId || !runAfters) {
-    return 0;
-  }
-  return getRunAfterIndexFromGraphLevel(reactFlow, runAfters, actionId);
-};
-
 export const useIsGraphEmpty = () => {
   return useSelector((state: RootState) => state.workflow.graph?.children?.length === 0);
 };
@@ -170,6 +148,7 @@ export const useNodeIds = () => {
     })
   );
 };
+
 export const useNewSwitchCaseId = () =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {

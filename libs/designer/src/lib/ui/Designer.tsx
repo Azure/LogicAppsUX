@@ -153,6 +153,7 @@ export const Designer = (props: DesignerProps) => {
       style: DEFAULT_NODE_SIZE,
     },
   ];
+
   const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
 
   const graph = useSelector((state: RootState) => state.workflow.graph);

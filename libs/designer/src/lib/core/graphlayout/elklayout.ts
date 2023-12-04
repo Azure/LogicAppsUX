@@ -2,13 +2,12 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
-import { updateNodeInfo } from '../state/workflow/workflowSlice';
 import { LogEntryLevel, LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { Edge, Node } from 'reactflow';
 
 export const layerSpacing = {
@@ -154,7 +153,6 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
   const [reactFlowSize, setReactFlowSize] = useState<number[]>([0, 0]);
   const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
-  const dispatch = useDispatch();
   const readOnly = useReadOnly();
 
   useThrottledEffect(
@@ -171,7 +169,6 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
         .then((g) => {
           const [n, e, s] = convertElkGraphToReactFlow(g);
           setReactFlowNodes(n);
-          dispatch(updateNodeInfo({ nodes: n, elkNodes: elkGraph?.children }));
           setReactFlowEdges(e);
           setReactFlowSize(s);
           LoggerService().endTrace(traceId, { status: Status.Success });
