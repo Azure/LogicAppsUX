@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { ReactFlowNodeInfo, WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
+import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
@@ -7,6 +7,8 @@ import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
+import type { ReactFlowInstance } from 'reactflow';
+import { useReactFlow } from 'reactflow';
 import Queue from 'yocto-queue';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
@@ -119,13 +121,13 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 };
 
 export const getRunAfterIndexFromGraphLevel = (
-  reactFlowNodeInfoDictionary: Record<string, ReactFlowNodeInfo>,
+  reactFlowInstance: ReactFlowInstance<any, any>,
   runAfters: string[],
   actionId: string
 ): number => {
   const sortedRunAfters = runAfters
     .slice(0)
-    .sort((id1, id2) => (reactFlowNodeInfoDictionary?.[id2]?.position?.x ?? 0) - (reactFlowNodeInfoDictionary?.[id1]?.position?.x ?? 0));
+    .sort((id1, id2) => (reactFlowInstance.getNode(id2)?.position?.x ?? 0) - (reactFlowInstance.getNode(id1)?.position?.x ?? 0));
 
   return sortedRunAfters?.findIndex((key) => key === actionId);
 };
@@ -147,14 +149,12 @@ export const useWorkflowNode = (actionId?: string) => {
   });
 };
 
-export const useRunAfterIndexBySource = (actionId: string, runAfters: string[]): number => {
-  return useSelector((state: RootState) => {
-    if (!actionId || !state?.workflow?.reactFlowNodeInfoDictionary) {
-      return 0;
-    }
-
-    return getRunAfterIndexFromGraphLevel(state?.workflow?.reactFlowNodeInfoDictionary, runAfters, actionId);
-  });
+export const useRunAfterIndexBySource = (actionId?: string, runAfters?: string[]): number => {
+  const reactFlow = useReactFlow();
+  if (!actionId || !runAfters) {
+    return 0;
+  }
+  return getRunAfterIndexFromGraphLevel(reactFlow, runAfters, actionId);
 };
 
 export const useIsGraphEmpty = () => {
