@@ -14,13 +14,15 @@ export interface CollapsedArrayProps {
   collapsedValue: ValueSegment[];
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   itemSchema: ArrayItemSchema;
   isComplex: boolean;
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const CollapsedArray = ({

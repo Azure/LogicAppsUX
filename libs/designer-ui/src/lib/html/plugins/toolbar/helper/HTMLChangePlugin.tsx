@@ -7,11 +7,11 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
-interface ChangeProps {
+interface HTMLChangePluginProps {
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const Change = ({ setValue }: ChangeProps) => {
+export const HTMLChangePlugin = ({ setValue }: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
     editorState.read(() => {

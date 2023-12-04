@@ -2,7 +2,7 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps, CallbackHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
-import { Change } from '../editor/base/plugins/Change';
+import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import type {
   IButtonStyles,
   IComboBox,
@@ -244,8 +244,10 @@ export const Combobox = ({
             getTokenPicker={baseEditorProps.getTokenPicker}
             placeholder={baseEditorProps.placeholder}
             dataAutomationId={baseEditorProps.dataAutomationId}
+            tokenMapping={baseEditorProps.tokenMapping}
+            loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
           >
-            <Change setValue={setValue} />
+            <EditorChangePlugin setValue={setValue} />
           </EditorWrapper>
           <TooltipHost content={clearEditor} calloutProps={calloutProps} styles={hostStyles}>
             <IconButton styles={buttonStyles} iconProps={clearIcon} aria-label={clearEditor} onClick={() => handleClearClick()} />

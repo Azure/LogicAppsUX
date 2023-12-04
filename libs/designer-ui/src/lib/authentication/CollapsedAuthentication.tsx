@@ -14,9 +14,11 @@ interface CollapsedAuthenticationProps {
   setIsValid: (b: boolean) => void;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setOption: (s: AuthenticationType) => void;
   serializeValue: (value: ValueSegment[]) => void;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const CollapsedAuthentication = ({

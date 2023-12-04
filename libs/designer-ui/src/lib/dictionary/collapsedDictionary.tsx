@@ -13,11 +13,13 @@ export type CollapsedDictionaryProps = {
   keyType?: string;
   valueType?: string;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
   onBlur?: () => void;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 };
 
 export const CollapsedDictionary = ({

@@ -31,10 +31,6 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
-export { removeQuotes } from './utils/helper';
-
-export { testTokenSegment, outputToken, outputToken2 } from '../shared/testtokensegment';
-
 export interface ChangeState {
   value: ValueSegment[];
   viewModel?: any; // TODO - Should be strongly typed once updated for Array
@@ -69,6 +65,8 @@ export interface BaseEditorProps {
   valueType?: string;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   dataAutomationId?: string;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -97,6 +95,8 @@ export const BaseEditor = ({
   tokenPickerButtonProps,
   valueType,
   dataAutomationId,
+  tokenMapping,
+  loadParameterValueFromString,
   onFocus,
   onBlur,
   getTokenPicker,
@@ -123,7 +123,18 @@ export const BaseEditor = ({
     }
   }, []);
 
-  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, isHtmlEditor, tabbable, singleValueSegment } = basePlugins;
+  const {
+    autoFocus,
+    autoLink,
+    clearEditor,
+    history = true,
+    tokens,
+    treeView,
+    isHtmlEditor = false,
+    tabbable,
+    singleValueSegment = false,
+  } = basePlugins;
+
   const describedByMessage = intl.formatMessage({
     defaultMessage: 'Add dynamic data or expressions by inserting a /',
     description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
@@ -200,7 +211,9 @@ export const BaseEditor = ({
         {tokens ? <DeleteTokenNode /> : null}
         {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
         {tokens ? <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} /> : null}
-        {tokens ? <PastePlugin tokens={{}} /> : null}
+        {tokens && !isHtmlEditor ? (
+          <PastePlugin segmentMapping={tokenMapping} loadParameterValueFromString={loadParameterValueFromString} />
+        ) : null}
         {isHtmlEditor && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
         {children}
         {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsTokenPickerOpened) : null}

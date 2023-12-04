@@ -1,4 +1,5 @@
 import type { AuthProps, MSIProps } from '..';
+import type { ValueSegment } from '../../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
@@ -18,8 +19,10 @@ interface MSIAuthenticationProps {
   identity?: ManagedIdentity;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...props }: MSIAuthenticationProps): JSX.Element => {

@@ -10,6 +10,8 @@ interface AuthenticationPropertyProps {
   initialValue?: ValueSegment[];
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   readonly?: boolean;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
   onBlur?: ChangeHandler;
 }

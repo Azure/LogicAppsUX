@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
-import { Change } from './plugins/toolbar/helper/Change';
+import { HTMLChangePlugin } from './plugins/toolbar/helper/HTMLChangePlugin';
 import { useState } from 'react';
 
 export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseEditorProps): JSX.Element => {
@@ -27,7 +27,7 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
       }}
       onBlur={handleBlur}
     >
-      <Change setValue={onValueChange} />
+      <HTMLChangePlugin setValue={onValueChange} />
     </EditorWrapper>
   );
 };

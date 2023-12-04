@@ -1,6 +1,6 @@
 import type { BaseEditorProps, ChangeHandler } from '../base';
 import { EditorWrapper } from '../base/EditorWrapper';
-import { Change } from '../base/plugins/Change';
+import { EditorChangePlugin } from '../base/plugins/EditorChange';
 import type { ValueSegment } from '../models/parameter';
 import SingleLine from './stringPlugins/SingleLine';
 import { useState } from 'react';
@@ -43,7 +43,7 @@ export const StringEditor = ({
       onBlur={handleBlur}
     >
       {singleLine ? <SingleLine /> : null}
-      <Change setValue={onValueChange} />
+      <EditorChangePlugin setValue={onValueChange} />
     </EditorWrapper>
   );
 };
