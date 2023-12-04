@@ -137,6 +137,7 @@ export const OutputSource = {
   Queries: 'queries',
   Headers: 'headers',
   Body: 'body',
+  BodyValue: 'body/value',
   Outputs: 'outputs',
 };
 
