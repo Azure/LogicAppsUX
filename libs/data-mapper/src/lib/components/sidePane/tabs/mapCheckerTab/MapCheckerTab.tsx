@@ -15,7 +15,7 @@ import { MapCheckerItem, MapCheckerItemSeverity } from './MapCheckerItem';
 import { Stack } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text, tokens } from '@fluentui/react-components';
 import { CheckmarkCircle20Filled } from '@fluentui/react-icons';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/vscode-extension';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,5 +1,5 @@
-import type { SchemaNodeExtended } from '@microsoft/vscode-extension';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/vscode-extension';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
 
 export const sourceSchemaNodes: SchemaNodeExtended[] = [
   {

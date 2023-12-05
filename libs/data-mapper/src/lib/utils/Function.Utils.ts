@@ -16,8 +16,7 @@ import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid } from '@microsoft/utils-logic-apps';
-import { InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/vscode-extension';
+import { isAGuid, InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {

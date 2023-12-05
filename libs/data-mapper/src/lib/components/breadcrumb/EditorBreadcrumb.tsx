@@ -5,7 +5,7 @@ import type { IBreadcrumbItem, IContextualMenuItem, IContextualMenuProps, IDivid
 import { Breadcrumb, ContextualMenu, IconButton } from '@fluentui/react';
 import { Button, tokens, makeStyles, Text, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
-import type { SchemaExtended, SchemaNodeExtended } from '@microsoft/vscode-extension';
+import type { SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

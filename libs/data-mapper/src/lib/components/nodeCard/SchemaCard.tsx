@@ -33,8 +33,8 @@ import {
 } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
-import type { SchemaNodeExtended } from '@microsoft/vscode-extension';
-import { SchemaNodeProperty, SchemaType } from '@microsoft/vscode-extension';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

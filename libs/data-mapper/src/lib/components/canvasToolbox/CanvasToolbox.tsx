@@ -19,7 +19,7 @@ import { Button, Text, mergeClasses, tokens, typographyStyles } from '@fluentui/
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { MenuItemType } from '@microsoft/designer-ui';
-import type { SchemaNodeExtended } from '@microsoft/vscode-extension';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

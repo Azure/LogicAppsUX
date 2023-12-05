@@ -5,8 +5,8 @@ import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
-import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/vscode-extension';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/vscode-extension';
+import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {

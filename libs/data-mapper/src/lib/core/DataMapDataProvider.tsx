@@ -7,9 +7,8 @@ import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } 
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
-import type { MapMetadata, MapDefinitionEntry, Schema } from '@microsoft/vscode-extension';
-import { SchemaType } from '@microsoft/vscode-extension';
+import type { MapMetadata, MapDefinitionEntry, Schema } from '@microsoft/utils-logic-apps';
+import { Theme as ThemeType, SchemaType } from '@microsoft/utils-logic-apps';
 import React, { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 

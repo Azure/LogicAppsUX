@@ -9,7 +9,7 @@ import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '
 import type { ITreeNode } from '../../../tree/Tree';
 import Tree from '../../../tree/Tree';
 import { mergeClasses, tokens } from '@fluentui/react-components';
-import type { SchemaNodeExtended } from '@microsoft/vscode-extension';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

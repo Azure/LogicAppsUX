@@ -24,9 +24,8 @@ import { isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
-import { isAGuid } from '@microsoft/utils-logic-apps';
-import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/vscode-extension';
-import { SchemaType } from '@microsoft/vscode-extension';
+import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { isAGuid, SchemaType } from '@microsoft/utils-logic-apps';
 
 export class MapDefinitionDeserializer {
   private readonly _mapDefinition: MapDefinitionEntry;

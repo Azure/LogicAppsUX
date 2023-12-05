@@ -99,7 +99,7 @@ import {
   WarningFilled,
   Wrench20Regular,
 } from '@fluentui/react-icons';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/vscode-extension';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
 import type { ReactElement } from 'react';
 
 // Using Fluent v8 as it has option for fallback icon

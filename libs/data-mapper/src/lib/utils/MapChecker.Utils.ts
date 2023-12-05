@@ -12,8 +12,8 @@ import {
 } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { isObjectType, isSchemaNodeExtended } from './Schema.Utils';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/vscode-extension';
-import { SchemaNodeProperty } from '@microsoft/vscode-extension';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { SchemaNodeProperty } from '@microsoft/utils-logic-apps';
 import { defineMessages } from 'react-intl';
 
 export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {

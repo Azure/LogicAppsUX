@@ -28,9 +28,8 @@ import {
 } from './Function.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid } from '@microsoft/utils-logic-apps';
-import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/vscode-extension';
-import { SchemaType } from '@microsoft/vscode-extension';
+import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { isAGuid, SchemaType } from '@microsoft/utils-logic-apps';
 
 export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
