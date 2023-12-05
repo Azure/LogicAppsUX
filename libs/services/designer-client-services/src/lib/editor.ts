@@ -76,6 +76,10 @@ export interface IEditorProps {
    * Render the base (non-custom) editor corresponding to the provided options.
    */
   renderDefaultEditor: (params: IRenderDefaultEditorParams) => JSX.Element;
+  /**
+   * Whether the editor is disabled.
+   */
+  disabled?: boolean;
 }
 
 export interface IEditorParameterInfo {
