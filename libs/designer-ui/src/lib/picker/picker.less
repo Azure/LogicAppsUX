@@ -124,10 +124,13 @@ a.msla-picker {
       &:focus,
       &:active {
         background-color: @hoverColor;
-        border-color: @ms-color-white;
         -webkit-transition: background-color 0.5s ease;
         -moz-transition: background-color 0.5s ease;
         transition: background-color 0.5s ease;
+      }
+
+      &:focus-visible {
+        border-color: @ms-color-white;
       }
 
       &:after {
@@ -268,8 +271,11 @@ a.msla-picker {
         &:hover,
         &:focus,
         &:active {
-          border-color: @ms-color-white;
           background-color: @ms-color-themeLighter;
+        }
+
+        &:focus-visible {
+          border-color: @ms-color-black;
         }
       }
     }
