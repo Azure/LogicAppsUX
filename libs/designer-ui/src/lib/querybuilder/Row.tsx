@@ -8,7 +8,7 @@ import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
 import { notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
-import type { MoveOption } from './Group';
+// import type { MoveOption } from './Group';
 import { RowDropdown, RowDropdownOptions } from './RowDropdown';
 import { operandNotEmpty } from './helper';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
@@ -39,11 +39,13 @@ type RowProps = {
   showDisabledDelete?: boolean;
   isGroupable?: boolean;
   groupedItems: GroupedItems[];
-  isTop: boolean;
-  isBottom: boolean;
+  // isTop: boolean;
+  // isBottom: boolean;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
   readonly?: boolean;
-  handleMove?: (childIndex: number, moveOption: MoveOption) => void;
+  // handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   forceSingleCondition?: boolean;
   handleUpdateParent: (newProps: GroupItems, index: number) => void;
@@ -70,6 +72,7 @@ export const Row = ({
   isSimpleQueryBuilder,
   handleDeleteChild,
   handleUpdateParent,
+  ...baseEditorProps
 }: RowProps) => {
   const intl = useIntl();
   const [key, setKey] = useState<ValueSegment[]>(operand1);
@@ -270,6 +273,7 @@ export const Row = ({
             newlineVerticalOffset: 16,
             horizontalOffSet: isSimpleQueryBuilder ? undefined /* uses default of 38*/ : 33,
           }}
+          {...baseEditorProps}
         />
         <RowDropdown disabled={readonly || key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
@@ -282,6 +286,7 @@ export const Row = ({
           editorBlur={handleValueSave}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
           tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, newlineVerticalOffset: 16, horizontalOffSet: 33 }}
+          {...baseEditorProps}
         />
       </div>
       {forceSingleCondition ? null : (

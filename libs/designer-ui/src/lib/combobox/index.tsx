@@ -1,8 +1,8 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps, CallbackHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
-import { Change } from '../editor/base/plugins/Change';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
+import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import type {
   IButtonStyles,
   IComboBox,
@@ -234,19 +234,21 @@ export const Combobox = ({
     <div className="msla-combobox-container">
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
-          <BaseEditor
+          <EditorWrapper
             labelId={labelId}
             readonly={baseEditorProps.readonly}
             className="msla-combobox-editor"
-            BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
+            basePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
             onBlur={handleBlur}
             getTokenPicker={baseEditorProps.getTokenPicker}
             placeholder={baseEditorProps.placeholder}
             dataAutomationId={baseEditorProps.dataAutomationId}
+            tokenMapping={baseEditorProps.tokenMapping}
+            loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
           >
-            <Change setValue={setValue} />
-          </BaseEditor>
+            <EditorChangePlugin setValue={setValue} />
+          </EditorWrapper>
           <TooltipHost content={clearEditor} calloutProps={calloutProps} styles={hostStyles}>
             <IconButton styles={buttonStyles} iconProps={clearIcon} aria-label={clearEditor} onClick={() => handleClearClick()} />
           </TooltipHost>

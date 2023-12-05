@@ -163,6 +163,7 @@ export const workflowParametersSlice = createSlice({
       };
       if (!newErrorObj.name) delete newErrorObj.name;
       if (!newErrorObj.value) delete newErrorObj.value;
+      if (!newErrorObj.defaultValue) delete newErrorObj.defaultValue;
       if (Object.keys(newErrorObj).length === 0) {
         delete state.validationErrors[id];
       } else {
