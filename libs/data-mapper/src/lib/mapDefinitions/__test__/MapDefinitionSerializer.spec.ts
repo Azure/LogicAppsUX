@@ -778,7 +778,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
-        console.log('a');
+        const root = mapDefinition['ns0:Root'] as MapDefinitionEntry;
+        const looping = root['Looping'] as MapDefinitionEntry;
+        const book = looping['$for(/ns0:bookstore/ns0:book)'] as MapDefinitionEntry;
+        const book2 = book['$for(ns0:book2)'] as MapDefinitionEntry;
+        const book3 = book2['$for(ns0:book3)'] as MapDefinitionEntry;
+        const person = book3['Person'] as MapDefinitionEntry;
+        const address = person['Address'];
+        const name = person['Name'];
+        expect(address).toEqual('ns0:name');
+        expect(name).toEqual('../ns0:author/ns0:first-name');
       });
 
       it('Generates body with many to one nested loops', () => {
