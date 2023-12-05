@@ -41,13 +41,15 @@ export interface GroupItemProps {
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
 }
 
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
 
-export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onChange }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onChange, ...baseEditorProps }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -88,6 +90,7 @@ export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onCha
         mustHaveItem={true}
         handleUpdateParent={handleUpdateParent}
         getTokenPicker={getTokenPicker}
+        {...baseEditorProps}
       />
     </div>
   );

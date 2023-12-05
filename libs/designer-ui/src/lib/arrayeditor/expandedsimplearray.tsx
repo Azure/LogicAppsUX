@@ -34,9 +34,11 @@ export interface ExpandedSimpleArrayProps {
   itemEnum?: string[];
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: SimpleArrayItem[]) => void;
   options?: ComboboxItem[];
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const ExpandedSimpleArray = ({
