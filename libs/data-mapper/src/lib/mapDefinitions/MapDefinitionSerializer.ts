@@ -3,9 +3,6 @@ import { mapDefinitionVersion, mapNodeParams, reservedMapDefinitionKeys } from '
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
-import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeProperty } from '../models/Schema';
 import { findLast } from '../utils/Array.Utils';
 import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, isCustomValue } from '../utils/Connection.Utils';
 import {
@@ -21,6 +18,8 @@ import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData }
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import { extend } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/vscode-extension';
+import { SchemaNodeProperty } from '@microsoft/vscode-extension';
 import yaml from 'js-yaml';
 
 interface OutputPathItem {
