@@ -13,9 +13,9 @@ import {
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
 } from './extensionConfig';
-import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
+import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import {
   copyFileSync,
