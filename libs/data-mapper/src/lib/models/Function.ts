@@ -1,7 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import type { FunctionPositionMetadata } from './MapMetadata';
-import { InputFormat as InputEntryType, NormalizedDataType } from './Schema';
-import type { SchemaNodeExtended } from './Schema';
+import type { FunctionPositionMetadata, SchemaNodeExtended } from '@microsoft/vscode-extension';
+import { InputFormat as InputEntryType, NormalizedDataType } from '@microsoft/vscode-extension';
 
 export interface FunctionManifest {
   version: string;
