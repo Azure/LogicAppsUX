@@ -1,4 +1,5 @@
 import type { MSIProps } from '..';
+import type { ValueSegment } from '../../editor';
 import type { ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
@@ -12,9 +13,11 @@ interface MSIAuthenticationDefaultProps {
   msiProps: MSIProps;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
   onBlur: ChangeHandler;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const MSIAuthenticationDefault = ({

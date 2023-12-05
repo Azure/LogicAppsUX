@@ -34,7 +34,7 @@ export * from './dictionary';
 export * from './documentationlinkitem';
 export * from './dropdown';
 export * from './editor/base';
-export * from './editor/models/parameter';
+export * from './editor';
 export * from './editor/monaco';
 export * from './editor/string';
 export * from './errorboundary';

@@ -1,9 +1,8 @@
 import type { GroupItems, RowItemProps } from '.';
 import { RowDropdownOptions, GroupType } from '.';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
+import { ValueSegmentType, removeQuotes } from '../editor';
 import type { ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
-import { removeQuotes } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import { Row } from './Row';
 import { getOperationValue, getOuterMostCommaIndex } from './helper';
@@ -20,6 +19,8 @@ export interface SimpleQueryBuilderProps {
   readonly?: boolean;
   itemValue: ValueSegment[];
   isRowFormat?: boolean;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
 }
@@ -38,7 +39,7 @@ const buttonStyles: IButtonStyles = {
   rootPressed: removeStyle,
 };
 
-export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChange }: SimpleQueryBuilderProps) => {
+export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChange, ...baseEditorProps }: SimpleQueryBuilderProps) => {
   const intl = useIntl();
 
   const [getRootProp, setRootProp] = useFunctionalState<RowItemProps | undefined>(convertAdvancedValueToRootProp(itemValue));
@@ -90,8 +91,8 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
     <div className="msla-querybuilder-container">
       {isRowFormat ? (
         <Row
-          isTop={false}
-          isBottom={false}
+          // isTop={false}
+          // isBottom={false}
           index={0}
           operand1={getRootProp()?.operand1}
           operand2={getRootProp()?.operand2}
@@ -103,6 +104,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
           readonly={readonly}
           clearEditorOnTokenInsertion={true}
           isSimpleQueryBuilder={true}
+          {...baseEditorProps}
         />
       ) : (
         <StringEditor
@@ -110,6 +112,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
           initialValue={advancedValue}
           getTokenPicker={getTokenPicker}
           onChange={handleUpdateRootProps}
+          {...baseEditorProps}
         />
       )}
       <ActionButton

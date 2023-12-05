@@ -1,7 +1,7 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { ValueSegment } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { CollapsedDictionaryValidation } from './plugins/CollapsedDictionaryValidation';
 import { useIntl } from 'react-intl';
@@ -13,11 +13,13 @@ export type CollapsedDictionaryProps = {
   keyType?: string;
   valueType?: string;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
   onBlur?: () => void;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 };
 
 export const CollapsedDictionary = ({
@@ -41,10 +43,10 @@ export const CollapsedDictionary = ({
   return (
     <div className="msla-dictionary-container msla-dictionary-editor-collapsed">
       <div className="msla-dictionary-content">
-        <BaseEditor
+        <EditorWrapper
           {...props}
           className="msla-collapsed-editor-container"
-          BasePlugins={{
+          basePlugins={{
             tokens: true,
             tabbable: true,
           }}
@@ -62,7 +64,7 @@ export const CollapsedDictionary = ({
             collapsedValue={collapsedValue}
             setCollapsedValue={setCollapsedValue}
           />
-        </BaseEditor>
+        </EditorWrapper>
       </div>
     </div>
   );

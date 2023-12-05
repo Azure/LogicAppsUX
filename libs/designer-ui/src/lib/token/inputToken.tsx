@@ -1,17 +1,18 @@
 import { getBrandColorRgbA } from '../card/utils';
 import { TokenType } from '../editor';
+import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
 import { OPEN_TOKEN_PICKER } from '../editor/base/plugins/OpenTokenPicker';
 import iconSvg from './icon/icon.svg';
 import { Icon, css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
-import { mergeRegister } from '@lexical/utils';
-import { $getNodeByKey, CLICK_COMMAND, COMMAND_PRIORITY_NORMAL } from 'lexical';
-import type { NodeKey } from 'lexical';
+import { $getNodeByKey, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
+import type { LexicalCommand, NodeKey } from 'lexical';
 import { useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
+export const DESELECT_NODE: LexicalCommand<undefined> = createCommand();
 export interface InputTokenProps {
   brandColor?: string;
   value?: string;
@@ -19,7 +20,7 @@ export interface InputTokenProps {
   icon?: string;
   isAdvanced?: boolean;
   isSecure?: boolean;
-  readOnly?: boolean;
+  readonly?: boolean;
   required?: boolean;
   title: string;
   nodeKey: NodeKey;
@@ -27,44 +28,37 @@ export interface InputTokenProps {
 }
 
 export const DELETE = '\u00D7';
-export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readOnly, title, nodeKey }) => {
+export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readonly, title, nodeKey }) => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
   const tokenRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
-    const unregister = mergeRegister(
-      editor.registerCommand<MouseEvent>(
-        CLICK_COMMAND,
-        (payload) => {
-          const event = payload;
-
-          if (event.target === tokenRef.current) {
-            if (event.shiftKey) {
-              setSelected(!isSelected);
-            } else {
-              clearSelection();
-              setSelected(true);
-            }
-            return true;
-          }
-
-          return false;
-        },
-        COMMAND_PRIORITY_NORMAL
-      )
+    return editor.registerCommand(
+      DESELECT_NODE,
+      () => {
+        setSelected(false);
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR
     );
-    return () => {
-      unregister();
-    };
-  }, [clearSelection, editor, isSelected, nodeKey, setSelected]);
+  }, [editor, setSelected]);
 
-  const handleTokenClicked = () => {
+  const handleTokenClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     if (nodeKey) {
       editor.getEditorState().read(() => {
-        if ($getNodeByKey(nodeKey)?.['__data']?.token?.tokenType === TokenType.FX) {
+        // if it is an expression token we'll open the token picker in update mode
+        if ($getNodeByKey(nodeKey)?.['__data']?.token?.tokenType === TokenType.FX && !readonly) {
           editor.dispatchCommand(OPEN_TOKEN_PICKER, nodeKey);
+        }
+        // otherwise we'll select the token
+        else if (e.shiftKey) {
+          setSelected(!isSelected);
+        } else {
+          clearSelection();
+          setSelected(true);
+          editor.dispatchCommand(CLOSE_TOKENPICKER, undefined);
         }
       });
     }
@@ -88,7 +82,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   };
 
   const renderTokenDeleteButton = (): JSX.Element | null => {
-    if (readOnly) {
+    if (readonly) {
       return null;
     }
 
@@ -114,12 +108,12 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   };
 
   return (
-    <div
+    <span
       className={css('msla-token msla-input-token', isSelected && 'selected')}
       data-automation-id={`msla-token msla-input-token-${title}`}
       onClick={(e) => {
+        handleTokenClicked(e);
         e.stopPropagation();
-        handleTokenClicked();
       }}
       style={tokenStyle}
       ref={tokenRef}
@@ -128,6 +122,6 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         {title}
       </div>
       {renderTokenDeleteButton()}
-    </div>
+    </span>
   );
 };

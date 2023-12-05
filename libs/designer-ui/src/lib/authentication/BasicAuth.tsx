@@ -1,4 +1,5 @@
 import type { AuthProps, BasicProps } from '.';
+import type { ValueSegment } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationProperty } from './AuthenticationProperty';
@@ -9,8 +10,10 @@ interface BasicAuthenticationProps {
   basicProps: BasicProps;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   readonly?: boolean;
-  getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const BasicAuthentication = ({ basicProps, setCurrentProps, ...props }: BasicAuthenticationProps): JSX.Element => {

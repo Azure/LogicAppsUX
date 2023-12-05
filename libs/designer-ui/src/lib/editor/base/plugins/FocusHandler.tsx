@@ -1,6 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
-import { BLUR_COMMAND, CLICK_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from 'lexical';
+import { BLUR_COMMAND, CLICK_COMMAND, COMMAND_PRIORITY_EDITOR, FOCUS_COMMAND } from 'lexical';
 import { useEffect } from 'react';
 
 interface FocusChangePluginProps {
@@ -20,7 +20,7 @@ export const FocusChangePlugin = ({ onFocus, onBlur, onClick }: FocusChangePlugi
           onFocus();
           return false;
         },
-        COMMAND_PRIORITY_LOW
+        COMMAND_PRIORITY_EDITOR
       ),
       editor.registerCommand(
         BLUR_COMMAND,
@@ -28,7 +28,7 @@ export const FocusChangePlugin = ({ onFocus, onBlur, onClick }: FocusChangePlugi
           onBlur();
           return false;
         },
-        COMMAND_PRIORITY_LOW
+        COMMAND_PRIORITY_EDITOR
       ),
 
       editor.registerCommand(
@@ -37,7 +37,7 @@ export const FocusChangePlugin = ({ onFocus, onBlur, onClick }: FocusChangePlugi
           onClick();
           return false;
         },
-        COMMAND_PRIORITY_LOW
+        COMMAND_PRIORITY_EDITOR
       )
     );
   }, [editor, onFocus, onBlur, onClick]);

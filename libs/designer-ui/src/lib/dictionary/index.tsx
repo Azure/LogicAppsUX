@@ -91,6 +91,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           setIsValid={setIsValid}
           setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
           onBlur={handleCollapsedBlur}
+          tokenMapping={baseEditorProps.tokenMapping}
+          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       ) : (
         <ExpandedDictionary
@@ -103,6 +105,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           setItems={updateItems}
           tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
           getTokenPicker={getTokenPicker}
+          tokenMapping={baseEditorProps.tokenMapping}
+          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       )}
 
