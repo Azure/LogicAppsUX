@@ -48,7 +48,6 @@ import {
   XDivide132Regular,
   XPowerY32Regular,
 } from '../images/FunctionIcons';
-import { NormalizedDataType, SchemaNodeProperty } from '../models';
 import { FunctionCategory } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
 import { FontIcon } from '@fluentui/react';
@@ -100,6 +99,7 @@ import {
   WarningFilled,
   Wrench20Regular,
 } from '@fluentui/react-icons';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/vscode-extension';
 import type { ReactElement } from 'react';
 
 // Using Fluent v8 as it has option for fallback icon

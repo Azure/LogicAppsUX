@@ -8,7 +8,6 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
-import { InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
@@ -18,6 +17,7 @@ import { LogCategory, LogService } from './Logging.Utils';
 import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
+import { InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/vscode-extension';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {

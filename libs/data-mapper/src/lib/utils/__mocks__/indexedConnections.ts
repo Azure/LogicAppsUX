@@ -1,5 +1,6 @@
-import { FunctionCategory, NormalizedDataType, SchemaNodeProperty } from '../../models';
+import { FunctionCategory } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/vscode-extension';
 
 export const indexedConnections: ConnectionDictionary = {
   'target-/ns0:Root/Looping/Person/Name': {

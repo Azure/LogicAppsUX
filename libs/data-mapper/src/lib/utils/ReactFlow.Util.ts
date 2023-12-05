@@ -11,14 +11,14 @@ import {
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { ConnectionDictionary, ConnectionUnit } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
-import { SchemaType } from '../models/Schema';
 import { functionsForLocation, getFunctionBrandingForCategory } from './Function.Utils';
 import type { LayoutNode, RootLayoutNode } from './Layout.Utils';
 import { applyCustomLayout, convertDataMapNodesToLayoutTree, convertWholeDataMapToLayoutTree } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/vscode-extension';
+import { SchemaType } from '@microsoft/vscode-extension';
 import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
 import { Position } from 'reactflow';

@@ -1,8 +1,7 @@
 import type { MapCheckerEntry } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
 import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
 import { sourcePrefix } from '../constants/ReactFlowConstants';
-import type { FunctionData, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaNodeProperty } from '../models';
+import type { FunctionData } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import {
   flattenInputs,
@@ -13,6 +12,8 @@ import {
 } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { isObjectType, isSchemaNodeExtended } from './Schema.Utils';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/vscode-extension';
+import { SchemaNodeProperty } from '@microsoft/vscode-extension';
 import { defineMessages } from 'react-intl';
 
 export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {

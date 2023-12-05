@@ -30,13 +30,13 @@ import {
   updateFunctionPosition,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import type { FunctionPositionMetadata } from '../models';
-import { SchemaType } from '../models';
 import { inputFromHandleId } from '../utils/Connection.Utils';
 import { isFunctionData } from '../utils/Function.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
+import type { FunctionPositionMetadata } from '@microsoft/vscode-extension';
+import { SchemaType } from '@microsoft/vscode-extension';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

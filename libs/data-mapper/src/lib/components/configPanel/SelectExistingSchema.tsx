@@ -1,6 +1,6 @@
 import type { RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models';
 import { FileDropdown } from '../fileDropdown/fileDropdown';
+import { SchemaType } from '@microsoft/vscode-extension';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

@@ -1,10 +1,10 @@
 import { openUpdateSourceSchemaPanelView, openUpdateTargetSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { IChoiceGroupOption } from '@fluentui/react';
 import { ChoiceGroup, IconButton, Label, Stack, StackItem, Text } from '@fluentui/react';
 import { useId } from '@microsoft/designer-ui';
+import { SchemaType } from '@microsoft/vscode-extension';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

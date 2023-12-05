@@ -1,5 +1,5 @@
-import type { SchemaNodeExtended } from '../../models';
-import { NormalizedDataType, SchemaNodeProperty } from '../../models';
+import type { SchemaNodeExtended } from '@microsoft/vscode-extension';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/vscode-extension';
 
 export const sourceSchemaNodes: SchemaNodeExtended[] = [
   {

@@ -1,6 +1,5 @@
 import { heavyRepeatingMockSchema } from '../../__mocks__';
 import { minFunction } from '../../__mocks__/FunctionMock';
-import { NormalizedDataType, SchemaNodeProperty, type Schema, type SchemaExtended, type SchemaNodeDictionary } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import {
@@ -12,6 +11,13 @@ import {
   removeQuotesFromString,
 } from '../Function.Utils';
 import { convertSchemaToSchemaExtended } from '../Schema.Utils';
+import {
+  NormalizedDataType,
+  SchemaNodeProperty,
+  type Schema,
+  type SchemaExtended,
+  type SchemaNodeDictionary,
+} from '@microsoft/vscode-extension';
 
 describe('utils/Functions', () => {
   describe('getFunctionOutputValue', () => {

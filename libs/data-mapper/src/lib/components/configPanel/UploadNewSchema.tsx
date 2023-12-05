@@ -1,7 +1,7 @@
-import type { SchemaType } from '../../models';
 import type { FileWithVsCodePath, SchemaFile } from './AddOrUpdateSchemaView';
 import { Button, Input } from '@fluentui/react-components';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
+import type { SchemaType } from '@microsoft/vscode-extension';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 

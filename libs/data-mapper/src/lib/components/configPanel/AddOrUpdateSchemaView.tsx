@@ -1,11 +1,11 @@
 import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models';
 import { SelectExistingSchema } from './SelectExistingSchema';
 import { UploadNewSchema } from './UploadNewSchema';
 import { ChoiceGroup, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IChoiceGroupOption } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
+import { SchemaType } from '@microsoft/vscode-extension';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

@@ -1,7 +1,7 @@
 import { targetPrefix } from '../../../constants/ReactFlowConstants';
 import type { RootState } from '../../../core/state/Store';
 import { convertToMapDefinition } from '../../../mapDefinitions';
-import type { FunctionData, SchemaNodeExtended } from '../../../models';
+import type { FunctionData } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import { collectFunctionValue } from '../../../utils/DataMap.Utils';
 import { isFunctionData } from '../../../utils/Function.Utils';
@@ -9,6 +9,7 @@ import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { commonCodeEditorProps } from '../../testMapPanel/TestMapPanel';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import type { SchemaNodeExtended } from '@microsoft/vscode-extension';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 

@@ -1,4 +1,4 @@
-import type { MapDefinitionEntry } from '../models';
+import type { MapDefinitionEntry } from '@microsoft/vscode-extension';
 import * as yaml from 'js-yaml';
 
 /*

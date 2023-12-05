@@ -1,7 +1,5 @@
 import { concatFunction } from '../../__mocks__/FunctionMock';
 import type { DataMapOperationState } from '../../core/state/DataMapSlice';
-import type { SchemaNodeExtended } from '../../models';
-import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock } from '../../models/Function';
@@ -20,6 +18,8 @@ import {
 } from '../Connection.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
+import type { SchemaNodeExtended } from '@microsoft/vscode-extension';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/vscode-extension';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
