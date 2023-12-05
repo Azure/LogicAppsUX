@@ -219,7 +219,7 @@ export const getOutputParametersFromManifest = (
 
   let operationOutputs: Record<string, OutputParameter>;
 
-  if (operationInfo?.operationId === 'foreach') {
+  if (operationInfo?.operationId?.toLowerCase() === 'foreach') {
     operationOutputs = {
       'builtin.$.item': {
         key: Constants.FOREACH_CURRENT_ITEM_KEY,
