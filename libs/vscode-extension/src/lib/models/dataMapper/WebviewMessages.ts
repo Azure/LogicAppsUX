@@ -1,3 +1,4 @@
+import type { ExtensionCommand } from '../extensioncommand';
 import type { MapDefinitionEntry } from './MapDefinition';
 import type { MapMetadata } from './MapMetadata';
 import type { SchemaType } from './Schema';
@@ -15,39 +16,46 @@ export type MapDefinitionData = {
 export type XsltData = { filename: string; fileContents: string };
 
 export type MessageToWebview =
-  | { command: 'initialize-frame'; data: InitializeData }
-  | { command: 'fetchSchema'; data: FetchSchemaData }
-  | { command: 'loadDataMap'; data: MapDefinitionData }
-  | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'getAvailableCustomXsltPaths'; data: string[] }
-  | { command: 'setXsltData'; data: XsltData }
-  | { command: 'setRuntimePort'; data: string }
-  | { command: 'getConfigurationSetting'; data: boolean };
+  | { command: typeof ExtensionCommand.initialize_frame; data: InitializeData }
+  | { command: typeof ExtensionCommand.fetchSchema; data: FetchSchemaData }
+  | { command: typeof ExtensionCommand.loadDataMap; data: MapDefinitionData }
+  | { command: typeof ExtensionCommand.showAvailableSchemas; data: string[] }
+  | { command: typeof ExtensionCommand.getAvailableCustomXsltPaths; data: string[] }
+  | { command: typeof ExtensionCommand.setXsltData; data: XsltData }
+  | { command: typeof ExtensionCommand.setRuntimePort; data: string }
+  | { command: typeof ExtensionCommand.getConfigurationSetting; data: boolean };
 
 export type MessageToVsix =
   | {
-      command: 'initialize';
+      command: typeof ExtensionCommand.initialize;
       data: any;
     }
   | {
-      command: 'addSchemaFromFile';
+      command: typeof ExtensionCommand.addSchemaFromFile;
       data: SchemaPathData;
     }
   | {
-      command: 'saveDataMapDefinition' | 'saveDraftDataMapDefinition' | 'saveDataMapXslt' | 'saveDataMapMetadata';
+      command:
+        | typeof ExtensionCommand.saveDataMapDefinition
+        | typeof ExtensionCommand.saveDraftDataMapDefinition
+        | typeof ExtensionCommand.saveDataMapXslt
+        | typeof ExtensionCommand.saveDataMapMetadata;
       data: string;
     }
   | {
-      command: 'webviewLoaded' | 'readLocalSchemaFileOptions' | 'readLocalCustomXsltFileOptions';
+      command:
+        | typeof ExtensionCommand.webviewLoaded
+        | typeof ExtensionCommand.readLocalSchemaFileOptions
+        | typeof ExtensionCommand.readLocalCustomXsltFileOptions;
     }
   | {
-      command: 'webviewRscLoadError';
+      command: typeof ExtensionCommand.webviewRscLoadError;
       data: string;
     }
   | {
-      command: 'setIsMapStateDirty';
+      command: typeof ExtensionCommand.setIsMapStateDirty;
       data: boolean;
     }
   | {
-      command: 'getFunctionDisplayExpanded';
+      command: typeof ExtensionCommand.getFunctionDisplayExpanded;
     };
