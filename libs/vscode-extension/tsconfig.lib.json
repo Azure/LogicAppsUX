@@ -5,11 +5,6 @@
     "declaration": true,
     "types": []
   },
-  "include": [
-    "**/*.ts",
-    "../utils/src/lib/models/dataMapper/index.ts",
-    "../utils/src/lib/models/dataMapper/MapDefinition.ts",
-    "../utils/src/lib/models/dataMapper/Schema.ts"
-  ],
+  "include": ["**/*.ts"],
   "exclude": ["**/*.spec.ts", "jest.config.ts"]
 }
