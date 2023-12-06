@@ -11,7 +11,7 @@ export * from './run';
 export * from './subscription';
 export * from './theme';
 export * from './dataMap';
-export * from './schema';
+export * from './dataMapSchema';
 
 export * as LogicApps from './logicApps';
 export * as LogicAppsV2 from './logicAppsV2';
