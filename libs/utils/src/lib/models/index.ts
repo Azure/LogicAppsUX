@@ -10,7 +10,9 @@ export * from './gateway';
 export * from './run';
 export * from './subscription';
 export * from './theme';
-export * from './dataMapper';
+export * from './Schema';
+export * from './MapDefinition';
+export * from './MapMetadata';
 
 export * as LogicApps from './logicApps';
 export * as LogicAppsV2 from './logicAppsV2';

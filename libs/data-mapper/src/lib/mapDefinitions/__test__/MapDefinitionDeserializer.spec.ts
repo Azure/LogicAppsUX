@@ -2,7 +2,7 @@ import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, index
 import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
-import type { MapDefinitionEntry } from '@microsoft/vscode-extension';
+import type { MapDefinitionEntry } from '@microsoft/utils-logic-apps';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,

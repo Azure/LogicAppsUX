@@ -6,8 +6,8 @@ import { applyConnectionValue } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/vscode-extension';
-import { SchemaFileFormat, SchemaType } from '@microsoft/vscode-extension';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { SchemaFileFormat, SchemaType } from '@microsoft/utils-logic-apps';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
