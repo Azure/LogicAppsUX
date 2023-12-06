@@ -1,7 +1,7 @@
-import { setSelectedNodeId, changePanelNode } from '../../../core';
-import { useConnectionById } from '../../../core/queries/connections';
-import { showDefaultTabs } from '../../../core/state/panel/panelSlice';
-import { useNodeDisplayName } from '../../../core/state/workflow/workflowSelectors';
+import { setSelectedNodeId, changePanelNode, setFocusNode } from '../../../../core';
+import { useConnectionById } from '../../../../core/queries/connections';
+import { showDefaultTabs } from '../../../../core/state/panel/panelSlice';
+import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { Icon, Text, css } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { getConnectionErrors } from '@microsoft/utils-logic-apps';
@@ -66,6 +66,7 @@ const NodeLinkBadge = ({ nodeId, iconUri }: { nodeId: string; iconUri?: string }
   const id = useNodeDisplayName(nodeId);
 
   const nodeClick = useCallback(() => {
+    dispatch(setFocusNode(nodeId));
     dispatch(setSelectedNodeId(nodeId));
     dispatch(changePanelNode(nodeId));
     dispatch(showDefaultTabs());

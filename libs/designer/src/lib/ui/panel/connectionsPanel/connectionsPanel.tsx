@@ -1,95 +1,80 @@
-import { useConnectionMapping, useConnectionRefs } from '../../../core';
-import { useConnector } from '../../../core/state/connection/connectionSelector';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '../../../core/utils/card';
-import { ConnectorConnectionsCard } from './connectorConnectionsCard';
+import { useSelectedNodeId } from '../../../core';
+import { useConnectionsForConnector } from '../../../core/queries/connections';
+import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
+import { useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
+import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
+import { AllConnections } from './allConnections/allConnections';
+import { CreateConnection } from './createConnection';
+import { SelectConnection } from './selectConnection/selectConnection';
 import { FocusTrapZone, IconButton, Text } from '@fluentui/react';
-import { Accordion, AccordionItem } from '@fluentui/react-components';
 import { type CommonPanelProps } from '@microsoft/designer-ui';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 export const ConnectionPanel = (props: CommonPanelProps) => {
-  const intl = useIntl();
+  const dispatch = useDispatch();
+  const selectedNodeId = useSelectedNodeId();
+  const connector = useConnectorByNodeId(selectedNodeId);
+  const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
+  const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
 
-  const connectionMapping = useConnectionMapping();
-  const connectionReferences = useConnectionRefs();
+  const isCreatingConnection = useIsCreatingConnection();
 
-  const connectionsWithNodes = useMemo(() => {
-    // make a copy of connectionReferences
-    const connections: any = {};
-    // const connections: any = JSON.parse(JSON.stringify(connectionReferences));
-    for (const [nodeId, connectionReference] of Object.entries(connectionMapping)) {
-      if (!connectionReference) continue;
-      if (!connections[connectionReference]) {
-        connections[connectionReference] = {
-          nodes: [],
-          ...connectionReferences?.[connectionReference],
-        };
-      }
-      connections[connectionReference]?.nodes.push(nodeId);
-    }
-    return connections;
-  }, [connectionMapping, connectionReferences]);
+  useEffect(() => {
+    if (selectedNodeId && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0)
+      dispatch(setIsCreatingConnection(true));
+  }, [connectionQuery.isError, connectionQuery.isLoading, connections, dispatch, selectedNodeId]);
 
-  const groupedConnections = useMemo(() => {
-    const grouped: Record<string, Record<string, string[]>> = {};
-    for (const connectionReference of Object.keys(connectionsWithNodes)) {
-      const apiId = connectionReferences?.[connectionReference]?.api.id;
-      if (!apiId) continue;
-      grouped[apiId] = grouped?.[apiId] || {};
-      grouped[apiId][connectionReference] = connectionsWithNodes[connectionReference];
-    }
-    return grouped;
-  }, [connectionsWithNodes, connectionReferences]);
+  const panelStatus = useMemo(() => {
+    if (!selectedNodeId) return 'default';
+    return isCreatingConnection ? 'create' : 'select';
+  }, [isCreatingConnection, selectedNodeId]);
 
   /// INTL
-
-  const connectionsPanelHeader = intl.formatMessage({
+  const intl = useIntl();
+  const connectionsPanelDefaultHeader = intl.formatMessage({
     defaultMessage: 'Connections',
     description: 'Header for the connections panel',
   });
+  const selectConnectionPanelHeader = intl.formatMessage({
+    defaultMessage: 'Change Connection',
+    description: 'Header for the change connection panel',
+  });
+  const createConnectionPanelHeader = intl.formatMessage({
+    defaultMessage: 'Create Connection',
+    description: 'Header for the create connection panel',
+  });
+
+  const panelHeaderText = useMemo(() => {
+    switch (panelStatus) {
+      case 'default':
+        return connectionsPanelDefaultHeader;
+      case 'select':
+        return selectConnectionPanelHeader;
+      case 'create':
+        return createConnectionPanelHeader;
+    }
+  }, [connectionsPanelDefaultHeader, createConnectionPanelHeader, panelStatus, selectConnectionPanelHeader]);
+
+  const renderContent = useCallback(() => {
+    switch (panelStatus) {
+      case 'default':
+        return <AllConnections />;
+      case 'select':
+        return <SelectConnection />;
+      case 'create':
+        return <CreateConnection />;
+    }
+  }, [panelStatus]);
 
   return (
     <FocusTrapZone>
       <div className="msla-app-action-header">
-        <Text variant="xLarge">{connectionsPanelHeader}</Text>
+        <Text variant="xLarge">{panelHeaderText}</Text>
         <IconButton onClick={props.toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
       </div>
-      <div className="msla-connections-panel-body">
-        <Accordion collapsible multiple>
-          {Object.entries(groupedConnections).map(([apiId, connectionRefs]) => (
-            <AccordionItem key={apiId} value={apiId}>
-              <ConnectorCardWrapper apiId={apiId} connectionRefs={connectionRefs} />
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+      <div className="msla-connections-panel-body">{renderContent()}</div>
     </FocusTrapZone>
-  );
-};
-
-interface ConnectorCardWrapperProps {
-  apiId: string;
-  connectionRefs: Record<string, string[]>;
-}
-
-const ConnectorCardWrapper = ({ apiId, connectionRefs }: ConnectorCardWrapperProps) => {
-  const connectorQuery = useConnector(apiId);
-  const connector = connectorQuery.data;
-
-  return (
-    <div>
-      {connectorQuery.isLoading && <div>Loading...</div>}
-      {connectorQuery.isError && <div>Error loading connector</div>}
-      {connectorQuery.isSuccess && connector && (
-        <ConnectorConnectionsCard
-          connectorId={connector?.id}
-          title={connector.properties.displayName}
-          iconUri={getIconUriFromConnector(connector)}
-          brandColor={getBrandColorFromConnector(connector)}
-          connectionRefs={connectionRefs}
-        />
-      )}
-    </div>
   );
 };

@@ -19,6 +19,7 @@ const initialState: PanelState = {
   selectedOperationGroupId: '',
   selectedOperationId: '',
   addingTrigger: false,
+  creatingConnection: false,
 };
 
 export const panelSlice = createSlice({
@@ -39,6 +40,8 @@ export const panelSlice = createSlice({
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
       state.addingTrigger = false;
+      state.creatingConnection = false;
+      state.isLoading = false;
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.panelLocation) {
@@ -50,11 +53,9 @@ export const panelSlice = createSlice({
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
+      clearPanel();
       if (state.collapsed) state.collapsed = false;
       state.selectedNode = action.payload;
-      state.currentState = undefined;
-      state.selectedOperationGroupId = '';
-      state.addingTrigger = false;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -95,43 +96,34 @@ export const panelSlice = createSlice({
       state.selectedOperationId = action.payload;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
+      clearPanel();
+      state.collapsed = false;
+      state.currentState = 'Operation';
       state.selectedNode = action.payload;
-      state.currentState = undefined;
-      state.selectedOperationGroupId = '';
       state.selectedOperationId = action.payload;
-      state.addingTrigger = false;
     },
     switchToWorkflowParameters: (state) => {
+      clearPanel();
       state.collapsed = false;
       state.currentState = 'WorkflowParameters';
-      state.selectedNode = '';
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = '';
-      state.addingTrigger = false;
     },
-    switchToConnectionsPanel: (state) => {
+    switchToConnectionsPanel: (state, action: PayloadAction<{ nodeId?: string } | undefined>) => {
+      const { nodeId } = action?.payload ?? {};
+
+      clearPanel();
       state.collapsed = false;
       state.currentState = 'Connection';
-      state.selectedNode = '';
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = '';
-      state.addingTrigger = false;
+      state.selectedNode = nodeId ?? '';
     },
     switchToNodeSearchPanel: (state) => {
+      clearPanel();
       state.collapsed = false;
       state.currentState = 'NodeSearch';
-      state.selectedNode = '';
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = '';
-      state.addingTrigger = false;
     },
     switchToErrorsPanel: (state) => {
+      clearPanel();
       state.collapsed = false;
       state.currentState = 'Error';
-      state.selectedNode = '';
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = '';
-      state.addingTrigger = false;
     },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
@@ -222,6 +214,12 @@ export const panelSlice = createSlice({
         args: [action.payload],
       });
     },
+    setIsPanelLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+    setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
+      state.creatingConnection = action.payload;
+    },
   },
 });
 
@@ -248,6 +246,8 @@ export const {
   switchToConnectionsPanel,
   switchToNodeSearchPanel,
   switchToErrorsPanel,
+  setIsPanelLoading,
+  setIsCreatingConnection,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

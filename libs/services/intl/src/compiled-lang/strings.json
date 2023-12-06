@@ -11,12 +11,6 @@
       "value": "Warning: input node type does not match the schema node's type"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Create connection reference"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -1129,12 +1123,6 @@
       "value": "Authority"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Loading..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1255,12 +1243,6 @@
     {
       "type": 0,
       "value": "Timeout value is invalid, must match ISO 8601 duration format"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Select connection reference"
     }
   ],
   "6fDYzG": [
@@ -2183,12 +2165,6 @@
     {
       "type": 0,
       "value": "Connection required"
-    }
-  ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Create connection"
     }
   ],
   "CaajcD": [
@@ -3837,6 +3813,12 @@
     {
       "type": 0,
       "value": "Enter unique property name"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -6305,6 +6287,12 @@
       "value": "Select the checkbox to choose this connection."
     }
   ],
+  "cZXqqf": [
+    {
+      "type": 0,
+      "value": "Change Connection"
+    }
+  ],
   "ca/QIc": [
     {
       "type": 0,
@@ -6721,12 +6709,6 @@
     {
       "type": 0,
       "value": "Sorry, something went wrong. Please try again."
-    }
-  ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Select connection"
     }
   ],
   "g076bL": [
@@ -9267,12 +9249,6 @@
     {
       "type": 0,
       "value": "Trigger date"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Loading"
     }
   ],
   "v39HKj": [

@@ -3,7 +3,7 @@ import type { PanelLocation, PanelTab } from '@microsoft/designer-ui';
 export interface PanelState {
   collapsed: boolean;
   selectedNode: string;
-  currentState?: 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Connection';
+  currentState?: 'Operation' | 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Connection';
   panelLocation?: PanelLocation;
   isParallelBranch: boolean;
   relationshipIds: RelationshipIds;
@@ -12,6 +12,8 @@ export interface PanelState {
   selectedOperationGroupId: string;
   selectedOperationId: string;
   addingTrigger: boolean;
+  isLoading?: boolean;
+  creatingConnection?: boolean;
 }
 
 export interface RelationshipIds {

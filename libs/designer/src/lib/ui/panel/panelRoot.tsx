@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../core';
 import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useCurrentPanelModePanelMode, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
+import { useCurrentPanelModePanelMode, useIsLoadingPanel, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorPanel } from './errorsPanel/errorsPanel';
@@ -11,6 +11,7 @@ import { RecommendationPanelContext } from './recommendation/recommendationPanel
 import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParametersPanel';
 import { WorkflowParametersPanelFooter } from './workflowParametersPanel/workflowParametersPanelFooter';
 import { Panel, PanelType } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import { isUndefined } from '@microsoft/applicationinsights-core-js';
 import type { CommonPanelProps, CustomPanelLocation } from '@microsoft/designer-ui';
 import { PanelLocation, PanelSize } from '@microsoft/designer-ui';
@@ -63,12 +64,24 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     [currentPanelMode]
   );
 
-  return isUndefined(currentPanelMode) ? (
+  const nonBlockingPanels = useMemo(() => ['Connection'], []);
+
+  const isLoadingPanel = useIsLoadingPanel();
+
+  if (isLoadingPanel)
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={'large'} />
+      </div>
+    );
+
+  return isUndefined(currentPanelMode) || currentPanelMode === 'Operation' ? (
     <NodeDetailsPanel {...commonPanelProps} />
   ) : (
     <Panel
       className={`msla-panel-root-${currentPanelMode}`}
       isLightDismiss
+      isBlocking={!nonBlockingPanels.includes(currentPanelMode)}
       type={commonPanelProps.panelLocation === PanelLocation.Right ? PanelType.medium : PanelType.customNear}
       isOpen={!collapsed}
       onDismiss={dismissPanel}
