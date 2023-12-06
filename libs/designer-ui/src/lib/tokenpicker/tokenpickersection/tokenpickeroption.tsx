@@ -92,7 +92,7 @@ export const TokenPickerOptions = ({
   };
 
   const handleTokenExpressionClicked = async (token: OutputToken) => {
-    const expression = token.value ?? '';
+    const expression = (await getValueSegmentFromToken(token, !tokenClickedCallback)).value;
     insertExpressionText(expression, 0);
   };
 
@@ -169,10 +169,7 @@ export const TokenPickerOptions = ({
   const sectionHeaderColorCss = `rgb(${sectionHeaderColorRgb.red}, ${sectionHeaderColorRgb.green}, ${sectionHeaderColorRgb.blue})`;
 
   const maxRowsShown = selectedKey === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
-  const showSeeMoreOrLessButton = !searchQuery && (
-    hasAdvanced(section.tokens) ||
-    section.tokens.length > maxRowsShown
-  );
+  const showSeeMoreOrLessButton = !searchQuery && (hasAdvanced(section.tokens) || section.tokens.length > maxRowsShown);
 
   return (
     <>

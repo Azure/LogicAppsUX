@@ -19,7 +19,7 @@ import { ExpressionParser } from '@microsoft/parsers-logic-apps';
 import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
 import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, $createTextNode, $getRoot, createEditor } from 'lexical';
 
-export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
+export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean, readonly?: boolean): RootNode => {
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
   const root = $getRoot().clear();
@@ -50,7 +50,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
         if ($isLinkNode(childNode)) {
           const linkNode = $createLinkNode(getURL(childNode, tokensEnabled, nodeMap));
           childNode.getChildren().forEach((listItemChildNode) => {
-            appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled);
+            appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled, readonly);
           });
           paragraph.append(linkNode);
         }
@@ -58,13 +58,13 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
         else if ($isListItemNode(childNode)) {
           const listItemNode = $createListItemNode();
           childNode.getChildren().forEach((listItemChildNode) => {
-            appendChildrenNode(listItemNode, listItemChildNode, nodeMap, tokensEnabled);
+            appendChildrenNode(listItemNode, listItemChildNode, nodeMap, tokensEnabled, readonly);
           });
           paragraph.append(listItemNode);
         }
         // Non line break nodes are parsed and appended to the paragraph node
         else if (!$isLineBreakNode(childNode)) {
-          appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled);
+          appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled, readonly);
         }
         // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
         else if ($isLineBreakNode(childNode)) {
@@ -97,7 +97,8 @@ const appendChildrenNode = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
   childNode: LexicalNode,
   nodeMap: Map<string, ValueSegment>,
-  tokensEnabled?: boolean
+  tokensEnabled?: boolean,
+  readonly?: boolean
 ) => {
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
@@ -108,7 +109,7 @@ const appendChildrenNode = (
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
     // and we'll need to use the ExtendedTextNode to apply the styles and format
-    appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled);
+    appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
   } else {
     paragraph.append(childNode);
   }
@@ -121,7 +122,8 @@ export const appendStringSegment = (
   childNodeStyles?: string,
   childNodeFormat?: number,
   nodeMap?: Map<string, ValueSegment>,
-  tokensEnabled?: boolean
+  tokensEnabled?: boolean,
+  readonly?: boolean
 ) => {
   let currIndex = 0;
   let prevIndex = 0;
@@ -147,6 +149,7 @@ export const appendStringSegment = (
               brandColor,
               icon,
               value,
+              readonly,
             });
             tokensEnabled && paragraph.append(token);
           }
@@ -158,6 +161,7 @@ export const appendStringSegment = (
               brandColor,
               icon,
               value,
+              readonly,
             });
             tokensEnabled && paragraph.append(token);
           } else {
@@ -175,7 +179,7 @@ export const appendStringSegment = (
   }
 };
 
-export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boolean): RootNode => {
+export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boolean, readonly?: boolean): RootNode => {
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -199,6 +203,7 @@ export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boo
           brandColor,
           icon,
           value,
+          readonly,
         });
         tokensEnabled && paragraph.append(token);
       } else if (title || name) {
@@ -208,6 +213,7 @@ export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boo
           brandColor,
           icon,
           value,
+          readonly
         });
         tokensEnabled && paragraph.append(token);
       } else {
