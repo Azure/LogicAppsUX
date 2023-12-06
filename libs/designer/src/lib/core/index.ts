@@ -20,6 +20,7 @@ export {
   clearPanel,
   switchToWorkflowParameters,
   switchToErrorsPanel,
+  switchToConnectionsPanel,
   collapsePanel,
 } from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';

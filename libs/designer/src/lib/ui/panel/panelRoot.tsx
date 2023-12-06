@@ -2,6 +2,7 @@ import type { AppDispatch } from '../../core';
 import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useCurrentPanelModePanelMode, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
+import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
 import { usePanelTabs } from './nodeDetailsPanel/tabInitialization';
@@ -57,8 +58,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     };
   }, [customPanelLocations, currentPanelMode, collapsed, dismissPanel, panelLocation, width]);
 
-  const onRenderFooterContent = useCallback(
-    () => (currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : null),
+  const onRenderFooterContent = useMemo(
+    () => (currentPanelMode === 'WorkflowParameters' ? () => <WorkflowParametersPanelFooter /> : undefined),
     [currentPanelMode]
   );
 
@@ -92,6 +93,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
           <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
         ) : currentPanelMode === 'NodeSearch' ? (
           <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
+        ) : currentPanelMode === 'Connection' ? (
+          <ConnectionPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Error' ? (
           <ErrorPanel {...commonPanelProps} />
         ) : null // Caught above

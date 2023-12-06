@@ -109,6 +109,14 @@ export const panelSlice = createSlice({
       state.selectedOperationId = '';
       state.addingTrigger = false;
     },
+    switchToConnectionsPanel: (state) => {
+      state.collapsed = false;
+      state.currentState = 'Connection';
+      state.selectedNode = '';
+      state.selectedOperationGroupId = '';
+      state.selectedOperationId = '';
+      state.addingTrigger = false;
+    },
     switchToNodeSearchPanel: (state) => {
       state.collapsed = false;
       state.currentState = 'NodeSearch';
@@ -237,6 +245,7 @@ export const {
   selectPanelTab,
   setTabError,
   switchToWorkflowParameters,
+  switchToConnectionsPanel,
   switchToNodeSearchPanel,
   switchToErrorsPanel,
 } = panelSlice.actions;

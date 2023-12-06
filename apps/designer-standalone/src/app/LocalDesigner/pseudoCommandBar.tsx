@@ -12,6 +12,7 @@ import {
   useAllConnectionErrors,
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
+  switchToConnectionsPanel,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
@@ -84,6 +85,7 @@ export const PseudoCommandBar = () => {
         text="Workflow Parameters"
         onClick={() => dispatch(switchToWorkflowParameters())}
       />
+      <ActionButton iconProps={{ iconName: 'Link12' }} text="Connections" onClick={() => dispatch(switchToConnectionsPanel())} />
       <ActionButton iconProps={{ iconName: 'Code' }} text="Code View" onClick={serializeCallback} />
       <ActionButton
         iconProps={{

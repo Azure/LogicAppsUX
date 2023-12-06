@@ -17,6 +17,7 @@ import {
   serializeWorkflow,
   validateParameter,
   updateParameterValidation,
+  switchToConnectionsPanel,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -141,6 +142,12 @@ export const DesignerCommandBar = ({
       },
       iconProps: { iconName: 'Parameter' },
       onClick: () => !!dispatch(switchToWorkflowParameters()),
+    },
+    {
+      key: 'connections',
+      text: 'Connections',
+      iconProps: { iconName: 'Link12' },
+      onClick: () => !!dispatch(switchToConnectionsPanel()),
     },
     {
       key: 'codeview',

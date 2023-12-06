@@ -1,0 +1,79 @@
+.msla-connector-connections-panel-body {
+  padding: 24px 0px;
+}
+
+.msla-connector-connections-card {
+  margin: 0px -10px;
+
+  .msla-connector-connections-card-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .msla-connector-connections-card-title {
+      align-self: center;
+      font-weight: 600;
+    }
+
+    .msla-connector-connections-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 2px;
+      text-align: center;
+      font-size: 24px/32px;
+    }
+  }
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.msla-connector-connections-card-connection {
+  padding: 12px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 2px;
+  border: 1px solid lightgray;
+
+  .msla-connector-connections-card-connection-title {
+    font-weight: 600;
+  }
+
+  .msla-connector-connections-card-connection-subtitle {
+    color: gray;
+  }
+
+  .msla-connector-connections-card-connection-status-icon {
+    font-size: large;
+  }
+
+  .msla-connector-connections-card-connection-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: -8px -12px;
+    padding: 8px 12px;
+    background-color: #00000008;
+  }
+
+  .msla-connector-connections-card-connection-nodes {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+.msla-theme-dark {
+  .msla-connector-connections-card-connection {
+    border: 1px solid darkgrey;
+  }
+
+  .msla-connector-connections-card-connection-body {
+    background-color: #ffffff08;
+  }
+}

@@ -29,6 +29,16 @@
       "value": "Protected"
     }
   ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
+    }
+  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -7855,6 +7865,12 @@
     {
       "type": 0,
       "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
