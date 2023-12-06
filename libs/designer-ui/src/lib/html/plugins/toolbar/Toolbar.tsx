@@ -7,7 +7,7 @@ import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
 import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
-import { convertEditorState } from './helper/Change';
+import { convertEditorState } from './helper/HTMLChangePlugin';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
 import { useTheme } from '@fluentui/react';
