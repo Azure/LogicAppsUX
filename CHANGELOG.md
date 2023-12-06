@@ -1,4 +1,23 @@
 # Logic Apps Designer
+## [2.89.0](https://github.com/Azure/LogicAppsUX/compare/v2.88.0...v2.89.0) (2023-12-06)
+
+
+### Features
+
+* **designer:** Add credential mapping support to connector ([#3748](https://github.com/Azure/LogicAppsUX/issues/3748)) ([40c1da0](https://github.com/Azure/LogicAppsUX/commit/40c1da04c9efb0bb3530a92478cd070a7120390e))
+* **designer:** Supporting Pasting Tokens in Editors ([#3793](https://github.com/Azure/LogicAppsUX/issues/3793)) ([64b4962](https://github.com/Azure/LogicAppsUX/commit/64b4962d2c9faad779cf52dfa834524831a56660))
+
+
+### Bug Fixes
+
+* **Consumption:** Fixing workflow parameter error ([#3798](https://github.com/Azure/LogicAppsUX/issues/3798)) ([04c4eb9](https://github.com/Azure/LogicAppsUX/commit/04c4eb9728951173e6d4b60a591c398c1e5fd84b))
+* **Designer:** Add Bounding Box to Folder Level Button in Panel ([#3802](https://github.com/Azure/LogicAppsUX/issues/3802)) ([39b5bd3](https://github.com/Azure/LogicAppsUX/commit/39b5bd3f0b1519990e152e57702c7f21f48a704e))
+* **Designer:** CustomEditor missing readonly/disabled state ([#3789](https://github.com/Azure/LogicAppsUX/issues/3789)) ([4813a07](https://github.com/Azure/LogicAppsUX/commit/4813a078138db00f0dbbee04ef1ee86bdc620f63))
+* **designer:** Fix colors for some buttons in high contrast mode ([#3783](https://github.com/Azure/LogicAppsUX/issues/3783)) ([5b3ebdf](https://github.com/Azure/LogicAppsUX/commit/5b3ebdf3289a9586639e04fbc7f428b1ac3695b0))
+* **designer:** Fixes using a token in expression editor not getting correct segment value ([#3791](https://github.com/Azure/LogicAppsUX/issues/3791)) ([65eae81](https://github.com/Azure/LogicAppsUX/commit/65eae81da4a818e02815cdc7b0abacb495099b3e))
+* **Designer:** Run after settings dots are not ordered properly ([#3765](https://github.com/Azure/LogicAppsUX/issues/3765)) ([61522b1](https://github.com/Azure/LogicAppsUX/commit/61522b1a1353c6ca43e41dbc8176279a7172b1fe))
+* **Designer:** Update check for foreach operation id to be case insensitive ([#3799](https://github.com/Azure/LogicAppsUX/issues/3799)) ([c475c38](https://github.com/Azure/LogicAppsUX/commit/c475c385067c6620f6b1ff5d4e4ef494d60f895a))
+* **vscode:** Add validation for workspace folder path as string ([#3659](https://github.com/Azure/LogicAppsUX/issues/3659)) ([#3779](https://github.com/Azure/LogicAppsUX/issues/3779)) ([35cfa0b](https://github.com/Azure/LogicAppsUX/commit/35cfa0bef60672f9f31b6fd21f5f944297f4aae8))
 
 ## [2.88.0](https://github.com/Azure/LogicAppsUX/compare/v2.87.0...v2.88.0) (2023-11-30)
 
