@@ -5,7 +5,7 @@ import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import { $createTokenNode } from '../nodes/tokenNode';
-import { convertStringToSegments } from './editorToSegement';
+import { convertStringToSegments } from './editorToSegment';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
 import { $generateNodesFromDOM } from '@lexical/html';
 import type { LinkNode } from '@lexical/link';
@@ -66,7 +66,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
         else if (!$isLineBreakNode(childNode)) {
           appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled, readonly);
         }
-        // // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
+        // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
         else if ($isLineBreakNode(childNode)) {
           paragraph.append($createTextNode('\n'));
         }
@@ -213,7 +213,7 @@ export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boo
           brandColor,
           icon,
           value,
-          readonly
+          readonly,
         });
         tokensEnabled && paragraph.append(token);
       } else {
