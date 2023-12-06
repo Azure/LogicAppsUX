@@ -17,7 +17,7 @@ import {
   type Schema,
   type SchemaExtended,
   type SchemaNodeDictionary,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/utils-logic-apps';
 
 describe('utils/Functions', () => {
   describe('getFunctionOutputValue', () => {

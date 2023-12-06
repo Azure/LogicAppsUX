@@ -18,8 +18,8 @@ import {
 } from '../Connection.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
-import type { SchemaNodeExtended } from '@microsoft/vscode-extension';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/vscode-extension';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
