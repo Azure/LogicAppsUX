@@ -1,9 +1,19 @@
-const unsafeCharacters = ['&', '"'];
-const unsafeCharacterEncodingMap: Record<string, string> = unsafeCharacters.reduce(
+const htmlUnsafeCharacters = ['<', '>'];
+const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(
   (acc, key) => ({ ...acc, [key]: encodeURIComponent(key) }),
   {}
 );
-const unsafeCharacterDecodingMap: Record<string, string> = unsafeCharacters.reduce(
+const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(
+  (acc, key) => ({ ...acc, [encodeURIComponent(key)]: key }),
+  {}
+);
+
+const lexicalUnsafeCharacters = ['&', '"'];
+const lexicalUnsafeCharacterEncodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(
+  (acc, key) => ({ ...acc, [key]: encodeURIComponent(key) }),
+  {}
+);
+const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(
   (acc, key) => ({ ...acc, [encodeURIComponent(key)]: key }),
   {}
 );
@@ -32,12 +42,17 @@ export const cleanHtmlString = (html: string): string => {
   return cleanedHtmlString;
 };
 
-export const decodeSegmentValue = (value: string): string => encodeOrDecodeSegmentValue(value, 'decode');
+export const decodeSegmentValue =
+  (value: string, mode: 'lexical' | 'html'): string => encodeOrDecodeSegmentValue(value, mode, 'decode');
 
-export const encodeSegmentValue = (value: string): string => encodeOrDecodeSegmentValue(value, 'encode');
+export const encodeSegmentValue =
+  (value: string, mode: 'lexical' | 'html'): string => encodeOrDecodeSegmentValue(value, mode, 'encode');
 
-const encodeOrDecodeSegmentValue = (value: string, direction: 'encode' | 'decode'): string => {
-  const map = direction === 'encode' ? unsafeCharacterEncodingMap : unsafeCharacterDecodingMap;
+const encodeOrDecodeSegmentValue = (value: string, mode: 'lexical' | 'html', direction: 'encode' | 'decode'): string => {
+  const map =
+    direction === 'encode'
+      ? (mode === 'lexical' ? lexicalUnsafeCharacterEncodingMap : htmlUnsafeCharacterEncodingMap)
+      : (mode === 'lexical' ? lexicalUnsafeCharacterDecodingMap : htmlUnsafeCharacterDecodingMap);
   let newValue = value;
   Object.keys(map).forEach((key) => {
     newValue = newValue.replaceAll(key, map[key]);

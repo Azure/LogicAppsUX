@@ -34,7 +34,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const encodedStringValue = encodeStringSegments(stringValue, tokensEnabled);
+  const encodedStringValue = encodeStringSegments(stringValue, tokensEnabled, 'lexical');
 
   const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
@@ -103,7 +103,7 @@ const appendChildrenNode = (
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
-    const decodedTextContent = tokensEnabled ? decodeSegmentValue(textContent) : textContent;
+    const decodedTextContent = tokensEnabled ? decodeSegmentValue(textContent, 'lexical') : textContent;
     const childNodeStyles = childNode.getStyle();
     const childNodeFormat = childNode.getFormat();
     // we need to pass in the styles and format of the parent node to the children node
@@ -254,7 +254,18 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
   return text;
 };
 
-export const encodeStringSegments = (value: string, tokensEnabled: boolean | undefined): string => {
+export const decodeStringSegments =
+  (value: string, tokensEnabled: boolean | undefined, mode: 'lexical' | 'html'): string => encodeOrDecodeStringSegments(value, tokensEnabled, mode, 'decode');
+
+export const encodeStringSegments =
+  (value: string, tokensEnabled: boolean | undefined, mode: 'lexical' | 'html'): string => encodeOrDecodeStringSegments(value, tokensEnabled, mode, 'encode');
+
+const encodeOrDecodeStringSegments = (
+  value: string,
+  tokensEnabled: boolean | undefined,
+  mode: 'lexical' | 'html',
+  direction: 'encode' | 'decode'
+): string => {
   if (!tokensEnabled) {
     return value;
   }
@@ -270,7 +281,8 @@ export const encodeStringSegments = (value: string, tokensEnabled: boolean | und
       }
 
       const tokenSegment = value.substring(startIndex + 2, endIndex);
-      const encodedTokenSegment = `$[${encodeSegmentValue(tokenSegment)}]$`;
+      const encodedTokenSegment =
+        `$[${direction === 'encode' ? encodeSegmentValue(tokenSegment, mode) : decodeSegmentValue(tokenSegment, mode)}]$`;
       newValue += encodedTokenSegment;
 
       i = endIndex + 1; // Skip the ']', and i++ will skip the '$'.

@@ -1,6 +1,7 @@
 import type { ValueSegment } from '../../../../editor';
 import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
+import { decodeStringSegments, encodeStringSegments } from '../../../../editor/base/utils/parsesegments';
 import { cleanHtmlString, decodeSegmentValue, encodeSegmentValue } from './util';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
@@ -33,9 +34,10 @@ export const convertEditorState = (
     const valueSegments: ValueSegment[] = [];
     editor.update(() => {
       const htmlEditorString = asPlainText ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
+      const encodedHtmlEditorString = encodeStringSegments(htmlEditorString, true, 'html');
       // Create a temporary DOM element to parse the HTML string
       const tempElement = document.createElement('div');
-      tempElement.innerHTML = htmlEditorString;
+      tempElement.innerHTML = encodedHtmlEditorString;
 
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
@@ -49,7 +51,7 @@ export const convertEditorState = (
           }
           if (attribute.name === 'id') {
             const idValue = element.getAttribute('id') ?? ''; // e.g., "$[concat(...),concat('&lt;', '"'),#AD008C]$"
-            const encodedIdValue = encodeSegmentValue(idValue); // e.g., "$[concat(...),concat('%26lt;', '%22'),#AD008C]$"
+            const encodedIdValue = encodeSegmentValue(idValue, 'lexical'); // e.g., "$[concat(...),concat('%26lt;', '%22'),#AD008C]$"
             element.setAttribute('id', encodedIdValue);
           }
         }
@@ -57,12 +59,13 @@ export const convertEditorState = (
 
       // Get the cleaned HTML string
       const cleanedHtmlString = cleanHtmlString(tempElement.innerHTML);
+      const resultHtmlString = decodeStringSegments(cleanedHtmlString, true, 'html');
 
       // Regular expression pattern to match <span id="..."></span>
       const spanIdPattern = /<span id="(.*?)"><\/span>/g;
       // Replace <span id="..."></span> with the captured "id" value if it is found in the viable ids map
-      const removeTokenTags = cleanedHtmlString.replace(spanIdPattern, (match, idValue) => {
-        const decodedIdValue = decodeSegmentValue(idValue);
+      const removeTokenTags = resultHtmlString.replace(spanIdPattern, (match, idValue) => {
+        const decodedIdValue = decodeSegmentValue(idValue, 'lexical');
         if (nodeMap.get(decodedIdValue)) {
           return decodedIdValue;
         } else {
