@@ -1,5 +1,5 @@
-import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary } from '../../models/Connection';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
 
 export const manyToManyConnectionSourceName =
   'source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect';

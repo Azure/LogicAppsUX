@@ -1,5 +1,5 @@
-import { SchemaNodeProperty } from '../../models';
 import { convertSchemaToSchemaExtended, findNodeForKey, getFileNameAndPath, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
+import { SchemaNodeProperty } from '@microsoft/utils-logic-apps';
 import { targetMockSchema } from '__mocks__/schemas';
 
 describe('utils/Schema', () => {
@@ -27,12 +27,12 @@ describe('utils/Schema', () => {
     const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
 
     it('finds loop value for key', () => {
-      const node = findNodeForKey('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name', extendedTarget.schemaTreeRoot);
+      const node = findNodeForKey('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name', extendedTarget.schemaTreeRoot, false);
       expect(node?.key).toEqual('/ns0:Root/Looping/Person/Name');
     });
 
     it('finds node for key', () => {
-      const node = findNodeForKey('/ns0:Root/Looping/Person/Name', extendedTarget.schemaTreeRoot);
+      const node = findNodeForKey('/ns0:Root/Looping/Person/Name', extendedTarget.schemaTreeRoot, false);
       expect(node?.key).toEqual('/ns0:Root/Looping/Person/Name');
     });
   });

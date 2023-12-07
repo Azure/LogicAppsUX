@@ -1,9 +1,9 @@
-import type { SchemaExtended } from '../../models';
 import { functionMock } from '../../models';
 import { loadMapDefinition } from '../../utils/MapDefinition.Utils';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
 import { convertToMapDefinition } from '../MapDefinitionSerializer';
+import type { SchemaExtended } from '@microsoft/utils-logic-apps';
 import { comprehensiveMapDefinition, transcriptJsonMapDefinitionString } from '__mocks__/mapDefinitions';
 import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockJsonSchema, targetMockJsonSchema } from '__mocks__/schemas';
 

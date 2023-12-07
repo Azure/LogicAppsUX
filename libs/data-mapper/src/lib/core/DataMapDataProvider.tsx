@@ -1,9 +1,5 @@
 import { MapDefinitionDeserializer } from '../mapDefinitions';
-import type { MapMetadata } from '../models';
 import type { FunctionData } from '../models/Function';
-import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { Schema } from '../models/Schema';
-import { SchemaType } from '../models/Schema';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
@@ -11,7 +7,8 @@ import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } 
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import type { MapMetadata, MapDefinitionEntry, Schema } from '@microsoft/utils-logic-apps';
+import { Theme as ThemeType, SchemaType } from '@microsoft/utils-logic-apps';
 import React, { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 

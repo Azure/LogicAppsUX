@@ -2,8 +2,6 @@ import { schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../../constant
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
-import { SchemaNodeProperty, SchemaType } from '../../models';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { collectSourceNodesForConnectionChain, collectTargetNodesForConnectionChain } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
@@ -35,6 +33,8 @@ import {
 } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

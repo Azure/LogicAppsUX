@@ -1,6 +1,5 @@
 import { setCurrentTargetSchemaNode } from '../../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../../core/state/Store';
-import type { SchemaNodeExtended } from '../../../../models';
 import { isObjectType, searchSchemaTreeFromRoot } from '../../../../utils/Schema.Utils';
 import type { FilteredDataTypesDict } from '../../../tree/SchemaTreeSearchbar';
 import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../../../tree/SchemaTreeSearchbar';
@@ -10,6 +9,7 @@ import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '
 import type { ITreeNode } from '../../../tree/Tree';
 import Tree from '../../../tree/Tree';
 import { mergeClasses, tokens } from '@fluentui/react-components';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

@@ -1,7 +1,8 @@
 import type { MapDefDropdownOption } from '../components/DevToolbox';
 import type { RootState } from './Store';
-import type { FunctionData, MapDefinitionEntry, MapMetadata } from '@microsoft/logic-apps-data-mapper';
+import type { FunctionData } from '@microsoft/logic-apps-data-mapper';
 import { functionMock, loadMapDefinition } from '@microsoft/logic-apps-data-mapper';
+import type { MapDefinitionEntry, MapMetadata } from '@microsoft/utils-logic-apps';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';

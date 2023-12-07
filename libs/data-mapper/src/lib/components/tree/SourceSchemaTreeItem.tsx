@@ -1,9 +1,9 @@
 import type { RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { AddCircle16Regular, CheckmarkCircle16Filled, Circle16Regular, Document20Regular } from '@fluentui/react-icons';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useSelector } from 'react-redux';
 
 export const useSchemaTreeItemStyles = makeStyles({

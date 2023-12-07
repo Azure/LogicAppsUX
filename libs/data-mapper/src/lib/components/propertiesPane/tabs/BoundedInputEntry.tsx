@@ -1,13 +1,13 @@
 import { setConnectionInput } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionInput } from '../../../models';
-import { InputFormat } from '../../../models';
 import type { Connection, ConnectionDictionary } from '../../../models/Connection';
 import { addQuotesToString, getInputName, getInputValue, removeQuotesFromString } from '../../../utils/Function.Utils';
 import { FileDropdown } from '../../fileDropdown/fileDropdown';
 import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { InputTextbox } from '../../inputTypes/InputTextbox';
 import { Tooltip } from '@fluentui/react-components';
+import { InputFormat } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 

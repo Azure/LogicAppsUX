@@ -3,10 +3,10 @@ import { arrayType } from '../components/tree/SchemaTreeSearchbar';
 import type { ITreeNode } from '../components/tree/Tree';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { FunctionData } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
+import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {

@@ -4,7 +4,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import DataMapperExt from './DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from './extensionConfig';
-import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import type { MapDefinitionEntry } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';

@@ -14,3 +14,4 @@ export * from './bundleFeed';
 export * from './tasks';
 export * from './launch';
 export * from './process';
+export * from './dataMapper';

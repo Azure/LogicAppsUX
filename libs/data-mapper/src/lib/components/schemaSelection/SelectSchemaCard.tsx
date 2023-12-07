@@ -1,6 +1,5 @@
 import { openAddSourceSchemaPanelView, openAddTargetSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import CardOnHover from './card_onHover.svg';
 import CardOnHoverDark from './card_onHover_dark.svg';
@@ -8,6 +7,7 @@ import CardOnRest from './card_onRest.svg';
 import CardOnRestDark from './card_onRest_dark.svg';
 import { Image, Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { SchemaType } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,4 +1,3 @@
-import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import {
@@ -15,6 +14,7 @@ import {
   Tooltip,
 } from '@fluentui/react-components';
 import { Dismiss20Regular, Filter20Regular, Checkmark20Filled } from '@fluentui/react-icons';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';

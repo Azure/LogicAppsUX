@@ -1,4 +1,4 @@
-import { SchemaType } from '../../models';
+import { SchemaType } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const ConfigPanelView = {
