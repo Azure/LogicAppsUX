@@ -130,7 +130,7 @@ export const SearchPreloader = () => {
 };
 
 export const Designer = (props: DesignerProps) => {
-  const { backgroundProps, panelLocation, customPanelLocations, displayRuntimeInfo } = props;
+  const { backgroundProps, panelLocation, customPanelLocations } = props;
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
@@ -235,11 +235,7 @@ export const Designer = (props: DesignerProps) => {
               hideAttribution: true,
             }}
           >
-            <PanelRoot
-              panelLocation={panelLocation}
-              customPanelLocations={customPanelLocations}
-              displayRuntimeInfo={displayRuntimeInfo ?? true}
-            />
+            <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
           </ReactFlow>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>

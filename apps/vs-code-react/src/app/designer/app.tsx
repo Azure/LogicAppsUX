@@ -182,6 +182,9 @@ export const DesignerApp = () => {
         readOnly,
         isMonitoringView,
         services: services,
+        hostOptions: {
+          displayRuntimeInfo: true,
+        },
       }}
     >
       {designerCommandBar}

@@ -18,9 +18,19 @@ export interface AboutProps {
   descriptionDocumentation?: OpenAPIV2.ExternalDocumentationObject;
   headerIcons?: BadgeProps[];
   isLoading?: boolean;
+  connectorType?: string;
+  displayRuntimeInfo: boolean;
 }
 
-export const About = ({ connectorDisplayName, description, descriptionDocumentation, headerIcons, isLoading }: AboutProps): JSX.Element => {
+export const About = ({
+  connectorDisplayName,
+  description,
+  descriptionDocumentation,
+  headerIcons,
+  isLoading,
+  connectorType,
+  displayRuntimeInfo,
+}: AboutProps): JSX.Element => {
   const intl = useIntl();
 
   if (isLoading) {
@@ -72,6 +82,10 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
     defaultMessage: 'Tags',
     description: 'Label For Tags in About Panel',
   });
+  const connectorTypeLabel = intl.formatMessage({
+    defaultMessage: 'Connector type',
+    description: 'Label For Connector Type in About Panel',
+  });
   return (
     <div className="msla-panel-about-container">
       <div className="msla-panel-about-name">
@@ -93,6 +107,14 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
           />
         </div>
       </div>
+      {displayRuntimeInfo ? (
+        <div className="msla-panel-about-description">
+          <Label className="msla-panel-description-label" styles={labelStyles}>
+            {connectorTypeLabel}
+          </Label>
+          <div className="msla-panel-description">{connectorType}</div>
+        </div>
+      ) : null}
       <div className="msla-panel-about-tags">
         <Label className="msla-panel-tags-label" styles={labelStyles}>
           {tagsMessage}

@@ -17,6 +17,10 @@ export const useIsReadOnly = () => {
   return useSelector((state: RootState) => state.workflowLoader.isReadOnly);
 };
 
+export const useHostOptions = () => {
+  return useSelector((state: RootState) => state.workflowLoader.hostOptions);
+};
+
 export const useIsMonitoringView = () => {
   return useSelector((state: RootState) => state.workflowLoader.isMonitoringView);
 };
