@@ -205,7 +205,7 @@ export const amendSourceKeyForDirectAccessIfNeeded = (sourceKey: string): [strin
 
     // Only amend DA if the expression is not wrapped in a function, etc.
     // Otherwise a bracket in one parameter may be matched with a bracked in another parameter.
-    if (keyWithDaStartIdx == 0 && keyWithDaEndIdx == sourceKey.length) {
+    if (keyWithDaStartIdx === 0 && keyWithDaEndIdx === sourceKey.length) {
       mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
       mockDirectAccessFnKey += `${sourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
       mockDirectAccessFnKey += `${sourceKey.substring(0, daOpenBracketIdx)}, `; // Scope (source loop element)
