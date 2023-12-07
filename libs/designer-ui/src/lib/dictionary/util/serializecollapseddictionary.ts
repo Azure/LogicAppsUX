@@ -1,7 +1,7 @@
 import type { DictionaryEditorItemProps } from '..';
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
-import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
+import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { getChildrenNodes, removeQuotes } from '../../editor/base/utils/helper';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';

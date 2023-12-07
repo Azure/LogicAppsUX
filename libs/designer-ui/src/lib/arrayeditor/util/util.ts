@@ -2,7 +2,7 @@ import type { ArrayItemSchema, ComplexArrayItem, ComplexArrayItems, SimpleArrayI
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
 import type { CastHandler } from '../../editor/base';
-import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
+import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { guid } from '@microsoft/utils-logic-apps';
 

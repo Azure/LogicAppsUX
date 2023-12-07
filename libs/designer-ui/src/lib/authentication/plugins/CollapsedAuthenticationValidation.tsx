@@ -1,7 +1,7 @@
 import type { AuthenticationType, AuthProps } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
-import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
+import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
 import { getChildrenNodes, isTokenValueSegment } from '../../editor/base/utils/helper';
 import { serializeAuthentication, validateAuthentication } from '../util';
 import { css } from '@fluentui/react';

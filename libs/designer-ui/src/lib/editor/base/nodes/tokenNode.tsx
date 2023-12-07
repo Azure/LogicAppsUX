@@ -14,7 +14,7 @@ export interface TokenNodeProps {
   readonly?: boolean;
 }
 
-export type SerailizedTokenNode = Spread<
+export type SerializedTokenNode = Spread<
   {
     title: string;
     data: ValueSegment;
@@ -53,7 +53,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     );
   }
 
-  static importJSON(serializedTokenNode: SerailizedTokenNode): TokenNode {
+  static importJSON(serializedTokenNode: SerializedTokenNode): TokenNode {
     return new TokenNode(
       serializedTokenNode.title,
       serializedTokenNode.data,
@@ -64,7 +64,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     );
   }
 
-  exportJSON(): SerailizedTokenNode {
+  exportJSON(): SerializedTokenNode {
     return {
       title: this.__title,
       data: this.__data,
