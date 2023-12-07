@@ -63,7 +63,7 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
-    // Currently a bug affecting the toolbug due to $getSelection https://github.com/facebook/lexical/issues/4011
+    // Currently a bug affecting the tool due to $getSelection https://github.com/facebook/lexical/issues/4011
     if ($isRangeSelection(selection)) {
       const anchorNode = selection.anchor.getNode();
       let element =

@@ -1,9 +1,9 @@
 import type { DictionaryEditorItemProps } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
-import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
+import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
 import { getChildrenNodes, showCollapsedValidation } from '../../editor/base/utils/helper';
-import { serializeDictionary } from '../util/serializecollapeseddictionary';
+import { serializeDictionary } from '../util/serializecollapseddictionary';
 import { css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
