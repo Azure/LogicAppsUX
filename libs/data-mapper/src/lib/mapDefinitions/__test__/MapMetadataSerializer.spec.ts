@@ -1,6 +1,6 @@
-import type { ConnectionAndOrder } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../MapMetadataSerializer';
+import type { ConnectionAndOrder } from '@microsoft/utils-logic-apps';
 
 describe('mapMetadataSerializer', () => {
   describe('generateFunctionConnectionMetadata', () => {

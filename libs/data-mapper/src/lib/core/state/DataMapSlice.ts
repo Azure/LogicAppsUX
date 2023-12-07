@@ -6,15 +6,6 @@ import {
   NotificationTypes,
 } from '../../components/notification/Notification';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapDefinitions';
-import type {
-  FunctionMetadata,
-  FunctionPositionMetadata,
-  MapMetadata,
-  SchemaExtended,
-  SchemaNodeDictionary,
-  SchemaNodeExtended,
-} from '../../models';
-import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
@@ -56,6 +47,15 @@ import {
   getSplitIdsFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import type {
+  FunctionMetadata,
+  FunctionPositionMetadata,
+  MapMetadata,
+  SchemaExtended,
+  SchemaNodeDictionary,
+  SchemaNodeExtended,
+} from '@microsoft/utils-logic-apps';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
