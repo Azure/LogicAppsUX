@@ -23,6 +23,9 @@ export interface WorkflowLoadingState {
   workflowKind?: string;
   language: string;
   areCustomEditorsEnabled?: boolean;
+  hostOptions: {
+    displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
+  };
 }
 
 const initialState: WorkflowLoadingState = {
@@ -40,6 +43,9 @@ const initialState: WorkflowLoadingState = {
   workflowKind: 'stateful',
   language: 'en',
   areCustomEditorsEnabled: false,
+  hostOptions: {
+    displayRuntimeInfo: true,
+  },
 };
 
 type WorkflowPayload = {
@@ -147,6 +153,9 @@ export const workflowLoadingSlice = createSlice({
     setAreCustomEditorsEnabled: (state, action: PayloadAction<boolean>) => {
       state.areCustomEditorsEnabled = action.payload;
     },
+    setHostOptions: (state, action: PayloadAction<WorkflowLoadingState['hostOptions']>) => {
+      state.hostOptions = { ...state.hostOptions, ...action.payload };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -182,6 +191,7 @@ export const {
   setLanguage,
   loadLastWorkflow,
   setAreCustomEditorsEnabled,
+  setHostOptions,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;
