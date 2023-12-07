@@ -1,14 +1,14 @@
 /* eslint-disable no-param-reassign */
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { DataMapOperationState, SetConnectionInputAction } from '../core/state/DataMapSlice';
-import type { SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
 import type { WritableDraft } from 'immer/dist/internal';
 
 /**

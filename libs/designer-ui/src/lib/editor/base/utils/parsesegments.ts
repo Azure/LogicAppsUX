@@ -5,7 +5,7 @@ import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import { $createTokenNode } from '../nodes/tokenNode';
-import { convertStringToSegments } from './editorToSegement';
+import { convertStringToSegments } from './editorToSegment';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
 import { $generateNodesFromDOM } from '@lexical/html';
 import type { LinkNode } from '@lexical/link';
@@ -213,7 +213,7 @@ export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boo
           brandColor,
           icon,
           value,
-          readonly
+          readonly,
         });
         tokensEnabled && paragraph.append(token);
       } else {

@@ -1,5 +1,7 @@
 import type { XYPosition } from 'reactflow';
 
+export type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[] };
+
 export interface FunctionPositionMetadata {
   targetKey: string;
   position: XYPosition;

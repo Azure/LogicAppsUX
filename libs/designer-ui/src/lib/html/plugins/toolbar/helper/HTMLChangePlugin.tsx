@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../../../../editor';
-import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegement';
+import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegment';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
 import { decodeStringSegments, encodeStringSegments } from '../../../../editor/base/utils/parsesegments';
 import { cleanHtmlString, decodeSegmentValue, encodeSegmentValue } from './util';
