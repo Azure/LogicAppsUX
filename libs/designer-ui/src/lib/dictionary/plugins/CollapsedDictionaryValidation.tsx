@@ -36,7 +36,14 @@ export const CollapsedDictionaryValidation = ({
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
-    serializeDictionary(editor, setItems, setIsValid, keyType, valueType);
+    editor.getEditorState().read(() => {
+      const editorString = getChildrenNodes($getRoot());
+      if (!editorString.trim().length || editorString === '{}') {
+        setIsValid(true);
+      } else {
+        serializeDictionary(editor, setItems, setIsValid, keyType, valueType);
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
