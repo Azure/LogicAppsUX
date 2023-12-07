@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { environment } from '../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
-import { useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } from '../../state/workflowLoadingSelectors';
+import { useHostOptions, useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } from '../../state/workflowLoadingSelectors';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ParametersData } from './Models/Workflow';
@@ -56,7 +56,7 @@ const DesignerEditorConsumption = () => {
   const readOnly = useIsReadOnly();
   const isMonitoringView = useIsMonitoringView();
   const showChatBot = useShowChatBot();
-
+  const hostOptions = useHostOptions();
   const queryClient = getReactQueryClient();
 
   // const workflowName = workflowId.split('/').splice(-1)[0];
@@ -169,7 +169,17 @@ const DesignerEditorConsumption = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, useLegacyWorkflowParameters: true }}>
+      <DesignerProvider
+        locale={'en-US'}
+        options={{
+          services,
+          isDarkMode,
+          readOnly,
+          isMonitoringView,
+          useLegacyWorkflowParameters: true,
+          hostOptions,
+        }}
+      >
         {workflow?.definition ? (
           <BJSWorkflowProvider workflow={{ definition: parsedDefinition, connectionReferences, parameters }}>
             <div style={{ height: 'inherit', width: 'inherit' }}>

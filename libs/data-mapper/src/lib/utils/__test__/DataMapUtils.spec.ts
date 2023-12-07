@@ -1,5 +1,4 @@
-import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
-import { FunctionCategory, NormalizedDataType, SchemaNodeProperty, SchemaType } from '../../models';
+import { FunctionCategory } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
   ReservedToken,
@@ -27,6 +26,8 @@ import {
   manyToOneConnectionSourceName,
   manyToOneConnectionTargetName,
 } from '../__mocks__';
+import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
 import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '__mocks__/schemas';
 
 describe('utils/DataMap', () => {

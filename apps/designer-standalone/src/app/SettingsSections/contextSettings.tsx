@@ -1,6 +1,7 @@
 import type { AppDispatch } from '../../state/store';
 import {
   useAreCustomEditorsEnabled,
+  useHostOptions,
   useIsDarkMode,
   useIsLocal,
   useIsMonitoringView,
@@ -15,6 +16,7 @@ import {
   loadWorkflow,
   setIsChatBotEnabled,
   setAreCustomEditorsEnabled,
+  setHostOptions,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -27,6 +29,7 @@ const ContextSettings = () => {
   const showChatBot = useShowChatBot();
   const isLocal = useIsLocal();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
+  const hostOptions = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -57,6 +60,11 @@ const ContextSettings = () => {
         label="Custom Editors"
         checked={areCustomEditorsEnabled}
         onChange={(_, checked) => dispatch(setAreCustomEditorsEnabled(!!checked))}
+      />
+      <Checkbox
+        label="Display Runtime Info"
+        checked={hostOptions.displayRuntimeInfo}
+        onChange={(_, checked) => dispatch(setHostOptions({ displayRuntimeInfo: !!checked }))}
       />
     </div>
   );

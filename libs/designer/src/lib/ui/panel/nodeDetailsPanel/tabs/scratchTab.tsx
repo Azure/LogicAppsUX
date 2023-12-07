@@ -7,7 +7,7 @@ import type {
   /*TokenPickerMode, ValueSegment*/
 } from '@microsoft/designer-ui';
 import {
-  // BaseEditor,
+  // EditorWrapper,
   //testTokenSegment, // AuthenticationType,
   // Combobox, // RowDropdownOptions,
   // GroupType,
@@ -448,7 +448,7 @@ getTokenPicker={GetTokenPicker}
             items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
           />
         } */}
-        {/* <BaseEditor initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} BasePlugins={{ treeView: true, tokens: true }} /> */}
+        {/* <EditorWrapper initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} basePlugins={{ treeView: true, tokens: true }} /> */}
       </>
     );
   };

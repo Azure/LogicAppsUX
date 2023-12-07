@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../../../../editor';
-import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegement';
+import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegment';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
 import { cleanHtmlString, decodeSegmentValue, encodeSegmentValue } from './util';
 import { $generateHtmlFromNodes } from '@lexical/html';
@@ -7,11 +7,11 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
-interface ChangeProps {
+interface HTMLChangePluginProps {
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const Change = ({ setValue }: ChangeProps) => {
+export const HTMLChangePlugin = ({ setValue }: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
     editorState.read(() => {

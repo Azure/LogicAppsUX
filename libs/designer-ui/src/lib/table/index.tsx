@@ -53,8 +53,10 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   placeholder,
   tokenPickerButtonProps,
   dataAutomationId,
-  getTokenPicker,
   onChange,
+  getTokenPicker,
+  tokenMapping,
+  loadParameterValueFromString,
 }): JSX.Element => {
   const intl = getIntl();
   const columnOptions = [
@@ -100,6 +102,8 @@ export const TableEditor: React.FC<TableEditorProps> = ({
             initialItems={items}
             tokenPickerButtonProps={tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
             onChange={onItemsChange}
           />
         </div>
