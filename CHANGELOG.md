@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.90.0](https://github.com/Azure/LogicAppsUX/compare/v2.89.0...v2.90.0) (2023-12-07)
+
+
+### Features
+
+* **Vs code:** Move Data-Mapper Constants to Utils/Vscode-Extension ([#3803](https://github.com/Azure/LogicAppsUX/issues/3803)) ([e31fa8c](https://github.com/Azure/LogicAppsUX/commit/e31fa8c735e4a096bcf24c1a547f1679f775c425))
+
 ## [2.89.0](https://github.com/Azure/LogicAppsUX/compare/v2.88.0...v2.89.0) (2023-12-06)
 
 
