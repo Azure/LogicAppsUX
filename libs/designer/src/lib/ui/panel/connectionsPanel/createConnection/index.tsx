@@ -1,6 +1,6 @@
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
-import { useOperationInfo, useSelectedNodeId } from '../../../../core';
+import { getIconUriFromConnector, useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
 import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
   getConnectionMetadata,
@@ -24,12 +24,13 @@ import {
   getConnectionParametersForAzureConnection,
   getSupportedParameterSets,
 } from '../../../../core/utils/connectors/connections';
+import { ActionList } from '../actionList/actionList';
 import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
 import type { ConnectionParameterProps } from './universalConnectionParameter';
 import { UniversalConnectionParameter } from './universalConnectionParameter';
 import type { IDropdownOption } from '@fluentui/react';
 import { MessageBarType, MessageBar, Checkbox, Dropdown, Icon, Label, TextField, TooltipHost } from '@fluentui/react';
-import { Button, Spinner } from '@fluentui/react-components';
+import { Body1Strong, Button, Divider, Spinner } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
   ConnectionService,
@@ -81,8 +82,10 @@ export const CreateConnection = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
-  const nodeId: string = useSelectedNodeId();
+  const selectedNodeIds = useSelectedNodeIds();
+  const nodeId = useSelectedNodeId();
   const connector = useConnectorByNodeId(nodeId);
+  const iconUri = getIconUriFromConnector(connector);
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
@@ -509,6 +512,11 @@ export const CreateConnection = () => {
 
   // INTL STRINGS
 
+  const componentDescription = intl.formatMessage({
+    defaultMessage: 'Create a new connection',
+    description: 'General description for creating a new connection.',
+  });
+
   const inputConnectionDisplayNameLabel = intl.formatMessage({
     defaultMessage: 'Connection Name',
     description: 'Connection Name',
@@ -732,135 +740,142 @@ export const CreateConnection = () => {
     );
 
   return (
-    <div className="msla-create-connection-container">
-      {/* Error Bar */}
-      {errorMessage && (
-        <MessageBar
-          messageBarType={MessageBarType.error}
-          isMultiline={true}
-          onDismiss={() => setErrorMessage(undefined)}
-          dismissButtonAriaLabel={closeErrorButtonAriaLabel}
-        >
-          {errorMessage}
-        </MessageBar>
-      )}
+    <div className="msla-edit-connection-container">
+      <ActionList nodeIds={selectedNodeIds} iconUri={iconUri} />
+      <Divider />
 
-      {/* Parameters */}
-      <div className="connection-params-container">
-        {/* Legacy Multi-Auth */}
-        {showLegacyMultiAuth && (
-          <div className="param-row">
-            <Label className="label" required htmlFor={'legacy-connection-param-set-select'} disabled={isLoading}>
-              {legacyMultiAuthLabelText}
-            </Label>
-            <Dropdown
-              id="legacy-connection-param-set-select"
-              className="connection-parameter-input"
-              selectedKey={selectedParamSetIndex}
-              onChange={onAuthDropdownChange}
-              disabled={isLoading}
-              ariaLabel={legacyMultiAuthLabelText}
-              // placeholder={connectionParameterSets?.uiDefinition?.description}
-              options={legacyMultiAuthOptions}
-            />
-          </div>
+      <Body1Strong>{componentDescription}</Body1Strong>
+
+      <div className="msla-create-connection-container">
+        {/* Error Bar */}
+        {errorMessage && (
+          <MessageBar
+            messageBarType={MessageBarType.error}
+            isMultiline={true}
+            onDismiss={() => setErrorMessage(undefined)}
+            dismissButtonAriaLabel={closeErrorButtonAriaLabel}
+          >
+            {errorMessage}
+          </MessageBar>
         )}
 
-        {/* OptionalGateway Checkbox */}
-        {!hasOnlyOnPremGateway && Object.entries(getParametersByCapability(Capabilities.gateway)).length > 0 && (
-          <div className="param-row center" style={{ margin: '8px 0px' }}>
-            <Checkbox
-              label={intl.formatMessage({
-                defaultMessage: 'Connect via on-premises data gateway',
-                description: 'Checkbox label for using an on-premises gateway',
-              })}
-              checked={enabledCapabilities.includes(Capabilities.gateway)}
-              onChange={() => toggleCapability(Capabilities.gateway)}
-              disabled={isLoading}
-            />
-            <TooltipHost content={gatewayTooltipText}>
-              <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-            </TooltipHost>
-          </div>
-        )}
-
-        {/* Name */}
-        {showNameInput && (
-          <div className="param-row">
-            <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
-              {inputConnectionDisplayNameLabel}
-            </Label>
-            <TextField
-              id={'connection-display-name-input'}
-              className="connection-parameter-input"
-              disabled={isLoading}
-              autoComplete="off"
-              aria-label={inputConnectionDisplayNamePlaceholder}
-              placeholder={inputConnectionDisplayNamePlaceholder}
-              value={connectionDisplayName}
-              onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
-            />
-          </div>
-        )}
-
-        {/* Legacy Managed Identity Selection */}
-        {legacyManagedIdentitySelected && (
-          <div className="param-row">
-            <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-              {legacyManagedIdentityDropdownText}
-            </Label>
-            <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
-          </div>
-        )}
-
-        {/* Authentication Selection */}
-        {isMultiAuth && (
-          <div className="param-row">
-            <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-              {connectionParameterSets?.uiDefinition?.displayName}
-            </Label>
-            <Dropdown
-              id="connection-param-set-select"
-              className="connection-parameter-input"
-              selectedKey={selectedParamSetIndex}
-              onChange={onAuthDropdownChange}
-              disabled={isLoading}
-              ariaLabel={connectionParameterSets?.uiDefinition?.description}
-              placeholder={connectionParameterSets?.uiDefinition?.description}
-              options={
-                connectionParameterSets?.values.map((paramSet, index) => ({
-                  key: index,
-                  text: paramSet?.uiDefinition?.displayName ?? paramSet?.name,
-                })) ?? []
-              }
-            />
-          </div>
-        )}
-
-        {/* Connector Parameters */}
-        {showConfigParameters &&
-          Object.entries(capabilityEnabledParameters)?.map(
-            ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
-              const mappingName = parameter?.uiDefinition?.credentialMapping?.mappingName;
-              if (mappingName) {
-                // This parameter belongs to a mapping - try to render a custom editor if supported.
-                return renderCredentialsMappingParameter(mappingName, parameter);
-              }
-
-              return renderConnectionParameter(key, parameter);
-            }
+        {/* Parameters */}
+        <div className="connection-params-container">
+          {/* Legacy Multi-Auth */}
+          {showLegacyMultiAuth && (
+            <div className="param-row">
+              <Label className="label" required htmlFor={'legacy-connection-param-set-select'} disabled={isLoading}>
+                {legacyMultiAuthLabelText}
+              </Label>
+              <Dropdown
+                id="legacy-connection-param-set-select"
+                className="connection-parameter-input"
+                selectedKey={selectedParamSetIndex}
+                onChange={onAuthDropdownChange}
+                disabled={isLoading}
+                ariaLabel={legacyMultiAuthLabelText}
+                // placeholder={connectionParameterSets?.uiDefinition?.description}
+                options={legacyMultiAuthOptions}
+              />
+            </div>
           )}
 
-        {/* Resource Selector UI */}
-        {resourceSelectorProps && <AzureResourcePicker {...resourceSelectorProps} />}
+          {/* OptionalGateway Checkbox */}
+          {!hasOnlyOnPremGateway && Object.entries(getParametersByCapability(Capabilities.gateway)).length > 0 && (
+            <div className="param-row center" style={{ margin: '8px 0px' }}>
+              <Checkbox
+                label={intl.formatMessage({
+                  defaultMessage: 'Connect via on-premises data gateway',
+                  description: 'Checkbox label for using an on-premises gateway',
+                })}
+                checked={enabledCapabilities.includes(Capabilities.gateway)}
+                onChange={() => toggleCapability(Capabilities.gateway)}
+                disabled={isLoading}
+              />
+              <TooltipHost content={gatewayTooltipText}>
+                <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+              </TooltipHost>
+            </div>
+          )}
+
+          {/* Name */}
+          {showNameInput && (
+            <div className="param-row">
+              <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
+                {inputConnectionDisplayNameLabel}
+              </Label>
+              <TextField
+                id={'connection-display-name-input'}
+                className="connection-parameter-input"
+                disabled={isLoading}
+                autoComplete="off"
+                aria-label={inputConnectionDisplayNamePlaceholder}
+                placeholder={inputConnectionDisplayNamePlaceholder}
+                value={connectionDisplayName}
+                onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
+              />
+            </div>
+          )}
+
+          {/* Legacy Managed Identity Selection */}
+          {legacyManagedIdentitySelected && (
+            <div className="param-row">
+              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
+                {legacyManagedIdentityDropdownText}
+              </Label>
+              <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
+            </div>
+          )}
+
+          {/* Authentication Selection */}
+          {isMultiAuth && (
+            <div className="param-row">
+              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
+                {connectionParameterSets?.uiDefinition?.displayName}
+              </Label>
+              <Dropdown
+                id="connection-param-set-select"
+                className="connection-parameter-input"
+                selectedKey={selectedParamSetIndex}
+                onChange={onAuthDropdownChange}
+                disabled={isLoading}
+                ariaLabel={connectionParameterSets?.uiDefinition?.description}
+                placeholder={connectionParameterSets?.uiDefinition?.description}
+                options={
+                  connectionParameterSets?.values.map((paramSet, index) => ({
+                    key: index,
+                    text: paramSet?.uiDefinition?.displayName ?? paramSet?.name,
+                  })) ?? []
+                }
+              />
+            </div>
+          )}
+
+          {/* Connector Parameters */}
+          {showConfigParameters &&
+            Object.entries(capabilityEnabledParameters)?.map(
+              ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
+                const mappingName = parameter?.uiDefinition?.credentialMapping?.mappingName;
+                if (mappingName) {
+                  // This parameter belongs to a mapping - try to render a custom editor if supported.
+                  return renderCredentialsMappingParameter(mappingName, parameter);
+                }
+
+                return renderConnectionParameter(key, parameter);
+              }
+            )}
+
+          {/* Resource Selector UI */}
+          {resourceSelectorProps && <AzureResourcePicker {...resourceSelectorProps} />}
+        </div>
+
+        {/* Descriptor text for simple and oauth */}
+        <div>{connectorDescription}</div>
+        {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
 
-      {/* Descriptor text for simple and oauth */}
-      <div>{connectorDescription}</div>
-      {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
-
       {/* Action Buttons */}
-      <div className="msla-create-connection-actions-container">
+      <div className="msla-edit-connection-actions-container">
         <Button disabled={!canSubmit} aria-label={submitButtonAriaLabel} onClick={submitCallback}>
           {submitButtonText}
         </Button>

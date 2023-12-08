@@ -8,7 +8,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: PanelState = {
   collapsed: true,
-  selectedNode: '',
+  selectedNodes: [],
   relationshipIds: {
     graphId: 'root',
   },
@@ -40,7 +40,7 @@ export const panelSlice = createSlice({
       state.collapsed = true;
       state.currentPanelMode = undefined;
       state.referencePanelMode = undefined;
-      state.selectedNode = '';
+      state.selectedNodes = [];
       state.selectedOperationGroupId = '';
       state.addingTrigger = false;
       state.creatingConnection = false;
@@ -51,13 +51,16 @@ export const panelSlice = createSlice({
       }
     },
     setSelectedNodeId: (state, action: PayloadAction<string>) => {
-      state.selectedNode = action.payload;
+      state.selectedNodes = [action.payload];
+    },
+    setSelectedNodeIds: (state, action: PayloadAction<string[]>) => {
+      state.selectedNodes = action.payload;
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
       clearPanel();
       if (state.collapsed) state.collapsed = false;
-      state.selectedNode = action.payload;
+      state.selectedNodes = [action.payload];
       state.currentPanelMode = 'Operation';
 
       LoggerService().log({
@@ -74,7 +77,7 @@ export const panelSlice = createSlice({
       state.collapsed = false;
       state.currentPanelMode = 'Discovery';
       state.relationshipIds = action.payload.relationshipIds;
-      state.selectedNode = action.payload.nodeId;
+      state.selectedNodes = [action.payload.nodeId];
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
       state.addingTrigger = !!action.payload?.addingTrigger;
 
@@ -98,13 +101,21 @@ export const panelSlice = createSlice({
     selectOperationId: (state, action: PayloadAction<string>) => {
       state.selectedOperationId = action.payload;
     },
-    openPanel: (state, action: PayloadAction<{ nodeId?: string; panelMode: PanelMode; referencePanelMode?: PanelMode }>) => {
-      const { nodeId, panelMode } = action?.payload ?? {};
+    openPanel: (
+      state,
+      action: PayloadAction<{
+        nodeId?: string;
+        nodeIds?: string[];
+        panelMode: PanelMode;
+        referencePanelMode?: PanelMode;
+      }>
+    ) => {
+      const { nodeId, nodeIds, panelMode, referencePanelMode } = action?.payload ?? {};
       clearPanel();
       state.collapsed = false;
       state.currentPanelMode = panelMode;
-      state.referencePanelMode = action.payload?.referencePanelMode;
-      state.selectedNode = nodeId ?? '';
+      state.referencePanelMode = referencePanelMode;
+      state.selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
     },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
@@ -211,6 +222,7 @@ export const {
   clearPanel,
   updatePanelLocation,
   setSelectedNodeId,
+  setSelectedNodeIds,
   changePanelNode,
   expandDiscoveryPanel,
   selectOperationGroupId,

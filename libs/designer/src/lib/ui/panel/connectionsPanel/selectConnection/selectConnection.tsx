@@ -1,13 +1,14 @@
-import { type AppDispatch, useSelectedNodeId, getIconUriFromConnector } from '../../../../core';
+import { type AppDispatch, getIconUriFromConnector } from '../../../../core';
 import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import { useNodeConnectionId, useConnectorByNodeId } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { useReferencePanelMode } from '../../../../core/state/panel/panelSelectors';
+import { useReferencePanelMode, useSelectedNodeIds } from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { ActionList } from '../actionList/actionList';
 import { ConnectionTable } from './connectionTable';
 import { MessageBar, MessageBarType } from '@fluentui/react';
-import { Button, Spinner, Text } from '@fluentui/react-components';
+import { Body1Strong, Button, Divider, Spinner } from '@fluentui/react-components';
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import { type Connection, type Connector } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -18,20 +19,22 @@ export const SelectConnection = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
-  const selectedNodeId = useSelectedNodeId();
-  const currentConnectionId = useNodeConnectionId(selectedNodeId);
+  const selectedNodeIds = useSelectedNodeIds();
+  const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const referencePanelMode = useReferencePanelMode();
 
   const closeConnectionsFlow = useCallback(() => {
-    dispatch(openPanel({ panelMode: referencePanelMode ?? 'Operation' }));
-  }, [dispatch, referencePanelMode]);
+    const panelMode = referencePanelMode ?? 'Operation';
+    const nodeId = panelMode === 'Operation' ? selectedNodeIds?.[0] : undefined;
+    dispatch(openPanel({ nodeId, panelMode }));
+  }, [dispatch, referencePanelMode, selectedNodeIds]);
 
   const createConnectionCallback = useCallback(() => {
     dispatch(setIsCreatingConnection(true));
   }, [dispatch]);
 
-  const connector = useConnectorByNodeId(selectedNodeId);
+  const connector = useConnectorByNodeId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
@@ -43,17 +46,19 @@ export const SelectConnection = () => {
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
       if (!connection) return;
-      dispatch(
-        updateNodeConnection({
-          nodeId: selectedNodeId,
-          connection,
-          connector: connector as Connector,
-        })
-      );
-      ConnectionService().setupConnectionIfNeeded(connection);
+      for (const nodeId of selectedNodeIds) {
+        dispatch(
+          updateNodeConnection({
+            nodeId,
+            connection,
+            connector: connector as Connector,
+          })
+        );
+        ConnectionService().setupConnectionIfNeeded(connection);
+      }
       closeConnectionsFlow();
     },
-    [dispatch, selectedNodeId, connector, closeConnectionsFlow]
+    [dispatch, selectedNodeIds, connector, closeConnectionsFlow]
   );
 
   const loadingText = intl.formatMessage({
@@ -63,11 +68,11 @@ export const SelectConnection = () => {
 
   const componentDescription = isXrmConnectionReferenceMode
     ? intl.formatMessage({
-        defaultMessage: 'Select an existing connection reference or create a new one.',
+        defaultMessage: 'Select an existing connection reference or create a new one',
         description: 'Select an existing connection reference or create a new one.',
       })
     : intl.formatMessage({
-        defaultMessage: 'Select an existing connection or create a new one.',
+        defaultMessage: 'Select an existing connection or create a new one',
         description: 'Select an existing connection or create a new one.',
       });
 
@@ -102,15 +107,11 @@ export const SelectConnection = () => {
     return <MessageBar messageBarType={MessageBarType.error}>{JSON.stringify(connectionQuery.error)}</MessageBar>;
 
   return (
-    <div className="msla-select-connections-container">
-      {/* TODO: Icon */}
-      <div className="msla-flex-header">
-        <img className="msla-action-icon" src={connectorIconUri} alt={connector?.properties?.displayName} />
-        <Text className="msla-flex-header-title">{connector?.properties?.displayName}</Text>
-      </div>
+    <div className="msla-edit-connection-container">
+      <ActionList nodeIds={selectedNodeIds} iconUri={connectorIconUri} />
+      <Divider />
 
-      <Text>{componentDescription}</Text>
-
+      <Body1Strong>{componentDescription}</Body1Strong>
       <ConnectionTable
         connections={connections}
         currentConnectionId={currentConnectionId}
@@ -120,7 +121,7 @@ export const SelectConnection = () => {
         isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
       />
 
-      <div className="msla-select-connection-actions-container">
+      <div className="msla-edit-connection-actions-container">
         <Button aria-label={buttonAddAria} onClick={createConnectionCallback}>
           {buttonAddText}
         </Button>

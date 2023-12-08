@@ -17,7 +17,7 @@ export { serializeWorkflow } from './actions/bjsworkflow/serializer';
 export { setSelectedNodeId, changePanelNode, clearPanel, openPanel, collapsePanel } from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
-export { useSelectedNodeId } from './state/panel/panelSelectors';
+export { useSelectedNodeId, useSelectedNodeIds } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { validateParameter } from './utils/parameters/helper';

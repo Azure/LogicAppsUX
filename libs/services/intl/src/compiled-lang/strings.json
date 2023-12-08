@@ -1369,6 +1369,12 @@
       "value": "Update source schema"
     }
   ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
+    }
+  ],
   "78Vggn": [
     {
       "type": 0,
@@ -2393,6 +2399,12 @@
       "value": "Duration"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2969,12 +2981,6 @@
     {
       "type": 0,
       "value": "Exit full screen"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Select an existing connection reference or create a new one."
     }
   ],
   "HSJLCu": [
@@ -5899,6 +5905,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -7973,6 +7985,12 @@
       "value": "Custom"
     }
   ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -9805,12 +9823,6 @@
     {
       "type": 0,
       "value": "Generate XSLT"
-    }
-  ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Select an existing connection or create a new one."
     }
   ],
   "ypZV9w": [

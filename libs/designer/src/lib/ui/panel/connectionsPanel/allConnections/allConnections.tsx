@@ -7,8 +7,8 @@ import {
 } from '../../../../core';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
 import { ConnectorConnectionsCard } from './connectorConnectionsCard';
-import { Accordion, AccordionItem } from '@fluentui/react-components';
-import { useMemo } from 'react';
+import { Accordion, AccordionItem, type AccordionToggleEventHandler } from '@fluentui/react-components';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export const AllConnections = () => {
@@ -61,8 +61,13 @@ export const AllConnections = () => {
     return grouped;
   }, [connectionsWithNodes, connectionReferences, groupedDisconnectedNodes]);
 
+  const [openConnectors, setOpenConnectors] = useState<string[]>([]);
+  const handleToggle: AccordionToggleEventHandler = (_e, data) => {
+    setOpenConnectors((data?.openItems ?? []) as string[]);
+  };
+
   return (
-    <Accordion collapsible multiple>
+    <Accordion collapsible multiple openItems={openConnectors} onToggle={handleToggle}>
       {Object.entries(groupedConnections).map(([apiId, connectionRefs]) => (
         <AccordionItem key={apiId} value={apiId}>
           <ConnectorCardWrapper apiId={apiId} connectionRefs={connectionRefs} disconnectedNodes={groupedDisconnectedNodes?.[apiId]} />
@@ -82,11 +87,10 @@ const ConnectorCardWrapper = ({ apiId, connectionRefs, disconnectedNodes }: Conn
   const connectorQuery = useConnector(apiId);
   const connector = connectorQuery.data;
 
-  if (connectorQuery.isLoading) return null;
-
   return (
     <div>
       <ConnectorConnectionsCard
+        isLoading={connectorQuery.isLoading}
         connectorId={apiId}
         title={connector?.properties?.displayName ?? apiId}
         iconUri={getIconUriFromConnector(connector)}

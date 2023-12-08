@@ -1,7 +1,6 @@
 import { ConnectionEntry } from './connectionEntry';
 import { DisconnectedEntry } from './disconnectedEntry';
-import { Text } from '@fluentui/react';
-import { AccordionHeader, AccordionPanel } from '@fluentui/react-components';
+import { Text, AccordionHeader, AccordionPanel, Spinner, Badge } from '@fluentui/react-components';
 import { getConnectorCategoryString } from '@microsoft/designer-ui';
 import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
@@ -13,6 +12,7 @@ export interface ConnectorConnectionsCardProps {
   iconUri?: string;
   connectionRefs?: Record<string, any>;
   disconnectedNodes?: string[];
+  isLoading?: boolean;
 }
 
 export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> = ({
@@ -22,6 +22,7 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   iconUri,
   connectionRefs = {},
   disconnectedNodes = [],
+  isLoading = false,
 }) => {
   const isBuiltIn = isBuiltInConnector(connectorId);
   const category = getConnectorCategoryString(connectorId);
@@ -39,11 +40,23 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
     <div key={connectorId} className="msla-connector-connections-card">
       <AccordionHeader>
         <div className="msla-flex-header">
-          <img className="msla-action-icon large" src={fallbackConnectorIconUrl(iconUri)} alt="" />
-          <Text className="msla-flex-header-title" variant={'large'}>
-            {connectionsPanelHeaderText}
-          </Text>
-          {isBuiltIn && <Text className="msla-psuedo-badge">{category}</Text>}
+          {isLoading ? (
+            <div className="msla-action-icon large">
+              <Spinner size="extra-small" style={{ margin: '4px' }} />
+            </div>
+          ) : (
+            <>
+              <img className="msla-action-icon large" src={fallbackConnectorIconUrl(iconUri)} alt="" />
+              <Text size={300} weight="semibold" className="msla-flex-header-title">
+                {connectionsPanelHeaderText}
+              </Text>
+              {isBuiltIn && (
+                <Badge shape="rounded" appearance="outline">
+                  {category}
+                </Badge>
+              )}
+            </>
+          )}
         </div>
       </AccordionHeader>
       <AccordionPanel>

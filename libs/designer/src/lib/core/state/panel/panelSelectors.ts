@@ -26,10 +26,11 @@ export const useSelectedSearchOperationGroupId = () =>
 export const useSelectedSearchOperationId = () =>
   useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationId));
 
-export const useSelectedNodeId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode));
+export const useSelectedNodeId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNodes?.[0] ?? ''));
+export const useSelectedNodeIds = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNodes));
 
 export const useIsNodeSelected = (nodeId: string) =>
-  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode === nodeId));
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNodes.includes(nodeId)));
 
 export const useRegisteredPanelTabs = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs));
 

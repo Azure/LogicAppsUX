@@ -1,8 +1,10 @@
+import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
-import { Text } from '@fluentui/react';
-import { Button, Tooltip } from '@fluentui/react-components';
+import { Button, Text, Tooltip } from '@fluentui/react-components';
 import { ArrowSwap24Filled, PlugDisconnected24Filled } from '@fluentui/react-icons';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 interface DisconnectedEntryProps {
   connectorId: string;
@@ -12,6 +14,8 @@ interface DisconnectedEntryProps {
 }
 
 export const DisconnectedEntry = ({ iconUri, nodeIds }: DisconnectedEntryProps) => {
+  const dispatch = useDispatch();
+
   const intl = useIntl();
   const componentTitle = intl.formatMessage({
     defaultMessage: 'Disconnected actions',
@@ -22,11 +26,15 @@ export const DisconnectedEntry = ({ iconUri, nodeIds }: DisconnectedEntryProps) 
     description: 'Tooltip for the button to reassign actions',
   });
 
+  const onReassignButtonClick = useCallback(() => {
+    dispatch(openPanel({ nodeIds, panelMode: 'Connection', referencePanelMode: 'Connection' }));
+  }, [dispatch, nodeIds]);
+
   return (
     <div className="msla-connector-connections-card-connection disconnected">
       <div className="msla-flex-header">
         <PlugDisconnected24Filled />
-        <Text className="msla-flex-header-title" variant="large">
+        <Text size={300} weight="semibold" className="msla-flex-header-title">
           {componentTitle}
         </Text>
       </div>
@@ -36,7 +44,7 @@ export const DisconnectedEntry = ({ iconUri, nodeIds }: DisconnectedEntryProps) 
             <NodeLinkButton key={nodeId} nodeId={nodeId} iconUri={iconUri} />
           ))}
           <Tooltip content={assignConnectionToAllTooltipText} relationship="label">
-            <Button icon={<ArrowSwap24Filled />} />
+            <Button icon={<ArrowSwap24Filled />} onClick={onReassignButtonClick} />
           </Tooltip>
         </div>
       </div>

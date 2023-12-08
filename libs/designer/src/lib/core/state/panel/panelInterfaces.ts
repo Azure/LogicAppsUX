@@ -4,7 +4,7 @@ export type PanelMode = 'Operation' | 'Discovery' | 'WorkflowParameters' | 'Node
 
 export interface PanelState {
   collapsed: boolean;
-  selectedNode: string;
+  selectedNodes: string[];
   currentPanelMode?: PanelMode;
   referencePanelMode?: PanelMode;
   panelLocation?: PanelLocation;

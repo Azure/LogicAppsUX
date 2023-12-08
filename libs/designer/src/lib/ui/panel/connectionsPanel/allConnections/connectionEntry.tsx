@@ -1,11 +1,13 @@
 import { useConnectionById } from '../../../../core/queries/connections';
+import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
-import { Icon, Text, css } from '@fluentui/react';
-import { Button, Tooltip } from '@fluentui/react-components';
+import { Icon, css } from '@fluentui/react';
+import { Button, Text, Tooltip } from '@fluentui/react-components';
 import { Open24Filled, ArrowSwap24Filled } from '@fluentui/react-icons';
 import { getConnectionErrors } from '@microsoft/utils-logic-apps';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 interface ConnectionEntryProps {
   connectorId: string;
@@ -16,26 +18,15 @@ interface ConnectionEntryProps {
 }
 
 export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconUri }: ConnectionEntryProps) => {
+  const dispatch = useDispatch();
+
   const connection = useConnectionById(connectionReference.connection.id, connectorId);
-  const nodeIds = connectionReference.nodes || [];
+  const nodeIds = useMemo(() => connectionReference.nodes || [], [connectionReference.nodes]);
 
   const errors = useMemo(() => {
     if (!connection?.result) return [];
     return getConnectionErrors(connection?.result);
   }, [connection]);
-
-  const statusIconComponent = useMemo(() => {
-    const hasErrors = errors.length > 0;
-    return (
-      <Icon
-        className={css(
-          'msla-connector-connections-card-connection-status-icon',
-          hasErrors ? 'msla-connection-status-icon--error' : 'msla-connection-status-icon--success'
-        )}
-        iconName={hasErrors ? 'ErrorBadge' : 'CompletedSolid'}
-      />
-    );
-  }, [errors]);
 
   const intl = useIntl();
   const openConnectionTooltipText = intl.formatMessage({
@@ -50,15 +41,40 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     defaultMessage: 'Reassign all connected actions to a new connection',
     description: 'Tooltip for the button to reassign actions',
   });
+  // const connectionValidStatusText = intl.formatMessage({
+  //   defaultMessage: 'Connection is valid',
+  //   description: 'Tooltip for the button to reassign actions',
+  // });
+  // const connectionInvalidStatusText = intl.formatMessage({
+  //   defaultMessage: 'Connection is invalid',
+  //   description: 'Tooltip for the button to reassign actions',
+  // });
+
+  const onReassignButtonClick = useCallback(() => {
+    dispatch(openPanel({ nodeIds, panelMode: 'Connection', referencePanelMode: 'Connection' }));
+  }, [dispatch, nodeIds]);
+
+  const statusIconComponent = useMemo(() => {
+    const hasErrors = errors.length > 0;
+    return (
+      <Icon
+        className={css(
+          'msla-connector-connections-card-connection-status-icon',
+          hasErrors ? 'msla-connection-status-icon--error' : 'msla-connection-status-icon--success'
+        )}
+        iconName={hasErrors ? 'ErrorBadge' : 'CompletedSolid'}
+      />
+    );
+  }, [errors.length]);
 
   return (
     <div key={refId} className="msla-connector-connections-card-connection">
       <div className="msla-flex-header">
         {statusIconComponent}
-        <Text className="msla-flex-header-title" variant="large">
+        <Text size={300} weight="semibold" className="msla-flex-header-title">
           {connection?.result?.properties.displayName ?? refId}
         </Text>
-        <Text className="msla-flex-header-subtitle" variant="large">
+        <Text size={300} className="msla-flex-header-subtitle">
           {connection?.result?.name}
         </Text>
         <Tooltip content={openConnectionTooltipText} relationship="label">
@@ -72,7 +88,7 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
             <NodeLinkButton key={nodeId} nodeId={nodeId} iconUri={iconUri} />
           ))}
           <Tooltip content={reassignConnectionTooltipText} relationship="label">
-            <Button icon={<ArrowSwap24Filled />} />
+            <Button icon={<ArrowSwap24Filled />} onClick={onReassignButtonClick} />
           </Tooltip>
         </div>
       </div>
