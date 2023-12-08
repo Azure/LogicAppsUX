@@ -2591,12 +2591,6 @@
       "value": "Please select yes or no"
     }
   ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Connection display name"
-    }
-  ],
   "F3IDl8": [
     {
       "type": 0,
@@ -6287,12 +6281,6 @@
       "value": "Discard changes"
     }
   ],
-  "cUW5m8": [
-    {
-      "type": 0,
-      "value": "Select the checkbox to choose this connection."
-    }
-  ],
   "cZXqqf": [
     {
       "type": 0,
@@ -6781,12 +6769,6 @@
     {
       "type": 0,
       "value": "Required. A boolean value that determines which value the expression should return."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Connection name"
     }
   ],
   "gIx5ys": [
@@ -8445,12 +8427,6 @@
       "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Invalid connection."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8641,12 +8617,6 @@
     {
       "type": 0,
       "value": "Secret"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Is connection invalid"
     }
   ],
   "rNi5Y3": [
@@ -9871,12 +9841,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Connection gateway"
     }
   ],
   "yzqXMp": [
