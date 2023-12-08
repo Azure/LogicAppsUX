@@ -7,9 +7,9 @@ import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
 import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
-import { convertEditorState } from './helper/HTMLChangePlugin';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
+import { convertEditorState } from './helper/HTMLChangePlugin';
 import { useTheme } from '@fluentui/react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
@@ -53,11 +53,12 @@ export type blockTypeToBlockName = (typeof blockTypeToBlockName)[keyof typeof bl
 
 interface ToolbarProps {
   isRawText?: boolean;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   readonly?: boolean;
   setIsRawText?: (newValue: boolean) => void;
 }
 
-export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
+export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
@@ -226,7 +227,7 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              convertEditorState(activeEditor, nodeMap, { asPlainText: false }).then((valueSegments) => {
+              convertEditorState(activeEditor, nodeMap, { asPlainText: false, loadParameterValueFromString }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
                   parseSegments(valueSegments, true);
@@ -240,7 +241,7 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              convertEditorState(activeEditor, nodeMap, { asPlainText: true }).then((valueSegments) => {
+              convertEditorState(activeEditor, nodeMap, { asPlainText: true, loadParameterValueFromString }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
                   parseHtmlSegments(valueSegments, true);

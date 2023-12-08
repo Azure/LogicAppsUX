@@ -1,5 +1,10 @@
 import { processNodeType } from '../../../html/plugins/toolbar/helper/functions';
-import { decodeSegmentValue, encodeSegmentValue } from '../../../html/plugins/toolbar/helper/util';
+import {
+  decodeSegmentValueInDomContext,
+  decodeSegmentValueInLexicalContext,
+  encodeSegmentValueInDomContext,
+  encodeSegmentValueInLexicalContext,
+} from '../../../html/plugins/toolbar/helper/util';
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
 import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
@@ -34,7 +39,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const encodedStringValue = encodeStringSegments(stringValue, tokensEnabled, 'lexical');
+  const encodedStringValue = encodeStringSegmentTokensInLexicalContext(stringValue, nodeMap);
 
   const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
@@ -103,7 +108,7 @@ const appendChildrenNode = (
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
-    const decodedTextContent = tokensEnabled ? decodeSegmentValue(textContent, 'lexical') : textContent;
+    const decodedTextContent = tokensEnabled ? decodeSegmentValueInLexicalContext(textContent) : textContent;
     const childNodeStyles = childNode.getStyle();
     const childNodeFormat = childNode.getFormat();
     // we need to pass in the styles and format of the parent node to the children node
@@ -254,43 +259,28 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
   return text;
 };
 
-export const decodeStringSegments = (value: string, tokensEnabled: boolean | undefined, mode: 'lexical' | 'html'): string =>
-  encodeOrDecodeStringSegments(value, tokensEnabled, mode, 'decode');
+export const decodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInDomContext);
 
-export const encodeStringSegments = (value: string, tokensEnabled: boolean | undefined, mode: 'lexical' | 'html'): string =>
-  encodeOrDecodeStringSegments(value, tokensEnabled, mode, 'encode');
+export const encodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, encodeSegmentValueInDomContext);
 
-const encodeOrDecodeStringSegments = (
+export const decodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext);
+
+export const encodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, encodeSegmentValueInLexicalContext);
+
+const encodeOrDecodeStringSegmentTokens = (
   value: string,
-  tokensEnabled: boolean | undefined,
-  mode: 'lexical' | 'html',
-  direction: 'encode' | 'decode'
+  nodeMap: Map<string, ValueSegment>,
+  transformer: (_: string) => string
 ): string => {
-  if (!tokensEnabled) {
-    return value;
-  }
+  let newValue = value;
 
-  let newValue = '';
-
-  for (let i = 0; i < value.length; i++) {
-    if (value.substring(i, i + 2) === '$[') {
-      const startIndex = i;
-      const endIndex = value.indexOf(']$', startIndex);
-      if (endIndex === -1) {
-        break;
-      }
-
-      const tokenSegment = value.substring(startIndex + 2, endIndex);
-      const encodedTokenSegment = `$[${
-        direction === 'encode' ? encodeSegmentValue(tokenSegment, mode) : decodeSegmentValue(tokenSegment, mode)
-      }]$`;
-      newValue += encodedTokenSegment;
-
-      i = endIndex + 1; // Skip the ']', and i++ will skip the '$'.
-      continue;
-    }
-
-    newValue += value[i];
+  for (const [key] of nodeMap.entries()) {
+    const encodedKey = transformer(key);
+    newValue = newValue.replaceAll(key, encodedKey);
   }
 
   return newValue;

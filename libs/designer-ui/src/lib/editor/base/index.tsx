@@ -166,7 +166,7 @@ export const BaseEditor = ({
   };
 
   const id = useId('msla-described-by-message');
-  const TextPlugin = isHtmlEditor ? RichTextPlugin : PlainTextPlugin;
+  const TextPlugin = isHtmlEditor && !isForcedPlainText ? RichTextPlugin : PlainTextPlugin;
 
   return (
     <>
@@ -177,9 +177,14 @@ export const BaseEditor = ({
         data-automation-id={dataAutomationId}
         title={placeholder}
       >
-        {isHtmlEditor
-          ? <Toolbar isRawText={isForcedPlainText} readonly={readonly} setIsRawText={setIsForcedPlainText} />
-          : null}
+        {isHtmlEditor ? (
+          <Toolbar
+            loadParameterValueFromString={loadParameterValueFromString}
+            isRawText={isForcedPlainText}
+            readonly={readonly}
+            setIsRawText={setIsForcedPlainText}
+          />
+        ) : null}
         <TextPlugin
           contentEditable={
             <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />

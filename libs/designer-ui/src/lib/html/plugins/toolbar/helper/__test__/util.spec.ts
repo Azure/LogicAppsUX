@@ -1,4 +1,4 @@
-import { cleanHtmlString, decodeSegmentValue, encodeSegmentValue } from '../util';
+import { cleanHtmlString, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext } from '../util';
 
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
@@ -16,7 +16,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
     });
   });
 
-  describe('decodeSegmentValue', () => {
+  describe('decodeSegmentValueInLexicalContext', () => {
     it.each([
       ['plain text', 'plain text'],
       ['text with %26lt;%26gt;', 'text with &lt;&gt;'],
@@ -28,11 +28,11 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["$[concat(...),concat('%26lt;'),#AD008C]$", "$[concat(...),concat('&lt;'),#AD008C]$"],
       ["$[concat(...),concat('%26amp;lt;'),#AD008C]$", "$[concat(...),concat('&amp;lt;'),#AD008C]$"],
     ])('should properly decode segments in: %p', (input, expected) => {
-      expect(decodeSegmentValue(input)).toBe(expected);
+      expect(decodeSegmentValueInLexicalContext(input)).toBe(expected);
     });
   });
 
-  describe('encodeSegmentValue', () => {
+  describe('encodeSegmentValueInLexicalContext', () => {
     it.each([
       ['plain text', 'plain text'],
       ['text with &lt;&gt;', 'text with %26lt;%26gt;'],
@@ -44,7 +44,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["$[concat(...),concat('&lt;'),#AD008C]$", "$[concat(...),concat('%26lt;'),#AD008C]$"],
       ["$[concat(...),concat('&amp;lt;'),#AD008C]$", "$[concat(...),concat('%26amp;lt;'),#AD008C]$"],
     ])('should properly encode segments in: %p', (input, expected) => {
-      expect(encodeSegmentValue(input)).toBe(expected);
+      expect(encodeSegmentValueInLexicalContext(input)).toBe(expected);
     });
   });
 });

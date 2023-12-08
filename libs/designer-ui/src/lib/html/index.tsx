@@ -27,7 +27,7 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
       }}
       onBlur={handleBlur}
     >
-      <HTMLChangePlugin setValue={onValueChange} />
+      <HTMLChangePlugin loadParameterValueFromString={baseEditorProps.loadParameterValueFromString} setValue={onValueChange} />
     </EditorWrapper>
   );
 };

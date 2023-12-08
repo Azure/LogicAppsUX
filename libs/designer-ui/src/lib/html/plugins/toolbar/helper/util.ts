@@ -42,20 +42,20 @@ export const cleanHtmlString = (html: string): string => {
   return cleanedHtmlString;
 };
 
-export const decodeSegmentValue =
-  (value: string, mode: 'lexical' | 'html'): string => encodeOrDecodeSegmentValue(value, mode, 'decode');
+export const decodeSegmentValueInDomContext = (value: string): string => encodeOrDecodeSegmentValue(value, htmlUnsafeCharacterDecodingMap);
 
-export const encodeSegmentValue =
-  (value: string, mode: 'lexical' | 'html'): string => encodeOrDecodeSegmentValue(value, mode, 'encode');
+export const encodeSegmentValueInDomContext = (value: string): string => encodeOrDecodeSegmentValue(value, htmlUnsafeCharacterEncodingMap);
 
-const encodeOrDecodeSegmentValue = (value: string, mode: 'lexical' | 'html', direction: 'encode' | 'decode'): string => {
-  const map =
-    direction === 'encode'
-      ? (mode === 'lexical' ? lexicalUnsafeCharacterEncodingMap : htmlUnsafeCharacterEncodingMap)
-      : (mode === 'lexical' ? lexicalUnsafeCharacterDecodingMap : htmlUnsafeCharacterDecodingMap);
+export const decodeSegmentValueInLexicalContext = (value: string): string =>
+  encodeOrDecodeSegmentValue(value, lexicalUnsafeCharacterDecodingMap);
+
+export const encodeSegmentValueInLexicalContext = (value: string): string =>
+  encodeOrDecodeSegmentValue(value, lexicalUnsafeCharacterEncodingMap);
+
+const encodeOrDecodeSegmentValue = (value: string, encodingMap: Record<string, string>): string => {
   let newValue = value;
-  Object.keys(map).forEach((key) => {
-    newValue = newValue.replaceAll(key, map[key]);
+  Object.keys(encodingMap).forEach((key) => {
+    newValue = newValue.replaceAll(key, encodingMap[key]);
   });
   return newValue;
 };
