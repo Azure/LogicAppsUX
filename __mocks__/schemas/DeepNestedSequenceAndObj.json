@@ -72,6 +72,13 @@
               }
             ],
             "qName": "ns0:book2"
+          },
+          {
+            "key": "/ns0:bookstore/ns0:book/ns0:title",
+            "name": "name",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "ns0:title"
           }
         ],
         "qName": "ns0:book"

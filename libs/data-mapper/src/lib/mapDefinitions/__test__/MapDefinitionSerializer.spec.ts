@@ -704,17 +704,14 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
       });
 
-      it('generates body with nested loop bug', () => {
-        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
-        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
-        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
-        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
-
-        const mapDefinition: MapDefinitionEntry = {};
-        const connections: ConnectionDictionary = {};
-
+      const setUpBackoutLoopTest = (
+        connections: ConnectionDictionary,
+        extendedComprehensiveSourceSchema: SchemaExtended,
+        extendedComprehensiveTargetSchema: SchemaExtended
+      ) => {
         // source nodes
         const book1Seq = extendedComprehensiveSourceSchema.schemaTreeRoot.children[0];
+        const book1Title = book1Seq.children[1];
         const book2Seq = book1Seq.children[0];
         const book3Seq = book2Seq.children[0];
         const book3Name = book3Seq.children[0];
@@ -725,6 +722,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const personLoop = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[0]; // root/looping/employee/person
         const personName = personLoop.children[0];
         const personAddress = personLoop.children[1];
+        const personOther = personLoop.children[2];
 
         // add 'loop' connections
         applyConnectionValue(connections, {
@@ -759,6 +757,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         // apply direct connections
         applyConnectionValue(connections, {
+          targetNode: personOther,
+          targetNodeReactFlowKey: addReactFlowPrefix(personOther.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book1Title.key, SchemaType.Source),
+            node: book1Title,
+          },
+        });
+
+        applyConnectionValue(connections, {
           targetNode: personName,
           targetNodeReactFlowKey: addReactFlowPrefix(personName.key, SchemaType.Target),
           findInputSlot: true,
@@ -777,6 +785,18 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
             node: book3Name,
           },
         });
+      };
+
+      it('generates body using ../ to navigate out of loops', () => {
+        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
+        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
+        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
+        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
+
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        setUpBackoutLoopTest(connections, extendedComprehensiveSourceSchema, extendedComprehensiveTargetSchema);
 
         generateMapDefinitionBody(mapDefinition, connections);
         const root = mapDefinition['ns0:Root'] as MapDefinitionEntry;
@@ -787,8 +807,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const person = book3['Person'] as MapDefinitionEntry;
         const address = person['Address'];
         const name = person['Name'];
+        const other = person['Other'];
         expect(address).toEqual('ns0:name');
         expect(name).toEqual('../ns0:author/ns0:first-name');
+        expect(other).toEqual('../../ns0:title');
       });
 
       it('Generates body with many to one nested loops', () => {
