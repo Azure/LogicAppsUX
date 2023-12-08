@@ -192,11 +192,13 @@ export async function getLocalDotNetVersionFromBinaries(): Promise<string> {
 
   // First try to get sdk from Binary installation folder
   const files = fs.existsSync(sdkVersionFolder) ? fs.readdirSync(sdkVersionFolder, { withFileTypes: true }) : null;
-  for (const file of files) {
-    if (file.isDirectory()) {
-      const version = file.name;
-      await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
-      return version;
+  if (Array.isArray(files)) {
+    for (const file of files) {
+      if (file.isDirectory()) {
+        const version = file.name;
+        await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
+        return version;
+      }
     }
   }
 
