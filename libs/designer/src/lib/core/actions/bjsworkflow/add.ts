@@ -6,7 +6,7 @@ import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
-import { changePanelNode, setIsPanelLoading, showDefaultTabs, switchToConnectionsPanel } from '../../state/panel/panelSlice';
+import { changePanelNode, openPanel, setIsPanelLoading, showDefaultTabs } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
@@ -101,8 +101,8 @@ export const initializeOperationDetails = async (
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
 
-  dispatch(changePanelNode(nodeId));
   dispatch(setIsPanelLoading(true));
+  dispatch(changePanelNode(nodeId));
 
   let initData: NodeData;
   let manifest: OperationManifest | undefined = undefined;
@@ -281,7 +281,7 @@ export const trySetDefaultConnectionForNode = async (
     dispatch(updateNodeConnection({ nodeId, connection: connections[0], connector }));
   } else if (isConnectionRequired) {
     dispatch(initEmptyConnectionMap(nodeId));
-    dispatch(switchToConnectionsPanel({ nodeId }));
+    dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
   }
 };
 

@@ -7,10 +7,12 @@ const getPanelState = (state: RootState) => state.panel;
 
 export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.collapsed));
 
-export const useCurrentPanelModePanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.currentState));
+export const useCurrentPanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.currentPanelMode));
+
+export const useReferencePanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.referencePanelMode));
 
 export const useIsNodeSearchMode = () =>
-  useSelector(createSelector(getPanelState, (state: PanelState) => state.currentState === 'NodeSearch'));
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.currentPanelMode === 'NodeSearch'));
 
 export const useIsAddingTrigger = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.addingTrigger));
 

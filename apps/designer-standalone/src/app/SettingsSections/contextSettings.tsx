@@ -6,6 +6,7 @@ import {
   useIsMonitoringView,
   useIsReadOnly,
   useShowChatBot,
+  useShowConnectionsPanel,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -15,6 +16,7 @@ import {
   loadWorkflow,
   setIsChatBotEnabled,
   setAreCustomEditorsEnabled,
+  setShowConnectionsPanel,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -25,6 +27,7 @@ const ContextSettings = () => {
   const isMonitoringView = useIsMonitoringView();
   const isDarkMode = useIsDarkMode();
   const showChatBot = useShowChatBot();
+  const showConnectionsPanel = useShowConnectionsPanel();
   const isLocal = useIsLocal();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const dispatch = useDispatch<AppDispatch>();
@@ -57,6 +60,11 @@ const ContextSettings = () => {
         label="Custom Editors"
         checked={areCustomEditorsEnabled}
         onChange={(_, checked) => dispatch(setAreCustomEditorsEnabled(!!checked))}
+      />
+      <Checkbox
+        label="Connections Panel"
+        checked={showConnectionsPanel}
+        onChange={(_, checked) => dispatch(setShowConnectionsPanel(!!checked))}
       />
     </div>
   );

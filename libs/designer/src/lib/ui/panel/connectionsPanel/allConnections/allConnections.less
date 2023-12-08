@@ -4,26 +4,6 @@
 
 .msla-connector-connections-card {
   margin: 0px -10px;
-
-  .msla-connector-connections-card-header {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-
-    .msla-connector-connections-card-title {
-      align-self: center;
-      font-weight: 600;
-    }
-
-    .msla-connector-connections-card-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 2px;
-      text-align: center;
-      font-size: 24px/32px;
-    }
-  }
-
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -38,6 +18,10 @@
   gap: 20px;
   border-radius: 2px;
   border: 1px solid lightgray;
+
+  &.disconnected {
+    border: 1px dashed lightgray;
+  }
 
   .msla-connector-connections-card-connection-title {
     font-weight: 600;
@@ -54,9 +38,10 @@
   .msla-connector-connections-card-connection-body {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
-    margin: -8px -12px;
-    padding: 8px 12px;
+    margin: -8px -12px -12px;
+    padding: 8px 12px 12px;
     background-color: #00000008;
   }
 

@@ -1,20 +1,28 @@
-import { useConnectionMapping, useConnectionRefs } from '../../../../core';
+import {
+  type RootState,
+  useConnectionMapping,
+  useConnectionRefs,
+  getIconUriFromConnector,
+  getBrandColorFromConnector,
+} from '../../../../core';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
-import { getIconUriFromConnector, getBrandColorFromConnector } from '../../../../core/utils/card';
 import { ConnectorConnectionsCard } from './connectorConnectionsCard';
 import { Accordion, AccordionItem } from '@fluentui/react-components';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 export const AllConnections = () => {
   const connectionMapping = useConnectionMapping();
   const connectionReferences = useConnectionRefs();
+
+  const allOperationInfo = useSelector((state: RootState) => state.operations.operationInfo);
 
   const connectionsWithNodes = useMemo(() => {
     // make a copy of connectionReferences
     const connections: any = {};
     // const connections: any = JSON.parse(JSON.stringify(connectionReferences));
     for (const [nodeId, connectionReference] of Object.entries(connectionMapping)) {
-      if (!connectionReference) continue;
+      if (!connectionReference) continue; // Skip if no connection reference
       if (!connections[connectionReference]) {
         connections[connectionReference] = {
           nodes: [],
@@ -26,6 +34,19 @@ export const AllConnections = () => {
     return connections;
   }, [connectionMapping, connectionReferences]);
 
+  const groupedDisconnectedNodes = useMemo(() => {
+    const groups: Record<string, string[]> = {};
+    for (const [nodeId, connectionReference] of Object.entries(connectionMapping)) {
+      if (!connectionReference) {
+        const apiId = allOperationInfo[nodeId]?.connectorId;
+        if (!apiId) continue;
+        groups[apiId] = groups?.[apiId] || [];
+        groups[apiId].push(nodeId);
+      }
+    }
+    return groups;
+  }, [allOperationInfo, connectionMapping]);
+
   const groupedConnections = useMemo(() => {
     const grouped: Record<string, Record<string, string[]>> = {};
     for (const connectionReference of Object.keys(connectionsWithNodes)) {
@@ -34,14 +55,17 @@ export const AllConnections = () => {
       grouped[apiId] = grouped?.[apiId] || {};
       grouped[apiId][connectionReference] = connectionsWithNodes[connectionReference];
     }
+    for (const apiId of Object.keys(groupedDisconnectedNodes)) {
+      grouped[apiId] = grouped?.[apiId] || {};
+    }
     return grouped;
-  }, [connectionsWithNodes, connectionReferences]);
+  }, [connectionsWithNodes, connectionReferences, groupedDisconnectedNodes]);
 
   return (
     <Accordion collapsible multiple>
       {Object.entries(groupedConnections).map(([apiId, connectionRefs]) => (
         <AccordionItem key={apiId} value={apiId}>
-          <ConnectorCardWrapper apiId={apiId} connectionRefs={connectionRefs} />
+          <ConnectorCardWrapper apiId={apiId} connectionRefs={connectionRefs} disconnectedNodes={groupedDisconnectedNodes?.[apiId]} />
         </AccordionItem>
       ))}
     </Accordion>
@@ -51,25 +75,25 @@ export const AllConnections = () => {
 interface ConnectorCardWrapperProps {
   apiId: string;
   connectionRefs: Record<string, string[]>;
+  disconnectedNodes?: string[];
 }
 
-const ConnectorCardWrapper = ({ apiId, connectionRefs }: ConnectorCardWrapperProps) => {
+const ConnectorCardWrapper = ({ apiId, connectionRefs, disconnectedNodes }: ConnectorCardWrapperProps) => {
   const connectorQuery = useConnector(apiId);
   const connector = connectorQuery.data;
 
+  if (connectorQuery.isLoading) return null;
+
   return (
     <div>
-      {connectorQuery.isLoading && <div>Loading...</div>}
-      {connectorQuery.isError && <div>Error loading connector</div>}
-      {connectorQuery.isSuccess && connector && (
-        <ConnectorConnectionsCard
-          connectorId={connector?.id}
-          title={connector.properties.displayName}
-          iconUri={getIconUriFromConnector(connector)}
-          brandColor={getBrandColorFromConnector(connector)}
-          connectionRefs={connectionRefs}
-        />
-      )}
+      <ConnectorConnectionsCard
+        connectorId={apiId}
+        title={connector?.properties?.displayName ?? apiId}
+        iconUri={getIconUriFromConnector(connector)}
+        brandColor={getBrandColorFromConnector(connector)}
+        connectionRefs={connectionRefs}
+        disconnectedNodes={disconnectedNodes}
+      />
     </div>
   );
 };

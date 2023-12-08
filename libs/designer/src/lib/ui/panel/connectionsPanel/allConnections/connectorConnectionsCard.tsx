@@ -1,4 +1,5 @@
 import { ConnectionEntry } from './connectionEntry';
+import { DisconnectedEntry } from './disconnectedEntry';
 import { Text } from '@fluentui/react';
 import { AccordionHeader, AccordionPanel } from '@fluentui/react-components';
 import { getConnectorCategoryString } from '@microsoft/designer-ui';
@@ -11,6 +12,7 @@ export interface ConnectorConnectionsCardProps {
   brandColor?: string;
   iconUri?: string;
   connectionRefs?: Record<string, any>;
+  disconnectedNodes?: string[];
 }
 
 export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> = ({
@@ -19,6 +21,7 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   brandColor,
   iconUri,
   connectionRefs = {},
+  disconnectedNodes = [],
 }) => {
   const isBuiltIn = isBuiltInConnector(connectorId);
   const category = getConnectorCategoryString(connectorId);
@@ -35,9 +38,9 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   return (
     <div key={connectorId} className="msla-connector-connections-card">
       <AccordionHeader>
-        <div className="msla-connector-connections-card-header">
-          <img className="msla-connector-connections-card-icon" src={fallbackConnectorIconUrl(iconUri)} alt="" />
-          <Text className="msla-connector-connections-card-title" variant={'large'}>
+        <div className="msla-flex-header">
+          <img className="msla-action-icon large" src={fallbackConnectorIconUrl(iconUri)} alt="" />
+          <Text className="msla-flex-header-title" variant={'large'}>
             {connectionsPanelHeaderText}
           </Text>
           {isBuiltIn && <Text className="msla-psuedo-badge">{category}</Text>}
@@ -55,6 +58,9 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
               brandColor={brandColor}
             />
           ))}
+          {disconnectedNodes?.length > 0 && (
+            <DisconnectedEntry nodeIds={disconnectedNodes} connectorId={connectorId} iconUri={iconUri} brandColor={brandColor} />
+          )}
         </div>
       </AccordionPanel>
     </div>

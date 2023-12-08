@@ -28,3 +28,7 @@ export const useSuppressDefaultNodeSelectFunctionality = () => {
 export const useNodeSelectAdditionalCallback = () => {
   return useSelector((state: RootState) => state.designerOptions.nodeSelectAdditionalCallback);
 };
+
+export const useShowConnectionsPanel = () => {
+  return useSelector((state: RootState) => state.designerOptions?.showConnectionsPanel ?? false);
+};

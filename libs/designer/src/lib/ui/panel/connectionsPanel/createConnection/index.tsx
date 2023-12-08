@@ -270,7 +270,7 @@ export const CreateConnection = () => {
 
   const cancelCallback = useCallback(() => {
     dispatch(setIsCreatingConnection(false));
-  }, []);
+  }, [dispatch]);
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',

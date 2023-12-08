@@ -1,14 +1,15 @@
-import { type AppDispatch, useSelectedNodeId } from '../../../../core';
+import { type AppDispatch, useSelectedNodeId, getIconUriFromConnector } from '../../../../core';
 import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import { useNodeConnectionId, useConnectorByNodeId } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { setIsCreatingConnection, switchToOperationPanel } from '../../../../core/state/panel/panelSlice';
+import { useReferencePanelMode } from '../../../../core/state/panel/panelSelectors';
+import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { ConnectionTable } from './connectionTable';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { Button, Spinner, Text } from '@fluentui/react-components';
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
-import type { Connection, Connector } from '@microsoft/utils-logic-apps';
+import { type Connection, type Connector } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -20,16 +21,18 @@ export const SelectConnection = () => {
   const selectedNodeId = useSelectedNodeId();
   const currentConnectionId = useNodeConnectionId(selectedNodeId);
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
+  const referencePanelMode = useReferencePanelMode();
 
   const closeConnectionsFlow = useCallback(() => {
-    dispatch(switchToOperationPanel(selectedNodeId));
-  }, [dispatch, selectedNodeId]);
+    dispatch(openPanel({ panelMode: referencePanelMode ?? 'Operation' }));
+  }, [dispatch, referencePanelMode]);
 
   const createConnectionCallback = useCallback(() => {
     dispatch(setIsCreatingConnection(true));
   }, [dispatch]);
 
   const connector = useConnectorByNodeId(selectedNodeId);
+  const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
 
@@ -100,6 +103,12 @@ export const SelectConnection = () => {
 
   return (
     <div className="msla-select-connections-container">
+      {/* TODO: Icon */}
+      <div className="msla-flex-header">
+        <img className="msla-action-icon" src={connectorIconUri} alt={connector?.properties?.displayName} />
+        <Text className="msla-flex-header-title">{connector?.properties?.displayName}</Text>
+      </div>
+
       <Text>{componentDescription}</Text>
 
       <ConnectionTable

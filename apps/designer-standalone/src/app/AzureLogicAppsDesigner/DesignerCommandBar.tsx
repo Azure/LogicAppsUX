@@ -8,8 +8,6 @@ import {
   store as DesignerStore,
   serializeBJSWorkflow,
   updateCallbackUrl,
-  switchToWorkflowParameters,
-  switchToErrorsPanel,
   useIsDesignerDirty,
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
@@ -17,7 +15,7 @@ import {
   serializeWorkflow,
   validateParameter,
   updateParameterValidation,
-  switchToConnectionsPanel,
+  openPanel,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -40,6 +38,7 @@ export const DesignerCommandBar = ({
   discard,
   saveWorkflow,
   isDarkMode,
+  showConnectionsPanel,
 }: {
   id: string;
   location: string;
@@ -48,6 +47,7 @@ export const DesignerCommandBar = ({
   saveWorkflow: (workflow: Workflow) => Promise<void>;
   isDarkMode: boolean;
   isConsumption?: boolean;
+  showConnectionsPanel?: boolean;
 }) => {
   const dispatch = useDispatch();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
@@ -100,83 +100,101 @@ export const DesignerCommandBar = ({
   );
 
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
-  const items: ICommandBarItemProps[] = [
-    {
-      key: 'save',
-      text: 'Save',
-      disabled: saveIsDisabled,
-      onRenderIcon: () => {
-        return isSaving ? (
-          <Spinner size={SpinnerSize.small} />
-        ) : (
-          <FontIcon aria-label="Save" iconName="Save" className={!saveIsDisabled ? classNames.azureBlue : classNames.azureGrey} />
-        );
+  const items: ICommandBarItemProps[] = useMemo(
+    () => [
+      {
+        key: 'save',
+        text: 'Save',
+        disabled: saveIsDisabled,
+        onRenderIcon: () => {
+          return isSaving ? (
+            <Spinner size={SpinnerSize.small} />
+          ) : (
+            <FontIcon aria-label="Save" iconName="Save" className={!saveIsDisabled ? classNames.azureBlue : classNames.azureGrey} />
+          );
+        },
+        onClick: () => {
+          saveWorkflowMutate();
+        },
       },
-      onClick: () => {
-        saveWorkflowMutate();
+      {
+        key: 'discard',
+        disabled: isSaving,
+        text: 'Discard',
+        iconProps: { iconName: 'Clear' },
+        onClick: () => {
+          discard();
+        },
       },
-    },
-    {
-      key: 'discard',
-      disabled: isSaving,
-      text: 'Discard',
-      iconProps: { iconName: 'Clear' },
-      onClick: () => {
-        discard();
+      {
+        key: 'parameters',
+        text: 'Parameters',
+        onRenderText: (item: { text: string }) => {
+          return (
+            <>
+              {item.text}
+              {haveWorkflowParameterErrors ? (
+                <div style={{ display: 'inline-block', marginLeft: 8 }}>
+                  <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
+                </div>
+              ) : null}
+            </>
+          );
+        },
+        iconProps: { iconName: 'Parameter' },
+        onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
       },
-    },
-    {
-      key: 'parameters',
-      text: 'Parameters',
-      onRenderText: (item: { text: string }) => {
-        return (
-          <>
-            {item.text}
-            {haveWorkflowParameterErrors ? (
-              <div style={{ display: 'inline-block', marginLeft: 8 }}>
-                <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
-              </div>
-            ) : null}
-          </>
-        );
+      ...(showConnectionsPanel
+        ? [
+            {
+              key: 'connections',
+              text: 'Connections',
+              iconProps: { iconName: 'Link12' },
+              onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+            },
+          ]
+        : []),
+      {
+        key: 'codeview',
+        text: 'View Code',
+        iconProps: { iconName: 'Code' },
+        onClick: async () => {
+          console.log(await serializeWorkflow(DesignerStore.getState()));
+          alert('Check console for workflow serialization');
+        },
       },
-      iconProps: { iconName: 'Parameter' },
-      onClick: () => !!dispatch(switchToWorkflowParameters()),
-    },
-    {
-      key: 'connections',
-      text: 'Connections',
-      iconProps: { iconName: 'Link12' },
-      onClick: () => !!dispatch(switchToConnectionsPanel()),
-    },
-    {
-      key: 'codeview',
-      text: 'View Code',
-      iconProps: { iconName: 'Code' },
-      onClick: async () => {
-        console.log(await serializeWorkflow(DesignerStore.getState()));
-        alert('Check console for workflow serialization');
+      {
+        key: 'errors',
+        text: 'Errors',
+        disabled: !haveErrors,
+        iconProps: {
+          iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
+          style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
+        },
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
       },
-    },
-    {
-      key: 'errors',
-      text: 'Errors',
-      disabled: !haveErrors,
-      iconProps: {
-        iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
-        style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
+      {
+        key: 'fileABug',
+        text: 'File a bug',
+        iconProps: { iconName: 'Bug' },
+        onClick: () => {
+          window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
+        },
       },
-      onClick: () => !!dispatch(switchToErrorsPanel()),
-    },
-    {
-      key: 'fileABug',
-      text: 'File a bug',
-      iconProps: { iconName: 'Bug' },
-      onClick: () => {
-        window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
-      },
-    },
-  ];
+    ],
+    [
+      discard,
+      dispatch,
+      haveErrors,
+      haveWorkflowParameterErrors,
+      isDarkMode,
+      isSaving,
+      saveIsDisabled,
+      saveWorkflowMutate,
+      showConnectionsPanel,
+    ]
+  );
+
   return (
     <CommandBar
       items={items}

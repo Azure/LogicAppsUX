@@ -17,7 +17,7 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
   const selectedNodeId = useSelectedNodeId();
   const connector = useConnectorByNodeId(selectedNodeId);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
-  const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
+  const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery.data]);
 
   const isCreatingConnection = useIsCreatingConnection();
 

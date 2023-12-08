@@ -1,3 +1,4 @@
+import { useShowConnectionsPanel } from '../../state/workflowLoadingSelectors';
 import './pseudoCommandBar.less';
 import type { IModalStyles } from '@fluentui/react';
 import { ActionButton, Modal } from '@fluentui/react';
@@ -7,12 +8,10 @@ import {
   useIsDesignerDirty,
   resetDesignerDirtyState,
   serializeWorkflow,
-  switchToWorkflowParameters,
-  switchToErrorsPanel,
   useAllConnectionErrors,
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
-  switchToConnectionsPanel,
+  openPanel,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
@@ -61,6 +60,8 @@ export const PseudoCommandBar = () => {
 
   const isDirty = useIsDesignerDirty();
 
+  const showConnectionsButton = useShowConnectionsPanel();
+
   return (
     <div className="pseudo-command-bar">
       <ActionButton
@@ -83,9 +84,15 @@ export const PseudoCommandBar = () => {
       <ActionButton
         iconProps={{ iconName: 'Parameter' }}
         text="Workflow Parameters"
-        onClick={() => dispatch(switchToWorkflowParameters())}
+        onClick={() => dispatch(openPanel({ panelMode: 'WorkflowParameters' }))}
       />
-      <ActionButton iconProps={{ iconName: 'Link12' }} text="Connections" onClick={() => dispatch(switchToConnectionsPanel())} />
+      {showConnectionsButton && (
+        <ActionButton
+          iconProps={{ iconName: 'Link12' }}
+          text="Connections"
+          onClick={() => dispatch(openPanel({ panelMode: 'Connection' }))}
+        />
+      )}
       <ActionButton iconProps={{ iconName: 'Code' }} text="Code View" onClick={serializeCallback} />
       <ActionButton
         iconProps={{
@@ -93,7 +100,7 @@ export const PseudoCommandBar = () => {
           style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
         }}
         text="Errors"
-        onClick={() => dispatch(switchToErrorsPanel())}
+        onClick={() => dispatch(openPanel({ panelMode: 'Error' }))}
         disabled={!haveErrors}
       />
 

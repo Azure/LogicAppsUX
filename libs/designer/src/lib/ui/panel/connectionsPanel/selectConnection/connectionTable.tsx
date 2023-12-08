@@ -1,5 +1,5 @@
 import { Icon, TooltipHost } from '@fluentui/react';
-import type { DataGridProps, OnSelectionChangeData, TableColumnDefinition, TableColumnSizingOptions } from '@fluentui/react-components';
+import type { DataGridProps, TableColumnDefinition, TableColumnSizingOptions } from '@fluentui/react-components';
 import {
   DataGrid,
   DataGridBody,
@@ -126,7 +126,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   };
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = useCallback(
-    (e: any, data: OnSelectionChangeData) => {
+    (e: any, data: any) => {
       const index = data.selectedItems.values().next().value;
       if (items[index]?.invalid) return; // Don't allow selection of invalid connections (they are disabled)
       const connection = connections[index];
@@ -149,7 +149,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       onSelectionChange={onSelectionChange}
       columnSizingOptions={columnSizingOptions}
       resizableColumns
-      focusMode="composite"
+      focusMode="row_unstable"
       subtleSelection
       style={{
         border: '1px solid #e0e0e0',

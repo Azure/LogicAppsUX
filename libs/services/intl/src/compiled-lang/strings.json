@@ -933,6 +933,12 @@
       "value": "Required. This value is the next integer after the highest integer that can be returned."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -6607,6 +6613,12 @@
       "value": "When a new item"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6963,6 +6975,12 @@
     {
       "type": 0,
       "value": "Undo"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -8225,6 +8243,12 @@
     {
       "type": 0,
       "value": "In-App"
+    }
+  ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -9695,6 +9719,12 @@
     {
       "type": 0,
       "value": "Value"
+    }
+  ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
     }
   ],
   "y1e9yw": [

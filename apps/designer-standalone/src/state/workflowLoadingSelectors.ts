@@ -41,6 +41,10 @@ export const useShowChatBot = () => {
   return useSelector((state: RootState) => state.workflowLoader.showChatBot);
 };
 
+export const useShowConnectionsPanel = () => {
+  return useSelector((state: RootState) => state.workflowLoader?.showConnectionsPanel ?? false);
+};
+
 export const useAreCustomEditorsEnabled = () => {
   return useSelector((state: RootState) => state.workflowLoader.areCustomEditorsEnabled);
 };

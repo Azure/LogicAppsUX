@@ -1,12 +1,11 @@
-import { setSelectedNodeId, changePanelNode, setFocusNode } from '../../../../core';
 import { useConnectionById } from '../../../../core/queries/connections';
-import { showDefaultTabs } from '../../../../core/state/panel/panelSlice';
-import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
+import { NodeLinkButton } from './nodeLinkButton';
 import { Icon, Text, css } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import { Button, Tooltip } from '@fluentui/react-components';
+import { Open24Filled, ArrowSwap24Filled } from '@fluentui/react-icons';
 import { getConnectionErrors } from '@microsoft/utils-logic-apps';
-import React, { useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 interface ConnectionEntryProps {
   connectorId: string;
@@ -38,43 +37,45 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     );
   }, [errors]);
 
+  const intl = useIntl();
+  const openConnectionTooltipText = intl.formatMessage({
+    defaultMessage: 'Open connection',
+    description: 'Tooltip for the button to open a connection',
+  });
+  const connectedActionsText = intl.formatMessage({
+    defaultMessage: 'Connected actions',
+    description: 'Header for the connected actions section',
+  });
+  const reassignConnectionTooltipText = intl.formatMessage({
+    defaultMessage: 'Reassign all connected actions to a new connection',
+    description: 'Tooltip for the button to reassign actions',
+  });
+
   return (
     <div key={refId} className="msla-connector-connections-card-connection">
-      <div className="msla-connector-connections-card-header">
+      <div className="msla-flex-header">
         {statusIconComponent}
-        <Text className="msla-connector-connections-card-connection-title" variant="large">
+        <Text className="msla-flex-header-title" variant="large">
           {connection?.result?.properties.displayName ?? refId}
         </Text>
-        <Text className="msla-connector-connections-card-connection-subtitle" variant="large">
+        <Text className="msla-flex-header-subtitle" variant="large">
           {connection?.result?.name}
         </Text>
+        <Tooltip content={openConnectionTooltipText} relationship="label">
+          <Button icon={<Open24Filled />} appearance="subtle" style={{ margin: '-6px', marginLeft: 'auto' }} />
+        </Tooltip>
       </div>
       <div className="msla-connector-connections-card-connection-body">
-        <Text>{'Connected Nodes:'}</Text>
+        <Text>{connectedActionsText}</Text>
         <div className="msla-connector-connections-card-connection-nodes">
           {nodeIds.map((nodeId: string) => (
-            <NodeLinkBadge key={nodeId} nodeId={nodeId} iconUri={iconUri} />
+            <NodeLinkButton key={nodeId} nodeId={nodeId} iconUri={iconUri} />
           ))}
+          <Tooltip content={reassignConnectionTooltipText} relationship="label">
+            <Button icon={<ArrowSwap24Filled />} />
+          </Tooltip>
         </div>
       </div>
     </div>
-  );
-};
-
-const NodeLinkBadge = ({ nodeId, iconUri }: { nodeId: string; iconUri?: string }) => {
-  const dispatch = useDispatch();
-  const id = useNodeDisplayName(nodeId);
-
-  const nodeClick = useCallback(() => {
-    dispatch(setFocusNode(nodeId));
-    dispatch(setSelectedNodeId(nodeId));
-    dispatch(changePanelNode(nodeId));
-    dispatch(showDefaultTabs());
-  }, [dispatch, nodeId]);
-
-  return (
-    <Button size="small" icon={<img src={iconUri} alt="" style={{ width: 'inherit', borderRadius: '2px' }} />} onClick={nodeClick}>
-      {id}
-    </Button>
   );
 };

@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../core';
 import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useCurrentPanelModePanelMode, useIsLoadingPanel, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
+import { useCurrentPanelMode, useIsLoadingPanel, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorPanel } from './errorsPanel/errorsPanel';
@@ -36,7 +36,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const isDarkMode = useIsDarkMode();
 
   const collapsed = useIsPanelCollapsed();
-  const currentPanelMode = useCurrentPanelModePanelMode();
+  const currentPanelMode = useCurrentPanelMode();
 
   usePanelTabs(); // This initializes tabs for the node details panel, can't be run twice so it lives here instead of in the panel
 
@@ -68,20 +68,19 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const isLoadingPanel = useIsLoadingPanel();
 
-  if (isLoadingPanel)
-    return (
-      <div className="msla-loading-container">
-        <Spinner size={'large'} />
-      </div>
-    );
+  const LoadingComponent = () => (
+    <div className="msla-loading-container">
+      <Spinner size={'large'} />
+    </div>
+  );
 
-  return isUndefined(currentPanelMode) || currentPanelMode === 'Operation' ? (
+  return (!isLoadingPanel && isUndefined(currentPanelMode)) || currentPanelMode === 'Operation' ? (
     <NodeDetailsPanel {...commonPanelProps} />
   ) : (
     <Panel
       className={`msla-panel-root-${currentPanelMode}`}
       isLightDismiss
-      isBlocking={!nonBlockingPanels.includes(currentPanelMode)}
+      isBlocking={!isLoadingPanel && !nonBlockingPanels.includes(currentPanelMode ?? '')}
       type={commonPanelProps.panelLocation === PanelLocation.Right ? PanelType.medium : PanelType.customNear}
       isOpen={!collapsed}
       onDismiss={dismissPanel}
@@ -100,7 +99,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       })}
     >
       {
-        currentPanelMode === 'WorkflowParameters' ? (
+        isLoadingPanel ? (
+          <LoadingComponent />
+        ) : currentPanelMode === 'WorkflowParameters' ? (
           <WorkflowParametersPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Discovery' ? (
           <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />

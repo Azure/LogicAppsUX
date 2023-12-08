@@ -1,6 +1,6 @@
+import { openPanel } from '../../../../../core';
 import { useIsOperationMissingConnection } from '../../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
-import { switchToConnectionsPanel } from '../../../../../core/state/panel/panelSlice';
 import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { Icon, Label, Link, Spinner, SpinnerSize } from '@fluentui/react';
 import { useCallback, useEffect } from 'react';
@@ -25,7 +25,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const isOperationMissingConnection = useIsOperationMissingConnection(nodeId);
 
   const openChangeConnectionCallback = useCallback(() => {
-    dispatch(switchToConnectionsPanel({ nodeId }));
+    dispatch(openPanel({ nodeId, panelMode: 'Connection' }));
   }, [dispatch, nodeId]);
 
   const operationInfo = useOperationInfo(nodeId);

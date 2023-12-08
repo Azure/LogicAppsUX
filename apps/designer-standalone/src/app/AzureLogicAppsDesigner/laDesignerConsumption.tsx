@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { environment } from '../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
-import { useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } from '../../state/workflowLoadingSelectors';
+import {
+  useIsDarkMode,
+  useIsMonitoringView,
+  useIsReadOnly,
+  useShowChatBot,
+  useShowConnectionsPanel,
+} from '../../state/workflowLoadingSelectors';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ParametersData } from './Models/Workflow';
@@ -56,6 +62,7 @@ const DesignerEditorConsumption = () => {
   const readOnly = useIsReadOnly();
   const isMonitoringView = useIsMonitoringView();
   const showChatBot = useShowChatBot();
+  const showConnectionsPanel = useShowConnectionsPanel();
 
   const queryClient = getReactQueryClient();
 
@@ -169,7 +176,17 @@ const DesignerEditorConsumption = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly, isMonitoringView, useLegacyWorkflowParameters: true }}>
+      <DesignerProvider
+        locale={'en-US'}
+        options={{
+          services,
+          isDarkMode,
+          readOnly,
+          isMonitoringView,
+          useLegacyWorkflowParameters: true,
+          showConnectionsPanel,
+        }}
+      >
         {workflow?.definition ? (
           <BJSWorkflowProvider workflow={{ definition: parsedDefinition, connectionReferences, parameters }}>
             <div style={{ height: 'inherit', width: 'inherit' }}>
@@ -181,6 +198,7 @@ const DesignerEditorConsumption = () => {
                 isReadOnly={readOnly}
                 isDarkMode={isDarkMode}
                 isConsumption
+                showConnectionsPanel={showConnectionsPanel}
               />
               <Designer />
               {showChatBot ? (

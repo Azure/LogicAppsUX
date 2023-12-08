@@ -26,6 +26,7 @@ export interface DesignerOptionsState {
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
+  showConnectionsPanel?: boolean;
 }
 
 export interface ServiceOptions {
