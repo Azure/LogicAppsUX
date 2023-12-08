@@ -1,7 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import {
@@ -30,7 +28,8 @@ import {
 } from './Function.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { isAGuid, SchemaType } from '@microsoft/utils-logic-apps';
 
 export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
@@ -206,7 +205,7 @@ export const amendSourceKeyForDirectAccessIfNeeded = (sourceKey: string): [strin
 
     // Only amend DA if the expression is not wrapped in a function, etc.
     // Otherwise a bracket in one parameter may be matched with a bracked in another parameter.
-    if (keyWithDaStartIdx == 0 && keyWithDaEndIdx == sourceKey.length) {
+    if (keyWithDaStartIdx === 0 && keyWithDaEndIdx === sourceKey.length) {
       mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
       mockDirectAccessFnKey += `${sourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
       mockDirectAccessFnKey += `${sourceKey.substring(0, daOpenBracketIdx)}, `; // Scope (source loop element)

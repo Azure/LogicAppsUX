@@ -5,13 +5,13 @@ import {
   simpleFunctionCardDiameter,
 } from '../constants/NodeConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, functionPlaceholderPosition } from './ReactFlow.Util';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 
 const rootLayoutNodeId = 'root';
 const LayoutContainer = {

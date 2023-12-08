@@ -1,6 +1,5 @@
 import { reactFlowFitViewOptions, ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models/';
 import { useOverviewLayout } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
@@ -10,6 +9,7 @@ import { checkNodeStatuses } from '../sidePane/tabs/targetSchemaTab/TargetSchema
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { SchemaType } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-named-as-default

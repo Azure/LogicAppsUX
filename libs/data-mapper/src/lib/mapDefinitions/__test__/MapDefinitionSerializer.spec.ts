@@ -1,12 +1,13 @@
 import { addFunction, concatFunction, greaterThanFunction, sortFunction } from '../../__mocks__/FunctionMock';
 import { reservedMapDefinitionKeys } from '../../constants/MapDefinitionConstants';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
-import { SchemaFileFormat, SchemaType, directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction } from '../../models';
+import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import { applyConnectionValue } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { SchemaFileFormat, SchemaType } from '@microsoft/utils-logic-apps';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,

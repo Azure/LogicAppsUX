@@ -1,6 +1,7 @@
 import type { AppDispatch } from '../../state/store';
 import {
   useAreCustomEditorsEnabled,
+  useHostOptions,
   useIsDarkMode,
   useIsLocal,
   useIsMonitoringView,
@@ -17,6 +18,7 @@ import {
   setIsChatBotEnabled,
   setAreCustomEditorsEnabled,
   setShowConnectionsPanel,
+  setHostOptions,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -30,6 +32,7 @@ const ContextSettings = () => {
   const showConnectionsPanel = useShowConnectionsPanel();
   const isLocal = useIsLocal();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
+  const hostOptions = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -65,6 +68,11 @@ const ContextSettings = () => {
         label="Connections Panel"
         checked={showConnectionsPanel}
         onChange={(_, checked) => dispatch(setShowConnectionsPanel(!!checked))}
+      />
+      <Checkbox
+        label="Display Runtime Info"
+        checked={hostOptions.displayRuntimeInfo}
+        onChange={(_, checked) => dispatch(setHostOptions({ displayRuntimeInfo: !!checked }))}
       />
     </div>
   );

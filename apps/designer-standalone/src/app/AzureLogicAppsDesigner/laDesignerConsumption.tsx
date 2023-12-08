@@ -6,6 +6,7 @@ import {
   useIsMonitoringView,
   useIsReadOnly,
   useShowChatBot,
+  useHostOptions,
   useShowConnectionsPanel,
 } from '../../state/workflowLoadingSelectors';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
@@ -64,6 +65,7 @@ const DesignerEditorConsumption = () => {
   const showChatBot = useShowChatBot();
   const showConnectionsPanel = useShowConnectionsPanel();
 
+  const hostOptions = useHostOptions();
   const queryClient = getReactQueryClient();
 
   // const workflowName = workflowId.split('/').splice(-1)[0];
@@ -185,6 +187,7 @@ const DesignerEditorConsumption = () => {
           isMonitoringView,
           useLegacyWorkflowParameters: true,
           showConnectionsPanel,
+          hostOptions,
         }}
       >
         {workflow?.definition ? (

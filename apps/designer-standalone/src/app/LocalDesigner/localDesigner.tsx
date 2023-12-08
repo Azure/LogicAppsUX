@@ -147,6 +147,7 @@ export const LocalDesigner = () => {
     language,
     areCustomEditorsEnabled,
     showConnectionsPanel,
+    hostOptions,
   } = useSelector((state: RootState) => state.workflowLoader);
   editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
@@ -170,6 +171,7 @@ export const LocalDesigner = () => {
     isDarkMode,
     useLegacyWorkflowParameters: isConsumption,
     showConnectionsPanel,
+    hostOptions,
   };
 
   return (

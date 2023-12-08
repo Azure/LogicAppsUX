@@ -1,5 +1,5 @@
 import type { AppDispatch } from '../../core';
-import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useHostOptions, useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useCurrentPanelMode, useIsLoadingPanel, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
@@ -21,7 +21,6 @@ import { useDispatch } from 'react-redux';
 export interface PanelRootProps {
   panelLocation?: PanelLocation;
   customPanelLocations?: CustomPanelLocation[];
-  displayRuntimeInfo: boolean;
 }
 
 const layerProps = {
@@ -30,9 +29,9 @@ const layerProps = {
 };
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
-  const { panelLocation, customPanelLocations, displayRuntimeInfo } = props;
+  const { panelLocation, customPanelLocations } = props;
   const dispatch = useDispatch<AppDispatch>();
-
+  const { displayRuntimeInfo } = useHostOptions();
   const isDarkMode = useIsDarkMode();
 
   const collapsed = useIsPanelCollapsed();

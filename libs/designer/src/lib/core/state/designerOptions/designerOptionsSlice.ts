@@ -30,6 +30,9 @@ const initialState: DesignerOptionsState = {
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
   showConnectionsPanel: false,
+  hostOptions: {
+    displayRuntimeInfo: true,
+  },
 };
 
 export const initializeServices = createAsyncThunk(
@@ -101,6 +104,10 @@ export const designerOptionsSlice = createSlice({
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
       state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
       state.showConnectionsPanel = action.payload.showConnectionsPanel;
+      state.hostOptions = {
+        ...state.hostOptions,
+        ...action.payload.hostOptions,
+      };
     },
   },
   extraReducers: (builder) => {

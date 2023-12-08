@@ -25,6 +25,9 @@ export interface DesignerOptionsState {
   useLegacyWorkflowParameters?: boolean;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
+  hostOptions: {
+    displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
+  };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
 }

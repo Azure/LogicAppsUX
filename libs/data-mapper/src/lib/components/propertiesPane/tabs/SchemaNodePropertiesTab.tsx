@@ -1,5 +1,4 @@
 import type { RootState } from '../../../core/state/Store';
-import type { SchemaNodeExtended } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { isSchemaNodeExtended } from '../../../utils';
 import { isCustomValue } from '../../../utils/Connection.Utils';
@@ -9,6 +8,7 @@ import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { Stack } from '@fluentui/react';
 import { Label, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
