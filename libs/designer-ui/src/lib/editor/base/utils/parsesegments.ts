@@ -244,9 +244,9 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
     if (segment.type === ValueSegmentType.LITERAL) {
       text += segment.value;
     } else if (segment.token) {
-      const { title, brandColor, value } = segment.token;
+      const { value } = segment.token;
       // get a text-identifiable unique id for the token
-      const string = `$[${title},${value},${brandColor}]$`;
+      const string = `@{${value}}`;
       text += string;
       nodeMap?.set(string, segment);
     }
@@ -254,11 +254,11 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
   return text;
 };
 
-export const decodeStringSegments =
-  (value: string, tokensEnabled: boolean | undefined, mode: 'lexical' | 'html'): string => encodeOrDecodeStringSegments(value, tokensEnabled, mode, 'decode');
+export const decodeStringSegments = (value: string, tokensEnabled: boolean | undefined, mode: 'lexical' | 'html'): string =>
+  encodeOrDecodeStringSegments(value, tokensEnabled, mode, 'decode');
 
-export const encodeStringSegments =
-  (value: string, tokensEnabled: boolean | undefined, mode: 'lexical' | 'html'): string => encodeOrDecodeStringSegments(value, tokensEnabled, mode, 'encode');
+export const encodeStringSegments = (value: string, tokensEnabled: boolean | undefined, mode: 'lexical' | 'html'): string =>
+  encodeOrDecodeStringSegments(value, tokensEnabled, mode, 'encode');
 
 const encodeOrDecodeStringSegments = (
   value: string,
@@ -281,8 +281,9 @@ const encodeOrDecodeStringSegments = (
       }
 
       const tokenSegment = value.substring(startIndex + 2, endIndex);
-      const encodedTokenSegment =
-        `$[${direction === 'encode' ? encodeSegmentValue(tokenSegment, mode) : decodeSegmentValue(tokenSegment, mode)}]$`;
+      const encodedTokenSegment = `$[${
+        direction === 'encode' ? encodeSegmentValue(tokenSegment, mode) : decodeSegmentValue(tokenSegment, mode)
+      }]$`;
       newValue += encodedTokenSegment;
 
       i = endIndex + 1; // Skip the ']', and i++ will skip the '$'.
