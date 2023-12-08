@@ -8,8 +8,9 @@ import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/wor
 import type { AppDispatch, RootState } from './store';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
+import { useDeepCompareEffect } from '@react-hookz/web';
 import { createSelector } from '@reduxjs/toolkit';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
@@ -20,12 +21,12 @@ export interface BJSWorkflowProviderProps {
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance }) => {
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initWorkflowKind(equals(workflow?.kind, 'stateful') ? WorkflowKind.STATEFUL : WorkflowKind.STATELESS));
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
-  }, [dispatch, workflow, runInstance]);
+  }, [runInstance, workflow]);
 
   return <>{children}</>;
 };
