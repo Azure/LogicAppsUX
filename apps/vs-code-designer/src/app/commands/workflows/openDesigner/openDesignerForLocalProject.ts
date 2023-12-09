@@ -126,23 +126,12 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.panel.onDidChangeViewState(
       async (event) => {
         const eventPanel: WebviewPanel = event.webviewPanel;
-        this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
-        eventPanel.webview.html = await this.getWebviewContent({
-          connectionsData: this.panelMetadata.connectionsData,
-          parametersData: this.panelMetadata.parametersData || {},
-          localSettings: this.panelMetadata.localSettings,
-          artifacts: this.panelMetadata.artifacts,
-          azureDetails: this.panelMetadata.azureDetails,
-          workflowDetails: this.panelMetadata.workflowDetails,
-        });
-        this.sendMsgToWebview({
-          command: ExtensionCommand.update_panel_metadata,
-          data: {
-            panelMetadata: this.panelMetadata,
-            connectionData: this.connectionData,
-            apiHubServiceDetails: this.apiHubServiceDetails,
-          },
-        });
+        if (eventPanel.visible) {
+          window.showInformationMessage(
+            localize('designer.restart', 'If changes were made to logic app files, restart designer to see the latest changes.'),
+            'OK'
+          );
+        }
       },
       undefined,
       ext.context.subscriptions
