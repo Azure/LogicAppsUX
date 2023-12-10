@@ -136,4 +136,9 @@ export function registerCommands(): void {
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
+  // Unit Test Commands
+  registerCommand('azureLogicAppsStandard.createUnitTest', createUnitTest);
+  registerCommand('azureLogicAppsStandard.editUnitTest', editUnitTest);
+  registerCommand('azureLogicAppsStandard.openUnitTestResults', openUnitTestResults);
+  registerCommand('azureLogicAppsStandard.runUnitTest', runUnitTest);
 }

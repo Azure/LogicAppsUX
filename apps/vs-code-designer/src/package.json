@@ -326,6 +326,26 @@
       {
         "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
         "title": "Data Mapper: Load existing data map"
+      },
+      {
+        "command": "azureLogicAppsStandard.createUnitTest",
+        "title": "Create Unit Test",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.openUnitTestResults",
+        "title": "View Unit Test Results",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.editUnitTest",
+        "title": "Edit Unit Test",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.runUnitTest",
+        "title": "Run Unit Test",
+        "category": "Azure Logic Apps"
       }
     ],
     "submenus": [
@@ -659,6 +679,26 @@
           "submenu": "azureLogicAppsStandard.dataMapperMenu",
           "group": "navigation",
           "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedFileExts"
+        },
+        {
+          "command": "azureLogicAppsStandard.createUnitTest",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@4"
+        },
+        {
+          "command": "azureLogicAppsStandard.openUnitTestResults",
+          "when": "resourceFilename=~/.unit-test.[0-9]{14}/",
+          "group": "navigation@5"
+        },
+        {
+          "command": "azureLogicAppsStandard.editUnitTest",
+          "when": "resourceFilename=~/.unit-test.json/",
+          "group": "navigation@4"
+        },
+        {
+          "command": "azureLogicAppsStandard.runUnitTest",
+          "when": "resourceFilename=~/.unit-test.json/",
+          "group": "navigation@4"
         }
       ],
       "commandPalette": [
