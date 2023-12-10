@@ -38,6 +38,8 @@ export abstract class OpenDesignerBase {
   protected oauthRedirectUrl?: string;
   protected schemaArtifacts?: FileDetails[] | undefined;
   protected mapArtifacts?: Record<string, FileDetails[]> | undefined;
+  protected unitTestName: string;
+  protected isUnitTest: boolean;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,

@@ -40,14 +40,15 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
 
-  constructor(context: IActionContext, node: Uri) {
+  constructor(context: IActionContext, node: Uri, unitTestName?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
     const apiVersion = '2018-11-01';
-    const panelName = `${workspace.name}-${workflowName}`;
+    const panelName = `${workspace.name}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
     super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true, false);
-
+    this.unitTestName = unitTestName;
+    this.isUnitTest = !!unitTestName;
     this.workflowFilePath = node.fsPath;
   }
 
@@ -167,6 +168,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
             hostVersion: ext.extensionVersion,
+            isUnitTest: this.isUnitTest,
           },
         });
         await this.validateWorkflow(this.panelMetadata.workflowContent);

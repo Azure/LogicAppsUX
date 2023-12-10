@@ -24,14 +24,15 @@ export interface DesignerCommandBarProps {
   isDisabled: boolean;
   onRefresh(): void;
   isDarkMode: boolean;
+  isUnitTest: boolean;
 }
 
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefreshing, isDisabled, onRefresh, isDarkMode }) => {
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefreshing, isDisabled, onRefresh, isDarkMode, isUnitTest }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
 
-  const isMonitoringView = useSelector(
+  const isMonitoringView: boolean = useSelector(
     createSelector(
       (state: RootState) => state.designerOptions,
       (state: any) => state.isMonitoringView
@@ -92,6 +93,14 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     MONITORING_VIEW_RESUBMIT: intl.formatMessage({
       defaultMessage: 'Resubmit',
       description: 'Button text for resubmit',
+    }),
+    UNIT_TEST_SAVE: intl.formatMessage({
+      defaultMessage: 'Save unit test definition',
+      description: 'Button text for save unit test definition',
+    }),
+    UNIT_TEST_ASSERTIONS: intl.formatMessage({
+      defaultMessage: 'Assertions',
+      description: 'Button text for unit test asssertions',
     }),
   };
 
@@ -195,9 +204,41 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     },
   ];
 
+  const unitTestItems: ICommandBarItemProps[] = [
+    {
+      key: 'Save',
+      disabled: isSaveDisabled,
+      text: Resources.UNIT_TEST_SAVE,
+      ariaLabel: Resources.UNIT_TEST_SAVE,
+      onRenderIcon: () => {
+        return isSaving ? (
+          <Spinner size={SpinnerSize.small} />
+        ) : (
+          <FontIcon
+            aria-label={Resources.DESIGNER_SAVE}
+            iconName="Save"
+            className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue}
+          />
+        );
+      },
+      onClick: () => {
+        console.log('Unit test save clicked');
+      },
+    },
+    {
+      key: 'Assertions',
+      text: Resources.UNIT_TEST_ASSERTIONS,
+      ariaLabel: Resources.UNIT_TEST_ASSERTIONS,
+      iconProps: { iconName: 'CheckMark' },
+      onClick: () => {
+        console.log('Assertions clicked');
+      },
+    },
+  ];
+
   return (
     <CommandBar
-      items={isMonitoringView ? monitoringViewItems : desingerItems}
+      items={isUnitTest ? unitTestItems : isMonitoringView ? monitoringViewItems : desingerItems}
       ariaLabel="Use left and right arrow keys to navigate between commands"
       styles={{
         root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}` },
