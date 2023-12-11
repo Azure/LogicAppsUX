@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.86.1](https://github.com/Azure/LogicAppsUX/compare/v2.86.0...v2.86.1) (2023-12-11)
+
+
+### Bug Fixes
+
+* **vscode:** Codefixes for workspace file creation, dotnet installation and designer refresh ([#3818](https://github.com/Azure/LogicAppsUX/issues/3818)) ([cc96054](https://github.com/Azure/LogicAppsUX/commit/cc9605428769c5e1d2f3b1b4c15bd0dba0cbc491)), closes [#3659](https://github.com/Azure/LogicAppsUX/issues/3659) [#3779](https://github.com/Azure/LogicAppsUX/issues/3779) [#3813](https://github.com/Azure/LogicAppsUX/issues/3813) [#3816](https://github.com/Azure/LogicAppsUX/issues/3816)
+
 ## [2.86.0](https://github.com/Azure/LogicAppsUX/compare/v2.85.0...v2.86.0) (2023-11-23)
 
 
