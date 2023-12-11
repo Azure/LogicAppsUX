@@ -31,10 +31,6 @@
     color: gray;
   }
 
-  .msla-connector-connections-card-connection-status-icon {
-    font-size: large;
-  }
-
   .msla-connector-connections-card-connection-body {
     display: flex;
     flex-direction: column;
@@ -53,6 +49,14 @@
   }
 }
 
+.msla-connection-status-icon--success {
+  color: #107c10;
+}
+
+.msla-connection-status-icon--error {
+  color: #a80000;
+}
+
 .msla-theme-dark {
   .msla-connector-connections-card-connection {
     border: 1px solid #797775;
@@ -64,5 +68,13 @@
 
   .msla-connector-connections-card-connection-body {
     background-color: #ffffff08;
+  }
+
+  .msla-connection-status-icon--success {
+    color: #92c353;
+  }
+
+  .msla-connection-status-icon--error {
+    color: #f1707b;
   }
 }

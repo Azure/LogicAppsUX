@@ -6299,6 +6299,12 @@
       "value": "Change Connection"
     }
   ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
+    }
+  ],
   "ca/QIc": [
     {
       "type": 0,
@@ -7817,6 +7823,12 @@
     {
       "type": 0,
       "value": "', split on not in array."
+    }
+  ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
     }
   ],
   "mYQFtf": [

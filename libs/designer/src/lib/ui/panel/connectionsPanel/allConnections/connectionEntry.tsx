@@ -1,9 +1,8 @@
 import { useConnectionById } from '../../../../core/queries/connections';
 import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
-import { Icon, css } from '@fluentui/react';
 import { Button, Text, Tooltip } from '@fluentui/react-components';
-import { Open24Filled, ArrowSwap24Filled } from '@fluentui/react-icons';
+import { Open24Filled, ArrowSwap24Filled, CheckmarkCircle24Filled, ErrorCircle24Filled } from '@fluentui/react-icons';
 import { getConnectionErrors } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -41,14 +40,14 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     defaultMessage: 'Reassign all connected actions to a new connection',
     description: 'Tooltip for the button to reassign actions',
   });
-  // const connectionValidStatusText = intl.formatMessage({
-  //   defaultMessage: 'Connection is valid',
-  //   description: 'Tooltip for the button to reassign actions',
-  // });
-  // const connectionInvalidStatusText = intl.formatMessage({
-  //   defaultMessage: 'Connection is invalid',
-  //   description: 'Tooltip for the button to reassign actions',
-  // });
+  const connectionValidStatusText = intl.formatMessage({
+    defaultMessage: 'Connection is valid',
+    description: 'Tooltip for the button to reassign actions',
+  });
+  const connectionInvalidStatusText = intl.formatMessage({
+    defaultMessage: 'Connection is invalid',
+    description: 'Tooltip for the button to reassign actions',
+  });
 
   const onReassignButtonClick = useCallback(() => {
     dispatch(openPanel({ nodeIds, panelMode: 'Connection', referencePanelMode: 'Connection' }));
@@ -57,15 +56,15 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   const statusIconComponent = useMemo(() => {
     const hasErrors = errors.length > 0;
     return (
-      <Icon
-        className={css(
-          'msla-connector-connections-card-connection-status-icon',
-          hasErrors ? 'msla-connection-status-icon--error' : 'msla-connection-status-icon--success'
+      <Tooltip content={hasErrors ? connectionInvalidStatusText : connectionValidStatusText} relationship="label">
+        {!hasErrors ? (
+          <CheckmarkCircle24Filled className={'msla-connection-status-icon--success'} />
+        ) : (
+          <ErrorCircle24Filled className={'msla-connection-status-icon--error'} />
         )}
-        iconName={hasErrors ? 'ErrorBadge' : 'CompletedSolid'}
-      />
+      </Tooltip>
     );
-  }, [errors.length]);
+  }, [connectionInvalidStatusText, connectionValidStatusText, errors.length]);
 
   return (
     <div key={refId} className="msla-connector-connections-card-connection">
