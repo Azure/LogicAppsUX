@@ -317,6 +317,7 @@ export const TokenField = ({
           basePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
