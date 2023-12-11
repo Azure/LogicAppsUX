@@ -129,6 +129,7 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 const hostService = {
   fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
   openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
+  openConnectionResource: (connectionId: string) => console.log('openConnectionResource:', connectionId),
 };
 const editorService = new CustomEditorService();
 

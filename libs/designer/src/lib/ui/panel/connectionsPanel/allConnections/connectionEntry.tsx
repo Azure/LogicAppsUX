@@ -3,6 +3,7 @@ import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
 import { Button, Text, Tooltip } from '@fluentui/react-components';
 import { Open24Filled, ArrowSwap24Filled, CheckmarkCircle24Filled, ErrorCircle24Filled } from '@fluentui/react-icons';
+import { HostService } from '@microsoft/designer-client-services-logic-apps';
 import { getConnectionErrors } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -66,6 +67,13 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     );
   }, [connectionInvalidStatusText, connectionValidStatusText, errors.length]);
 
+  // Only show the open connection button if the service method is supplied
+  const openConnectionSupported = useMemo(() => HostService().openConnectionResource !== undefined, []);
+  const openConnectionCallback = useCallback(() => {
+    if (!connection?.result?.id) return;
+    HostService().openConnectionResource?.(connection?.result?.id);
+  }, [connection?.result?.id]);
+
   return (
     <div key={refId} className="msla-connector-connections-card-connection">
       <div className="msla-flex-header">
@@ -76,9 +84,16 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
         <Text size={300} className="msla-flex-header-subtitle">
           {connection?.result?.name}
         </Text>
-        <Tooltip content={openConnectionTooltipText} relationship="label">
-          <Button icon={<Open24Filled />} appearance="subtle" style={{ margin: '-6px', marginLeft: 'auto' }} />
-        </Tooltip>
+        {openConnectionSupported && (
+          <Tooltip content={openConnectionTooltipText} relationship="label">
+            <Button
+              icon={<Open24Filled />}
+              appearance="subtle"
+              style={{ margin: '-6px', marginLeft: 'auto' }}
+              onClick={openConnectionCallback}
+            />
+          </Tooltip>
+        )}
       </div>
       <div className="msla-connector-connections-card-connection-body">
         <Text>{connectedActionsText}</Text>
