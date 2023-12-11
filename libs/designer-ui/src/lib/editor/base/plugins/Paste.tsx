@@ -22,7 +22,7 @@ export const PastePlugin = ({ segmentMapping, loadParameterValueFromString }: Pa
       PASTE_COMMAND,
       (event: ClipboardEvent) => {
         const clipboardData = event instanceof InputEvent || event instanceof KeyboardEvent ? null : event.clipboardData;
-        const lexicalString = clipboardData?.getData('text/plain');
+        const lexicalString = clipboardData?.getData('text/plain').replace(/\r\n/g, '\n');
         if (lexicalString && segmentMapping && loadParameterValueFromString) {
           const valueSegments = loadParameterValueFromString(lexicalString);
           editor.update(() => {
