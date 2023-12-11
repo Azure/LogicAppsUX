@@ -3,7 +3,7 @@ import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { EditorState, ElementNode } from 'lexical';
-import { $getNodeByKey, $getRoot, $isElementNode, $isTextNode } from 'lexical';
+import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
 
 export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegment[] {
   const segments: ValueSegment[] = [];
@@ -26,6 +26,8 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
       segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: trimLiteral ? childNode.__text.trim() : childNode.__text });
     } else if ($isTokenNode(childNode)) {
       segments.push(childNode.__data);
+    } else if ($isLineBreakNode(childNode)) {
+      segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '\n' });
     }
   });
 };
