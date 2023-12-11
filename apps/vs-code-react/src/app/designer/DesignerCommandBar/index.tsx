@@ -71,6 +71,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     }
   });
 
+  const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const { definition } = await serializeBJSWorkflow(designerState, {
+      skipValidation: false,
+      ignoreNonCriticalErrors: true,
+    });
+
+    // TODO(ccastrotrejo): We need to check for unit test errors
+    await vscode.postMessage({
+      command: ExtensionCommand.saveUnitTest,
+      definition,
+    });
+  });
+
   const onResubmit = async () => {
     vscode.postMessage({
       command: ExtensionCommand.resubmitRun,
@@ -140,12 +154,13 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
 
-  const isSaveDisabled = isSaving || haveErrors || !designerIsDirty;
+  const isSaveWorkflowDisabled = isSaving || haveErrors || !designerIsDirty;
+  const isSaveUnitTestDisabled = isSavingUnitTest;
 
   const desingerItems: ICommandBarItemProps[] = [
     {
       key: 'Save',
-      disabled: isSaveDisabled,
+      disabled: isSaveWorkflowDisabled,
       text: Resources.DESIGNER_SAVE,
       onRenderIcon: () => {
         return isSaving ? (
@@ -154,7 +169,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
           <FontIcon
             aria-label={Resources.DESIGNER_SAVE}
             iconName="Save"
-            className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue}
+            className={isSaveWorkflowDisabled ? classNames.disableGrey : classNames.azureBlue}
           />
         );
       },
@@ -207,22 +222,22 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   const unitTestItems: ICommandBarItemProps[] = [
     {
       key: 'Save',
-      disabled: isSaveDisabled,
+      disabled: isSaveUnitTestDisabled,
       text: Resources.UNIT_TEST_SAVE,
       ariaLabel: Resources.UNIT_TEST_SAVE,
       onRenderIcon: () => {
-        return isSaving ? (
+        return isSavingUnitTest ? (
           <Spinner size={SpinnerSize.small} />
         ) : (
           <FontIcon
             aria-label={Resources.DESIGNER_SAVE}
             iconName="Save"
-            className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue}
+            className={isSaveUnitTestDisabled ? classNames.disableGrey : classNames.azureBlue}
           />
         );
       },
       onClick: () => {
-        console.log('Unit test save clicked');
+        saveUnitTestMutate();
       },
     },
     {

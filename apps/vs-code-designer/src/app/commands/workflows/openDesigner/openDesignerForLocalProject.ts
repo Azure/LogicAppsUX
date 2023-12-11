@@ -22,6 +22,7 @@ import {
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
+import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -183,6 +184,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
         await this.validateWorkflow(this.panelMetadata.workflowContent);
+        break;
+      }
+      case ExtensionCommand.saveUnitTest: {
+        await saveUnitTestDefinition(this.projectPath, this.workflowName, this.unitTestName, msg.definition);
         break;
       }
       case ExtensionCommand.addConnection: {
