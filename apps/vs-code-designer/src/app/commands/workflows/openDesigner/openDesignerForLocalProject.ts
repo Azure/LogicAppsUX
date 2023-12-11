@@ -22,6 +22,7 @@ import {
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
+import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -40,14 +41,15 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
 
-  constructor(context: IActionContext, node: Uri) {
+  constructor(context: IActionContext, node: Uri, unitTestName?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
     const apiVersion = '2018-11-01';
-    const panelName = `${workspace.name}-${workflowName}`;
+    const panelName = `${workspace.name}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
     super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true, false);
-
+    this.unitTestName = unitTestName;
+    this.isUnitTest = !!unitTestName;
     this.workflowFilePath = node.fsPath;
   }
 
@@ -167,6 +169,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
             hostVersion: ext.extensionVersion,
+            isUnitTest: this.isUnitTest,
           },
         });
         await this.validateWorkflow(this.panelMetadata.workflowContent);
@@ -181,6 +184,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
         await this.validateWorkflow(this.panelMetadata.workflowContent);
+        break;
+      }
+      case ExtensionCommand.saveUnitTest: {
+        await saveUnitTestDefinition(this.projectPath, this.workflowName, this.unitTestName, msg.definition);
         break;
       }
       case ExtensionCommand.addConnection: {

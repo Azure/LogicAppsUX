@@ -34,6 +34,7 @@ export const DesignerApp = () => {
     isMonitoringView,
     runId,
     hostVersion,
+    isUnitTest,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
@@ -155,6 +156,7 @@ export const DesignerApp = () => {
         isRefreshing={isRefetching}
         onRefresh={refetch}
         isDarkMode={theme === Theme.Dark}
+        isUnitTest={isUnitTest}
       />
     );
 
