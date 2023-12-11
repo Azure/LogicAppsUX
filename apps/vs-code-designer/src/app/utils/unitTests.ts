@@ -37,6 +37,12 @@ export const saveUnitTestDefinition = async (
   });
 };
 
+export const getUnitTestName = (filePath: string) => {
+  const unitTestFileName = path.basename(filePath);
+  const fileNameItems = unitTestFileName.split('.');
+  return fileNameItems[0];
+};
+
 const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestName: string) => {
   return path.join(projectPath, workflowName, 'development', 'tests', workflowName, `${unitTestName}.unit-test.json`);
 };
