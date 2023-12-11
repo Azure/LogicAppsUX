@@ -6,6 +6,7 @@ import panelReducer from './state/panel/panelSlice';
 import settingsReducer from './state/setting/settingSlice';
 import staticResultsSchemasReducer from './state/staticresultschema/staticresultsSlice';
 import tokens from './state/tokens/tokensSlice';
+import unitTestReducer from './state/unitTest/unitTestSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
 import { configureStore } from '@reduxjs/toolkit';
@@ -22,6 +23,7 @@ export const store = configureStore({
     tokens: tokens,
     workflowParameters: workflowParametersReducer,
     staticResults: staticResultsSchemasReducer,
+    unitTest: unitTestReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
