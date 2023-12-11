@@ -33,3 +33,4 @@ export { getOutputTokenSections, getExpressionTokenSections } from './utils/toke
 export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
+export { useUnitTestDefinition } from './state/unitTest/unitTestSelectors';
