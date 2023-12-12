@@ -2,6 +2,8 @@ import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
+import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { TrafficLightDot } from '@microsoft/designer-ui';
 import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -52,6 +54,7 @@ export const DesignerCommandBar = ({
   isConsumption?: boolean;
   rightShift?: string;
   enableCopilot?: () => void;
+  loggerService?: ILoggerService;
 }) => {
   const dispatch = useDispatch();
   const isCopilotReady = useNodesInitialized();
@@ -172,7 +175,14 @@ export const DesignerCommandBar = ({
       text: 'Assistant',
       iconProps: { iconName: 'Chat' },
       disabled: !isCopilotReady,
-      onClick: enableCopilot,
+      onClick: () => {
+        enableCopilot?.();
+        LoggerService().log({
+          level: LogEntryLevel.Warning,
+          area: 'chatbot',
+          message: 'workflow assistant opened',
+        });
+      },
     },
     {
       key: 'fileABug',
