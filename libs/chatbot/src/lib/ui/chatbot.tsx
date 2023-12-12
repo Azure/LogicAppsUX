@@ -182,13 +182,13 @@ export const Chatbot = ({
   const logFeedbackVote = useCallback((reaction: ChatEntryReaction, isRemovedVote?: boolean) => {
     if (isRemovedVote) {
       LoggerService().log({
-        level: LogEntryLevel.Verbose,
+        level: LogEntryLevel.Warning,
         area: 'chatbot: feedback',
         message: `Feedback Reaction: ${reaction} removed`,
       });
     } else {
       LoggerService().log({
-        level: LogEntryLevel.Verbose,
+        level: LogEntryLevel.Warning,
         area: 'chatbot: feedback',
         message: `Feedback Reaction: ${reaction}`,
       });
@@ -336,7 +336,7 @@ export const Chatbot = ({
             setCollapsed(true);
             closeChatBot?.();
             LoggerService().log({
-              level: LogEntryLevel.Verbose,
+              level: LogEntryLevel.Warning,
               area: 'chatbot',
               message: 'workflow assistant closed',
             });

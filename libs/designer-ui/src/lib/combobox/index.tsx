@@ -61,6 +61,7 @@ export interface ComboboxProps extends BaseEditorProps {
   errorDetails?: { message: string };
   useOption?: boolean;
   onMenuOpen?: CallbackHandler;
+  shouldSort?: boolean;
 }
 
 export const Combobox = ({
@@ -73,6 +74,7 @@ export const Combobox = ({
   onMenuOpen,
   labelId,
   label,
+  shouldSort = true,
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
@@ -96,7 +98,11 @@ export const Combobox = ({
   }, [isLoading]);
 
   // Sort newOptions array alphabetically based on the `displayName` property.
-  options.sort((currentItem, nextItem) => currentItem.displayName.localeCompare(nextItem.displayName));
+  useMemo(() => {
+    if (shouldSort) {
+      options.sort((currentItem, nextItem) => currentItem.displayName.localeCompare(nextItem.displayName));
+    }
+  }, [options, shouldSort]);
 
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {

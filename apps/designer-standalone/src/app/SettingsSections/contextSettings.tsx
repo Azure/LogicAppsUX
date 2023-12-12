@@ -1,12 +1,10 @@
 import type { AppDispatch } from '../../state/store';
 import {
   useAreCustomEditorsEnabled,
-  useHostOptions,
   useIsDarkMode,
-  useIsLocal,
   useIsMonitoringView,
   useIsReadOnly,
-  useShowChatBot,
+  useHostOptions,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -14,7 +12,6 @@ import {
   setReadOnly,
   loadRun,
   loadWorkflow,
-  setIsChatBotEnabled,
   setAreCustomEditorsEnabled,
   setHostOptions,
 } from '../../state/workflowLoadingSlice';
@@ -26,8 +23,6 @@ const ContextSettings = () => {
   const isReadOnly = useIsReadOnly();
   const isMonitoringView = useIsMonitoringView();
   const isDarkMode = useIsDarkMode();
-  const showChatBot = useShowChatBot();
-  const isLocal = useIsLocal();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const hostOptions = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
@@ -53,9 +48,6 @@ const ContextSettings = () => {
       />
       <Checkbox label="Monitoring View" checked={isMonitoringView} onChange={changeMonitoringView} />
       <Checkbox label="Dark Mode" checked={isDarkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
-      {!isLocal ? (
-        <Checkbox label="Chatbot" checked={showChatBot} onChange={(_, checked) => dispatch(setIsChatBotEnabled(!!checked))} />
-      ) : null}
       <Checkbox
         label="Custom Editors"
         checked={areCustomEditorsEnabled}
