@@ -142,9 +142,9 @@ const appendChildrenNode = (
     }
 
     appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
+  } else {
+    paragraph.append(childNode);
   }
-
-  paragraph.append(childNode);
 };
 
 // Splits up text content into their respective nodes
