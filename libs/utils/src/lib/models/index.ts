@@ -12,6 +12,7 @@ export * from './subscription';
 export * from './theme';
 export * from './dataMap';
 export * from './dataMapSchema';
+export * from './unitTest';
 
 export * as LogicApps from './logicApps';
 export * as LogicAppsV2 from './logicAppsV2';
