@@ -22,7 +22,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot } from '@microsoft/chatbot';
+import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -202,6 +202,10 @@ const DesignerEditorConsumption = () => {
                 isDarkMode={isDarkMode}
                 isConsumption
                 showConnectionsPanel={showConnectionsPanel}
+                rightShift={showChatBot ? chatbotPanelWidth : undefined}
+                enableCopilot={() => {
+                  dispatch(setIsChatBotEnabled(!showChatBot));
+                }}
               />
               <Designer />
               {showChatBot ? (
