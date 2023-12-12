@@ -85,7 +85,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       onDismiss={dismissPanel}
       hasCloseButton={false}
       overlayProps={{ isDarkThemed: isDarkMode }}
-      focusTrapZoneProps={{ disabled: collapsed, forceFocusInsideTrap: true }}
       layerProps={layerProps}
       customWidth={width}
       onRenderFooterContent={onRenderFooterContent}

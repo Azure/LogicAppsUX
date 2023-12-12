@@ -6,7 +6,7 @@ import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
 import { CreateConnection } from './createConnection';
 import { SelectConnection } from './selectConnection/selectConnection';
-import { FocusTrapZone, IconButton, Text } from '@fluentui/react';
+import { IconButton, Text } from '@fluentui/react';
 import { type CommonPanelProps } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -69,12 +69,12 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
   }, [panelStatus]);
 
   return (
-    <FocusTrapZone>
+    <>
       <div className="msla-app-action-header">
         <Text variant="xLarge">{panelHeaderText}</Text>
         <IconButton onClick={props.toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>
-    </FocusTrapZone>
+    </>
   );
 };

@@ -149,7 +149,7 @@ export const DesignerCommandBar = ({
             {
               key: 'connections',
               text: 'Connections',
-              iconProps: { iconName: 'Link12' },
+              iconProps: { iconName: 'Link' },
               onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
             },
           ]
