@@ -16,8 +16,8 @@ import {
   useGateways,
   useSubscriptions,
 } from '../../../../core/state/connection/connectionSelector';
-import { useMonitoringView } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { showDefaultTabs, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { useReferencePanelMode } from '../../../../core/state/panel/panelSelectors';
+import { setIsCreatingConnection, openPanel } from '../../../../core/state/panel/panelSlice';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import {
   getAssistedConnectionProps,
@@ -82,7 +82,7 @@ export const CreateConnection = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
-  const selectedNodeIds = useSelectedNodeIds();
+  const nodeIds = useSelectedNodeIds();
   const nodeId = useSelectedNodeId();
   const connector = useConnectorByNodeId(nodeId);
   const iconUri = getIconUriFromConnector(connector);
@@ -90,7 +90,6 @@ export const CreateConnection = () => {
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
-  const isMonitoringView = useMonitoringView();
 
   const subscriptionsQuery = useSubscriptions();
   const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
@@ -106,7 +105,7 @@ export const CreateConnection = () => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const applyNewConnection = useCallback(
-    (newConnection: Connection, selectedIdentity?: string) => {
+    (nodeId: string, newConnection: Connection, selectedIdentity?: string) => {
       const payload: ConnectionPayload = { nodeId, connection: newConnection, connector: connector as Connector };
 
       if (selectedIdentity) {
@@ -117,7 +116,7 @@ export const CreateConnection = () => {
 
       dispatch(updateNodeConnection(payload));
     },
-    [connector, dispatch, nodeId]
+    [connector, dispatch]
   );
 
   const assistedConnectionProps = useMemo(
@@ -150,6 +149,13 @@ export const CreateConnection = () => {
         : undefined,
     [assistedConnectionProps, selectResourceCallback, selectSubResourceCallback, selectedResourceId, selectedSubResource]
   );
+
+  const referencePanelMode = useReferencePanelMode();
+  const closeConnectionsFlow = useCallback(() => {
+    const panelMode = referencePanelMode ?? 'Operation';
+    const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
+    dispatch(openPanel({ nodeId, panelMode }));
+  }, [dispatch, referencePanelMode, nodeIds]);
 
   const createConnectionCallback = useCallback(
     async (
@@ -242,8 +248,10 @@ export const CreateConnection = () => {
         }
 
         if (connection) {
-          applyNewConnection(connection, identitySelected);
-          dispatch(showDefaultTabs({ isMonitoringView }));
+          for (const nodeId of nodeIds) {
+            applyNewConnection(nodeId, connection, identitySelected);
+          }
+          closeConnectionsFlow();
         } else if (err) {
           setErrorMessage(String(err));
         }
@@ -260,20 +268,16 @@ export const CreateConnection = () => {
       setIsLoading(false);
     },
     [
-      applyNewConnection,
+      connector,
       assistedConnectionProps,
       connectionMetadata,
-      connector,
-      dispatch,
       operationManifest?.properties.connection?.type,
       selectedSubResource,
-      isMonitoringView,
+      closeConnectionsFlow,
+      nodeIds,
+      applyNewConnection,
     ]
   );
-
-  const cancelCallback = useCallback(() => {
-    dispatch(setIsCreatingConnection(false));
-  }, [dispatch]);
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
@@ -510,6 +514,10 @@ export const CreateConnection = () => {
     servicePrincipalSelected,
   ]);
 
+  const cancelCallback = useCallback(() => {
+    dispatch(setIsCreatingConnection(false));
+  }, [dispatch]);
+
   // INTL STRINGS
 
   const componentDescription = intl.formatMessage({
@@ -741,7 +749,7 @@ export const CreateConnection = () => {
 
   return (
     <div className="msla-edit-connection-container">
-      <ActionList nodeIds={selectedNodeIds} iconUri={iconUri} />
+      <ActionList nodeIds={nodeIds} iconUri={iconUri} />
       <Divider />
 
       <Body1Strong>{componentDescription}</Body1Strong>
