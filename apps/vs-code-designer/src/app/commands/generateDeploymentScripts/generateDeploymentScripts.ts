@@ -253,6 +253,7 @@ async function callStandardResourcesApi(
         Accept: 'application/zip',
         'Content-Type': 'application/json',
       },
+      responseType: 'arraybuffer',
     });
     ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
     return Buffer.from(response.data, 'binary');
@@ -305,8 +306,9 @@ async function callManagedConnectionsApi(
     const response = await axios.post(apiUrl, requestBody, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `${accessToken}`,
       },
+      responseType: 'arraybuffer',
     });
 
     // Convert and log the successful response
