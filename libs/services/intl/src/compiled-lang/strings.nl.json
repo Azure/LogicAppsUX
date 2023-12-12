@@ -2877,12 +2877,6 @@
       "value": "Aan de slag"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Minder weergeven"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3487,12 +3481,6 @@
       "value": "Volgende stroomsuggestie"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Meer weergeven"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3802,7 +3790,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopiëren"
     }
   ],
   "NE54Uu": [
@@ -4221,6 +4209,12 @@
       "value": "Schema-URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Retourneert de UTF-8-bytelengte van een invoertekenreeks"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4325,6 +4319,12 @@
     {
       "type": 0,
       "value": "Negeren"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Vereist. De tekenreeks waaruit UTF-16-lengte moet worden berekend."
     }
   ],
   "Q5w4Do": [
@@ -5857,6 +5857,12 @@
     {
       "type": 0,
       "value": "Uitzoomen"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Welkom bij de werkstroomassistent!"
     }
   ],
   "Yw7Nfl": [
@@ -7482,7 +7488,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Stel een vraag over deze werkstroom of over Azure Logic Apps in het algemeen..."
     }
   ],
   "kZCX7t": [
@@ -7553,6 +7559,12 @@
     {
       "type": 0,
       "value": "Voer een geldige JSON in."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Ongeldige verbinding"
     }
   ],
   "l/9YHQ": [
@@ -8147,6 +8159,12 @@
       "value": "Wilt u alle niet-opgeslagen wijzigingen negeren?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Minder weergeven"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8291,12 +8309,6 @@
       "value": "Triggers"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Welkom bij de werkstroomassistent."
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8325,6 +8337,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt een XML-knooppunt, knooppuntenset of waarde als JSON geretourneerd uit de opgegeven XPath-expressie"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Vereist. De tekenreeks waaruit UTF-8-lengte moet worden berekend."
     }
   ],
   "q1gfIs": [
@@ -9071,6 +9089,20 @@
       "value": "Vereist. De verzamelingen die moeten worden geëvalueerd. Een object dat in een van de verzamelingen wordt weergegeven, wordt ook in het resultaat weergegeven."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Meer weergeven ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9135,6 +9167,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9221,6 +9259,12 @@
     {
       "type": 0,
       "value": "Elke actie moet een of meer uitvoeringen hebben na configuraties"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Retourneert de UTF-16-bytelengte van een invoertekenreeks"
     }
   ],
   "vEBhDX": [

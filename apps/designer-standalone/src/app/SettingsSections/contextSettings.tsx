@@ -1,5 +1,11 @@
 import type { AppDispatch } from '../../state/store';
-import { useAreCustomEditorsEnabled, useIsDarkMode, useIsMonitoringView, useIsReadOnly } from '../../state/workflowLoadingSelectors';
+import {
+  useAreCustomEditorsEnabled,
+  useIsDarkMode,
+  useIsMonitoringView,
+  useIsReadOnly,
+  useHostOptions,
+} from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
   setMonitoringView,
@@ -7,6 +13,7 @@ import {
   loadRun,
   loadWorkflow,
   setAreCustomEditorsEnabled,
+  setHostOptions,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -17,6 +24,7 @@ const ContextSettings = () => {
   const isMonitoringView = useIsMonitoringView();
   const isDarkMode = useIsDarkMode();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
+  const hostOptions = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -44,6 +52,11 @@ const ContextSettings = () => {
         label="Custom Editors"
         checked={areCustomEditorsEnabled}
         onChange={(_, checked) => dispatch(setAreCustomEditorsEnabled(!!checked))}
+      />
+      <Checkbox
+        label="Display Runtime Info"
+        checked={hostOptions.displayRuntimeInfo}
+        onChange={(_, checked) => dispatch(setHostOptions({ displayRuntimeInfo: !!checked }))}
       />
     </div>
   );

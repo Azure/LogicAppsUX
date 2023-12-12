@@ -2835,12 +2835,6 @@
       "value": "開始"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "查看較少內容"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3438,12 +3432,6 @@
       "value": "下一個流程建議"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "查看更多"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3753,7 +3741,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "複製"
     }
   ],
   "NE54Uu": [
@@ -4168,6 +4156,12 @@
       "value": "結構描述 URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "傳回輸入字串的 UTF-8 位元組長度"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4276,6 +4270,12 @@
     {
       "type": 0,
       "value": "捨棄"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "必填。要從中計算 UTF-16 長度的字串。"
     }
   ],
   "Q5w4Do": [
@@ -5813,6 +5813,12 @@
     {
       "type": 0,
       "value": "縮小"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "歡迎使用工作流程助理！"
     }
   ],
   "Yw7Nfl": [
@@ -7423,7 +7429,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "詢問關於此工作流程或 Azure Logic Apps 的整體問題..."
     }
   ],
   "kZCX7t": [
@@ -7483,6 +7489,12 @@
     {
       "type": 0,
       "value": "請輸入有效的 JSON。"
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "連線無效"
     }
   ],
   "l/9YHQ": [
@@ -8069,6 +8081,12 @@
       "value": "要捨棄所有未儲存的變更嗎?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "查看較少內容"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8213,12 +8231,6 @@
       "value": "觸發程序"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "歡迎使用工作流程助理！"
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8247,6 +8259,12 @@
     {
       "type": 0,
       "value": "從提供的 XPath 運算式以 JSON 格式傳回 XML 節點、節點集或值"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "必填。要從中計算 UTF-8 長度的字串。"
     }
   ],
   "q1gfIs": [
@@ -8994,6 +9012,20 @@
       "value": "必要。要評估的集合。出現於任一集合中的物件，也會出現於結果中。"
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "查看更多内容 ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9058,6 +9090,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9144,6 +9182,12 @@
     {
       "type": 0,
       "value": "每個動作在設定之後必須執行一或多個"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "傳回輸入字串的 UTF-16 位元組長度"
     }
   ],
   "vEBhDX": [
@@ -9675,7 +9719,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "產生 XSLT"
     }
   ],
   "yoCi15": [

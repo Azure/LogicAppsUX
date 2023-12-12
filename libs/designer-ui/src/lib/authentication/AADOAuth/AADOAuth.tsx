@@ -1,4 +1,5 @@
 import type { AuthProps, OAuthProps } from '..';
+import type { ValueSegment } from '../../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
@@ -10,17 +11,20 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum AuthenticationOAuthType {
-  SECRET = 'Secret',
-  CERTIFICATE = 'Certificate',
-}
+export const AuthenticationOAuthType = {
+  SECRET: 'Secret',
+  CERTIFICATE: 'Certificate',
+} as const;
+export type AuthenticationOAuthType = (typeof AuthenticationOAuthType)[keyof typeof AuthenticationOAuthType];
 
 interface ActiveDirectoryAuthenticationProps {
   OauthProps: OAuthProps;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const ActiveDirectoryAuthentication = ({

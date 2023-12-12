@@ -10,13 +10,14 @@ export interface EditorContentChangedEventArgs extends editor.IModelContentChang
   value?: string;
 }
 // TODO: Add more languages
-export enum EditorLanguage {
-  javascript = 'javascript',
-  json = 'json',
-  xml = 'xml',
-  templateExpressionLanguage = 'TemplateExpressionLanguage',
-  yaml = 'yaml',
-}
+export const EditorLanguage = {
+  javascript: 'javascript',
+  json: 'json',
+  xml: 'xml',
+  templateExpressionLanguage: 'TemplateExpressionLanguage',
+  yaml: 'yaml',
+} as const;
+export type EditorLanguage = (typeof EditorLanguage)[keyof typeof EditorLanguage];
 
 export interface MonacoProps extends MonacoOptions {
   className?: string;
@@ -105,6 +106,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       onMouseDown,
       openTokenPicker,
       label,
+      wordWrap = 'on',
       ...options
     },
     ref
@@ -264,6 +266,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               unicodeHighlight: { invisibleCharacters: false, nonBasicASCII: false, ambiguousCharacters: false },
               renderWhitespace: 'none',
               ariaLabel: label,
+              wordWrap,
               ...options,
             }}
             value={value}

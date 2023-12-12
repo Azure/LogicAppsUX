@@ -3,7 +3,7 @@ import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType 
 import { DynamicallyAddedParameter, DynamicallyAddedParameterType } from '../../dynamicallyaddedparameter';
 import { generateDynamicParameterKey, getIconForDynamicallyAddedParameterType } from '../../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../../editor';
-import type { BasePlugins, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { basePlugins, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { StringEditor } from '../../editor/string';
 import type { FloatingActionMenuItem } from '../floatingactionmenubase';
@@ -33,7 +33,7 @@ type FloatingActionMenuOutputsProps = {
   initialValue: ValueSegment[];
   onChange?: ChangeHandler;
   editorViewModel: FloatingActionMenuOutputViewModel;
-  BasePlugins: BasePlugins;
+  basePlugins: basePlugins;
   tokenPickerButtonProps: TokenPickerButtonEditorProps | undefined;
   getTokenPicker: GetTokenPickerHandler;
   hideValidationErrors: ChangeHandler | undefined;
@@ -90,7 +90,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
       <StringEditor
         className="msla-setting-token-editor-container"
         placeholder={placeholder}
-        BasePlugins={props.BasePlugins}
+        basePlugins={props.basePlugins}
         readonly={false}
         initialValue={props.editorViewModel.outputValueSegmentsMap[schemaKey] || []}
         tokenPickerButtonProps={props.tokenPickerButtonProps}

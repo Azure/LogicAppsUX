@@ -1,25 +1,26 @@
 import type { TestMapResponse } from '../../core';
 import { generateDataMapXslt, testDataMap } from '../../core/queries/datamap';
 import type { RootState } from '../../core/state/Store';
-import { SchemaFileFormat } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Stack, StackItem, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import { guid, isNullOrEmpty } from '@microsoft/utils-logic-apps';
+import { guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-enum PanelPivotItems {
-  Input = 'input',
-  Output = 'output',
-}
+const PanelPivotItems = {
+  Input: 'input',
+  Output: 'output',
+} as const;
+export type PanelPivotItems = (typeof PanelPivotItems)[keyof typeof PanelPivotItems];
 
-enum InputDataOptions {
-  PasteSample = 'pasteSample',
-}
+const InputDataOptions = {
+  PasteSample: 'pasteSample',
+} as const;
+export type InputDataOptions = (typeof InputDataOptions)[keyof typeof InputDataOptions];
 
 export const commonCodeEditorProps: Partial<MonacoProps> = {
   lineNumbers: 'on',

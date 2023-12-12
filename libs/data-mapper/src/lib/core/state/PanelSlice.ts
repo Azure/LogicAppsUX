@@ -1,11 +1,12 @@
-import { SchemaType } from '../../models';
+import { SchemaType } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 
-export enum ConfigPanelView {
-  DefaultConfig = 'defaultConfig',
-  AddSchema = 'addSchema',
-  UpdateSchema = 'updateSchema',
-}
+export const ConfigPanelView = {
+  DefaultConfig: 'defaultConfig',
+  AddSchema: 'addSchema',
+  UpdateSchema: 'updateSchema',
+} as const;
+export type ConfigPanelView = (typeof ConfigPanelView)[keyof typeof ConfigPanelView];
 
 export interface PanelState {
   currentPanelView?: ConfigPanelView;

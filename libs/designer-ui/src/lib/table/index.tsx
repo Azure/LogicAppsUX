@@ -36,10 +36,11 @@ const dropdownStyles: Partial<IDropdownStyles> = {
   },
 };
 
-export enum ColumnMode {
-  Automatic = 'Automatic',
-  Custom = 'Custom',
-}
+export const ColumnMode = {
+  Automatic: 'Automatic',
+  Custom: 'Custom',
+} as const;
+export type ColumnMode = (typeof ColumnMode)[keyof typeof ColumnMode];
 
 export const TableEditor: React.FC<TableEditorProps> = ({
   initialItems,
@@ -52,8 +53,10 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   placeholder,
   tokenPickerButtonProps,
   dataAutomationId,
-  getTokenPicker,
   onChange,
+  getTokenPicker,
+  tokenMapping,
+  loadParameterValueFromString,
 }): JSX.Element => {
   const intl = getIntl();
   const columnOptions = [
@@ -99,6 +102,8 @@ export const TableEditor: React.FC<TableEditorProps> = ({
             initialItems={items}
             tokenPickerButtonProps={tokenPickerButtonProps}
             getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
             onChange={onItemsChange}
           />
         </div>

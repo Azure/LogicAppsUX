@@ -64,7 +64,7 @@ const DesignerEditor = () => {
   }));
 
   const dispatch = useDispatch<AppDispatch>();
-  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language } = useSelector(
+  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language, hostOptions } = useSelector(
     (state: RootState) => state.workflowLoader
   );
 
@@ -245,7 +245,7 @@ const DesignerEditor = () => {
 
   return (
     <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
+      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView, hostOptions }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}

@@ -22,14 +22,16 @@ import { useIntl } from 'react-intl';
 
 export { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 
-export enum AuthenticationType {
-  NONE = 'None',
-  BASIC = 'Basic',
-  CERTIFICATE = 'ClientCertificate',
-  OAUTH = 'ActiveDirectoryOAuth',
-  RAW = 'Raw',
-  MSI = 'ManagedServiceIdentity',
-}
+export const AuthenticationType = {
+  NONE: 'None',
+  BASIC: 'Basic',
+  CERTIFICATE: 'ClientCertificate',
+  OAUTH: 'ActiveDirectoryOAuth',
+  RAW: 'Raw',
+  MSI: 'ManagedServiceIdentity',
+} as const;
+export type AuthenticationType = (typeof AuthenticationType)[keyof typeof AuthenticationType];
+
 export interface BasicProps {
   basicUsername?: ValueSegment[];
   basicPassword?: ValueSegment[];
@@ -85,6 +87,8 @@ export const AuthenticationEditor = ({
   getTokenPicker,
   onChange,
   readonly,
+  tokenMapping,
+  loadParameterValueFromString,
   ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
@@ -120,9 +124,11 @@ export const AuthenticationEditor = ({
           <BasicAuthentication
             basicProps={basic}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            getTokenPicker={getTokenPicker}
             readonly={readonly}
             setCurrentProps={setCurrentProps}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.CERTIFICATE:
@@ -130,9 +136,11 @@ export const AuthenticationEditor = ({
           <CertificateAuthentication
             clientCertificateProps={clientCertificate}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            getTokenPicker={getTokenPicker}
             readonly={readonly}
             setCurrentProps={setCurrentProps}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.RAW:
@@ -143,6 +151,8 @@ export const AuthenticationEditor = ({
             readonly={readonly}
             getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.MSI:
@@ -152,8 +162,10 @@ export const AuthenticationEditor = ({
             msiProps={msi}
             readonly={readonly}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.OAUTH:
@@ -162,8 +174,10 @@ export const AuthenticationEditor = ({
             OauthProps={aadOAuth}
             readonly={readonly}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.NONE:
@@ -205,12 +219,14 @@ export const AuthenticationEditor = ({
           collapsedValue={collapsedValue}
           isValid={isValid}
           setCollapsedValue={setCollapsedValue}
-          getTokenPicker={getTokenPicker}
           setIsValid={setIsValid}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
           serializeValue={serializeCollapsedValue}
           readonly={readonly}
+          getTokenPicker={getTokenPicker}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
         />
       ) : (
         <div className="msla-authentication-editor-expanded-container">

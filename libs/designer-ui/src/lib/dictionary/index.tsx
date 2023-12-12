@@ -9,10 +9,11 @@ import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum DictionaryType {
-  DEFAULT = 'default',
-  TABLE = 'table',
-}
+export const DictionaryType = {
+  DEFAULT: 'default',
+  TABLE: 'table',
+} as const;
+export type DictionaryType = (typeof DictionaryType)[keyof typeof DictionaryType];
 export interface DictionaryEditorItemProps {
   id: string;
   key: ValueSegment[];
@@ -90,6 +91,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           setIsValid={setIsValid}
           setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
           onBlur={handleCollapsedBlur}
+          tokenMapping={baseEditorProps.tokenMapping}
+          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       ) : (
         <ExpandedDictionary
@@ -102,6 +105,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           setItems={updateItems}
           tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
           getTokenPicker={getTokenPicker}
+          tokenMapping={baseEditorProps.tokenMapping}
+          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       )}
 

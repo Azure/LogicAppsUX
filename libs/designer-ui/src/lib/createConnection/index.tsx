@@ -18,7 +18,7 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { ConnectionParameterEditorService } from '@microsoft/designer-client-services-logic-apps';
-import type { GatewayServiceConfig } from '@microsoft/designer-client-services-logic-apps';
+import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
 import type {
   ConnectionParameter,
   ConnectionParameterSet,
@@ -37,6 +37,7 @@ import {
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
 } from '@microsoft/utils-logic-apps';
+import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -73,11 +74,12 @@ export interface CreateConnectionProps {
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
-enum LegacyMultiAuthOptions {
-  oauth = 0,
-  servicePrincipal = 1,
-  managedIdentity = 2,
-}
+const LegacyMultiAuthOptions = {
+  oauth: 0,
+  servicePrincipal: 1,
+  managedIdentity: 2,
+} as const;
+type LegacyMultiAuthOptions = (typeof LegacyMultiAuthOptions)[keyof typeof LegacyMultiAuthOptions];
 
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const {
@@ -132,10 +134,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
 
   const hasOnlyOnPremGateway = useMemo(
-    () =>
-      (connectorCapabilities?.includes(Capabilities[Capabilities.gateway]) &&
-        !connectorCapabilities?.includes(Capabilities[Capabilities.cloud])) ??
-      false,
+    () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
     [connectorCapabilities]
   );
 
@@ -195,8 +194,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
       const dependentParam = constraints?.dependentParameter;
       if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) return false;
-      if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
-      if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) return false;
+      if (parameter.type === ConnectionParameterTypes.oauthSetting) return false;
+      if (parameter.type === ConnectionParameterTypes.managedIdentity) return false;
       return true;
     },
     [parameterValues, servicePrincipalSelected, legacyManagedIdentitySelected]
@@ -236,7 +235,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const capabilityEnabledParameters = useMemo(() => {
     let output: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = parametersByCapability['general'];
     Object.entries(parametersByCapability).forEach(([capabilityText, parameters]) => {
-      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText))
+      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText as any))
         output = {
           ...output,
           ...parameters,
@@ -473,6 +472,77 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
   const showConfigParameters = useMemo(() => !resourceSelectedProps, [resourceSelectedProps]);
 
+  const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
+    const connectionParameterProps: ConnectionParameterProps = {
+      parameterKey: key,
+      parameter,
+      value: parameterValues[key],
+      setValue: (val: any) => setParameterValues({ ...parameterValues, [key]: val }),
+      isSubscriptionDropdownDisabled: gatewayServiceConfig?.disableSubscriptionLookup,
+      isLoading,
+      selectedSubscriptionId,
+      selectSubscriptionCallback,
+      availableGateways,
+      availableSubscriptions,
+    };
+
+    const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
+      connectorId: connectorId,
+      parameterKey: key,
+    });
+    if (customParameterOptions) {
+      const CustomConnectionParameter = customParameterOptions.EditorComponent;
+      return <CustomConnectionParameter key={key} {...connectionParameterProps} />;
+    }
+
+    return <UniversalConnectionParameter key={key} {...connectionParameterProps} />;
+  };
+
+  // Connection parameters mapping allows grouping several parameters into one custom editor.
+  // Keep track of encountered and active mappings to avoid rendering the same mapping multiple times, or rendering the included parameters.
+  const allParameterMappings = new Set<string>();
+  const activeParameterMappings = new Set<string>();
+  const renderCredentialsMappingParameter = (mappingName: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
+    if (!allParameterMappings.has(mappingName)) {
+      allParameterMappings.add(mappingName);
+      // This is the first time this mapping has been encountered,
+      // we need to check if there is an Editor for it - overriding each included parameters.
+      const parameters = fromPairs(
+        Object.entries(capabilityEnabledParameters).filter(
+          ([_, parameter]) => parameter.uiDefinition?.credentialMapping?.mappingName === mappingName
+        )
+      );
+
+      const credentialMappingOptions = ConnectionParameterEditorService()?.getCredentialMappingEditorOptions?.({
+        connectorId,
+        mappingName,
+        parameters,
+      });
+
+      if (credentialMappingOptions) {
+        activeParameterMappings.add(mappingName);
+        const CredentialsMappingEditorComponent = credentialMappingOptions.EditorComponent;
+        const props: IConnectionCredentialMappingEditorProps = {
+          connectorId,
+          mappingName,
+          parameters,
+          setParameterValues,
+          renderParameter: renderConnectionParameter,
+        };
+        return <CredentialsMappingEditorComponent key={`mapping:${mappingName}`} {...props} />;
+      }
+    }
+
+    // If we encounter an already active mapping,
+    // we skip the parameter rendering since an Editor was already found and rendered.
+    if (activeParameterMappings.has(mappingName)) {
+      return null;
+    }
+
+    // Default case: render the parameter. No custom Editor was found for this mapping.
+    return renderConnectionParameter(mappingName, parameter);
+  };
+
   // RENDER
 
   return (
@@ -585,29 +655,13 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         {showConfigParameters &&
           Object.entries(capabilityEnabledParameters)?.map(
             ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
-              const connectionParameterProps: ConnectionParameterProps = {
-                parameterKey: key,
-                parameter,
-                value: parameterValues[key],
-                setValue: (val: any) => setParameterValues({ ...parameterValues, [key]: val }),
-                isSubscriptionDropdownDisabled: gatewayServiceConfig?.disableSubscriptionLookup,
-                isLoading,
-                selectedSubscriptionId,
-                selectSubscriptionCallback,
-                availableGateways,
-                availableSubscriptions,
-              };
-
-              const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
-                connectorId: connectorId,
-                parameterKey: key,
-              });
-              if (customParameterOptions) {
-                const CustomConnectionParameter = customParameterOptions.EditorComponent;
-                return <CustomConnectionParameter key={key} {...connectionParameterProps} />;
+              const mappingName = parameter?.uiDefinition?.credentialMapping?.mappingName;
+              if (mappingName) {
+                // This parameter belongs to a mapping - try to render a custom editor if supported.
+                return renderCredentialsMappingParameter(mappingName, parameter);
               }
 
-              return <UniversalConnectionParameter key={key} {...connectionParameterProps} />;
+              return renderConnectionParameter(key, parameter);
             }
           )}
 

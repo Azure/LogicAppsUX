@@ -1,7 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import type { FunctionPositionMetadata } from './MapMetadata';
-import { InputFormat as InputEntryType, NormalizedDataType } from './Schema';
-import type { SchemaNodeExtended } from './Schema';
+import type { FunctionPositionMetadata, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { InputFormat as InputEntryType, NormalizedDataType } from '@microsoft/utils-logic-apps';
 
 export interface FunctionManifest {
   version: string;
@@ -36,16 +35,17 @@ export interface FunctionInput {
 }
 
 // NOTE: These values must be in alphabetical order (used in sorting within FunctionsList) with the exception of 'Custom' which goes at the bottom
-export enum FunctionCategory {
-  Collection = 'Collection',
-  Conversion = 'Conversion',
-  DateTime = 'Date time',
-  Logical = 'Logical',
-  Math = 'Math',
-  String = 'String',
-  Utility = 'Utilities',
-  Custom = 'Custom',
-}
+export const FunctionCategory = {
+  Collection: 'Collection',
+  Conversion: 'Conversion',
+  DateTime: 'Date time',
+  Logical: 'Logical',
+  Math: 'Math',
+  String: 'String',
+  Utility: 'Utilities',
+  Custom: 'Custom',
+} as const;
+export type FunctionCategory = (typeof FunctionCategory)[keyof typeof FunctionCategory];
 
 export interface CreatedFunction {
   // Should be the target schema to display this on

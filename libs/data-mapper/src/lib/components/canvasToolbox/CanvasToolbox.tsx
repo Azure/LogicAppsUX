@@ -1,7 +1,6 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import { openAddSourceSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
 import { flattenSchemaNode, searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
@@ -20,14 +19,16 @@ import { Button, Text, mergeClasses, tokens, typographyStyles } from '@fluentui/
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { MenuItemType } from '@microsoft/designer-ui';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export enum ToolboxPanelTabs {
-  sourceSchemaTree = 'sourceSchemaTree',
-  functionsList = 'functionsList',
-}
+export const ToolboxPanelTabs = {
+  sourceSchemaTree: 'sourceSchemaTree',
+  functionsList: 'functionsList',
+} as const;
+export type ToolboxPanelTabs = (typeof ToolboxPanelTabs)[keyof typeof ToolboxPanelTabs];
 
 const generalToolboxPanelProps = {
   xPos: '16px',

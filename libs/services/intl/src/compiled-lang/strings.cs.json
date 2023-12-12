@@ -2921,12 +2921,6 @@
       "value": "Začínáme"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Zobrazit méně"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3553,12 +3547,6 @@
       "value": "Další návrh toku"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Zobrazit více"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3868,7 +3856,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopírovat"
     }
   ],
   "NE54Uu": [
@@ -4287,6 +4275,12 @@
       "value": "Identifikátor URI schématu"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Vrátí bajtovou délku UTF-8 vstupního řetězce."
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4391,6 +4385,12 @@
     {
       "type": 0,
       "value": "Zahodit"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec, ze kterého se má vypočítat délka UTF-16"
     }
   ],
   "Q5w4Do": [
@@ -5949,6 +5949,12 @@
     {
       "type": 0,
       "value": "Oddálit"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Vítá vás asistent pracovního postupu!"
     }
   ],
   "Yw7Nfl": [
@@ -7600,7 +7606,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Zeptejte se na tento pracovní postup nebo na Azure Logic Apps obecně..."
     }
   ],
   "kZCX7t": [
@@ -7693,6 +7699,12 @@
     {
       "type": 0,
       "value": "Zadejte platný JSON."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Neplatné připojení"
     }
   ],
   "l/9YHQ": [
@@ -8287,6 +8299,12 @@
       "value": "Chcete zahodit všechny neuložené změny?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Zobrazit méně"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8431,12 +8449,6 @@
       "value": "Triggery"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Vítá vás asistent pracovního postupu!"
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8465,6 +8477,12 @@
     {
       "type": 0,
       "value": "Vrátí ze zadaného výrazu XPath uzel XML, sadu uzlů nebo hodnotu jako JSON."
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec, ze kterého se má vypočítat délka UTF-8"
     }
   ],
   "q1gfIs": [
@@ -9237,6 +9255,20 @@
       "value": "Vyžadováno. Kolekce k vyhodnocení. Objekt, který se zobrazí v libovolné kolekci, se také zobrazí ve výsledku."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Zobrazit více ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9301,6 +9333,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9387,6 +9425,12 @@
     {
       "type": 0,
       "value": "Každá akce musí mít jedno nebo více spuštění po konfiguraci."
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Vrátí bajtovou délku UTF-16 vstupního řetězce."
     }
   ],
   "vEBhDX": [

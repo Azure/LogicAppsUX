@@ -2897,12 +2897,6 @@
       "value": "Erste Schritte"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Weniger anzeigen"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3515,12 +3509,6 @@
       "value": "Nächster Flowvorschlag"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Mehr anzeigen"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3830,7 +3818,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopieren"
     }
   ],
   "NE54Uu": [
@@ -4253,6 +4241,12 @@
       "value": "Schema-URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Gibt die UTF-8-Länge einer Eingabezeichenfolge in Bytes zurück."
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4361,6 +4355,12 @@
     {
       "type": 0,
       "value": "Verwerfen"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der die UTF-16-Länge berechnet werden soll."
     }
   ],
   "Q5w4Do": [
@@ -5913,6 +5913,12 @@
     {
       "type": 0,
       "value": "Verkleinern"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Willkommen beim Workflow-Assistenten!"
     }
   ],
   "Yw7Nfl": [
@@ -7542,7 +7548,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Stellen Sie eine Frage zu diesem Workflow oder zu Azure Logic Apps als Ganzes ..."
     }
   ],
   "kZCX7t": [
@@ -7613,6 +7619,12 @@
     {
       "type": 0,
       "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Ungültige Verbindung"
     }
   ],
   "l/9YHQ": [
@@ -8211,6 +8223,12 @@
       "value": "Möchten Sie alle nicht gespeicherten Änderungen verwerfen?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Weniger anzeigen"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8355,12 +8373,6 @@
       "value": "Trigger"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Willkommen beim Workflow-Assistenten!"
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8389,6 +8401,12 @@
     {
       "type": 0,
       "value": "Gibt einen XML-Knoten, einen Knotensatz oder Wert in JSON-Schreibweise aus dem angegebenen XPath-Ausdruck zurück."
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der die UTF-8-Länge berechnet werden soll."
     }
   ],
   "q1gfIs": [
@@ -9147,6 +9165,20 @@
       "value": "Erforderlich. Die auszuwertenden Sammlungen. Ein Objekt, das sich in einer Sammlung befindet, wird auch im Ergebnis angezeigt."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Mehr anzeigen ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9211,6 +9243,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9297,6 +9335,12 @@
     {
       "type": 0,
       "value": "Jede Aktion muss mindestens eine Ausführung nach der Konfiguration aufweisen"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Gibt die UTF-16-Länge einer Eingabezeichenfolge in Bytes zurück."
     }
   ],
   "vEBhDX": [

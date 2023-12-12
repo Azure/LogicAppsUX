@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { BaseEditor } from '../editor/base';
-import { Change } from './plugins/toolbar/helper/Change';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
+import { HTMLChangePlugin } from './plugins/toolbar/helper/HTMLChangePlugin';
 import { useState } from 'react';
 
 export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseEditorProps): JSX.Element => {
@@ -16,18 +16,18 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
   };
 
   return (
-    <BaseEditor
+    <EditorWrapper
       {...baseEditorProps}
       className="msla-html-editor"
       initialValue={initialValue}
-      BasePlugins={{ tokens: true, clearEditor: true, toolbar: true, ...baseEditorProps.BasePlugins }}
+      basePlugins={{ tokens: true, clearEditor: true, isHtmlEditor: true, ...baseEditorProps.basePlugins }}
       tokenPickerButtonProps={{
         ...baseEditorProps.tokenPickerButtonProps,
         newlineVerticalOffset: 20,
       }}
       onBlur={handleBlur}
     >
-      <Change setValue={onValueChange} />
-    </BaseEditor>
+      <HTMLChangePlugin setValue={onValueChange} />
+    </EditorWrapper>
   );
 };

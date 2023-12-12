@@ -2863,12 +2863,6 @@
       "value": "Introdução"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Ver Menos"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3488,12 +3482,6 @@
       "value": "Próxima sugestão de fluxo"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Ver Mais"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3803,7 +3791,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Copiar"
     }
   ],
   "NE54Uu": [
@@ -4222,6 +4210,12 @@
       "value": "Uri do Esquema"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Retorna o comprimento de bytes UTF-8 de uma cadeia de caracteres de entrada"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4326,6 +4320,12 @@
     {
       "type": 0,
       "value": "Descartar"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia de caracteres a partir da qual se calcula o comprimento UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -5873,6 +5873,12 @@
     {
       "type": 0,
       "value": "Reduzir"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Bem-vindo ao assistente do fluxo de trabalho!"
     }
   ],
   "Yw7Nfl": [
@@ -7513,7 +7519,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Faça uma pergunta sobre esse fluxo de trabalho ou sobre os Aplicativos Lógicos como um todo..."
     }
   ],
   "kZCX7t": [
@@ -7595,6 +7601,12 @@
     {
       "type": 0,
       "value": "Insira um json válido."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Conexão inválida"
     }
   ],
   "l/9YHQ": [
@@ -8189,6 +8201,12 @@
       "value": "Deseja descartar todas as alterações não salvas?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Ver Menos"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8333,12 +8351,6 @@
       "value": "Disparadores"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Bem-vindo(a) ao assistente de fluxo de trabalho!"
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8367,6 +8379,12 @@
     {
       "type": 0,
       "value": "Retorna um nó XML, um conjunto de nós ou um valor como JSON da expressão XPath fornecida"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia de caracteres a partir da qual se calcula o comprimento UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9136,6 +9154,20 @@
       "value": "Necessário. As coleções a serem avaliadas. Um objeto que aparece em qualquer uma das coleções também aparece no resultado."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Ver mais ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9200,6 +9232,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9286,6 +9324,12 @@
     {
       "type": 0,
       "value": "Cada ação deve ter uma ou mais execuções após as configurações"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Retorna o comprimento de bytes UTF-16 de uma cadeia de caracteres de entrada"
     }
   ],
   "vEBhDX": [

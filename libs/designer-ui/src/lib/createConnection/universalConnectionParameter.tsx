@@ -38,7 +38,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
   let inputComponent = undefined;
 
   // Gateway setting parameter
-  if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.gatewaySetting]) {
+  if (parameter?.type === ConnectionParameterTypes.gatewaySetting) {
     inputComponent = (
       <GatewayPicker
         parameterKey={parameterKey}
@@ -55,7 +55,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
   }
 
   // Boolean parameter
-  else if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.bool]) {
+  else if (parameter?.type === ConnectionParameterTypes.bool) {
     if (value === undefined) setValue(false);
     inputComponent = <Checkbox checked={value} onChange={(e: any, checked?: boolean) => setValue(checked)} label={description} />;
   }

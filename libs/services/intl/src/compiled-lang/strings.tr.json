@@ -2857,12 +2857,6 @@
       "value": "Kullanmaya başlayın"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Daha Az Göster"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3471,12 +3465,6 @@
       "value": "Sonraki akış önerisi"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Daha Fazlasını Göster"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3786,7 +3774,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopyala"
     }
   ],
   "NE54Uu": [
@@ -4205,6 +4193,12 @@
       "value": "Şema URI'si"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Bir giriş dizesinin UTF-8 bayt uzunluğunu döndürür"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4309,6 +4303,12 @@
     {
       "type": 0,
       "value": "At"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Gerekli. UTF-16 uzunluğunun hesaplandığı dize."
     }
   ],
   "Q5w4Do": [
@@ -5849,6 +5849,12 @@
     {
       "type": 0,
       "value": "Uzaklaştır"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "İş akışı yardımcısına hoş geldiniz!"
     }
   ],
   "Yw7Nfl": [
@@ -7462,7 +7468,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Bu iş akışı veya genel olarak Azure Logic Apps hakkında soru sorun..."
     }
   ],
   "kZCX7t": [
@@ -7533,6 +7539,12 @@
     {
       "type": 0,
       "value": "Geçerli bir json girin."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Geçersiz bağlantı"
     }
   ],
   "l/9YHQ": [
@@ -8127,6 +8139,12 @@
       "value": "Kaydedilmeyen tüm değişiklikleri atmak istiyor musunuz?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Daha Az Göster"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8271,12 +8289,6 @@
       "value": "Tetikleyiciler"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "İş akışı yardımcısına hoş geldiniz!"
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8305,6 +8317,12 @@
     {
       "type": 0,
       "value": "Bir XML düğümünü, düğüm kümesini veya değeri, sağlanan XPath ifadesinden JSON olarak döndürür"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Gerekli. UTF-8 uzunluğunun hesaplandığı dize."
     }
   ],
   "q1gfIs": [
@@ -9059,6 +9077,20 @@
       "value": "Gerekli. Değerlendirilecek koleksiyonlar. Koleksiyonların herhangi birinde görünen bir nesne sonuçta da görüntülenir."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Daha Fazla Göster ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9123,6 +9155,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9209,6 +9247,12 @@
     {
       "type": 0,
       "value": "Her eylem bir veya daha fazla “sonrasında çalıştır” yapılandırması içermelidir"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Bir giriş dizesinin UTF-16 bayt uzunluğunu döndürür"
     }
   ],
   "vEBhDX": [
@@ -9736,7 +9780,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "XSLT oluştur"
     }
   ],
   "yoCi15": [

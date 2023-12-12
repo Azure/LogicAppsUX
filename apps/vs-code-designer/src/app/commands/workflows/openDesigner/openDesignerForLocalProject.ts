@@ -26,7 +26,7 @@ import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, FileSystemConnectionInfo, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
@@ -90,7 +90,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await startDesignTimeApi(this.projectPath);
 
-    this.baseUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}`;
+    this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -126,23 +126,12 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.panel.onDidChangeViewState(
       async (event) => {
         const eventPanel: WebviewPanel = event.webviewPanel;
-        this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
-        eventPanel.webview.html = await this.getWebviewContent({
-          connectionsData: this.panelMetadata.connectionsData,
-          parametersData: this.panelMetadata.parametersData || {},
-          localSettings: this.panelMetadata.localSettings,
-          artifacts: this.panelMetadata.artifacts,
-          azureDetails: this.panelMetadata.azureDetails,
-          workflowDetails: this.panelMetadata.workflowDetails,
-        });
-        this.sendMsgToWebview({
-          command: ExtensionCommand.update_panel_metadata,
-          data: {
-            panelMetadata: this.panelMetadata,
-            connectionData: this.connectionData,
-            apiHubServiceDetails: this.apiHubServiceDetails,
-          },
-        });
+        if (eventPanel.visible) {
+          window.showInformationMessage(
+            localize('designer.restart', 'If changes were made to logic app files, restart designer to see the latest changes.'),
+            'OK'
+          );
+        }
       },
       undefined,
       ext.context.subscriptions
@@ -166,6 +155,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
+            project: ProjectName.designer,
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             baseUrl: this.baseUrl,
@@ -288,7 +278,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * @param {any} workflow - Workflow schema to validate.
    */
   private async validateWorkflow(workflow: any): Promise<void> {
-    const url = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
+    const url = `http://localhost:${ext.designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
     try {
       await sendRequest(this.context, {
         url,

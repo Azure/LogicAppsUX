@@ -2921,12 +2921,6 @@
       "value": "Rozpocznij"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Zobacz mniej"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3557,12 +3551,6 @@
       "value": "Następna sugestia dotycząca przepływu"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Zobacz więcej"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3872,7 +3860,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopiuj"
     }
   ],
   "NE54Uu": [
@@ -4291,6 +4279,12 @@
       "value": "Identyfikator URI schematu"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Zwraca długość bajtów UTF-8 ciągu wejściowego"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4395,6 +4389,12 @@
     {
       "type": 0,
       "value": "Odrzuć"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg do obliczenia długości UTF-16."
     }
   ],
   "Q5w4Do": [
@@ -5961,6 +5961,12 @@
     {
       "type": 0,
       "value": "Pomniejsz"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Witamy w asystencie przepływu pracy!"
     }
   ],
   "Yw7Nfl": [
@@ -7608,7 +7614,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Zadaj pytanie dotyczące tego przepływu pracy lub samej usługi Logic Apps..."
     }
   ],
   "kZCX7t": [
@@ -7717,6 +7723,12 @@
     {
       "type": 0,
       "value": "Wprowadź prawidłowy kod JSON."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowe połączenie"
     }
   ],
   "l/9YHQ": [
@@ -8311,6 +8323,12 @@
       "value": "Czy na pewno chcesz odrzucić wszystkie niezapisane zmiany?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Zobacz mniej"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8455,12 +8473,6 @@
       "value": "Wyzwalacze"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Witamy w asystencie przepływu pracy!"
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8489,6 +8501,12 @@
     {
       "type": 0,
       "value": "Zwraca węzeł, zestaw węzłów lub wartość XML jako kod JSON na podstawie podanego wyrażenia XPath"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg, na podstawie który ma zostać obliczona długość UTF-8."
     }
   ],
   "q1gfIs": [
@@ -9269,6 +9287,20 @@
       "value": "Parametr wymagany. Kolekcje do wyliczenia wartości. Obiekt, który pojawia się w dowolnej kolekcji, pojawia się również w wyniku."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Zobacz więcej ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9333,6 +9365,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9419,6 +9457,12 @@
     {
       "type": 0,
       "value": "Każda akcja musi mieć co najmniej jeden przebieg po konfiguracji"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Zwraca długość bajtów UTF-16 ciągu wejściowego"
     }
   ],
   "vEBhDX": [
@@ -9950,7 +9994,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "Generuj XSLT"
     }
   ],
   "yoCi15": [

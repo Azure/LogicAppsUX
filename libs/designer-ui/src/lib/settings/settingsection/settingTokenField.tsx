@@ -47,6 +47,8 @@ export interface SettingTokenFieldProps extends SettingProps {
   showTokens?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
+  tokenMapping: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;
@@ -61,7 +63,6 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const labelId = useId('msla-editor-label');
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
-
   return (
     <>
       {!hideLabel && (
@@ -94,6 +95,8 @@ export const TokenField = ({
   labelId,
   pickerCallbacks,
   tokenpickerButtonProps,
+  tokenMapping,
+  loadParameterValueFromString,
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
@@ -150,6 +153,8 @@ export const TokenField = ({
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
           dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
         />
       );
 
@@ -169,6 +174,8 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${labelForAutomationId}`}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
         />
       );
 
@@ -188,6 +195,8 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
         />
       );
 
@@ -206,6 +215,16 @@ export const TokenField = ({
           castParameter={onCastParameter}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
+          // Props for dynamic options
+          options={(editorOptions?.options?.value ?? editorOptions?.options)?.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+          }))}
+          isLoading={isLoading}
+          errorDetails={errorDetails}
+          onMenuOpen={onComboboxMenuOpen}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
         />
       );
 
@@ -219,7 +238,9 @@ export const TokenField = ({
           authenticationValue={editorViewModel.authenticationValue}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
-          BasePlugins={{ tokens: showTokens }}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
+          basePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
@@ -230,7 +251,8 @@ export const TokenField = ({
         <SimpleQueryBuilder
           readonly={readOnly}
           itemValue={editorViewModel.itemValue ?? value}
-          isRowFormat={editorViewModel.isRowFormat}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -246,6 +268,8 @@ export const TokenField = ({
           readonly={readOnly}
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}
         />
       );
@@ -266,7 +290,7 @@ export const TokenField = ({
         <FilePickerEditor
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
-          BasePlugins={{ tokens: showTokens, clearEditor: true }}
+          basePlugins={{ tokens: showTokens, clearEditor: true }}
           readonly={readOnly}
           initialValue={value}
           displayValue={editorViewModel.displayValue}
@@ -276,6 +300,8 @@ export const TokenField = ({
           pickerCallbacks={pickerCallbacks as PickerCallbackHandlers}
           isLoading={isLoading}
           errorDetails={errorDetails}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
           editorBlur={onValueChange}
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
@@ -288,7 +314,7 @@ export const TokenField = ({
         <HTMLEditor
           initialValue={value}
           placeholder={placeholder}
-          BasePlugins={{ tokens: showTokens }}
+          basePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
@@ -303,7 +329,7 @@ export const TokenField = ({
           initialValue={value}
           onChange={onValueChange}
           editorViewModel={editorViewModel}
-          BasePlugins={{ tokens: showTokens }}
+          basePlugins={{ tokens: showTokens }}
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           hideValidationErrors={hideValidationErrors}
@@ -325,10 +351,12 @@ export const TokenField = ({
           labelId={labelId}
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
-          BasePlugins={{ tokens: showTokens }}
+          basePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           initialValue={value}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}

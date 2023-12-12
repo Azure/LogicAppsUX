@@ -55,30 +55,31 @@ describe('ui/settings/customTokenField', () => {
       renderer.unmount();
     });
 
-    it('should render the custom editor component', () => {
-      const MyCustomEditor = () => <div>My Custom Editor</div>;
-      const props: CustomTokenFieldProps = {
-        label: 'name',
-        labelId: 'msla-editor-label1',
-        value: [
-          {
-            value: 'test',
-            type: ValueSegmentType.LITERAL,
-            id: '8713da12-1afb-48ce-8fec-429bdb8599b8',
-          },
-        ],
-        tokenEditor: true,
-        onCastParameter: jest.fn(),
-        getTokenPicker: jest.fn(),
-        editor: 'internal-custom-editor',
-        editorOptions: {
-          EditorComponent: MyCustomEditor,
-          editor: 'dropdown',
-          editorOptions: { options: [{ key: '1', value: 'option 1', displayName: 'Option 1' }] },
-          hideLabel: true,
+    const MyCustomEditor = () => <div>My Custom Editor</div>;
+    const getCustomTokenFieldProps = (): CustomTokenFieldProps => ({
+      label: 'name',
+      labelId: 'msla-editor-label1',
+      value: [
+        {
+          value: 'test',
+          type: ValueSegmentType.LITERAL,
+          id: '8713da12-1afb-48ce-8fec-429bdb8599b8',
         },
-      };
+      ],
+      tokenEditor: true,
+      onCastParameter: jest.fn(),
+      getTokenPicker: jest.fn(),
+      editor: 'internal-custom-editor',
+      editorOptions: {
+        EditorComponent: MyCustomEditor,
+        editor: 'dropdown',
+        editorOptions: { options: [{ key: '1', value: 'option 1', displayName: 'Option 1' }] },
+        hideLabel: true,
+      },
+    });
 
+    it('should render the custom editor component', () => {
+      const props = getCustomTokenFieldProps();
       renderer.render(<CustomTokenField {...props} />);
       const customTokenField = renderer.getRenderOutput();
 
@@ -111,6 +112,24 @@ describe('ui/settings/customTokenField', () => {
       expect(defaultEditor.props.label).toBe(props.label);
       expect(defaultEditor.props.onCastParameter).toBe(props.onCastParameter);
       expect(defaultEditor.props.getTokenPicker).toBe(props.getTokenPicker);
+    });
+
+    it.each([true, false, undefined])(`should render the custom editor with "disabled" set to %s`, (disabled) => {
+      const props = getCustomTokenFieldProps();
+      props.readOnly = disabled;
+
+      renderer.render(<CustomTokenField {...props} />);
+      const customTokenField = renderer.getRenderOutput();
+
+      expect(customTokenField.type).toBe(MyCustomEditor);
+      expect(customTokenField.props).toEqual({
+        editor: props.editorOptions?.editor,
+        editorOptions: props.editorOptions?.editorOptions,
+        value: props.value,
+        onValueChange: props.onValueChange,
+        renderDefaultEditor: expect.any(Function),
+        disabled: props.readOnly,
+      });
     });
   });
 });

@@ -18,12 +18,13 @@ export interface GroupedItems {
 
 export type GroupItems = GroupItemProps | RowItemProps;
 
-export enum GroupType {
-  ROW = 'row',
-  GROUP = 'group',
-}
+export const GroupType = {
+  ROW: 'row',
+  GROUP: 'group',
+} as const;
+export type GroupType = (typeof GroupType)[keyof typeof GroupType];
 export interface RowItemProps {
-  type: GroupType.ROW;
+  type: typeof GroupType.ROW;
   checked?: boolean;
   operand1: ValueSegment[];
   operator: string;
@@ -31,7 +32,7 @@ export interface RowItemProps {
 }
 
 export interface GroupItemProps {
-  type: GroupType.GROUP;
+  type: typeof GroupType.GROUP;
   checked?: boolean;
   condition?: GroupDropdownOptions;
   items: GroupItems[];
@@ -40,13 +41,15 @@ export interface GroupItemProps {
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
 }
 
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
 
-export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onChange }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onChange, ...baseEditorProps }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -87,6 +90,7 @@ export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onCha
         mustHaveItem={true}
         handleUpdateParent={handleUpdateParent}
         getTokenPicker={getTokenPicker}
+        {...baseEditorProps}
       />
     </div>
   );

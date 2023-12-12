@@ -34,8 +34,11 @@ export interface ExpandedSimpleArrayProps {
   itemEnum?: string[];
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: SimpleArrayItem[]) => void;
+  options?: ComboboxItem[];
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const ExpandedSimpleArray = ({
@@ -47,6 +50,7 @@ export const ExpandedSimpleArray = ({
   itemEnum,
   setItems,
   readonly,
+  options,
   ...props
 }: ExpandedSimpleArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -68,6 +72,16 @@ export const ExpandedSimpleArray = ({
     }
   };
 
+  const comboboxOptions =
+    options ??
+    itemEnum?.map(
+      (val: string): ComboboxItem => ({
+        displayName: val,
+        key: val,
+        value: val,
+      })
+    );
+
   return (
     <div className="msla-array-container msla-array-item-container">
       {items.map((item, index) => {
@@ -84,16 +98,10 @@ export const ExpandedSimpleArray = ({
                 />
               </div>
             </div>
-            {itemEnum && itemEnum.length > 0 ? (
+            {comboboxOptions ? (
               <Combobox
                 {...props}
-                options={itemEnum.map(
-                  (val: string): ComboboxItem => ({
-                    displayName: val,
-                    key: val,
-                    value: val,
-                  })
-                )}
+                options={comboboxOptions}
                 initialValue={item.value ?? []}
                 placeholder={placeholder}
                 onChange={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}

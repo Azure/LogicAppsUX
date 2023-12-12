@@ -2835,12 +2835,6 @@
       "value": "はじめましょう"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "表示数を減らす"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3438,12 +3432,6 @@
       "value": "次のフローの提案"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "表示数を増やす"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3753,7 +3741,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "コピー"
     }
   ],
   "NE54Uu": [
@@ -4172,6 +4160,12 @@
       "value": "スキーマ URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "入力文字列の UTF-8 バイト長を返します"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4276,6 +4270,12 @@
     {
       "type": 0,
       "value": "破棄"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "必須。UTF-16 の長さを計算する対象の文字列。"
     }
   ],
   "Q5w4Do": [
@@ -5801,6 +5801,12 @@
     {
       "type": 0,
       "value": "縮小"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "ワークフロー アシスタントへようこそ!"
     }
   ],
   "Yw7Nfl": [
@@ -7403,7 +7409,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "このワークフローか、Azure Logic Apps 全般について質問してください..."
     }
   ],
   "kZCX7t": [
@@ -7463,6 +7469,12 @@
     {
       "type": 0,
       "value": "有効な JSON を入力してください。"
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "無効な接続"
     }
   ],
   "l/9YHQ": [
@@ -8049,6 +8061,12 @@
       "value": "保存されていないすべての変更を破棄しますか?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "表示数を減らす"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8193,12 +8211,6 @@
       "value": "トリガー"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "ワークフロー アシスタントへようこそ!"
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8227,6 +8239,12 @@
     {
       "type": 0,
       "value": "指定された XPath 式から XML ノード、ノードセット、または値を JSON として返します"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "必須。UTF-8 の長さを計算する対象の文字列。"
     }
   ],
   "q1gfIs": [
@@ -8966,6 +8984,20 @@
       "value": "必須。評価するコレクション。コレクションのいずれかに存在するオブジェクトは、結果にも含まれます。"
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "表示数を増やす ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " 件)"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9030,6 +9062,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9116,6 +9154,12 @@
     {
       "type": 0,
       "value": "各アクションは、構成後に 1 回以上の実行を必要とします"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "入力文字列の UTF-16 バイト長を返します"
     }
   ],
   "vEBhDX": [
@@ -9377,7 +9421,7 @@
   "ww1mN/": [
     {
       "type": 0,
-      "value": "Canvas"
+      "value": "キャンバス"
     }
   ],
   "wxaQwD": [
@@ -9643,7 +9687,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "XSLT の生成"
     }
   ],
   "yoCi15": [

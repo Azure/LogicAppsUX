@@ -109,7 +109,8 @@ export const workflowSlice = createSlice({
       const currentNodeToBeReplaced = getWorkflowNodeFromGraphState(state, nodeId) as WorkflowNode;
       const graphId = state.nodesMetadata[nodeId].graphId;
       const currentGraph = (graphId === 'root' ? state.graph : getWorkflowNodeFromGraphState(state, graphId)) as WorkflowNode;
-      const parentId = getImmediateSourceNodeIds(currentGraph, nodeId)[0];
+      const parentIds = getImmediateSourceNodeIds(currentGraph, nodeId);
+      const parentId = parentIds.length > 1 ? undefined : parentIds[0];
       addNodeToWorkflow(
         { nodeId: foreachNodeId, relationshipIds: { graphId, parentId, childId: nodeId }, operation },
         currentGraph,

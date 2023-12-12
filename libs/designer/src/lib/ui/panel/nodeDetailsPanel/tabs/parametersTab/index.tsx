@@ -20,6 +20,7 @@ import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  loadParameterValueFromString,
   parameterValueToString,
   remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
@@ -134,6 +135,7 @@ export const ParametersTab = () => {
           nodeId={selectedNodeId}
           isLoading={connectionName.isLoading}
           readOnly={!!readOnly}
+          hasError={errorInfo?.level === ErrorLevel.Connection}
         />
       ) : null}
       {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
@@ -286,14 +288,17 @@ const ParameterSection = ({
     },
   });
 
-  const getValueSegmentFromToken = async (
-    parameterId: string,
-    token: OutputToken,
-    addImplicitForeachIfNeeded: boolean,
-    addLatestActionName: boolean
-  ): Promise<ValueSegment> => {
-    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
-  };
+  const getValueSegmentFromToken = useCallback(
+    async (
+      parameterId: string,
+      token: OutputToken,
+      addImplicitForeachIfNeeded: boolean,
+      addLatestActionName: boolean
+    ): Promise<ValueSegment> => {
+      return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
+    },
+    [dispatch, nodeId, rootState]
+  );
 
   const getTokenPicker = (
     parameterId: string,
@@ -346,6 +351,18 @@ const ParameterSection = ({
     );
   };
 
+  const tokenMapping = useMemo((): Record<string, ValueSegment> => {
+    const mapping: Record<string, ValueSegment> = {};
+    tokenGroup.forEach((group) => {
+      return group.tokens.forEach(async (token) => {
+        if (token.value) {
+          mapping[token.value] = await getValueSegmentFromToken(nodeId, token, false, false);
+        }
+      });
+    });
+    return mapping;
+  }, [getValueSegmentFromToken, nodeId, tokenGroup]);
+
   const onExpandSection = (sectionName: string) => {
     if (sectionName) {
       setSectionExpanded(!sectionExpanded);
@@ -373,6 +390,8 @@ const ParameterSection = ({
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
+          tokenMapping,
+          loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),

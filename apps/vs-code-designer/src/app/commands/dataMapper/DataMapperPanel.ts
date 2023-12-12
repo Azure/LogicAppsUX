@@ -13,9 +13,11 @@ import {
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
 } from './extensionConfig';
-import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType, MapMetadata } from '@microsoft/logic-apps-data-mapper';
+import type { SchemaType, MapMetadata } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
+import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import {
   copyFileSync,
   existsSync as fileExistsSync,
@@ -82,7 +84,7 @@ export default class DataMapperPanel {
   }
 
   private async _setWebviewHtml() {
-    this.panel.webview.html = await getWebViewHTML('vs-code-data-mapper', this.panel);
+    this.panel.webview.html = await getWebViewHTML('vs-code-react', this.panel);
   }
 
   public sendMsgToWebview(msg: MessageToWebview) {
@@ -91,53 +93,62 @@ export default class DataMapperPanel {
 
   private _handleWebviewMsg(msg: MessageToVsix) {
     switch (msg.command) {
-      case 'webviewLoaded':
+      case ExtensionCommand.initialize: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.initialize_frame,
+          data: {
+            project: ProjectName.dataMapper,
+          },
+        });
+        break;
+      }
+      case ExtensionCommand.webviewLoaded:
         // Send runtime port to webview
-        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${ext.dataMapperRuntimePort}` });
+        this.sendMsgToWebview({ command: ExtensionCommand.setRuntimePort, data: `${ext.designTimePort}` });
 
         // If loading a data map, handle that + xslt filename
         this.handleLoadMapDefinitionIfAny();
 
         break;
-      case 'webviewRscLoadError':
+      case ExtensionCommand.webviewRscLoadError:
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
         ext.showError(localize('WebviewRscLoadError', `Error loading Data Mapper resource: "{0}"`, msg.data));
         break;
-      case 'addSchemaFromFile': {
+      case ExtensionCommand.addSchemaFromFile: {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
-      case 'readLocalSchemaFileOptions': {
+      case ExtensionCommand.readLocalSchemaFileOptions: {
         this.handleReadSchemaFileOptions();
         break;
       }
-      case 'readLocalCustomXsltFileOptions': {
+      case ExtensionCommand.readLocalCustomXsltFileOptions: {
         this.handleReadAvailableFunctionPaths();
         break;
       }
-      case 'saveDataMapDefinition': {
+      case ExtensionCommand.saveDataMapDefinition: {
         this.saveMapDefinition(msg.data);
         break;
       }
-      case 'saveDataMapMetadata': {
+      case ExtensionCommand.saveDataMapMetadata: {
         this.saveMapMetadata(msg.data);
         break;
       }
-      case 'saveDataMapXslt': {
+      case ExtensionCommand.saveDataMapXslt: {
         this.saveMapXslt(msg.data);
         break;
       }
-      case 'saveDraftDataMapDefinition': {
+      case ExtensionCommand.saveDraftDataMapDefinition: {
         if (this.dataMapStateIsDirty) {
           this.saveDraftDataMapDefinition(msg.data);
         }
         break;
       }
-      case 'setIsMapStateDirty': {
+      case ExtensionCommand.setIsMapStateDirty: {
         this.handleUpdateMapDirtyState(msg.data);
         break;
       }
-      case 'getFunctionDisplayExpanded': {
+      case ExtensionCommand.getFunctionDisplayExpanded: {
         this.getConfigurationSetting('useExpandedFunctionCards');
         break;
       }
@@ -162,7 +173,7 @@ export default class DataMapperPanel {
     if (this.mapDefinitionData) {
       const mapMetadata = this.readMapMetadataFile();
       this.sendMsgToWebview({
-        command: 'loadDataMap',
+        command: ExtensionCommand.loadDataMap,
         data: { ...this.mapDefinitionData, metadata: mapMetadata },
       });
 
@@ -190,17 +201,21 @@ export default class DataMapperPanel {
   }
 
   public handleReadSchemaFileOptions() {
-    return this.getFilesForPath(schemasPath, 'showAvailableSchemas', supportedSchemaFileExts);
+    return this.getFilesForPath(schemasPath, ExtensionCommand.showAvailableSchemas, supportedSchemaFileExts);
   }
 
   public handleReadAvailableFunctionPaths() {
     const absoluteFolderPath = path.join(ext.logicAppWorkspace, customXsltPath);
     if (fileExistsSync(absoluteFolderPath)) {
-      return this.getFilesForPath(customXsltPath, 'getAvailableCustomXsltPaths', supportedCustomXsltFileExts);
+      return this.getFilesForPath(customXsltPath, ExtensionCommand.getAvailableCustomXsltPaths, supportedCustomXsltFileExts);
     }
   }
 
-  private getFilesForPath(folderPath: string, command: 'showAvailableSchemas' | 'getAvailableCustomXsltPaths', fileTypes: string[]) {
+  private getFilesForPath(
+    folderPath: string,
+    command: typeof ExtensionCommand.showAvailableSchemas | typeof ExtensionCommand.getAvailableCustomXsltPaths,
+    fileTypes: string[]
+  ) {
     fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
@@ -256,7 +271,7 @@ export default class DataMapperPanel {
         }
 
         this.sendMsgToWebview({
-          command: 'fetchSchema',
+          command: ExtensionCommand.fetchSchema,
           data: { fileName: primarySchemaFileName, type: schemaType as SchemaType },
         });
       });
@@ -381,7 +396,7 @@ export default class DataMapperPanel {
     if (fileExistsSync(expectedXsltPath)) {
       fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
         this.sendMsgToWebview({
-          command: 'setXsltData',
+          command: ExtensionCommand.setXsltData,
           data: {
             filename: this.dataMapName,
             fileContents,
@@ -397,7 +412,7 @@ export default class DataMapperPanel {
     const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
     const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
     this.sendMsgToWebview({
-      command: 'getConfigurationSetting',
+      command: ExtensionCommand.getConfigurationSetting,
       data: configValue,
     });
   }

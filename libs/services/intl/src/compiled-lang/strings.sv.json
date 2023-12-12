@@ -2873,12 +2873,6 @@
       "value": "Kom igång"
     }
   ],
-  "Gi72X5": [
-    {
-      "type": 0,
-      "value": "Visa mindre"
-    }
-  ],
   "Gi7czD": [
     {
       "type": 0,
@@ -3487,12 +3481,6 @@
       "value": "Nästa flödesförslag"
     }
   ],
-  "LJmfmK": [
-    {
-      "type": 0,
-      "value": "Visa mer"
-    }
-  ],
   "LMB8am": [
     {
       "type": 0,
@@ -3802,7 +3790,7 @@
   "N7zEUZ": [
     {
       "type": 0,
-      "value": "Copy"
+      "value": "Kopiera"
     }
   ],
   "NE54Uu": [
@@ -4217,6 +4205,12 @@
       "value": "Schemat-URI"
     }
   ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Returnerar UTF-8-längden i byte för en indatasträng"
+    }
+  ],
   "Peg6ZT": [
     {
       "type": 0,
@@ -4321,6 +4315,12 @@
     {
       "type": 0,
       "value": "Ignorera"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng som UTF-16-längden ska beräknas från."
     }
   ],
   "Q5w4Do": [
@@ -5849,6 +5849,12 @@
     {
       "type": 0,
       "value": "Zooma ut"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Välkommen till arbetsflödesassistenten!"
     }
   ],
   "Yw7Nfl": [
@@ -7474,7 +7480,7 @@
   "kXn5e0": [
     {
       "type": 0,
-      "value": "Ask a question about this workflow or about Azure Logic Apps as a whole ..."
+      "value": "Ställ en fråga om det här arbetsflödet eller om Azure Logic Apps som helhet..."
     }
   ],
   "kZCX7t": [
@@ -7545,6 +7551,12 @@
     {
       "type": 0,
       "value": "Ange en giltig JSON."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Ogiltig anslutning"
     }
   ],
   "l/9YHQ": [
@@ -8139,6 +8151,12 @@
       "value": "Vill du ta bort alla ändringar som inte har sparats?"
     }
   ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Visa mindre"
+    }
+  ],
   "oZMhX/": [
     {
       "type": 0,
@@ -8283,12 +8301,6 @@
       "value": "Utlösare"
     }
   ],
-  "pl+hNy": [
-    {
-      "type": 0,
-      "value": "Välkommen till arbetsflödesassistenten!"
-    }
-  ],
   "pozypE": [
     {
       "type": 0,
@@ -8317,6 +8329,12 @@
     {
       "type": 0,
       "value": "Rerturnerar en XML-nod, en noduppsättning eller ett värde som JSON från det tillhandahållna XPath-uttrycket"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng som UTF-8-längden ska beräknas från."
     }
   ],
   "q1gfIs": [
@@ -9067,6 +9085,20 @@
       "value": "Obligatoriskt. De samlingar som ska utvärderas. Ett objekt som visas i någon av samlingarna visas också i resultatet."
     }
   ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Visa mer ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "uUlBZ8": [
     {
       "type": 0,
@@ -9131,6 +9163,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connector type"
     }
   ],
   "unMaeV": [
@@ -9217,6 +9255,12 @@
     {
       "type": 0,
       "value": "Varje åtgärd måste köras en eller flera gånger efter konfiguration"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Returnerar UTF-16-längden i byte för en indatasträng"
     }
   ],
   "vEBhDX": [
@@ -9748,7 +9792,7 @@
   "ylfgv1": [
     {
       "type": 0,
-      "value": "Generate XSLT"
+      "value": "Generera XSLT"
     }
   ],
   "yoCi15": [

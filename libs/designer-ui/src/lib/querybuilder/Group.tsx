@@ -1,6 +1,7 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { RowDropdownOptions, GroupType } from '.';
 import { Checkbox } from '../checkbox';
+import type { ValueSegment } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { AddSection } from './AddSection';
 import type { GroupDropdownOptions } from './GroupDropdown';
@@ -26,14 +27,14 @@ const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.leftCenter,
 };
 
-export enum MoveOption {
-  UP = 'up',
-  DOWN = 'down',
-}
+export const MoveOption = {
+  UP: 'up',
+  DOWN: 'down',
+};
+export type MoveOption = (typeof MoveOption)[keyof typeof MoveOption];
 
 interface GroupProps {
   readonly?: boolean;
-  checked?: boolean;
   groupProps: GroupItemProps;
   isRootGroup?: boolean;
   isGroupable: boolean;
@@ -42,8 +43,10 @@ interface GroupProps {
   mustHaveItem?: boolean;
   isTop: boolean;
   isBottom: boolean;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
-  handleMove?: (childIndex: number, moveOption: MoveOption) => void;
+  // handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUngroupChild?: (indexToInsertAt: number) => void;
   handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
@@ -64,6 +67,7 @@ export const Group = ({
   handleDeleteChild,
   handleUngroupChild,
   handleUpdateParent,
+  ...baseEditorProps
 }: GroupProps) => {
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
@@ -203,19 +207,19 @@ export const Group = ({
     }
   };
 
-  const handleMoveChild = (childIndex: number, moveOption: MoveOption) => {
-    if (childIndex <= 0 && moveOption === MoveOption.UP) {
-      // const newItems = { ...groupProps };
-    } else if (childIndex >= groupProps.items.length - 1 && moveOption === MoveOption.DOWN) {
-      // come back
-    } else {
-      const newItems = { ...groupProps };
-      const child = newItems.items[childIndex];
-      newItems.items[childIndex] = newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)];
-      newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)] = child;
-      handleUpdateParent(newItems, index);
-    }
-  };
+  // const handleMoveChild = (childIndex: number, moveOption: MoveOption) => {
+  //   if (childIndex <= 0 && moveOption === MoveOption.UP) {
+  //     // const newItems = { ...groupProps };
+  //   } else if (childIndex >= groupProps.items.length - 1 && moveOption === MoveOption.DOWN) {
+  //     // come back
+  //   } else {
+  //     const newItems = { ...groupProps };
+  //     const child = newItems.items[childIndex];
+  //     newItems.items[childIndex] = newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)];
+  //     newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)] = child;
+  //     handleUpdateParent(newItems, index);
+  //   }
+  // };
 
   const onRenderOverflowButton = (): JSX.Element => {
     const groupCommands = intl.formatMessage({
@@ -286,12 +290,13 @@ export const Group = ({
                     isGroupable={isGroupable}
                     showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
                     groupedItems={groupedItems}
-                    isTop={isTop && currIndex === 0 && !!isRootGroup}
-                    isBottom={isBottom && index === groupProps.items.length - 1 && !!isRootGroup}
+                    // isTop={isTop && currIndex === 0 && !!isRootGroup}
+                    // isBottom={isBottom && index === groupProps.items.length - 1 && !!isRootGroup}
                     getTokenPicker={getTokenPicker}
-                    handleMove={handleMoveChild}
+                    // handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUpdateParent={handleUpdateNewParent}
+                    {...baseEditorProps}
                   />
                 ) : (
                   <Group
@@ -310,10 +315,11 @@ export const Group = ({
                     isTop={isTop && currIndex === 0}
                     isBottom={isBottom && currIndex === groupProps.items.length - 1}
                     getTokenPicker={getTokenPicker}
-                    handleMove={handleMoveChild}
+                    // handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
+                    {...baseEditorProps}
                   />
                 );
               })}
@@ -326,13 +332,14 @@ export const Group = ({
                       index={0}
                       isGroupable={isGroupable}
                       showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
-                      isTop={isTop && !!isRootGroup}
-                      isBottom={isBottom && !!isRootGroup}
+                      // isTop={isTop && !!isRootGroup}
+                      // isBottom={isBottom && !!isRootGroup}
                       groupedItems={groupedItems}
                       getTokenPicker={getTokenPicker}
-                      handleMove={handleMoveChild}
+                      // handleMove={handleMoveChild}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
+                      {...baseEditorProps}
                     />
                   ) : null}
                   <AddSection

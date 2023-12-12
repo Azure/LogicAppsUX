@@ -148,6 +148,7 @@ export const useNodeIds = () => {
     })
   );
 };
+
 export const useNewSwitchCaseId = () =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
