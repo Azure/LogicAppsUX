@@ -9,6 +9,7 @@ import { getExpressionTokenTitle } from '../../../tokenpicker/util';
 import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
+import type { TokenNode } from '../nodes/tokenNode';
 import { $createTokenNode } from '../nodes/tokenNode';
 import { convertStringToSegments } from './editorToSegment';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
@@ -24,7 +25,14 @@ import { ExpressionParser } from '@microsoft/parsers-logic-apps';
 import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
 import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, $createTextNode, $getRoot, createEditor } from 'lexical';
 
-export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean, readonly?: boolean): RootNode => {
+export interface SegmentParserOptions {
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  readonly?: boolean;
+  tokensEnabled?: boolean;
+}
+
+export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParserOptions): RootNode => {
+  const { loadParameterValueFromString, readonly, tokensEnabled } = options ?? {};
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
   const root = $getRoot().clear();
@@ -55,7 +63,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
         if ($isLinkNode(childNode)) {
           const linkNode = $createLinkNode(getURL(childNode, tokensEnabled, nodeMap));
           childNode.getChildren().forEach((listItemChildNode) => {
-            appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled, readonly);
+            appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled, readonly, loadParameterValueFromString);
           });
           paragraph.append(linkNode);
         }
@@ -63,13 +71,13 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
         else if ($isListItemNode(childNode)) {
           const listItemNode = $createListItemNode();
           childNode.getChildren().forEach((listItemChildNode) => {
-            appendChildrenNode(listItemNode, listItemChildNode, nodeMap, tokensEnabled, readonly);
+            appendChildrenNode(listItemNode, listItemChildNode, nodeMap, tokensEnabled, readonly, loadParameterValueFromString);
           });
           paragraph.append(listItemNode);
         }
         // Non line break nodes are parsed and appended to the paragraph node
         else if (!$isLineBreakNode(childNode)) {
-          appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled, readonly);
+          appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled, readonly, loadParameterValueFromString);
         }
         // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
         else if ($isLineBreakNode(childNode)) {
@@ -103,21 +111,40 @@ const appendChildrenNode = (
   childNode: LexicalNode,
   nodeMap: Map<string, ValueSegment>,
   tokensEnabled?: boolean,
-  readonly?: boolean
+  readonly?: boolean,
+  loadParameterValueFromString?: (value: string) => ValueSegment[]
 ) => {
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
     const decodedTextContent = tokensEnabled ? decodeSegmentValueInLexicalContext(textContent) : textContent;
-    const childNodeStyles = childNode.getStyle();
-    const childNodeFormat = childNode.getFormat();
+
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
     // and we'll need to use the ExtendedTextNode to apply the styles and format
+    const childNodeStyles = childNode.getStyle();
+    const childNodeFormat = childNode.getFormat();
+
+    if (tokensEnabled && nodeMap) {
+      const contentAsParameter = loadParameterValueFromString?.(decodedTextContent);
+      if (contentAsParameter) {
+        contentAsParameter.forEach((segment) => {
+          const tokenNode = createTokenNodeFromSegment(segment, readonly);
+          if (tokenNode) {
+            paragraph.append(tokenNode);
+          } else {
+            appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
+          }
+        });
+
+        return;
+      }
+    }
+
     appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
-  } else {
-    paragraph.append(childNode);
   }
+
+  paragraph.append(childNode);
 };
 
 // Splits up text content into their respective nodes
@@ -142,37 +169,8 @@ export const appendStringSegment = (
       // token is found in the text
       if (nodeMap && tokensEnabled) {
         const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
-        if (tokenSegment && tokenSegment.token) {
-          const segmentValue = tokenSegment.value;
-          const { brandColor, icon, title, name, value, tokenType } = tokenSegment.token;
-          // Expression token handling
-          if (tokenType === TokenType.FX) {
-            const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
-            const token = $createTokenNode({
-              title: getExpressionTokenTitle(expressionValue) ?? title,
-              data: tokenSegment,
-              brandColor,
-              icon,
-              value,
-              readonly,
-            });
-            tokensEnabled && paragraph.append(token);
-          }
-          // other token handling
-          else if (title || name) {
-            const token = $createTokenNode({
-              title: title ?? name,
-              data: tokenSegment,
-              brandColor,
-              icon,
-              value,
-              readonly,
-            });
-            tokensEnabled && paragraph.append(token);
-          } else {
-            throw new Error('Token Node is missing title or name');
-          }
-        }
+        const token = createTokenNodeFromSegment(tokenSegment, readonly);
+        token && paragraph.append(token);
       }
       prevIndex = currIndex = newIndex;
     }
@@ -184,7 +182,8 @@ export const appendStringSegment = (
   }
 };
 
-export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boolean, readonly?: boolean): RootNode => {
+export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentParserOptions): RootNode => {
+  const { readonly, tokensEnabled } = options ?? {};
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -257,6 +256,43 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
     }
   });
   return text;
+};
+
+const createTokenNodeFromSegment = (tokenSegment: ValueSegment | undefined, readonly: boolean | undefined): TokenNode | undefined => {
+  if (!tokenSegment?.token) {
+    return undefined;
+  }
+
+  const segmentValue = tokenSegment.value;
+  const { brandColor, icon, title, name, value, tokenType } = tokenSegment.token;
+  // Expression token handling
+  if (tokenType === TokenType.FX) {
+    const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
+    const token = $createTokenNode({
+      title: getExpressionTokenTitle(expressionValue) ?? title,
+      data: tokenSegment,
+      brandColor,
+      icon,
+      value,
+      readonly,
+    });
+    return token;
+  }
+
+  // other token handling
+  if (title || name) {
+    const token = $createTokenNode({
+      title: title ?? name,
+      data: tokenSegment,
+      brandColor,
+      icon,
+      value,
+      readonly,
+    });
+    return token;
+  }
+
+  throw new Error('Token Node is missing title or name');
 };
 
 export const decodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>

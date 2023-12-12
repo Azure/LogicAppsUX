@@ -5,7 +5,7 @@ import type { InitialConfigType } from '@lexical/react/LexicalComposer';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 
 export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
-  const { initialValue, basePlugins = {}, readonly } = props;
+  const { initialValue, basePlugins = {}, readonly, loadParameterValueFromString } = props;
   const { isHtmlEditor, tokens } = basePlugins;
   const initialConfig: InitialConfigType = {
     ...defaultInitialConfig,
@@ -14,7 +14,9 @@ export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
     editorState:
       initialValue &&
       (() => {
-        isHtmlEditor ? parseHtmlSegments(initialValue, tokens, readonly) : parseSegments(initialValue, tokens, readonly);
+        isHtmlEditor
+          ? parseHtmlSegments(initialValue, { tokensEnabled: tokens, readonly, loadParameterValueFromString })
+          : parseSegments(initialValue, { tokensEnabled: tokens, readonly, loadParameterValueFromString });
       }),
   };
   return (

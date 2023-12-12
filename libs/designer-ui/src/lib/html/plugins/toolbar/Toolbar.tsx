@@ -230,7 +230,7 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
               convertEditorState(activeEditor, nodeMap, { asPlainText: false, loadParameterValueFromString }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
-                  parseSegments(valueSegments, true);
+                  parseSegments(valueSegments, { tokensEnabled: true, loadParameterValueFromString });
                   setIsRawText(true);
                 });
               });
@@ -244,7 +244,7 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
               convertEditorState(activeEditor, nodeMap, { asPlainText: true, loadParameterValueFromString }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
-                  parseHtmlSegments(valueSegments, true);
+                  parseHtmlSegments(valueSegments, { tokensEnabled: true, loadParameterValueFromString });
                   setIsRawText(false);
                 });
               });
