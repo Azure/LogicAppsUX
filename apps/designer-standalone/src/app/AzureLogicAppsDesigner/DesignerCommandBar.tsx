@@ -1,8 +1,8 @@
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
+import { Badge } from '@fluentui/react-components';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
-import { TrafficLightDot } from '@microsoft/designer-ui';
 import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -129,20 +129,14 @@ export const DesignerCommandBar = ({
       {
         key: 'parameters',
         text: 'Parameters',
-        onRenderText: (item: { text: string }) => {
-          return (
-            <>
-              {item.text}
-              {haveWorkflowParameterErrors ? (
-                <div style={{ display: 'inline-block', marginLeft: 8 }}>
-                  <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
-                </div>
-              ) : null}
-            </>
-          );
-        },
         iconProps: { iconName: 'Parameter' },
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
+        onRenderText: (item: { text: string }) => (
+          <>
+            {item.text}
+            {haveWorkflowParameterErrors && <Badge size="extra-small" color="danger" />}
+          </>
+        ),
       },
       ...(showConnectionsPanel
         ? [
@@ -151,6 +145,12 @@ export const DesignerCommandBar = ({
               text: 'Connections',
               iconProps: { iconName: 'Link' },
               onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+              onRenderText: (item: { text: string }) => (
+                <>
+                  {item.text}
+                  {haveConnectionErrors && <Badge size="extra-small" color="danger" />}
+                </>
+              ),
             },
           ]
         : []),
@@ -187,6 +187,7 @@ export const DesignerCommandBar = ({
       dispatch,
       haveErrors,
       haveWorkflowParameterErrors,
+      haveConnectionErrors,
       isDarkMode,
       isSaving,
       saveIsDisabled,

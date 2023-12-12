@@ -3,6 +3,7 @@ import { DisconnectedEntry } from './disconnectedEntry';
 import { Text, AccordionHeader, AccordionPanel, Spinner, Badge } from '@fluentui/react-components';
 import { getConnectorCategoryString } from '@microsoft/designer-ui';
 import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/utils-logic-apps';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface ConnectorConnectionsCardProps {
@@ -36,6 +37,11 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
     { connectorName: title }
   );
 
+  const hasErrors = useMemo(() => {
+    if (disconnectedNodes?.length > 0) return true;
+    return Object.values(connectionRefs).some((connectionReference) => connectionReference?.connection?.result?.errors?.length > 0);
+  }, [connectionRefs, disconnectedNodes?.length]);
+
   return (
     <div key={connectorId} className="msla-connector-connections-card">
       <AccordionHeader>
@@ -55,6 +61,7 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
                   {category}
                 </Badge>
               )}
+              {hasErrors && <Badge size="extra-small" color="danger" />}
             </>
           )}
         </div>

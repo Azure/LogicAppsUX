@@ -1,6 +1,6 @@
 import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
-import { Button, Text, Tooltip } from '@fluentui/react-components';
+import { Badge, Button, Text, Tooltip } from '@fluentui/react-components';
 import { ArrowSwap24Filled, PlugDisconnected24Filled } from '@fluentui/react-icons';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -37,6 +37,7 @@ export const DisconnectedEntry = ({ iconUri, nodeIds }: DisconnectedEntryProps) 
         <Text size={300} weight="semibold" className="msla-flex-header-title">
           {componentTitle}
         </Text>
+        <Badge size="extra-small" color="danger" />
       </div>
       <div className="msla-connector-connections-card-connection-body">
         <div className="msla-connector-connections-card-connection-nodes">
