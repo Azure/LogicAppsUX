@@ -24,9 +24,9 @@ import { FileManagement } from './iacGestureHelperFunctions';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { getBaseGraphApi, type ILocalSettingsJson } from '@microsoft/vscode-extension';
+import axios from 'axios';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
-import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 import { window } from 'vscode';
 
@@ -241,19 +241,6 @@ async function callStandardResourcesApi(
       targetAppServicePlanName: appServicePlan,
     };
 
-    // Set up the options for the POST request
-    const requestOptions = {
-      method: 'POST',
-      uri: apiUrl,
-      body: deploymentArtifactsInput,
-      json: true,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/zip',
-      },
-      encoding: 'binary',
-    };
-
     ext.outputChannel.appendLog(
       localize(
         'operationalContext',
@@ -261,9 +248,15 @@ async function callStandardResourcesApi(
       )
     );
     ext.outputChannel.appendLog(localize('initiatingStandardResourcesApiCall', 'Initiating Standard Resources API call...'));
-    const response = await requestP(requestOptions);
+    const response = await axios.post(apiUrl, deploymentArtifactsInput, {
+      headers: {
+        Accept: 'application/zip',
+        'Content-Type': 'application/json',
+      },
+      responseType: 'arraybuffer',
+    });
     ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
-    return Buffer.from(response, 'binary');
+    return Buffer.from(response.data, 'binary');
   } catch (error) {
     ext.outputChannel.appendLog(
       localize('failedStandardResourcesApiCall', `Failed to call Standard Resources API. Error: ${error.message || error}`)
@@ -309,24 +302,17 @@ async function callManagedConnectionsApi(
       ConnectionReferenceName: connectionReferenceName,
     };
 
-    // Configure the POST request options
-    const requestOptions = {
-      method: 'POST',
-      uri: apiUrl,
-      body: requestBody,
-      json: true,
+    // Execute the API call
+    const response = await axios.post(apiUrl, requestBody, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `${accessToken}`,
       },
-      encoding: 'binary',
-    };
-
-    // Execute the API call
-    const response = await requestP(requestOptions);
+      responseType: 'arraybuffer',
+    });
 
     // Convert and log the successful response
-    const buffer = Buffer.from(response, 'binary');
+    const buffer = Buffer.from(response.data, 'binary');
     ext.outputChannel.appendLog(
       localize('successfulManagedConnection', `Successfully retrieved deployment artifacts for connection: ${connectionName}.`)
     );
