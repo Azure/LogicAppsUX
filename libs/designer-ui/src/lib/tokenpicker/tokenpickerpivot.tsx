@@ -11,6 +11,7 @@ const pivotStyles: Partial<IPivotStyles> = {
     },
     fontSize: '16px',
     padding: '10px',
+    color: '#323130',
   },
   root: {
     padding: '0 5px 5px 5px',
