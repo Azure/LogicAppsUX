@@ -6,6 +6,7 @@ import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies } from '../../utils/binaries';
+import { stopDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
@@ -67,6 +68,7 @@ export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: strin
           if (result === DialogResponses.learnMore) {
             await openUrl('https://aka.ms/azFuncOutdated');
           } else if (result === update) {
+            stopDesignTimeApi();
             await installFuncCoreToolsBinaries(context, majorVersion);
           } else if (result === DialogResponses.dontWarnAgain) {
             await updateGlobalSetting(showCoreToolsWarningKey, false);

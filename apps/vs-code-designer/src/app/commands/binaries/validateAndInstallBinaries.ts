@@ -61,21 +61,21 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
           progress.report({ increment: 20, message: `NodeJS` });
-          await timeout(validateNodeJsIsLatest, dependencyTimeout, dependenciesVersions?.nodejs);
+          await timeout(validateNodeJsIsLatest, dependencyTimeout, true, dependenciesVersions?.nodejs);
           await setNodeJsCommand();
         });
 
         context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
           progress.report({ increment: 20, message: `Functions Runtime` });
-          await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, dependenciesVersions?.funcCoreTools);
+          await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, true, dependenciesVersions?.funcCoreTools);
           await setFunctionsCommand();
         });
 
         context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
           progress.report({ increment: 20, message: `.NET SDK` });
-          await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
+          await timeout(validateDotNetIsLatest, dependencyTimeout, true, dependenciesVersions?.dotnet);
           await setDotNetCommand(context);
         });
         ext.outputChannel.appendLog(
