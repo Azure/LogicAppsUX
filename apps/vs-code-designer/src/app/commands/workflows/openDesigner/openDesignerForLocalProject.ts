@@ -22,7 +22,7 @@ import {
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
-import { getWorkflowFilePathFromUnitTest, saveUnitTestDefinition } from '../../../utils/unitTests';
+import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -51,7 +51,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.unitTestName = unitTestName;
     this.isUnitTest = !!unitTestName;
     this.unitTestDefinition = unitTestDefinition ?? null;
-    this.workflowFilePath = unitTestDefinition ? getWorkflowFilePathFromUnitTest(context, node.fsPath) : node.fsPath;
+    this.workflowFilePath = node.fsPath;
   }
 
   private createFileSystemConnection = (connectionInfo: FileSystemConnectionInfo): Promise<any> => {

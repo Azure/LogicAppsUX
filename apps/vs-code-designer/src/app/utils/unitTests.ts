@@ -51,11 +51,3 @@ const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestNam
 const getWorkflowTestsPath = (projectPath: string, workflowName: string) => {
   return path.join(projectPath, developmentDirectoryName, testsDirectoryName, workflowName);
 };
-
-// TODO(ccastrotrejo): Need to check with PM if unit tests will have workflow definition snapshots
-// or if we can store the path in the unit test definition
-export const getWorkflowFilePathFromUnitTest = (context: any, filePath: string): string => {
-  const activeFile = vscode?.window?.activeTextEditor?.document;
-  console.log(activeFile);
-  return filePath;
-};
