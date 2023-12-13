@@ -717,12 +717,14 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const book3Name = book3Seq.children[0];
         const authObj = book2Seq.children[1];
         const authorName = authObj.children[1];
+        const publisherLine1 = authObj.children[3].children[0];
 
         // target nodes
         const personLoop = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[0]; // root/looping/employee/person
         const personName = personLoop.children[0];
         const personAddress = personLoop.children[1];
         const personOther = personLoop.children[2];
+        const personPublisher = personLoop.children[3];
 
         // add 'loop' connections
         applyConnectionValue(connections, {
@@ -756,6 +758,15 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         });
 
         // apply direct connections
+        applyConnectionValue(connections, {
+          targetNode: personPublisher,
+          targetNodeReactFlowKey: addReactFlowPrefix(personPublisher.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(publisherLine1.key, SchemaType.Source),
+            node: publisherLine1,
+          },
+        });
         applyConnectionValue(connections, {
           targetNode: personOther,
           targetNodeReactFlowKey: addReactFlowPrefix(personOther.key, SchemaType.Target),
@@ -808,9 +819,12 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const address = person['Address'];
         const name = person['Name'];
         const other = person['Other'];
+        const publisherLine = person['Publisher'];
+
         expect(address).toEqual('ns0:name');
         expect(name).toEqual('../ns0:author/ns0:first-name');
         expect(other).toEqual('../../ns0:title');
+        expect(publisherLine).toEqual('../ns0:author/ns0:publisher/ns0:line1');
       });
 
       it('Generates body with many to one nested loops', () => {
@@ -2792,6 +2806,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         generateMapDefinitionBody(mapDefinition, connections);
 
+        // danielle do we remove the * in the map?
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
         const rootKeys = Object.keys(rootObject);

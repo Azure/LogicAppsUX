@@ -66,6 +66,22 @@
                     "type": "String",
                     "properties": "Optional",
                     "qName": "ns0:last-name"
+                  },
+                  {
+                    "key": "/ns0:bookstore/ns0:book/ns0:book2/ns0:author/ns0:publisher",
+                    "name": "publisher",
+                    "type": "Complex",
+                    "properties": "Optional",
+                    "qName": "ns0:publisher",
+                    "children": [
+                      {
+                        "key": "/ns0:bookstore/ns0:book/ns0:book2/ns0:author/ns0:publisher/ns0:line1",
+                        "name": "line1",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "ns0:line1"
+                      }
+                    ]
                   }
                 ],
                 "qName": "ns0:author"

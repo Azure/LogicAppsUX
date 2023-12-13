@@ -113,7 +113,7 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
   });
 };
 
-const createTargetPath = (
+const createSourcePath = (
   newPath: OutputPathItem[],
   isFinalPath: boolean,
   pathItem: PathItem,
@@ -155,7 +155,6 @@ const createTargetPath = (
 };
 
 const getSrcPathRelativeToLoop = (newPath: OutputPathItem[]) => {
-  // danielle use this and the path to root?
   const valueToTrim = newPath
     .map((pathItem) => (pathItem.key.startsWith(mapNodeParams.for) ? getSourceKeyOfLastLoop(pathItem.key) : ''))
     .filter((path) => path !== '')
@@ -197,46 +196,43 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 
       const isFinalPath = targetNode.key === targetPath.key;
 
-      // danielle is this source path?
-      let formattedLmlSnippetForTarget = createTargetPath(newPath, isFinalPath, targetPath, connections, input, pathToRoot);
+      let formattedLmlSnippetForSource = createSourcePath(newPath, isFinalPath, targetPath, connections, input, pathToRoot);
 
       // construct source side of LML for connection
-      // danielle can this just go out of the loop? might be less confusing
       if (isFinalPath) {
         const connectionsToTarget = connections[addTargetReactFlowPrefix(targetPath.key)];
-        const inputIntoTargetNode = connectionsToTarget.inputs[0]; // danielle is this always 1?
+        const inputIntoTargetNode = connectionsToTarget.inputs[0];
         const inputNode = inputIntoTargetNode[0];
         if (inputNode && isConnectionUnit(inputNode)) {
           if (isFunctionData(inputNode.node)) {
-            // danielle this is probably where we get the
             const valueToTrim = getSrcPathRelativeToLoop(newPath);
 
             if (valueToTrim) {
               // Need local variables for functions
-              if (formattedLmlSnippetForTarget === valueToTrim) {
-                formattedLmlSnippetForTarget = '';
+              if (formattedLmlSnippetForSource === valueToTrim) {
+                formattedLmlSnippetForSource = '';
               } else {
-                formattedLmlSnippetForTarget = formattedLmlSnippetForTarget.replaceAll(`${valueToTrim}/`, '');
+                formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}/`, '');
 
                 // Handle dot access
-                if (!formattedLmlSnippetForTarget.includes('[') && !formattedLmlSnippetForTarget.includes(']')) {
-                  formattedLmlSnippetForTarget = formattedLmlSnippetForTarget.replaceAll(`${valueToTrim}`, '.');
+                if (!formattedLmlSnippetForSource.includes('[') && !formattedLmlSnippetForSource.includes(']')) {
+                  formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}`, '.');
                 }
               }
             }
           } else {
             // Need local variables for non-functions
-            const valueToTrim = getPathForSrcSchemaNode(inputNode, formattedLmlSnippetForTarget);
-            // danielle this assumes that the lowest repeating is actually where we are- need to find lowest repeating that matches
+            const valueToTrim = getPathForSrcSchemaNode(inputNode, formattedLmlSnippetForSource);
             if (
-              formattedLmlSnippetForTarget === inputNode.node.key &&
+              formattedLmlSnippetForSource === inputNode.node.key &&
               inputNode.node.nodeProperties.includes(SchemaNodeProperty.Repeating)
             ) {
-              formattedLmlSnippetForTarget = '.';
+              formattedLmlSnippetForSource = '.';
             } else if (valueToTrim) {
+              // account for source elements at different level of loop
+              // danielle account for object in loop
               let backoutValue = '';
               if (valueToTrim !== lastLoop.loop) {
-                // ex:
                 const loopDifference = lastLoop.loop.replace(valueToTrim || ' ', '');
                 for (const i of loopDifference) {
                   if (i === '/') {
@@ -244,24 +240,24 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
                   }
                 }
               }
-              formattedLmlSnippetForTarget = backoutValue + formattedLmlSnippetForTarget.replace(`${valueToTrim}/`, '');
+              formattedLmlSnippetForSource = backoutValue + formattedLmlSnippetForSource.replace(`${valueToTrim}/`, '');
             }
 
-            formattedLmlSnippetForTarget = formattedLmlSnippetForTarget.startsWith('@')
-              ? `./${formattedLmlSnippetForTarget}`
-              : formattedLmlSnippetForTarget;
+            formattedLmlSnippetForSource = formattedLmlSnippetForSource.startsWith('@')
+              ? `./${formattedLmlSnippetForSource}`
+              : formattedLmlSnippetForSource;
           }
         }
 
         if (isTargetObjectType) {
           // $Value
           newPath.push({ key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName });
-          newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForTarget });
+          newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
         } else {
           // Standard property to value
           newPath.push({
             key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
-            value: formattedLmlSnippetForTarget && !isObjectType(targetNode.type) ? formattedLmlSnippetForTarget : undefined,
+            value: formattedLmlSnippetForSource && !isObjectType(targetNode.type) ? formattedLmlSnippetForSource : undefined,
           });
         }
       }
