@@ -1,4 +1,4 @@
-import { ConnectionParameterRow } from './connectionParameterRow';
+import { ConnectionParameterRow } from '../connectionParameterRow';
 import GatewayPicker from './gatewayPicker';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';

@@ -9,7 +9,6 @@ import {
   updateNodeConnection,
   needsOAuth,
 } from '../../../../core/actions/bjsworkflow/connections';
-import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {
   useConnectorByNodeId,
   useGatewayServiceConfig,
@@ -19,37 +18,31 @@ import {
 import { useReferencePanelMode } from '../../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection, openPanel } from '../../../../core/state/panel/panelSlice';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
-import {
-  getAssistedConnectionProps,
-  getConnectionParametersForAzureConnection,
-  getSupportedParameterSets,
-} from '../../../../core/utils/connectors/connections';
+import { getAssistedConnectionProps, getSupportedParameterSets } from '../../../../core/utils/connectors/connections';
 import { ActionList } from '../actionList/actionList';
-import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
-import type { ConnectionParameterProps } from './universalConnectionParameter';
-import { UniversalConnectionParameter } from './universalConnectionParameter';
+import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
+import ConnectionNameInput from './formInputs/connectionNameInput';
+import LegacyGatewayCheckbox from './formInputs/legacyGatewayCheckbox';
+import LegacyManagedIdentityDropdown from './formInputs/legacyManagedIdentityPicker';
+import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMultiAuth';
+import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
+import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
+import { createConnection } from './helpers/createConnection';
 import type { IDropdownOption } from '@fluentui/react';
-import { MessageBarType, MessageBar, Checkbox, Dropdown, Icon, Label, TextField, TooltipHost } from '@fluentui/react';
+import { MessageBarType, MessageBar, Label } from '@fluentui/react';
 import { Body1Strong, Button, Divider, Spinner } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
-  ConnectionService,
   LogEntryLevel,
   LoggerService,
   WorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type {
-  ConnectionCreationInfo,
-  ConnectionParametersMetadata,
-  IConnectionCredentialMappingEditorProps,
-} from '@microsoft/designer-client-services-logic-apps';
+import type { IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type {
   Connection,
   ConnectionParameter,
-  ConnectionParameterSet,
   ConnectionParameterSetParameter,
-  ConnectionParameterSetValues,
   Connector,
   ManagedIdentity,
 } from '@microsoft/utils-logic-apps';
@@ -70,13 +63,6 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
-
-const LegacyMultiAuthOptions = {
-  oauth: 0,
-  servicePrincipal: 1,
-  managedIdentity: 2,
-} as const;
-type LegacyMultiAuthOptions = (typeof LegacyMultiAuthOptions)[keyof typeof LegacyMultiAuthOptions];
 
 export const CreateConnection = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -156,128 +142,6 @@ export const CreateConnection = () => {
     const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
     dispatch(openPanel({ nodeId, panelMode }));
   }, [dispatch, referencePanelMode, nodeIds]);
-
-  const createConnectionCallback = useCallback(
-    async (
-      displayName?: string,
-      selectedParameterSet?: ConnectionParameterSet,
-      parameterValues: Record<string, any> = {},
-      isOAuthConnection?: boolean,
-      alternativeParameterValues?: Record<string, any>,
-      identitySelected?: string
-    ) => {
-      if (!connector?.id) return;
-
-      setIsLoading(true);
-      setErrorMessage(undefined);
-
-      let outputParameterValues = parameterValues;
-
-      if (selectedParameterSet) {
-        const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
-          ([, parameter]) => parameter?.uiDefinition?.constraints?.required === 'true'
-        );
-        requiredParameters?.forEach(([key, parameter]) => {
-          if (!outputParameterValues?.[key]) {
-            outputParameterValues[key] = parameter?.uiDefinition?.constraints?.default;
-          }
-        });
-      }
-
-      try {
-        // Assign connection parameters from resource selector experience
-        if (assistedConnectionProps) {
-          const assistedParams = await getConnectionParametersForAzureConnection(
-            operationManifest?.properties.connection?.type,
-            selectedSubResource
-          );
-          outputParameterValues = { ...outputParameterValues, ...assistedParams };
-        }
-
-        // If oauth, find the oauth parameter and assign the redirect url
-        if (isOAuthConnection && selectedParameterSet) {
-          const oAuthParameter = Object.entries(selectedParameterSet?.parameters).find(
-            ([_, parameter]) => !!parameter?.oAuthSettings?.redirectUrl
-          );
-          if (oAuthParameter) {
-            const oAuthParameterKey = oAuthParameter?.[0];
-            const oAuthParameterObj = oAuthParameter?.[1];
-            const redirectUrl = oAuthParameterObj?.oAuthSettings?.redirectUrl;
-            outputParameterValues[oAuthParameterKey] = redirectUrl;
-          }
-        }
-
-        const connectionParameterSetValues: ConnectionParameterSetValues = {
-          name: selectedParameterSet?.name ?? '',
-          values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
-            // eslint-disable-next-line no-param-reassign
-            acc[key] = { value: outputParameterValues[key] };
-            return acc;
-          }, {}),
-        };
-
-        const connectionInfo: ConnectionCreationInfo = {
-          displayName,
-          connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
-          connectionParameters: outputParameterValues,
-          alternativeParameterValues,
-        };
-
-        const parametersMetadata: ConnectionParametersMetadata = {
-          connectionMetadata: connectionMetadata,
-          connectionParameterSet: selectedParameterSet,
-          connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
-        };
-
-        let connection, err;
-
-        const newName = await getUniqueConnectionName(connector.id);
-        if (isOAuthConnection) {
-          await ConnectionService()
-            .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
-            .then(({ connection: c, errorMessage }) => {
-              connection = c;
-              err = errorMessage;
-            })
-            .catch((errorMessage) => (err = errorMessage));
-        } else {
-          await ConnectionService()
-            .createConnection(newName, connector, connectionInfo, parametersMetadata)
-            .then((c) => (connection = c))
-            .catch((errorMessage) => (err = errorMessage));
-        }
-
-        if (connection) {
-          for (const nodeId of nodeIds) {
-            applyNewConnection(nodeId, connection, identitySelected);
-          }
-          closeConnectionsFlow();
-        } else if (err) {
-          setErrorMessage(String(err));
-        }
-      } catch (error: any) {
-        setErrorMessage(String(error?.responseText ?? error?.message));
-        const message = `Failed to create connection: ${error}`;
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: 'create connection tab',
-          message,
-          error: error instanceof Error ? error : undefined,
-        });
-      }
-      setIsLoading(false);
-    },
-    [
-      connector,
-      assistedConnectionProps,
-      connectionMetadata,
-      operationManifest?.properties.connection?.type,
-      selectedSubResource,
-      closeConnectionsFlow,
-      nodeIds,
-      applyNewConnection,
-    ]
-  );
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
@@ -470,7 +334,12 @@ export const CreateConnection = () => {
 
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
-  const submitCallback = useCallback(() => {
+  const submitCallback = useCallback(async () => {
+    if (!connector?.id) return;
+
+    setIsLoading(true);
+    setErrorMessage(undefined);
+
     const visibleParameterValues = Object.fromEntries(
       Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
     );
@@ -480,38 +349,62 @@ export const CreateConnection = () => {
       supportsServicePrincipalConnection &&
       Object.keys(unfilteredParameters).includes(SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE)
     ) {
-      const oauthValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
-      const servicePrincipalValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS;
       visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE] = servicePrincipalSelected
-        ? servicePrincipalValue
-        : oauthValue;
+        ? SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS
+        : SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
     }
 
-    const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
     const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
 
-    return createConnectionCallback?.(
-      showNameInput ? connectionDisplayName : undefined,
-      connectionParameterSets?.values[selectedParamSetIndex],
-      visibleParameterValues,
-      isUsingOAuth,
-      alternativeParameterValues,
-      identitySelected
-    );
+    try {
+      const { connection, error } = await createConnection({
+        displayName: showNameInput ? connectionDisplayName : undefined,
+        selectedParameterSet: connectionParameterSets?.values[selectedParamSetIndex],
+        isOAuthConnection: isUsingOAuth,
+        parameterValues: visibleParameterValues,
+        alternativeParameterValues: legacyManagedIdentitySelected ? {} : undefined,
+        connector,
+        operationManifest,
+        connectionMetadata,
+      });
+      if (connection) {
+        for (const nodeId of nodeIds) {
+          applyNewConnection(nodeId, connection, identitySelected);
+        }
+        closeConnectionsFlow();
+      } else if (error) {
+        setErrorMessage(String(error));
+      }
+    } catch (error: any) {
+      setErrorMessage(String(error?.responseText ?? error?.message));
+      const message = `Failed to create connection: ${error}`;
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'create connection tab',
+        message,
+        error: error instanceof Error ? error : undefined,
+      });
+    }
+    setIsLoading(false);
   }, [
     parameterValues,
     supportsServicePrincipalConnection,
     unfilteredParameters,
     legacyManagedIdentitySelected,
     selectedManagedIdentity,
-    createConnectionCallback,
+    connector,
+    capabilityEnabledParameters,
+    servicePrincipalSelected,
     showNameInput,
     connectionDisplayName,
     connectionParameterSets?.values,
     selectedParamSetIndex,
     isUsingOAuth,
-    capabilityEnabledParameters,
-    servicePrincipalSelected,
+    operationManifest,
+    connectionMetadata,
+    closeConnectionsFlow,
+    nodeIds,
+    applyNewConnection,
   ]);
 
   const cancelCallback = useCallback(() => {
@@ -523,16 +416,6 @@ export const CreateConnection = () => {
   const componentDescription = intl.formatMessage({
     defaultMessage: 'Create a new connection',
     description: 'General description for creating a new connection.',
-  });
-
-  const inputConnectionDisplayNameLabel = intl.formatMessage({
-    defaultMessage: 'Connection Name',
-    description: 'Connection Name',
-  });
-
-  const inputConnectionDisplayNamePlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter a name for the connection',
-    description: 'Placeholder text for connection name input',
   });
 
   const createButtonText = intl.formatMessage({
@@ -598,57 +481,10 @@ export const CreateConnection = () => {
     description: 'Close button aria label',
   });
 
-  const gatewayTooltipText = intl.formatMessage({
-    defaultMessage: "Select this checkbox if you're setting up an on-premises connection.",
-    description: 'Tooltip for the on-premises data gateway connection checkbox',
-  });
-
-  const legacyMultiAuthLabelText = intl.formatMessage({
-    defaultMessage: 'Authentication',
-    description: 'Label for legacy multi auth dropdown',
-  });
-
-  const oAuthDropdownText = intl.formatMessage({
-    defaultMessage: 'OAuth',
-    description: 'Dropdown text for OAuth connection',
-  });
-
-  const servicePrincipalDropdownText = intl.formatMessage({
-    defaultMessage: 'Service Principal',
-    description: 'Dropdown text for service principal connection',
-  });
-
-  const legacyManagedIdentityDropdownText = intl.formatMessage({
+  const legacyManagedIdentityLabelText = intl.formatMessage({
     defaultMessage: 'Managed Identity',
     description: 'Dropdown text for legacy managed identity connection',
   });
-
-  const legacyMultiAuthOptions: IDropdownOption<any>[] = useMemo(() => {
-    return [
-      {
-        key: LegacyMultiAuthOptions.oauth,
-        text: oAuthDropdownText,
-      },
-      supportsServicePrincipalConnection
-        ? {
-            key: LegacyMultiAuthOptions.servicePrincipal,
-            text: servicePrincipalDropdownText,
-          }
-        : undefined,
-      supportsLegacyManagedIdentityConnection
-        ? {
-            key: LegacyMultiAuthOptions.managedIdentity,
-            text: legacyManagedIdentityDropdownText,
-          }
-        : undefined,
-    ].filter((opt) => opt !== undefined) as IDropdownOption<any>[];
-  }, [
-    legacyManagedIdentityDropdownText,
-    oAuthDropdownText,
-    servicePrincipalDropdownText,
-    supportsLegacyManagedIdentityConnection,
-    supportsServicePrincipalConnection,
-  ]);
 
   const connectorDescription = useMemo(() => {
     if (isUsingOAuth) return authDescriptionText;
@@ -771,65 +607,38 @@ export const CreateConnection = () => {
         <div className="connection-params-container">
           {/* Legacy Multi-Auth */}
           {showLegacyMultiAuth && (
-            <div className="param-row">
-              <Label className="label" required htmlFor={'legacy-connection-param-set-select'} disabled={isLoading}>
-                {legacyMultiAuthLabelText}
-              </Label>
-              <Dropdown
-                id="legacy-connection-param-set-select"
-                className="connection-parameter-input"
-                selectedKey={selectedParamSetIndex}
-                onChange={onAuthDropdownChange}
-                disabled={isLoading}
-                ariaLabel={legacyMultiAuthLabelText}
-                // placeholder={connectionParameterSets?.uiDefinition?.description}
-                options={legacyMultiAuthOptions}
-              />
-            </div>
+            <LegacyMultiAuth
+              isLoading={isLoading}
+              value={selectedParamSetIndex}
+              onChange={onAuthDropdownChange}
+              supportsServicePrincipalConnection={supportsServicePrincipalConnection}
+              supportsLegacyManagedIdentityConnection={supportsLegacyManagedIdentityConnection}
+            />
           )}
 
           {/* OptionalGateway Checkbox */}
           {!hasOnlyOnPremGateway && Object.entries(getParametersByCapability(Capabilities.gateway)).length > 0 && (
-            <div className="param-row center" style={{ margin: '8px 0px' }}>
-              <Checkbox
-                label={intl.formatMessage({
-                  defaultMessage: 'Connect via on-premises data gateway',
-                  description: 'Checkbox label for using an on-premises gateway',
-                })}
-                checked={enabledCapabilities.includes(Capabilities.gateway)}
-                onChange={() => toggleCapability(Capabilities.gateway)}
-                disabled={isLoading}
-              />
-              <TooltipHost content={gatewayTooltipText}>
-                <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-              </TooltipHost>
-            </div>
+            <LegacyGatewayCheckbox
+              isLoading={isLoading}
+              value={enabledCapabilities.includes(Capabilities.gateway)}
+              onChange={() => toggleCapability(Capabilities.gateway)}
+            />
           )}
 
           {/* Name */}
           {showNameInput && (
-            <div className="param-row">
-              <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
-                {inputConnectionDisplayNameLabel}
-              </Label>
-              <TextField
-                id={'connection-display-name-input'}
-                className="connection-parameter-input"
-                disabled={isLoading}
-                autoComplete="off"
-                aria-label={inputConnectionDisplayNamePlaceholder}
-                placeholder={inputConnectionDisplayNamePlaceholder}
-                value={connectionDisplayName}
-                onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
-              />
-            </div>
+            <ConnectionNameInput
+              isLoading={isLoading}
+              value={connectionDisplayName}
+              onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
+            />
           )}
 
           {/* Legacy Managed Identity Selection */}
           {legacyManagedIdentitySelected && (
             <div className="param-row">
               <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-                {legacyManagedIdentityDropdownText}
+                {legacyManagedIdentityLabelText}
               </Label>
               <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
             </div>
@@ -837,26 +646,12 @@ export const CreateConnection = () => {
 
           {/* Authentication Selection */}
           {isMultiAuth && (
-            <div className="param-row">
-              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-                {connectionParameterSets?.uiDefinition?.displayName}
-              </Label>
-              <Dropdown
-                id="connection-param-set-select"
-                className="connection-parameter-input"
-                selectedKey={selectedParamSetIndex}
-                onChange={onAuthDropdownChange}
-                disabled={isLoading}
-                ariaLabel={connectionParameterSets?.uiDefinition?.description}
-                placeholder={connectionParameterSets?.uiDefinition?.description}
-                options={
-                  connectionParameterSets?.values.map((paramSet, index) => ({
-                    key: index,
-                    text: paramSet?.uiDefinition?.displayName ?? paramSet?.name,
-                  })) ?? []
-                }
-              />
-            </div>
+            <ConnectionMultiAuthInput
+              isLoading={isLoading}
+              value={selectedParamSetIndex}
+              onChange={onAuthDropdownChange}
+              connectionParameterSets={connectionParameterSets}
+            />
           )}
 
           {/* Connector Parameters */}
@@ -868,7 +663,6 @@ export const CreateConnection = () => {
                   // This parameter belongs to a mapping - try to render a custom editor if supported.
                   return renderCredentialsMappingParameter(mappingName, parameter);
                 }
-
                 return renderConnectionParameter(key, parameter);
               }
             )}
