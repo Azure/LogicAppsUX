@@ -5,12 +5,14 @@ import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
 import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
 import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
 import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
+import codeToggleDark from '../icons/dark/code-toggle.svg'; // TODO
+import codeToggleLight from '../icons/light/code-toggle.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
 import { convertEditorState } from './helper/HTMLChangePlugin';
-import { useTheme } from '@fluentui/react';
+import { css, useTheme } from '@fluentui/react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -170,6 +172,8 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
     };
   }, [activeEditor]);
 
+  const formattingButtonsDisabled = readonly || !!isRawText;
+
   return (
     <div className="msla-html-editor-toolbar">
       <button
@@ -207,17 +211,18 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
         <img className={'format'} src={isInverted ? clockWiseArrowDark : clockWiseArrowLight} alt={'clockwise arrow'} />
       </button>
       <Divider />
-      <BlockFormatDropDown disabled={readonly} blockType={blockType} editor={editor} />
-      <FontDropDown fontDropdownType={FontDropDownType.FONTFAMILY} value={fontFamily} editor={editor} disabled={readonly} />
-      <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={readonly} />
+      <BlockFormatDropDown disabled={formattingButtonsDisabled} blockType={blockType} editor={editor} />
+      <FontDropDown fontDropdownType={FontDropDownType.FONTFAMILY} value={fontFamily} editor={editor} disabled={formattingButtonsDisabled} />
+      <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={formattingButtonsDisabled} />
       <Divider />
-      <Format activeEditor={activeEditor} readonly={readonly} />
+      <Format activeEditor={activeEditor} readonly={formattingButtonsDisabled} />
       <ListPlugin />
       <LinkPlugin />
       {setIsRawText ? (
         <button
-          aria-label="Raw HTML toggle"
-          className="toolbar-item"
+          aria-label="Raw code toggle"
+          className={css("toolbar-item", isRawText && "active")}
+          disabled={readonly}
           onMouseDown={(e) => {
             e.preventDefault();
           }}
@@ -252,10 +257,9 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
 
             isRawText ? exitRawHtmlMode() : enterRawHtmlMode();
           }}
-          style={{ background: isRawText ? '#8f8' : '#f88' }} // TODO REMOVE: For testing only.
-          title={'Toggle raw HTML view'}
+          title={'Toggle code view'}
         >
-          {'</>'}
+          <img className={'format'} src={isInverted ? codeToggleDark : codeToggleLight} alt={'code view'} />
         </button>
       ) : null}
     </div>
