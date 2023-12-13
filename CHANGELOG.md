@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.86.3](https://github.com/Azure/LogicAppsUX/compare/v2.86.2...v2.86.3) (2023-12-13)
+
+
+### Bug Fixes
+
+* **vscode:** Add workflow app kind to local.settings.json ([#3841](https://github.com/Azure/LogicAppsUX/issues/3841)) ([#3842](https://github.com/Azure/LogicAppsUX/issues/3842)) ([a8c8f5b](https://github.com/Azure/LogicAppsUX/commit/a8c8f5b10092cc11327149ff2ff6ffde05127e2c))
+
 ### [2.86.2](https://github.com/Azure/LogicAppsUX/compare/v2.86.1...v2.86.2) (2023-12-11)
 
 ### [2.86.1](https://github.com/Azure/LogicAppsUX/compare/v2.86.0...v2.86.1) (2023-12-11)
