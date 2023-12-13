@@ -128,11 +128,14 @@ const appendChildrenNode = (
     const textContent = childNode.getTextContent();
     const decodedTextContent = tokensEnabled ? decodeSegmentValueInLexicalContext(textContent) : textContent;
 
-    // we need to pass in the styles and format of the parent node to the children node
-    // because Lexical text nodes do not have styles or format
-    // and we'll need to use the ExtendedTextNode to apply the styles and format
-    const childNodeStyles = childNode.getStyle();
-    const childNodeFormat = childNode.getFormat();
+    const appendAsStringSegment = () => {
+      // we need to pass in the styles and format of the parent node to the children node
+      // because Lexical text nodes do not have styles or format
+      // and we'll need to use the ExtendedTextNode to apply the styles and format
+      const childNodeStyles = childNode.getStyle();
+      const childNodeFormat = childNode.getFormat();
+      appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, options);
+    };
 
     if (tokensEnabled && nodeMap && loadParameterValueFromString) {
       const contentAsParameter = loadParameterValueFromString(decodedTextContent);
@@ -141,29 +144,29 @@ const appendChildrenNode = (
         if (tokenNode) {
           paragraph.append(tokenNode);
         } else {
-          appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
+          appendAsStringSegment();
         }
       });
 
       return;
     }
 
-    appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
+    appendAsStringSegment();
   } else {
     paragraph.append(childNode);
   }
 };
 
 // Splits up text content into their respective nodes
-export const appendStringSegment = (
+const appendStringSegment = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
   value: string,
-  childNodeStyles?: string,
-  childNodeFormat?: number,
-  nodeMap?: Map<string, ValueSegment>,
-  tokensEnabled?: boolean,
-  readonly?: boolean
+  childNodeStyles: string | undefined,
+  childNodeFormat: number | undefined,
+  nodeMap: Map<string, ValueSegment> | undefined,
+  options: SegmentParserOptions | undefined
 ) => {
+  const { tokensEnabled, readonly } = options ?? {};
   let currIndex = 0;
   let prevIndex = 0;
   while (currIndex < value.length) {

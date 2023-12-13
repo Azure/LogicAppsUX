@@ -179,8 +179,8 @@ export const BaseEditor = ({
       >
         {isHtmlEditor ? (
           <Toolbar
-            loadParameterValueFromString={loadParameterValueFromString}
             isRawText={isForcedPlainText}
+            loadParameterValueFromString={loadParameterValueFromString}
             readonly={readonly}
             setIsRawText={setIsForcedPlainText}
           />

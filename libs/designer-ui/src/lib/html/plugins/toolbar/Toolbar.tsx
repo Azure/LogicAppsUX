@@ -3,9 +3,10 @@ import { parseHtmlSegments, parseSegments } from '../../../editor/base/utils/par
 import { isApple } from '../../../helper';
 import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
 import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
+import codeToggleDark from '../icons/dark/code-toggle.svg';
 import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
 import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
-import codeToggleDark from '../icons/dark/code-toggle.svg'; // TODO
+// TODO
 import codeToggleLight from '../icons/light/code-toggle.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
@@ -36,6 +37,7 @@ import {
   UNDO_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -64,6 +66,7 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
+  const intl = useIntl();
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -172,6 +175,11 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
     };
   }, [activeEditor]);
 
+  const toggleCodeViewMessage = intl.formatMessage({
+    defaultMessage: 'Toggle code view',
+    description: 'Label used for the toolbar button which switches between raw HTML (code) view and WYSIWIG (rich text) view',
+  });
+
   const formattingButtonsDisabled = readonly || !!isRawText;
 
   return (
@@ -212,7 +220,12 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
       </button>
       <Divider />
       <BlockFormatDropDown disabled={formattingButtonsDisabled} blockType={blockType} editor={editor} />
-      <FontDropDown fontDropdownType={FontDropDownType.FONTFAMILY} value={fontFamily} editor={editor} disabled={formattingButtonsDisabled} />
+      <FontDropDown
+        fontDropdownType={FontDropDownType.FONTFAMILY}
+        value={fontFamily}
+        editor={editor}
+        disabled={formattingButtonsDisabled}
+      />
       <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={formattingButtonsDisabled} />
       <Divider />
       <Format activeEditor={activeEditor} readonly={formattingButtonsDisabled} />
@@ -221,7 +234,7 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
       {setIsRawText ? (
         <button
           aria-label="Raw code toggle"
-          className={css("toolbar-item", isRawText && "active")}
+          className={css('toolbar-item', isRawText && 'active')}
           disabled={readonly}
           onMouseDown={(e) => {
             e.preventDefault();
@@ -257,7 +270,7 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
 
             isRawText ? exitRawHtmlMode() : enterRawHtmlMode();
           }}
-          title={'Toggle code view'}
+          title={toggleCodeViewMessage}
         >
           <img className={'format'} src={isInverted ? codeToggleDark : codeToggleLight} alt={'code view'} />
         </button>
