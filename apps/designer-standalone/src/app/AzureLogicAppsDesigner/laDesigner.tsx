@@ -258,6 +258,10 @@ const DesignerEditor = () => {
                 location={canonicalLocation}
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
+                rightShift={showChatBot ? chatbotPanelWidth : undefined}
+                enableCopilot={async () => {
+                  dispatch(setIsChatBotEnabled(!showChatBot));
+                }}
               />
               <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
               {showChatBot ? (

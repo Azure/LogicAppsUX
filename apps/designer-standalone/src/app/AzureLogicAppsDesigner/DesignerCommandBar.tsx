@@ -2,6 +2,8 @@ import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
+import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { TrafficLightDot } from '@microsoft/designer-ui';
 import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -17,6 +19,7 @@ import {
   serializeWorkflow,
   validateParameter,
   updateParameterValidation,
+  useNodesInitialized,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -39,6 +42,8 @@ export const DesignerCommandBar = ({
   discard,
   saveWorkflow,
   isDarkMode,
+  rightShift,
+  enableCopilot,
 }: {
   id: string;
   location: string;
@@ -47,8 +52,12 @@ export const DesignerCommandBar = ({
   saveWorkflow: (workflow: Workflow) => Promise<void>;
   isDarkMode: boolean;
   isConsumption?: boolean;
+  rightShift?: string;
+  enableCopilot?: () => void;
+  loggerService?: ILoggerService;
 }) => {
   const dispatch = useDispatch();
+  const isCopilotReady = useNodesInitialized();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
@@ -162,6 +171,20 @@ export const DesignerCommandBar = ({
       onClick: () => !!dispatch(switchToErrorsPanel()),
     },
     {
+      key: 'copilot',
+      text: 'Assistant',
+      iconProps: { iconName: 'Chat' },
+      disabled: !isCopilotReady,
+      onClick: () => {
+        enableCopilot?.();
+        LoggerService().log({
+          level: LogEntryLevel.Warning,
+          area: 'chatbot',
+          message: 'workflow assistant opened',
+        });
+      },
+    },
+    {
       key: 'fileABug',
       text: 'File a bug',
       iconProps: { iconName: 'Bug' },
@@ -175,7 +198,13 @@ export const DesignerCommandBar = ({
       items={items}
       ariaLabel="Use left and right arrow keys to navigate between commands"
       styles={{
-        root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '4px 8px' },
+        root: {
+          borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
+          position: 'relative',
+          // we should modify what we pass back from logic app designer to simplify this logic
+          left: rightShift ?? 0,
+          padding: '4px 8px',
+        },
       }}
     />
   );
