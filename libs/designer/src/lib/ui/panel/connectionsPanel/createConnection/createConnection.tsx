@@ -1,24 +1,4 @@
-import constants from '../../../../common/constants';
-import type { AppDispatch, RootState } from '../../../../core';
-import { getIconUriFromConnector, useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
-import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
-import {
-  getConnectionMetadata,
-  getConnectionProperties,
-  getApiHubAuthentication,
-  updateNodeConnection,
-  needsOAuth,
-} from '../../../../core/actions/bjsworkflow/connections';
-import {
-  useConnectorByNodeId,
-  useGatewayServiceConfig,
-  useGateways,
-  useSubscriptions,
-} from '../../../../core/state/connection/connectionSelector';
-import { useReferencePanelMode } from '../../../../core/state/panel/panelSelectors';
-import { setIsCreatingConnection, openPanel } from '../../../../core/state/panel/panelSlice';
-import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
-import { getAssistedConnectionProps, getSupportedParameterSets } from '../../../../core/utils/connectors/connections';
+import { needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
 import { ActionList } from '../actionList/actionList';
 import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
 import ConnectionNameInput from './formInputs/connectionNameInput';
@@ -27,24 +7,21 @@ import LegacyManagedIdentityDropdown from './formInputs/legacyManagedIdentityPic
 import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMultiAuth';
 import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
 import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
-import { createConnection } from './helpers/createConnection';
 import type { IDropdownOption } from '@fluentui/react';
 import { MessageBarType, MessageBar, Label } from '@fluentui/react';
-import { Body1Strong, Button, Divider, Spinner } from '@fluentui/react-components';
-import {
-  ConnectionParameterEditorService,
-  LogEntryLevel,
-  LoggerService,
-  WorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
+import { Body1Strong, Button, Divider } from '@fluentui/react-components';
+import { ConnectionParameterEditorService } from '@microsoft/designer-client-services-logic-apps';
+import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
+import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type {
-  Connection,
   ConnectionParameter,
+  ConnectionParameterSet,
   ConnectionParameterSetParameter,
-  Connector,
+  ConnectionParameterSets,
+  Gateway,
   ManagedIdentity,
+  Subscription,
 } from '@microsoft/utils-logic-apps';
 import {
   Capabilities,
@@ -60,102 +37,67 @@ import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
-export const CreateConnection = () => {
-  const dispatch = useDispatch<AppDispatch>();
+export interface CreateConnectionProps {
+  nodeIds?: string[];
+  iconUri?: string;
+  connectorId: string;
+  connectorDisplayName: string;
+  connectorCapabilities?: string[];
+  connectionParameters?: Record<string, ConnectionParameter>;
+  connectionParameterSets?: ConnectionParameterSets;
+  connectionAlternativeParameters?: Record<string, ConnectionParameter>;
+  identity?: ManagedIdentity;
+  isLoading?: boolean;
+  createConnectionCallback?: (
+    newName?: string,
+    selectedParameterSet?: ConnectionParameterSet,
+    parameterValues?: Record<string, any>,
+    isOAuthConnection?: boolean,
+    alternativeParameterValues?: Record<string, any>,
+    identitySelected?: string
+  ) => void;
+  cancelCallback?: () => void;
+  hideCancelButton?: boolean;
+  errorMessage?: string;
+  clearErrorCallback?: () => void;
+  selectSubscriptionCallback?: (subscriptionId: string) => void;
+  selectedSubscriptionId?: string;
+  availableSubscriptions?: Subscription[];
+  availableGateways?: Gateway[];
+  gatewayServiceConfig?: Partial<GatewayServiceConfig>;
+  checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
+  resourceSelectorProps?: AzureResourcePickerProps;
+}
+
+export const CreateConnection = (props: CreateConnectionProps) => {
+  const {
+    nodeIds = [],
+    iconUri = '',
+    connectorId,
+    connectorDisplayName,
+    connectorCapabilities,
+    connectionParameters,
+    connectionParameterSets,
+    connectionAlternativeParameters,
+    identity,
+    isLoading = false,
+    createConnectionCallback,
+    cancelCallback,
+    hideCancelButton = false,
+    errorMessage,
+    clearErrorCallback,
+    selectSubscriptionCallback,
+    selectedSubscriptionId,
+    availableSubscriptions,
+    availableGateways,
+    gatewayServiceConfig,
+    resourceSelectorProps,
+  } = props;
 
   const intl = useIntl();
-  const nodeIds = useSelectedNodeIds();
-  const nodeId = useSelectedNodeId();
-  const connector = useConnectorByNodeId(nodeId);
-  const iconUri = getIconUriFromConnector(connector);
-  const operationInfo = useOperationInfo(nodeId);
-  const { data: operationManifest } = useOperationManifest(operationInfo);
-  const connectionMetadata = getConnectionMetadata(operationManifest);
-  const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
-
-  const subscriptionsQuery = useSubscriptions();
-  const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
-  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
-  const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
-  const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
-  const gatewayServiceConfig = useGatewayServiceConfig();
-
-  const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-
-  const applyNewConnection = useCallback(
-    (nodeId: string, newConnection: Connection, selectedIdentity?: string) => {
-      const payload: ConnectionPayload = { nodeId, connection: newConnection, connector: connector as Connector };
-
-      if (selectedIdentity) {
-        const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
-        payload.connectionProperties = getConnectionProperties(connector as Connector, userAssignedIdentity);
-        payload.authentication = getApiHubAuthentication(userAssignedIdentity);
-      }
-
-      dispatch(updateNodeConnection(payload));
-    },
-    [connector, dispatch]
-  );
-
-  const assistedConnectionProps = useMemo(
-    () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
-    [connector, operationManifest]
-  );
-
-  const [selectedResourceId, setSelectedResourceId] = useState<string>('');
-  const [selectedSubResource, setSelectedSubResource] = useState<any | undefined>();
-
-  const selectResourceCallback = useCallback((resource: any) => {
-    setSelectedResourceId(resource?.id);
-    setSelectedSubResource(undefined);
-  }, []);
-
-  const selectSubResourceCallback = useCallback((subResource: any) => {
-    setSelectedSubResource(subResource);
-  }, []);
-
-  const resourceSelectorProps = useMemo(
-    () =>
-      assistedConnectionProps
-        ? {
-            ...assistedConnectionProps,
-            selectedResourceId,
-            onResourceSelect: selectResourceCallback,
-            selectedSubResource,
-            onSubResourceSelect: selectSubResourceCallback,
-          }
-        : undefined,
-    [assistedConnectionProps, selectResourceCallback, selectSubResourceCallback, selectedResourceId, selectedSubResource]
-  );
-
-  const referencePanelMode = useReferencePanelMode();
-  const closeConnectionsFlow = useCallback(() => {
-    const panelMode = referencePanelMode ?? 'Operation';
-    const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
-    dispatch(openPanel({ nodeId, panelMode }));
-  }, [dispatch, referencePanelMode, nodeIds]);
-
-  const loadingText = intl.formatMessage({
-    defaultMessage: 'Loading connection data...',
-    description: 'Message to show under the loading icon when loading connection parameters',
-  });
-
-  const connectorId = connector?.id ?? '';
-  const connectorDisplayName = connector?.properties.displayName;
-  const connectorCapabilities = connector?.properties.capabilities;
-  const connectionParameters = connector?.properties.connectionParameters;
-  const connectionParameterSets = getSupportedParameterSets(connector?.properties.connectionParameterSets, operationInfo.type);
-  const connectionAlternativeParameters = connector?.properties?.connectionAlternativeParameters;
-
-  const hideCancelButton = !hasExistingConnection;
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
@@ -334,12 +276,7 @@ export const CreateConnection = () => {
 
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
-  const submitCallback = useCallback(async () => {
-    if (!connector?.id) return;
-
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
+  const submitCallback = useCallback(() => {
     const visibleParameterValues = Object.fromEntries(
       Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
     );
@@ -349,67 +286,39 @@ export const CreateConnection = () => {
       supportsServicePrincipalConnection &&
       Object.keys(unfilteredParameters).includes(SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE)
     ) {
+      const oauthValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
+      const servicePrincipalValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS;
       visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE] = servicePrincipalSelected
-        ? SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS
-        : SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
+        ? servicePrincipalValue
+        : oauthValue;
     }
 
+    const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
     const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
 
-    try {
-      const { connection, error } = await createConnection({
-        displayName: showNameInput ? connectionDisplayName : undefined,
-        selectedParameterSet: connectionParameterSets?.values[selectedParamSetIndex],
-        isOAuthConnection: isUsingOAuth,
-        parameterValues: visibleParameterValues,
-        alternativeParameterValues: legacyManagedIdentitySelected ? {} : undefined,
-        connector,
-        operationManifest,
-        connectionMetadata,
-      });
-      if (connection) {
-        for (const nodeId of nodeIds) {
-          applyNewConnection(nodeId, connection, identitySelected);
-        }
-        closeConnectionsFlow();
-      } else if (error) {
-        setErrorMessage(String(error));
-      }
-    } catch (error: any) {
-      setErrorMessage(String(error?.responseText ?? error?.message));
-      const message = `Failed to create connection: ${error}`;
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: 'create connection tab',
-        message,
-        error: error instanceof Error ? error : undefined,
-      });
-    }
-    setIsLoading(false);
+    return createConnectionCallback?.(
+      showNameInput ? connectionDisplayName : undefined,
+      connectionParameterSets?.values[selectedParamSetIndex],
+      visibleParameterValues,
+      isUsingOAuth,
+      alternativeParameterValues,
+      identitySelected
+    );
   }, [
     parameterValues,
     supportsServicePrincipalConnection,
     unfilteredParameters,
     legacyManagedIdentitySelected,
     selectedManagedIdentity,
-    connector,
-    capabilityEnabledParameters,
-    servicePrincipalSelected,
+    createConnectionCallback,
     showNameInput,
     connectionDisplayName,
     connectionParameterSets?.values,
     selectedParamSetIndex,
     isUsingOAuth,
-    operationManifest,
-    connectionMetadata,
-    closeConnectionsFlow,
-    nodeIds,
-    applyNewConnection,
+    capabilityEnabledParameters,
+    servicePrincipalSelected,
   ]);
-
-  const cancelCallback = useCallback(() => {
-    dispatch(setIsCreatingConnection(false));
-  }, [dispatch]);
 
   // INTL STRINGS
 
@@ -512,9 +421,9 @@ export const CreateConnection = () => {
       isSubscriptionDropdownDisabled: gatewayServiceConfig?.disableSubscriptionLookup,
       isLoading,
       selectedSubscriptionId,
-      selectSubscriptionCallback: (subscriptionId: string) => setSelectedSubscriptionId(subscriptionId),
+      selectSubscriptionCallback,
       availableGateways,
-      availableSubscriptions: subscriptions,
+      availableSubscriptions,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
@@ -576,13 +485,6 @@ export const CreateConnection = () => {
 
   // RENDER
 
-  if (connector?.properties === undefined)
-    return (
-      <div className="msla-loading-container">
-        <Spinner size={'large'} label={loadingText} />
-      </div>
-    );
-
   return (
     <div className="msla-edit-connection-container">
       <ActionList nodeIds={nodeIds} iconUri={iconUri} />
@@ -596,7 +498,7 @@ export const CreateConnection = () => {
           <MessageBar
             messageBarType={MessageBarType.error}
             isMultiline={true}
-            onDismiss={() => setErrorMessage(undefined)}
+            onDismiss={clearErrorCallback}
             dismissButtonAriaLabel={closeErrorButtonAriaLabel}
           >
             {errorMessage}

@@ -4,7 +4,7 @@ import { useConnectorByNodeId } from '../../../core/state/connection/connectionS
 import { useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
-import { CreateConnection } from './createConnection';
+import { CreateConnectionWrapper } from './createConnection/createConnectionWrapper';
 import { SelectConnection } from './selectConnection/selectConnection';
 import { IconButton, Text } from '@fluentui/react';
 import { type CommonPanelProps } from '@microsoft/designer-ui';
@@ -64,7 +64,7 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
       case 'select':
         return <SelectConnection />;
       case 'create':
-        return <CreateConnection />;
+        return <CreateConnectionWrapper />;
     }
   }, [panelStatus]);
 

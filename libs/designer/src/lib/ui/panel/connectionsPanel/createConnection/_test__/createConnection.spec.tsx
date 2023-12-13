@@ -1,5 +1,4 @@
-import { CreateConnection } from '..';
-import { getSupportedParameterSets } from '../../../../../core/utils/connectors/connections';
+import { CreateConnection, type CreateConnectionProps } from '../createConnection';
 import { UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import type { IDropdownProps } from '@fluentui/react';
 import {
@@ -116,12 +115,19 @@ describe('ui/createConnection', () => {
   });
 
   it('should render the create connection component', () => {
-    renderer.render(<CreateConnection />);
-    const createConnection = renderer.getRenderOutput();
+    const props: CreateConnectionProps = {
+      connectorId: 'myConnectorId',
+      connectorDisplayName: 'My Connector',
+      checkOAuthCallback: jest.fn(),
+    };
+    renderer.render(<CreateConnection {...props} />);
+    const createConnectionContainer = renderer.getRenderOutput();
 
-    expect(createConnection.type).toEqual('div');
-    expect(createConnection.props.className).toEqual('msla-create-connection-container');
-    expect(React.Children.toArray(createConnection.props.children)).not.toHaveLength(0);
+    expect(createConnectionContainer.type).toEqual('div');
+    expect(createConnectionContainer.props.className).toEqual('msla-edit-connection-container');
+    expect(React.Children.toArray(createConnectionContainer.props.children)).not.toHaveLength(0);
+
+    const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
     const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
     const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
@@ -131,10 +137,15 @@ describe('ui/createConnection', () => {
   });
 
   it('should render visible connectionParameters', () => {
-    const connectionParameters = getConnectionParameters();
-    jest.mocked(getConnectionParameters).mockReturnValue(connectionParameters);
-    renderer.render(<CreateConnection />);
-    const createConnection = renderer.getRenderOutput();
+    const props: CreateConnectionProps = {
+      connectorId: 'myConnectorId',
+      connectorDisplayName: 'My Connector',
+      connectionParameters: getConnectionParameters(),
+      checkOAuthCallback: jest.fn(),
+    };
+    renderer.render(<CreateConnection {...props} />);
+    const createConnectionContainer = renderer.getRenderOutput();
+    const createConnection = findConnectionCreateDiv(createConnectionContainer);
     const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
     const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
 
@@ -142,21 +153,26 @@ describe('ui/createConnection', () => {
     expect(parameters).toHaveLength(2);
 
     expect(parameters[0].props.parameterKey).toEqual('parameterA');
-    expect(parameters[0].props.parameter).toEqual(connectionParameters?.['parameterA']);
+    expect(parameters[0].props.parameter).toEqual(props.connectionParameters?.['parameterA']);
     expect(parameters[0].props.value).toBeUndefined();
     expect(parameters[0].props.setValue).toEqual(expect.any(Function));
 
     expect(parameters[1].props.parameterKey).toEqual('parameterD');
-    expect(parameters[1].props.parameter).toEqual(connectionParameters?.['parameterD']);
+    expect(parameters[1].props.parameter).toEqual(props.connectionParameters?.['parameterD']);
     expect(parameters[1].props.value).toBeUndefined();
     expect(parameters[1].props.setValue).toEqual(expect.any(Function));
   });
 
   it('should render connectionParameterSet dropdown and parameters', () => {
-    const connectionParameterSets = getConnectionParameterSets();
-    jest.mocked(getConnectionParameterSets).mockReturnValue(connectionParameterSets);
-    renderer.render(<CreateConnection />);
-    const createConnection = renderer.getRenderOutput();
+    const props: CreateConnectionProps = {
+      connectorId: 'myConnectorId',
+      connectorDisplayName: 'My Connector',
+      connectionParameterSets: getConnectionParameterSets(),
+      checkOAuthCallback: jest.fn(),
+    };
+    renderer.render(<CreateConnection {...props} />);
+    const createConnectionContainer = renderer.getRenderOutput();
+    const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
     const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
     expect(parameterSetsDropdown).toBeDefined();
@@ -169,12 +185,12 @@ describe('ui/createConnection', () => {
     expect(parameters).toHaveLength(2);
 
     expect(parameters[0].props.parameterKey).toEqual('parameterA');
-    expect(parameters[0].props.parameter).toEqual(connectionParameterSets?.values[0].parameters['parameterA']);
+    expect(parameters[0].props.parameter).toEqual(props.connectionParameterSets?.values[0].parameters['parameterA']);
     expect(parameters[0].props.value).toBeUndefined();
     expect(parameters[0].props.setValue).toEqual(expect.any(Function));
 
     expect(parameters[1].props.parameterKey).toEqual('parameterD');
-    expect(parameters[1].props.parameter).toEqual(connectionParameterSets?.values[0].parameters['parameterD']);
+    expect(parameters[1].props.parameter).toEqual(props.connectionParameterSets?.values[0].parameters['parameterD']);
     expect(parameters[1].props.value).toBeUndefined();
     expect(parameters[1].props.setValue).toEqual(expect.any(Function));
   });
@@ -203,10 +219,15 @@ describe('ui/createConnection', () => {
     });
 
     it('should support custom parameter editor for connectionParameters', () => {
-      const connectionParameters = getConnectionParameters();
-      jest.mocked(getConnectionParameters).mockReturnValue(connectionParameters);
-      renderer.render(<CreateConnection />);
-      const createConnection = renderer.getRenderOutput();
+      const props: CreateConnectionProps = {
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameters: getConnectionParameters(),
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
       const parameters = findParameterComponents(createConnection, UniversalConnectionParameter, CustomConnectionParameter);
 
       expect(connectionParameterEditorService.getConnectionParameterEditor).toHaveBeenCalledTimes(2);
@@ -222,13 +243,13 @@ describe('ui/createConnection', () => {
       expect(parameters).toHaveLength(2);
       expect(parameters[0].type).toEqual(CustomConnectionParameter);
       expect(parameters[0].props.parameterKey).toEqual('parameterA');
-      expect(parameters[0].props.parameter).toEqual(connectionParameters?.['parameterA']);
+      expect(parameters[0].props.parameter).toEqual(props.connectionParameters?.['parameterA']);
       expect(parameters[0].props.value).toBeUndefined();
       expect(parameters[0].props.setValue).toEqual(expect.any(Function));
 
       expect(parameters[1].type).toEqual(UniversalConnectionParameter);
       expect(parameters[1].props.parameterKey).toEqual('parameterD');
-      expect(parameters[1].props.parameter).toEqual(connectionParameters?.['parameterD']);
+      expect(parameters[1].props.parameter).toEqual(props.connectionParameters?.['parameterD']);
       expect(parameters[1].props.value).toBeUndefined();
       expect(parameters[1].props.setValue).toEqual(expect.any(Function));
     });
@@ -248,10 +269,15 @@ describe('ui/createConnection', () => {
       };
       InitConnectionParameterEditorService(connectionParameterEditorService);
 
-      const connectionParameterSets = getConnectionParameterSets();
-      jest.mocked(getSupportedParameterSets).mockReturnValue(connectionParameterSets);
-      renderer.render(<CreateConnection />);
-      const createConnection = renderer.getRenderOutput();
+      const props: CreateConnectionProps = {
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets: getConnectionParameterSets(),
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
       expect(parameterSetsDropdown?.props.selectedKey).toEqual(0);
@@ -262,13 +288,13 @@ describe('ui/createConnection', () => {
 
       expect(parameters[0].type).toEqual(CustomConnectionParameter);
       expect(parameters[0].props.parameterKey).toEqual('parameterA');
-      expect(parameters[0].props.parameter).toEqual(connectionParameterSets?.values[0].parameters['parameterA']);
+      expect(parameters[0].props.parameter).toEqual(props.connectionParameterSets?.values[0].parameters['parameterA']);
       expect(parameters[0].props.value).toBeUndefined();
       expect(parameters[0].props.setValue).toEqual(expect.any(Function));
 
       expect(parameters[1].type).toEqual(UniversalConnectionParameter);
       expect(parameters[1].props.parameterKey).toEqual('parameterD');
-      expect(parameters[1].props.parameter).toEqual(connectionParameterSets?.values[0].parameters['parameterD']);
+      expect(parameters[1].props.parameter).toEqual(props.connectionParameterSets?.values[0].parameters['parameterD']);
       expect(parameters[1].props.value).toBeUndefined();
       expect(parameters[1].props.setValue).toEqual(expect.any(Function));
     });
@@ -410,9 +436,15 @@ describe('ui/createConnection', () => {
 
     it('should not render CustomCredentialMappingEditor when connector has no mapping metadata', () => {
       const connectionParameterSets = getConnectionParameterSets();
-      jest.mocked(getConnectionParameterSets).mockReturnValue(connectionParameterSets);
-      renderer.render(<CreateConnection />);
-      const createConnection = renderer.getRenderOutput();
+      const props: CreateConnectionProps = {
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets,
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       expect(connectionParameterEditorService.getCredentialMappingEditorOptions).not.toHaveBeenCalled();
 
@@ -425,9 +457,15 @@ describe('ui/createConnection', () => {
 
     it('should render CustomCredentialMappingEditor when connector has mapping metadata', () => {
       const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
-      jest.mocked(getConnectionParameterSets).mockReturnValue(connectionParameterSets);
-      renderer.render(<CreateConnection />);
-      const createConnection = renderer.getRenderOutput();
+      const props: CreateConnectionProps = {
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets,
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       expect(connectionParameterEditorService.getCredentialMappingEditorOptions).toHaveBeenCalledTimes(1);
       expect(connectionParameterEditorService.getCredentialMappingEditorOptions).toHaveBeenLastCalledWith({
@@ -483,9 +521,15 @@ describe('ui/createConnection', () => {
       setup();
 
       const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
-      jest.mocked(getSupportedParameterSets).mockReturnValue(connectionParameterSets);
-      renderer.render(<CreateConnection />);
-      const createConnection = renderer.getRenderOutput();
+      const props: CreateConnectionProps = {
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets,
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
       expect(parameters).toHaveLength(3);
@@ -494,6 +538,12 @@ describe('ui/createConnection', () => {
       expect(mappingEditors).toHaveLength(0);
     });
   });
+
+  function findConnectionCreateDiv(createConnection: ReactElement) {
+    return React.Children.toArray(createConnection.props.children).find(
+      (child) => (child as ReactElement)?.props.className === 'msla-create-connection-container'
+    ) as ReactElement;
+  }
 
   function findConnectionsParamContainer(createConnection: ReactElement) {
     return React.Children.toArray(createConnection.props.children).find(
