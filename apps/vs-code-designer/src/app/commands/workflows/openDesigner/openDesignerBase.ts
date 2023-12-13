@@ -40,6 +40,7 @@ export abstract class OpenDesignerBase {
   protected mapArtifacts?: Record<string, FileDetails[]> | undefined;
   protected unitTestName: string;
   protected isUnitTest: boolean;
+  protected unitTestDefinition: any;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,

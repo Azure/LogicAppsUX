@@ -15,14 +15,14 @@ import {
   containsApiHubConnectionReference,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
-  getFunctionProjectRoot,
+  getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
 } from '../../../utils/codeless/connection';
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
-import { saveUnitTestDefinition } from '../../../utils/unitTests';
+import { getWorkflowFilePathFromUnitTest, saveUnitTestDefinition } from '../../../utils/unitTests';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -41,7 +41,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
 
-  constructor(context: IActionContext, node: Uri, unitTestName?: string) {
+  constructor(context: IActionContext, node: Uri, unitTestName?: string, unitTestDefinition?: any) {
     const workflowName = path.basename(path.dirname(node.fsPath));
     const apiVersion = '2018-11-01';
     const panelName = `${workspace.name}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
@@ -50,7 +50,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true, false);
     this.unitTestName = unitTestName;
     this.isUnitTest = !!unitTestName;
-    this.workflowFilePath = node.fsPath;
+    this.unitTestDefinition = unitTestDefinition ?? null;
+    this.workflowFilePath = unitTestDefinition ? getWorkflowFilePathFromUnitTest(context, node.fsPath) : node.fsPath;
   }
 
   private createFileSystemConnection = (connectionInfo: FileSystemConnectionInfo): Promise<any> => {
@@ -58,7 +59,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const username = connectionInfo.connectionParameters?.['username'];
     const password = connectionInfo.connectionParameters?.['password'];
 
-    return new Promise((resolve, _) => {
+    return new Promise((resolve) => {
       exec(`net use ${rootFolder} ${password} /user:${username}`, (error) => {
         if (error) {
           resolve({ errorMessage: JSON.stringify(error.message) });
@@ -85,7 +86,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       return;
     }
 
-    this.projectPath = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     if (!this.projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
@@ -170,6 +171,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             oauthRedirectUrl: this.oauthRedirectUrl,
             hostVersion: ext.extensionVersion,
             isUnitTest: this.isUnitTest,
+            unitTestDefinition: this.unitTestDefinition,
           },
         });
         await this.validateWorkflow(this.panelMetadata.workflowContent);
@@ -398,7 +400,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this._migrate(workflowContent, migrationOptions);
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
-    const projectPath: string | undefined = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
