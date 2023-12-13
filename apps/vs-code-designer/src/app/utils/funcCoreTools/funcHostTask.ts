@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../../constants';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { delay } from '@azure/ms-rest-js';
 import { isString } from '@microsoft/utils-logic-apps';
@@ -117,7 +117,7 @@ export async function getFuncPortFromTaskOrProject(
     if (isString(projectPathOrTaskScope)) {
       projectPath = projectPathOrTaskScope;
     } else if (typeof projectPathOrTaskScope === 'object') {
-      projectPath = await tryGetFunctionProjectRoot(context, projectPathOrTaskScope);
+      projectPath = await tryGetLogicAppProjectRoot(context, projectPathOrTaskScope);
     }
 
     if (projectPath) {

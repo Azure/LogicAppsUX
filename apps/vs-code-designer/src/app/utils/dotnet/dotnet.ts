@@ -14,7 +14,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
 import { findFiles, getWorkspaceFolder } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -240,7 +240,7 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
     try {
       if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
         const workspaceFolder = await getWorkspaceFolder(context);
-        const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
+        const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
         if (projectPath) {
           const pathEnv = {
