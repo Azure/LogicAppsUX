@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localSettingsFileName } from '../../../constants';
-import { tryGetFunctionProjectRoot } from '../../utils/verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { selectWorkspaceFile } from '../../utils/workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
@@ -25,7 +25,7 @@ export async function getLocalSettingsFile(
 ): Promise<string> {
   workspaceFolder = workspaceFolder || workspace.workspaceFolders?.[0];
   if (workspaceFolder) {
-    const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+    const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
     if (projectPath) {
       const localSettingsFile: string = path.join(projectPath, localSettingsFileName);
       if (await fse.pathExists(localSettingsFile)) {
@@ -35,7 +35,7 @@ export async function getLocalSettingsFile(
   }
 
   return await selectWorkspaceFile(context, placeHolder, async (f: WorkspaceFolder): Promise<string> => {
-    const projectPath: string = (await tryGetFunctionProjectRoot(context, f, true /* suppressPrompt */)) || f.uri.fsPath;
+    const projectPath: string = (await tryGetLogicAppProjectRoot(context, f, true /* suppressPrompt */)) || f.uri.fsPath;
     return path.relative(f.uri.fsPath, path.join(projectPath, localSettingsFileName));
   });
 }

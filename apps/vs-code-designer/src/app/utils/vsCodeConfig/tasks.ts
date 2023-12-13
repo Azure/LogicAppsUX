@@ -6,7 +6,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { ProjectFile } from '../dotnet/dotnet';
 import { getDotnetDebugSubpath, getProjFiles, getTargetFramework } from '../dotnet/dotnet';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage, type ITask, type ITaskInputs } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
@@ -91,7 +91,7 @@ export async function validateTasksJson(context: IActionContext, folders: Readon
   try {
     if (folders) {
       for (const folder of folders) {
-        const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, folder);
+        const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder);
         context.telemetry.properties.projectPath = projectPath;
         if (projectPath) {
           const tasksJsonPath: string = path.join(projectPath, '.vscode', 'tasks.json');

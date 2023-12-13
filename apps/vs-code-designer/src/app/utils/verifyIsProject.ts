@@ -38,7 +38,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
  * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
  */
-export async function tryGetFunctionProjectRoot(
+export async function tryGetLogicAppProjectRoot(
   context: IActionContext,
   workspaceFolder: WorkspaceFolder | string,
   suppressPrompt = false
@@ -108,7 +108,7 @@ export async function verifyAndPromptToCreateProject(
 ): Promise<string | undefined> {
   options = options || {};
 
-  const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, fsPath);
+  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, fsPath);
   if (!projectPath) {
     if (!options.suppressCreateProjectPrompt) {
       const message: string = localize('notLogicApp', 'The selected folder is not a logic app project. Create new project?');

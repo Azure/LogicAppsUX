@@ -13,7 +13,7 @@ import {
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
@@ -29,7 +29,7 @@ import type { MessageItem } from 'vscode';
 export async function activateAzurite(context: IActionContext): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
     if (projectPath) {
       const globalAzuriteLocationSetting: string = getWorkspaceSetting<string>(azuriteLocationSetting, projectPath, azuriteExtensionPrefix);

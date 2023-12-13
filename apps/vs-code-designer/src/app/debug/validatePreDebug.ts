@@ -13,7 +13,7 @@ import {
 import { localize } from '../../localize';
 import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage, setLocalAppSetting } from '../utils/appSettings/localSettings';
-import { tryGetFunctionProjectRoot } from '../utils/verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getDebugConfigs, isDebugConfigEqual } from '../utils/vsCodeConfig/launch';
 import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -44,7 +44,7 @@ export async function preDebugValidate(context: IActionContext, debugConfig: vsc
 
     if (shouldContinue) {
       context.telemetry.properties.lastValidateStep = 'getProjectRoot';
-      const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspace, true /* suppressPrompt */);
+      const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspace, true /* suppressPrompt */);
 
       if (projectPath) {
         const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);
