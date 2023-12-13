@@ -3,6 +3,11 @@ export interface AddMockResultPayload {
   mockResult: string;
 }
 
+export interface InitDefintionPayload {
+  assertions: string[];
+  mockResults: Map<string, string>;
+}
+
 export interface AddAssertionPayload {
   assertion: string;
 }

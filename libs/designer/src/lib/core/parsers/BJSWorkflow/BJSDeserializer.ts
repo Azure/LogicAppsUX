@@ -7,7 +7,7 @@ import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
+import type { Assertion, LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
 import {
   containsIdTag,
   WORKFLOW_NODE_TYPES,
@@ -108,6 +108,21 @@ export const Deserialize = (
     nodesMetadata,
     ...(Object.keys(definition.staticResults ?? {}).length > 0 ? { staticResults: definition.staticResults } : {}),
   };
+};
+
+export const deserializeUnitTestDefinition = (unitTestDefinition: any | null): any => {
+  if (isNullOrUndefined(unitTestDefinition)) return null;
+  // deserialize mocks
+  const mockResults = new Map();
+  const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
+  mockResults.set(`&${triggerName}`, JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4));
+  Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
+    mockResults.set(actionName, JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4));
+  });
+
+  // deserialize assertions
+  const assertions = unitTestDefinition.assertions.map((assertionObj: Assertion) => assertionObj.assertionString);
+  return { mockResults, assertions };
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
