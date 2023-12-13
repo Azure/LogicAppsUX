@@ -8,7 +8,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import undoable, { includeAction } from 'redux-undo';
 
 const includedActions = [
-  'dataMap/setInitialSchema',
   'dataMap/doDataMapOperation',
   'dataMap/makeConnection',
   'dataMap/addFunctionNode',
