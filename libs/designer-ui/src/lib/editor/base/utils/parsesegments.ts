@@ -41,7 +41,7 @@ export interface SegmentParserOptions {
 }
 
 export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParserOptions): RootNode => {
-  const { loadParameterValueFromString, readonly, tokensEnabled } = options ?? {};
+  const { tokensEnabled } = options ?? {};
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
   const root = $getRoot().clear();
@@ -72,7 +72,7 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
         if ($isLinkNode(childNode)) {
           const linkNode = $createLinkNode(getURL(childNode, tokensEnabled, nodeMap));
           childNode.getChildren().forEach((listItemChildNode) => {
-            appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled, readonly, loadParameterValueFromString);
+            appendChildrenNode(linkNode, listItemChildNode, nodeMap, options);
           });
           paragraph.append(linkNode);
         }
@@ -80,13 +80,13 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
         else if ($isListItemNode(childNode)) {
           const listItemNode = $createListItemNode();
           childNode.getChildren().forEach((listItemChildNode) => {
-            appendChildrenNode(listItemNode, listItemChildNode, nodeMap, tokensEnabled, readonly, loadParameterValueFromString);
+            appendChildrenNode(listItemNode, listItemChildNode, nodeMap, options);
           });
           paragraph.append(listItemNode);
         }
         // Non line break nodes are parsed and appended to the paragraph node
         else if (!$isLineBreakNode(childNode)) {
-          appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled, readonly, loadParameterValueFromString);
+          appendChildrenNode(paragraph, childNode, nodeMap, options);
         }
         // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
         else if ($isLineBreakNode(childNode)) {
@@ -119,10 +119,10 @@ const appendChildrenNode = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
   childNode: LexicalNode,
   nodeMap: Map<string, ValueSegment>,
-  tokensEnabled?: boolean,
-  readonly?: boolean,
-  loadParameterValueFromString?: (value: string) => ValueSegment[]
+  options: SegmentParserOptions | undefined
 ) => {
+  const { tokensEnabled, readonly, loadParameterValueFromString } = options ?? {};
+
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
@@ -134,20 +134,18 @@ const appendChildrenNode = (
     const childNodeStyles = childNode.getStyle();
     const childNodeFormat = childNode.getFormat();
 
-    if (tokensEnabled && nodeMap) {
-      const contentAsParameter = loadParameterValueFromString?.(decodedTextContent);
-      if (contentAsParameter) {
-        contentAsParameter.forEach((segment) => {
-          const tokenNode = createTokenNodeFromSegment(segment, readonly);
-          if (tokenNode) {
-            paragraph.append(tokenNode);
-          } else {
-            appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
-          }
-        });
+    if (tokensEnabled && nodeMap && loadParameterValueFromString) {
+      const contentAsParameter = loadParameterValueFromString(decodedTextContent);
+      contentAsParameter.forEach((segment) => {
+        const tokenNode = createTokenNodeFromSegment(segment, readonly);
+        if (tokenNode) {
+          paragraph.append(tokenNode);
+        } else {
+          appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
+        }
+      });
 
-        return;
-      }
+      return;
     }
 
     appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
