@@ -232,7 +232,8 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
               // account for source elements at different level of loop
               // danielle account for object in loop
               let backoutValue = '';
-              if (valueToTrim !== lastLoop.loop) {
+              if (valueToTrim !== lastLoop.loop && !valueToTrim.includes('/*')) {
+                // second condition is temporary fix for json arrays
                 const loopDifference = lastLoop.loop.replace(valueToTrim || ' ', '');
                 for (const i of loopDifference) {
                   if (i === '/') {
