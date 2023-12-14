@@ -20,7 +20,6 @@ import { TokenTypeAheadPlugin } from './plugins/TokenTypeahead';
 import { TreeView } from './plugins/TreeView';
 import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
 import { TokenPickerButton } from './plugins/tokenpickerbutton';
-import { getChildrenNodes } from './utils/helper';
 import { css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -28,7 +27,6 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { $getRoot } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
@@ -126,14 +124,6 @@ export const BaseEditor = ({
       onRef(containerRef.current);
     }
   }, []);
-
-  useEffect(() => {
-    editor.getEditorState().read(() => {
-      const nodeMap = new Map<string, ValueSegment>();
-      const editorString = getChildrenNodes($getRoot(), nodeMap);
-      console.log(editorString);
-    });
-  }, [editor]);
 
   const {
     autoFocus,
