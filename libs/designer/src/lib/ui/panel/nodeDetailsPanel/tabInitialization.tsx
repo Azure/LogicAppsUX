@@ -1,20 +1,17 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useIsXrmConnectionReferenceMode, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedNodeId, useSelectedPanelTabName, useVisiblePanelTabs } from '../../../core/state/panel/panelSelectors';
 import { registerPanelTabs, setTabVisibility, selectPanelTab, isolateTab } from '../../../core/state/panel/panelSlice';
 import { useHasSchema } from '../../../core/state/staticresultschema/staitcresultsSelector';
 import { isRootNodeInGraph } from '../../../core/utils/graph';
 import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
-import { getCreateConnectionTab } from './tabs/createConnectionTab';
-import { loadingTab } from './tabs/loadingTab';
 import { monitoringTab } from './tabs/monitoringTab/monitoringTab';
 import { parametersTab } from './tabs/parametersTab';
 import { monitorRetryTab } from './tabs/retryTab';
 import { scratchTab } from './tabs/scratchTab';
-import { getSelectConnectionTab } from './tabs/selectConnectionTab';
 import { settingsTab } from './tabs/settingsTab';
 import { testingTab } from './tabs/testingTab';
 import { SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
@@ -34,28 +31,8 @@ export const usePanelTabs = () => {
   const operationInfo = useOperationInfo(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
-  const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
 
   const visibleTabs = useVisiblePanelTabs();
-
-  const selectConnectionTabTitle = isXrmConnectionReferenceMode
-    ? intl.formatMessage({
-        defaultMessage: 'Select connection reference',
-        description: 'Title for the select connection reference tab',
-      })
-    : intl.formatMessage({
-        defaultMessage: 'Select connection',
-        description: 'Title for the select connection tab',
-      });
-  const createConnectionTabTitle = isXrmConnectionReferenceMode
-    ? intl.formatMessage({
-        defaultMessage: 'Create connection reference',
-        description: 'Title for the create connection reference tab',
-      })
-    : intl.formatMessage({
-        defaultMessage: 'Create connection',
-        description: 'Title for the create connection tab',
-      });
 
   useEffect(() => {
     const tabs = [
@@ -65,7 +42,6 @@ export const usePanelTabs = () => {
       codeViewTab(intl),
       testingTab(intl),
       aboutTab(intl),
-      loadingTab(intl),
       monitorRetryTab(intl),
     ];
     if (process.env.NODE_ENV !== 'production') {
@@ -73,16 +49,6 @@ export const usePanelTabs = () => {
     }
     dispatch(registerPanelTabs(tabs));
   }, [dispatch, intl]);
-
-  useEffect(() => {
-    const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
-    dispatch(registerPanelTabs([createConnectionTab]));
-  }, [dispatch, createConnectionTabTitle]);
-
-  useEffect(() => {
-    const selectConnectionTab = getSelectConnectionTab(selectConnectionTabTitle);
-    dispatch(registerPanelTabs([selectConnectionTab]));
-  }, [dispatch, selectConnectionTabTitle]);
 
   useEffect(() => {
     dispatch(
