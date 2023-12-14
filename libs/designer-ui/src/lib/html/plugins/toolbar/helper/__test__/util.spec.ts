@@ -1,7 +1,9 @@
 import {
   cleanHtmlString,
   cleanStyleAttribute,
+  decodeSegmentValueInDomContext,
   decodeSegmentValueInLexicalContext,
+  encodeSegmentValueInDomContext,
   encodeSegmentValueInLexicalContext,
   isAttributeSupportedByLexical,
   isTagNameSupportedByLexical,
@@ -34,6 +36,34 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['white-space: pre-wrap; color: red;', 'color: red;'],
     ])('should return style=%p as %p', (input, expected) => {
       expect(cleanStyleAttribute(input)).toBe(expected);
+    });
+  });
+
+  describe('decodeSegmentValueInDomContext', () => {
+    it.each([
+      ['plain text', 'plain text'],
+      ['text with <>', 'text with <>'],
+      ['text with %3C%3E', 'text with <>'],
+      ["$[concat(...),concat('abc'),#AD008C]$", "$[concat(...),concat('abc'),#AD008C]$"],
+      ["$[concat(...),concat('%3C()%3E'),#AD008C]$", "$[concat(...),concat('<()>'),#AD008C]$"],
+      ["@{concat('abc')}", "@{concat('abc')}"],
+      ["@{concat('%3C()%3E')}", "@{concat('<()>')}"],
+    ])('should properly decode segments in: %p', (input, expected) => {
+      expect(decodeSegmentValueInDomContext(input)).toBe(expected);
+    });
+  });
+
+  describe('encodeSegmentValueInDomContext', () => {
+    it.each([
+      ['plain text', 'plain text'],
+      ['text with <>', 'text with %3C%3E'],
+      ['text with %3C%3E', 'text with %3C%3E'],
+      ["$[concat(...),concat('abc'),#AD008C]$", "$[concat(...),concat('abc'),#AD008C]$"],
+      ["$[concat(...),concat('<()>'),#AD008C]$", "$[concat(...),concat('%3C()%3E'),#AD008C]$"],
+      ["@{concat('abc')}", "@{concat('abc')}"],
+      ["@{concat('<()>')}", "@{concat('%3C()%3E')}"],
+    ])('should properly encode segments in: %p', (input, expected) => {
+      expect(encodeSegmentValueInDomContext(input)).toBe(expected);
     });
   });
 
