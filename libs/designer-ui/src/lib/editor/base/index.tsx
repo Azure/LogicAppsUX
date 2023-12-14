@@ -57,7 +57,7 @@ export interface BaseEditorProps {
   className?: string;
   readonly?: boolean;
   placeholder?: string;
-  basePlugins?: basePlugins;
+  basePlugins?: BasePlugins;
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   labelId?: string;
@@ -73,7 +73,7 @@ export interface BaseEditorProps {
   getTokenPicker: GetTokenPickerHandler;
 }
 
-export interface basePlugins {
+export interface BasePlugins {
   autoFocus?: boolean;
   autoLink?: boolean;
   clearEditor?: boolean;
