@@ -21,6 +21,7 @@ export interface DesignerOptionsState {
   readOnly?: boolean;
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
+  isUnitTest?: boolean;
   servicesInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
   isXrmConnectionReferenceMode?: boolean;

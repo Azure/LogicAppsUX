@@ -5,6 +5,7 @@ import {
   useIsMonitoringView,
   useIsReadOnly,
   useHostOptions,
+  useIsUnitTestView,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -14,6 +15,7 @@ import {
   loadWorkflow,
   setAreCustomEditorsEnabled,
   setHostOptions,
+  setUnitTest,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -22,6 +24,7 @@ import { useDispatch } from 'react-redux';
 const ContextSettings = () => {
   const isReadOnly = useIsReadOnly();
   const isMonitoringView = useIsMonitoringView();
+  const isUnitTest = useIsUnitTestView();
   const isDarkMode = useIsDarkMode();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const hostOptions = useHostOptions();
@@ -30,6 +33,17 @@ const ContextSettings = () => {
   const changeMonitoringView = useCallback(
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
+      if (checked) {
+        dispatch(loadRun());
+        dispatch(loadWorkflow());
+      }
+    },
+    [dispatch]
+  );
+
+  const changeUnitTestView = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(setUnitTest(!!checked));
       if (checked) {
         dispatch(loadRun());
         dispatch(loadWorkflow());
@@ -47,6 +61,7 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setReadOnly(!!checked))}
       />
       <Checkbox label="Monitoring View" checked={isMonitoringView} onChange={changeMonitoringView} />
+      <Checkbox label="Unit Test View" checked={isUnitTest} onChange={changeUnitTestView} />
       <Checkbox label="Dark Mode" checked={isDarkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
       <Checkbox
         label="Custom Editors"
