@@ -129,14 +129,11 @@ const appendChildrenNode = (
     const textContent = childNode.getTextContent();
     const decodedTextContent = tokensEnabled ? decodeSegmentValueInLexicalContext(textContent) : textContent;
 
-    const appendAsStringSegment = () => {
-      // we need to pass in the styles and format of the parent node to the children node
-      // because Lexical text nodes do not have styles or format
-      // and we'll need to use the ExtendedTextNode to apply the styles and format
-      const childNodeStyles = childNode.getStyle();
-      const childNodeFormat = childNode.getFormat();
-      appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, options);
-    };
+    // we need to pass in the styles and format of the parent node to the children node
+    // because Lexical text nodes do not have styles or format
+    // and we'll need to use the ExtendedTextNode to apply the styles and format
+    const childNodeStyles = childNode.getStyle();
+    const childNodeFormat = childNode.getFormat();
 
     if (tokensEnabled && nodeMap && loadParameterValueFromString) {
       const contentAsParameter = loadParameterValueFromString(decodedTextContent);
@@ -145,11 +142,11 @@ const appendChildrenNode = (
         if (tokenNode) {
           paragraph.append(tokenNode);
         } else {
-          appendAsStringSegment();
+          appendStringSegment(paragraph, segment.value, childNodeStyles, childNodeFormat, nodeMap, options);
         }
       });
     } else {
-      appendAsStringSegment();
+      appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, options);
     }
   } else {
     paragraph.append(childNode);
