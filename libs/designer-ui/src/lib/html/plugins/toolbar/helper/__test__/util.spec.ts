@@ -9,8 +9,11 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['<p>text1<br></p><p><br></p><p>text2</p>', '<p>text1</p><br><br><p>text2</p>'],
       ['<span>text</span>', 'text'],
       ['<span id="$[abc,variables(\'abc\'),#770bd6]$">text</span>', '<span id="$[abc,variables(\'abc\'),#770bd6]$">text</span>'],
-      ['<span id="$[concat(\'&lt;\'),#ad008c]$">text</span>', '<span id="$[concat(\'&lt;\'),#ad008c]$">text</span>'],
-      ['<span id="$[concat(\'%26lt;\'),#ad008c]$">text</span>', '<span id="$[concat(\'%26lt;\'),#ad008c]$">text</span>'],
+      ['<span id="$[concat(),concat(\'&lt;\'),#ad008c]$">text</span>', '<span id="$[concat(),concat(\'&lt;\'),#ad008c]$">text</span>'],
+      ['<span id="$[concat(),concat(\'%26lt;\'),#ad008c]$">text</span>', '<span id="$[concat(),concat(\'%26lt;\'),#ad008c]$">text</span>'],
+      ['<span id="@{variables(\'abc\')}">text</span>', '<span id="@{variables(\'abc\')}">text</span>'],
+      ['<span id="@{concat(\'&lt;\')}">text</span>', '<span id="@{concat(\'&lt;\')}">text</span>'],
+      ['<span id="@{concat(\'%26lt;\')}">text</span>', '<span id="@{concat(\'%26lt;\')}">text</span>'],
     ])('should properly convert HTML: %p', (input, expected) => {
       expect(cleanHtmlString(input)).toBe(expected);
     });
@@ -27,6 +30,9 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["$[concat(...),concat('abc'),#AD008C]$", "$[concat(...),concat('abc'),#AD008C]$"],
       ["$[concat(...),concat('%26lt;'),#AD008C]$", "$[concat(...),concat('&lt;'),#AD008C]$"],
       ["$[concat(...),concat('%26amp;lt;'),#AD008C]$", "$[concat(...),concat('&amp;lt;'),#AD008C]$"],
+      ["@{concat('abc')}", "@{concat('abc')}"],
+      ["@{concat('%26lt;')}", "@{concat('&lt;')}"],
+      ["@{concat('%26amp;lt;')}", "@{concat('&amp;lt;')}"],
     ])('should properly decode segments in: %p', (input, expected) => {
       expect(decodeSegmentValueInLexicalContext(input)).toBe(expected);
     });
@@ -43,6 +49,9 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["$[concat(...),concat('abc'),#AD008C]$", "$[concat(...),concat('abc'),#AD008C]$"],
       ["$[concat(...),concat('&lt;'),#AD008C]$", "$[concat(...),concat('%26lt;'),#AD008C]$"],
       ["$[concat(...),concat('&amp;lt;'),#AD008C]$", "$[concat(...),concat('%26amp;lt;'),#AD008C]$"],
+      ["@{concat('abc')}", "@{concat('abc')}"],
+      ["@{concat('&lt;')}", "@{concat('%26lt;')}"],
+      ["@{concat('&amp;lt;')}", "@{concat('%26amp;lt;')}"],
     ])('should properly encode segments in: %p', (input, expected) => {
       expect(encodeSegmentValueInLexicalContext(input)).toBe(expected);
     });
