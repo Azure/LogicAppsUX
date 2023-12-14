@@ -8,11 +8,10 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
   const { initialValue, basePlugins = {}, loadParameterValueFromString, readonly, tokenMapping } = props;
   const { htmlEditor, tokens } = basePlugins;
-  const isRichHtmlEditor = htmlEditor === 'rich-html';
   const initialConfig: InitialConfigType = {
     ...defaultInitialConfig,
     editable: !readonly,
-    nodes: isRichHtmlEditor ? htmlNodes : defaultNodes,
+    nodes: htmlEditor ? htmlNodes : defaultNodes,
     editorState:
       initialValue &&
       (() => {
@@ -22,7 +21,7 @@ export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
           segmentMapping: tokenMapping,
           tokensEnabled: tokens,
         };
-        isRichHtmlEditor ? parseHtmlSegments(initialValue, options) : parseSegments(initialValue, options);
+        htmlEditor === 'rich-html' ? parseHtmlSegments(initialValue, options) : parseSegments(initialValue, options);
       }),
   };
   return (

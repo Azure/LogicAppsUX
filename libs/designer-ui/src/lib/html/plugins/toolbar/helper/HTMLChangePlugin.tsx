@@ -36,8 +36,8 @@ export const HTMLChangePlugin = ({
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), nodeMap);
       if (!isHtmlStringValueSafeForLexical(editorString, nodeMap)) {
-        isNewValuePlaintext = false;
-        setIsValuePlaintext(false);
+        isNewValuePlaintext = true;
+        setIsValuePlaintext(isNewValuePlaintext);
       }
 
       convertEditorState(editor, nodeMap, { isValuePlaintext: isNewValuePlaintext, loadParameterValueFromString }).then(setValue);
