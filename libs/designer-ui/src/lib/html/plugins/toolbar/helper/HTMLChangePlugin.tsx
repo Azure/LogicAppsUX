@@ -52,11 +52,17 @@ export const convertEditorState = (
           const attribute = attributes[j];
           if (attribute.name !== 'id' && attribute.name !== 'style' && attribute.name !== 'href') {
             element.removeAttribute(attribute.name);
+            continue;
           }
           if (attribute.name === 'id') {
             const idValue = element.getAttribute('id') ?? ''; // e.g., "$[concat(...),concat('&lt;', '"'),#AD008C]$"
             const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "$[concat(...),concat('%26lt;', '%22'),#AD008C]$"
             element.setAttribute('id', encodedIdValue);
+            continue;
+          }
+          if (attribute.name === 'style' && attribute.value === 'white-space: pre-wrap;') {
+            element.removeAttribute(attribute.name);
+            continue;
           }
         }
       }

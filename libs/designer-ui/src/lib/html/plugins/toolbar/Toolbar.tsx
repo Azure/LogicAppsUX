@@ -6,7 +6,6 @@ import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg'
 import codeToggleDark from '../icons/dark/code-toggle.svg';
 import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
 import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
-// TODO
 import codeToggleLight from '../icons/light/code-toggle.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
