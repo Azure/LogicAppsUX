@@ -432,10 +432,10 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     });
     if (customParameterOptions) {
       const CustomConnectionParameter = customParameterOptions.EditorComponent;
-      return <CustomConnectionParameter key={key} {...connectionParameterProps} />;
+      return <CustomConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
     }
 
-    return <UniversalConnectionParameter key={key} {...connectionParameterProps} />;
+    return <UniversalConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
   };
 
   // Connection parameters mapping allows grouping several parameters into one custom editor.
@@ -510,6 +510,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* Legacy Multi-Auth */}
           {showLegacyMultiAuth && (
             <LegacyMultiAuth
+              data-testId={'legacy-multi-auth'}
               isLoading={isLoading}
               value={selectedParamSetIndex}
               onChange={onAuthDropdownChange}
@@ -521,6 +522,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* OptionalGateway Checkbox */}
           {!hasOnlyOnPremGateway && Object.entries(getParametersByCapability(Capabilities.gateway)).length > 0 && (
             <LegacyGatewayCheckbox
+              data-testId={'legacy-gateway-checkbox'}
               isLoading={isLoading}
               value={enabledCapabilities.includes(Capabilities.gateway)}
               onChange={() => toggleCapability(Capabilities.gateway)}
@@ -530,6 +532,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* Name */}
           {showNameInput && (
             <ConnectionNameInput
+              data-testId={'connection-name-input'}
               isLoading={isLoading}
               value={connectionDisplayName}
               onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
@@ -549,6 +552,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* Authentication Selection */}
           {isMultiAuth && (
             <ConnectionMultiAuthInput
+              data-testId={'connection-multi-auth-input'}
               isLoading={isLoading}
               value={selectedParamSetIndex}
               onChange={onAuthDropdownChange}

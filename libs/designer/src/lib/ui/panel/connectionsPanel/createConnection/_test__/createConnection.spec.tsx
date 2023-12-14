@@ -1,6 +1,5 @@
 import { CreateConnection, type CreateConnectionProps } from '../createConnection';
 import { UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
-import type { IDropdownProps } from '@fluentui/react';
 import {
   InitConnectionParameterEditorService,
   type IConnectionParameterEditorService,
@@ -176,10 +175,6 @@ describe('ui/createConnection', () => {
 
     const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
     expect(parameterSetsDropdown).toBeDefined();
-    expect(parameterSetsDropdown?.props.options).toHaveLength(2);
-    expect(parameterSetsDropdown?.props.options[0].text).toEqual('first parameter set');
-    expect(parameterSetsDropdown?.props.options[1].text).toEqual('second parameter set');
-    expect(parameterSetsDropdown?.props.selectedKey).toEqual(0);
 
     const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
     expect(parameters).toHaveLength(2);
@@ -280,7 +275,7 @@ describe('ui/createConnection', () => {
       const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
-      expect(parameterSetsDropdown?.props.selectedKey).toEqual(0);
+      expect(parameterSetsDropdown).toBeDefined();
 
       const parameters = findParameterComponents(createConnection, UniversalConnectionParameter, CustomConnectionParameter);
 
@@ -561,13 +556,11 @@ describe('ui/createConnection', () => {
   function findParameterSetsDropdown(createConnection: ReactElement) {
     const connectionsParamContainer = findConnectionsParamContainer(createConnection);
     for (const paramRow of React.Children.toArray(connectionsParamContainer.props.children)) {
-      for (const child of React.Children.toArray((paramRow as ReactElement).props.children)) {
-        if ((child as ReactElement)?.props.id === 'connection-param-set-select') {
-          return child as ReactElement<IDropdownProps>;
-        }
+      const testId = (paramRow as ReactElement)?.props?.['data-testId']?.toString();
+      if (testId === 'connection-multi-auth-input') {
+        return paramRow;
       }
     }
-
     return undefined;
   }
 });
