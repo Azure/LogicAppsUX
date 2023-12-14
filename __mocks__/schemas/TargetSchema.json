@@ -218,6 +218,14 @@
                 "properties": "Optional",
                 "qName": "Other",
                 "parentKey": "/ns0:Root/Looping/Person"
+              },
+              {
+                "key": "/ns0:Root/Looping/Person/Publisher",
+                "name": "Publisher",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "Publisher",
+                "parentKey": "/ns0:Root/Looping/Person"
               }
             ],
             "qName": "Person",
