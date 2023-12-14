@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.86.4](https://github.com/Azure/LogicAppsUX/compare/v2.86.3...v2.86.4) (2023-12-14)
+
+
+### Bug Fixes
+
+* **designer:** Custom Code Workspace fix empty lib folder ([#3769](https://github.com/Azure/LogicAppsUX/issues/3769)) ([#3848](https://github.com/Azure/LogicAppsUX/issues/3848)) ([16dacd4](https://github.com/Azure/LogicAppsUX/commit/16dacd4ce7e8006e93e6152f672fad79f3840dc5))
+
 ### [2.86.3](https://github.com/Azure/LogicAppsUX/compare/v2.86.2...v2.86.3) (2023-12-13)
 
 
