@@ -25,6 +25,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
+  isUnitTest: false,
   isDarkMode: false,
   servicesInitialized: false,
   useLegacyWorkflowParameters: false,
@@ -97,6 +98,7 @@ export const designerOptionsSlice = createSlice({
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
+      state.isUnitTest = action.payload.isUnitTest;
       state.isDarkMode = action.payload.isDarkMode;
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;

@@ -13,7 +13,7 @@ export { useIsWorkflowParametersDirty, useWorkflowParameterValidationErrors } fr
 export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
-export { serializeWorkflow } from './actions/bjsworkflow/serializer';
+export { serializeWorkflow, serializeUnitTestDefinition } from './actions/bjsworkflow/serializer';
 export {
   setSelectedNodeId,
   changePanelNode,

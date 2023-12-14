@@ -183,6 +183,7 @@ export const DesignerApp = () => {
         isDarkMode: theme === Theme.Dark,
         readOnly,
         isMonitoringView,
+        isUnitTest,
         services: services,
         hostOptions: {
           displayRuntimeInfo: true,

@@ -34,7 +34,14 @@ import {
   DeserializationType,
   PropertySerializationType,
 } from '@microsoft/parsers-logic-apps';
-import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
+import type {
+  Assertion,
+  LocationSwapMap,
+  LogicAppsV2,
+  OperationManifest,
+  OperationMock,
+  SubGraphDetail,
+} from '@microsoft/utils-logic-apps';
 import {
   SerializationErrorCode,
   SerializationException,
@@ -1057,4 +1064,55 @@ const getSplitOn = (
     ...(splitOnConfiguration ? { splitOnConfiguration } : {}),
   };
 };
+
+export const serializeUnitTestDefinition = async (rootState: RootState): Promise<any> => {
+  const { mockResults, assertions } = rootState.unitTest;
+
+  return {
+    triggerMocks: getTriggerMocks(mockResults),
+    actionMocks: getActionMocks(mockResults),
+    assertions: getAssertions(assertions),
+  };
+};
+
+const getAssertions = (assertions: string[]): Assertion[] => {
+  const result: Assertion[] = [];
+  assertions.forEach((assert) => {
+    // if it's an empty assertion, don't add it to the def file
+    if (assert.length > 0) {
+      result.push({ assertionString: assert, description: '' });
+    }
+  });
+  return result;
+};
+
+const getTriggerMocks = (mockResults: Map<string, string>): Record<string, OperationMock> => {
+  const result: Record<string, OperationMock> = {};
+  mockResults.forEach((value, key) => {
+    if (key.charAt(0) === '&') {
+      if (value) {
+        // return trigger
+        const mockTriggerJson = JSON.parse(value);
+        const triggerName = key.substring(1); // take off meta data
+        result[triggerName] = mockTriggerJson;
+      }
+    }
+  });
+  // only reach here if there is not trigger mock
+  return result;
+};
+
+const getActionMocks = (mockResults: Map<string, string>): Record<string, OperationMock> => {
+  const result: Record<string, OperationMock> = {};
+  mockResults.forEach((value, key) => {
+    if (key.charAt(0) !== '&') {
+      if (value) {
+        const mockResultJson = JSON.parse(value);
+        result[key] = mockResultJson;
+      }
+    }
+  });
+  return result;
+};
+
 //#endregion

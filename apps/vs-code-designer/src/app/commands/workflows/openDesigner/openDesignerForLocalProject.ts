@@ -41,7 +41,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
 
-  constructor(context: IActionContext, node: Uri, unitTestName?: string) {
+  constructor(context: IActionContext, node: Uri, unitTestName?: string, unitTestDefinition?: any) {
     const workflowName = path.basename(path.dirname(node.fsPath));
     const apiVersion = '2018-11-01';
     const panelName = `${workspace.name}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
@@ -50,6 +50,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true, false);
     this.unitTestName = unitTestName;
     this.isUnitTest = !!unitTestName;
+    this.unitTestDefinition = unitTestDefinition ?? null;
     this.workflowFilePath = node.fsPath;
   }
 
@@ -58,7 +59,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const username = connectionInfo.connectionParameters?.['username'];
     const password = connectionInfo.connectionParameters?.['password'];
 
-    return new Promise((resolve, _) => {
+    return new Promise((resolve) => {
       exec(`net use ${rootFolder} ${password} /user:${username}`, (error) => {
         if (error) {
           resolve({ errorMessage: JSON.stringify(error.message) });
@@ -170,6 +171,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             oauthRedirectUrl: this.oauthRedirectUrl,
             hostVersion: ext.extensionVersion,
             isUnitTest: this.isUnitTest,
+            unitTestDefinition: this.unitTestDefinition,
           },
         });
         await this.validateWorkflow(this.panelMetadata.workflowContent);

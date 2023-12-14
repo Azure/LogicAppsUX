@@ -5,6 +5,7 @@ import { TrafficLightDot } from '@microsoft/designer-ui';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
+  serializeUnitTestDefinition,
   switchToWorkflowParameters,
   useIsDesignerDirty,
   validateParameter,
@@ -73,10 +74,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
-    const { definition } = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
-      ignoreNonCriticalErrors: true,
-    });
+    const definition = await serializeUnitTestDefinition(designerState);
 
     // TODO(ccastrotrejo): We need to check for unit test errors
     await vscode.postMessage({

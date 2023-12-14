@@ -1,8 +1,10 @@
 import type { Workflow } from '../common/models/workflow';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
+import { deserializeUnitTestDefinition } from './parsers/BJSWorkflow/BJSDeserializer';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import type { DesignerOptionsState } from './state/designerOptions/designerOptionsInterfaces';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
+import { initUnitTestDefinition } from './state/unitTest/unitTestSlice';
 import { WorkflowKind } from './state/workflow/workflowInterfaces';
 import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from './store';
@@ -17,15 +19,17 @@ export interface BJSWorkflowProviderProps {
   workflow: Workflow;
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
   children?: React.ReactNode;
+  unitTestDefinition?: string;
 }
 
-const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance }) => {
+const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance, unitTestDefinition }) => {
   const dispatch = useDispatch<AppDispatch>();
   useDeepCompareEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initWorkflowKind(equals(workflow?.kind, 'stateful') ? WorkflowKind.STATEFUL : WorkflowKind.STATELESS));
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
+    dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null)));
   }, [runInstance, workflow]);
 
   return <>{children}</>;

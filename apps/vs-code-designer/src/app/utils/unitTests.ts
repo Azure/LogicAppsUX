@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { developmentDirectoryName, testsDirectoryName, unitTestsFileName } from '../../constants';
 import { localize } from '../../localize';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -44,9 +45,9 @@ export const getUnitTestName = (filePath: string) => {
 };
 
 const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestName: string) => {
-  return path.join(projectPath, workflowName, 'development', 'tests', workflowName, `${unitTestName}.unit-test.json`);
+  return path.join(projectPath, developmentDirectoryName, testsDirectoryName, workflowName, `${unitTestName}${unitTestsFileName}`);
 };
 
 const getWorkflowTestsPath = (projectPath: string, workflowName: string) => {
-  return path.join(projectPath, workflowName, 'development', 'tests', workflowName);
+  return path.join(projectPath, developmentDirectoryName, testsDirectoryName, workflowName);
 };

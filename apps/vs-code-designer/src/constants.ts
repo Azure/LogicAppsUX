@@ -16,12 +16,15 @@ export const tasksFileName = 'tasks.json';
 export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
-export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
+export const unitTestsFileName = '.unit-test.json';
 
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
+export const developmentDirectoryName = '.development';
+export const testsDirectoryName = 'tests';
+export const vscodeFolderName = '.vscode';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
