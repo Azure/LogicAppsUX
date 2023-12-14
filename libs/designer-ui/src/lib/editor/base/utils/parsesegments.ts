@@ -293,27 +293,33 @@ const createTokenNodeFromSegment = (
 };
 
 export const decodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
-  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInDomContext);
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInDomContext, encodeSegmentValueInDomContext, 'decode');
 
 export const encodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
-  encodeOrDecodeStringSegmentTokens(value, nodeMap, encodeSegmentValueInDomContext);
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInDomContext, encodeSegmentValueInDomContext, 'encode');
 
 export const decodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
-  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext);
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext, 'decode');
 
 export const encodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
-  encodeOrDecodeStringSegmentTokens(value, nodeMap, encodeSegmentValueInLexicalContext);
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext, 'encode');
 
 const encodeOrDecodeStringSegmentTokens = (
   value: string,
   nodeMap: Map<string, ValueSegment>,
-  transformer: (_: string) => string
+  decoder: (input: string) => string,
+  encoder: (input: string) => string,
+  direction: 'encode' | 'decode'
 ): string => {
   let newValue = value;
 
   for (const [key] of nodeMap.entries()) {
-    const encodedKey = transformer(key);
-    newValue = newValue.replaceAll(key, encodedKey);
+    const encodedValue = encoder(key);
+    const decodedValue = decoder(key);
+    newValue = newValue.replaceAll(
+      direction === 'encode' ? decodedValue : encodedValue,
+      direction === 'encode' ? encodedValue : decodedValue
+    );
   }
 
   return newValue;

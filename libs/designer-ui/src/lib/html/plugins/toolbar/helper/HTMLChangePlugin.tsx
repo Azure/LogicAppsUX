@@ -1,12 +1,14 @@
 import type { ValueSegment } from '../../../../editor';
 import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegment';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
-import { decodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
+import {
+  decodeStringSegmentTokensInDomContext,
+  decodeStringSegmentTokensInLexicalContext,
+  encodeStringSegmentTokensInLexicalContext,
+} from '../../../../editor/base/utils/parsesegments';
 import {
   cleanHtmlString,
   cleanStyleAttribute,
-  decodeSegmentValueInLexicalContext,
-  encodeSegmentValueInLexicalContext,
   getDomFromHtmlEditorString,
   isAttributeSupportedByLexical,
   isHtmlStringValueSafeForLexical,
@@ -60,9 +62,10 @@ export const convertEditorState = (
     const valueSegments: ValueSegment[] = [];
     editor.update(() => {
       const htmlEditorString = isValuePlaintext ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
+      const encodedLexicalString = encodeStringSegmentTokensInLexicalContext(htmlEditorString, nodeMap);
 
       // Create a temporary DOM element to parse the HTML string
-      const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
+      const tempElement = getDomFromHtmlEditorString(encodedLexicalString, nodeMap);
 
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
@@ -75,12 +78,6 @@ export const convertEditorState = (
             element.removeAttribute(attribute.name);
             continue;
           }
-          if (attribute.name === 'id') {
-            const idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
-            const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "@{concat('%26lt;', '%22')}"
-            element.setAttribute('id', encodedIdValue);
-            continue;
-          }
           if (attribute.name === 'style') {
             const newAttributeValue = cleanStyleAttribute(attribute.value);
             newAttributeValue ? element.setAttribute('style', newAttributeValue) : element.removeAttribute(attribute.name);
@@ -89,25 +86,25 @@ export const convertEditorState = (
         }
       }
 
-      // Get the cleaned HTML string
+      // Clean the HTML string and decode the token nodes
       const cleanedHtmlString = cleanHtmlString(tempElement.innerHTML);
-      const resultHtmlString = decodeStringSegmentTokensInDomContext(cleanedHtmlString, nodeMap);
+      const decodedHtmlString = decodeStringSegmentTokensInDomContext(cleanedHtmlString, nodeMap);
+      const decodedLexicalString = decodeStringSegmentTokensInLexicalContext(decodedHtmlString, nodeMap);
 
-      // Regular expression pattern to match <span id="..."></span>
-      const spanIdPattern = /<span id="(.*?)"><\/span>/g;
       // Replace <span id="..."></span> with the captured "id" value if it is found in the viable ids map
-      const removeTokenTags = resultHtmlString.replace(spanIdPattern, (match, idValue) => {
-        const decodedIdValue = decodeSegmentValueInLexicalContext(idValue);
-        if (nodeMap.get(decodedIdValue)) {
-          return decodedIdValue;
+      const spanIdPattern = /<span id="(.*?)"><\/span>/g;
+      const noSpansHtmlString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
+        if (nodeMap.get(idValue)) {
+          return idValue;
         } else {
           return match;
         }
       });
+
       if (loadParameterValueFromString) {
-        valueSegments.push(...loadParameterValueFromString(removeTokenTags));
+        valueSegments.push(...loadParameterValueFromString(noSpansHtmlString));
       } else {
-        valueSegments.push(...convertStringToSegments(removeTokenTags, true, nodeMap));
+        valueSegments.push(...convertStringToSegments(noSpansHtmlString, true, nodeMap));
       }
       resolve(valueSegments);
     });

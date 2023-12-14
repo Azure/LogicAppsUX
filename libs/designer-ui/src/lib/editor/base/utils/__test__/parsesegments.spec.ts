@@ -1,7 +1,19 @@
+import { decodeStringSegmentTokensInDomContext, encodeStringSegmentTokensInLexicalContext } from '../parsesegments';
 import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
-import { encodeStringSegmentTokensInLexicalContext } from '../parsesegments';
 
 describe('lib/editor/base/utils/parseSegments', () => {
+  describe('decodeStringSegmentTokensInDomContext', () => {
+    it.each([
+      ['plain text', 'plain text'],
+      [`text @{concat('%3C')} text`, `text @{concat('<')} text`],
+    ])('should properly encode segments in: %p', (input, expected) => {
+      const nodeMap = new Map<string, ValueSegment>();
+      nodeMap.set(`concat('<')`, {} as unknown as ValueSegment);
+
+      expect(decodeStringSegmentTokensInDomContext(input, nodeMap)).toBe(expected);
+    });
+  });
+
   describe('encodeStringSegmentTokensInLexicalContext', () => {
     it.each([
       ['plain text', 'plain text'],
