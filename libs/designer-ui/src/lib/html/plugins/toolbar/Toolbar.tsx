@@ -251,7 +251,7 @@ export const Toolbar = ({
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              convertEditorState(activeEditor, nodeMap, { asPlainText: false, loadParameterValueFromString }).then((valueSegments) => {
+              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: false, loadParameterValueFromString }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
                   parseSegments(valueSegments, { loadParameterValueFromString, segmentMapping, tokensEnabled: true });
@@ -265,7 +265,7 @@ export const Toolbar = ({
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              convertEditorState(activeEditor, nodeMap, { asPlainText: true, loadParameterValueFromString }).then((valueSegments) => {
+              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: true, loadParameterValueFromString }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
                   parseHtmlSegments(valueSegments, { loadParameterValueFromString, segmentMapping, tokensEnabled: true });

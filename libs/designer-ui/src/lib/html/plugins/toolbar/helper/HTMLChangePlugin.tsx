@@ -9,17 +9,18 @@ import type { EditorState, LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
 interface HTMLChangePluginProps {
+  isValuePlaintext: boolean;
   loadParameterValueFromString?: (value: string) => ValueSegment[];
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const HTMLChangePlugin = ({ loadParameterValueFromString, setValue }: HTMLChangePluginProps) => {
+export const HTMLChangePlugin = ({ isValuePlaintext, loadParameterValueFromString, setValue }: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
     editorState.read(() => {
       getChildrenNodes($getRoot(), nodeMap);
     });
-    convertEditorState(editor, nodeMap, { asPlainText: false, loadParameterValueFromString }).then(setValue);
+    convertEditorState(editor, nodeMap, { isValuePlaintext, loadParameterValueFromString }).then(setValue);
   };
   return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
@@ -28,16 +29,16 @@ export const convertEditorState = (
   editor: LexicalEditor,
   nodeMap: Map<string, ValueSegment>,
   options: {
-    asPlainText: boolean;
+    isValuePlaintext: boolean;
     loadParameterValueFromString?: HTMLChangePluginProps['loadParameterValueFromString'];
   }
 ): Promise<ValueSegment[]> => {
-  const { asPlainText, loadParameterValueFromString } = options;
+  const { isValuePlaintext, loadParameterValueFromString } = options;
 
   return new Promise((resolve) => {
     const valueSegments: ValueSegment[] = [];
     editor.update(() => {
-      const htmlEditorString = asPlainText ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
+      const htmlEditorString = isValuePlaintext ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
       const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(htmlEditorString, nodeMap);
       // Create a temporary DOM element to parse the HTML string
       const tempElement = document.createElement('div');

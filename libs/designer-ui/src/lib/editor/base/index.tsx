@@ -20,6 +20,7 @@ import { TokenTypeAheadPlugin } from './plugins/TokenTypeahead';
 import { TreeView } from './plugins/TreeView';
 import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
 import { TokenPickerButton } from './plugins/tokenpickerbutton';
+import { getChildrenNodes } from './utils/helper';
 import { css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -27,6 +28,7 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { $getRoot } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
@@ -71,6 +73,7 @@ export interface BaseEditorProps {
   onBlur?: () => void;
   onFocus?: () => void;
   getTokenPicker: GetTokenPickerHandler;
+  setIsValuePlaintext?: (isValuePlaintext: boolean) => void;
 }
 
 export interface BasePlugins {
@@ -80,7 +83,7 @@ export interface BasePlugins {
   history?: boolean;
   tokens?: boolean;
   treeView?: boolean;
-  isHtmlEditor?: boolean;
+  htmlEditor?: 'rich-html' | 'raw-html' | false;
   tabbable?: boolean;
   singleValueSegment?: boolean;
 }
@@ -100,6 +103,7 @@ export const BaseEditor = ({
   onFocus,
   onBlur,
   getTokenPicker,
+  setIsValuePlaintext,
 }: BaseEditorProps) => {
   const [editor] = useLexicalComposerContext();
   const editorId = useId('msla-tokenpicker-callout-location');
@@ -110,7 +114,6 @@ export const BaseEditor = ({
   const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
-  const [isForcedPlainText, setIsForcedPlainText] = useState(false);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
@@ -124,6 +127,14 @@ export const BaseEditor = ({
     }
   }, []);
 
+  useEffect(() => {
+    editor.getEditorState().read(() => {
+      const nodeMap = new Map<string, ValueSegment>();
+      const editorString = getChildrenNodes($getRoot(), nodeMap);
+      console.log(editorString);
+    });
+  }, [editor]);
+
   const {
     autoFocus,
     autoLink,
@@ -131,7 +142,7 @@ export const BaseEditor = ({
     history = true,
     tokens,
     treeView,
-    isHtmlEditor = false,
+    htmlEditor = false,
     tabbable,
     singleValueSegment = false,
   } = basePlugins;
@@ -166,7 +177,7 @@ export const BaseEditor = ({
   };
 
   const id = useId('msla-described-by-message');
-  const TextPlugin = isHtmlEditor && !isForcedPlainText ? RichTextPlugin : PlainTextPlugin;
+  const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
 
   return (
     <>
@@ -177,13 +188,13 @@ export const BaseEditor = ({
         data-automation-id={dataAutomationId}
         title={placeholder}
       >
-        {isHtmlEditor ? (
+        {htmlEditor ? (
           <Toolbar
-            isRawText={isForcedPlainText}
+            isRawText={htmlEditor === 'raw-html'}
             loadParameterValueFromString={loadParameterValueFromString}
             readonly={readonly}
             segmentMapping={tokenMapping}
-            setIsRawText={setIsForcedPlainText}
+            setIsRawText={setIsValuePlaintext}
           />
         ) : null}
         <TextPlugin
@@ -220,10 +231,10 @@ export const BaseEditor = ({
         {tokens ? <DeleteTokenNode /> : null}
         {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
         {tokens ? <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} /> : null}
-        {tokens && !isHtmlEditor ? (
+        {tokens && !htmlEditor ? (
           <PastePlugin segmentMapping={tokenMapping} loadParameterValueFromString={loadParameterValueFromString} />
         ) : null}
-        {isHtmlEditor && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
+        {htmlEditor && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
         {children}
         {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsTokenPickerOpened) : null}
       </div>
