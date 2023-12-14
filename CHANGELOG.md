@@ -1,4 +1,25 @@
 # Logic Apps Designer
+## [2.92.0](https://github.com/Azure/LogicAppsUX/compare/v2.91.0...v2.92.0) (2023-12-14)
+
+
+### Features
+
+* **vscode:** Remove designer refresh and add window message ([#3816](https://github.com/Azure/LogicAppsUX/issues/3816)) ([8633353](https://github.com/Azure/LogicAppsUX/commit/8633353c6ef66510f6379caf7d26c8d09067e522))
+
+
+### Bug Fixes
+
+* **copilot:** Raising Telemetry Level of Copilot ([#3832](https://github.com/Azure/LogicAppsUX/issues/3832)) ([e787a25](https://github.com/Azure/LogicAppsUX/commit/e787a25b33fab39eb9afef95881c86c9bc53cab2))
+* **Data Mapper:** Disabled allowing undo add schema ([#3837](https://github.com/Azure/LogicAppsUX/issues/3837)) ([f852e2a](https://github.com/Azure/LogicAppsUX/commit/f852e2a9d6d6e02d9c619b0d3b474328ff9e3414))
+* **Data Mapper:** Display Error Message for Failing Schema Load ([#3839](https://github.com/Azure/LogicAppsUX/issues/3839)) ([4146cdc](https://github.com/Azure/LogicAppsUX/commit/4146cdc470e1f24bcf57e73866f72bb9ab724580))
+* **designer:** Add connector type info to about panel and refactor how displayRuntimeInfo is passed in ([#3812](https://github.com/Azure/LogicAppsUX/issues/3812)) ([c2b2ef3](https://github.com/Azure/LogicAppsUX/commit/c2b2ef3e7e348fd3da843044201fb44e0f8178e8))
+* **designer:** Add default text color for token picker pivot ([#3838](https://github.com/Azure/LogicAppsUX/issues/3838)) ([11ff584](https://github.com/Azure/LogicAppsUX/commit/11ff58428c0c06448ca43bbfe3b3ae6475edbc1e))
+* **designer:** Fix toggle for collapsed and expanded dictionary view … ([#3811](https://github.com/Azure/LogicAppsUX/issues/3811)) ([b5690d5](https://github.com/Azure/LogicAppsUX/commit/b5690d52b157b283ea8f8ef24197d345b46bb72b))
+* **designer:** Fixes an issue where we weren't properly creating new lines in the editor ([#3823](https://github.com/Azure/LogicAppsUX/issues/3823)) ([67ccddf](https://github.com/Azure/LogicAppsUX/commit/67ccddf3b3d0f48b6bcee6daa302ee2f7f833ef5))
+* **designer:** issue where designer would constantly rerender if anything about hte window changed ([#3814](https://github.com/Azure/LogicAppsUX/issues/3814)) ([de11487](https://github.com/Azure/LogicAppsUX/commit/de114872891188cd45c4772a074b2a90c5da2e45))
+* **vscode:** Add troubleshoot dependencies message [#3687](https://github.com/Azure/LogicAppsUX/issues/3687) ([#3833](https://github.com/Azure/LogicAppsUX/issues/3833)) ([992eb3f](https://github.com/Azure/LogicAppsUX/commit/992eb3f9356977f1e906bbbde1d279e167bc0197))
+* **vscode:** Add workflow app kind to local.settings.json ([#3841](https://github.com/Azure/LogicAppsUX/issues/3841)) ([852b535](https://github.com/Azure/LogicAppsUX/commit/852b535e030730d1aadeb2f150318aa78ab2e24c))
+* **vscode:** Check list of files in dotnet binary installation ([#3813](https://github.com/Azure/LogicAppsUX/issues/3813)) ([319e660](https://github.com/Azure/LogicAppsUX/commit/319e6604a9b7ac250df2e75dfd570d8ddc916f9b))
 
 ## [2.91.0](https://github.com/Azure/LogicAppsUX/compare/v2.90.0...v2.91.0) (2023-12-07)
 
