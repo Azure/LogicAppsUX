@@ -9,6 +9,7 @@ import {
 import {
   cleanHtmlString,
   cleanStyleAttribute,
+  encodeSegmentValueInLexicalContext,
   getDomFromHtmlEditorString,
   isAttributeSupportedByLexical,
   isHtmlStringValueSafeForLexical,
@@ -61,11 +62,16 @@ export const convertEditorState = (
   return new Promise((resolve) => {
     const valueSegments: ValueSegment[] = [];
     editor.update(() => {
-      const htmlEditorString = isValuePlaintext ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
-      const encodedLexicalString = encodeStringSegmentTokensInLexicalContext(htmlEditorString, nodeMap);
+      let htmlEditorString = isValuePlaintext ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
+
+      if (isValuePlaintext) {
+        // If we're in the raw HTML editor, the tokens are not wrapped in <span> and thus have to be encoded before
+        // the string is converted into DOM elements.
+        htmlEditorString = encodeStringSegmentTokensInLexicalContext(htmlEditorString, nodeMap);
+      }
 
       // Create a temporary DOM element to parse the HTML string
-      const tempElement = getDomFromHtmlEditorString(encodedLexicalString, nodeMap);
+      const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
 
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
@@ -78,6 +84,13 @@ export const convertEditorState = (
             element.removeAttribute(attribute.name);
             continue;
           }
+          if (attribute.name === 'id' && !isValuePlaintext) {
+            // If we're in the rich HTML editor, encoding occurs at the element level since they are all wrapped in <span>.
+            const idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
+            const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "@{concat('%26lt;', '%22')}"
+            element.setAttribute('id', encodedIdValue);
+            continue;
+          }
           if (attribute.name === 'style') {
             const newAttributeValue = cleanStyleAttribute(attribute.value);
             newAttributeValue ? element.setAttribute('style', newAttributeValue) : element.removeAttribute(attribute.name);
@@ -86,12 +99,12 @@ export const convertEditorState = (
         }
       }
 
-      // Clean the HTML string and decode the token nodes
+      // Clean the HTML string and decode the token nodes since `nodeMap` keys are always decoded.
       const cleanedHtmlString = cleanHtmlString(tempElement.innerHTML);
       const decodedHtmlString = decodeStringSegmentTokensInDomContext(cleanedHtmlString, nodeMap);
       const decodedLexicalString = decodeStringSegmentTokensInLexicalContext(decodedHtmlString, nodeMap);
 
-      // Replace <span id="..."></span> with the captured "id" value if it is found in the viable ids map
+      // Replace `<span id="..."></span>` with the captured `id` value if it is found in the viable IDs map.
       const spanIdPattern = /<span id="(.*?)"><\/span>/g;
       const noSpansHtmlString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
         if (nodeMap.get(idValue)) {
