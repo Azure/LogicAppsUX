@@ -1,8 +1,16 @@
 import type { ValueSegment } from '../../../../editor';
 import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegment';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
-import { decodeStringSegmentTokensInDomContext, encodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
-import { cleanHtmlString, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext } from './util';
+import { decodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
+import {
+  cleanHtmlString,
+  cleanStyleAttribute,
+  decodeSegmentValueInLexicalContext,
+  encodeSegmentValueInLexicalContext,
+  getDomFromHtmlEditorString,
+  isAttributeSupportedByLexical,
+  isHtmlStringValueSafeForLexical,
+} from './util';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
@@ -11,16 +19,29 @@ import { $getRoot } from 'lexical';
 interface HTMLChangePluginProps {
   isValuePlaintext: boolean;
   loadParameterValueFromString?: (value: string) => ValueSegment[];
+  setIsValuePlaintext: (isValuePlaintext: boolean) => void;
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const HTMLChangePlugin = ({ isValuePlaintext, loadParameterValueFromString, setValue }: HTMLChangePluginProps) => {
+export const HTMLChangePlugin = ({
+  isValuePlaintext,
+  loadParameterValueFromString,
+  setIsValuePlaintext,
+  setValue,
+}: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
+    let isNewValuePlaintext = isValuePlaintext;
+
     editorState.read(() => {
-      getChildrenNodes($getRoot(), nodeMap);
+      const editorString = getChildrenNodes($getRoot(), nodeMap);
+      if (!isHtmlStringValueSafeForLexical(editorString, nodeMap)) {
+        isNewValuePlaintext = false;
+        setIsValuePlaintext(false);
+      }
+
+      convertEditorState(editor, nodeMap, { isValuePlaintext: isNewValuePlaintext, loadParameterValueFromString }).then(setValue);
     });
-    convertEditorState(editor, nodeMap, { isValuePlaintext, loadParameterValueFromString }).then(setValue);
   };
   return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
@@ -39,10 +60,9 @@ export const convertEditorState = (
     const valueSegments: ValueSegment[] = [];
     editor.update(() => {
       const htmlEditorString = isValuePlaintext ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
-      const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(htmlEditorString, nodeMap);
+
       // Create a temporary DOM element to parse the HTML string
-      const tempElement = document.createElement('div');
-      tempElement.innerHTML = encodedHtmlEditorString;
+      const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
 
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
@@ -51,18 +71,19 @@ export const convertEditorState = (
         const attributes = Array.from(element.attributes);
         for (let j = 0; j < attributes.length; j++) {
           const attribute = attributes[j];
-          if (attribute.name !== 'id' && attribute.name !== 'style' && attribute.name !== 'href') {
+          if (!isAttributeSupportedByLexical(element.tagName, attribute.name)) {
             element.removeAttribute(attribute.name);
             continue;
           }
           if (attribute.name === 'id') {
-            const idValue = element.getAttribute('id') ?? ''; // e.g., "$[concat(...),concat('&lt;', '"'),#AD008C]$"
-            const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "$[concat(...),concat('%26lt;', '%22'),#AD008C]$"
+            const idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
+            const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "@{concat('%26lt;', '%22')}"
             element.setAttribute('id', encodedIdValue);
             continue;
           }
-          if (attribute.name === 'style' && attribute.value === 'white-space: pre-wrap;') {
-            element.removeAttribute(attribute.name);
+          if (attribute.name === 'style') {
+            const newAttributeValue = cleanStyleAttribute(attribute.value);
+            newAttributeValue ? element.setAttribute('style', newAttributeValue) : element.removeAttribute(attribute.name);
             continue;
           }
         }

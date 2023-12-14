@@ -37,6 +37,7 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
       <HTMLChangePlugin
         isValuePlaintext={isValuePlaintext}
         loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
+        setIsValuePlaintext={setIsValuePlaintext}
         setValue={onValueChange}
       />
     </EditorWrapper>

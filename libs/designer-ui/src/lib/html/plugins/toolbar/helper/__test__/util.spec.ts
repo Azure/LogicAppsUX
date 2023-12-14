@@ -1,4 +1,11 @@
-import { cleanHtmlString, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext } from '../util';
+import {
+  cleanHtmlString,
+  cleanStyleAttribute,
+  decodeSegmentValueInLexicalContext,
+  encodeSegmentValueInLexicalContext,
+  isAttributeSupportedByLexical,
+  isTagNameSupportedByLexical,
+} from '../util';
 
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
@@ -16,6 +23,17 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['<span id="@{concat(\'%26lt;\')}">text</span>', '<span id="@{concat(\'%26lt;\')}">text</span>'],
     ])('should properly convert HTML: %p', (input, expected) => {
       expect(cleanHtmlString(input)).toBe(expected);
+    });
+  });
+
+  describe('cleanStyleAttribute', () => {
+    it.each<[string, string | undefined]>([
+      ['', undefined],
+      ['white-space: pre-wrap;', undefined],
+      ['color: red; white-space: pre-wrap;', 'color: red;'],
+      ['white-space: pre-wrap; color: red;', 'color: red;'],
+    ])('should return style=%p as %p', (input, expected) => {
+      expect(cleanStyleAttribute(input)).toBe(expected);
     });
   });
 
@@ -54,6 +72,52 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["@{concat('&amp;lt;')}", "@{concat('%26amp;lt;')}"],
     ])('should properly encode segments in: %p', (input, expected) => {
       expect(encodeSegmentValueInLexicalContext(input)).toBe(expected);
+    });
+  });
+
+  describe('isAttributeSupportedByLexical', () => {
+    it.each<[string, string, boolean]>([
+      ['', 'href', false],
+      ['a', '', false],
+      ['a', 'href', true],
+      ['a', 'id', true],
+      ['a', 'style', true],
+      ['span', 'href', false],
+      ['span', 'id', true],
+      ['span', 'style', true],
+      ['p', 'href', false],
+      ['p', 'id', true],
+      ['p', 'style', true],
+    ])('should return <%s %s="..." /> as supported=%p', (inputTag, inputAttr, expected) => {
+      expect(isAttributeSupportedByLexical(inputTag, inputAttr)).toBe(expected);
+    });
+  });
+
+  describe('isTagNameSupportedByLexical', () => {
+    it.each<[string, boolean]>([
+      ['', false],
+      ['*', false],
+      ['section', false],
+      ['script', false],
+      ['style', false],
+      ['b', true],
+      ['br', true],
+      ['em', true],
+      ['h1', true],
+      ['h2', true],
+      ['h3', true],
+      ['h4', true],
+      ['h5', true],
+      ['h6', true],
+      ['i', true],
+      ['li', true],
+      ['ol', true],
+      ['p', true],
+      ['span', true],
+      ['strong', true],
+      ['ul', true],
+    ])('should return <%s /> as supported=%p', (inputTag, expected) => {
+      expect(isTagNameSupportedByLexical(inputTag)).toBe(expected);
     });
   });
 });
