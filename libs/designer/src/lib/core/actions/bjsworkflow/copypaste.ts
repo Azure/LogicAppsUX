@@ -4,6 +4,7 @@ import { initCopiedConnectionMap } from '../../state/connection/connectionSlice'
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
+import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode } from '../../state/workflow/workflowSlice';
 import { initializeOperationDetails } from './add';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -65,6 +66,8 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
     count++;
   }
 
+  dispatch(setIsPanelLoading(true));
+
   // update workflow
   dispatch(
     pasteNode({
@@ -73,6 +76,8 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
       operation: operationInfo,
     })
   );
+
+  dispatch(setFocusNode(nodeId));
 
   dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
   await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
@@ -84,5 +89,5 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
     dispatch(initCopiedConnectionMap({ nodeId, referenceKey: connectionData }));
   }
 
-  dispatch(setFocusNode(nodeId));
+  dispatch(setIsPanelLoading(false));
 });

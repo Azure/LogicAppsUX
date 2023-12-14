@@ -23,7 +23,7 @@ export default {
   },
   transformIgnorePatterns: [
     // all exceptions must be first line
-    '/node_modules/(?!@fluentui/react)',
+    '<rootDir>/node_modules/(?!${transformIgnoreNodeModules})',
   ],
   moduleNameMapper: {
     '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
@@ -32,3 +32,5 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/designer',
 };
+
+const transformIgnoreNodeModules = ['@fluentui/react'].join('|');

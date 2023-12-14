@@ -1,4 +1,4 @@
-import type { Workflow } from './workflow';
+import type { Workflow } from '@microsoft/logic-apps-designer';
 
 export interface RequestData {
   properties: {

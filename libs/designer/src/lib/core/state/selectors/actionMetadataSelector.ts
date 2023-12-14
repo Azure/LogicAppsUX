@@ -20,7 +20,6 @@ export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   if (result.isLoading || !result.isFetched || result.isPlaceholderData) return false;
   const manifest = result.data;
   return manifest ? isConnectionRequiredForOperation(manifest) : true;
-  // else case needs to be implemented: work item 14936435
 };
 
 export const useAllowUserToChangeConnection = (op: NodeOperation) => {
@@ -34,7 +33,6 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
       : { connectionId: '', connectorId: '' };
   });
 
-  // 14955807 task to investigate adding connection type to state to avoid checking in multiple places, or another strategy to avoid below way to find connection
   const { result: connection, isLoading } = useConnectionById(connectionId, connectorId);
 
   return {

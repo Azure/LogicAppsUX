@@ -1,17 +1,15 @@
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
+import { Badge } from '@fluentui/react-components';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import { TrafficLightDot } from '@microsoft/designer-ui';
 import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
   serializeBJSWorkflow,
   updateCallbackUrl,
-  switchToWorkflowParameters,
-  switchToErrorsPanel,
   useIsDesignerDirty,
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
@@ -19,6 +17,7 @@ import {
   serializeWorkflow,
   validateParameter,
   updateParameterValidation,
+  openPanel,
   useNodesInitialized,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
@@ -42,6 +41,7 @@ export const DesignerCommandBar = ({
   discard,
   saveWorkflow,
   isDarkMode,
+  showConnectionsPanel,
   rightShift,
   enableCopilot,
 }: {
@@ -52,6 +52,7 @@ export const DesignerCommandBar = ({
   saveWorkflow: (workflow: Workflow) => Promise<void>;
   isDarkMode: boolean;
   isConsumption?: boolean;
+  showConnectionsPanel?: boolean;
   rightShift?: string;
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
@@ -108,91 +109,108 @@ export const DesignerCommandBar = ({
   );
 
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
-  const items: ICommandBarItemProps[] = [
-    {
-      key: 'save',
-      text: 'Save',
-      disabled: saveIsDisabled,
-      onRenderIcon: () => {
-        return isSaving ? (
-          <Spinner size={SpinnerSize.small} />
-        ) : (
-          <FontIcon aria-label="Save" iconName="Save" className={!saveIsDisabled ? classNames.azureBlue : classNames.azureGrey} />
-        );
+  const items: ICommandBarItemProps[] = useMemo(
+    () => [
+      {
+        key: 'save',
+        text: 'Save',
+        disabled: saveIsDisabled,
+        onRenderIcon: () => {
+          return isSaving ? (
+            <Spinner size={SpinnerSize.small} />
+          ) : (
+            <FontIcon aria-label="Save" iconName="Save" className={!saveIsDisabled ? classNames.azureBlue : classNames.azureGrey} />
+          );
+        },
+        onClick: () => {
+          saveWorkflowMutate();
+        },
       },
-      onClick: () => {
-        saveWorkflowMutate();
+      {
+        key: 'discard',
+        disabled: isSaving,
+        text: 'Discard',
+        iconProps: { iconName: 'Clear' },
+        onClick: () => {
+          discard();
+        },
       },
-    },
-    {
-      key: 'discard',
-      disabled: isSaving,
-      text: 'Discard',
-      iconProps: { iconName: 'Clear' },
-      onClick: () => {
-        discard();
+      {
+        key: 'parameters',
+        text: 'Parameters',
+        iconProps: { iconName: 'Parameter' },
+        onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
+        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
       },
-    },
-    {
-      key: 'parameters',
-      text: 'Parameters',
-      onRenderText: (item: { text: string }) => {
-        return (
-          <>
-            {item.text}
-            {haveWorkflowParameterErrors ? (
-              <div style={{ display: 'inline-block', marginLeft: 8 }}>
-                <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
-              </div>
-            ) : null}
-          </>
-        );
+      {
+        key: 'codeview',
+        text: 'View Code',
+        iconProps: { iconName: 'Code' },
+        onClick: async () => {
+          console.log(await serializeWorkflow(DesignerStore.getState()));
+          alert('Check console for workflow serialization');
+        },
       },
-      iconProps: { iconName: 'Parameter' },
-      onClick: () => !!dispatch(switchToWorkflowParameters()),
-    },
-    {
-      key: 'codeview',
-      text: 'View Code',
-      iconProps: { iconName: 'Code' },
-      onClick: async () => {
-        console.log(await serializeWorkflow(DesignerStore.getState()));
-        alert('Check console for workflow serialization');
+      ...(showConnectionsPanel
+        ? [
+            {
+              key: 'connections',
+              text: 'Connections',
+              iconProps: { iconName: 'Link' },
+              onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+              onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
+            },
+          ]
+        : []),
+      {
+        key: 'errors',
+        text: 'Errors',
+        disabled: !haveErrors,
+        iconProps: {
+          iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
+          style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
+        },
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
       },
-    },
-    {
-      key: 'errors',
-      text: 'Errors',
-      disabled: !haveErrors,
-      iconProps: {
-        iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
-        style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
+      {
+        key: 'copilot',
+        text: 'Assistant',
+        iconProps: { iconName: 'Chat' },
+        disabled: !isCopilotReady,
+        onClick: () => {
+          enableCopilot?.();
+          LoggerService().log({
+            level: LogEntryLevel.Warning,
+            area: 'chatbot',
+            message: 'workflow assistant opened',
+          });
+        },
       },
-      onClick: () => !!dispatch(switchToErrorsPanel()),
-    },
-    {
-      key: 'copilot',
-      text: 'Assistant',
-      iconProps: { iconName: 'Chat' },
-      disabled: !isCopilotReady,
-      onClick: () => {
-        enableCopilot?.();
-        LoggerService().log({
-          level: LogEntryLevel.Warning,
-          area: 'chatbot',
-          message: 'workflow assistant opened',
-        });
+      {
+        key: 'fileABug',
+        text: 'File a bug',
+        iconProps: { iconName: 'Bug' },
+        onClick: () => {
+          window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
+        },
       },
-    },
-    {
-      key: 'fileABug',
-      text: 'File a bug',
-      iconProps: { iconName: 'Bug' },
-      onClick: () => {
-        window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
-      },
-    },
-  ];
+    ],
+    [
+      discard,
+      dispatch,
+      haveErrors,
+      haveWorkflowParameterErrors,
+      haveConnectionErrors,
+      isDarkMode,
+      isSaving,
+      saveIsDisabled,
+      saveWorkflowMutate,
+      showConnectionsPanel,
+      enableCopilot,
+      isCopilotReady,
+    ]
+  );
+
   return (
     <CommandBar
       items={items}
@@ -209,3 +227,10 @@ export const DesignerCommandBar = ({
     />
   );
 };
+
+const CustomCommandBarButton = ({ text, showError }: { text: string; showError?: boolean }) => (
+  <div style={{ margin: '2px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+    {text}
+    {showError && <Badge size="extra-small" color="danger" />}
+  </div>
+);

@@ -9,6 +9,7 @@ export type ContentType = (typeof ContentType)[keyof typeof ContentType];
 export interface IHostService {
   fetchAndDisplayContent(title: string, url: string, type: ContentType): void;
   openWorkflowParametersBlade?(): void;
+  openConnectionResource?(connectionId: string): void;
 }
 
 let service: IHostService;

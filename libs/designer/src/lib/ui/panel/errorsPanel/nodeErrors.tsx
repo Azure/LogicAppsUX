@@ -1,6 +1,5 @@
-import { setFocusNode, useNodeDisplayName } from '../../../core';
+import { openPanel, setFocusNode, useNodeDisplayName } from '../../../core';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
-import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { NodeErrorCard } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -20,7 +19,7 @@ export const NodeErrors = (props: ErrorCardProps) => {
 
   const onClick = useCallback(() => {
     dispatch(setFocusNode(nodeId));
-    dispatch(switchToOperationPanel(nodeId));
+    dispatch(openPanel({ nodeId, panelMode: 'Operation' }));
   }, [dispatch, nodeId]);
 
   return <NodeErrorCard id={nodeId} title={nodeDisplayName} brandColor={brandColor} iconUri={iconUri} errors={errors} onClick={onClick} />;

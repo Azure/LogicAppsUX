@@ -1,6 +1,5 @@
 import constants from '../common/constants';
 import type { RequestData } from '../common/models/Query';
-import type { Workflow } from '../common/models/workflow';
 import { isSuccessResponse } from '../core/util';
 import { CopilotPanelHeader } from './panelheader';
 import type { ITextField } from '@fluentui/react';
@@ -18,6 +17,7 @@ import {
   ChatSuggestionGroup,
   ChatSuggestion,
 } from '@microsoft/designer-ui';
+import type { Workflow } from '@microsoft/logic-apps-designer';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';

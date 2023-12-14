@@ -29,6 +29,7 @@ const initialState: DesignerOptionsState = {
   servicesInitialized: false,
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
+  showConnectionsPanel: false,
   hostOptions: {
     displayRuntimeInfo: true,
   },
@@ -102,6 +103,7 @@ export const designerOptionsSlice = createSlice({
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
       state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
+      state.showConnectionsPanel = action.payload.showConnectionsPanel;
       state.hostOptions = {
         ...state.hostOptions,
         ...action.payload.hostOptions,

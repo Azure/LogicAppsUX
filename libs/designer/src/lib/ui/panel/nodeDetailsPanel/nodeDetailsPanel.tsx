@@ -16,7 +16,7 @@ import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice
 import { useOperationErrorInfo, useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import {
   useIsPanelCollapsed,
-  useCurrentPanelModePanelMode,
+  useCurrentPanelMode,
   useRegisteredPanelTabs,
   useSelectedPanelTabName,
 } from '../../../core/state/panel/panelSelectors';
@@ -56,7 +56,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     idReplacements: state.workflow.idReplacements,
   }));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
-  const currentPanelMode = useCurrentPanelModePanelMode();
+  const currentPanelMode = useCurrentPanelMode();
 
   const graphNode = useWorkflowNode(selectedNode) as WorkflowNode;
 
