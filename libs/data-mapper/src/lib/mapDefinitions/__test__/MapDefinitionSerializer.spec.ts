@@ -2806,7 +2806,6 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         generateMapDefinitionBody(mapDefinition, connections);
 
-        // danielle do we remove the * in the map?
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
         const rootKeys = Object.keys(rootObject);

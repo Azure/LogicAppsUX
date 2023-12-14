@@ -230,7 +230,6 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
               formattedLmlSnippetForSource = '.';
             } else if (valueToTrim) {
               // account for source elements at different level of loop
-              // danielle account for object in loop
               let backoutValue = '';
               if (valueToTrim !== lastLoop.loop && !valueToTrim.includes('/*')) {
                 // second condition is temporary fix for json arrays
