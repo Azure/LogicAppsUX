@@ -1,11 +1,12 @@
 import { BaseEditor, type BaseEditorProps } from '../..';
 import { defaultInitialConfig, defaultNodes, htmlNodes } from './utils/initialConfig';
+import type { SegmentParserOptions } from './utils/parsesegments';
 import { parseHtmlSegments, parseSegments } from './utils/parsesegments';
 import type { InitialConfigType } from '@lexical/react/LexicalComposer';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 
 export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
-  const { initialValue, basePlugins = {}, readonly, loadParameterValueFromString } = props;
+  const { initialValue, basePlugins = {}, loadParameterValueFromString, readonly, tokenMapping } = props;
   const { isHtmlEditor, tokens } = basePlugins;
   const initialConfig: InitialConfigType = {
     ...defaultInitialConfig,
@@ -14,9 +15,13 @@ export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
     editorState:
       initialValue &&
       (() => {
-        isHtmlEditor
-          ? parseHtmlSegments(initialValue, { tokensEnabled: tokens, readonly, loadParameterValueFromString })
-          : parseSegments(initialValue, { tokensEnabled: tokens, readonly, loadParameterValueFromString });
+        const options: SegmentParserOptions = {
+          loadParameterValueFromString,
+          readonly,
+          segmentMapping: tokenMapping,
+          tokensEnabled: tokens,
+        };
+        isHtmlEditor ? parseHtmlSegments(initialValue, options) : parseSegments(initialValue, options);
       }),
   };
   return (

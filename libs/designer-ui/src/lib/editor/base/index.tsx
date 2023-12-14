@@ -182,6 +182,7 @@ export const BaseEditor = ({
             isRawText={isForcedPlainText}
             loadParameterValueFromString={loadParameterValueFromString}
             readonly={readonly}
+            segmentMapping={tokenMapping}
             setIsRawText={setIsForcedPlainText}
           />
         ) : null}

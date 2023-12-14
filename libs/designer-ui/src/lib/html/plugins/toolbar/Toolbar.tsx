@@ -59,10 +59,17 @@ interface ToolbarProps {
   isRawText?: boolean;
   loadParameterValueFromString?: (value: string) => ValueSegment[];
   readonly?: boolean;
+  segmentMapping?: Record<string, ValueSegment>;
   setIsRawText?: (newValue: boolean) => void;
 }
 
-export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
+export const Toolbar = ({
+  isRawText,
+  loadParameterValueFromString,
+  readonly = false,
+  segmentMapping,
+  setIsRawText,
+}: ToolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
@@ -248,7 +255,7 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
               convertEditorState(activeEditor, nodeMap, { asPlainText: false, loadParameterValueFromString }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
-                  parseSegments(valueSegments, { tokensEnabled: true, loadParameterValueFromString });
+                  parseSegments(valueSegments, { loadParameterValueFromString, segmentMapping, tokensEnabled: true });
                   setIsRawText(true);
                 });
               });
@@ -262,7 +269,7 @@ export const Toolbar = ({ isRawText, loadParameterValueFromString, readonly = fa
               convertEditorState(activeEditor, nodeMap, { asPlainText: true, loadParameterValueFromString }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
-                  parseHtmlSegments(valueSegments, { tokensEnabled: true, loadParameterValueFromString });
+                  parseHtmlSegments(valueSegments, { loadParameterValueFromString, segmentMapping, tokensEnabled: true });
                   setIsRawText(false);
                 });
               });

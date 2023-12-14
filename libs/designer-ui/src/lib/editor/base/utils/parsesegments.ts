@@ -6,7 +6,7 @@ import {
   encodeSegmentValueInLexicalContext,
 } from '../../../html/plugins/toolbar/helper/util';
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
-import type { ValueSegment } from '../../models/parameter';
+import type { Token, ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import type { TokenNode } from '../nodes/tokenNode';
@@ -37,6 +37,7 @@ import {
 export interface SegmentParserOptions {
   loadParameterValueFromString?: (value: string) => ValueSegment[];
   readonly?: boolean;
+  segmentMapping?: Record<string, ValueSegment>;
   tokensEnabled?: boolean;
 }
 
@@ -121,7 +122,7 @@ const appendChildrenNode = (
   nodeMap: Map<string, ValueSegment>,
   options: SegmentParserOptions | undefined
 ) => {
-  const { tokensEnabled, readonly, loadParameterValueFromString } = options ?? {};
+  const { loadParameterValueFromString, tokensEnabled } = options ?? {};
 
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
@@ -140,18 +141,16 @@ const appendChildrenNode = (
     if (tokensEnabled && nodeMap && loadParameterValueFromString) {
       const contentAsParameter = loadParameterValueFromString(decodedTextContent);
       contentAsParameter.forEach((segment) => {
-        const tokenNode = createTokenNodeFromSegment(segment, readonly);
+        const tokenNode = createTokenNodeFromSegment(segment, options);
         if (tokenNode) {
           paragraph.append(tokenNode);
         } else {
           appendAsStringSegment();
         }
       });
-
-      return;
+    } else {
+      appendAsStringSegment();
     }
-
-    appendAsStringSegment();
   } else {
     paragraph.append(childNode);
   }
@@ -166,7 +165,7 @@ const appendStringSegment = (
   nodeMap: Map<string, ValueSegment> | undefined,
   options: SegmentParserOptions | undefined
 ) => {
-  const { tokensEnabled, readonly } = options ?? {};
+  const { tokensEnabled } = options ?? {};
   let currIndex = 0;
   let prevIndex = 0;
   while (currIndex < value.length) {
@@ -179,7 +178,7 @@ const appendStringSegment = (
       // token is found in the text
       if (nodeMap && tokensEnabled) {
         const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
-        const token = createTokenNodeFromSegment(tokenSegment, readonly);
+        const token = createTokenNodeFromSegment(tokenSegment, options);
         token && paragraph.append(token);
       }
       prevIndex = currIndex = newIndex;
@@ -267,38 +266,54 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
   return text;
 };
 
-const createTokenNodeFromSegment = (tokenSegment: ValueSegment | undefined, readonly: boolean | undefined): TokenNode | undefined => {
+const createTokenNodeFromSegment = (
+  tokenSegment: ValueSegment | undefined,
+  options: SegmentParserOptions | undefined
+): TokenNode | undefined => {
   if (!tokenSegment?.token) {
     return undefined;
   }
 
+  const { readonly, segmentMapping } = options ?? {};
+
   const segmentValue = tokenSegment.value;
-  const { brandColor, icon, title, name, value, tokenType } = tokenSegment.token;
+  const mappedSegment = segmentMapping?.[segmentValue];
+
+  let segment: ValueSegment;
+  let segmentToken: Token;
+
+  if (mappedSegment?.token) {
+    segment = mappedSegment;
+    segmentToken = mappedSegment.token;
+  } else {
+    segment = tokenSegment;
+    segmentToken = tokenSegment.token;
+  }
+
+  const { brandColor, icon, title, name, value, tokenType } = segmentToken;
   // Expression token handling
   if (tokenType === TokenType.FX) {
     const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
-    const token = $createTokenNode({
+    return $createTokenNode({
       title: getExpressionTokenTitle(expressionValue) ?? title,
-      data: tokenSegment,
+      data: segment,
       brandColor,
       icon,
       value,
       readonly,
     });
-    return token;
   }
 
   // other token handling
   if (title || name) {
-    const token = $createTokenNode({
+    return $createTokenNode({
       title: title ?? name,
-      data: tokenSegment,
+      data: segment,
       brandColor,
       icon,
       value,
       readonly,
     });
-    return token;
   }
 
   throw new Error('Token Node is missing title or name');
