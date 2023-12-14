@@ -2,10 +2,11 @@ import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, index
 import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
-import type { MapDefinitionEntry } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, Schema, SchemaExtended } from '@microsoft/utils-logic-apps';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
+  deepNestedSequenceAndObject,
   sourceMockJsonSchema,
   sourceMockSchema,
   targetMockJsonSchema,
@@ -1009,6 +1010,44 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(
           (result['target-/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier'].inputs[0][0] as ConnectionUnit).reactFlowKey
         ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
+      });
+
+      it('creates a loop connection with backout access', () => {
+        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
+        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
+        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
+        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(/ns0:bookstore/ns0:book)': {
+              '$for(ns0:book2)': {
+                '$for(ns0:book3)': {
+                  Person: {
+                    Address: 'ns0:name',
+                    Name: '../ns0:author/ns0:first-name',
+                  },
+                },
+              },
+            },
+          },
+        };
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+          simpleMap,
+          extendedComprehensiveSourceSchema,
+          extendedComprehensiveTargetSchema,
+          functionMock
+        );
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+
+        // target-/ns0:Root/Looping/Person/Address
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:bookstore/ns0:book/ns0:book2/ns0:book3/ns0:name'
+        );
+        // target-/ns0:Root/Looping/Person/Name
+        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:bookstore/ns0:book/ns0:book2/ns0:author/ns0:first-name'
+        );
       });
 
       it('If-Else test', () => {

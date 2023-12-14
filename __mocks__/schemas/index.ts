@@ -6,3 +6,4 @@ export { default as comprehensiveSourceSchema } from './ComprehensiveSourceSchem
 export { default as comprehensiveTargetSchema } from './ComprehensiveTargetSchema.json';
 export { default as playgroundSourceSchema } from './PlaygroundSourceSchema.json';
 export { default as playgroundTargetSchema } from './PlaygroundTargetSchema.json';
+export { default as deepNestedSequenceAndObject } from './DeepNestedSequenceAndObj.json';
