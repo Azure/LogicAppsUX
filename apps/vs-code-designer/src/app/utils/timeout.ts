@@ -8,33 +8,45 @@ import { localize } from '../../localize';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 
+/**
+ * A wrapper async timeout function for dependency installation. Uses Promise.race.
+ * @param asyncFunc The async function used to validate dependency.
+ * @param dependencyName The name of the dependency.
+ * @param timeoutMs The timeout in ms.
+ * @param helpLink Help Link for users to manually install the dependency.
+ * @param params The async function Parameters.
+ * @returns
+ */
 export async function timeout(
   asyncFunc: (...params: any[]) => Promise<void>,
+  dependencyName: string,
   timeoutMs: number,
   helpLink: string,
   ...params: any[]
 ): Promise<void> {
   try {
-    ext.outputChannel.appendLog(`Running: ${asyncFunc.name}`);
     const asyncOperation = asyncFunc(...params);
+
+    // If timeOutErrorOperation settles firsts, asyncOperation will continue to run.
     await Promise.race([asyncOperation, timeOutErrorOperation(timeoutMs)]);
   } catch (error) {
+    ext.outputChannel.appendLog(`Timeout: ${asyncFunc.name}`);
     const result = await vscode.window.showWarningMessage(
-      localize('asyncTimeout', `${asyncFunc.name} timed out after ${timeoutMs} ms. Retry ${asyncFunc.name}?`),
+      localize('asyncTimeout', `${dependencyName} timed out after ${timeoutMs} ms. Retry ${dependencyName}?`),
       DialogResponses.yes,
       DialogResponses.no
     );
 
     if (result == DialogResponses.yes) {
       ext.outputChannel.appendLog(`Retrying: ${asyncFunc.name}`);
-      return await timeout(asyncFunc, timeoutMs, helpLink, ...params);
+      return await timeout(asyncFunc, dependencyName, timeoutMs, helpLink, ...params);
     } else {
       vscode.window.showErrorMessage(
         localize(
           'timeoutError',
-          `${asyncFunc.name} timed out after ${
+          `${dependencyName} timed out after ${
             timeoutMs / 1000
-          } seconds. Please click [here](${helpLink}) to access our troubleshooting documentation for step-by-step instructions.`
+          } seconds. Please click [here](${helpLink}) to manually install the dependency.`
         )
       );
     }

@@ -63,21 +63,39 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
           progress.report({ increment: 20, message: `NodeJS` });
-          await timeout(validateNodeJsIsLatest, dependencyTimeout, helpLink, dependenciesVersions?.nodejs);
+          await timeout(
+            validateNodeJsIsLatest,
+            'NodeJs',
+            dependencyTimeout,
+            'https://github.com/nodesource/distributions',
+            dependenciesVersions?.nodejs
+          );
           await setNodeJsCommand();
         });
 
         context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
           progress.report({ increment: 20, message: `Functions Runtime` });
-          await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, helpLink, dependenciesVersions?.funcCoreTools);
+          await timeout(
+            validateFuncCoreToolsIsLatest,
+            'Functions Runtime',
+            dependencyTimeout,
+            'https://github.com/Azure/azure-functions-core-tools/releases',
+            dependenciesVersions?.funcCoreTools
+          );
           await setFunctionsCommand();
         });
 
         context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
           progress.report({ increment: 20, message: `.NET SDK` });
-          await timeout(validateDotNetIsLatest, dependencyTimeout, helpLink, dependenciesVersions?.dotnet);
+          await timeout(
+            validateDotNetIsLatest,
+            `.NET SDK`,
+            dependencyTimeout,
+            'https://dotnet.microsoft.com/en-us/download/dotnet/6.0',
+            dependenciesVersions?.dotnet
+          );
           await setDotNetCommand(context);
         });
         ext.outputChannel.appendLog(

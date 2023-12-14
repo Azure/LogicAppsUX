@@ -14,9 +14,10 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { isLogicAppProject, tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
 import { findFiles, getWorkspaceFolder } from '../workspace';
+import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import type { IWorkerRuntime } from '@microsoft/vscode-extension';
@@ -241,8 +242,10 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
       if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
         const workspaceFolder = await getWorkspaceFolder(context);
         const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
+        const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
 
-        if (projectPath) {
+        // Check if LogicAppProject to prevent updating LogicAppsUX settings.
+        if (projectPath && isLogicAppProject(folderPath)) {
           const pathEnv = {
             PATH: newPath,
           };
