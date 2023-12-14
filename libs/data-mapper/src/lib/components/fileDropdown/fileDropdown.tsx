@@ -72,7 +72,6 @@ export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownPro
   return (
     <>
       <Text size={200}>{props.relativePathMessage}</Text>
-      <Text className={styles.errorMessage}>{props.errorMessage}</Text>
       <Combobox
         aria-label={props.ariaLabel}
         placeholder={props.placeholder}
@@ -90,6 +89,7 @@ export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownPro
       >
         {formattedOptions}
       </Combobox>
+      <Text className={styles.errorMessage}>{props.errorMessage}</Text>
     </>
   );
 };
