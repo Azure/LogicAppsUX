@@ -1,9 +1,0 @@
-{
-  "typescript.tsdk": "node_modules\\typescript\\lib",
-  "cSpell.words": ["fluentui", "reactflow"],
-  "eslint.validate": ["json"],
-  "terminal.integrated.env.windows": {
-    "PATH": "C:\\Users\\Riley\\.azurelogicapps\\dependencies\\DotNetSDK;${env:PATH}"
-  },
-  "omnisharp.dotNetCliPaths": ["C:\\Users\\Riley\\.azurelogicapps\\dependencies\\DotNetSDK"]
-}
