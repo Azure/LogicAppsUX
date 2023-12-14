@@ -140,29 +140,8 @@ export const DesignerCommandBar = ({
         text: 'Parameters',
         iconProps: { iconName: 'Parameter' },
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
-        onRenderText: (item: { text: string }) => (
-          <>
-            {item.text}
-            {haveWorkflowParameterErrors && <Badge size="extra-small" color="danger" />}
-          </>
-        ),
+        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
       },
-      ...(showConnectionsPanel
-        ? [
-            {
-              key: 'connections',
-              text: 'Connections',
-              iconProps: { iconName: 'Link' },
-              onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
-              onRenderText: (item: { text: string }) => (
-                <>
-                  {item.text}
-                  {haveConnectionErrors && <Badge size="extra-small" color="danger" />}
-                </>
-              ),
-            },
-          ]
-        : []),
       {
         key: 'codeview',
         text: 'View Code',
@@ -172,6 +151,17 @@ export const DesignerCommandBar = ({
           alert('Check console for workflow serialization');
         },
       },
+      ...(showConnectionsPanel
+        ? [
+            {
+              key: 'connections',
+              text: 'Connections',
+              iconProps: { iconName: 'Link' },
+              onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+              onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
+            },
+          ]
+        : []),
       {
         key: 'errors',
         text: 'Errors',
@@ -237,3 +227,10 @@ export const DesignerCommandBar = ({
     />
   );
 };
+
+const CustomCommandBarButton = ({ text, showError }: { text: string; showError?: boolean }) => (
+  <div style={{ margin: '2px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+    {text}
+    {showError && <Badge size="extra-small" color="danger" />}
+  </div>
+);

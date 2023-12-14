@@ -115,6 +115,7 @@ export const CreateConnectionWrapper = () => {
   const closeConnectionsFlow = useCallback(() => {
     const panelMode = referencePanelMode ?? 'Operation';
     const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
+    dispatch(setIsCreatingConnection(false));
     dispatch(openPanel({ nodeId, panelMode }));
   }, [dispatch, referencePanelMode, nodeIds]);
 

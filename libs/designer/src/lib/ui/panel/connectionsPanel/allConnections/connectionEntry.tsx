@@ -1,7 +1,7 @@
 import { useConnectionById } from '../../../../core/queries/connections';
 import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
-import { Button, Text, Tooltip } from '@fluentui/react-components';
+import { Button, Spinner, Text, Tooltip } from '@fluentui/react-components';
 import { Open24Filled, ArrowSwap24Filled, CheckmarkCircle24Filled, ErrorCircle24Filled } from '@fluentui/react-icons';
 import { HostService } from '@microsoft/designer-client-services-logic-apps';
 import { getConnectionErrors } from '@microsoft/utils-logic-apps';
@@ -22,11 +22,6 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
 
   const connection = useConnectionById(connectionReference.connection.id, connectorId);
   const nodeIds = useMemo(() => connectionReference.nodes || [], [connectionReference.nodes]);
-
-  const errors = useMemo(() => {
-    if (!connection?.result) return [];
-    return getConnectionErrors(connection?.result);
-  }, [connection]);
 
   const intl = useIntl();
   const openConnectionTooltipText = intl.formatMessage({
@@ -54,7 +49,14 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     dispatch(openPanel({ nodeIds, panelMode: 'Connection', referencePanelMode: 'Connection' }));
   }, [dispatch, nodeIds]);
 
+  const errors = useMemo(() => {
+    if (connection?.isLoading) return [];
+    if (!connection?.result) return [connectionInvalidStatusText];
+    return getConnectionErrors(connection?.result);
+  }, [connection, connectionInvalidStatusText]);
+
   const statusIconComponent = useMemo(() => {
+    if (connection?.isLoading) return <Spinner size="extra-small" />;
     const hasErrors = errors.length > 0;
     return (
       <Tooltip content={hasErrors ? connectionInvalidStatusText : connectionValidStatusText} relationship="label">
@@ -65,7 +67,7 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
         )}
       </Tooltip>
     );
-  }, [connectionInvalidStatusText, connectionValidStatusText, errors.length]);
+  }, [connection?.isLoading, connectionInvalidStatusText, connectionValidStatusText, errors.length]);
 
   // Only show the open connection button if the service method is supplied
   const openConnectionSupported = useMemo(() => HostService().openConnectionResource !== undefined, []);

@@ -1,3 +1,4 @@
+import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
 import { DisconnectedEntry } from './disconnectedEntry';
 import { Text, AccordionHeader, AccordionPanel, Spinner, Badge } from '@fluentui/react-components';
@@ -37,10 +38,15 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
     { connectorName: title }
   );
 
+  const allErrors = useAllConnectionErrors();
   const hasErrors = useMemo(() => {
     if (disconnectedNodes?.length > 0) return true;
-    return Object.values(connectionRefs).some((connectionReference) => connectionReference?.connection?.result?.errors?.length > 0);
-  }, [connectionRefs, disconnectedNodes?.length]);
+    const nodesWithErrors = Object.keys(allErrors);
+    const connectorNodeIds = Object.values(connectionRefs)
+      .map((obj) => obj.nodes)
+      .flat();
+    return nodesWithErrors.some((nodeId) => connectorNodeIds.includes(nodeId));
+  }, [allErrors, connectionRefs, disconnectedNodes?.length]);
 
   return (
     <div key={connectorId} className="msla-connector-connections-card">
