@@ -190,6 +190,7 @@ export function startDesignTimeProcess(
 }
 
 export function stopDesignTimeApi(): void {
+  ext.outputChannel.appendLog('Stopping Design Time Api');
   if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
     return;
   }

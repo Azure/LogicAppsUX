@@ -14,7 +14,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
-import { isLogicAppProject, tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { isLogicAppProject } from '../verifyIsProject';
 import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
 import { findFiles, getWorkspaceFolder } from '../workspace';
 import { isString } from '@microsoft/utils-logic-apps';
@@ -241,11 +241,10 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
     try {
       if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
         const workspaceFolder = await getWorkspaceFolder(context);
-        const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
         const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
 
         // Check if LogicAppProject to prevent updating LogicAppsUX settings.
-        if (projectPath && isLogicAppProject(folderPath)) {
+        if (isLogicAppProject(folderPath)) {
           const pathEnv = {
             PATH: newPath,
           };
@@ -253,22 +252,23 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
           // Required for dotnet cli in VSCode Terminal
           switch (process.platform) {
             case Platform.windows: {
-              await updateWorkspaceSetting('integrated.env.windows', pathEnv, projectPath, 'terminal');
+              await updateWorkspaceSetting('integrated.env.windows', pathEnv, ext.logicAppWorkspace, 'terminal');
               break;
             }
 
             case Platform.linux: {
-              await updateWorkspaceSetting('integrated.env.linux', pathEnv, projectPath, 'terminal');
+              await updateWorkspaceSetting('integrated.env.linux', pathEnv, ext.logicAppWorkspace, 'terminal');
               break;
             }
 
             case Platform.mac: {
-              await updateWorkspaceSetting('integrated.env.osx', pathEnv, projectPath, 'terminal');
+              ext.logicAppWorkspace;
+              await updateWorkspaceSetting('integrated.env.osx', pathEnv, ext.logicAppWorkspace, 'terminal');
               break;
             }
           }
           // Required for CoreClr
-          await updateWorkspaceSetting('dotNetCliPaths', [dotNetBinariesPath], projectPath, 'omnisharp');
+          await updateWorkspaceSetting('dotNetCliPaths', [dotNetBinariesPath], ext.logicAppWorkspace, 'omnisharp');
         }
       }
     } catch (error) {
