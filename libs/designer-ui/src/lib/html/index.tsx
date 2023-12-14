@@ -1,11 +1,17 @@
 import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
+import { convertSegmentsToString } from '../editor/base/utils/parsesegments';
 import { HTMLChangePlugin } from './plugins/toolbar/helper/HTMLChangePlugin';
+import { isHtmlStringValueSafeForLexical } from './plugins/toolbar/helper/util';
 import { useState } from 'react';
 
 export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseEditorProps): JSX.Element => {
-  const [isValuePlaintext, setIsValuePlaintext] = useState(false);
+  const [isValuePlaintext, setIsValuePlaintext] = useState(() => {
+    const blankNodeMap = new Map<string, ValueSegment>();
+    const initialValueString = convertSegmentsToString(initialValue, blankNodeMap);
+    return !isHtmlStringValueSafeForLexical(initialValueString, blankNodeMap);
+  });
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
 
   const onValueChange = (newValue: ValueSegment[]): void => {
