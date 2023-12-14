@@ -192,7 +192,6 @@ const appendStringSegment = (
 };
 
 export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentParserOptions): RootNode => {
-  const { readonly, tokensEnabled } = options ?? {};
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -207,31 +206,8 @@ export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentPa
   valueSegments.forEach((segment) => {
     const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
-      const { brandColor, icon, title, name, value, tokenType } = segment.token;
-      if (tokenType === TokenType.FX) {
-        const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
-        const token = $createTokenNode({
-          title: getExpressionTokenTitle(expressionValue) ?? title,
-          data: segment,
-          brandColor,
-          icon,
-          value,
-          readonly,
-        });
-        tokensEnabled && paragraph.append(token);
-      } else if (title || name) {
-        const token = $createTokenNode({
-          title: title ?? name,
-          data: segment,
-          brandColor,
-          icon,
-          value,
-          readonly,
-        });
-        tokensEnabled && paragraph.append(token);
-      } else {
-        throw new Error('Token Node is missing title or name');
-      }
+      const token = createTokenNodeFromSegment(segment, options);
+      token && paragraph.append(token);
     } else {
       // there are some cases where segmentValue comes in as a JSON
       if (typeof segmentValue === 'string') {
