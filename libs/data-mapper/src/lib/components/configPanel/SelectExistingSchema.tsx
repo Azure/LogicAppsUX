@@ -47,7 +47,7 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   return (
     <FileDropdown
       allPathOptions={dataMapDropdownOptions}
-      errorMessage={''}
+      errorMessage={props.errorMessage}
       setSelectedPath={setSelectedSchema}
       relativePathMessage={`${folderLocationLabel} ${schemaRelativePath}`}
       placeholder={schemaDropdownPlaceholder}
