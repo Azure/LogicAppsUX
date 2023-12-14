@@ -117,6 +117,9 @@ export const workflowLoadingSlice = createSlice({
     },
     setUnitTest: (state, action: PayloadAction<boolean>) => {
       state.isUnitTest = action.payload;
+      if (action.payload) {
+        state.isReadOnly = true;
+      }
     },
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.isDarkMode = action.payload;

@@ -47,7 +47,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const panelName = `${workspace.name}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
-    super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true, false);
+    super(context, workflowName, panelName, apiVersion, panelGroupKey, !!unitTestName, true, false);
     this.unitTestName = unitTestName;
     this.isUnitTest = !!unitTestName;
     this.unitTestDefinition = unitTestDefinition ?? null;
