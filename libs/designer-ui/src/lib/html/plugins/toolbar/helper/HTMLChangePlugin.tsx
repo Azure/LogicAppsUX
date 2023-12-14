@@ -106,7 +106,7 @@ export const convertEditorState = (
 
       // Replace `<span id="..."></span>` with the captured `id` value if it is found in the viable IDs map.
       const spanIdPattern = /<span id="(.*?)"><\/span>/g;
-      const noSpansHtmlString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
+      const noTokenSpansString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
         if (nodeMap.get(idValue)) {
           return idValue;
         } else {
@@ -115,9 +115,9 @@ export const convertEditorState = (
       });
 
       if (loadParameterValueFromString) {
-        valueSegments.push(...loadParameterValueFromString(noSpansHtmlString));
+        valueSegments.push(...loadParameterValueFromString(noTokenSpansString));
       } else {
-        valueSegments.push(...convertStringToSegments(noSpansHtmlString, true, nodeMap));
+        valueSegments.push(...convertStringToSegments(noTokenSpansString, true, nodeMap));
       }
       resolve(valueSegments);
     });
