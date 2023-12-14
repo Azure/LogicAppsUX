@@ -51,7 +51,7 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
               onClick={() => {
                 window.open('https://aka.ms/azurecopilot/privacystatement', '_blank');
                 LoggerService().log({
-                  level: LogEntryLevel.Verbose,
+                  level: LogEntryLevel.Warning,
                   area: 'chatbot',
                   message: 'protection link opened',
                 });

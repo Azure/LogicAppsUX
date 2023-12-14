@@ -17,7 +17,16 @@ import { $isHeadingNode } from '@lexical/rich-text';
 import type { Expression } from '@microsoft/parsers-logic-apps';
 import { ExpressionParser } from '@microsoft/parsers-logic-apps';
 import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
-import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, $createTextNode, $getRoot, createEditor } from 'lexical';
+import {
+  $createParagraphNode,
+  $isTextNode,
+  $isLineBreakNode,
+  $isParagraphNode,
+  $createTextNode,
+  $getRoot,
+  createEditor,
+  $createLineBreakNode,
+} from 'lexical';
 
 export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean, readonly?: boolean): RootNode => {
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
@@ -225,8 +234,7 @@ export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boo
         const splitSegment = segmentValue.split('\n');
         paragraph.append($createTextNode(splitSegment[0]));
         for (let i = 1; i < splitSegment.length; i++) {
-          root.append(paragraph);
-          paragraph = $createParagraphNode();
+          paragraph.append($createLineBreakNode());
           paragraph.append($createTextNode(splitSegment[i]));
         }
       } else {

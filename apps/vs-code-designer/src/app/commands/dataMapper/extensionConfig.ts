@@ -1,3 +1,5 @@
+import { logicAppKind } from '../../../constants';
+
 export const webviewType = 'dataMapperWebview';
 
 export const supportedDataMapDefinitionFileExts = ['.lml', '.yml'];
@@ -21,6 +23,7 @@ export const settingsFileContent = {
     AzureWebJobsSecretStorageType: 'Files',
     FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated',
     ProjectDirectoryPath: 'should/be/set/by/code',
+    APP_KIND: logicAppKind,
   },
 };
 
