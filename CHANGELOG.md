@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [2.93.0](https://github.com/Azure/LogicAppsUX/compare/v2.92.0...v2.93.0) (2023-12-14)
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix pill tooltip UX and corner rounding ([#3843](https://github.com/Azure/LogicAppsUX/issues/3843)) ([c06f9a5](https://github.com/Azure/LogicAppsUX/commit/c06f9a5ec5845de430acf84123fe78ceb3cfde45))
+* **Designer:** Connections panel refactor ([#3815](https://github.com/Azure/LogicAppsUX/issues/3815)) ([92d28ee](https://github.com/Azure/LogicAppsUX/commit/92d28ee64116b765c8c483b40fdf02b9ae6a81e2))
+
 ## [2.92.0](https://github.com/Azure/LogicAppsUX/compare/v2.91.0...v2.92.0) (2023-12-14)
 
 
