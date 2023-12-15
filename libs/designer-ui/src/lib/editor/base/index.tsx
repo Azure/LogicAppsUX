@@ -218,7 +218,7 @@ export const BaseEditor = ({
         <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} onClick={handleClick} />
         <ReadOnly readonly={readonly} />
         {tabbable ? null : <IgnoreTab />}
-        {isHtmlEditor ? null : <ArrowNavigation />}
+        {htmlEditor === 'rich-html' ? null : <ArrowNavigation />}
         {tokens ? <InsertTokenNode /> : null}
         {tokens ? <DeleteTokenNode /> : null}
         {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
