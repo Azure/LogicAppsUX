@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [2.94.0](https://github.com/Azure/LogicAppsUX/compare/v2.93.0...v2.94.0) (2023-12-15)
+
+
+### Bug Fixes
+
+* **Data Mapper:** fixing edifact nested loop mapping bug  ([#3824](https://github.com/Azure/LogicAppsUX/issues/3824)) ([575f61d](https://github.com/Azure/LogicAppsUX/commit/575f61d22e9a413ddb30baea3bc582c6592ba548))
+* **Designer:** Git-Removed the .vscode/settings.json file ([#3847](https://github.com/Azure/LogicAppsUX/issues/3847)) ([c769a5e](https://github.com/Azure/LogicAppsUX/commit/c769a5e83ce24c456f679f9ed42262a82ba02e86))
+
 ## [2.93.0](https://github.com/Azure/LogicAppsUX/compare/v2.92.0...v2.93.0) (2023-12-14)
 
 
