@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.95.0](https://github.com/Azure/LogicAppsUX/compare/v2.94.0...v2.95.0) (2023-12-15)
+
+
+### Features
+
+* **designer-ui:** Support raw code view in HTML editor ([#3849](https://github.com/Azure/LogicAppsUX/issues/3849)) ([13a76cc](https://github.com/Azure/LogicAppsUX/commit/13a76cc1be46c98e91526e887834a4e90d9b34ed))
+
 ## [2.94.0](https://github.com/Azure/LogicAppsUX/compare/v2.93.0...v2.94.0) (2023-12-15)
 
 
