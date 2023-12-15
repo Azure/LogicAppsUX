@@ -3,6 +3,7 @@ import { DESELECT_NODE } from '../../token/inputToken';
 import type { TokenPickerMode } from '../../tokenpicker';
 import { useId } from '../../useId';
 import type { ValueSegment } from '../models/parameter';
+import { ArrowNavigation } from './plugins/ArrowNavigation';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
@@ -217,6 +218,7 @@ export const BaseEditor = ({
         <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} onClick={handleClick} />
         <ReadOnly readonly={readonly} />
         {tabbable ? null : <IgnoreTab />}
+        {htmlEditor === 'rich-html' ? null : <ArrowNavigation />}
         {tokens ? <InsertTokenNode /> : null}
         {tokens ? <DeleteTokenNode /> : null}
         {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
