@@ -10,6 +10,7 @@ import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDe
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { SchemaFileFormat, SchemaType } from '@microsoft/utils-logic-apps';
 import {
+  deepNestedSequenceAndObject,
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
   sourceMockJsonSchema,
@@ -571,6 +572,129 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(simpleChildChildEntries.length).toEqual(1);
         expect(simpleChildChildEntries[0][0]).toEqual('Direct');
         expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
+      });
+
+      const setUpBackoutLoopTest = (
+        connections: ConnectionDictionary,
+        extendedComprehensiveSourceSchema: SchemaExtended,
+        extendedComprehensiveTargetSchema: SchemaExtended
+      ) => {
+        // source nodes
+        const book1Seq = extendedComprehensiveSourceSchema.schemaTreeRoot.children[0];
+        const book1Title = book1Seq.children[1];
+        const book2Seq = book1Seq.children[0];
+        const book3Seq = book2Seq.children[0];
+        const book3Name = book3Seq.children[0];
+        const authObj = book2Seq.children[1];
+        const authorName = authObj.children[1];
+        const publisherLine1 = authObj.children[3].children[0];
+
+        // target nodes
+        const personLoop = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[0]; // root/looping/employee/person
+        const personName = personLoop.children[0];
+        const personAddress = personLoop.children[1];
+        const personOther = personLoop.children[2];
+        const personPublisher = personLoop.children[3];
+
+        // add 'loop' connections
+        applyConnectionValue(connections, {
+          targetNode: personLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(personLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book1Seq.key, SchemaType.Source),
+            node: book1Seq,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: personLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(personLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book2Seq.key, SchemaType.Source),
+            node: book2Seq,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: personLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(personLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book3Seq.key, SchemaType.Source),
+            node: book3Seq,
+          },
+        });
+
+        // apply direct connections
+        applyConnectionValue(connections, {
+          targetNode: personPublisher,
+          targetNodeReactFlowKey: addReactFlowPrefix(personPublisher.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(publisherLine1.key, SchemaType.Source),
+            node: publisherLine1,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: personOther,
+          targetNodeReactFlowKey: addReactFlowPrefix(personOther.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book1Title.key, SchemaType.Source),
+            node: book1Title,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: personName,
+          targetNodeReactFlowKey: addReactFlowPrefix(personName.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(authorName.key, SchemaType.Source),
+            node: authorName,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: personAddress,
+          targetNodeReactFlowKey: addReactFlowPrefix(personAddress.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(book3Name.key, SchemaType.Source),
+            node: book3Name,
+          },
+        });
+      };
+
+      it('generates body using ../ to navigate out of loops', () => {
+        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
+        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
+        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
+        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
+
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        setUpBackoutLoopTest(connections, extendedComprehensiveSourceSchema, extendedComprehensiveTargetSchema);
+
+        generateMapDefinitionBody(mapDefinition, connections);
+        const root = mapDefinition['ns0:Root'] as MapDefinitionEntry;
+        const looping = root['Looping'] as MapDefinitionEntry;
+        const book = looping['$for(/ns0:bookstore/ns0:book)'] as MapDefinitionEntry;
+        const book2 = book['$for(ns0:book2)'] as MapDefinitionEntry;
+        const book3 = book2['$for(ns0:book3)'] as MapDefinitionEntry;
+        const person = book3['Person'] as MapDefinitionEntry;
+        const address = person['Address'];
+        const name = person['Name'];
+        const other = person['Other'];
+        const publisherLine = person['Publisher'];
+
+        expect(address).toEqual('ns0:name');
+        expect(name).toEqual('../ns0:author/ns0:first-name');
+        expect(other).toEqual('../../ns0:title');
+        expect(publisherLine).toEqual('../ns0:author/ns0:publisher/ns0:line1');
       });
 
       it('Generates body with many to one nested loops', () => {

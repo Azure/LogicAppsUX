@@ -11,12 +11,6 @@
       "value": "警告: 入力ノードの種類がスキーマ ノードの種類と一致しません"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "接続参照の作成"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "保護されています"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
     }
   ],
   "+FcXe9": [
@@ -917,6 +921,12 @@
       "value": "必須。この値は、返すことができる最も大きい整数より後の次の整数です。"
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1107,12 +1117,6 @@
       "value": "権限"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "読み込んでいます..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1235,12 +1239,6 @@
       "value": "タイムアウト値が無効です。ISO 8601 の期間の形式と一致する必要があります"
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "接続参照の選択"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1357,6 +1355,12 @@
     {
       "type": 0,
       "value": "ソース スキーマの更新"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "78Vggn": [
@@ -2152,12 +2156,6 @@
       "value": "接続が必要"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "接続の作成"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2378,6 +2376,12 @@
       "value": "期間"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2570,12 +2574,6 @@
     {
       "type": 0,
       "value": "[はい] または [いいえ] を選択してください"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "接続の表示名"
     }
   ],
   "F3IDl8": [
@@ -2945,12 +2943,6 @@
     {
       "type": 0,
       "value": "全画面表示の終了"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "既存の接続参照を選択するか、新規に作成してください。"
     }
   ],
   "HSJLCu": [
@@ -3778,6 +3770,12 @@
     {
       "type": 0,
       "value": "一意のプロパティ名の入力"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -5843,6 +5841,12 @@
       "value": " にする必要があります)"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6225,10 +6229,16 @@
       "value": "変更の破棄"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "この接続を選択するには、チェック ボックスをオンにします。"
+      "value": "Change Connection"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
     }
   ],
   "ca/QIc": [
@@ -6541,6 +6551,12 @@
       "value": "新しいアイテム"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6645,12 +6661,6 @@
       "value": "問題が発生しました。もう一度やり直してください。"
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "接続の選択"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6709,12 +6719,6 @@
     {
       "type": 0,
       "value": "必須。式がどちらの値を返す必要があるかを決定するブール値。"
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "接続名"
     }
   ],
   "gIx5ys": [
@@ -6892,6 +6896,12 @@
     {
       "type": 0,
       "value": "元に戻す"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7713,6 +7723,12 @@
       "value": "' の分割の種類が無効です。分割が配列にありません。"
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7753,6 +7769,12 @@
     {
       "type": 0,
       "value": "送信要求にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
@@ -7871,6 +7893,12 @@
     {
       "type": 0,
       "value": "カスタム"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
     }
   ],
   "nSan4V": [
@@ -8127,6 +8155,12 @@
       "value": "アプリ内"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8321,12 +8355,6 @@
       "value": "文字列の末尾が値かどうかを確認します (大文字と小文字は区別されません、インバリアント カルチャ)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "接続が無効です。"
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8506,12 +8534,6 @@
     {
       "type": 0,
       "value": "シークレット"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "接続が無効です"
     }
   ],
   "rNi5Y3": [
@@ -9138,12 +9160,6 @@
       "value": "トリガーの日付"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "読み込み中"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9586,6 +9602,12 @@
       "value": "値"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9690,12 +9712,6 @@
       "value": "XSLT の生成"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "既存の接続を選択するか、新規作成してください。"
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9730,12 +9746,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) サラエボ、スコピエ、ワルシャワ、ザグレブ"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "接続ゲートウェイ"
     }
   ],
   "yzqXMp": [
