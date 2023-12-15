@@ -194,7 +194,7 @@ export function stopDesignTimeApi(): void {
   if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
     return;
   }
-  cp.exec('echo Stop DesignTime Api');
+
   if (os.platform() === Platform.windows) {
     cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /t /f');
   } else {
