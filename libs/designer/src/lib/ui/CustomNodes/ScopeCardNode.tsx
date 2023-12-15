@@ -3,7 +3,7 @@ import { getMonitoringError } from '../../common/utilities/error';
 import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
-import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useUnitTest } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
@@ -58,6 +58,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const isUnitTest = useUnitTest();
 
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
@@ -154,8 +155,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
-    dispatch(showDefaultTabs({ isScopeNode, isMonitoringView }));
-  }, [dispatch, isScopeNode, scopeId, isMonitoringView]);
+    dispatch(showDefaultTabs({ isScopeNode, isMonitoringView, isUnitTest }));
+  }, [dispatch, isScopeNode, scopeId, isMonitoringView, isUnitTest]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
   const handleGraphCollapse = useCallback(() => {

@@ -10,6 +10,7 @@ import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
 import { getCreateConnectionTab } from './tabs/createConnectionTab';
 import { loadingTab } from './tabs/loadingTab';
+import { mockResultsTab } from './tabs/mockResultsTab/mockResultsTab';
 import { monitoringTab } from './tabs/monitoringTab/monitoringTab';
 import { parametersTab } from './tabs/parametersTab';
 import { monitorRetryTab } from './tabs/retryTab';
@@ -67,6 +68,7 @@ export const usePanelTabs = () => {
       aboutTab(intl),
       loadingTab(intl),
       monitorRetryTab(intl),
+      mockResultsTab(intl),
     ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);

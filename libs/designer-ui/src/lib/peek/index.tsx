@@ -5,16 +5,17 @@ import { useIntl } from 'react-intl';
 export interface PeekProps {
   input: string;
   onOKClick?(): void;
+  isReadOnly?: boolean;
 }
 
-export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
+export function Peek({ input, onOKClick, isReadOnly }: PeekProps): JSX.Element {
   const intl = useIntl();
 
   const options = {
     contextmenu: false,
     fontSize: 13,
     lineNumbers: 'off',
-    readOnly: true,
+    readOnly: isReadOnly ?? true,
     scrollBeyondLastLine: false,
     wordWrap: 'on',
     defaultValue: '',

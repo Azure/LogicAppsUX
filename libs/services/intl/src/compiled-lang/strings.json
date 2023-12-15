@@ -4463,6 +4463,12 @@
       "value": "Triggers cannot be deleted."
     }
   ],
+  "R/UPRD": [
+    {
+      "type": 0,
+      "value": "Mocked Results Tab"
+    }
+  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -7617,6 +7623,12 @@
     {
       "type": 0,
       "value": "Enter a valid number."
+    }
+  ],
+  "lC+EbT": [
+    {
+      "type": 0,
+      "value": "Mocked Results"
     }
   ],
   "lM9qrG": [

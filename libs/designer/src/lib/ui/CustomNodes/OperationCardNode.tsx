@@ -10,6 +10,7 @@ import {
   useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
+  useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
@@ -71,6 +72,7 @@ const copyCalloutStyles: Partial<ICalloutContentStyles> = {
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const isUnitTest = useUnitTest();
   const intl = useIntl();
   const tooltipId = useId();
 
@@ -191,8 +193,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
     if (suppressDefaultNodeSelect) return;
     dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
-  }, [dispatch, hasSchema, id, isMonitoringView, nodeSelectCallbackOverride, runHistory, suppressDefaultNodeSelect]);
+    dispatch(showDefaultTabs({ isMonitoringView, isUnitTest, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
+  }, [dispatch, hasSchema, id, isMonitoringView, isUnitTest, nodeSelectCallbackOverride, runHistory, suppressDefaultNodeSelect]);
 
   const brandColor = useBrandColor(id);
   const iconUri = useIconUri(id);

@@ -158,13 +158,15 @@ export const panelSlice = createSlice({
     showDefaultTabs: (
       state,
       action: PayloadAction<
-        { isScopeNode?: boolean; isMonitoringView?: boolean; hasSchema?: boolean; showRunHistory?: boolean } | undefined
+        | { isScopeNode?: boolean; isMonitoringView?: boolean; isUnitTest?: boolean; hasSchema?: boolean; showRunHistory?: boolean }
+        | undefined
       >
     ) => {
       const isMonitoringView = action.payload?.isMonitoringView;
+      const isUnitTest = action.payload?.isUnitTest;
       const isScopeNode = action.payload?.isScopeNode;
       const hasSchema = action.payload?.hasSchema;
-      const defaultTabs = [
+      let defaultTabs = [
         constants.PANEL_TAB_NAMES.ABOUT,
         constants.PANEL_TAB_NAMES.CODE_VIEW,
         constants.PANEL_TAB_NAMES.SETTINGS,
@@ -183,6 +185,10 @@ export const panelSlice = createSlice({
       }
       if (isScopeNode && !isMonitoringView) {
         defaultTabs.shift();
+      }
+
+      if (isUnitTest) {
+        defaultTabs = [constants.PANEL_TAB_NAMES.MOCK_RESULTS];
       }
 
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {

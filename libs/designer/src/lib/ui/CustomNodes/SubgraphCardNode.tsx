@@ -4,7 +4,7 @@ import type { AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { getOperationManifest } from '../../core/queries/operation';
-import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useUnitTest } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
@@ -46,6 +46,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const subgraphNode = useWorkflowNode(subgraphId);
   const operationInfo = useOperationInfo(graphId);
   const isMonitoringView = useMonitoringView();
+  const isUnitTest = useUnitTest();
   const normalizedType = node?.type.toLowerCase();
 
   const label = useNodeDisplayName(subgraphId);
@@ -67,15 +68,15 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         };
         initializeSwitchCaseFromManifest(newCaseId, subGraphManifest, dispatch);
         dispatch(changePanelNode(newCaseId));
-        dispatch(showDefaultTabs({ isMonitoringView }));
+        dispatch(showDefaultTabs({ isMonitoringView, isUnitTest }));
         dispatch(setFocusNode(newCaseId));
       } else {
         dispatch(changePanelNode(_id));
         dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-        dispatch(showDefaultTabs({ isMonitoringView }));
+        dispatch(showDefaultTabs({ isMonitoringView, isUnitTest }));
       }
     },
-    [isAddCase, graphNode, dispatch, newCaseId, subgraphId, operationInfo, iconUri, isMonitoringView]
+    [isAddCase, graphNode, dispatch, newCaseId, subgraphId, operationInfo, iconUri, isMonitoringView, isUnitTest]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
