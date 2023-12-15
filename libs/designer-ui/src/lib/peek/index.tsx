@@ -6,9 +6,10 @@ export interface PeekProps {
   input: string;
   onOKClick?(): void;
   isReadOnly?: boolean;
+  onContentChanged?(value: string | undefined): void;
 }
 
-export function Peek({ input, onOKClick, isReadOnly }: PeekProps): JSX.Element {
+export function Peek({ input, onOKClick, isReadOnly, onContentChanged }: PeekProps): JSX.Element {
   const intl = useIntl();
 
   const options = {
@@ -33,6 +34,7 @@ export function Peek({ input, onOKClick, isReadOnly }: PeekProps): JSX.Element {
           readOnly={options.readOnly}
           language={EditorLanguage.json}
           height={getEditorStyle(input)}
+          onContentChanged={(e) => (onContentChanged ? onContentChanged(e.value) : null)}
         />
       </div>
       {onOKClick ? (

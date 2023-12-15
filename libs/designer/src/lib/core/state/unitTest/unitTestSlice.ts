@@ -10,7 +10,7 @@ export interface AddImplicitForeachPayload {
 }
 
 export const initialUnitTestState: UnitTestState = {
-  mockResults: new Map(),
+  mockResults: {},
   assertions: [],
 };
 
@@ -27,7 +27,7 @@ export const unitTestSlice = createSlice({
     },
     addMockResult: (state: UnitTestState, action: PayloadAction<AddMockResultPayload>) => {
       const { operationName, mockResult } = action.payload;
-      state.mockResults.set(operationName, mockResult);
+      state.mockResults[operationName] = mockResult;
     },
     addAssertion: (state: UnitTestState, action: PayloadAction<AddAssertionPayload>) => {
       const { assertion } = action.payload;

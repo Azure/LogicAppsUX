@@ -5,10 +5,18 @@ import { useSelector } from 'react-redux';
 
 export const getUnitTestState = (state: RootState): UnitTestState => state.unitTest;
 
-export const useMockResults = (): Map<string, string> => {
+export const useMockResults = (): any => {
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
       return state.mockResults;
+    })
+  );
+};
+
+export const useMockResultsByOperation = (operationName: string): string | undefined => {
+  return useSelector(
+    createSelector(getUnitTestState, (state: UnitTestState) => {
+      return state.mockResults[operationName] ?? undefined;
     })
   );
 };

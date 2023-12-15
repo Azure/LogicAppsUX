@@ -1,17 +1,41 @@
 import constants from '../../../../../common/constants';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
-import type { RootState } from '../../../../../core/store';
+import { useMockResultsByOperation } from '../../../../../core/state/unitTest/unitTestSelectors';
+import { addMockResult } from '../../../../../core/state/unitTest/unitTestSlice';
+import type { AppDispatch, RootState } from '../../../../../core/store';
+import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 import { Peek } from '@microsoft/designer-ui';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
-import { useSelector } from 'react-redux';
+import { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const MockResultsTab = () => {
   const nodeId = useSelectedNodeId();
-  const nodeMockResults = useSelector<RootState, any>((state) => state.unitTest.mockResults.get(nodeId));
-  const content = isNullOrUndefined(nodeMockResults) ? '' : JSON.stringify(nodeMockResults, null, 2);
+  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const operationName = isTriggerNode ? `&${nodeId}` : nodeId;
+  const nodeMockResults = useMockResultsByOperation(nodeId);
+  const mockResults = isNullOrUndefined(nodeMockResults) ? '' : nodeMockResults;
 
-  return <Peek input={content} isReadOnly={false} />;
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleMockResultChange = useCallback(
+    (updatedMockResult: string): void => {
+      // TODO(ccastrotrejo): Small bug when empty string is passed in,
+      // but will remove it since we are not going to user the Peek component anymore
+      if (updatedMockResult === '') {
+        return;
+      }
+      dispatch(addMockResult({ operationName, mockResult: updatedMockResult }));
+    },
+    [operationName, dispatch, addMockResult]
+  );
+
+  const resultsEditor = useMemo(() => {
+    return <Peek input={mockResults} isReadOnly={false} onContentChanged={handleMockResultChange} />;
+  }, [mockResults, handleMockResultChange]);
+
+  return resultsEditor;
 };
 
 export const mockResultsTab: PanelTabFn = (intl) => ({
