@@ -85,6 +85,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapore"
     }
   ],
+  "+nCfrr": [
+    {
+      "type": 0,
+      "value": "Delete assertion"
+    }
+  ],
   "+oelX4": [
     {
       "type": 0,
@@ -5445,6 +5451,12 @@
     {
       "type": 0,
       "value": "Tenant"
+    }
+  ],
+  "X5d+tr": [
+    {
+      "type": 0,
+      "value": "Create assertion"
     }
   ],
   "X7X5ew": [

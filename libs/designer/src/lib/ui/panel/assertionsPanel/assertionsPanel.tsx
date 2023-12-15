@@ -1,4 +1,4 @@
-import { CommandBarButton, IconButton, List, Text } from '@fluentui/react';
+import { IconButton, List, PrimaryButton, Text, TextField } from '@fluentui/react';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
@@ -11,8 +11,13 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   });
 
   const addAssertionText = intl.formatMessage({
-    defaultMessage: 'Create parameter',
-    description: 'Create Parameter Text',
+    defaultMessage: 'Create assertion',
+    description: 'Create Assertion Text',
+  });
+
+  const deleteAssertionText = intl.formatMessage({
+    defaultMessage: 'Delete assertion',
+    description: 'Create Assertion Text',
   });
 
   const onClose = () => props.toggleCollapse?.();
@@ -21,9 +26,20 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
   const assertions: string[] = [];
 
-  const renderAssertion = (_item?: any): JSX.Element => {
-    // TODO: 12798972 Workflow Parameter
-    return <h1>TEXT</h1>;
+  const renderAssertion = (item: any, index: any): JSX.Element => {
+    return (
+      <div key={index} style={{ marginBottom: '1rem' }}>
+        <div className="msla-copy-input-control">
+          <TextField
+            className="msla-copy-input-control-textbox"
+            style={{ backgroundColor: '#fff', color: 'black' }} // default for class was grey
+            value={item}
+            onChange={() => console.log('test')}
+          />
+          <IconButton ariaLabel={deleteAssertionText} iconProps={{ iconName: 'Delete' }} onClick={() => console.log('test')} />
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -33,8 +49,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
       </div>
       {assertions.length ? <List items={assertions} onRenderCell={renderAssertion} /> : null}
-      <div className="msla-workflow-parameters-add">
-        <CommandBarButton text={addAssertionText} onClick={onAssertionAdd} />
+      <div className="assertion-button-container">
+        <PrimaryButton text={addAssertionText} onClick={onAssertionAdd} />
       </div>
     </div>
   );
