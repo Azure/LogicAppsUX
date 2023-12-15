@@ -373,6 +373,7 @@ export function createExpressionToken(expression: Expression): Token {
     title: (expression as ExpressionFunction).name,
     brandColor: '#AD008C',
     icon: FxIcon,
+    value: (expression as ExpressionFunction).expression,
   };
 }
 

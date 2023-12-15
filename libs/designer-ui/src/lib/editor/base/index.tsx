@@ -57,7 +57,7 @@ export interface BaseEditorProps {
   className?: string;
   readonly?: boolean;
   placeholder?: string;
-  basePlugins?: basePlugins;
+  basePlugins?: BasePlugins;
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   labelId?: string;
@@ -71,16 +71,17 @@ export interface BaseEditorProps {
   onBlur?: () => void;
   onFocus?: () => void;
   getTokenPicker: GetTokenPickerHandler;
+  setIsValuePlaintext?: (isValuePlaintext: boolean) => void;
 }
 
-export interface basePlugins {
+export interface BasePlugins {
   autoFocus?: boolean;
   autoLink?: boolean;
   clearEditor?: boolean;
   history?: boolean;
   tokens?: boolean;
   treeView?: boolean;
-  isHtmlEditor?: boolean;
+  htmlEditor?: 'rich-html' | 'raw-html' | false;
   tabbable?: boolean;
   singleValueSegment?: boolean;
 }
@@ -100,6 +101,7 @@ export const BaseEditor = ({
   onFocus,
   onBlur,
   getTokenPicker,
+  setIsValuePlaintext,
 }: BaseEditorProps) => {
   const [editor] = useLexicalComposerContext();
   const editorId = useId('msla-tokenpicker-callout-location');
@@ -130,7 +132,7 @@ export const BaseEditor = ({
     history = true,
     tokens,
     treeView,
-    isHtmlEditor = false,
+    htmlEditor = false,
     tabbable,
     singleValueSegment = false,
   } = basePlugins;
@@ -165,7 +167,7 @@ export const BaseEditor = ({
   };
 
   const id = useId('msla-described-by-message');
-  const TextPlugin = isHtmlEditor ? RichTextPlugin : PlainTextPlugin;
+  const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
 
   return (
     <>
@@ -176,7 +178,15 @@ export const BaseEditor = ({
         data-automation-id={dataAutomationId}
         title={placeholder}
       >
-        {isHtmlEditor ? <Toolbar readonly={readonly} /> : null}
+        {htmlEditor ? (
+          <Toolbar
+            isRawText={htmlEditor === 'raw-html'}
+            loadParameterValueFromString={loadParameterValueFromString}
+            readonly={readonly}
+            segmentMapping={tokenMapping}
+            setIsRawText={setIsValuePlaintext}
+          />
+        ) : null}
         <TextPlugin
           contentEditable={
             <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
@@ -211,10 +221,10 @@ export const BaseEditor = ({
         {tokens ? <DeleteTokenNode /> : null}
         {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
         {tokens ? <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} /> : null}
-        {tokens && !isHtmlEditor ? (
+        {tokens && !htmlEditor ? (
           <PastePlugin segmentMapping={tokenMapping} loadParameterValueFromString={loadParameterValueFromString} />
         ) : null}
-        {isHtmlEditor && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
+        {htmlEditor && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
         {children}
         {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsTokenPickerOpened) : null}
       </div>

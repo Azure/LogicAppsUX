@@ -46,7 +46,7 @@ import {
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -188,6 +188,8 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+
+  const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -351,16 +353,22 @@ const ParameterSection = ({
     );
   };
 
-  const tokenMapping = useMemo((): Record<string, ValueSegment> => {
-    const mapping: Record<string, ValueSegment> = {};
-    tokenGroup.forEach((group) => {
-      return group.tokens.forEach(async (token) => {
-        if (token.value) {
+  useEffect(() => {
+    const callback = async () => {
+      const mapping: Record<string, ValueSegment> = {};
+      for (const group of tokenGroup) {
+        for (const token of group.tokens) {
+          if (!token.value) {
+            continue;
+          }
+
           mapping[token.value] = await getValueSegmentFromToken(nodeId, token, false, false);
         }
-      });
-    });
-    return mapping;
+      }
+      setTokenMapping(mapping);
+    };
+
+    callback();
   }, [getValueSegmentFromToken, nodeId, tokenGroup]);
 
   const onExpandSection = (sectionName: string) => {

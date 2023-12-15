@@ -15,7 +15,7 @@ export const UpdateEditorFromPicker = ({ pickerDisplayValue }: ChangeProps) => {
     if (pickerDisplayValue.length > 0) {
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
       editor.update(() => {
-        parseSegments(pickerDisplayValue, /*tokensEnabled*/ true, /*readonly*/ false);
+        parseSegments(pickerDisplayValue, { tokensEnabled: true, readonly: false });
       });
     }
   }, [editor, pickerDisplayValue]);
