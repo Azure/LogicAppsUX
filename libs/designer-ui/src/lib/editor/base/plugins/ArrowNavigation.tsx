@@ -18,6 +18,11 @@ function $isTargetWithinDecorator(target: HTMLElement): boolean {
   return $isDecoratorNode(node);
 }
 
+/*  There is a known bug in the lexical-plain-text-plugin where the arrow keys
+ *  get stuck when navigating with decorator nodes. This causes an accessibility
+ *  issue where users cannot navigate outside of the decorator node.
+ *  This plugin is a temporary workaround until the bug is fixed.
+ */
 export function ArrowNavigation() {
   const [editor] = useLexicalComposerContext();
 
