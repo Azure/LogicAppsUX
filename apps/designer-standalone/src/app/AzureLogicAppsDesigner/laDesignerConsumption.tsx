@@ -191,6 +191,7 @@ const DesignerEditorConsumption = () => {
                 isReadOnly={readOnly}
                 isDarkMode={isDarkMode}
                 isConsumption
+                isUnitTest={false}
                 rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={() => {
                   dispatch(setIsChatBotEnabled(!showChatBot));

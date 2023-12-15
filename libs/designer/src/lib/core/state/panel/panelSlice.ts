@@ -109,6 +109,14 @@ export const panelSlice = createSlice({
       state.selectedOperationId = '';
       state.addingTrigger = false;
     },
+    switchToAssertionsPanel: (state) => {
+      state.collapsed = false;
+      state.currentState = 'Assertions';
+      state.selectedNode = '';
+      state.selectedOperationGroupId = '';
+      state.selectedOperationId = '';
+      state.addingTrigger = false;
+    },
     switchToNodeSearchPanel: (state) => {
       state.collapsed = false;
       state.currentState = 'NodeSearch';
@@ -245,6 +253,7 @@ export const {
   switchToWorkflowParameters,
   switchToNodeSearchPanel,
   switchToErrorsPanel,
+  switchToAssertionsPanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

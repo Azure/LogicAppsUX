@@ -20,6 +20,7 @@ import {
   validateParameter,
   updateParameterValidation,
   useNodesInitialized,
+  switchToAssertionsPanel,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -44,6 +45,7 @@ export const DesignerCommandBar = ({
   isDarkMode,
   rightShift,
   enableCopilot,
+  isUnitTest,
 }: {
   id: string;
   location: string;
@@ -51,6 +53,7 @@ export const DesignerCommandBar = ({
   discard: () => unknown;
   saveWorkflow: (workflow: Workflow) => Promise<void>;
   isDarkMode: boolean;
+  isUnitTest: boolean;
   isConsumption?: boolean;
   rightShift?: string;
   enableCopilot?: () => void;
@@ -86,6 +89,7 @@ export const DesignerCommandBar = ({
     }
   });
 
+  console.log('charlie', isUnitTest);
   const designerIsDirty = useIsDesignerDirty();
 
   const allInputErrors = useSelector((state: RootState) => {
@@ -150,6 +154,14 @@ export const DesignerCommandBar = ({
       },
       iconProps: { iconName: 'Parameter' },
       onClick: () => !!dispatch(switchToWorkflowParameters()),
+    },
+    {
+      key: 'Assertions',
+      text: 'Assertions',
+      ariaLabel: 'Assertions',
+      iconProps: { iconName: 'CheckMark' },
+      disabled: !isUnitTest,
+      onClick: () => !!dispatch(switchToAssertionsPanel()),
     },
     {
       key: 'codeview',

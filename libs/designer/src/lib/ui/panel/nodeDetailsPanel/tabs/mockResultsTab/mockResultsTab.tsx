@@ -28,7 +28,7 @@ export const MockResultsTab = () => {
       }
       dispatch(addMockResult({ operationName, mockResult: updatedMockResult }));
     },
-    [operationName, dispatch, addMockResult]
+    [operationName, dispatch]
   );
 
   const resultsEditor = useMemo(() => {

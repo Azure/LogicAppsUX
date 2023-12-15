@@ -21,6 +21,7 @@ export {
   switchToWorkflowParameters,
   switchToErrorsPanel,
   collapsePanel,
+  switchToAssertionsPanel,
 } from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';

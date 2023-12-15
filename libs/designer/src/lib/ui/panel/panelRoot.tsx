@@ -2,6 +2,7 @@ import type { AppDispatch } from '../../core';
 import { useHostOptions, useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useCurrentPanelModePanelMode, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
+import { AssertionsPanel } from './assertionsPanel/assertionsPanel';
 import { ErrorPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
 import { usePanelTabs } from './nodeDetailsPanel/tabInitialization';
@@ -93,6 +94,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
           <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
         ) : currentPanelMode === 'Error' ? (
           <ErrorPanel {...commonPanelProps} />
+        ) : currentPanelMode === 'Assertions' ? (
+          <AssertionsPanel {...commonPanelProps} />
         ) : null // Caught above
       }
     </Panel>
