@@ -11,12 +11,6 @@
       "value": "Varning! Indatanodens typ matchar inte typ av schemanod"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Skapa anslutningsreferens"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Skyddat"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
     }
   ],
   "+FcXe9": [
@@ -929,6 +933,12 @@
       "value": "Måste anges. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1119,12 +1129,6 @@
       "value": "Utfärdare"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Läser in…"
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1247,12 +1251,6 @@
       "value": "Tidsgränsintervallet är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Välj anslutningsreferens"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1369,6 +1367,12 @@
     {
       "type": 0,
       "value": "Uppdatera källschema"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "78Vggn": [
@@ -2171,12 +2175,6 @@
       "value": "Anslutning krävs"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Skapa anslutning"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2393,6 +2391,12 @@
       "value": "Varaktighet"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2589,12 +2593,6 @@
     {
       "type": 0,
       "value": "Välj ja eller nej"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Visningsnamn för anslutning"
     }
   ],
   "F3IDl8": [
@@ -2983,12 +2981,6 @@
     {
       "type": 0,
       "value": "Avsluta helskärmsläge"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Välj en befintlig anslutningsreferens eller skapa en ny."
     }
   ],
   "HSJLCu": [
@@ -3827,6 +3819,12 @@
     {
       "type": 0,
       "value": "Ange ett unikt egenskapsnamn"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -5891,6 +5889,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6273,10 +6277,16 @@
       "value": "Åsidosätt ändringarna"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Markera kryssrutan om du vill välja den här anslutningen."
+      "value": "Change Connection"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
     }
   ],
   "ca/QIc": [
@@ -6593,6 +6603,12 @@
       "value": "När ett nytt objekt"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6693,12 +6709,6 @@
       "value": "Någonting gick fel. Försök igen."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Välj anslutning"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6757,12 +6767,6 @@
     {
       "type": 0,
       "value": "Obligatoriskt. A booleskt värde som bestämmer vilket värde uttrycket ska returnera."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Anslutningens namn"
     }
   ],
   "gIx5ys": [
@@ -6959,6 +6963,12 @@
     {
       "type": 0,
       "value": "Ångra"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7803,6 +7813,12 @@
       "value": ", delning finns inte matrisen."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7843,6 +7859,12 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
@@ -7961,6 +7983,12 @@
     {
       "type": 0,
       "value": "Anpassat"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
     }
   ],
   "nSan4V": [
@@ -8217,6 +8245,12 @@
       "value": "I appen"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8405,12 +8439,6 @@
     {
       "type": 0,
       "value": "Kontrollerar om strängen slutar med ett värde (skiftlägseokänsligt, invariant kultur)"
-    }
-  ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Ogiltig anslutning."
     }
   ],
   "qSejoi": [
@@ -8603,12 +8631,6 @@
     {
       "type": 0,
       "value": "Hemlighet"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Är anslutningen ogiltig"
     }
   ],
   "rNi5Y3": [
@@ -9239,12 +9261,6 @@
       "value": "Utlösardatum"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Läser in"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9691,6 +9707,12 @@
       "value": "Värde"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9795,12 +9817,6 @@
       "value": "Generera XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Välj en befintlig anslutning eller skapa en ny."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9835,12 +9851,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Warszawa, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Anslutningsgateway"
     }
   ],
   "yzqXMp": [

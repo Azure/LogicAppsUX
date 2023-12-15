@@ -11,12 +11,6 @@
       "value": "경고: 입력 노드 형식이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "연결 참조 만들기"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "보호됨"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
     }
   ],
   "+FcXe9": [
@@ -917,6 +921,12 @@
       "value": "필수. 이 값은 반환할 수 있는 가장 높은 정수 다음 정수입니다."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1107,12 +1117,6 @@
       "value": "기관"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "로드..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1235,12 +1239,6 @@
       "value": "시간 제한 값이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "연결 참조 선택"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1357,6 +1355,12 @@
     {
       "type": 0,
       "value": "원본 스키마 업데이트"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "78Vggn": [
@@ -2144,12 +2148,6 @@
       "value": "연결 필요"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "연결 만들기"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2370,6 +2368,12 @@
       "value": "기간"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2562,12 +2566,6 @@
     {
       "type": 0,
       "value": "예 또는 아니요를 선택하세요."
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "연결 표시 이름"
     }
   ],
   "F3IDl8": [
@@ -2937,12 +2935,6 @@
     {
       "type": 0,
       "value": "전체 화면 종료"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "기존 연결 참조를 선택하거나 새 연결 참조를 만듭니다."
     }
   ],
   "HSJLCu": [
@@ -3770,6 +3762,12 @@
     {
       "type": 0,
       "value": "고유한 속성 이름 입력"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -5839,6 +5837,12 @@
       "value": "까지여야 합니다.)"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6221,10 +6225,16 @@
       "value": "변경 내용 취소"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "확인란을 선택하여 이 연결을 선택합니다."
+      "value": "Change Connection"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
     }
   ],
   "ca/QIc": [
@@ -6537,6 +6547,12 @@
       "value": "새 항목이 있는 경우"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6641,12 +6657,6 @@
       "value": "죄송합니다. 문제가 발생했습니다. 다시 시도하십시오."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "연결 선택"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6705,12 +6715,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 식이 반환해야 하는 값을 결정하는 부울 값입니다."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "연결 이름"
     }
   ],
   "gIx5ys": [
@@ -6888,6 +6892,12 @@
     {
       "type": 0,
       "value": "실행 취소"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7709,6 +7719,12 @@
       "value": "'에 대해 분할 유형이 잘못되었습니다. 분할이 배열에 없습니다."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7749,6 +7765,12 @@
     {
       "type": 0,
       "value": "Logic Apps가 나가는 요청에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
@@ -7867,6 +7889,12 @@
     {
       "type": 0,
       "value": "사용자 지정"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
     }
   ],
   "nSan4V": [
@@ -8123,6 +8151,12 @@
       "value": "앱 내"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8317,12 +8351,6 @@
       "value": "문자열이 값으로 끝나는지 여부를 확인합니다(대/소문자 구분 안 함, 고정 문화권)."
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "잘못된 연결입니다."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8502,12 +8530,6 @@
     {
       "type": 0,
       "value": "비밀"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "연결이 잘못되었습니다."
     }
   ],
   "rNi5Y3": [
@@ -9134,12 +9156,6 @@
       "value": "트리거 날짜"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "로드"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9582,6 +9598,12 @@
       "value": "값"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9686,12 +9708,6 @@
       "value": "XSLT 생성"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "기존 연결을 선택하거나 새 연결을 만듭니다."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9726,12 +9742,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) 사라예보, 스코페, 바르샤바, 자그레브"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "연결 게이트웨이"
     }
   ],
   "yzqXMp": [

@@ -11,12 +11,6 @@
       "value": "Upozornění: Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Vytvořit informace o připojení"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Chráněno"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
     }
   ],
   "+FcXe9": [
@@ -925,6 +929,12 @@
       "value": "Požadované. Tato hodnota je další celé číslo za nejvyšším celým číslem, které lze vrátit."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1115,12 +1125,6 @@
       "value": "Autorita"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Načítání…"
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1243,12 +1247,6 @@
       "value": "Hodnota časového limitu je neplatná. Musí odpovídat formátu doby trvání dle normy ISO 8601."
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Vybrat informace o připojení"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1365,6 +1363,12 @@
     {
       "type": 0,
       "value": "Aktualizovat zdrojové schéma"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "78Vggn": [
@@ -2193,12 +2197,6 @@
       "value": "Připojení je povinné"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Vytvořte připojení"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2419,6 +2417,12 @@
       "value": "Doba trvání"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2615,12 +2619,6 @@
     {
       "type": 0,
       "value": "Vyberte prosím ano nebo ne."
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Zobrazovaný název připojení"
     }
   ],
   "F3IDl8": [
@@ -3031,12 +3029,6 @@
     {
       "type": 0,
       "value": "Ukončit zobrazení na celou obrazovku"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Vyberte existující informace o připojení nebo vytvořte nové."
     }
   ],
   "HSJLCu": [
@@ -3893,6 +3885,12 @@
     {
       "type": 0,
       "value": "Zadat jedinečný název vlastnosti"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -5991,6 +5989,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6373,10 +6377,16 @@
       "value": "Zahodit změny"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Pokud chcete zvolit toto připojení, zaškrtněte toto políčko."
+      "value": "Change Connection"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
     }
   ],
   "ca/QIc": [
@@ -6693,6 +6703,12 @@
       "value": "Když nová položka"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6793,12 +6809,6 @@
       "value": "Bohužel došlo k chybě. Opakujte akci."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Vyberte připojení"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6857,12 +6867,6 @@
     {
       "type": 0,
       "value": "Vyžadováno. Logická hodnota určující, kterou hodnotu má výraz vracet."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Název připojení"
     }
   ],
   "gIx5ys": [
@@ -7081,6 +7085,12 @@
     {
       "type": 0,
       "value": "Vrátit zpět"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7951,6 +7961,12 @@
       "value": "' – rozdělení není v poli."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7991,6 +8007,12 @@
     {
       "type": 0,
       "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
@@ -8109,6 +8131,12 @@
     {
       "type": 0,
       "value": "Vlastní"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
     }
   ],
   "nSan4V": [
@@ -8365,6 +8393,12 @@
       "value": "V aplikaci"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8557,12 +8591,6 @@
     {
       "type": 0,
       "value": "Zkontrolujte, jestli řetězec končí určitou hodnotou (nerozlišuje velikost písmen, invariantní jazyková verze)."
-    }
-  ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Neplatné připojení"
     }
   ],
   "qSejoi": [
@@ -8777,12 +8805,6 @@
     {
       "type": 0,
       "value": "Tajný kód"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Připojení je neplatné"
     }
   ],
   "rNi5Y3": [
@@ -9409,12 +9431,6 @@
       "value": "Datum triggeru"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Načítání"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9861,6 +9877,12 @@
       "value": "Hodnota"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9965,12 +9987,6 @@
       "value": "Generovat XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Vyberte existující připojení nebo vytvořte nové."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -10005,12 +10021,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Varšava, Záhřeb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Brána připojení"
     }
   ],
   "yzqXMp": [

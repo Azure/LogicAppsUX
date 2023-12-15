@@ -11,12 +11,6 @@
       "value": "Peringatan: tipe node input tidak cocok dengan tipe node skema"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Buat referensi koneksi"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Dilindungi"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
     }
   ],
   "+FcXe9": [
@@ -917,6 +921,12 @@
       "value": "Diperlukan. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1107,12 +1117,6 @@
       "value": "Otoritas"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Memuat..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1235,12 +1239,6 @@
       "value": "Nilai batas waktu tidak valid, harus cocok dengan format durasi ISO 8601"
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Pilih referensi koneksi"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1357,6 +1355,12 @@
     {
       "type": 0,
       "value": "Perbarui skema sumber"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "78Vggn": [
@@ -2152,12 +2156,6 @@
       "value": "Koneksi diperlukan"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Buat koneksi"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2378,6 +2376,12 @@
       "value": "Durasi"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2574,12 +2578,6 @@
     {
       "type": 0,
       "value": "Silakan pilih ya atau tidak"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nama tampilan koneksi"
     }
   ],
   "F3IDl8": [
@@ -2949,12 +2947,6 @@
     {
       "type": 0,
       "value": "Keluar dari mode layar penuh"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Pilih referensi koneksi yang sudah ada atau buat baru."
     }
   ],
   "HSJLCu": [
@@ -3782,6 +3774,12 @@
     {
       "type": 0,
       "value": "Masukkan nama properti unik"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -5851,6 +5849,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6233,10 +6237,16 @@
       "value": "Buang perubahan"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Pilih kotak centang untuk memilih koneksi ini."
+      "value": "Change Connection"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
     }
   ],
   "ca/QIc": [
@@ -6553,6 +6563,12 @@
       "value": "Saat item baru"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6657,12 +6673,6 @@
       "value": "Maaf, ada yang tidak beres. Coba lagi."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Pilih koneksi"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6721,12 +6731,6 @@
     {
       "type": 0,
       "value": "Harus diisi. Nilai boolean yang menentukan nilai ekspresi yang harus dikembalikan."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nama koneksi"
     }
   ],
   "gIx5ys": [
@@ -6904,6 +6908,12 @@
     {
       "type": 0,
       "value": "Batalkan"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7737,6 +7747,12 @@
       "value": "', pemisahan tidak dalam array."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7777,6 +7793,12 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
@@ -7895,6 +7917,12 @@
     {
       "type": 0,
       "value": "Kustom"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
     }
   ],
   "nSan4V": [
@@ -8151,6 +8179,12 @@
       "value": "Dalam Aplikasi"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8345,12 +8379,6 @@
       "value": "Memeriksa apakah string berakhir dengan nilai (tidak peka huruf besar/kecil, kultur invarian)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Koneksi tidak valid."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8530,12 +8558,6 @@
     {
       "type": 0,
       "value": "Rahasia"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Apakah koneksi tidak valid"
     }
   ],
   "rNi5Y3": [
@@ -9170,12 +9192,6 @@
       "value": "Tanggal pemicu"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Memuat"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9622,6 +9638,12 @@
       "value": "Nilai"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9726,12 +9748,6 @@
       "value": "Buat XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Pilih koneksi yang sudah ada atau buat yang baru."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9766,12 +9782,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Warsawa, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Gateway koneksi"
     }
   ],
   "yzqXMp": [

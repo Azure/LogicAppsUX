@@ -11,12 +11,6 @@
       "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Verbindingsverwijzing maken"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Beveiligd"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
     }
   ],
   "+FcXe9": [
@@ -925,6 +929,12 @@
       "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1119,12 +1129,6 @@
       "value": "Instantie"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Laden..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1247,12 +1251,6 @@
       "value": "De time-outwaarde is ongeldig, deze moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Verbindingsverwijzing selecteren"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1369,6 +1367,12 @@
     {
       "type": 0,
       "value": "Bronschema bijwerken"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "78Vggn": [
@@ -2171,12 +2175,6 @@
       "value": "Een verbinding is vereist"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Verbinding maken"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2397,6 +2395,12 @@
       "value": "Duur"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2593,12 +2597,6 @@
     {
       "type": 0,
       "value": "U moet Ja of Nee kiezen"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Weergavenaam van verbinding"
     }
   ],
   "F3IDl8": [
@@ -2987,12 +2985,6 @@
     {
       "type": 0,
       "value": "Volledig scherm afsluiten"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Selecteer een bestaande verbindingsverwijzing of maak een nieuwe."
     }
   ],
   "HSJLCu": [
@@ -3827,6 +3819,12 @@
     {
       "type": 0,
       "value": "Een unieke eigenschapsnaam invoeren"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -5899,6 +5897,12 @@
       "value": " zijn)"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6281,10 +6285,16 @@
       "value": "Wijzigingen negeren"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Schakel het selectievakje in om deze verbinding te kiezen."
+      "value": "Change Connection"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
     }
   ],
   "ca/QIc": [
@@ -6601,6 +6611,12 @@
       "value": "Wanneer een nieuw item"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6701,12 +6717,6 @@
       "value": "Er is iets verkeerd gegaan. Probeer het opnieuw."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Verbinding selecteren"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6765,12 +6775,6 @@
     {
       "type": 0,
       "value": "Vereist. Een booleaanse waarde waarmee wordt bepaald welke waarde door de expressie moet worden opgehaald."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Verbindingsnaam"
     }
   ],
   "gIx5ys": [
@@ -6967,6 +6971,12 @@
     {
       "type": 0,
       "value": "Ongedaan maken"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7811,6 +7821,12 @@
       "value": ", splits op 'niet in de matrix'."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7851,6 +7867,12 @@
     {
       "type": 0,
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
@@ -7969,6 +7991,12 @@
     {
       "type": 0,
       "value": "Aangepast"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
     }
   ],
   "nSan4V": [
@@ -8225,6 +8253,12 @@
       "value": "In-app"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8413,12 +8447,6 @@
     {
       "type": 0,
       "value": "Er wordt gecontroleerd of de tekenreeks eindigt op een waarde (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
-    }
-  ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Ongeldige verbinding."
     }
   ],
   "qSejoi": [
@@ -8611,12 +8639,6 @@
     {
       "type": 0,
       "value": "Geheim"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Is niet geldig voor verbinding"
     }
   ],
   "rNi5Y3": [
@@ -9243,12 +9265,6 @@
       "value": "Triggerdatum"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Laden"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9695,6 +9711,12 @@
       "value": "Waarde"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9799,12 +9821,6 @@
       "value": "XSLT genereren"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Selecteer een bestaande verbinding of maak een nieuwe."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9839,12 +9855,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Warschau, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Verbindingsgateway"
     }
   ],
   "yzqXMp": [

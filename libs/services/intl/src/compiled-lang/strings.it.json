@@ -11,12 +11,6 @@
       "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Creare riferimento alla connessione"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Protetta"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
     }
   ],
   "+FcXe9": [
@@ -917,6 +921,12 @@
       "value": "Obbligatorio. Valore corrispondente all'intero successivo dopo l’intero più elevato che è stato restituito."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1107,12 +1117,6 @@
       "value": "Autorità"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Caricamento..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1235,12 +1239,6 @@
       "value": "Il valore del timeout non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Selezionare il riferimento alla connessione"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1357,6 +1355,12 @@
     {
       "type": 0,
       "value": "Aggiorna schema di origine"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "78Vggn": [
@@ -2174,12 +2178,6 @@
       "value": "Connessione richiesta"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Creare connessione"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2392,6 +2390,12 @@
       "value": "Durata"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2588,12 +2592,6 @@
     {
       "type": 0,
       "value": "Scegliere Sì o No"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nome visualizzato della connessione"
     }
   ],
   "F3IDl8": [
@@ -2985,12 +2983,6 @@
     {
       "type": 0,
       "value": "Esci dalla visualizzazione a schermo intero"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Seleziona un riferimento alla connessione esistente o creane uno nuovo."
     }
   ],
   "HSJLCu": [
@@ -3840,6 +3832,12 @@
     {
       "type": 0,
       "value": "Immettere un nome proprietà univoco"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -5939,6 +5937,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6321,10 +6325,16 @@
       "value": "Rimuovi le modifiche"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Seleziona la casella di controllo per scegliere questa connessione."
+      "value": "Change Connection"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
     }
   ],
   "ca/QIc": [
@@ -6641,6 +6651,12 @@
       "value": "Quando un nuovo elemento"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6745,12 +6761,6 @@
       "value": "Si è verificato un errore. Riprovare."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Selezionare la connessione"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6809,12 +6819,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore booleano che determina il valore che deve essere restituito dall'espressione."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nome della connessione"
     }
   ],
   "gIx5ys": [
@@ -7014,6 +7018,12 @@
     {
       "type": 0,
       "value": "Annulla"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7869,6 +7879,12 @@
       "value": "'. Il valore SplitOn non è presente nella matrice."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7909,6 +7925,12 @@
     {
       "type": 0,
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella richiesta in uscita."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
@@ -8023,6 +8045,12 @@
     {
       "type": 0,
       "value": "Personalizzata"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
     }
   ],
   "nSan4V": [
@@ -8279,6 +8307,12 @@
       "value": "In-app"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8471,12 +8505,6 @@
     {
       "type": 0,
       "value": "Verifica se la stringa termina con un valore (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
-    }
-  ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "La connessione non è valida."
     }
   ],
   "qSejoi": [
@@ -8680,12 +8708,6 @@
     {
       "type": 0,
       "value": "Segreto"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Connessione non valida"
     }
   ],
   "rNi5Y3": [
@@ -9320,12 +9342,6 @@
       "value": "Data di attivazione"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Caricamento"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9772,6 +9788,12 @@
       "value": "Valore"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9876,12 +9898,6 @@
       "value": "Genera XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Selezionare una connessione esistente o crearne una nuova."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9916,12 +9932,6 @@
     {
       "type": 0,
       "value": "(UTC + 1.00 h) Sarajevo, Skopje, Varsavia, Zagabria"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Gateway connessione"
     }
   ],
   "yzqXMp": [
