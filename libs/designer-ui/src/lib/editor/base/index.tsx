@@ -202,7 +202,7 @@ export const BaseEditor = ({
         <span id={id} hidden={true}>
           {describedByMessage}
         </span>
-        {treeView ? <TreeView /> : <TreeView />}
+        {treeView ? <TreeView /> : null}
         {autoFocus ? <AutoFocus /> : null}
         {history ? <History /> : null}
         {autoLink ? <AutoLink /> : null}
