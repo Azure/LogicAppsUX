@@ -84,9 +84,9 @@
       .msla-comment-icon {
         float: left;
         font-size: @card-header-icon-size;
-        height: 32px;
-        width: 32px;
-        line-height: 32px;
+        height: 20px;
+        width: 20px;
+        padding: 0px 6px;
         margin-right: 4px;
         text-align: center;
       }
@@ -97,12 +97,21 @@
       width: 32px;
     }
 
-    .collapse-toggle-left {
-      float: right;
-    }
-
-    .collapse-toggle-right {
-      float: left;
+    .collapse-toggle {
+      &.left {
+        float: right;
+        transform: rotate(180deg);
+        &.collapsed {
+          transform: rotate(0deg);
+        }
+      }
+      &.right {
+        float: left;
+        transform: rotate(0deg);
+        &.collapsed {
+          transform: rotate(180deg);
+        }
+      }
     }
   }
 

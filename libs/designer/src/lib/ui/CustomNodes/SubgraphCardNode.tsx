@@ -20,8 +20,8 @@ import {
 import { addSwitchCase, deleteSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { DeleteNodeModal, MenuItemType, SubgraphCard } from '@microsoft/designer-ui';
+import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
+import { DeleteNodeModal, SubgraphCard } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES, removeIdTag } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -95,7 +95,6 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   );
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const handleDeleteClick = () => setShowDeleteModal(true);
   const handleDelete = () => {
     if (subgraphNode) {
       dispatch(deleteGraphNode({ graphId: subgraphId, graphNode: subgraphNode }));
@@ -103,24 +102,13 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     }
   };
 
-  const getDeleteMenuItem = () => {
-    const deleteDescription = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Delete text',
-    });
+  const deleteClick = useCallback(() => {
+    setShowDeleteModal(true);
+  }, []);
 
-    return {
-      key: deleteDescription,
-      disabled: readOnly,
-      iconName: 'Delete',
-      title: deleteDescription,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
-  };
-
-  const contextMenuOptions: MenuItemOption[] = [];
-  if (metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']) contextMenuOptions.push(getDeleteMenuItem());
+  const contextMenuItems: JSX.Element[] = [
+    ...(metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE'] ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />] : []),
+  ];
 
   return (
     <div>
@@ -139,7 +127,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 onClick={subgraphClick}
                 collapsed={graphCollapsed}
                 handleCollapse={handleGraphCollapse}
-                contextMenuOptions={contextMenuOptions}
+                contextMenuItems={contextMenuItems}
               />
               {isMonitoringView && normalizedType === constants.NODE.TYPE.UNTIL ? (
                 <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />

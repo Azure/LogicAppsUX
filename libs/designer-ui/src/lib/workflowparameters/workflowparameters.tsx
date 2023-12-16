@@ -3,9 +3,13 @@ import Constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, WorkflowParameterUpdateHandler } from './workflowparameter';
 import { WorkflowParameter } from './workflowparameter';
-import { IconButton, CommandBarButton, List, MessageBar, useTheme, Text } from '@fluentui/react';
+import { CommandBarButton, List, MessageBar, useTheme, Text } from '@fluentui/react';
 import type { IIconProps, IMessageBarStyles } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
+import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
+
+const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 const lightMessageBarStyles: IMessageBarStyles = {
   root: {
@@ -155,7 +159,7 @@ export function WorkflowParameters({
     <div className="msla-workflow-parameters">
       <div className="msla-workflow-parameters-heading">
         <Text variant="xLarge">{titleText}</Text>
-        <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
+        <Button appearance="subtle" onClick={onClose} icon={<CloseIcon />} />
       </div>
 
       {useLegacy ? null : <InfoBar isInverted={isInverted} />}

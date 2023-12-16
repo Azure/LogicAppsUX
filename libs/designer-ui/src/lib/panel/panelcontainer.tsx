@@ -1,10 +1,8 @@
 import { EmptyContent } from '../card/emptycontent';
-import type { MenuItemOption } from '../card/types';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import type { CommonPanelProps, PanelTab } from './panelUtil';
 import { PanelScope, PanelLocation } from './panelUtil';
 import { PanelContent } from './panelcontent';
-import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
 import type { TitleChangeHandler } from './panelheader/panelheadertitle';
 import { PanelPivot } from './panelpivot';
@@ -39,8 +37,7 @@ export type PanelContainerProps = {
   isLoading?: boolean;
   panelScope: PanelScope;
   pivotDisabled?: boolean;
-  panelHeaderControlType?: PanelHeaderControlType;
-  panelHeaderMenu: MenuItemOption[];
+  headerMenuItems: JSX.Element[];
   selectedTab?: string;
   showCommentBox: boolean;
   readOnlyMode?: boolean;
@@ -48,7 +45,6 @@ export type PanelContainerProps = {
   nodeId: string;
   title?: string;
   layerProps?: ILayerProps;
-  onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: (tabName: string | undefined) => void;
   toggleCollapse: () => void;
@@ -67,8 +63,7 @@ export const PanelContainer = ({
   errorMessage,
   isLoading,
   panelScope,
-  panelHeaderControlType,
-  panelHeaderMenu,
+  headerMenuItems,
   selectedTab,
   showCommentBox,
   readOnlyMode,
@@ -77,7 +72,6 @@ export const PanelContainer = ({
   title,
   width,
   layerProps,
-  onDismissButtonClicked,
   setSelectedTab,
   toggleCollapse,
   trackEvent,
@@ -101,13 +95,10 @@ export const PanelContainer = ({
           showCommentBox={showCommentBox}
           noNodeSelected={noNodeSelected}
           panelScope={panelScope}
-          onDismissButtonClicked={onDismissButtonClicked}
-          panelHeaderMenu={panelHeaderMenu}
-          panelHeaderControlType={panelHeaderControlType}
+          headerMenuItems={headerMenuItems}
           readOnlyMode={readOnlyMode}
           titleId={headerTextId}
           title={title}
-          includeTitle={true}
           isError={isError}
           isLoading={isLoading}
           comment={comment}
@@ -126,9 +117,7 @@ export const PanelContainer = ({
       showCommentBox,
       noNodeSelected,
       panelScope,
-      onDismissButtonClicked,
-      panelHeaderMenu,
-      panelHeaderControlType,
+      headerMenuItems,
       readOnlyMode,
       title,
       isError,

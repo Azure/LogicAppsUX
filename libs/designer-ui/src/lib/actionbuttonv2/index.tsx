@@ -1,6 +1,6 @@
 import { Plus } from './images/plus';
-import type { ICalloutProps } from '@fluentui/react';
-import { css, DirectionalHint, TooltipHost } from '@fluentui/react';
+import { css } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
 
 export interface ActionButtonV2Props {
   id?: string;
@@ -13,10 +13,6 @@ export interface ActionButtonV2Props {
   onClick?(e: React.MouseEvent<HTMLElement>): void;
 }
 
-const calloutProps: ICalloutProps = {
-  directionalHint: DirectionalHint.topCenter,
-};
-
 export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
   tabIndex,
   id,
@@ -28,7 +24,7 @@ export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
   onClick,
 }) => {
   return (
-    <TooltipHost calloutProps={calloutProps} content={title}>
+    <Tooltip withArrow positioning={'after'} content={title} relationship="label">
       <button
         id={id}
         data-automation-id={dataAutomationId}
@@ -42,6 +38,6 @@ export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
       >
         <Plus />
       </button>
-    </TooltipHost>
+    </Tooltip>
   );
 };

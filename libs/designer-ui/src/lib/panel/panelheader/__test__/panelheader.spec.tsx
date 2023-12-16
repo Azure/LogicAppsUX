@@ -1,7 +1,7 @@
 import { MenuItemType } from '../../../card/types';
 import { PanelLocation, PanelScope } from '../../panelUtil';
 import type { PanelHeaderProps } from '../panelheader';
-import { PanelHeader, PanelHeaderControlType } from '../panelheader';
+import { PanelHeader } from '../panelheader';
 import { initializeIcons } from '@fluentui/react';
 import React from 'react';
 import renderer from 'react-test-renderer';
@@ -20,7 +20,6 @@ describe('lib/panel/panelHeader/main', () => {
       panelHeaderMenu: [],
       headerLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
-      includeTitle: true,
       toggleCollapse: jest.fn(),
       onTitleChange: jest.fn(),
       commentChange: jest.fn(),
@@ -53,7 +52,6 @@ describe('lib/panel/panelHeader/main', () => {
       ],
       headerLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
-      includeTitle: true,
       toggleCollapse: jest.fn(),
     };
     shallow = ReactShallowRenderer.createRenderer();
@@ -84,7 +82,6 @@ describe('lib/panel/panelHeader/main', () => {
       isRight: false,
       comment: 'sample comment',
       titleId: 'title id',
-      panelHeaderControlType: PanelHeaderControlType.MENU,
       noNodeSelected: false,
       readOnlyMode: false,
       renameTitleDisabled: false,
@@ -138,7 +135,6 @@ describe('lib/panel/panelHeader/main', () => {
       isRight: false,
       comment: 'sample comment',
       titleId: 'title id',
-      panelHeaderControlType: PanelHeaderControlType.DISMISS_BUTTON,
       noNodeSelected: false,
       readOnlyMode: false,
       renameTitleDisabled: false,

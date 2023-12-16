@@ -309,6 +309,12 @@
       "value": "(UTC+05:30) Sri Jayawardenepura"
     }
   ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
+    }
+  ],
   "0CvRZW": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Dismiss"
     }
   ],
   "20oqsp": [
@@ -3929,12 +3929,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "This Action/Trigger cannot be copied."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4455,12 +4449,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Triggers cannot be deleted."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4549,12 +4537,6 @@
     {
       "type": 0,
       "value": "issue"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "You can add notes only when you edit a step's inputs."
     }
   ],
   "Rp5pHU": [
@@ -5965,12 +5947,6 @@
       "value": "Read more"
     }
   ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "This operation has already been deleted."
-    }
-  ],
   "Zg3IjD": [
     {
       "type": 0,
@@ -6981,6 +6957,12 @@
     {
       "type": 0,
       "value": "Connected actions"
+    }
+  ],
+  "hUZwdI": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "hZqQdt": [
