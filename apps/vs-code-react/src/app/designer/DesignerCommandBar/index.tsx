@@ -10,6 +10,7 @@ import {
   useIsDesignerDirty,
   validateParameter,
   updateParameterValidation,
+  switchToAssertionsPanel,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/utils-logic-apps';
@@ -243,9 +244,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       text: Resources.UNIT_TEST_ASSERTIONS,
       ariaLabel: Resources.UNIT_TEST_ASSERTIONS,
       iconProps: { iconName: 'CheckMark' },
-      onClick: () => {
-        console.log('Assertions clicked');
-      },
+      onClick: () => !!dispatch(switchToAssertionsPanel()),
     },
   ];
 
