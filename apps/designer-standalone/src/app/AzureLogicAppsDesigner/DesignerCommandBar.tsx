@@ -89,7 +89,6 @@ export const DesignerCommandBar = ({
     }
   });
 
-  console.log('charlie', isUnitTest);
   const designerIsDirty = useIsDesignerDirty();
 
   const allInputErrors = useSelector((state: RootState) => {

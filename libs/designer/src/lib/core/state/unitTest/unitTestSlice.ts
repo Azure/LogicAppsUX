@@ -29,13 +29,13 @@ export const unitTestSlice = createSlice({
       const { operationName, mockResult } = action.payload;
       state.mockResults[operationName] = mockResult;
     },
-    addAssertion: (state: UnitTestState, action: PayloadAction<AddAssertionPayload>) => {
-      const { assertion } = action.payload;
-      state.assertions.push(assertion);
+    addAssertions: (state: UnitTestState, action: PayloadAction<AddAssertionPayload>) => {
+      const { assertions } = action.payload;
+      state.assertions = assertions;
     },
   },
 });
 
-export const { addAssertion, addMockResult, initUnitTestDefinition } = unitTestSlice.actions;
+export const { addAssertions, addMockResult, initUnitTestDefinition } = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;

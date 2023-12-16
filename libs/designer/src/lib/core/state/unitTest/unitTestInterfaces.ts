@@ -9,7 +9,7 @@ export interface InitDefintionPayload {
 }
 
 export interface AddAssertionPayload {
-  assertion: string;
+  assertions: string[];
 }
 
 export interface UnitTestState {
