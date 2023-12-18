@@ -37,5 +37,4 @@ export interface WorkflowState {
   isDirty: boolean;
   workflowKind: WorkflowKind;
   originalDefinition: LogicAppsV2.WorkflowDefinition;
-  isPowerAutomate?: boolean;
 }

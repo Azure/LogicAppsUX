@@ -62,7 +62,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   options?: ComboboxItem[];
   errorDetails?: { message: string };
   onMenuOpen?: CallbackHandler;
-  isPowerAutomate?: boolean;
+  suppressCastingForSerialize?: boolean;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
@@ -76,7 +76,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   onChange,
   castParameter,
   dataAutomationId,
-  isPowerAutomate,
+  suppressCastingForSerialize,
   ...baseEditorProps
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
@@ -121,7 +121,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const updateComplexItems = (newItems: ComplexArrayItems[]) => {
     setItems(newItems);
     // we want to supress casting for when switching between expanded and collapsed array, but cast when serializing
-    const objectValue = parseComplexItems(newItems, itemSchema, castParameter, isPowerAutomate);
+    const objectValue = parseComplexItems(newItems, itemSchema, castParameter, suppressCastingForSerialize);
     const { castedValue, uncastedValue } = objectValue;
     setCollapsedValue(uncastedValue);
     if (!collapsed) {

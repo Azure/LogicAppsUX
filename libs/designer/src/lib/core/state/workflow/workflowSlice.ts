@@ -53,7 +53,6 @@ export const initialWorkflowState: WorkflowState = {
     $schema: constants.SCHEMA.GA_20160601.URL,
     contentVersion: '1.0.0.0',
   },
-  isPowerAutomate: false,
 };
 
 export const workflowSlice = createSlice({
@@ -65,9 +64,6 @@ export const workflowSlice = createSlice({
     },
     initWorkflowKind: (state: WorkflowState, action: PayloadAction<WorkflowKind>) => {
       state.workflowKind = action.payload;
-    },
-    initPowerAutomate: (state: WorkflowState, action: PayloadAction<boolean>) => {
-      state.isPowerAutomate = action.payload;
     },
     initRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
       state.runInstance = action.payload;
@@ -451,7 +447,6 @@ export const {
   initWorkflowSpec,
   initWorkflowKind,
   initRunInstance,
-  initPowerAutomate,
   addNode,
   addImplicitForeachNode,
   pasteNode,
