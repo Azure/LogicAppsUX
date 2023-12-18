@@ -1,7 +1,7 @@
 import { useAssertions } from '../../../core/state/unitTest/unitTestSelectors';
 import { addAssertions } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch } from '../../../core/store';
-import { IconButton, List, PrimaryButton, Text, TextField } from '@fluentui/react';
+import { FocusTrapZone, IconButton, List, PrimaryButton, Text, TextField } from '@fluentui/react';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
@@ -73,8 +73,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   return (
-    <div className="msla-workflow-parameters">
-      <div className="msla-workflow-parameters-heading">
+    <FocusTrapZone>
+      <div className="msla-app-action-header">
         <Text variant="xLarge">{titleText}</Text>
         <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
       </div>
@@ -82,6 +82,6 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
       <div className="assertion-button-container">
         <PrimaryButton text={addAssertionText} onClick={onAssertionAdd} />
       </div>
-    </div>
+    </FocusTrapZone>
   );
 };
