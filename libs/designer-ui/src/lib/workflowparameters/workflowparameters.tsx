@@ -69,7 +69,7 @@ export function WorkflowParameters({
     }
   };
 
-  const renderTitleAndDescription = (): JSX.Element => {
+  const NoParameters = (): JSX.Element => {
     const description1 = useLegacy
       ? intl.formatMessage({
           defaultMessage: 'Create, manage Logic Apps parameters, give it a default value.',
@@ -142,8 +142,7 @@ export function WorkflowParameters({
           {createText}
         </Button>
       </div>
-      {parameters.length ? null : renderTitleAndDescription()}
-      {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : null}
+      {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : <NoParameters />}
     </div>
   );
 }
