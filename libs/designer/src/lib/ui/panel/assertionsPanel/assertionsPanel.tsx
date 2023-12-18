@@ -8,11 +8,16 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
+const getAssertions = (assertions: string[]) => {
+  return assertions.map((assertion) => {
+    return { key: guid(), value: assertion };
+  });
+};
+
 export const AssertionsPanel = (props: CommonPanelProps) => {
   const intl = useIntl();
   const workflowAssertions = useAssertions();
-  console.log('workflowAssertions', workflowAssertions);
-  const [assertions, setAssertions] = useState<string[]>(workflowAssertions);
+  const [assertions, setAssertions] = useState<{ key: string; value: string }[]>(getAssertions(workflowAssertions));
   const dispatch = useDispatch<AppDispatch>();
 
   const titleText = intl.formatMessage({
@@ -31,7 +36,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   });
 
   const onClose = () => {
-    dispatch(addAssertions({ assertions }));
+    dispatch(addAssertions({ assertions: assertions.map((assertion) => assertion.value) }));
     props.toggleCollapse?.();
   };
 
@@ -43,21 +48,23 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
 
   const onAssertionChange = (index: number, value: string | undefined) => {
     const newAssertions = [...assertions];
-    newAssertions[index] = value ?? '';
+    newAssertions[index].value = value ?? '';
     setAssertions(newAssertions);
   };
 
   const onAssertionAdd = () => {
-    setAssertions([...assertions, '']);
+    setAssertions([...assertions, { key: guid(), value: '' }]);
   };
 
   const renderAssertion = (item: any, index: any): JSX.Element => {
     return (
-      <div className="msla-copy-input-control" key={guid()}>
+      <div className="msla-copy-input-control">
         <TextField
+          spellCheck={false}
+          key={item.key}
           className="msla-copy-input-control-textbox"
           style={{ backgroundColor: '#fff', color: 'black' }} // default for class was grey
-          value={item}
+          value={item.value}
           onChange={(_, value) => onAssertionChange(index, value)}
         />
         <IconButton ariaLabel={deleteAssertionText} iconProps={{ iconName: 'Delete' }} onClick={() => onAssertionDelete(index)} />
@@ -71,7 +78,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         <Text variant="xLarge">{titleText}</Text>
         <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
       </div>
-      {assertions.length ? <List items={assertions} onRenderCell={renderAssertion} /> : null}
+      {assertions.length > 0 ? <List items={assertions} onRenderCell={renderAssertion} /> : null}
       <div className="assertion-button-container">
         <PrimaryButton text={addAssertionText} onClick={onAssertionAdd} />
       </div>
