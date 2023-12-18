@@ -6,7 +6,7 @@ import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { NoWorkspaceError } from './errors';
 import { isPathEqual, isSubpath } from './fs';
-import { tryGetFunctionProjectRoot } from './verifyIsProject';
+import { tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/utils-logic-apps';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
@@ -62,7 +62,7 @@ export async function getWorkspaceFolder(context: IActionContext): Promise<vscod
     const logicAppsWorkspaces = [];
 
     for (const folder of vscode.workspace.workspaceFolders) {
-      const projectRoot = await tryGetFunctionProjectRoot(context, folder);
+      const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
       if (projectRoot) {
         logicAppsWorkspaces.push(projectRoot);
       }

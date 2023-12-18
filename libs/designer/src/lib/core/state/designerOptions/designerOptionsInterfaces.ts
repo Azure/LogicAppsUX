@@ -29,6 +29,7 @@ export interface DesignerOptionsState {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
+  showConnectionsPanel?: boolean;
 }
 
 export interface ServiceOptions {

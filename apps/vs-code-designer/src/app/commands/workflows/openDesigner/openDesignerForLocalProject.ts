@@ -15,7 +15,7 @@ import {
   containsApiHubConnectionReference,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
-  getFunctionProjectRoot,
+  getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
 } from '../../../utils/codeless/connection';
@@ -83,7 +83,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       return;
     }
 
-    this.projectPath = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     if (!this.projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
@@ -391,7 +391,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this._migrate(workflowContent, migrationOptions);
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
-    const projectPath: string | undefined = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;

@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.91.0",
+  "version": "2.95.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -746,7 +746,7 @@
           "azureLogicAppsStandard.dependencyTimeout": {
             "type": "number",
             "description": "The timeout (in seconds) to be used when validating and installing dependencies.",
-            "default": 120
+            "default": 300
           },
           "azureLogicAppsStandard.autoRuntimeDependenciesPath": {
             "scope": "resource",
