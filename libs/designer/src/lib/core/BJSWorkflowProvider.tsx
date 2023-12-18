@@ -8,7 +8,7 @@ import { initUnitTestDefinition } from './state/unitTest/unitTestSlice';
 import { WorkflowKind } from './state/workflow/workflowInterfaces';
 import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from './store';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, UnitTestDefinition } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
 import { useDeepCompareEffect } from '@react-hookz/web';
 import { createSelector } from '@reduxjs/toolkit';
@@ -19,7 +19,7 @@ export interface BJSWorkflowProviderProps {
   workflow: Workflow;
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
   children?: React.ReactNode;
-  unitTestDefinition?: string;
+  unitTestDefinition?: UnitTestDefinition | null;
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance, unitTestDefinition }) => {

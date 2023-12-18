@@ -35,6 +35,7 @@ export const DesignerApp = () => {
     runId,
     hostVersion,
     isUnitTest,
+    unitTestDefinition,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
@@ -169,6 +170,7 @@ export const DesignerApp = () => {
         kind: standardApp.kind,
       }}
       runInstance={runInstance}
+      unitTestDefinition={unitTestDefinition}
     >
       <Designer />
     </BJSWorkflowProvider>

@@ -7,7 +7,7 @@ import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Assertion, LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
+import type { Assertion, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/utils-logic-apps';
 import {
   containsIdTag,
   WORKFLOW_NODE_TYPES,
@@ -110,7 +110,7 @@ export const Deserialize = (
   };
 };
 
-export const deserializeUnitTestDefinition = (unitTestDefinition: any | null): any => {
+export const deserializeUnitTestDefinition = (unitTestDefinition: UnitTestDefinition | null): any => {
   if (isNullOrUndefined(unitTestDefinition)) return null;
   // deserialize mocks
   const mockResults: { [key: string]: string } = {};
