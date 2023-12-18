@@ -11,12 +11,6 @@
       "value": "Figyelmeztetés: a bemeneti csomópont típusa nem felel meg a sémacsomópont típusának"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Kapcsolati hivatkozás létrehozása"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Védett"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-kapcsolatok"
     }
   ],
   "+FcXe9": [
@@ -933,6 +937,12 @@
       "value": "Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Kapcsolat megnyitása"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1123,12 +1133,6 @@
       "value": "Szolgáltató"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Betöltés..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1251,12 +1255,6 @@
       "value": "Az időtúllépési érték érvénytelen, meg kell felelnie az ISO 8601 időtartam-formátumnak"
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Kapcsolati hivatkozás kiválasztása"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1365,6 +1363,12 @@
     {
       "type": 0,
       "value": "Forrásséma frissítése"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Új kapcsolat létrehozása"
     }
   ],
   "78Vggn": [
@@ -2171,12 +2175,6 @@
       "value": "Kapcsolat szükséges"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Kapcsolat létrehozása"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2401,6 +2399,12 @@
       "value": "Időtartam"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Válasszon ki egy meglévő kapcsolatot, vagy hozzon létre egy újat."
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2593,12 +2597,6 @@
     {
       "type": 0,
       "value": "Válassza az igen vagy a nem lehetőséget"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Kapcsolat megjelenített neve"
     }
   ],
   "F3IDl8": [
@@ -2987,12 +2985,6 @@
     {
       "type": 0,
       "value": "Kilépés a teljes képernyős módból"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Válasszon ki egy meglévő kapcsolati hivatkozást, vagy hozzon létre egy újat."
     }
   ],
   "HSJLCu": [
@@ -3831,6 +3823,12 @@
     {
       "type": 0,
       "value": "Egyedi tulajdonságnevet adjon meg"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Kapcsolat létrehozása"
     }
   ],
   "Nh91qA": [
@@ -5899,6 +5897,12 @@
       "value": " között kell lennie)"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Válasszon ki egy meglévő kapcsolati hivatkozást, vagy hozzon létre egy újat."
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6281,10 +6285,16 @@
       "value": "Módosítások elvetése"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Jelölje be a jelölőnégyzetet a kapcsolat kiválasztásához."
+      "value": "Kapcsolat megváltoztatása"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "A kapcsolat érvényes"
     }
   ],
   "ca/QIc": [
@@ -6601,6 +6611,12 @@
       "value": "Új elem esetén"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Az összes csatlakoztatott művelet hozzárendelése új kapcsolathoz"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6705,12 +6721,6 @@
       "value": "Hiba történt a művelet közben. Próbálja meg ismét."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Kapcsolat kiválasztása"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6747,6 +6757,12 @@
       "value": "Teszt futtatása"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6769,12 +6785,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Logikai érték, mely meghatározza a kifejezés által visszaadott értéket."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Kapcsolat neve"
     }
   ],
   "gIx5ys": [
@@ -6971,6 +6981,12 @@
     {
       "type": 0,
       "value": "Visszavonás"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Csatlakoztatott műveletek"
     }
   ],
   "hZqQdt": [
@@ -7815,6 +7831,12 @@
       "value": "”. A felosztás nincs a tömbben."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "A kapcsolat érvénytelen"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7855,6 +7877,12 @@
     {
       "type": 0,
       "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a kimenő Logic Apps-kérelemben való megjelenítésének letiltása."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Kapcsolatok"
     }
   ],
   "mvrlkP": [
@@ -7973,6 +8001,12 @@
     {
       "type": 0,
       "value": "Egyéni"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Ez a változás több műveletet módosít."
     }
   ],
   "nSan4V": [
@@ -8229,6 +8263,12 @@
       "value": "Alkalmazáson belüli termék"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Leválasztott műveletek"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8423,12 +8463,6 @@
       "value": "Annak ellenőrzése, hogy a sztring egy adott értékre végződik-e (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Érvénytelen kapcsolat."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8619,12 +8653,6 @@
     {
       "type": 0,
       "value": "Titkos kód"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Érvénytelen a kapcsolat?"
     }
   ],
   "rNi5Y3": [
@@ -9255,12 +9283,6 @@
       "value": "Aktiválás dátuma"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Betöltés folyamatban"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9707,6 +9729,12 @@
       "value": "Érték"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Az összes leválasztott művelet hozzárendelése új kapcsolathoz"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9811,12 +9839,6 @@
       "value": "XSLT létrehozása"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Válasszon ki egy meglévő kapcsolatot, vagy hozzon létre egy újat."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9851,12 +9873,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Szarajevó, Szkopje, Varsó, Zágráb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Kapcsolódási átjáró"
     }
   ],
   "yzqXMp": [

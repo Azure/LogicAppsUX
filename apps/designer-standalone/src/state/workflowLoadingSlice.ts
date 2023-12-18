@@ -21,6 +21,7 @@ export interface WorkflowLoadingState {
   isLocal: boolean;
   isUnitTest: boolean;
   showChatBot?: boolean;
+  showConnectionsPanel?: boolean;
   workflowKind?: string;
   language: string;
   areCustomEditorsEnabled?: boolean;
@@ -42,6 +43,7 @@ const initialState: WorkflowLoadingState = {
   isConsumption: false,
   isLocal: false,
   showChatBot: false,
+  showConnectionsPanel: false,
   workflowKind: 'stateful',
   language: 'en',
   areCustomEditorsEnabled: false,
@@ -136,6 +138,9 @@ export const workflowLoadingSlice = createSlice({
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
       state.showChatBot = action.payload;
     },
+    setShowConnectionsPanel: (state, action: PayloadAction<boolean>) => {
+      state.showConnectionsPanel = action.payload;
+    },
     loadLastWorkflow: (state) => {
       const lastWorkflow = getStateHistory() as WorkflowLoadingState;
       if (!lastWorkflow) return;
@@ -194,6 +199,7 @@ export const {
   setConsumption,
   setIsLocalSelected,
   setIsChatBotEnabled,
+  setShowConnectionsPanel,
   changeRunId,
   setLanguage,
   loadLastWorkflow,

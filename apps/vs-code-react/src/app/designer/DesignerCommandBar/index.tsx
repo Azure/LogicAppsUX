@@ -6,10 +6,10 @@ import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
   serializeUnitTestDefinition,
-  switchToWorkflowParameters,
   useIsDesignerDirty,
   validateParameter,
   updateParameterValidation,
+  openPanel,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/utils-logic-apps';
@@ -192,7 +192,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
           </>
         );
       },
-      onClick: () => !!dispatch(switchToWorkflowParameters()),
+      onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
     },
   ];
 

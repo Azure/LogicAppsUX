@@ -63,9 +63,8 @@ const DesignerEditor = () => {
   }));
 
   const dispatch = useDispatch<AppDispatch>();
-  const { isReadOnly, isDarkMode, isMonitoringView, isUnitTest, runId, appId, showChatBot, language, hostOptions } = useSelector(
-    (state: RootState) => state.workflowLoader
-  );
+  const { isReadOnly, isDarkMode, isMonitoringView, isUnitTest, runId, appId, showChatBot, language, hostOptions, showConnectionsPanel } =
+    useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -246,7 +245,7 @@ const DesignerEditor = () => {
     <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
         locale={language}
-        options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView, isUnitTest, hostOptions }}
+        options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView, isUnitTest, hostOptions, showConnectionsPanel }}
       >
         {workflow?.definition ? (
           <BJSWorkflowProvider
@@ -261,6 +260,7 @@ const DesignerEditor = () => {
                 location={canonicalLocation}
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
+                showConnectionsPanel={showConnectionsPanel}
                 rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={async () => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
@@ -466,6 +466,7 @@ const getDesignerServices = (
   const hostService = {
     fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
     openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
+    openConnectionResource: (connectionId: string) => console.log('openConnectionResource:', connectionId),
   };
 
   const functionService = new BaseFunctionService({

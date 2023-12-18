@@ -14,17 +14,10 @@ export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
 export { serializeWorkflow, serializeUnitTestDefinition } from './actions/bjsworkflow/serializer';
-export {
-  setSelectedNodeId,
-  changePanelNode,
-  clearPanel,
-  switchToWorkflowParameters,
-  switchToErrorsPanel,
-  collapsePanel,
-} from './state/panel/panelSlice';
+export { setSelectedNodeId, changePanelNode, clearPanel, openPanel, collapsePanel } from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
-export { useSelectedNodeId } from './state/panel/panelSelectors';
+export { useSelectedNodeId, useSelectedNodeIds } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { validateParameter } from './utils/parameters/helper';
@@ -33,3 +26,4 @@ export { getOutputTokenSections, getExpressionTokenSections } from './utils/toke
 export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
+export { getBrandColorFromManifest, getIconUriFromManifest, getBrandColorFromConnector, getIconUriFromConnector } from './utils/card';

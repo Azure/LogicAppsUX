@@ -11,12 +11,6 @@
       "value": "Warning: input node type does not match the schema node's type"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Create connection reference"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Protected"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connections"
     }
   ],
   "+FcXe9": [
@@ -929,6 +933,12 @@
       "value": "Required. This value is the next integer after the highest integer that can be returned."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Open connection"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1119,12 +1129,6 @@
       "value": "Authority"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Loading..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1247,12 +1251,6 @@
       "value": "Timeout value is invalid, must match ISO 8601 duration format"
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Select connection reference"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1369,6 +1367,12 @@
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "78Vggn": [
@@ -2175,12 +2179,6 @@
       "value": "Connection required"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Create connection"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2401,6 +2399,12 @@
       "value": "Duration"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2597,12 +2601,6 @@
     {
       "type": 0,
       "value": "Please select yes or no"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Connection display name"
     }
   ],
   "F3IDl8": [
@@ -2983,12 +2981,6 @@
     {
       "type": 0,
       "value": "Exit full screen"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Select an existing connection reference or create a new one."
     }
   ],
   "HSJLCu": [
@@ -3827,6 +3819,12 @@
     {
       "type": 0,
       "value": "Enter unique property name"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Create Connection"
     }
   ],
   "Nh91qA": [
@@ -5907,6 +5905,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6289,10 +6293,16 @@
       "value": "Discard changes"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Select the checkbox to choose this connection."
+      "value": "Change Connection"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Connection is valid"
     }
   ],
   "ca/QIc": [
@@ -6609,6 +6619,12 @@
       "value": "When a new item"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reassign all connected actions to a new connection"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6713,12 +6729,6 @@
       "value": "Sorry, something went wrong. Please try again."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Select connection"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6755,6 +6765,12 @@
       "value": "Run test"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6777,12 +6793,6 @@
     {
       "type": 0,
       "value": "Required. A boolean value that determines which value the expression should return."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Connection name"
     }
   ],
   "gIx5ys": [
@@ -6971,6 +6981,12 @@
     {
       "type": 0,
       "value": "Undo"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7815,6 +7831,12 @@
       "value": "', split on not in array."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Connection is invalid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7855,6 +7877,12 @@
     {
       "type": 0,
       "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connections"
     }
   ],
   "mvrlkP": [
@@ -7973,6 +8001,12 @@
     {
       "type": 0,
       "value": "Custom"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Multiple actions will be modified by this change."
     }
   ],
   "nSan4V": [
@@ -8229,6 +8263,12 @@
       "value": "In-App"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Disconnected actions"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8423,12 +8463,6 @@
       "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Invalid connection."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8619,12 +8653,6 @@
     {
       "type": 0,
       "value": "Secret"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Is connection invalid"
     }
   ],
   "rNi5Y3": [
@@ -9259,12 +9287,6 @@
       "value": "Trigger date"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Loading"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9711,6 +9733,12 @@
       "value": "Value"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reassign all disconnected actions to a new connection"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9815,12 +9843,6 @@
       "value": "Generate XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Select an existing connection or create a new one."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9855,12 +9877,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Connection gateway"
     }
   ],
   "yzqXMp": [
