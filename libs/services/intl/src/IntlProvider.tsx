@@ -56,6 +56,9 @@ const loadLocaleData = async (locale: string): Promise<Record<string, string> | 
     case 'hu':
       messages = await import('./compiled-lang/strings.hu.json');
       break;
+    case 'id':
+      messages = await import('./compiled-lang/strings.id.json');
+      break;
     case 'it':
       messages = await import('./compiled-lang/strings.it.json');
       break;

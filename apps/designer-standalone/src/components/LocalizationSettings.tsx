@@ -38,6 +38,10 @@ export const LocalizationSettings = () => {
           text: 'French',
         },
         {
+          key: 'id',
+          text: 'Indonesian',
+        },
+        {
           key: 'en-XA',
           text: 'Test Language (en-XA)',
         },
