@@ -185,7 +185,7 @@ const ParameterSection = ({
       workflowParameters: state.workflowParameters.definitions,
     };
   });
-  const isPowerAutomate: boolean | undefined = useSelector((state: RootState) => state.workflow.isPowerAutomate);
+  const isPowerAutomate = useSelector((state: RootState) => state.workflow.isPowerAutomate);
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
@@ -395,7 +395,7 @@ const ParameterSection = ({
           value: remappedValues,
           editor,
           editorOptions,
-          isPowerAutomate: isPowerAutomate,
+          isPowerAutomate,
           tokenEditor: true,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
