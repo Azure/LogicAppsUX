@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from 'react-redux';
 export interface BJSWorkflowProviderProps {
   workflow: Workflow;
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
-  isPowerAutomate?: boolean;
   children?: React.ReactNode;
 }
 

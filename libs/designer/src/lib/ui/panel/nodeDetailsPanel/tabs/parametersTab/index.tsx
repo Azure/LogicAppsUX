@@ -185,7 +185,6 @@ const ParameterSection = ({
       workflowParameters: state.workflowParameters.definitions,
     };
   });
-  const isPowerAutomate = useSelector((state: RootState) => state.workflow.isPowerAutomate);
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
@@ -395,7 +394,6 @@ const ParameterSection = ({
           value: remappedValues,
           editor,
           editorOptions,
-          isPowerAutomate,
           tokenEditor: true,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
@@ -408,6 +406,7 @@ const ParameterSection = ({
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
+          suppressCastingForSerialize: /* TODO: Will need to determine how this is passed down */ false,
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
               { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
