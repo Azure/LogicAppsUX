@@ -150,7 +150,7 @@ export const DesignerApp = () => {
   const loadingApp = <Spinner className="designer--loading" size={SpinnerSize.large} label={intlText.LOADING_APP} />;
 
   const designerCommandBar =
-    readOnly && !isMonitoringView ? null : (
+    readOnly && !isMonitoringView && !isUnitTest ? null : (
       <DesignerCommandBar
         isDisabled={isError || isFetching || isLoading}
         isRefreshing={isRefetching}
