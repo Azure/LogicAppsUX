@@ -21,7 +21,7 @@ import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { delay } from '@azure/ms-rest-js';
@@ -190,12 +190,13 @@ export function startDesignTimeProcess(
 }
 
 export function stopDesignTimeApi(): void {
+  ext.outputChannel.appendLog('Stopping Design Time Api');
   if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
     return;
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /T /F');
+    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /t /f');
   } else {
     ext.designChildProcess.kill();
   }
@@ -205,7 +206,7 @@ export function stopDesignTimeApi(): void {
 export async function promptStartDesignTimeOption(context: IActionContext) {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
     if (projectPath) {

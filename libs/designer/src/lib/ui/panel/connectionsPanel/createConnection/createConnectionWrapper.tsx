@@ -1,12 +1,13 @@
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
+import { getIconUriFromConnector, useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
 import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
-  getApiHubAuthentication,
   getConnectionMetadata,
   getConnectionProperties,
-  needsOAuth,
+  getApiHubAuthentication,
   updateNodeConnection,
+  needsOAuth,
 } from '../../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {
@@ -15,20 +16,18 @@ import {
   useGateways,
   useSubscriptions,
 } from '../../../../core/state/connection/connectionSelector';
-import { useMonitoringView } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { isolateTab, showDefaultTabs } from '../../../../core/state/panel/panelSlice';
-import { useOperationInfo, useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useReferencePanelMode } from '../../../../core/state/panel/panelSelectors';
+import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import {
   getAssistedConnectionProps,
   getConnectionParametersForAzureConnection,
   getSupportedParameterSets,
 } from '../../../../core/utils/connectors/connections';
-import { Spinner, SpinnerSize } from '@fluentui/react';
+import { CreateConnection } from './createConnection';
+import { Spinner } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
-import { LogEntryLevel, LoggerService, ConnectionService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import { CreateConnection } from '@microsoft/designer-ui';
-import type { PanelTab } from '@microsoft/designer-ui';
+import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   Connection,
   ConnectionParameterSet,
@@ -40,17 +39,18 @@ import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-const CreateConnectionTab = () => {
+export const CreateConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
   const nodeId: string = useSelectedNodeId();
+  const nodeIds = useSelectedNodeIds();
   const connector = useConnectorByNodeId(nodeId);
+  const iconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
-  const isMonitoringView = useMonitoringView();
 
   const subscriptionsQuery = useSubscriptions();
   const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
@@ -66,8 +66,12 @@ const CreateConnectionTab = () => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const applyNewConnection = useCallback(
-    (newConnection: Connection, selectedIdentity?: string) => {
-      const payload: ConnectionPayload = { nodeId, connection: newConnection, connector: connector as Connector };
+    (_nodeId: string, newConnection: Connection, selectedIdentity?: string) => {
+      const payload: ConnectionPayload = {
+        nodeId: _nodeId,
+        connection: newConnection,
+        connector: connector as Connector,
+      };
 
       if (selectedIdentity) {
         const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
@@ -77,7 +81,7 @@ const CreateConnectionTab = () => {
 
       dispatch(updateNodeConnection(payload));
     },
-    [connector, dispatch, nodeId]
+    [connector, dispatch]
   );
 
   const assistedConnectionProps = useMemo(
@@ -106,6 +110,14 @@ const CreateConnectionTab = () => {
         onSubResourceSelect: selectSubResourceCallback,
       }
     : undefined;
+
+  const referencePanelMode = useReferencePanelMode();
+  const closeConnectionsFlow = useCallback(() => {
+    const panelMode = referencePanelMode ?? 'Operation';
+    const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
+    dispatch(setIsCreatingConnection(false));
+    dispatch(openPanel({ nodeId, panelMode }));
+  }, [dispatch, referencePanelMode, nodeIds]);
 
   const createConnectionCallback = useCallback(
     async (
@@ -198,8 +210,8 @@ const CreateConnectionTab = () => {
         }
 
         if (connection) {
-          applyNewConnection(connection, identitySelected);
-          dispatch(showDefaultTabs({ isMonitoringView }));
+          for (const nodeId of nodeIds) applyNewConnection(nodeId, connection, identitySelected);
+          closeConnectionsFlow();
         } else if (err) {
           setErrorMessage(String(err));
         }
@@ -216,19 +228,19 @@ const CreateConnectionTab = () => {
       setIsLoading(false);
     },
     [
-      applyNewConnection,
+      connector,
       assistedConnectionProps,
       connectionMetadata,
-      connector,
-      dispatch,
       operationManifest?.properties.connection?.type,
       selectedSubResource,
-      isMonitoringView,
+      closeConnectionsFlow,
+      nodeIds,
+      applyNewConnection,
     ]
   );
 
   const cancelCallback = useCallback(() => {
-    dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
+    dispatch(setIsCreatingConnection(false));
   }, [dispatch]);
 
   const loadingText = intl.formatMessage({
@@ -239,12 +251,14 @@ const CreateConnectionTab = () => {
   if (connector?.properties === undefined)
     return (
       <div className="msla-loading-container">
-        <Spinner size={SpinnerSize.large} label={loadingText} />
+        <Spinner size={'large'} label={loadingText} />
       </div>
     );
 
   return (
     <CreateConnection
+      nodeIds={nodeIds}
+      iconUri={iconUri}
       connectorId={connector.id}
       connectorDisplayName={connector.properties.displayName}
       connectorCapabilities={connector.properties.capabilities}
@@ -264,18 +278,7 @@ const CreateConnectionTab = () => {
       availableGateways={availableGateways}
       gatewayServiceConfig={gatewayServiceConfig}
       checkOAuthCallback={needsOAuth}
-      resourceSelectedProps={resourceSelectorProps}
+      resourceSelectorProps={resourceSelectorProps}
     />
   );
 };
-
-export function getCreateConnectionTab(title: string): PanelTab {
-  return {
-    title: title,
-    name: constants.PANEL_TAB_NAMES.CONNECTION_CREATE,
-    description: 'Create Connection Tab',
-    visible: true,
-    content: <CreateConnectionTab />,
-    order: 0,
-  };
-}

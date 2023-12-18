@@ -4,7 +4,7 @@ import type {
   IConnectionParameterEditorService,
   IConnectionParameterInfo,
 } from '@microsoft/designer-client-services-logic-apps';
-import { ConnectionParameterRow, UniversalConnectionParameter } from '@microsoft/designer-ui';
+import { ConnectionParameterRow, UniversalConnectionParameter } from '@microsoft/logic-apps-designer';
 import { useEffect, useState } from 'react';
 
 export class CustomConnectionParameterEditorService implements IConnectionParameterEditorService {
