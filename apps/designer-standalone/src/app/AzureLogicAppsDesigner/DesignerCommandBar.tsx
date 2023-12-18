@@ -44,6 +44,7 @@ export const DesignerCommandBar = ({
   showConnectionsPanel,
   rightShift,
   enableCopilot,
+  isUnitTest,
 }: {
   id: string;
   location: string;
@@ -51,6 +52,7 @@ export const DesignerCommandBar = ({
   discard: () => unknown;
   saveWorkflow: (workflow: Workflow) => Promise<void>;
   isDarkMode: boolean;
+  isUnitTest: boolean;
   isConsumption?: boolean;
   showConnectionsPanel?: boolean;
   rightShift?: string;
@@ -143,6 +145,14 @@ export const DesignerCommandBar = ({
         onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
       },
       {
+        key: 'Assertions',
+        text: 'Assertions',
+        ariaLabel: 'Assertions',
+        iconProps: { iconName: 'CheckMark' },
+        disabled: !isUnitTest,
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
+      },
+      {
         key: 'codeview',
         text: 'View Code',
         iconProps: { iconName: 'Code' },
@@ -208,6 +218,7 @@ export const DesignerCommandBar = ({
       showConnectionsPanel,
       enableCopilot,
       isCopilotReady,
+      isUnitTest,
     ]
   );
 

@@ -1,9 +1,10 @@
 import type { PanelLocation, PanelTab } from '@microsoft/designer-ui';
 
-export type PanelMode = 'Operation' | 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Connection';
+export type PanelMode = 'Operation' | 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Connection' | 'Assertions';
 
 export interface PanelState {
   collapsed: boolean;
+  currentState?: 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Assertions';
   selectedNodes: string[];
   currentPanelMode?: PanelMode;
   referencePanelMode?: PanelMode;

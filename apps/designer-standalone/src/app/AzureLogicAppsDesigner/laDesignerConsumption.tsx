@@ -201,6 +201,7 @@ const DesignerEditorConsumption = () => {
                 isReadOnly={readOnly}
                 isDarkMode={isDarkMode}
                 isConsumption
+                isUnitTest={false}
                 showConnectionsPanel={showConnectionsPanel}
                 rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={() => {

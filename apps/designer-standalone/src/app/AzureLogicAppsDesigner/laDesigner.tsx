@@ -260,6 +260,7 @@ const DesignerEditor = () => {
                 location={canonicalLocation}
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
+                isUnitTest={isUnitTest}
                 showConnectionsPanel={showConnectionsPanel}
                 rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={async () => {

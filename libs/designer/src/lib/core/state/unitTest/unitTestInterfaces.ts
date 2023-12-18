@@ -5,14 +5,14 @@ export interface AddMockResultPayload {
 
 export interface InitDefintionPayload {
   assertions: string[];
-  mockResults: Map<string, string>;
+  mockResults: { [key: string]: string };
 }
 
 export interface AddAssertionPayload {
-  assertion: string;
+  assertions: string[];
 }
 
 export interface UnitTestState {
-  mockResults: Map<string, string>;
+  mockResults: { [key: string]: string };
   assertions: string[];
 }

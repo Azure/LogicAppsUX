@@ -113,11 +113,11 @@ export const Deserialize = (
 export const deserializeUnitTestDefinition = (unitTestDefinition: any | null): any => {
   if (isNullOrUndefined(unitTestDefinition)) return null;
   // deserialize mocks
-  const mockResults = new Map();
+  const mockResults: { [key: string]: string } = {};
   const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
-  mockResults.set(`&${triggerName}`, JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4));
+  mockResults[`&${triggerName}`] = JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4);
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
-    mockResults.set(actionName, JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4));
+    mockResults[actionName] = JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4);
   });
 
   // deserialize assertions

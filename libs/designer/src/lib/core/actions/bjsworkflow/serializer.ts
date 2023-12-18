@@ -1086,10 +1086,11 @@ const getAssertions = (assertions: string[]): Assertion[] => {
   return result;
 };
 
-const getTriggerMocks = (mockResults: Map<string, string>): Record<string, OperationMock> => {
+const getTriggerMocks = (mockResults: { [key: string]: string }): Record<string, OperationMock> => {
   const result: Record<string, OperationMock> = {};
-  mockResults.forEach((value, key) => {
+  Object.keys(mockResults).forEach((key) => {
     if (key.charAt(0) === '&') {
+      const value = mockResults[key];
       if (value) {
         // return trigger
         const mockTriggerJson = JSON.parse(value);
@@ -1098,14 +1099,14 @@ const getTriggerMocks = (mockResults: Map<string, string>): Record<string, Opera
       }
     }
   });
-  // only reach here if there is not trigger mock
   return result;
 };
 
-const getActionMocks = (mockResults: Map<string, string>): Record<string, OperationMock> => {
+const getActionMocks = (mockResults: { [key: string]: string }): Record<string, OperationMock> => {
   const result: Record<string, OperationMock> = {};
-  mockResults.forEach((value, key) => {
+  Object.keys(mockResults).forEach((key) => {
     if (key.charAt(0) !== '&') {
+      const value = mockResults[key];
       if (value) {
         const mockResultJson = JSON.parse(value);
         result[key] = mockResultJson;

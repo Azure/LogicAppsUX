@@ -243,9 +243,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       text: Resources.UNIT_TEST_ASSERTIONS,
       ariaLabel: Resources.UNIT_TEST_ASSERTIONS,
       iconProps: { iconName: 'CheckMark' },
-      onClick: () => {
-        console.log('Assertions clicked');
-      },
+      onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
     },
   ];
 

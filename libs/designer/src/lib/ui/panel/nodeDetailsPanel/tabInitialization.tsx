@@ -8,6 +8,7 @@ import { useHasSchema } from '../../../core/state/staticresultschema/staitcresul
 import { isRootNodeInGraph } from '../../../core/utils/graph';
 import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
+import { mockResultsTab } from './tabs/mockResultsTab/mockResultsTab';
 import { monitoringTab } from './tabs/monitoringTab/monitoringTab';
 import { parametersTab } from './tabs/parametersTab';
 import { monitorRetryTab } from './tabs/retryTab';
@@ -43,6 +44,7 @@ export const usePanelTabs = () => {
       testingTab(intl),
       aboutTab(intl),
       monitorRetryTab(intl),
+      mockResultsTab(intl),
     ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
