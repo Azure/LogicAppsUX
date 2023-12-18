@@ -11,12 +11,6 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Criar referência de conexão"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Protegido"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 0,
+      "value": "conexões "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "+FcXe9": [
@@ -909,6 +913,12 @@
       "value": "Necessário. Este valor é o próximo inteiro após o número inteiro mais alto que poderia ser retornado."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Abrir conexão"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1099,12 +1109,6 @@
       "value": "Autoridade"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Carregando..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1217,12 +1221,6 @@
     {
       "type": 0,
       "value": "O valor de tempo limite é inválido. Ele deve corresponder ao formato de duração ISO 8601"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Selecionar referência de conexão"
     }
   ],
   "6fDYzG": [
@@ -1341,6 +1339,12 @@
     {
       "type": 0,
       "value": "Atualizar esquema de origem"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Criar uma nova conexão"
     }
   ],
   "78Vggn": [
@@ -2154,12 +2158,6 @@
       "value": "Conexão exigida"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Criar conexão"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2380,6 +2378,12 @@
       "value": "Duração"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Selecione uma conexão existente ou crie uma nova"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2576,12 +2580,6 @@
     {
       "type": 0,
       "value": "Selecione sim ou não"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nome de exibição da conexão"
     }
   ],
   "F3IDl8": [
@@ -2973,12 +2971,6 @@
     {
       "type": 0,
       "value": "Sair de tela inteira"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Selecione uma referência de conexão existente ou crie uma nova."
     }
   ],
   "HSJLCu": [
@@ -3828,6 +3820,12 @@
     {
       "type": 0,
       "value": "Insira um nome de propriedade exclusivo"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Criar Conexão"
     }
   ],
   "Nh91qA": [
@@ -5915,6 +5913,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Selecione uma referência de conexão existente ou crie uma nova"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6297,10 +6301,16 @@
       "value": "Descartar alterações"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Marque a caixa de seleção para escolher esta conexão."
+      "value": "Alterar Conexão"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "A conexão é válida"
     }
   ],
   "ca/QIc": [
@@ -6617,6 +6627,12 @@
       "value": "Quando um novo item"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reatribuir todas as ações conectadas a uma nova conexão"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6721,12 +6737,6 @@
       "value": "Desculpe, algo deu errado. Tente novamente."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Selecionar a conexão"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6763,6 +6773,12 @@
       "value": "Executar teste"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6785,12 +6801,6 @@
     {
       "type": 0,
       "value": "Necessário. Um valor booliano que determina qual valor a expressão deve retornar."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nome da conexão"
     }
   ],
   "gIx5ys": [
@@ -6998,6 +7008,12 @@
     {
       "type": 0,
       "value": "Desfazer"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Ações conectadas"
     }
   ],
   "hZqQdt": [
@@ -7853,6 +7869,12 @@
       "value": "\", dividido em não na matriz."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "A conexão é inválida"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7893,6 +7915,12 @@
     {
       "type": 0,
       "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Conexões"
     }
   ],
   "mvrlkP": [
@@ -8011,6 +8039,12 @@
     {
       "type": 0,
       "value": "Personalizado"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Várias ações serão modificadas por essa alteração."
     }
   ],
   "nSan4V": [
@@ -8267,6 +8301,12 @@
       "value": "No aplicativo"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Ações desconectadas"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8459,12 +8499,6 @@
     {
       "type": 0,
       "value": "Verifica se a cadeia de caracteres termina com um valor (não diferencia maiúsculas de minúsculas, cultura invariável)"
-    }
-  ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Conexão inválida."
     }
   ],
   "qSejoi": [
@@ -8668,12 +8702,6 @@
     {
       "type": 0,
       "value": "Segredo"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "A conexão é inválida"
     }
   ],
   "rNi5Y3": [
@@ -9308,12 +9336,6 @@
       "value": "Data de disparo"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Carregando"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9760,6 +9782,12 @@
       "value": "Valor"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Reatribuir todas as ações desconectadas a uma nova conexão"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9864,12 +9892,6 @@
       "value": "Gerar XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Selecione uma conexão existente ou crie uma nova."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9904,12 +9926,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Varsóvia, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Gateway de conexão"
     }
   ],
   "yzqXMp": [

@@ -59,12 +59,6 @@ import {
   ManifestParser,
   PropertyName,
 } from '@microsoft/parsers-logic-apps';
-import type {
-  CustomSwaggerServiceDetails,
-  OperationInfo,
-  OperationManifest,
-  OperationManifestProperties,
-} from '@microsoft/utils-logic-apps';
 import {
   CustomSwaggerServiceNames,
   UnsupportedException,
@@ -73,6 +67,12 @@ import {
   ConnectionReferenceKeyFormat,
   unmap,
   getObjectPropertyValue,
+} from '@microsoft/utils-logic-apps';
+import type {
+  CustomSwaggerServiceDetails,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 

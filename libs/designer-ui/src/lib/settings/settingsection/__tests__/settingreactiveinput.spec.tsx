@@ -37,7 +37,6 @@ describe('ui/settings/settingreactiveinput', () => {
     const [toggle, textFieldContainer]: any[] = React.Children.toArray(reactiveToggle.props.children);
 
     expect(toggle.props.checked).toBeTruthy();
-    console.log(textFieldContainer);
     const [textField]: any[] = React.Children.toArray(textFieldContainer.props.children);
     expect(textField.props.id).toBe(minimal.textFieldId);
     expect(textField.props.value).toBe(minimal.textFieldValue);

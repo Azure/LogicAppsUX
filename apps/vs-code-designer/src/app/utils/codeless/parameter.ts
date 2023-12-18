@@ -3,7 +3,7 @@ import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
-import { getFunctionProjectRoot } from './connection';
+import { getLogicAppProjectRoot } from './connection';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
@@ -29,7 +29,7 @@ export async function getParametersJson(workflowFilePath: string): Promise<Recor
 }
 
 export async function saveParameters(context: IActionContext, workflowFilePath: string, parameters: WorkflowParameter): Promise<void> {
-  const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const parametersFilePath = path.join(projectPath, parametersFileName);
   const parametersFileExists = fse.pathExistsSync(parametersFilePath);
 

@@ -1,9 +1,15 @@
 import { processNodeType } from '../../../html/plugins/toolbar/helper/functions';
-import { decodeSegmentValue, encodeSegmentValue } from '../../../html/plugins/toolbar/helper/util';
+import {
+  decodeSegmentValueInDomContext,
+  decodeSegmentValueInLexicalContext,
+  encodeSegmentValueInDomContext,
+  encodeSegmentValueInLexicalContext,
+} from '../../../html/plugins/toolbar/helper/util';
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
-import type { ValueSegment } from '../../models/parameter';
+import type { Token, ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
+import type { TokenNode } from '../nodes/tokenNode';
 import { $createTokenNode } from '../nodes/tokenNode';
 import { convertStringToSegments } from './editorToSegment';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
@@ -28,10 +34,18 @@ import {
   $createLineBreakNode,
 } from 'lexical';
 
-export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean, readonly?: boolean): RootNode => {
+export interface SegmentParserOptions {
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  readonly?: boolean;
+  segmentMapping?: Record<string, ValueSegment>;
+  tokensEnabled?: boolean;
+}
+
+export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParserOptions): RootNode => {
+  const { tokensEnabled } = options ?? {};
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
-  const root = $getRoot();
+  const root = $getRoot().clear();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode | HeadingNode | ListNode;
 
@@ -43,7 +57,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const encodedStringValue = encodeStringSegments(stringValue, tokensEnabled);
+  const encodedStringValue = encodeStringSegmentTokensInLexicalContext(stringValue, nodeMap);
 
   const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
@@ -59,7 +73,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
         if ($isLinkNode(childNode)) {
           const linkNode = $createLinkNode(getURL(childNode, tokensEnabled, nodeMap));
           childNode.getChildren().forEach((listItemChildNode) => {
-            appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled, readonly);
+            appendChildrenNode(linkNode, listItemChildNode, nodeMap, options);
           });
           paragraph.append(linkNode);
         }
@@ -67,13 +81,13 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
         else if ($isListItemNode(childNode)) {
           const listItemNode = $createListItemNode();
           childNode.getChildren().forEach((listItemChildNode) => {
-            appendChildrenNode(listItemNode, listItemChildNode, nodeMap, tokensEnabled, readonly);
+            appendChildrenNode(listItemNode, listItemChildNode, nodeMap, options);
           });
           paragraph.append(listItemNode);
         }
         // Non line break nodes are parsed and appended to the paragraph node
         else if (!$isLineBreakNode(childNode)) {
-          appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled, readonly);
+          appendChildrenNode(paragraph, childNode, nodeMap, options);
         }
         // needs to wait for this fix https://github.com/facebook/lexical/issues/3879
         else if ($isLineBreakNode(childNode)) {
@@ -106,34 +120,49 @@ const appendChildrenNode = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
   childNode: LexicalNode,
   nodeMap: Map<string, ValueSegment>,
-  tokensEnabled?: boolean,
-  readonly?: boolean
+  options: SegmentParserOptions | undefined
 ) => {
+  const { loadParameterValueFromString, tokensEnabled } = options ?? {};
+
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
-    const decodedTextContent = tokensEnabled ? decodeSegmentValue(textContent) : textContent;
-    const childNodeStyles = childNode.getStyle();
-    const childNodeFormat = childNode.getFormat();
+    const decodedTextContent = tokensEnabled ? decodeSegmentValueInLexicalContext(textContent) : textContent;
+
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
     // and we'll need to use the ExtendedTextNode to apply the styles and format
-    appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled, readonly);
+    const childNodeStyles = childNode.getStyle();
+    const childNodeFormat = childNode.getFormat();
+
+    if (tokensEnabled && nodeMap && loadParameterValueFromString) {
+      const contentAsParameter = loadParameterValueFromString(decodedTextContent);
+      contentAsParameter.forEach((segment) => {
+        const tokenNode = createTokenNodeFromSegment(segment, options);
+        if (tokenNode) {
+          paragraph.append(tokenNode);
+        } else {
+          appendStringSegment(paragraph, segment.value, childNodeStyles, childNodeFormat, nodeMap, options);
+        }
+      });
+    } else {
+      appendStringSegment(paragraph, decodedTextContent, childNodeStyles, childNodeFormat, nodeMap, options);
+    }
   } else {
     paragraph.append(childNode);
   }
 };
 
 // Splits up text content into their respective nodes
-export const appendStringSegment = (
+const appendStringSegment = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
   value: string,
-  childNodeStyles?: string,
-  childNodeFormat?: number,
-  nodeMap?: Map<string, ValueSegment>,
-  tokensEnabled?: boolean,
-  readonly?: boolean
+  childNodeStyles: string | undefined,
+  childNodeFormat: number | undefined,
+  nodeMap: Map<string, ValueSegment> | undefined,
+  options: SegmentParserOptions | undefined
 ) => {
+  const { tokensEnabled } = options ?? {};
   let currIndex = 0;
   let prevIndex = 0;
   while (currIndex < value.length) {
@@ -146,37 +175,8 @@ export const appendStringSegment = (
       // token is found in the text
       if (nodeMap && tokensEnabled) {
         const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
-        if (tokenSegment && tokenSegment.token) {
-          const segmentValue = tokenSegment.value;
-          const { brandColor, icon, title, name, value, tokenType } = tokenSegment.token;
-          // Expression token handling
-          if (tokenType === TokenType.FX) {
-            const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
-            const token = $createTokenNode({
-              title: getExpressionTokenTitle(expressionValue) ?? title,
-              data: tokenSegment,
-              brandColor,
-              icon,
-              value,
-              readonly,
-            });
-            tokensEnabled && paragraph.append(token);
-          }
-          // other token handling
-          else if (title || name) {
-            const token = $createTokenNode({
-              title: title ?? name,
-              data: tokenSegment,
-              brandColor,
-              icon,
-              value,
-              readonly,
-            });
-            tokensEnabled && paragraph.append(token);
-          } else {
-            throw new Error('Token Node is missing title or name');
-          }
-        }
+        const token = createTokenNodeFromSegment(tokenSegment, options);
+        token && paragraph.append(token);
       }
       prevIndex = currIndex = newIndex;
     }
@@ -188,7 +188,7 @@ export const appendStringSegment = (
   }
 };
 
-export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boolean, readonly?: boolean): RootNode => {
+export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentParserOptions): RootNode => {
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -203,31 +203,8 @@ export const parseSegments = (valueSegments: ValueSegment[], tokensEnabled?: boo
   valueSegments.forEach((segment) => {
     const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
-      const { brandColor, icon, title, name, value, tokenType } = segment.token;
-      if (tokenType === TokenType.FX) {
-        const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
-        const token = $createTokenNode({
-          title: getExpressionTokenTitle(expressionValue) ?? title,
-          data: segment,
-          brandColor,
-          icon,
-          value,
-          readonly,
-        });
-        tokensEnabled && paragraph.append(token);
-      } else if (title || name) {
-        const token = $createTokenNode({
-          title: title ?? name,
-          data: segment,
-          brandColor,
-          icon,
-          value,
-          readonly,
-        });
-        tokensEnabled && paragraph.append(token);
-      } else {
-        throw new Error('Token Node is missing title or name');
-      }
+      const token = createTokenNodeFromSegment(segment, options);
+      token && paragraph.append(token);
     } else {
       // there are some cases where segmentValue comes in as a JSON
       if (typeof segmentValue === 'string') {
@@ -252,9 +229,9 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
     if (segment.type === ValueSegmentType.LITERAL) {
       text += segment.value;
     } else if (segment.token) {
-      const { title, brandColor, value } = segment.token;
+      const { value } = segment.token;
       // get a text-identifiable unique id for the token
-      const string = `$[${title},${value},${brandColor}]$`;
+      const string = `@{${value}}`;
       text += string;
       nodeMap?.set(string, segment);
     }
@@ -262,30 +239,87 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
   return text;
 };
 
-export const encodeStringSegments = (value: string, tokensEnabled: boolean | undefined): string => {
-  if (!tokensEnabled) {
-    return value;
+const createTokenNodeFromSegment = (
+  tokenSegment: ValueSegment | undefined,
+  options: SegmentParserOptions | undefined
+): TokenNode | undefined => {
+  if (!tokenSegment?.token) {
+    return undefined;
   }
 
-  let newValue = '';
+  const { readonly, segmentMapping } = options ?? {};
 
-  for (let i = 0; i < value.length; i++) {
-    if (value.substring(i, i + 2) === '$[') {
-      const startIndex = i;
-      const endIndex = value.indexOf(']$', startIndex);
-      if (endIndex === -1) {
-        break;
-      }
+  const segmentValue = tokenSegment.value;
+  const mappedSegment = segmentMapping?.[segmentValue];
 
-      const tokenSegment = value.substring(startIndex + 2, endIndex);
-      const encodedTokenSegment = `$[${encodeSegmentValue(tokenSegment)}]$`;
-      newValue += encodedTokenSegment;
+  let segment: ValueSegment;
+  let segmentToken: Token;
 
-      i = endIndex + 1; // Skip the ']', and i++ will skip the '$'.
-      continue;
-    }
+  if (mappedSegment?.token) {
+    segment = mappedSegment;
+    segmentToken = mappedSegment.token;
+  } else {
+    segment = tokenSegment;
+    segmentToken = tokenSegment.token;
+  }
 
-    newValue += value[i];
+  const { brandColor, icon, title, name, value, tokenType } = segmentToken;
+  // Expression token handling
+  if (tokenType === TokenType.FX) {
+    const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
+    return $createTokenNode({
+      title: getExpressionTokenTitle(expressionValue) ?? title,
+      data: segment,
+      brandColor,
+      icon,
+      value,
+      readonly,
+    });
+  }
+
+  // other token handling
+  if (title || name) {
+    return $createTokenNode({
+      title: title ?? name,
+      data: segment,
+      brandColor,
+      icon,
+      value,
+      readonly,
+    });
+  }
+
+  throw new Error('Token Node is missing title or name');
+};
+
+export const decodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInDomContext, encodeSegmentValueInDomContext, 'decode');
+
+export const encodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInDomContext, encodeSegmentValueInDomContext, 'encode');
+
+export const decodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext, 'decode');
+
+export const encodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+  encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext, 'encode');
+
+const encodeOrDecodeStringSegmentTokens = (
+  value: string,
+  nodeMap: Map<string, ValueSegment>,
+  decoder: (input: string) => string,
+  encoder: (input: string) => string,
+  direction: 'encode' | 'decode'
+): string => {
+  let newValue = value;
+
+  for (const [key] of nodeMap.entries()) {
+    const encodedValue = encoder(key);
+    const decodedValue = decoder(key);
+    newValue = newValue.replaceAll(
+      direction === 'encode' ? decodedValue : encodedValue,
+      direction === 'encode' ? encodedValue : decodedValue
+    );
   }
 
   return newValue;
