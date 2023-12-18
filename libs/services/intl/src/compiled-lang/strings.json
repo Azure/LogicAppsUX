@@ -23,16 +23,6 @@
       "value": "Protected"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -4827,6 +4817,12 @@
       "value": "Note"
     }
   ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnected"
+    }
+  ],
   "Ttc0SM": [
     {
       "type": 0,
@@ -5395,6 +5391,12 @@
     {
       "type": 0,
       "value": "A managed identity is not configured on the logic app."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "X/7je+": [
@@ -6577,6 +6579,12 @@
       "value": "Italic (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reassign"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6951,12 +6959,6 @@
     {
       "type": 0,
       "value": "Undo"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hUZwdI": [
@@ -8237,12 +8239,6 @@
     {
       "type": 0,
       "value": "In-App"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -9707,12 +9703,6 @@
     {
       "type": 0,
       "value": "Value"
-    }
-  ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
     }
   ],
   "y1e9yw": [

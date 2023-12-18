@@ -7,7 +7,8 @@ import { PanelHeader } from './panelheader/panelheader';
 import type { TitleChangeHandler } from './panelheader/panelheadertitle';
 import { PanelPivot } from './panelpivot';
 import type { ILayerProps } from '@fluentui/react';
-import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { MessageBar, MessageBarType } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { useCallback } from 'react';
@@ -161,7 +162,7 @@ export const PanelContainer = ({
             <EmptyContent />
           ) : isLoading ? (
             <div className="msla-loading-container">
-              <Spinner size={SpinnerSize.large} />
+              <Spinner size={'large'} />
             </div>
           ) : isError ? (
             <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
