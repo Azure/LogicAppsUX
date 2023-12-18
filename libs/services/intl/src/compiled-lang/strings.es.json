@@ -30,7 +30,7 @@
     },
     {
       "type": 0,
-      "value": " connections"
+      "value": " conexiones"
     }
   ],
   "+FcXe9": [
@@ -932,7 +932,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Abrir conexión"
     }
   ],
   "41eMpW": [
@@ -1368,7 +1368,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Crear una conexión nueva"
     }
   ],
   "78Vggn": [
@@ -2409,7 +2409,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Seleccionar una conexión existente o crear una nueva"
     }
   ],
   "Dhu3IS": [
@@ -3853,7 +3853,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Crear conexión"
     }
   ],
   "Nh91qA": [
@@ -5948,7 +5948,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Seleccione una referencia de conexión existente o cree una nueva"
     }
   ],
   "ZBJiuD": [
@@ -6336,13 +6336,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Cambiar conexión"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "La conexión es válida"
     }
   ],
   "ca/QIc": [
@@ -6662,7 +6662,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Reasignar todas las acciones conectadas a una nueva conexión"
     }
   ],
   "f/lWTW": [
@@ -6803,6 +6803,12 @@
     {
       "type": 0,
       "value": "Ejecutar prueba"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
     }
   ],
   "gCXOd5": [
@@ -7039,7 +7045,7 @@
   "hTZZr+": [
     {
       "type": 0,
-      "value": "Connected actions"
+      "value": "Acciones conectadas"
     }
   ],
   "hZqQdt": [
@@ -7890,7 +7896,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "La conexión no es válida"
     }
   ],
   "mYQFtf": [
@@ -7938,7 +7944,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Conexiones"
     }
   ],
   "mvrlkP": [
@@ -8062,7 +8068,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Este cambio modificará varias acciones."
     }
   ],
   "nSan4V": [
@@ -8322,7 +8328,7 @@
   "p3K7eM": [
     {
       "type": 0,
-      "value": "Disconnected actions"
+      "value": "Acciones desconectadas"
     }
   ],
   "p5ZID0": [
@@ -9803,7 +9809,7 @@
   "xxeu75": [
     {
       "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
+      "value": "Reasignar todas las acciones desconectadas a una nueva conexión"
     }
   ],
   "y1e9yw": [

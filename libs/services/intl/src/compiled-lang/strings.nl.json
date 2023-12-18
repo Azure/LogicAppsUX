@@ -30,7 +30,7 @@
     },
     {
       "type": 0,
-      "value": " connections"
+      "value": "-verbindingen"
     }
   ],
   "+FcXe9": [
@@ -932,7 +932,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Verbinding openen"
     }
   ],
   "41eMpW": [
@@ -1372,7 +1372,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Een nieuwe verbinding maken"
     }
   ],
   "78Vggn": [
@@ -2398,7 +2398,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Selecteer een bestaande verbinding of maak een nieuwe"
     }
   ],
   "Dhu3IS": [
@@ -3824,7 +3824,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Verbinding maken"
     }
   ],
   "Nh91qA": [
@@ -5900,7 +5900,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Selecteer een bestaande verbindingsverwijzing of maak een nieuwe"
     }
   ],
   "ZBJiuD": [
@@ -6288,13 +6288,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Verbinding wijzigen"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "Verbinding is geldig"
     }
   ],
   "ca/QIc": [
@@ -6614,7 +6614,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Alle verbonden acties opnieuw toewijzen aan een nieuwe verbinding"
     }
   ],
   "f/lWTW": [
@@ -6751,6 +6751,12 @@
     {
       "type": 0,
       "value": "Test uitvoeren"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
     }
   ],
   "gCXOd5": [
@@ -6976,7 +6982,7 @@
   "hTZZr+": [
     {
       "type": 0,
-      "value": "Connected actions"
+      "value": "Verbonden acties"
     }
   ],
   "hZqQdt": [
@@ -7824,7 +7830,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "Verbinding is ongeldig"
     }
   ],
   "mYQFtf": [
@@ -7872,7 +7878,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Verbindingen"
     }
   ],
   "mvrlkP": [
@@ -7996,7 +8002,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Door deze wijziging worden meerdere acties gewijzigd."
     }
   ],
   "nSan4V": [
@@ -8256,7 +8262,7 @@
   "p3K7eM": [
     {
       "type": 0,
-      "value": "Disconnected actions"
+      "value": "Verbroken acties"
     }
   ],
   "p5ZID0": [
@@ -9714,7 +9720,7 @@
   "xxeu75": [
     {
       "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
+      "value": "Alle niet-verbonden acties opnieuw toewijzen aan een nieuwe verbinding"
     }
   ],
   "y1e9yw": [

@@ -30,7 +30,7 @@
     },
     {
       "type": 0,
-      "value": " connections"
+      "value": " bağlantıları"
     }
   ],
   "+FcXe9": [
@@ -924,7 +924,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Bağlantıyı açın"
     }
   ],
   "41eMpW": [
@@ -1360,7 +1360,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Yeni bağlantı oluştur"
     }
   ],
   "78Vggn": [
@@ -2390,7 +2390,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Mevcut bir bağlantıyı seçin veya yeni bir bağlantı oluşturun"
     }
   ],
   "Dhu3IS": [
@@ -3808,7 +3808,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Bağlantı Oluştur"
     }
   ],
   "Nh91qA": [
@@ -5892,7 +5892,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Mevcut bir bağlantı başvurusu seçin veya yeni bir başvuru oluşturun"
     }
   ],
   "ZBJiuD": [
@@ -6280,13 +6280,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Bağlantıyı Değiştir"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "Bağlantı geçerli"
     }
   ],
   "ca/QIc": [
@@ -6602,7 +6602,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Tüm bağlı eylemleri yeni bir bağlantıya yeniden atayın"
     }
   ],
   "f/lWTW": [
@@ -6743,6 +6743,12 @@
     {
       "type": 0,
       "value": "Testi çalıştır"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
     }
   ],
   "gCXOd5": [
@@ -6960,7 +6966,7 @@
   "hTZZr+": [
     {
       "type": 0,
-      "value": "Connected actions"
+      "value": "Bağlı eylemler"
     }
   ],
   "hZqQdt": [
@@ -7804,7 +7810,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "Bağlantı geçersiz"
     }
   ],
   "mYQFtf": [
@@ -7852,7 +7858,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Bağlantılar"
     }
   ],
   "mvrlkP": [
@@ -7976,7 +7982,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Bu değiştirilecek birden çok eylem değiştirilir."
     }
   ],
   "nSan4V": [
@@ -8236,7 +8242,7 @@
   "p3K7eM": [
     {
       "type": 0,
-      "value": "Disconnected actions"
+      "value": "Bağlantısı kesilmiş eylemler"
     }
   ],
   "p5ZID0": [
@@ -9698,7 +9704,7 @@
   "xxeu75": [
     {
       "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
+      "value": "Bağlantısı kesilmiş tüm eylemleri yeni bir bağlantıya yeniden atayın"
     }
   ],
   "y1e9yw": [

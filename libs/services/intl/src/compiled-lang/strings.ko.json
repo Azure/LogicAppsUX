@@ -25,12 +25,16 @@
   ],
   "+7IA0V": [
     {
+      "type": 0,
+      "value": "연결 "
+    },
+    {
       "type": 1,
       "value": "connectorName"
     },
     {
       "type": 0,
-      "value": " connections"
+      "value": "개"
     }
   ],
   "+FcXe9": [
@@ -924,7 +928,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "열린 연결"
     }
   ],
   "41eMpW": [
@@ -1360,7 +1364,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "새 연결을 만듦"
     }
   ],
   "78Vggn": [
@@ -2371,7 +2375,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "기존 연결을 선택하거나 새 연결을 만드세요."
     }
   ],
   "Dhu3IS": [
@@ -3767,7 +3771,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "연결 만들기"
     }
   ],
   "Nh91qA": [
@@ -5840,7 +5844,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "기존 연결 참조를 선택하거나 새 연결 참조를 만드세요."
     }
   ],
   "ZBJiuD": [
@@ -6228,13 +6232,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "연결 변경"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "연결이 유효합니다."
     }
   ],
   "ca/QIc": [
@@ -6550,7 +6554,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "연결된 모든 작업을 새 연결에 다시 할당"
     }
   ],
   "f/lWTW": [
@@ -6691,6 +6695,12 @@
     {
       "type": 0,
       "value": "테스트 실행"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
     }
   ],
   "gCXOd5": [
@@ -6897,7 +6907,7 @@
   "hTZZr+": [
     {
       "type": 0,
-      "value": "Connected actions"
+      "value": "연결된 작업"
     }
   ],
   "hZqQdt": [
@@ -7722,7 +7732,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "연결이 잘못되었습니다."
     }
   ],
   "mYQFtf": [
@@ -7770,7 +7780,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "연결"
     }
   ],
   "mvrlkP": [
@@ -7894,7 +7904,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "이 변경으로 인해 여러 작업이 수정됩니다."
     }
   ],
   "nSan4V": [
@@ -8154,7 +8164,7 @@
   "p3K7eM": [
     {
       "type": 0,
-      "value": "Disconnected actions"
+      "value": "연결이 끊긴 작업"
     }
   ],
   "p5ZID0": [
@@ -9601,7 +9611,7 @@
   "xxeu75": [
     {
       "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
+      "value": "연결이 끊긴 모든 작업을 새 연결에 다시 할당"
     }
   ],
   "y1e9yw": [

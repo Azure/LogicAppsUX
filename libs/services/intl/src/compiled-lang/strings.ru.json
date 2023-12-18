@@ -25,12 +25,12 @@
   ],
   "+7IA0V": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Подключения "
     },
     {
-      "type": 0,
-      "value": " connections"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "+FcXe9": [
@@ -932,7 +932,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Открыть подключение"
     }
   ],
   "41eMpW": [
@@ -1368,7 +1368,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Создание подключения"
     }
   ],
   "78Vggn": [
@@ -2420,7 +2420,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Выберите существующее подключение или создайте новое"
     }
   ],
   "Dhu3IS": [
@@ -3894,7 +3894,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Создать подключение"
     }
   ],
   "Nh91qA": [
@@ -6000,7 +6000,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Выберите существующую ссылку на подключение или создайте новую"
     }
   ],
   "ZBJiuD": [
@@ -6388,13 +6388,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Изменить подключение"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "Подключение действительно"
     }
   ],
   "ca/QIc": [
@@ -6714,7 +6714,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Переназначить все подключенные действия новому подключению"
     }
   ],
   "f/lWTW": [
@@ -6851,6 +6851,12 @@
     {
       "type": 0,
       "value": "Запустить тест"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
     }
   ],
   "gCXOd5": [
@@ -7098,7 +7104,7 @@
   "hTZZr+": [
     {
       "type": 0,
-      "value": "Connected actions"
+      "value": "Подключенные действия"
     }
   ],
   "hZqQdt": [
@@ -7972,7 +7978,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "Подключение недопустимо"
     }
   ],
   "mYQFtf": [
@@ -8020,7 +8026,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Подключения"
     }
   ],
   "mvrlkP": [
@@ -8144,7 +8150,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Это изменение приведет к изменению нескольких действий."
     }
   ],
   "nSan4V": [
@@ -8404,7 +8410,7 @@
   "p3K7eM": [
     {
       "type": 0,
-      "value": "Disconnected actions"
+      "value": "Отключенные действия"
     }
   ],
   "p5ZID0": [
@@ -9896,7 +9902,7 @@
   "xxeu75": [
     {
       "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
+      "value": "Переназначить все отключенные действия новому подключению"
     }
   ],
   "y1e9yw": [
