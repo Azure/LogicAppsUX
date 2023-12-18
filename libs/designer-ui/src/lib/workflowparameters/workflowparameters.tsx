@@ -3,39 +3,15 @@ import Constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, WorkflowParameterUpdateHandler } from './workflowparameter';
 import { WorkflowParameter } from './workflowparameter';
-import { CommandBarButton, List, MessageBar, useTheme, Text } from '@fluentui/react';
-import type { IIconProps, IMessageBarStyles } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
-import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
+import { List, useTheme, Text } from '@fluentui/react';
+import { Button, MessageBar } from '@fluentui/react-components';
+import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 
+const CreateIcon = bundleIcon(Add24Filled, Add24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-const lightMessageBarStyles: IMessageBarStyles = {
-  root: {
-    backgroundColor: Constants.BACKGROUND_COLOR_LIGHT,
-  },
-  icon: {
-    color: 'gray',
-  },
-  text: {
-    color: Constants.BACKGROUND_COLOR_DARK,
-  },
-};
-
-const darkMessageBarStyles: IMessageBarStyles = {
-  root: {
-    backgroundColor: Constants.BACKGROUND_COLOR_DARK,
-  },
-  icon: {
-    color: 'white',
-  },
-  text: {
-    color: 'white',
-  },
-};
-
-const InfoBar = ({ isInverted }: { isInverted: boolean }) => {
+const InfoBar = () => {
   const intl = useIntl();
   const text = intl.formatMessage({
     defaultMessage:
@@ -44,7 +20,7 @@ const InfoBar = ({ isInverted }: { isInverted: boolean }) => {
   });
   return (
     <div className="msla-workflow-parameters-message-bar">
-      <MessageBar isMultiline={true} styles={isInverted ? darkMessageBarStyles : lightMessageBarStyles}>
+      <MessageBar layout="multiline" style={{ padding: '8px 12px' }}>
         {text}
       </MessageBar>
     </div>
@@ -85,8 +61,6 @@ export function WorkflowParameters({
   const isInverted = isHighContrastBlack() || theme.isInverted;
 
   const intl = useIntl();
-
-  const addIcon: IIconProps = { iconName: 'Add' };
 
   const handleAddParameter = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (onAddParameter) {
@@ -162,9 +136,11 @@ export function WorkflowParameters({
         <Button appearance="subtle" onClick={onClose} icon={<CloseIcon />} />
       </div>
 
-      {useLegacy ? null : <InfoBar isInverted={isInverted} />}
+      {useLegacy ? null : <InfoBar />}
       <div className="msla-workflow-parameters-add">
-        <CommandBarButton disabled={isReadOnly} text={createText} iconProps={addIcon} onClick={handleAddParameter} />
+        <Button disabled={isReadOnly} onClick={handleAddParameter} icon={<CreateIcon />}>
+          {createText}
+        </Button>
       </div>
       {parameters.length ? null : renderTitleAndDescription()}
       {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : null}
