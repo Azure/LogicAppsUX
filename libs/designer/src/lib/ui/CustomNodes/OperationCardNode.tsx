@@ -21,7 +21,7 @@ import {
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedNodeId, showDefaultTabs } from '../../core/state/panel/panelSlice';
+import { changePanelNode, isolateTab, setSelectedNodeId, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
   useAllOperations,
   useBrandColor,
@@ -193,7 +193,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
     if (suppressDefaultNodeSelect) return;
     dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs({ isMonitoringView, isUnitTest, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
+    if (isUnitTest) {
+      dispatch(isolateTab(constants.PANEL_TAB_NAMES.MOCK_RESULTS));
+    } else {
+      dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
+    }
   }, [dispatch, hasSchema, id, isMonitoringView, isUnitTest, nodeSelectCallbackOverride, runHistory, suppressDefaultNodeSelect]);
 
   const brandColor = useBrandColor(id);

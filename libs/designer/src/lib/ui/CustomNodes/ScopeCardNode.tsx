@@ -6,7 +6,7 @@ import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly, useUnitTest } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
+import { changePanelNode, isolateTab, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
   useAllOperations,
   useBrandColor,
@@ -155,7 +155,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
-    dispatch(showDefaultTabs({ isScopeNode, isMonitoringView, isUnitTest }));
+    if (isUnitTest) {
+      dispatch(isolateTab(constants.PANEL_TAB_NAMES.MOCK_RESULTS));
+    } else {
+      dispatch(showDefaultTabs({ isScopeNode, isMonitoringView }));
+    }
   }, [dispatch, isScopeNode, scopeId, isMonitoringView, isUnitTest]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);

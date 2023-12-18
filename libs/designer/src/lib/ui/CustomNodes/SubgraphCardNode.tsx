@@ -68,12 +68,20 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         };
         initializeSwitchCaseFromManifest(newCaseId, subGraphManifest, dispatch);
         dispatch(changePanelNode(newCaseId));
-        dispatch(showDefaultTabs({ isMonitoringView, isUnitTest }));
+        if (isUnitTest) {
+          dispatch(isolateTab(constants.PANEL_TAB_NAMES.MOCK_RESULTS));
+        } else {
+          dispatch(showDefaultTabs({ isMonitoringView }));
+        }
         dispatch(setFocusNode(newCaseId));
       } else {
         dispatch(changePanelNode(_id));
         dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-        dispatch(showDefaultTabs({ isMonitoringView, isUnitTest }));
+        if (isUnitTest) {
+          dispatch(isolateTab(constants.PANEL_TAB_NAMES.MOCK_RESULTS));
+        } else {
+          dispatch(showDefaultTabs({ isMonitoringView }));
+        }
       }
     },
     [isAddCase, graphNode, dispatch, newCaseId, subgraphId, operationInfo, iconUri, isMonitoringView, isUnitTest]
