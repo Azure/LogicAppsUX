@@ -29,7 +29,6 @@ import { CustomTokenField, isCustomEditor } from './customTokenField';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import { equals } from '@microsoft/utils-logic-apps';
-import { useIntl } from 'react-intl';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -61,20 +60,9 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
-  const intl = useIntl();
   const labelId = useId('msla-editor-label');
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
-
-  const conditionAction = props.editor === 'condition';
-  let conditionActionDescription;
-  if (conditionAction) {
-    conditionActionDescription = intl.formatMessage({
-      defaultMessage: 'Provide the values to compare and select the operator to use.',
-      description: 'Text description for how to use the Condition action.',
-    });
-  }
-
   return (
     <>
       {!hideLabel && (
@@ -82,11 +70,6 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
           <Label id={labelId} className="msla-label" required={props.required}>
             {props.label}
           </Label>
-        </div>
-      )}
-      {conditionAction && (
-        <div className="msla-input-parameter-description" tabIndex={0}>
-          <span>{conditionActionDescription}</span>
         </div>
       )}
       <div key={props.id}>
@@ -288,6 +271,7 @@ export const TokenField = ({
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}
+          showDescription={true}
         />
       );
 
