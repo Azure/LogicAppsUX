@@ -5,18 +5,16 @@ import { useIntl } from 'react-intl';
 export interface PeekProps {
   input: string;
   onOKClick?(): void;
-  isReadOnly?: boolean;
-  onContentChanged?(value: string | undefined): void;
 }
 
-export function Peek({ input, onOKClick, isReadOnly, onContentChanged }: PeekProps): JSX.Element {
+export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
   const intl = useIntl();
 
   const options = {
     contextmenu: false,
     fontSize: 13,
     lineNumbers: 'off',
-    readOnly: isReadOnly ?? true,
+    readOnly: true,
     scrollBeyondLastLine: false,
     wordWrap: 'on',
     defaultValue: '',
@@ -34,7 +32,6 @@ export function Peek({ input, onOKClick, isReadOnly, onContentChanged }: PeekPro
           readOnly={options.readOnly}
           language={EditorLanguage.json}
           height={getEditorStyle(input)}
-          onContentChanged={(e) => (onContentChanged ? onContentChanged(e.value) : null)}
         />
       </div>
       {onOKClick ? (

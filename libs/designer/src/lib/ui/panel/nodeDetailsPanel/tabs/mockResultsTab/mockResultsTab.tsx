@@ -4,8 +4,8 @@ import { useMockResultsByOperation } from '../../../../../core/state/unitTest/un
 import { addMockResult } from '../../../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
-import type { PanelTabFn } from '@microsoft/designer-ui';
-import { Peek } from '@microsoft/designer-ui';
+import type { ChangeState, PanelTabFn } from '@microsoft/designer-ui';
+import { CodeEditor, EditorLanguage } from '@microsoft/designer-ui';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,19 +20,27 @@ export const MockResultsTab = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleMockResultChange = useCallback(
-    (updatedMockResult: string): void => {
-      // TODO(ccastrotrejo): Small bug when empty string is passed in,
-      // but will remove it since we are not going to user the Peek component anymore
-      if (updatedMockResult === '') {
-        return;
-      }
-      dispatch(addMockResult({ operationName: nodeName, mockResult: updatedMockResult }));
+    (newState: ChangeState): void => {
+      dispatch(addMockResult({ operationName: nodeName, mockResult: newState.value[0].value }));
     },
     [nodeName, dispatch]
   );
 
+  const getTokenPicker: any = () => {
+    console.log('getTockerPicker'); // TODO(ccastrotreoj): Remove this =as this is just used for first iteration
+  };
+
   const resultsEditor = useMemo(() => {
-    return <Peek input={mockResults} key={nodeName} isReadOnly={false} onContentChanged={handleMockResultChange} />;
+    return (
+      <CodeEditor
+        key={nodeName}
+        initialValue={[{ id: nodeName, type: 'literal', value: mockResults }]}
+        language={EditorLanguage.json}
+        onChange={handleMockResultChange}
+        readonly={false}
+        getTokenPicker={getTokenPicker}
+      />
+    );
   }, [mockResults, handleMockResultChange, nodeName]);
 
   return resultsEditor;
