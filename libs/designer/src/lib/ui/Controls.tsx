@@ -1,6 +1,6 @@
+import { openPanel } from '../core';
 import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
 import { toggleMinimap } from '../core/state/designerView/designerViewSlice';
-import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
 import { Icon, useTheme } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -17,7 +17,7 @@ const CustomControls = () => {
   };
 
   const searchToggleClick = () => {
-    dispatch(switchToNodeSearchPanel());
+    dispatch(openPanel({ panelMode: 'NodeSearch' }));
   };
 
   const minimapAria = intl.formatMessage({

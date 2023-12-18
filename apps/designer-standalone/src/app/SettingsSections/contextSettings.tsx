@@ -4,6 +4,7 @@ import {
   useIsDarkMode,
   useIsMonitoringView,
   useIsReadOnly,
+  useShowConnectionsPanel,
   useHostOptions,
   useIsUnitTestView,
 } from '../../state/workflowLoadingSelectors';
@@ -14,6 +15,7 @@ import {
   loadRun,
   loadWorkflow,
   setAreCustomEditorsEnabled,
+  setShowConnectionsPanel,
   setHostOptions,
   setUnitTest,
 } from '../../state/workflowLoadingSlice';
@@ -26,6 +28,7 @@ const ContextSettings = () => {
   const isMonitoringView = useIsMonitoringView();
   const isUnitTest = useIsUnitTestView();
   const isDarkMode = useIsDarkMode();
+  const showConnectionsPanel = useShowConnectionsPanel();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const hostOptions = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
@@ -67,6 +70,11 @@ const ContextSettings = () => {
         label="Custom Editors"
         checked={areCustomEditorsEnabled}
         onChange={(_, checked) => dispatch(setAreCustomEditorsEnabled(!!checked))}
+      />
+      <Checkbox
+        label="Connections Panel"
+        checked={showConnectionsPanel}
+        onChange={(_, checked) => dispatch(setShowConnectionsPanel(!!checked))}
       />
       <Checkbox
         label="Display Runtime Info"

@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { environment } from '../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
-import { useHostOptions, useIsDarkMode, useIsMonitoringView, useIsReadOnly, useShowChatBot } from '../../state/workflowLoadingSelectors';
+import {
+  useIsDarkMode,
+  useIsMonitoringView,
+  useIsReadOnly,
+  useShowChatBot,
+  useHostOptions,
+  useShowConnectionsPanel,
+} from '../../state/workflowLoadingSelectors';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ParametersData } from './Models/Workflow';
@@ -56,6 +63,8 @@ const DesignerEditorConsumption = () => {
   const readOnly = useIsReadOnly();
   const isMonitoringView = useIsMonitoringView();
   const showChatBot = useShowChatBot();
+  const showConnectionsPanel = useShowConnectionsPanel();
+
   const hostOptions = useHostOptions();
   const queryClient = getReactQueryClient();
 
@@ -177,6 +186,7 @@ const DesignerEditorConsumption = () => {
           readOnly,
           isMonitoringView,
           useLegacyWorkflowParameters: true,
+          showConnectionsPanel,
           hostOptions,
         }}
       >
@@ -192,6 +202,7 @@ const DesignerEditorConsumption = () => {
                 isDarkMode={isDarkMode}
                 isConsumption
                 isUnitTest={false}
+                showConnectionsPanel={showConnectionsPanel}
                 rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={() => {
                   dispatch(setIsChatBotEnabled(!showChatBot));

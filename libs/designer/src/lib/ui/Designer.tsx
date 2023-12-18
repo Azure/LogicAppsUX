@@ -1,9 +1,9 @@
+import { openPanel } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
-import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
@@ -186,7 +186,7 @@ export const Designer = (props: DesignerProps) => {
 
   useHotkeys(['meta+shift+p'], (event) => {
     event.preventDefault();
-    dispatch(switchToNodeSearchPanel());
+    dispatch(openPanel({ panelMode: 'NodeSearch' }));
   });
 
   const isMonitoringView = useMonitoringView();

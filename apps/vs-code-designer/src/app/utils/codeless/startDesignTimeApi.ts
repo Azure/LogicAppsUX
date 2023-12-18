@@ -190,12 +190,13 @@ export function startDesignTimeProcess(
 }
 
 export function stopDesignTimeApi(): void {
+  ext.outputChannel.appendLog('Stopping Design Time Api');
   if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
     return;
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /T /F');
+    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /t /f');
   } else {
     ext.designChildProcess.kill();
   }

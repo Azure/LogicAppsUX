@@ -35,6 +35,8 @@ if (process.env.NODE_ENV === 'development') {
   (window as any).DesignerStore = store;
 }
 
+// Infer the `AppStore` from the store itself
+export type AppStore = typeof store;
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}

@@ -11,12 +11,6 @@
       "value": "Ostrzeżenie: typ węzła danych wejściowych jest niezgodny z typem węzła schematu"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Tworzenie odwołanie do połączenia"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Chronione"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 0,
+      "value": "Połączenia łącznika "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "+FcXe9": [
@@ -925,6 +929,12 @@
       "value": "Wymagane. ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Otwórz połączenie"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1115,12 +1125,6 @@
       "value": "Urząd"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Trwa ładowanie..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1243,12 +1247,6 @@
       "value": "Wartość czasu jest nieprawidłowa, musi być zgodny z formatem czasu trwania ISO 8601"
     }
   ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Wybierz odwołanie do połączenia"
-    }
-  ],
   "6fDYzG": [
     {
       "type": 0,
@@ -1365,6 +1363,12 @@
     {
       "type": 0,
       "value": "Aktualizuj schemat źródłowy"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Utwórz nowe połączenie"
     }
   ],
   "78Vggn": [
@@ -2193,12 +2197,6 @@
       "value": "Wymagane połączenie"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Tworzenie połączenia"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2419,6 +2417,12 @@
       "value": "Czas trwania"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Wybierz istniejące połączenie lub utwórz nowe."
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2615,12 +2619,6 @@
     {
       "type": 0,
       "value": "Wybierz opcję Tak lub Nie"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nazwa wyświetlana połączenia"
     }
   ],
   "F3IDl8": [
@@ -3031,12 +3029,6 @@
     {
       "type": 0,
       "value": "Zamknij widok pełnoekranowy"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Wybierz istniejące odwołanie do połączenia lub utwórz nowe."
     }
   ],
   "HSJLCu": [
@@ -3897,6 +3889,12 @@
     {
       "type": 0,
       "value": "Wprowadź unikatową nazwę właściwości"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Utwórz połączenie"
     }
   ],
   "Nh91qA": [
@@ -6003,6 +6001,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Wybierz istniejące odwołanie do połączenia lub utwórz nowe."
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6385,10 +6389,16 @@
       "value": "Odrzuć zmiany"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Zaznacz pole wyboru, aby wybrać to połączenie."
+      "value": "Zmień połączenie"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Połączenie jest prawidłowe"
     }
   ],
   "ca/QIc": [
@@ -6705,6 +6715,12 @@
       "value": "Gdy nowy element"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Ponownie przypisz wszystkie połączone akcje do nowego połączenia"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6805,12 +6821,6 @@
       "value": "Niestety, coś poszło źle. Spróbuj ponownie."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Wybierz połączenie"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6847,6 +6857,12 @@
       "value": "Uruchom test"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Toggle code view"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6869,12 +6885,6 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Wartość logiczna, która określa, którą wartość powinno zwracać wyrażenie."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nazwa połączenia"
     }
   ],
   "gIx5ys": [
@@ -7093,6 +7103,12 @@
     {
       "type": 0,
       "value": "Cofnij"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Połączone akcje"
     }
   ],
   "hZqQdt": [
@@ -7975,6 +7991,12 @@
       "value": "”, dlatego brak podziału w tablicy."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Połączenie jest nieprawidłowe"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -8015,6 +8037,12 @@
     {
       "type": 0,
       "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do żądania wychodzącego."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Połączenia"
     }
   ],
   "mvrlkP": [
@@ -8133,6 +8161,12 @@
     {
       "type": 0,
       "value": "Niestandardowe"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Ta zmiana spowoduje zmodyfikowanie wielu akcji."
     }
   ],
   "nSan4V": [
@@ -8389,6 +8423,12 @@
       "value": "W aplikacji"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Rozłączone akcje"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8581,12 +8621,6 @@
     {
       "type": 0,
       "value": "Sprawdza, czy ciąg kończy się wartością (bez uwzględniania wielkości liter, kultura niezmienna)"
-    }
-  ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Nieprawidłowe połączenie."
     }
   ],
   "qSejoi": [
@@ -8801,12 +8835,6 @@
     {
       "type": 0,
       "value": "Wpis tajny"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Czy połączenie jest nieprawidłowe"
     }
   ],
   "rNi5Y3": [
@@ -9441,12 +9469,6 @@
       "value": "Data wyzwalacza"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Ładowanie"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9893,6 +9915,12 @@
       "value": "Wartość"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Ponownie przypisz wszystkie połączone akcje do nowego połączenia"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9997,12 +10025,6 @@
       "value": "Generuj XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Wybierz istniejące połączenie lub utwórz nowe."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -10037,12 +10059,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajewo, Skopie, Warszawa, Zagrzeb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Brama połączeń"
     }
   ],
   "yzqXMp": [

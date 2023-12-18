@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { RelationshipIds, PanelState } from './panelInterfaces';
+import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { PanelLocation } from '@microsoft/designer-ui';
@@ -8,7 +8,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: PanelState = {
   collapsed: true,
-  selectedNode: '',
+  selectedNodes: [],
   relationshipIds: {
     graphId: 'root',
   },
@@ -19,6 +19,9 @@ const initialState: PanelState = {
   selectedOperationGroupId: '',
   selectedOperationId: '',
   addingTrigger: false,
+  creatingConnection: false,
+  currentPanelMode: undefined,
+  referencePanelMode: undefined,
 };
 
 export const panelSlice = createSlice({
@@ -35,10 +38,12 @@ export const panelSlice = createSlice({
     },
     clearPanel: (state) => {
       state.collapsed = true;
-      state.currentState = undefined;
-      state.selectedNode = '';
+      state.currentPanelMode = undefined;
+      state.referencePanelMode = undefined;
+      state.selectedNodes = [];
       state.selectedOperationGroupId = '';
       state.addingTrigger = false;
+      state.creatingConnection = false;
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.panelLocation) {
@@ -46,15 +51,17 @@ export const panelSlice = createSlice({
       }
     },
     setSelectedNodeId: (state, action: PayloadAction<string>) => {
-      state.selectedNode = action.payload;
+      state.selectedNodes = [action.payload];
+    },
+    setSelectedNodeIds: (state, action: PayloadAction<string[]>) => {
+      state.selectedNodes = action.payload;
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
+      clearPanel();
       if (state.collapsed) state.collapsed = false;
-      state.selectedNode = action.payload;
-      state.currentState = undefined;
-      state.selectedOperationGroupId = '';
-      state.addingTrigger = false;
+      state.selectedNodes = [action.payload];
+      state.currentPanelMode = 'Operation';
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -68,9 +75,9 @@ export const panelSlice = createSlice({
       action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean; addingTrigger?: boolean }>
     ) => {
       state.collapsed = false;
-      state.currentState = 'Discovery';
+      state.currentPanelMode = 'Discovery';
       state.relationshipIds = action.payload.relationshipIds;
-      state.selectedNode = action.payload.nodeId;
+      state.selectedNodes = [action.payload.nodeId];
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
       state.addingTrigger = !!action.payload?.addingTrigger;
 
@@ -94,44 +101,21 @@ export const panelSlice = createSlice({
     selectOperationId: (state, action: PayloadAction<string>) => {
       state.selectedOperationId = action.payload;
     },
-    switchToOperationPanel: (state, action: PayloadAction<string>) => {
-      state.selectedNode = action.payload;
-      state.currentState = undefined;
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = action.payload;
-      state.addingTrigger = false;
-    },
-    switchToWorkflowParameters: (state) => {
+    openPanel: (
+      state,
+      action: PayloadAction<{
+        nodeId?: string;
+        nodeIds?: string[];
+        panelMode: PanelMode;
+        referencePanelMode?: PanelMode;
+      }>
+    ) => {
+      const { nodeId, nodeIds, panelMode, referencePanelMode } = action?.payload ?? {};
+      clearPanel();
       state.collapsed = false;
-      state.currentState = 'WorkflowParameters';
-      state.selectedNode = '';
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = '';
-      state.addingTrigger = false;
-    },
-    switchToAssertionsPanel: (state) => {
-      state.collapsed = false;
-      state.currentState = 'Assertions';
-      state.selectedNode = '';
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = '';
-      state.addingTrigger = false;
-    },
-    switchToNodeSearchPanel: (state) => {
-      state.collapsed = false;
-      state.currentState = 'NodeSearch';
-      state.selectedNode = '';
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = '';
-      state.addingTrigger = false;
-    },
-    switchToErrorsPanel: (state) => {
-      state.collapsed = false;
-      state.currentState = 'Error';
-      state.selectedNode = '';
-      state.selectedOperationGroupId = '';
-      state.selectedOperationId = '';
-      state.addingTrigger = false;
+      state.currentPanelMode = panelMode;
+      state.referencePanelMode = referencePanelMode;
+      state.selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
     },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
@@ -228,6 +212,12 @@ export const panelSlice = createSlice({
         args: [action.payload],
       });
     },
+    setIsPanelLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+    setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
+      state.creatingConnection = action.payload;
+    },
   },
 });
 
@@ -238,11 +228,12 @@ export const {
   clearPanel,
   updatePanelLocation,
   setSelectedNodeId,
+  setSelectedNodeIds,
   changePanelNode,
   expandDiscoveryPanel,
   selectOperationGroupId,
   selectOperationId,
-  switchToOperationPanel,
+  openPanel,
   registerPanelTabs,
   unregisterPanelTab,
   showDefaultTabs,
@@ -250,10 +241,8 @@ export const {
   isolateTab,
   selectPanelTab,
   setTabError,
-  switchToWorkflowParameters,
-  switchToNodeSearchPanel,
-  switchToErrorsPanel,
-  switchToAssertionsPanel,
+  setIsPanelLoading,
+  setIsCreatingConnection,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

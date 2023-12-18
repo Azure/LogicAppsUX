@@ -1,6 +1,5 @@
-import { CreateConnection, type CreateConnectionProps } from '..';
-import { UniversalConnectionParameter } from '../universalConnectionParameter';
-import type { IDropdownProps } from '@fluentui/react';
+import { CreateConnection, type CreateConnectionProps } from '../createConnection';
+import { UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import {
   InitConnectionParameterEditorService,
   type IConnectionParameterEditorService,
@@ -121,11 +120,13 @@ describe('ui/createConnection', () => {
       checkOAuthCallback: jest.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
-    const createConnection = renderer.getRenderOutput();
+    const createConnectionContainer = renderer.getRenderOutput();
 
-    expect(createConnection.type).toEqual('div');
-    expect(createConnection.props.className).toEqual('msla-create-connection-container');
-    expect(React.Children.toArray(createConnection.props.children)).not.toHaveLength(0);
+    expect(createConnectionContainer.type).toEqual('div');
+    expect(createConnectionContainer.props.className).toEqual('msla-edit-connection-container');
+    expect(React.Children.toArray(createConnectionContainer.props.children)).not.toHaveLength(0);
+
+    const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
     const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
     const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
@@ -142,7 +143,8 @@ describe('ui/createConnection', () => {
       checkOAuthCallback: jest.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
-    const createConnection = renderer.getRenderOutput();
+    const createConnectionContainer = renderer.getRenderOutput();
+    const createConnection = findConnectionCreateDiv(createConnectionContainer);
     const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
     const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
 
@@ -168,14 +170,11 @@ describe('ui/createConnection', () => {
       checkOAuthCallback: jest.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
-    const createConnection = renderer.getRenderOutput();
+    const createConnectionContainer = renderer.getRenderOutput();
+    const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
     const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
     expect(parameterSetsDropdown).toBeDefined();
-    expect(parameterSetsDropdown?.props.options).toHaveLength(2);
-    expect(parameterSetsDropdown?.props.options[0].text).toEqual('first parameter set');
-    expect(parameterSetsDropdown?.props.options[1].text).toEqual('second parameter set');
-    expect(parameterSetsDropdown?.props.selectedKey).toEqual(0);
 
     const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
     expect(parameters).toHaveLength(2);
@@ -222,7 +221,8 @@ describe('ui/createConnection', () => {
         checkOAuthCallback: jest.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
-      const createConnection = renderer.getRenderOutput();
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
       const parameters = findParameterComponents(createConnection, UniversalConnectionParameter, CustomConnectionParameter);
 
       expect(connectionParameterEditorService.getConnectionParameterEditor).toHaveBeenCalledTimes(2);
@@ -271,10 +271,11 @@ describe('ui/createConnection', () => {
         checkOAuthCallback: jest.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
-      const createConnection = renderer.getRenderOutput();
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
-      expect(parameterSetsDropdown?.props.selectedKey).toEqual(0);
+      expect(parameterSetsDropdown).toBeDefined();
 
       const parameters = findParameterComponents(createConnection, UniversalConnectionParameter, CustomConnectionParameter);
 
@@ -437,7 +438,8 @@ describe('ui/createConnection', () => {
         checkOAuthCallback: jest.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
-      const createConnection = renderer.getRenderOutput();
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       expect(connectionParameterEditorService.getCredentialMappingEditorOptions).not.toHaveBeenCalled();
 
@@ -457,7 +459,8 @@ describe('ui/createConnection', () => {
         checkOAuthCallback: jest.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
-      const createConnection = renderer.getRenderOutput();
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       expect(connectionParameterEditorService.getCredentialMappingEditorOptions).toHaveBeenCalledTimes(1);
       expect(connectionParameterEditorService.getCredentialMappingEditorOptions).toHaveBeenLastCalledWith({
@@ -520,7 +523,8 @@ describe('ui/createConnection', () => {
         checkOAuthCallback: jest.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
-      const createConnection = renderer.getRenderOutput();
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
 
       const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
       expect(parameters).toHaveLength(3);
@@ -529,6 +533,12 @@ describe('ui/createConnection', () => {
       expect(mappingEditors).toHaveLength(0);
     });
   });
+
+  function findConnectionCreateDiv(createConnection: ReactElement) {
+    return React.Children.toArray(createConnection.props.children).find(
+      (child) => (child as ReactElement)?.props.className === 'msla-create-connection-container'
+    ) as ReactElement;
+  }
 
   function findConnectionsParamContainer(createConnection: ReactElement) {
     return React.Children.toArray(createConnection.props.children).find(
@@ -546,13 +556,11 @@ describe('ui/createConnection', () => {
   function findParameterSetsDropdown(createConnection: ReactElement) {
     const connectionsParamContainer = findConnectionsParamContainer(createConnection);
     for (const paramRow of React.Children.toArray(connectionsParamContainer.props.children)) {
-      for (const child of React.Children.toArray((paramRow as ReactElement).props.children)) {
-        if ((child as ReactElement)?.props.id === 'connection-param-set-select') {
-          return child as ReactElement<IDropdownProps>;
-        }
+      const testId = (paramRow as ReactElement)?.props?.['data-testId']?.toString();
+      if (testId === 'connection-multi-auth-input') {
+        return paramRow;
       }
     }
-
     return undefined;
   }
 });

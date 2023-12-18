@@ -22,6 +22,8 @@ import type { IBundleDependencyFeed } from '@microsoft/vscode-extension';
 import * as vscode from 'vscode';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
+  const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
+
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification, // Location of the progress indicator
@@ -61,21 +63,39 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
           progress.report({ increment: 20, message: `NodeJS` });
-          await timeout(validateNodeJsIsLatest, dependencyTimeout, dependenciesVersions?.nodejs);
+          await timeout(
+            validateNodeJsIsLatest,
+            'NodeJs',
+            dependencyTimeout,
+            'https://github.com/nodesource/distributions',
+            dependenciesVersions?.nodejs
+          );
           await setNodeJsCommand();
         });
 
         context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
           progress.report({ increment: 20, message: `Functions Runtime` });
-          await timeout(validateFuncCoreToolsIsLatest, dependencyTimeout, dependenciesVersions?.funcCoreTools);
+          await timeout(
+            validateFuncCoreToolsIsLatest,
+            'Functions Runtime',
+            dependencyTimeout,
+            'https://github.com/Azure/azure-functions-core-tools/releases',
+            dependenciesVersions?.funcCoreTools
+          );
           await setFunctionsCommand();
         });
 
         context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
           progress.report({ increment: 20, message: `.NET SDK` });
-          await timeout(validateDotNetIsLatest, dependencyTimeout, dependenciesVersions?.dotnet);
+          await timeout(
+            validateDotNetIsLatest,
+            `.NET SDK`,
+            dependencyTimeout,
+            'https://dotnet.microsoft.com/en-us/download/dotnet/6.0',
+            dependenciesVersions?.dotnet
+          );
           await setDotNetCommand(context);
         });
         ext.outputChannel.appendLog(
@@ -88,13 +108,13 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         ext.outputChannel.appendLog(
           localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', error?.message)
         );
+        context.telemetry.properties.dependenciesError = error?.message;
         vscode.window.showErrorMessage(
           localize(
             'binariesTroubleshoot',
-            'The Validation and Installation of Runtime Dependencies encountered an error. To resolve this issue, please click [here](https://aka.ms/lastandard/onboarding/troubleshoot) to access our troubleshooting documentation for step-by-step instructions.'
+            `The Validation and Installation of Runtime Dependencies encountered an error. To resolve this issue, please click [here](${helpLink}) to access our troubleshooting documentation for step-by-step instructions.`
           )
         );
-        context.telemetry.properties.dependenciesError = error?.message;
       }
     }
   );

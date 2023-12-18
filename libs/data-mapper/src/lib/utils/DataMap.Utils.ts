@@ -383,9 +383,29 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   if (relativeSrcKeyArr.length > 0) {
     relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
-        // Replace './' to deal with relative attribute paths
+        let fullyQualifiedSourceKey = '';
 
-        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
+        const srcTokens = lexThisThing(relativeKeyMatch);
+        let backoutCount = 0;
+
+        if (srcTokens.some((token) => token === ReservedToken.backout)) {
+          fullyQualifiedSourceKey = srcKeyWithinFor;
+          srcTokens.forEach((token) => {
+            if (token === ReservedToken.backout) {
+              backoutCount++;
+            }
+          });
+          const relativeKeyNoBackouts = relativeKeyMatch.substring(backoutCount * 3);
+          while (backoutCount > 0) {
+            const lastElem = fullyQualifiedSourceKey.lastIndexOf('/');
+            fullyQualifiedSourceKey = fullyQualifiedSourceKey.substring(0, lastElem);
+            backoutCount--;
+          }
+          fullyQualifiedSourceKey += '/' + relativeKeyNoBackouts;
+        } else {
+          // Replace './' to deal with relative attribute paths
+          fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
+        }
         const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
 
         constructedSourceKey = isValidSrcNode
@@ -406,6 +426,7 @@ export const Separators = {
   CloseParenthesis: ')',
   Comma: ',',
   Dollar: '$',
+  //ForwardSlash: '/'
 } as const;
 export type Separators = (typeof Separators)[keyof typeof Separators];
 
@@ -414,10 +435,11 @@ export const separators: string[] = [Separators.OpenParenthesis, Separators.Clos
 export const ReservedToken = {
   for: 'for',
   if: 'if',
+  backout: '../',
 } as const;
 export type ReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
 
-export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if];
+export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout];
 
 export const lexThisThing = (targetKey: string): string[] => {
   const tokens: string[] = [];
@@ -426,6 +448,7 @@ export const lexThisThing = (targetKey: string): string[] => {
   let currentToken = '';
   while (i < targetKey.length) {
     const currentChar = targetKey[i];
+
     if (separators.includes(currentChar)) {
       if (!currentToken) {
         // if it is a Separator
@@ -449,6 +472,7 @@ export const lexThisThing = (targetKey: string): string[] => {
       i++;
       continue;
     }
+
     if (i === targetKey.length - 1) {
       tokens.push(currentToken);
     }
