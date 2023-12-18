@@ -3,9 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { PackageManager, funcDependencyName } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies } from '../../utils/binaries';
+import { startDesignTimeApi, stopDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
@@ -67,7 +69,9 @@ export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: strin
           if (result === DialogResponses.learnMore) {
             await openUrl('https://aka.ms/azFuncOutdated');
           } else if (result === update) {
+            stopDesignTimeApi();
             await installFuncCoreToolsBinaries(context, majorVersion);
+            await startDesignTimeApi(ext.logicAppWorkspace);
           } else if (result === DialogResponses.dontWarnAgain) {
             await updateGlobalSetting(showCoreToolsWarningKey, false);
           }

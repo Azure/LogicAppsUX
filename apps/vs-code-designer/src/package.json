@@ -746,7 +746,7 @@
           "azureLogicAppsStandard.dependencyTimeout": {
             "type": "number",
             "description": "The timeout (in seconds) to be used when validating and installing dependencies.",
-            "default": 120
+            "default": 300
           },
           "azureLogicAppsStandard.autoRuntimeDependenciesPath": {
             "scope": "resource",
