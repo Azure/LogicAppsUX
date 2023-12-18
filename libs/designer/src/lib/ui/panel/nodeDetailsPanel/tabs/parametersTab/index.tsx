@@ -406,6 +406,7 @@ const ParameterSection = ({
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
+          suppressCastingForSerialize: /* TODO: Will need to determine how this is passed down */ false,
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
               { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
