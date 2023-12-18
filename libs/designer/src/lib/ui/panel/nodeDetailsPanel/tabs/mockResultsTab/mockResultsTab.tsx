@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 export const MockResultsTab = () => {
   const nodeId = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
-  const operationName = isTriggerNode ? `&${nodeId}` : nodeId;
+  const nodeName = isTriggerNode ? `&${nodeId}` : nodeId;
   const nodeMockResults = useMockResultsByOperation(nodeId);
   const mockResults = isNullOrUndefined(nodeMockResults) ? '' : nodeMockResults;
 
@@ -26,14 +26,14 @@ export const MockResultsTab = () => {
       if (updatedMockResult === '') {
         return;
       }
-      dispatch(addMockResult({ operationName, mockResult: updatedMockResult }));
+      dispatch(addMockResult({ operationName: nodeName, mockResult: updatedMockResult }));
     },
-    [operationName, dispatch]
+    [nodeName, dispatch]
   );
 
   const resultsEditor = useMemo(() => {
-    return <Peek input={mockResults} isReadOnly={false} onContentChanged={handleMockResultChange} />;
-  }, [mockResults, handleMockResultChange]);
+    return <Peek input={mockResults} key={nodeName} isReadOnly={false} onContentChanged={handleMockResultChange} />;
+  }, [mockResults, handleMockResultChange, nodeName]);
 
   return resultsEditor;
 };
