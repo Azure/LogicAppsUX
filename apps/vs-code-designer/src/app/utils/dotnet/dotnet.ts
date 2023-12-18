@@ -261,7 +261,6 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
             }
 
             case Platform.mac: {
-              ext.logicAppWorkspace;
               await updateWorkspaceSetting('integrated.env.osx', pathEnv, projectPath, 'terminal');
               break;
             }
