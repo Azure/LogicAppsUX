@@ -1167,6 +1167,12 @@
       "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
