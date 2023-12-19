@@ -68,8 +68,8 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
   const onClose = () => onDismiss?.();
 
   return (
-    <div className="msla-workflow-parameters">
-      <div className="msla-workflow-parameters-heading">
+    <div className="msla-workflow-assertions">
+      <div className="msla-workflow-assertions-heading">
         <Text variant="xLarge">{titleText}</Text>
         <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
       </div>

@@ -1,9 +1,9 @@
-.msla-workflow-parameters {
+.msla-workflow-assertions {
   display: flex;
   flex-direction: column;
   gap: 16px;
 
-  .msla-workflow-parameters-heading {
+  .msla-workflow-assertions-heading {
     margin-top: 20px;
     display: flex;
     gap: 8px;
@@ -16,18 +16,7 @@
     padding-bottom: 16px;
   }
 
-  .msla-workflow-parameter {
-    display: flex;
-    gap: 8px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #9e9e9e;
-
-    & > div:first-child {
-      flex-grow: 1;
-    }
-  }
-
-  .msla-workflow-parameters-empty {
+  .msla-workflow-assertions-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,26 +24,18 @@
     margin-bottom: 30px;
   }
 
-  .msla-workflow-parameters-error {
+  .msla-workflow-assertions-error {
     display: flex;
     flex-direction: column;
   }
 
   .msla-theme-dark {
-    .msla-workflow-parameters-text {
+    .msla-workflow-assertions-text {
       color: @ms-color-themePrimary;
     }
   }
 
-  .msla-workflow-parameter-read-only {
-    vertical-align: sub;
-  }
-
-  .msla-workflow-parameter-heading-text {
-    padding-left: 10px;
-  }
-
-  .msla-workflow-parameters-empty {
+  .msla-workflow-assertions-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -62,33 +43,12 @@
     margin-bottom: 30px;
   }
 
-  .msla-workflow-parameter-field {
-    padding: 10px 0px 0px 10px;
-    display: flex;
-    min-height: 24px;
-  }
-
-  .msla-workflow-parameter-value-field {
-    padding: 10px 0px 10px 10px;
-    display: flex;
-    align-items: flex-start;
-  }
-  .msla-workflow-parameters-text {
+  .msla-workflow-assertions-text {
     text-align: center;
     padding: 30px 50px;
   }
 
-  .msla-workflow-parameters-link-text {
+  .msla-workflow-assertions-link-text {
     padding-right: 5px;
-  }
-
-  .msla-workflow-parameter-error-dot {
-    display: inline-block;
-    margin-left: 8px;
-  }
-
-  *.ms-Button {
-    height: 32px;
-    font-size: 14px;
   }
 }
