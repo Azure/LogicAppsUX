@@ -1,5 +1,6 @@
 import { MenuItem } from '@fluentui/react-components';
 import { bundleIcon, Clipboard24Filled, Clipboard24Regular } from '@fluentui/react-icons';
+import { isApple } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 const CopyIcon = bundleIcon(Clipboard24Filled, Clipboard24Regular);
@@ -27,10 +28,15 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
   //   defaultMessage: 'This Action/Trigger cannot be copied.',
   //   description: 'Text to explain this action/trigger cannot be copied',
   // });
-  const copyKeyboardText = intl.formatMessage({
+  const copyKeyboardTextWin = intl.formatMessage({
     defaultMessage: 'Ctrl+C',
-    description: '"Copy" keyboard command text',
+    description: '"Copy" keyboard command text for Windows',
   });
+  const copyKeyboardTextMac = intl.formatMessage({
+    defaultMessage: '⌘+C',
+    description: '"Copy" keyboard command text for Mac',
+  });
+  const copyKeyboardText = isApple() ? copyKeyboardTextMac : copyKeyboardTextWin;
 
   const titleText = isTrigger ? copyTrigger : copyAction;
 

@@ -1,4 +1,3 @@
-import { isApple } from '../../../helper';
 import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
 import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
 import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
@@ -16,6 +15,7 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
+import { isApple } from '@microsoft/utils-logic-apps';
 import {
   $getSelection,
   $isRangeSelection,
