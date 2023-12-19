@@ -30,7 +30,7 @@
     },
     {
       "type": 0,
-      "value": " connections"
+      "value": "-Verbindungen"
     }
   ],
   "+FcXe9": [
@@ -940,7 +940,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Verbindung öffnen"
     }
   ],
   "41eMpW": [
@@ -2418,7 +2418,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Wählen Sie eine vorhandene Verbindung aus, oder erstellen Sie eine neue."
     }
   ],
   "Dhu3IS": [
@@ -5956,7 +5956,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Wählen Sie eine vorhandene Verbindungsreferenz aus, oder erstellen Sie eine neue."
     }
   ],
   "ZBJiuD": [
@@ -6670,7 +6670,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Zuweisen aller verbundenen Aktionen zu einer neuen Verbindung"
     }
   ],
   "f/lWTW": [
@@ -7042,7 +7042,7 @@
   "hTZZr+": [
     {
       "type": 0,
-      "value": "Connected actions"
+      "value": "Verbundene Aktionen"
     }
   ],
   "hZqQdt": [
@@ -8066,7 +8066,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Durch diese Änderung werden mehrere Aktionen geändert."
     }
   ],
   "nSan4V": [
@@ -8326,7 +8326,7 @@
   "p3K7eM": [
     {
       "type": 0,
-      "value": "Disconnected actions"
+      "value": "Getrennte Aktionen"
     }
   ],
   "p5ZID0": [
@@ -9796,7 +9796,7 @@
   "xxeu75": [
     {
       "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
+      "value": "Zuweisen aller getrennten Aktionen zu einer neuen Verbindung"
     }
   ],
   "y1e9yw": [
