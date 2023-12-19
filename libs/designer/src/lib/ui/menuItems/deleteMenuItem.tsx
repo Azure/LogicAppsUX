@@ -20,10 +20,6 @@ export const DeleteMenuItem = (props: DeleteMenuItemProps) => {
     defaultMessage: 'Delete',
     description: 'Delete text',
   });
-  // const disableTriggerDeleteText = intl.formatMessage({
-  //   defaultMessage: 'Triggers cannot be deleted.',
-  //   description: 'Text to explain that triggers cannot be deleted',
-  // });
   const deleteKeyboardText = intl.formatMessage({
     defaultMessage: 'Del',
     description: '"Delete" keyboard command text',

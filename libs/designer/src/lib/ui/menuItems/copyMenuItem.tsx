@@ -24,10 +24,6 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
     defaultMessage: 'Copy Trigger',
     description: 'Copy Trigger text',
   });
-  // const copyDisabledText = intl.formatMessage({
-  //   defaultMessage: 'This Action/Trigger cannot be copied.',
-  //   description: 'Text to explain this action/trigger cannot be copied',
-  // });
   const copyKeyboardTextWin = intl.formatMessage({
     defaultMessage: 'Ctrl+C',
     description: '"Copy" keyboard command text for Windows',
