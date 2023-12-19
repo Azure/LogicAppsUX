@@ -28,7 +28,6 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
       className="msla-html-editor"
       initialValue={initialValue}
       basePlugins={{
-        tokens: true,
         clearEditor: true,
         htmlEditor: isValuePlaintext ? 'raw-html' : 'rich-html',
         ...baseEditorProps.basePlugins,
@@ -40,12 +39,7 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
       onBlur={handleBlur}
       setIsValuePlaintext={setIsValuePlaintext}
     >
-      <HTMLChangePlugin
-        isValuePlaintext={isValuePlaintext}
-        loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
-        setIsValuePlaintext={setIsValuePlaintext}
-        setValue={onValueChange}
-      />
+      <HTMLChangePlugin isValuePlaintext={isValuePlaintext} setIsValuePlaintext={setIsValuePlaintext} setValue={onValueChange} />
     </EditorWrapper>
   );
 };

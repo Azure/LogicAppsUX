@@ -7,7 +7,7 @@ import { ValueSegmentType } from '../editor/models/parameter';
 import { Picker } from './picker';
 import { PickerItemType } from './pickerItem';
 import { EditorValueChange } from './plugins/EditorValueChange';
-import { UpdateEditorFromPicker } from './plugins/UpdateEditorFromPicker';
+import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
@@ -132,7 +132,7 @@ export const FilePickerEditor = ({
           setEditorDisplayValue={setEditorDisplayValue}
           clearPickerInfo={clearPickerInfo}
         />
-        <UpdateEditorFromPicker pickerDisplayValue={pickerDisplayValue} />
+        <UpdateEditorFromFilePicker pickerDisplayValue={pickerDisplayValue} />
       </EditorWrapper>
       <TooltipHost content={openFolderLabel} calloutProps={calloutProps} styles={hostStyles}>
         <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openFolderPicker} id={pickerIconId} />
