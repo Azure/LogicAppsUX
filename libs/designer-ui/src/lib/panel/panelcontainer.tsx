@@ -1,9 +1,9 @@
 import { EmptyContent } from '../card/emptycontent';
 import type { MenuItemOption } from '../card/types';
 import type { PageActionTelemetryData } from '../telemetry/models';
-import { PanelContent } from './panelContent';
 import type { CommonPanelProps, PanelTab } from './panelUtil';
 import { PanelScope, PanelLocation } from './panelUtil';
+import { PanelContent } from './panelcontent';
 import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
 import type { TitleChangeHandler } from './panelheader/panelheadertitle';

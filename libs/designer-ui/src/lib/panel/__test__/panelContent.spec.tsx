@@ -1,4 +1,4 @@
-import { PanelContent, type PanelContentProps } from '../panelContent';
+import { PanelContent, type PanelContentProps } from '../panelcontent';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/workflowparameters/workflowparameter', () => {
