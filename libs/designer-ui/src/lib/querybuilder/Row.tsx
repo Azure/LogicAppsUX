@@ -278,7 +278,7 @@ export const Row = ({
         <RowDropdown disabled={readonly || key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
           valueType={constants.SWAGGER.TYPE.ANY}
-          readonly={readonly || key.length === 0}
+          readonly={readonly || (key.length === 0 && operand2.length === 0)}
           className={'msla-querybuilder-row-value-input'}
           initialValue={operand2}
           placeholder={rowValueInputPlaceholder}
