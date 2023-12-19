@@ -1419,6 +1419,12 @@
       "value": "\" cannot be found for this operation"
     }
   ],
+  "7PTnxD": [
+    {
+      "type": 0,
+      "value": "New assertion"
+    }
+  ],
   "7PtWvu": [
     {
       "type": 0,
@@ -6521,6 +6527,12 @@
     {
       "type": 0,
       "value": "Warnings"
+    }
+  ],
+  "dzPAxq": [
+    {
+      "type": 0,
+      "value": "Edit assertion"
     }
   ],
   "e+GuGo": [

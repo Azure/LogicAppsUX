@@ -1,23 +1,13 @@
-import type { EventHandler } from '../eventhandler';
-import { IconButton, List, Text, PrimaryButton, TextField } from '@fluentui/react';
+import { isHighContrastBlack } from '../utils';
+import { type AssertionUpdateHandler, type AssertionDeleteHandler, Assertion } from './assertion';
+import { IconButton, List, Text, PrimaryButton, useTheme } from '@fluentui/react';
+import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
-
-export interface AssertionUpdateEvent {
-  index: number;
-  value: string | undefined;
-}
-
-export interface AssertionDeleteEvent {
-  index: number;
-}
 
 type OnClickHandler = () => void;
 
-export type AssertionUpdateHandler = EventHandler<AssertionUpdateEvent>;
-export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;
-
 export interface AssertionsProps {
-  assertions: { key: string; value: string }[];
+  assertions: AssertionDefintion[];
   onDismiss: OnClickHandler;
   onAssertionAdd: OnClickHandler;
   onAssertionUpdate: AssertionUpdateHandler;
@@ -26,6 +16,8 @@ export interface AssertionsProps {
 
 export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionUpdate, onAssertionDelete }: AssertionsProps): JSX.Element {
   const intl = useIntl();
+  const theme = useTheme();
+  const isInverted = isHighContrastBlack() || theme.isInverted;
 
   const titleText = intl.formatMessage({
     defaultMessage: 'Assertions',
@@ -37,11 +29,6 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
     description: 'Create Assertion Text',
   });
 
-  const deleteAssertionText = intl.formatMessage({
-    defaultMessage: 'Delete assertion',
-    description: 'Create Assertion Text',
-  });
-
   const handleAddAssertion = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (onAssertionAdd) {
       event.stopPropagation();
@@ -49,19 +36,12 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
     }
   };
 
-  const renderAssertion = (item: any, index: any): JSX.Element => {
+  const renderAssertion = (item?: AssertionDefintion): JSX.Element => {
+    if (!item) {
+      return <></>;
+    }
     return (
-      <div className="msla-copy-input-control">
-        <TextField
-          spellCheck={false}
-          key={item.key}
-          className="msla-copy-input-control-textbox"
-          style={{ backgroundColor: '#fff', color: 'black' }} // default for class was grey
-          value={item.value}
-          onChange={(_, value) => onAssertionUpdate({ index, value })}
-        />
-        <IconButton ariaLabel={deleteAssertionText} iconProps={{ iconName: 'Delete' }} onClick={() => onAssertionDelete({ index })} />
-      </div>
+      <Assertion assertion={item} onAssertionDelete={onAssertionDelete} onAssertionUpdate={onAssertionUpdate} isInverted={isInverted} />
     );
   };
 

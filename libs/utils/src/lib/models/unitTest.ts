@@ -13,3 +13,8 @@ export interface UnitTestDefinition {
   actionMocks: Record<string, OperationMock>;
   assertions: Assertion[];
 }
+
+export interface AssertionDefintion {
+  name: string;
+  description: string;
+}
