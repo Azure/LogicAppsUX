@@ -21,16 +21,6 @@ describe('ui/workflowparameters/workflowparameter', () => {
     expect(panelContent).toMatchSnapshot();
   });
 
-  it('should render when no tabs.', () => {
-    renderer.render(<PanelContent {...minimal} />);
-    const panelContent = renderer.getRenderOutput();
-    const pivotMenu = panelContent.props.children;
-
-    expect(pivotMenu.props.className).toBe('msla-panel-menu');
-    expect(pivotMenu.props.overflowAriaLabel).toBe('more panels');
-    expect(pivotMenu.props.children).toHaveLength(Object.keys(minimal.tabs).length);
-  });
-
   it('should render menu items when passed tabs.', () => {
     // TODO: 13865562 When Tabs get setup
   });

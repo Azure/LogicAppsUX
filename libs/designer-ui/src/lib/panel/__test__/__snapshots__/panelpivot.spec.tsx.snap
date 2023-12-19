@@ -2,25 +2,26 @@
 
 exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
 <div
-  className="msla-pivot"
+  id="msla-node-details-panel-"
 >
-  <StyledPivot
-    className="msla-panel-menu"
-    onLinkClick={[Function]}
-    overflowAriaLabel="more panels"
-    overflowBehavior="menu"
-    styles={
-      Object {
-        "link": Object {
-          "margin": "1px 24px 1px 1px",
-        },
-        "text": Object {
-          "&:hover": Object {
-            "color": "#0078D4",
-          },
-        },
+  <ForwardRef
+    aria-label="more panels"
+  >
+    <TabList
+      onTabSelect={[Function]}
+      style={
+        Object {
+          "margin": "0px -12px",
+        }
       }
-    }
+    >
+      <OverflowMenu
+        tabs={Array []}
+      />
+    </TabList>
+  </ForwardRef>
+  <div
+    className="msla-panel-content-container"
   />
 </div>
 `;
