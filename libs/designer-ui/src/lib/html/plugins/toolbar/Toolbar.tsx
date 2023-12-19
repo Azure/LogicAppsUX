@@ -56,19 +56,11 @@ export type blockTypeToBlockName = (typeof blockTypeToBlockName)[keyof typeof bl
 
 interface ToolbarProps {
   isRawText?: boolean;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
   readonly?: boolean;
-  segmentMapping?: Record<string, ValueSegment>;
   setIsRawText?: (newValue: boolean) => void;
 }
 
-export const Toolbar = ({
-  isRawText,
-  loadParameterValueFromString,
-  readonly = false,
-  segmentMapping,
-  setIsRawText,
-}: ToolbarProps): JSX.Element => {
+export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
@@ -251,10 +243,11 @@ export const Toolbar = ({
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: false, loadParameterValueFromString }).then((valueSegments) => {
+
+              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: false }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
-                  parseSegments(valueSegments, { loadParameterValueFromString, segmentMapping, tokensEnabled: true });
+                  parseSegments(valueSegments, { tokensEnabled: true, readonly });
                   setIsRawText(true);
                 });
               });
@@ -265,10 +258,10 @@ export const Toolbar = ({
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
               });
-              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: true, loadParameterValueFromString }).then((valueSegments) => {
+              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: true }).then((valueSegments) => {
                 activeEditor.update(() => {
                   $getRoot().clear().select();
-                  parseHtmlSegments(valueSegments, { loadParameterValueFromString, segmentMapping, tokensEnabled: true });
+                  parseHtmlSegments(valueSegments, { tokensEnabled: true, readonly });
                   setIsRawText(false);
                 });
               });

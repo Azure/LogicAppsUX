@@ -35,7 +35,6 @@ export const StringEditor = ({
       {...baseEditorProps}
       initialValue={initialValue}
       basePlugins={{
-        tokens: baseEditorProps.basePlugins?.tokens ?? true,
         clearEditor: clearEditorOnTokenInsertion,
         singleValueSegment: clearEditorOnTokenInsertion,
         ...baseEditorProps.basePlugins,

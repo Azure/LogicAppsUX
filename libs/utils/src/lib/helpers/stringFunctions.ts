@@ -12,3 +12,5 @@ export const areApiIdsEqual = (id1?: string, id2?: string) => normalizeApiId(id1
 export const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const normalizeAutomationId = (s: string) => s.replace(/\W/g, '-');
+
+export const wrapTokenValue = (s: string) => `@{${s}}`;

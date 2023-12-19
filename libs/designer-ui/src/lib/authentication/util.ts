@@ -428,7 +428,7 @@ export const serializeAuthentication = (
 };
 
 export function containsToken(value: string): boolean {
-  if (value.indexOf('$[') !== -1 && value.indexOf(']$') !== -1) {
+  if (value.indexOf('@{') !== -1 && value.indexOf('}') !== -1) {
     return true;
   } else {
     return false;

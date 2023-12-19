@@ -21,17 +21,11 @@ import { $getRoot } from 'lexical';
 
 interface HTMLChangePluginProps {
   isValuePlaintext: boolean;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
   setIsValuePlaintext: (isValuePlaintext: boolean) => void;
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const HTMLChangePlugin = ({
-  isValuePlaintext,
-  loadParameterValueFromString,
-  setIsValuePlaintext,
-  setValue,
-}: HTMLChangePluginProps) => {
+export const HTMLChangePlugin = ({ isValuePlaintext, setIsValuePlaintext, setValue }: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
     let isNewValuePlaintext = isValuePlaintext;
@@ -43,7 +37,7 @@ export const HTMLChangePlugin = ({
         setIsValuePlaintext(isNewValuePlaintext);
       }
 
-      convertEditorState(editor, nodeMap, { isValuePlaintext: isNewValuePlaintext, loadParameterValueFromString }).then(setValue);
+      convertEditorState(editor, nodeMap, { isValuePlaintext: isNewValuePlaintext }).then(setValue);
     });
   };
   return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
@@ -54,13 +48,11 @@ export const convertEditorState = (
   nodeMap: Map<string, ValueSegment>,
   options: {
     isValuePlaintext: boolean;
-    loadParameterValueFromString?: HTMLChangePluginProps['loadParameterValueFromString'];
   }
 ): Promise<ValueSegment[]> => {
-  const { isValuePlaintext, loadParameterValueFromString } = options;
+  const { isValuePlaintext } = options;
 
   return new Promise((resolve) => {
-    const valueSegments: ValueSegment[] = [];
     editor.update(() => {
       let htmlEditorString = isValuePlaintext ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
 
@@ -113,12 +105,7 @@ export const convertEditorState = (
           return match;
         }
       });
-
-      if (loadParameterValueFromString) {
-        valueSegments.push(...loadParameterValueFromString(noTokenSpansString));
-      } else {
-        valueSegments.push(...convertStringToSegments(noTokenSpansString, true, nodeMap));
-      }
+      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, true, nodeMap);
       resolve(valueSegments);
     });
   });

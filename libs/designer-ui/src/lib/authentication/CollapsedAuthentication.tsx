@@ -33,7 +33,7 @@ export const CollapsedAuthentication = ({
 }: CollapsedAuthenticationProps): JSX.Element => {
   return (
     <div className="msla-authentication-editor-collapsed-container">
-      <EditorWrapper {...props} initialValue={collapsedValue} basePlugins={{ tokens: true, tabbable: true }}>
+      <EditorWrapper {...props} initialValue={collapsedValue} basePlugins={{ tabbable: true }}>
         <CollapsedAuthenticationValidation
           className={'msla-auth-editor-validation'}
           collapsedValue={collapsedValue}

@@ -6,8 +6,8 @@ import type { InitialConfigType } from '@lexical/react/LexicalComposer';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 
 export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
-  const { initialValue, basePlugins = {}, loadParameterValueFromString, readonly, tokenMapping } = props;
-  const { htmlEditor, tokens } = basePlugins;
+  const { initialValue, basePlugins = {}, readonly } = props;
+  const { htmlEditor, tokens = true } = basePlugins;
   const initialConfig: InitialConfigType = {
     ...defaultInitialConfig,
     editable: !readonly,
@@ -16,9 +16,7 @@ export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
       initialValue &&
       (() => {
         const options: SegmentParserOptions = {
-          loadParameterValueFromString,
           readonly,
-          segmentMapping: tokenMapping,
           tokensEnabled: tokens,
         };
         htmlEditor === 'rich-html' ? parseHtmlSegments(initialValue, options) : parseSegments(initialValue, options);
