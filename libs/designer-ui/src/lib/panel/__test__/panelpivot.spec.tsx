@@ -1,15 +1,12 @@
-import type { PanelPivotProps } from '../panelpivot';
-import { PanelPivot } from '../panelpivot';
+import { PanelContent, type PanelContentProps } from '../panelContent';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/workflowparameters/workflowparameter', () => {
-  let minimal: PanelPivotProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: PanelContentProps, renderer: ReactShallowRenderer.ShallowRenderer;
   beforeEach(() => {
     minimal = {
       nodeId: '',
-      isCollapsed: false,
-      tabs: {},
-      onTabChange: jest.fn(),
+      tabs: [],
       trackEvent: jest.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
@@ -20,17 +17,14 @@ describe('ui/workflowparameters/workflowparameter', () => {
   });
 
   it('should construct.', () => {
-    const panelPivot = renderer.render(<PanelPivot {...minimal} />);
-    expect(panelPivot).toMatchSnapshot();
+    const panelContent = renderer.render(<PanelContent {...minimal} />);
+    expect(panelContent).toMatchSnapshot();
   });
 
   it('should render when no tabs.', () => {
-    renderer.render(<PanelPivot {...minimal} />);
-    const panelPivot = renderer.getRenderOutput();
-
-    expect(panelPivot.props.className).toBe('msla-pivot');
-
-    const pivotMenu = panelPivot.props.children;
+    renderer.render(<PanelContent {...minimal} />);
+    const panelContent = renderer.getRenderOutput();
+    const pivotMenu = panelContent.props.children;
 
     expect(pivotMenu.props.className).toBe('msla-panel-menu');
     expect(pivotMenu.props.overflowAriaLabel).toBe('more panels');
