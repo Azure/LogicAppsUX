@@ -1,4 +1,5 @@
 import type { ApiHubServiceDetails, ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { UnitTestDefinition } from '@microsoft/utils-logic-apps';
 import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -19,6 +20,7 @@ export interface DesignerState {
   oauthRedirectUrl: string;
   hostVersion: string;
   isUnitTest: boolean;
+  unitTestDefinition: UnitTestDefinition | null;
 }
 
 const initialState: DesignerState = {
@@ -48,6 +50,7 @@ const initialState: DesignerState = {
   oauthRedirectUrl: '',
   hostVersion: '',
   isUnitTest: false,
+  unitTestDefinition: null,
 };
 
 export const designerSlice = createSlice({
@@ -68,6 +71,7 @@ export const designerSlice = createSlice({
         runId,
         hostVersion,
         isUnitTest,
+        unitTestDefinition,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -82,6 +86,7 @@ export const designerSlice = createSlice({
       state.oauthRedirectUrl = oauthRedirectUrl;
       state.hostVersion = hostVersion;
       state.isUnitTest = isUnitTest;
+      state.unitTestDefinition = unitTestDefinition;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;

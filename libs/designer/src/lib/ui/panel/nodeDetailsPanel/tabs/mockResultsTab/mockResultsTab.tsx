@@ -14,7 +14,7 @@ export const MockResultsTab = () => {
   const nodeId = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const nodeName = isTriggerNode ? `&${nodeId}` : nodeId;
-  const nodeMockResults = useMockResultsByOperation(nodeId);
+  const nodeMockResults = useMockResultsByOperation(nodeName);
   const mockResults = isNullOrUndefined(nodeMockResults) ? '' : nodeMockResults;
 
   const dispatch = useDispatch<AppDispatch>();
