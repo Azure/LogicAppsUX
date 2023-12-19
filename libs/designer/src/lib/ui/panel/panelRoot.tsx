@@ -64,7 +64,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     [currentPanelMode]
   );
 
-  const nonBlockingPanels = useMemo(() => ['Connection'], []);
+  const nonBlockingPanels = useMemo(() => ['Connection', 'Assertions'], []);
 
   const isLoadingPanel = useIsLoadingPanel();
 

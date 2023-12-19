@@ -87,6 +87,7 @@ export * from './editor/base/plugins/tokenpickerbutton';
 export * from './utils';
 export * from './workflow/schema/generator';
 export * from './workflowparameters';
+export * from './assertionsPanel';
 export * from './useId';
 export { FunctionGroupDefinitions as TemplateFunctions } from './workflow/languageservice/templatefunctions';
 export type { FunctionDefinition } from './workflow/languageservice/templatefunctions';
