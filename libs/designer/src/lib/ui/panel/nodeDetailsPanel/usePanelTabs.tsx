@@ -29,7 +29,6 @@ export const usePanelTabs = () => {
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
-  const isScopeNode = nodeMetaData?.subgraphType === SUBGRAPH_TYPES.SCOPE;
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(selectedNode);
 
@@ -39,9 +38,9 @@ export const usePanelTabs = () => {
   const monitoringTabItem = useMemo(
     () => ({
       ...monitoringTab(intl),
-      visible: !isScopeNode && isMonitoringView,
+      visible: isMonitoringView,
     }),
-    [intl, isMonitoringView, isScopeNode]
+    [intl, isMonitoringView]
   );
 
   const parametersTabItem = useMemo(
