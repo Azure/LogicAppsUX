@@ -2839,6 +2839,12 @@
       "value": "Explain flow"
     }
   ],
+  "GX3fkR": [
+    {
+      "type": 0,
+      "value": "New assertion"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -4237,6 +4243,12 @@
       "value": "Workflow functions"
     }
   ],
+  "PhBS5+": [
+    {
+      "type": 0,
+      "value": "Enter name"
+    }
+  ],
   "PjBcG3": [
     {
       "type": 0,
@@ -5461,12 +5473,6 @@
     {
       "type": 0,
       "value": "Tenant"
-    }
-  ],
-  "X5d+tr": [
-    {
-      "type": 0,
-      "value": "Create assertion"
     }
   ],
   "X7X5ew": [
@@ -7023,6 +7029,12 @@
     {
       "type": 0,
       "value": "Connected actions"
+    }
+  ],
+  "hW7oe7": [
+    {
+      "type": 0,
+      "value": "Enter description"
     }
   ],
   "hZqQdt": [

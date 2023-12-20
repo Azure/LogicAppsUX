@@ -1,6 +1,6 @@
 import { isHighContrastBlack } from '../utils';
 import { type AssertionUpdateHandler, type AssertionDeleteHandler, type AssertionAddHandler, Assertion } from './assertion';
-import { IconButton, List, Text, PrimaryButton, useTheme } from '@fluentui/react';
+import { IconButton, List, Text, useTheme, ActionButton } from '@fluentui/react';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
@@ -25,8 +25,8 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
   });
 
   const addAssertionText = intl.formatMessage({
-    defaultMessage: 'Create assertion',
-    description: 'Create Assertion Text',
+    defaultMessage: 'New assertion',
+    description: 'New Assertion Text',
   });
 
   const headingTitle = intl.formatMessage({
@@ -66,8 +66,8 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
         <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
       </div>
       {assertions.length > 0 ? <List items={assertions} onRenderCell={renderAssertion} /> : null}
-      <div className="assertion-button-container">
-        <PrimaryButton text={addAssertionText} onClick={handleAddAssertion} />
+      <div className="msla-workflow-assertions-footer">
+        <ActionButton text={`${addAssertionText} +`} allowDisabledFocus onClick={handleAddAssertion} />
       </div>
     </div>
   );

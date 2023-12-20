@@ -9,7 +9,7 @@ export const labelStyles: Partial<ILabelStyles> = {
     display: 'inline-block',
     minWidth: '120px',
     verticalAlign: 'top',
-    padding: '0px',
+    padding: '5px 0px',
   },
 };
 
@@ -58,9 +58,14 @@ export const AssertionField = ({ assertion, onChange, isEditable, isReadOnly }: 
     description: 'Parameter Field Description Title',
   });
 
-  const nameDescription = intl.formatMessage({
-    defaultMessage: 'Enter parameter name.',
-    description: 'Parameter Field Name Description',
+  const namePlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter name',
+    description: 'Assertion field name placeholder',
+  });
+
+  const descriptionPlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter description',
+    description: 'Assertion field description placeholder',
   });
 
   const onDescriptionChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
@@ -89,7 +94,7 @@ export const AssertionField = ({ assertion, onChange, isEditable, isReadOnly }: 
             styles={textFieldStyles}
             id={parameterDetails.name}
             ariaLabel={nameTitle}
-            placeholder={nameDescription}
+            placeholder={namePlaceholder}
             value={name}
             onChange={onNameChange}
             disabled={isReadOnly}
@@ -99,7 +104,7 @@ export const AssertionField = ({ assertion, onChange, isEditable, isReadOnly }: 
         )}
       </div>
       <div className="msla-assertion-field">
-        <Label styles={labelStyles} required={true} htmlFor={parameterDetails.description}>
+        <Label styles={labelStyles} htmlFor={parameterDetails.description}>
           {descriptionTitle}
         </Label>
         {isEditable ? (
@@ -108,7 +113,7 @@ export const AssertionField = ({ assertion, onChange, isEditable, isReadOnly }: 
             styles={textFieldStyles}
             id={parameterDetails.description}
             ariaLabel={descriptionTitle}
-            placeholder={nameDescription}
+            placeholder={descriptionPlaceholder}
             value={description}
             onChange={onDescriptionChange}
             disabled={isReadOnly}
