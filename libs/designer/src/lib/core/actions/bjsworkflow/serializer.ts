@@ -34,14 +34,7 @@ import {
   DeserializationType,
   PropertySerializationType,
 } from '@microsoft/parsers-logic-apps';
-import type {
-  Assertion,
-  LocationSwapMap,
-  LogicAppsV2,
-  OperationManifest,
-  OperationMock,
-  SubGraphDetail,
-} from '@microsoft/utils-logic-apps';
+import type { LocationSwapMap, LogicAppsV2, OperationManifest, OperationMock, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
   SerializationErrorCode,
   SerializationException,
@@ -1066,25 +1059,25 @@ const getSplitOn = (
 };
 
 export const serializeUnitTestDefinition = async (rootState: RootState): Promise<any> => {
-  const { mockResults, assertions } = rootState.unitTest;
+  const { mockResults } = rootState.unitTest;
 
   return {
     triggerMocks: getTriggerMocks(mockResults),
     actionMocks: getActionMocks(mockResults),
-    assertions: getAssertions(assertions),
+    assertions: [], //TODO(ccastrotrejo): Add assertions
   };
 };
 
-const getAssertions = (assertions: string[]): Assertion[] => {
-  const result: Assertion[] = [];
-  assertions.forEach((assert) => {
-    // if it's an empty assertion, don't add it to the def file
-    if (assert.length > 0) {
-      result.push({ assertionString: assert, description: '' });
-    }
-  });
-  return result;
-};
+// const getAssertions = (assertions: string[]): Assertion[] => {
+//   const result: Assertion[] = [];
+//   assertions.forEach((assert) => {
+//     // if it's an empty assertion, don't add it to the def file
+//     if (assert.length > 0) {
+//       result.push({ assertionString: assert, description: '' });
+//     }
+//   });
+//   return result;
+// };
 
 const getTriggerMocks = (mockResults: { [key: string]: string }): Record<string, OperationMock> => {
   const result: Record<string, OperationMock> = {};

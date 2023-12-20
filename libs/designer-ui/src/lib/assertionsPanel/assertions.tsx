@@ -41,13 +41,6 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
     }
   };
 
-  const handleDeleteAssertion = (event: React.MouseEvent<HTMLButtonElement>): void => {
-    if (onAssertionDelete) {
-      event.stopPropagation();
-      onAssertionDelete({ index: 0 });
-    }
-  };
-
   const renderAssertion = (item?: AssertionDefintion): JSX.Element => {
     if (!item) {
       return <></>;
@@ -56,7 +49,7 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
       <Assertion
         key={item.id}
         assertion={item}
-        onAssertionDelete={handleDeleteAssertion}
+        onAssertionDelete={onAssertionDelete}
         onAssertionUpdate={onAssertionUpdate}
         isInverted={isInverted}
       />

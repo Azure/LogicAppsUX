@@ -13,12 +13,13 @@ const commandBarStyles: Partial<IButtonStyles> = {
 };
 
 export interface AssertionUpdateEvent {
+  id: string;
   name: string;
   description: string;
 }
 
 export interface AssertionDeleteEvent {
-  index: number;
+  id: string;
 }
 
 export interface AssertionAddEvent {
@@ -32,7 +33,7 @@ export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
 
 export interface AssertionProps {
   assertion: AssertionDefintion;
-  onAssertionDelete: React.MouseEventHandler<HTMLButtonElement>;
+  onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   isInverted: boolean;
 }
@@ -50,7 +51,11 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
 
   const handleSave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(false);
-    onAssertionUpdate({ name: name, description: description });
+    onAssertionUpdate({ name: name, description: description, id: assertion.id });
+  };
+
+  const handleDelete: React.MouseEventHandler<HTMLButtonElement> = (): void => {
+    onAssertionDelete({ id: assertion.id });
   };
 
   const iconProps: IIconProps = {
@@ -77,7 +82,7 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
           styles={commandBarStyles}
           text={name}
         />
-        <AssertionButtons isEditable={isEditable} onEdit={handleEdit} onSave={handleSave} onDelete={onAssertionDelete} />
+        <AssertionButtons isEditable={isEditable} onEdit={handleEdit} onSave={handleSave} onDelete={handleDelete} />
       </div>
       <div className="msla-workflow-assertion-content">
         {expanded ? (

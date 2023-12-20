@@ -1,5 +1,5 @@
 import { useAssertions } from '../../../core/state/unitTest/unitTestSelectors';
-import { addAssertions } from '../../../core/state/unitTest/unitTestSlice';
+import { updateAssertions } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch } from '../../../core/store';
 import {
   type AssertionDeleteEvent,
@@ -12,44 +12,48 @@ import { guid, type AssertionDefintion } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-const getAssertions = (assertions: string[]): AssertionDefintion[] => {
-  return assertions.map((assertion) => {
-    return { id: guid(), name: '', description: assertion };
-  });
+const getAssertions = (assertions: string[]): Record<string, AssertionDefintion> => {
+  return assertions.reduce((acc, curr) => {
+    const id = guid();
+    return { ...acc, [id]: { id: id, name: curr, description: '' } };
+  }, {});
 };
 
 export const AssertionsPanel = (props: CommonPanelProps) => {
   const workflowAssertions = useAssertions();
-  const [assertions, setAssertions] = useState<AssertionDefintion[]>(getAssertions(workflowAssertions));
+  console.log(workflowAssertions);
+  const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>(getAssertions([]));
   const dispatch = useDispatch<AppDispatch>();
 
   const onClose = () => {
-    dispatch(addAssertions({ assertions: assertions.map(() => ' assertion.value') }));
     props.toggleCollapse?.();
   };
 
   const onAssertionDelete = (event: AssertionDeleteEvent) => {
-    const { index } = event;
-    const test = [...assertions];
-    test.splice(index, 1);
-    setAssertions(test);
+    const { id } = event;
+    const newAssertions = { ...assertions };
+    delete newAssertions[id];
+    setAssertions(newAssertions);
   };
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {
-    const { name, description } = event;
-    console.log('charlie', name, description);
-    const newAssertions = [...assertions];
-    // newAssertions[index].value = value ?? '';
+    const newAssertions = { ...assertions };
+    const { name, description, id } = event;
+    newAssertions[id].name = name;
+    newAssertions[id].description = description;
+    dispatch(updateAssertions({ assertions: newAssertions }));
+
     setAssertions(newAssertions);
   };
 
   const onAssertionAdd = (event: AssertionAddEvent) => {
-    setAssertions([...assertions, { id: guid(), name: event.name, description: event.description }]);
+    const id = guid();
+    setAssertions({ ...assertions, [id]: { id: id, name: event.name, description: event.description } });
   };
 
   return (
     <Assertions
-      assertions={assertions}
+      assertions={Object.values(assertions)}
       onAssertionAdd={onAssertionAdd}
       onDismiss={onClose}
       onAssertionDelete={onAssertionDelete}
