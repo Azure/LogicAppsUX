@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useUnitTest } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -10,6 +10,7 @@ import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors'
 import { isRootNodeInGraph } from '../../../core/utils/graph';
 import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
+import { mockResultsTab } from './tabs/mockResultsTab/mockResultsTab';
 import { monitoringTab } from './tabs/monitoringTab/monitoringTab';
 import { parametersTab } from './tabs/parametersTab';
 import { monitorRetryTab } from './tabs/retryTab';
@@ -25,7 +26,7 @@ export const usePanelTabs = () => {
   const intl = useIntl();
 
   const isMonitoringView = useMonitoringView();
-
+  const isUnitTestView = useUnitTest();
   const selectedNode = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(selectedNode);
@@ -42,6 +43,14 @@ export const usePanelTabs = () => {
       visible: !isScopeNode && isMonitoringView,
     }),
     [intl, isMonitoringView, isScopeNode]
+  );
+
+  const mockResultsTabItem = useMemo(
+    () => ({
+      ...mockResultsTab(intl),
+      visible: isUnitTestView,
+    }),
+    [intl, isUnitTestView]
   );
 
   const parametersTabItem = useMemo(
@@ -84,6 +93,7 @@ export const usePanelTabs = () => {
   const scratchTabItem = useMemo(() => scratchTab, []);
 
   const tabs = useMemo(() => {
+    if (isUnitTestView) return [mockResultsTabItem];
     // Switch cases should only show parameters tab
     if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) return [parametersTabItem];
 
@@ -101,6 +111,8 @@ export const usePanelTabs = () => {
       .filter((a) => a.visible)
       .sort((a, b) => a.order - b.order);
   }, [
+    mockResultsTabItem,
+    isUnitTestView,
     aboutTabItem,
     codeViewTabItem,
     monitorRetryTabItem,
