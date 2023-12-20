@@ -7,7 +7,6 @@ import { PanelContent } from './panelcontent';
 import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
 import type { TitleChangeHandler } from './panelheader/panelheadertitle';
-import { PanelPivot } from './panelpivot';
 import type { ILayerProps } from '@fluentui/react';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
@@ -42,15 +41,15 @@ export type PanelContainerProps = {
   panelHeaderControlType?: PanelHeaderControlType;
   panelHeaderMenu: MenuItemOption[];
   selectedTab?: string;
+  selectTab: (tabId: string) => void;
   showCommentBox: boolean;
   readOnlyMode?: boolean;
-  tabs: Record<string, PanelTab>;
+  tabs: PanelTab[];
   nodeId: string;
   title?: string;
   layerProps?: ILayerProps;
   onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
-  setSelectedTab: (tabName: string | undefined) => void;
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
@@ -70,6 +69,7 @@ export const PanelContainer = ({
   panelHeaderControlType,
   panelHeaderMenu,
   selectedTab,
+  selectTab,
   showCommentBox,
   readOnlyMode,
   tabs,
@@ -78,7 +78,6 @@ export const PanelContainer = ({
   width,
   layerProps,
   onDismissButtonClicked,
-  setSelectedTab,
   toggleCollapse,
   trackEvent,
   renderHeader,
@@ -86,9 +85,6 @@ export const PanelContainer = ({
   onTitleChange,
 }: PanelContainerProps) => {
   const intl = useIntl();
-  const onTabChange = (itemKey: string): void => {
-    setSelectedTab && setSelectedTab(itemKey);
-  };
 
   const defaultRenderHeader = useCallback(
     (_props?: IPanelProps, _defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
@@ -177,17 +173,7 @@ export const PanelContainer = ({
           ) : isError ? (
             <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
           ) : (
-            <div className="msla-panel-page">
-              <PanelPivot
-                isCollapsed={isCollapsed}
-                tabs={tabs}
-                selectedTab={selectedTab}
-                onTabChange={onTabChange}
-                trackEvent={trackEvent}
-                nodeId={nodeId}
-              />
-              <PanelContent tabs={tabs} selectedTab={selectedTab} />
-            </div>
+            <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={selectTab} />
           )}
         </>
       )}
