@@ -1,6 +1,7 @@
 import { SearchableDropdown } from '../searchabledropdown';
 import type { SearchableDropdownProps } from '../searchabledropdown';
-import { TooltipHost, Link, Stack, Label } from '@fluentui/react';
+import { Stack, Label } from '@fluentui/react';
+import { Button, Tooltip } from '@fluentui/react-components';
 import type { FC } from 'react';
 
 export interface SearchableDropdownWithAddAllProps extends SearchableDropdownProps {
@@ -32,18 +33,18 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
 
   const renderButton = (handler: () => void, text?: string, tooltip?: string, enabled?: boolean, dataAutomationId?: string) => {
     return text ? (
-      <TooltipHost content={tooltip}>
-        <Link onClick={handler} underline disabled={enabled} className="msla-dropdown-control-button" data-automation-id={dataAutomationId}>
+      <Tooltip relationship={'label'} content={tooltip ?? ''} withArrow>
+        <Button size={'small'} appearance={'outline'} onClick={handler} disabled={enabled} data-automation-id={dataAutomationId}>
           {text}
-        </Link>
-      </TooltipHost>
+        </Button>
+      </Tooltip>
     ) : null;
   };
 
   return (
     <>
       {label && <Label className="msla-searchable-dropdown-label">{label}</Label>}
-      <Stack horizontal>
+      <Stack horizontal tokens={{ childrenGap: '8px' }}>
         <SearchableDropdown {...searchableDropdownProps} className="msla-searchable-dropdown-with-buttons" />
         {renderButton(handleShowAll, addAllButtonText, addAllButtonTooltip, !(addAllButtonEnabled ?? true), 'msla-add-all-button')}
         {renderButton(

@@ -34,6 +34,7 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { Divider } from '@fluentui/react-components';
 import { EditorService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DynamicCallStatus,
@@ -130,13 +131,16 @@ export const ParametersTab = () => {
         </div>
       ))}
       {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
-        <ConnectionDisplay
-          connectionName={connectionName.result}
-          nodeId={selectedNodeId}
-          isLoading={connectionName.isLoading}
-          readOnly={!!readOnly}
-          hasError={errorInfo?.level === ErrorLevel.Connection}
-        />
+        <>
+          <Divider style={{ padding: '16px 0px' }} />
+          <ConnectionDisplay
+            connectionName={connectionName.result}
+            nodeId={selectedNodeId}
+            isLoading={connectionName.isLoading}
+            readOnly={!!readOnly}
+            hasError={errorInfo?.level === ErrorLevel.Connection}
+          />
+        </>
       ) : null}
       {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>

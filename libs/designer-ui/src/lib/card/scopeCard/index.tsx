@@ -28,9 +28,10 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   isLoading,
   title,
   onClick,
+  onDeleteClick,
   handleCollapse,
   selected,
-  contextMenuOptions = [],
+  contextMenuItems = [],
   runData = {},
 }) => {
   const contextMenu = useCardContextMenu();
@@ -39,7 +40,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
     onClick?.();
   };
 
-  const keyboardInteraction = useCardKeyboardInteraction(onClick, contextMenuOptions);
+  const keyboardInteraction = useCardKeyboardInteraction(onClick, onDeleteClick);
 
   const badges = [
     ...(commentBox && commentBox.comment
@@ -101,16 +102,16 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               ))}
             </div>
           </div>
-          {contextMenuOptions?.length > 0 ? (
-            <CardContextMenu
-              contextMenuLocation={contextMenu.location}
-              contextMenuOptions={contextMenuOptions}
-              showContextMenu={contextMenu.isShowing}
-              title={title}
-              onSetShowContextMenu={contextMenu.setIsShowing}
-            />
-          ) : null}
         </div>
+        {contextMenuItems?.length > 0 ? (
+          <CardContextMenu
+            contextMenuLocation={contextMenu.location}
+            menuItems={contextMenuItems}
+            open={contextMenu.isShowing}
+            title={title}
+            setOpen={contextMenu.setIsShowing}
+          />
+        ) : null}
       </div>
     </div>
   );

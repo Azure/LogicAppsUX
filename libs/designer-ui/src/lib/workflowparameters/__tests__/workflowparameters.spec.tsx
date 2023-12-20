@@ -63,7 +63,7 @@ describe('ui/workflowparameters/workflowparameters', () => {
     });
     expect(add.props.className).toBe('msla-workflow-parameters-add');
     const addButton = add.props.children;
-    expect(addButton.props.text).toBe(addMessage);
+    expect(addButton.props.children).toBe(addMessage);
 
     expect(parameterList.props.items).toHaveLength(2);
   });

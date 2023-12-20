@@ -4,11 +4,15 @@ import { useAllSettingsValidationErrors } from '../../../core/state/setting/sett
 import { useWorkflowParameterValidationErrors } from '../../../core/state/workflowparameters/workflowparametersselector';
 import { NodeErrors } from './nodeErrors';
 import { WorkflowParameterErrors } from './workflowParameterErrors';
-import { FocusTrapZone, IconButton, Text } from '@fluentui/react';
+import { FocusTrapZone, Text } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
+import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+
+const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export const ErrorPanel = (props: CommonPanelProps) => {
   const intl = useIntl();
@@ -123,7 +127,7 @@ export const ErrorPanel = (props: CommonPanelProps) => {
     <FocusTrapZone>
       <div className="msla-app-action-header">
         <Text variant="xLarge">{errorPanelHeader}</Text>
-        <IconButton onClick={props.toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
+        <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div className="msla-error-panel-body">
         <ErrorCategory title={workflowParameterErrorsCategoryHeader} numErrors={numWorkflowParameterErrors}>

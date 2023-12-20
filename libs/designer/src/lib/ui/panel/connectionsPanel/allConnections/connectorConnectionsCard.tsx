@@ -1,11 +1,9 @@
 import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
-import { DisconnectedEntry } from './disconnectedEntry';
 import { Text, AccordionHeader, AccordionPanel, Spinner, Badge } from '@fluentui/react-components';
 import { getConnectorCategoryString } from '@microsoft/designer-ui';
 import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 
 export interface ConnectorConnectionsCardProps {
   connectorId: string;
@@ -29,15 +27,6 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   const isBuiltIn = isBuiltInConnector(connectorId);
   const category = getConnectorCategoryString(connectorId);
 
-  const intl = useIntl();
-  const connectionsPanelHeaderText = intl.formatMessage(
-    {
-      defaultMessage: '{connectorName} connections',
-      description: 'Header for the connections panel',
-    },
-    { connectorName: title }
-  );
-
   const allErrors = useAllConnectionErrors();
   const hasErrors = useMemo(() => {
     if (disconnectedNodes?.length > 0) return true;
@@ -60,7 +49,7 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
             <>
               <img className="msla-action-icon large" src={fallbackConnectorIconUrl(iconUri)} alt="" />
               <Text size={300} weight="semibold" className="msla-flex-header-title">
-                {connectionsPanelHeaderText}
+                {title}
               </Text>
               {isBuiltIn && (
                 <Badge shape="rounded" appearance="outline">
@@ -85,7 +74,7 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
             />
           ))}
           {disconnectedNodes?.length > 0 && (
-            <DisconnectedEntry nodeIds={disconnectedNodes} connectorId={connectorId} iconUri={iconUri} brandColor={brandColor} />
+            <ConnectionEntry disconnectedNodeIds={disconnectedNodes} connectorId={connectorId} iconUri={iconUri} brandColor={brandColor} />
           )}
         </div>
       </AccordionPanel>

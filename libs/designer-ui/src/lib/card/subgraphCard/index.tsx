@@ -2,7 +2,6 @@ import { ActionButtonV2 } from '../../actionbuttonv2';
 import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { CardContextMenu } from '../cardcontextmenu';
 import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
-import type { MenuItemOption } from '../types';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft/utils-logic-apps';
 import { SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
@@ -18,8 +17,9 @@ interface SubgraphCardProps {
   selected?: boolean;
   readOnly?: boolean;
   onClick?(id?: string): void;
+  onDeleteClick?(): void;
   showAddButton?: boolean;
-  contextMenuOptions?: MenuItemOption[];
+  contextMenuItems?: JSX.Element[];
 }
 
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
@@ -32,11 +32,12 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   selected = false,
   readOnly = false,
   onClick,
-  contextMenuOptions = [],
+  onDeleteClick,
+  contextMenuItems = [],
 }) => {
   const intl = useIntl();
 
-  const keyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), contextMenuOptions);
+  const keyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
   const contextMenu = useCardContextMenu();
 
   const addCaseLabel = intl.formatMessage({
@@ -122,13 +123,13 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           {data.title}
         </button>
         <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
-        {contextMenuOptions?.length > 0 ? (
+        {contextMenuItems?.length > 0 ? (
           <CardContextMenu
             contextMenuLocation={contextMenu.location}
-            contextMenuOptions={contextMenuOptions}
-            showContextMenu={contextMenu.isShowing}
+            menuItems={contextMenuItems}
+            open={contextMenu.isShowing}
             title={data.title}
-            onSetShowContextMenu={contextMenu.setIsShowing}
+            setOpen={contextMenu.setIsShowing}
           />
         ) : null}
       </div>

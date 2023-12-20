@@ -1,5 +1,4 @@
 import constants from '../../../constants';
-import { isApple } from '../../../helper';
 import fontColorSvgDark from '../icons/dark/font-color.svg';
 import linkDark from '../icons/dark/link.svg';
 import paintBucketSvgDark from '../icons/dark/paint-bucket.svg';
@@ -18,6 +17,7 @@ import { useTheme } from '@fluentui/react';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $patchStyleText, $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister } from '@lexical/utils';
+import { isApple } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import {
   COMMAND_PRIORITY_NORMAL,

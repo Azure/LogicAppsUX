@@ -122,7 +122,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       }}
     >
       <MenuTrigger>
-        <MenuButton icon={<AddIcon />} size="large" appearance="transparent">
+        <MenuButton icon={<AddIcon />} size="large" appearance="subtle">
           {RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE}
         </MenuButton>
       </MenuTrigger>

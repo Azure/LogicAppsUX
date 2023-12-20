@@ -1,8 +1,15 @@
 import { useConnectionById } from '../../../../core/queries/connections';
 import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
+import { css } from '@fluentui/react';
 import { Button, Spinner, Text, Tooltip } from '@fluentui/react-components';
-import { Open24Filled, ArrowSwap24Filled, CheckmarkCircle24Filled, ErrorCircle24Filled } from '@fluentui/react-icons';
+import {
+  Open24Filled,
+  ArrowSwap24Filled,
+  CheckmarkCircle24Filled,
+  ErrorCircle24Filled,
+  PlugDisconnected24Filled,
+} from '@fluentui/react-icons';
 import { HostService } from '@microsoft/designer-client-services-logic-apps';
 import { getConnectionErrors } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo } from 'react';
@@ -11,17 +18,20 @@ import { useDispatch } from 'react-redux';
 
 interface ConnectionEntryProps {
   connectorId: string;
-  refId: string;
-  connectionReference: any;
+  refId?: string;
+  connectionReference?: any;
   brandColor?: string;
   iconUri?: string;
+  disconnectedNodeIds?: string[];
 }
 
-export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconUri }: ConnectionEntryProps) => {
+export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconUri, disconnectedNodeIds = [] }: ConnectionEntryProps) => {
   const dispatch = useDispatch();
 
-  const connection = useConnectionById(connectionReference.connection.id, connectorId);
-  const nodeIds = useMemo(() => connectionReference.nodes || [], [connectionReference.nodes]);
+  const connection = useConnectionById(connectionReference?.connection?.id, connectorId);
+  const nodeIds = useMemo(() => connectionReference?.nodes || disconnectedNodeIds, [connectionReference?.nodes, disconnectedNodeIds]);
+
+  const disconnected = useMemo(() => disconnectedNodeIds.length > 0, [disconnectedNodeIds.length]);
 
   const intl = useIntl();
   const openConnectionTooltipText = intl.formatMessage({
@@ -29,8 +39,12 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     description: 'Tooltip for the button to open a connection',
   });
   const connectedActionsText = intl.formatMessage({
-    defaultMessage: 'Connected actions',
+    defaultMessage: 'Actions',
     description: 'Header for the connected actions section',
+  });
+  const reassignButtonText = intl.formatMessage({
+    defaultMessage: 'Reassign',
+    description: 'Button text to reassign actions',
   });
   const reassignConnectionTooltipText = intl.formatMessage({
     defaultMessage: 'Reassign all connected actions to a new connection',
@@ -43,6 +57,10 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   const connectionInvalidStatusText = intl.formatMessage({
     defaultMessage: 'Connection is invalid',
     description: 'Tooltip for the button to reassign actions',
+  });
+  const disconnectedText = intl.formatMessage({
+    defaultMessage: 'Disconnected',
+    description: 'Text to show when a connection is disconnected',
   });
 
   const onReassignButtonClick = useCallback(() => {
@@ -57,6 +75,7 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
 
   const statusIconComponent = useMemo(() => {
     if (connection?.isLoading) return <Spinner size="extra-small" />;
+    if (disconnected) return <PlugDisconnected24Filled />;
     const hasErrors = errors.length > 0;
     return (
       <Tooltip content={hasErrors ? connectionInvalidStatusText : connectionValidStatusText} relationship="label">
@@ -67,7 +86,7 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
         )}
       </Tooltip>
     );
-  }, [connection?.isLoading, connectionInvalidStatusText, connectionValidStatusText, errors.length]);
+  }, [connection?.isLoading, connectionInvalidStatusText, connectionValidStatusText, errors.length, disconnected]);
 
   // Only show the open connection button if the service method is supplied
   const openConnectionSupported = useMemo(() => HostService().openConnectionResource !== undefined, []);
@@ -76,12 +95,14 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     HostService().openConnectionResource?.(connection?.result?.id);
   }, [connection?.result?.id]);
 
+  const cardTitle = connection?.result?.properties.displayName ?? refId ?? disconnectedText;
+
   return (
-    <div key={refId} className="msla-connector-connections-card-connection">
+    <div key={refId} className={css('msla-connector-connections-card-connection', disconnected && 'disconnected')}>
       <div className="msla-flex-header">
         {statusIconComponent}
         <Text size={300} weight="semibold" className="msla-flex-header-title">
-          {connection?.result?.properties.displayName ?? refId}
+          {cardTitle}
         </Text>
         <Text size={300} className="msla-flex-header-subtitle">
           {connection?.result?.name}
@@ -98,14 +119,24 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
         )}
       </div>
       <div className="msla-connector-connections-card-connection-body">
-        <Text>{connectedActionsText}</Text>
+        <div className="msla-flex-header">
+          <Text>{connectedActionsText}</Text>
+          <Tooltip content={reassignConnectionTooltipText} relationship="label">
+            <Button
+              appearance="subtle"
+              size="small"
+              icon={<ArrowSwap24Filled />}
+              onClick={onReassignButtonClick}
+              style={{ color: 'var(--colorBrandForeground1)' }}
+            >
+              {reassignButtonText}
+            </Button>
+          </Tooltip>
+        </div>
         <div className="msla-connector-connections-card-connection-nodes">
           {nodeIds.map((nodeId: string) => (
             <NodeLinkButton key={nodeId} nodeId={nodeId} iconUri={iconUri} />
           ))}
-          <Tooltip content={reassignConnectionTooltipText} relationship="label">
-            <Button icon={<ArrowSwap24Filled />} onClick={onReassignButtonClick} />
-          </Tooltip>
         </div>
       </div>
     </div>

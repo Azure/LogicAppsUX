@@ -16,8 +16,8 @@ import {
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, Tooltip, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
 import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -155,21 +155,6 @@ export const ConnectionEdge = (props: EdgeProps) => {
   };
 
   const contextMenu = useCardContextMenu();
-  const getRemoveMenuItem = (): MenuItemOption => {
-    const deleteLine = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Remove line from canvas',
-    });
-
-    return {
-      key: deleteLine,
-      disabled: false,
-      iconName: 'Delete',
-      title: deleteLine,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
-  };
 
   const handleDeleteClick = () => {
     dispatch(setSelectedItem(id));
@@ -223,9 +208,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
       <CardContextMenu
         title={'Delete'}
         contextMenuLocation={contextMenu.location}
-        contextMenuOptions={[getRemoveMenuItem()]}
-        showContextMenu={contextMenu.isShowing}
-        onSetShowContextMenu={contextMenu.setIsShowing}
+        menuItems={[<DeleteMenuItem key="delete" onClick={handleDeleteClick} />]}
+        open={contextMenu.isShowing}
+        setOpen={contextMenu.setIsShowing}
       />
     </svg>
   );

@@ -1,5 +1,6 @@
-import type { IButtonStyles } from '@fluentui/react';
-import { IconButton, TooltipHost, css } from '@fluentui/react';
+import { css } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
+import { Info16Regular } from '@fluentui/react-icons';
 
 export interface SettingLabelProps {
   labelText: string;
@@ -8,15 +9,6 @@ export interface SettingLabelProps {
   subLabelText?: string;
   isSubLabelToggle?: boolean;
 }
-const infoButtonStyles: IButtonStyles = {
-  root: { color: '#8d8686' },
-  rootHovered: {
-    backgroundColor: 'transparent',
-  },
-  rootPressed: {
-    backgroundColor: 'transparent',
-  },
-};
 
 export function SettingLabel({
   labelText,
@@ -29,15 +21,9 @@ export function SettingLabel({
     <>
       <div className="msla-setting-label-container">
         <div className="msla-setting-label-title">{labelText}</div>
-        <TooltipHost content={infoTooltipText}>
-          <IconButton
-            role="tooltip"
-            aria-label={infoTooltipText}
-            className="msla-setting-label-tooltip-icon"
-            iconProps={{ iconName: 'Info' }}
-            styles={infoButtonStyles}
-          />
-        </TooltipHost>
+        <Tooltip relationship="label" content={infoTooltipText ?? ''} aria-label={infoTooltipText}>
+          <Info16Regular className="msla-setting-label-tooltip-icon" />
+        </Tooltip>
       </div>
       {settingDescription ? <div className="msla-setting-label-description">{settingDescription}</div> : null}
       {subLabelText ? <div className={css('msla-setting-label-subLabel', isSubLabelToggle && 'isToggle')}>{subLabelText}</div> : null}

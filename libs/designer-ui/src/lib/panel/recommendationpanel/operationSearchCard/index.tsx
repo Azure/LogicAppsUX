@@ -2,6 +2,7 @@ import { InfoDot } from '../../../infoDot';
 import { convertUIElementNameToAutomationId, getPreviewTag } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
 import { Text, Image } from '@fluentui/react';
+import { Badge } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 export type OperationSearchCardProps = {
@@ -44,9 +45,26 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
       <Text className="msla-op-search-card-name">{title}</Text>
-      {displayRuntimeInfo && previewTag ? <Text className="msla-psuedo-badge">{previewTag}</Text> : null}
-      {displayRuntimeInfo && isBuiltIn && category ? <Text className="msla-psuedo-badge">{category}</Text> : null}
-      {displayRuntimeInfo && isTrigger ? <Text className="msla-psuedo-badge">{triggerBadgeText}</Text> : null}
+      {displayRuntimeInfo && (
+        <>
+          {previewTag ? (
+            <Badge appearance="outline" shape="rounded">
+              {previewTag}
+            </Badge>
+          ) : null}
+          {isBuiltIn && category ? (
+            <Badge appearance="outline" shape="rounded">
+              {category}
+            </Badge>
+          ) : null}
+          {isTrigger ? (
+            <Badge appearance="outline" shape="rounded">
+              {triggerBadgeText}
+            </Badge>
+          ) : null}
+        </>
+      )}
+
       <InfoDot description={description} innerAriaHidden="true" />
     </button>
   );

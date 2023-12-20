@@ -76,55 +76,25 @@
   width: 100%;
 
   .msla-run-after-edge-header-contents {
-    display: inline-block;
-    width: 80%;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 4px 4px 4px 8px;
+  }
 
-    .msla-run-after-edge-header-logo {
-      display: inline-block;
-      vertical-align: middle;
-      margin-top: 8px;
-      margin-bottom: 8px;
-      margin-right: 8px;
+  .msla-run-after-node-image {
+    border-radius: 2px;
+    width: 24px;
+    height: 24px;
+  }
 
-      .msla-run-after-logo-image {
-        border-radius: 2px;
-        width: 24px;
-        height: 24px;
-        vertical-align: middle;
-      }
-    }
-
-    .msla-run-after-edge-header-text {
-      display: inline-block;
-      vertical-align: middle;
-      font-weight: 600;
-      font-family: @font-family;
-      font-size: 14px;
-      max-width: 80%;
-      overflow-wrap: break-word;
-    }
-
-    .msla-run-after-icon {
-      padding: 0px 10px;
-      transform: translate(0px, 3px);
-    }
+  .msla-run-after-node-title {
+    flex-grow: 1;
   }
 
   .msla-run-after-traffic-lights {
-    display: inline-flex;
-    vertical-align: middle;
-    width: 13%;
-    margin-right: 1px;
-    justify-content: flex-end;
-
-    .msla-run-after-first-light {
-      margin-left: 50%;
-      margin-right: 2px;
-    }
-    .msla-run-after-light {
-      margin-right: 2px;
-      display: inline-block;
-    }
+    display: flex;
+    gap: 2px;
   }
 }
 .msla-run-after-delete-icon {
@@ -138,33 +108,22 @@
 }
 
 .msla-run-after-statuses {
-  margin-left: 34px;
-  margin-top: 8px;
+  margin-left: 25px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
 
-  .msla-run-after-status-checkbox {
-    margin-bottom: 8px;
-    margin-right: 8px;
+  .status-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-    span {
-      margin-bottom: 3px;
+    svg {
+      width: 16px;
+      height: 16px;
     }
   }
-  .msla-run-after-label-badge {
-    margin-right: 6px;
-    display: flex;
-    vertical-align: middle;
-    width: 16px;
-    margin-left: 4px;
-  }
 }
-
-.msla-run-after-separator {
-  padding: 0px;
-  width: 100%;
-  display: inline-block;
-  color: #6b6b6b;
-}
-
 .msla-card-body div.msla-two-columns.msla-run-after-columns {
   width: 100%;
 }

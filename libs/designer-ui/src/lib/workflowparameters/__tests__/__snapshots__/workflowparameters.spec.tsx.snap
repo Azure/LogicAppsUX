@@ -12,30 +12,22 @@ exports[`ui/workflowparameters/workflowparameters should construct. 1`] = `
     >
       Parameters
     </Text>
-    <CustomizedIconButton
-      iconProps={
-        Object {
-          "iconName": "Cancel",
-        }
-      }
+    <Button
+      appearance="subtle"
+      icon={<CompoundIcon />}
       onClick={[Function]}
     />
   </div>
-  <InfoBar
-    isInverted={false}
-  />
+  <InfoBar />
   <div
     className="msla-workflow-parameters-add"
   >
-    <CustomizedCommandBarButton
-      iconProps={
-        Object {
-          "iconName": "Add",
-        }
-      }
+    <Button
+      icon={<CompoundIcon />}
       onClick={[Function]}
-      text="Create parameter"
-    />
+    >
+      Create parameter
+    </Button>
   </div>
   <List
     items={

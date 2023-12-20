@@ -23,16 +23,6 @@
       "value": "Protected"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -179,6 +169,12 @@
       "value": "Open Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -307,6 +303,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -559,12 +561,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Dismiss"
     }
   ],
   "20oqsp": [
@@ -3935,12 +3931,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "This Action/Trigger cannot be copied."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4461,12 +4451,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Triggers cannot be deleted."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4555,12 +4539,6 @@
     {
       "type": 0,
       "value": "issue"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "You can add notes only when you edit a step's inputs."
     }
   ],
   "Rp5pHU": [
@@ -4849,6 +4827,12 @@
     {
       "type": 0,
       "value": "Note"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnected"
     }
   ],
   "Ttc0SM": [
@@ -5421,6 +5405,12 @@
       "value": "A managed identity is not configured on the logic app."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5969,12 +5959,6 @@
     {
       "type": 0,
       "value": "Read more"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "This operation has already been deleted."
     }
   ],
   "Zg3IjD": [
@@ -6607,6 +6591,12 @@
       "value": "Italic (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reassign"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6987,12 +6977,6 @@
     {
       "type": 0,
       "value": "Undo"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -8269,12 +8253,6 @@
       "value": "In-App"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8841,6 +8819,12 @@
     {
       "type": 0,
       "value": "Key"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9739,12 +9723,6 @@
       "value": "Value"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9993,12 +9971,6 @@
     {
       "type": 0,
       "value": "Stop"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Delete"
     }
   ],
   "ziYCiA": [

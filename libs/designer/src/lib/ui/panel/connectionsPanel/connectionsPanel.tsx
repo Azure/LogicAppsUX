@@ -6,11 +6,15 @@ import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
 import { CreateConnectionWrapper } from './createConnection/createConnectionWrapper';
 import { SelectConnection } from './selectConnection/selectConnection';
-import { IconButton, Text } from '@fluentui/react';
+import { Text } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
+import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { type CommonPanelProps } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+
+const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export const ConnectionPanel = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
@@ -72,7 +76,7 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
     <>
       <div className="msla-app-action-header">
         <Text variant="xLarge">{panelHeaderText}</Text>
-        <IconButton onClick={props.toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
+        <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>
     </>

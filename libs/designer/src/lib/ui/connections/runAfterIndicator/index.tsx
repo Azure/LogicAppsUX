@@ -1,4 +1,5 @@
-import { Text, TooltipHost, useTheme } from '@fluentui/react';
+import { Text, useTheme } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
 import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
 import { idDisplayCase, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
@@ -83,13 +84,13 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
   );
 
   return (
-    <TooltipHost content={tooltipContent}>
+    <Tooltip relationship={'description'} withArrow content={tooltipContent}>
       <div className="msla-run-after-dot-container">
         <Dot status={RUN_AFTER_STATUS.SUCCEEDED} />
         <Dot status={RUN_AFTER_STATUS.TIMEDOUT} />
         <Dot status={RUN_AFTER_STATUS.SKIPPED} />
         <Dot status={RUN_AFTER_STATUS.FAILED} />
       </div>
-    </TooltipHost>
+    </Tooltip>
   );
 }
