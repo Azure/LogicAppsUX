@@ -1,8 +1,8 @@
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
-import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
-import type { MapDefinitionEntry, Schema, SchemaExtended } from '@microsoft/utils-logic-apps';
+import { getLoopTargetNodeWithJson, MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
@@ -2114,5 +2114,59 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
       });
     });
+  });
+
+  describe('XSD to JSON', () => {
+    const simpleMap: MapDefinitionEntry = {
+      $version: '1',
+      $input: 'XSD',
+      $output: 'JSON',
+      $sourceSchema: 'SourceSchemaJson.json',
+      $targetSchema: 'TargetSchemaJson.json',
+    };
+
+    const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
+
+    it('maps a looping XSD to JSON', () => {
+      simpleMap['root'] = {
+        ComplexArray1: {
+          '$for(/ns0:Root/Looping/Employee)': {
+            F1: 'TelephoneNumber',
+          },
+        },
+      };
+
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const result = mapDefinitionDeserializer.convertFromMapDefinition();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(4);
+
+      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
+
+      expect(resultEntries[1][0]).toEqual('source-/root/Nums/*/Num');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
+
+      expect(resultEntries[2][0]).toEqual('target-/root/ComplexArray1/*');
+      expect(resultEntries[2][1]).toBeTruthy();
+      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
+
+      expect(resultEntries[3][0]).toEqual('target-/root/ComplexArray1/*/F1');
+      expect(resultEntries[3][1]).toBeTruthy();
+      expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
+    });
+  });
+
+  it('gets correct target node for json schema', () => {
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
+    const root = extendedTarget.schemaTreeRoot;
+    const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
+
+    expect((matchingTarget as SchemaNodeExtended).name).toEqual('F1');
   });
 });

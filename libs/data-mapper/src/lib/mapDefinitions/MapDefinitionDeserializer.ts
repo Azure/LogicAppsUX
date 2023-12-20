@@ -329,10 +329,18 @@ export class MapDefinitionDeserializer {
           // Gets tgtKey for current loop (which will be the single key chunk immediately following the loop path chunk)
           const startIdxOfNextPathChunk = loopKey.indexOf('/', endOfForIdx + 2);
           tgtLoopNodeKey = getTargetValueWithoutLoopsSchemaSpecific(
+            // danielle this assumes that if there is a * in the source there will be in the target
             startIdxOfNextPathChunk > -1 ? loopKey.substring(0, startIdxOfNextPathChunk) : loopKey,
             loopKey.indexOf('*') > -1
           );
+          // danielle try inserting code to get target node with /*/
           tgtLoopNode = findNodeForKey(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot, true);
+          if (!tgtLoopNode) {
+            const jsonTgt = getLoopTargetNodeWithJson(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot);
+            if (jsonTgt) {
+              tgtLoopNode = jsonTgt as SchemaNodeExtended;
+            }
+          }
         }
 
         // Handle index variables
@@ -458,3 +466,32 @@ export class MapDefinitionDeserializer {
     }
   };
 }
+
+export const getLoopTargetNodeWithJson = (targetKey: string, targetSchemaRoot: SchemaNodeExtended) => {
+  let trimmedTargetKey = targetKey;
+  if (targetKey[0] === '/') {
+    trimmedTargetKey = targetKey.substring(1);
+  }
+  const targetKeyPath = trimmedTargetKey.split('/');
+  const matchingSchemaNode = getLoopTargetNode(targetKeyPath, 1, targetSchemaRoot);
+  return matchingSchemaNode;
+};
+
+const getLoopTargetNode = (targetKeyPath: string[], ind: number, parentNode: SchemaNodeExtended) => {
+  if (ind === targetKeyPath.length) {
+    return parentNode;
+  }
+
+  const possibleNodes: (SchemaNodeExtended | SchemaExtended | undefined)[] = [];
+
+  parentNode.children.forEach((child) => {
+    if (child.name === targetKeyPath[ind]) {
+      possibleNodes.push(getLoopTargetNode(targetKeyPath, ind + 1, child));
+    }
+    if (child.name === '<ArrayItem>') {
+      possibleNodes.push(getLoopTargetNode(targetKeyPath, ind, child));
+    }
+  });
+
+  return possibleNodes.find((node) => node !== null);
+};
