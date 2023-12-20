@@ -122,6 +122,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
       {hasChildren &&
         isNodeExpanded &&
         node.children?.map((childNode) => <TreeBranch<ITreeNode<T>> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
+
       <CardContextMenu
         title={'contextMenu'}
         contextMenuLocation={contextMenu.location}

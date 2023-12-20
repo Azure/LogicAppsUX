@@ -28,8 +28,6 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLoc
     onStart: useCallback(() => open && setOpen(false), [open, setOpen]),
   });
 
-  if (!open) return null;
-
   const CARD_CONTEXT_MENU_ARIA_LABEL = intl.formatMessage(
     {
       defaultMessage: 'Context menu for {title} card',
@@ -54,10 +52,11 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLoc
 
   return (
     <Menu
-      open={true}
+      open={open}
       aria-label={CARD_CONTEXT_MENU_ARIA_LABEL}
       onOpenChange={(_e: any, data: MenuOpenChangeData) => setOpen(data.open)}
       positioning={{ target: { getBoundingClientRect }, offset }}
+      closeOnScroll
     >
       <MenuPopover>
         <MenuList>{menuItems}</MenuList>
