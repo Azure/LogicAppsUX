@@ -6,7 +6,6 @@ import { AssertionsPanel } from './assertionsPanel/assertionsPanel';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
-import { usePanelTabs } from './nodeDetailsPanel/tabInitialization';
 import { NodeSearchPanel } from './nodeSearchPanel/nodeSearchPanel';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParametersPanel';
@@ -37,8 +36,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const currentPanelMode = useCurrentPanelMode();
-
-  usePanelTabs(); // This initializes tabs for the node details panel, can't be run twice so it lives here instead of in the panel
 
   const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
 

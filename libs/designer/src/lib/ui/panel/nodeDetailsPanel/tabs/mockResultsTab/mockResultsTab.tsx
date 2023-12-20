@@ -47,6 +47,7 @@ export const MockResultsTab = () => {
 };
 
 export const mockResultsTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.MOCK_RESULTS,
   title: intl.formatMessage({
     defaultMessage: 'Mocked Results',
     description: 'The tab label for the mocked results tab on the operation panel',

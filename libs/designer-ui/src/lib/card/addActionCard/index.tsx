@@ -25,7 +25,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
     onClick?.();
   };
 
-  const keyboardInteraction = useCardKeyboardInteraction(onClick, []);
+  const keyboardInteraction = useCardKeyboardInteraction(onClick);
 
   const brandColor = '#484F58';
   const cardIcon = (
