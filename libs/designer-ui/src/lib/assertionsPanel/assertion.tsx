@@ -1,10 +1,10 @@
 import type { EventHandler } from '../eventhandler';
+import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
-import { CommandBarButton, FontWeights, IconButton } from '@fluentui/react';
+import { CommandBarButton, FontWeights } from '@fluentui/react';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
-import { useIntl } from 'react-intl';
 
 const commandBarStyles: Partial<IButtonStyles> = {
   label: {
@@ -32,24 +32,25 @@ export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
 
 export interface AssertionProps {
   assertion: AssertionDefintion;
-  onAssertionDelete: AssertionDeleteHandler;
+  onAssertionDelete: React.MouseEventHandler<HTMLButtonElement>;
   onAssertionUpdate: AssertionUpdateHandler;
   isInverted: boolean;
 }
 
-export function Assertion({ isInverted, assertion, onAssertionUpdate }: AssertionProps): JSX.Element {
+export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertionDelete }: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
-
   const { name } = assertion;
 
-  const handleEdit = (): void => {
+  const handleEdit: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(true);
     setExpanded(true);
   };
 
-  const intl = useIntl();
-  // const themeName = isInverted ? 'dark' : 'light';
+  const handleSave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
+    setIsEditable(false);
+    onAssertionUpdate({ name, description: '' });
+  };
 
   const iconProps: IIconProps = {
     iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
@@ -65,16 +66,6 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate }: Assertio
     setExpanded(!expanded);
   };
 
-  const deleteAssertionText = intl.formatMessage({
-    defaultMessage: 'Delete assertion',
-    description: 'Create Assertion Text',
-  });
-
-  const editAssertionText = intl.formatMessage({
-    defaultMessage: 'Edit assertion',
-    description: 'Edit Assertion Text',
-  });
-
   return (
     <div className="msla-workflow-assertion">
       <div className="msla-workflow-assertion-header">
@@ -85,10 +76,7 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate }: Assertio
           styles={commandBarStyles}
           text={name}
         />
-        <div className="msla-workflow-assertion-header-buttons">
-          <IconButton ariaLabel={editAssertionText} iconProps={{ iconName: 'Edit' }} onClick={handleEdit} />
-          <IconButton ariaLabel={deleteAssertionText} iconProps={{ iconName: 'Delete' }} />
-        </div>
+        <AssertionButtons onEdit={handleEdit} onSave={handleSave} isEditable={isEditable} onDelete={onAssertionDelete} />
       </div>
       <div className="msla-workflow-assertion-content">
         {expanded ? <AssertionField assertion={assertion} onChange={onAssertionUpdate} isEditable={isEditable} /> : null}
