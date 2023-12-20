@@ -1,4 +1,5 @@
 import type { EventHandler } from '../eventhandler';
+import { AssertionField } from './assertionField';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
 import { CommandBarButton, FontWeights, IconButton } from '@fluentui/react';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
@@ -12,16 +13,22 @@ const commandBarStyles: Partial<IButtonStyles> = {
 };
 
 export interface AssertionUpdateEvent {
-  index: number;
-  value: string | undefined;
+  name: string;
+  description: string;
 }
 
 export interface AssertionDeleteEvent {
   index: number;
 }
 
+export interface AssertionAddEvent {
+  name: string;
+  description: string;
+}
+
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;
 export type AssertionUpdateHandler = EventHandler<AssertionUpdateEvent>;
+export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
 
 export interface AssertionProps {
   assertion: AssertionDefintion;
@@ -30,9 +37,9 @@ export interface AssertionProps {
   isInverted: boolean;
 }
 
-export function Assertion({ isInverted, assertion }: AssertionProps): JSX.Element {
+export function Assertion({ isInverted, assertion, onAssertionUpdate }: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(false);
-  const [_isEditable, setIsEditable] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
 
   const { name } = assertion;
 
@@ -68,29 +75,23 @@ export function Assertion({ isInverted, assertion }: AssertionProps): JSX.Elemen
     description: 'Edit Assertion Text',
   });
 
-  const headingTitle = intl.formatMessage({
-    defaultMessage: 'New assertion',
-    description: 'Heading title for an assertion without name',
-  });
-
   return (
-    <div className="msla-workflow-parameter">
-      <div>
-        <div>
-          <CommandBarButton
-            data-testid={name + '-parameter-heading-button'}
-            className="msla-workflow-parameter-heading-button"
-            iconProps={iconProps}
-            onClick={handleToggleExpand}
-            styles={commandBarStyles}
-            text={name ? name : headingTitle}
-          />
+    <div className="msla-workflow-assertion">
+      <div className="msla-workflow-assertion-header">
+        <CommandBarButton
+          data-testid={name + '-assertion-heading-button'}
+          iconProps={iconProps}
+          onClick={handleToggleExpand}
+          styles={commandBarStyles}
+          text={name}
+        />
+        <div className="msla-workflow-assertion-header-buttons">
+          <IconButton ariaLabel={editAssertionText} iconProps={{ iconName: 'Edit' }} onClick={handleEdit} />
+          <IconButton ariaLabel={deleteAssertionText} iconProps={{ iconName: 'Delete' }} />
         </div>
-        {expanded ? <h1>{'Hello there'}</h1> : null}
       </div>
-      <div className="msla-workflow-parameter-edit-or-delete-button">
-        <IconButton ariaLabel={editAssertionText} iconProps={{ iconName: 'Edit' }} onClick={handleEdit} />
-        <IconButton ariaLabel={deleteAssertionText} iconProps={{ iconName: 'Delete' }} />
+      <div className="msla-workflow-assertion-content">
+        {expanded ? <AssertionField assertion={assertion} onChange={onAssertionUpdate} isEditable={isEditable} /> : null}
       </div>
     </div>
   );
