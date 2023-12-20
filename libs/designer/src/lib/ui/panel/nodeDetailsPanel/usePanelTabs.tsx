@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
@@ -29,10 +30,9 @@ export const usePanelTabs = () => {
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
-  const isScopeNode = nodeMetaData?.subgraphType === SUBGRAPH_TYPES.SCOPE;
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(selectedNode);
-
+  const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
   const parameterValidationErrors = useParameterValidationErrors(selectedNode);
   const settingValidationErrors = useSettingValidationErrors(selectedNode);
 
