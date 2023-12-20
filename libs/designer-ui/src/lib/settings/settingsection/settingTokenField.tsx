@@ -57,6 +57,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
+  suppressCastingForSerialize?: boolean;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -102,6 +103,7 @@ export const TokenField = ({
   hideValidationErrors,
   onCastParameter,
   getTokenPicker,
+  suppressCastingForSerialize,
 }: TokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
   const labelForAutomationId = convertUIElementNameToAutomationId(label);
@@ -225,6 +227,7 @@ export const TokenField = ({
           onMenuOpen={onComboboxMenuOpen}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
+          suppressCastingForSerialize={suppressCastingForSerialize}
         />
       );
 
@@ -271,6 +274,7 @@ export const TokenField = ({
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           getTokenPicker={getTokenPicker}
+          showDescription={true}
         />
       );
 

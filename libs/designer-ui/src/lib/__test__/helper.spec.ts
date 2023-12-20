@@ -1,4 +1,5 @@
-import { getDragStartHandlerWhenDisabled, isEdge, isFirefox } from '../helper';
+import { getDragStartHandlerWhenDisabled } from '../helper';
+import { isEdge, isFirefox } from '@microsoft/utils-logic-apps';
 
 describe('lib/helper', () => {
   afterEach(() => {

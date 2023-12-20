@@ -8,7 +8,7 @@ interface ChangeProps {
   pickerDisplayValue: ValueSegment[];
 }
 
-export const UpdateEditorFromPicker = ({ pickerDisplayValue }: ChangeProps) => {
+export const UpdateEditorFromFilePicker = ({ pickerDisplayValue }: ChangeProps) => {
   const [editor] = useLexicalComposerContext();
 
   useUpdateEffect(() => {

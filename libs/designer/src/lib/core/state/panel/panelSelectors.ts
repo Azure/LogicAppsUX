@@ -32,25 +32,7 @@ export const useSelectedNodeIds = () => useSelector(createSelector(getPanelState
 export const useIsNodeSelected = (nodeId: string) =>
   useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNodes.includes(nodeId)));
 
-export const useRegisteredPanelTabs = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs));
-
-export const usePanelTabByName = (tabName: string) =>
-  useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs[tabName]));
-
-export const useVisiblePanelTabs = () =>
-  useSelector(
-    createSelector(getPanelState, (state: PanelState) => {
-      const visibleTabs = Object.values(state.registeredTabs).filter((tab) => tab.visible !== false);
-      return visibleTabs.sort((a, b) => a.order - b.order);
-    })
-  );
-
-export const useSelectedPanelTabName = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedTabName));
-
-export const useSelectedPanelTab = () => {
-  const selectedPanelTabName = useSelectedPanelTabName();
-  return useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs[selectedPanelTabName ?? '']));
-};
+export const useSelectedPanelTabId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedTabId));
 
 export const usePanelLocation = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.panelLocation));
 

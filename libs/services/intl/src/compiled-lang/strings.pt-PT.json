@@ -1163,6 +1163,12 @@
       "value": "Os parâmetros utilizados no Logic App serão convertidos num modelo do Azure Resource Manager durante a geração do modelo de implementação."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,

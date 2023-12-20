@@ -84,9 +84,9 @@
       .msla-comment-icon {
         float: left;
         font-size: @card-header-icon-size;
-        height: 32px;
-        width: 32px;
-        line-height: 32px;
+        height: 20px;
+        width: 20px;
+        padding: 0px 6px;
         margin-right: 4px;
         text-align: center;
       }
@@ -97,25 +97,21 @@
       width: 32px;
     }
 
-    .collapse-toggle-left {
-      float: right;
-    }
-
-    .collapse-toggle-right {
-      float: left;
-    }
-  }
-
-  .msla-pivot {
-    overflow: hidden;
-    clear: left;
-    .msla-panel-menu {
-      padding-bottom: 10px;
-    }
-
-    .msla-workflowpanel-pivot-error-icon {
-      margin-left: 3px;
-      margin-top: -10px;
+    .collapse-toggle {
+      &.left {
+        float: right;
+        transform: rotate(180deg);
+        &.collapsed {
+          transform: rotate(0deg);
+        }
+      }
+      &.right {
+        float: left;
+        transform: rotate(0deg);
+        &.collapsed {
+          transform: rotate(180deg);
+        }
+      }
     }
   }
 
@@ -143,6 +139,10 @@
     .msla-trace-inputs-outputs {
       margin: 0 0 20px;
     }
+  }
+
+  .msla-panel-content-container {
+    margin-top: 12px;
   }
 
   .msla-tab-component-container {
@@ -220,6 +220,7 @@
   display: flex;
   margin: 8px 0px;
   gap: 8px;
+  padding-left: 24px;
 }
 
 .connection-display {
@@ -232,6 +233,7 @@
     display: flex;
     column-gap: 8px;
     flex-wrap: wrap;
+    align-items: center;
   }
 
   .connection-info-error {

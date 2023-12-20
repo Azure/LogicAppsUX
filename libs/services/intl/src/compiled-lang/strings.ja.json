@@ -30,7 +30,7 @@
     },
     {
       "type": 0,
-      "value": " connections"
+      "value": " 接続"
     }
   ],
   "+FcXe9": [
@@ -924,7 +924,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "接続を開く"
     }
   ],
   "41eMpW": [
@@ -1153,6 +1153,12 @@
     {
       "type": 0,
       "value": "ロジック アプリで使用されるパラメーターは、デプロイ テンプレートの生成中に Azure Resource Manager テンプレートに変換されます。"
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
     }
   ],
   "5hWg4V": [
@@ -2379,7 +2385,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "既存の接続を選択するか、新規作成してください"
     }
   ],
   "Dhu3IS": [
@@ -5844,7 +5850,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "既存の接続参照を選択するか、新規に作成してください"
     }
   ],
   "ZBJiuD": [
@@ -6554,7 +6560,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "接続されているすべてのアクションを新しい接続に再割り当てします"
     }
   ],
   "f/lWTW": [
@@ -6907,7 +6913,7 @@
   "hTZZr+": [
     {
       "type": 0,
-      "value": "Connected actions"
+      "value": "接続されたアクション"
     }
   ],
   "hZqQdt": [
@@ -7904,7 +7910,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "この変更によって複数のアクションが変更されます。"
     }
   ],
   "nSan4V": [
@@ -8164,7 +8170,7 @@
   "p3K7eM": [
     {
       "type": 0,
-      "value": "Disconnected actions"
+      "value": "切断されたアクション"
     }
   ],
   "p5ZID0": [
@@ -9611,7 +9617,7 @@
   "xxeu75": [
     {
       "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
+      "value": "切断されているすべてのアクションを新しい接続に再割り当てします"
     }
   ],
   "y1e9yw": [

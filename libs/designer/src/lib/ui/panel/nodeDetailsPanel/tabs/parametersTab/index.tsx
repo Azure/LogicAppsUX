@@ -1,6 +1,6 @@
 import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
-import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
@@ -34,6 +34,7 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { Divider } from '@fluentui/react-components';
 import { EditorService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DynamicCallStatus,
@@ -130,13 +131,16 @@ export const ParametersTab = () => {
         </div>
       ))}
       {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
-        <ConnectionDisplay
-          connectionName={connectionName.result}
-          nodeId={selectedNodeId}
-          isLoading={connectionName.isLoading}
-          readOnly={!!readOnly}
-          hasError={errorInfo?.level === ErrorLevel.Connection}
-        />
+        <>
+          <Divider style={{ padding: '16px 0px' }} />
+          <ConnectionDisplay
+            connectionName={connectionName.result}
+            nodeId={selectedNodeId}
+            isLoading={connectionName.isLoading}
+            readOnly={!!readOnly}
+            hasError={errorInfo?.level === ErrorLevel.Connection}
+          />
+        </>
       ) : null}
       {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
@@ -188,6 +192,8 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+
+  const { suppressCastingForSerialize } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -406,6 +412,7 @@ const ParameterSection = ({
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
+          suppressCastingForSerialize: suppressCastingForSerialize ?? false,
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
               { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
@@ -489,8 +496,8 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 };
 
 export const parametersTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
-  name: constants.PANEL_TAB_NAMES.PARAMETERS,
   description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
   visible: true,
   content: <ParametersTab />,

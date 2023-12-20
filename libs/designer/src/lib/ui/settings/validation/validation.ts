@@ -2,7 +2,6 @@ import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
-import { setTabError } from '../../../core/state/panel/panelSlice';
 import { setValidationError } from '../../../core/state/setting/settingSlice';
 import { isISO8601 } from '../../../core/utils/validation';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -173,5 +172,4 @@ export const validateNodeSettings = (
       break;
   }
   dispatch(setValidationError({ nodeId: selectedNode, errors: validationErrors }));
-  dispatch(setTabError({ tabName: 'settings', hasErrors: validationErrors.length > 0, nodeId: selectedNode }));
 };

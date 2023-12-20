@@ -22,6 +22,7 @@ import type { HeadingNode } from '@lexical/rich-text';
 import { $isHeadingNode } from '@lexical/rich-text';
 import type { Expression } from '@microsoft/parsers-logic-apps';
 import { ExpressionParser } from '@microsoft/parsers-logic-apps';
+import { wrapTokenValue } from '@microsoft/utils-logic-apps';
 import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
 import {
   $createParagraphNode,
@@ -35,9 +36,7 @@ import {
 } from 'lexical';
 
 export interface SegmentParserOptions {
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
   readonly?: boolean;
-  segmentMapping?: Record<string, ValueSegment>;
   tokensEnabled?: boolean;
 }
 
@@ -122,7 +121,7 @@ const appendChildrenNode = (
   nodeMap: Map<string, ValueSegment>,
   options: SegmentParserOptions | undefined
 ) => {
-  const { loadParameterValueFromString, tokensEnabled } = options ?? {};
+  const { tokensEnabled } = options ?? {};
 
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
@@ -135,10 +134,10 @@ const appendChildrenNode = (
     const childNodeStyles = childNode.getStyle();
     const childNodeFormat = childNode.getFormat();
 
-    if (tokensEnabled && nodeMap && loadParameterValueFromString) {
-      const contentAsParameter = loadParameterValueFromString(decodedTextContent);
+    if (tokensEnabled && nodeMap) {
+      const contentAsParameter = convertStringToSegments(decodedTextContent, true, nodeMap);
       contentAsParameter.forEach((segment) => {
-        const tokenNode = createTokenNodeFromSegment(segment, options);
+        const tokenNode = createTokenNodeFromSegment(segment, options, nodeMap);
         if (tokenNode) {
           paragraph.append(tokenNode);
         } else {
@@ -166,16 +165,16 @@ const appendStringSegment = (
   let currIndex = 0;
   let prevIndex = 0;
   while (currIndex < value.length) {
-    if (value.substring(currIndex - 2, currIndex) === '$[') {
+    if (value.substring(currIndex - 2, currIndex) === '@{') {
       const textSegment = value.substring(prevIndex, currIndex - 2);
       if (textSegment) {
         paragraph.append($createExtendedTextNode(textSegment, childNodeStyles, childNodeFormat));
       }
-      const newIndex = value.indexOf(']$', currIndex) + 2;
+      const newIndex = value.indexOf('}', currIndex) + 2;
       // token is found in the text
       if (nodeMap && tokensEnabled) {
         const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
-        const token = createTokenNodeFromSegment(tokenSegment, options);
+        const token = createTokenNodeFromSegment(tokenSegment, options, nodeMap);
         token && paragraph.append(token);
       }
       prevIndex = currIndex = newIndex;
@@ -241,17 +240,16 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
 
 const createTokenNodeFromSegment = (
   tokenSegment: ValueSegment | undefined,
-  options: SegmentParserOptions | undefined
+  options: SegmentParserOptions | undefined,
+  nodeMap?: Map<string, ValueSegment>
 ): TokenNode | undefined => {
   if (!tokenSegment?.token) {
     return undefined;
   }
-
-  const { readonly, segmentMapping } = options ?? {};
-
+  const { readonly } = options ?? {};
   const segmentValue = tokenSegment.value;
-  const mappedSegment = segmentMapping?.[segmentValue];
-
+  const wrappedSegmentValue = wrapTokenValue(segmentValue);
+  const mappedSegment = nodeMap?.get(wrappedSegmentValue);
   let segment: ValueSegment;
   let segmentToken: Token;
 

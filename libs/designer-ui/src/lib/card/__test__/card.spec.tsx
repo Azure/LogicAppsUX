@@ -1,7 +1,5 @@
 import type { CardProps } from '../index';
 import { Card } from '../index';
-import type { MenuItemOption } from '../types';
-import { MenuItemType } from '../types';
 import renderer from 'react-test-renderer';
 
 describe('lib/card', () => {
@@ -42,21 +40,6 @@ describe('lib/card', () => {
 
   it('should render as selected', () => {
     const tree = renderer.create(<Card {...minimal} selected={true} />).toJSON();
-    expect(tree).toMatchSnapshot();
-  });
-
-  it('should render with a context menu', () => {
-    const contextMenuOptions: MenuItemOption[] = [
-      {
-        disabled: false,
-        iconName: 'Delete',
-        key: 'Delete',
-        title: 'Delete',
-        type: MenuItemType.Normal,
-        onClick: jest.fn(),
-      },
-    ];
-    const tree = renderer.create(<Card {...minimal} contextMenuOptions={contextMenuOptions} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
