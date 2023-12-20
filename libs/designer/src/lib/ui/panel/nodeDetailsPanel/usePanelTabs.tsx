@@ -39,8 +39,7 @@ export const usePanelTabs = () => {
   const monitoringTabItem = useMemo(
     () => ({
       ...monitoringTab(intl),
-      visible: isScopeNode,
-      isMonitoringView,
+      visible: isScopeNode && isMonitoringView,
     }),
     [intl, isMonitoringView, isScopeNode]
   );
