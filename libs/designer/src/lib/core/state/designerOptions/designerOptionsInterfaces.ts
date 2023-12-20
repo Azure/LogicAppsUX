@@ -27,6 +27,7 @@ export interface DesignerOptionsState {
   suppressDefaultNodeSelectFunctionality?: boolean;
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
+    suppressCastingForSerialize?: boolean; // suppress casting for serialize
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

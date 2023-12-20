@@ -32,6 +32,7 @@ const initialState: DesignerOptionsState = {
   showConnectionsPanel: false,
   hostOptions: {
     displayRuntimeInfo: true,
+    suppressCastingForSerialize: false,
   },
 };
 
