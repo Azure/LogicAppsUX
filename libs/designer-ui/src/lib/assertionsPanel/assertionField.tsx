@@ -1,5 +1,6 @@
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
+import { isEmptyString } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -56,12 +57,17 @@ export const AssertionField = ({
 
   const nameTitle = intl.formatMessage({
     defaultMessage: 'Assertion name',
-    description: 'Parameter Field Assertion Name Title',
+    description: 'Parameter field assertion name title',
   });
 
   const descriptionTitle = intl.formatMessage({
     defaultMessage: 'Description',
-    description: 'Parameter Field Description Title',
+    description: 'Parameter field description title',
+  });
+
+  const noDescription = intl.formatMessage({
+    defaultMessage: 'No description',
+    description: 'Parameter field no description text',
   });
 
   const namePlaceholder = intl.formatMessage({
@@ -85,9 +91,11 @@ export const AssertionField = ({
   return (
     <>
       <div className="msla-assertion-field">
-        <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
-          {nameTitle}
-        </Label>
+        {isEditable ? (
+          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
+            {nameTitle}
+          </Label>
+        ) : null}
         {isEditable ? (
           <TextField
             data-testid={parameterDetails.name}
@@ -99,14 +107,14 @@ export const AssertionField = ({
             onChange={onNameChange}
             disabled={isReadOnly}
           />
-        ) : (
-          <Text className="msla-assertion-field-read-only">{name}</Text>
-        )}
+        ) : null}
       </div>
       <div className="msla-assertion-field">
-        <Label styles={labelStyles} htmlFor={parameterDetails.description}>
-          {descriptionTitle}
-        </Label>
+        {isEditable ? (
+          <Label styles={labelStyles} htmlFor={parameterDetails.description}>
+            {descriptionTitle}
+          </Label>
+        ) : null}
         {isEditable ? (
           <TextField
             data-testid={parameterDetails.description}
@@ -120,6 +128,8 @@ export const AssertionField = ({
             multiline
             autoAdjustHeight
           />
+        ) : isEmptyString(description) ? (
+          <Text className="msla-assertion-field-read-only assertion-field-no-content">{noDescription}</Text>
         ) : (
           <Text className="msla-assertion-field-read-only">{description}</Text>
         )}
