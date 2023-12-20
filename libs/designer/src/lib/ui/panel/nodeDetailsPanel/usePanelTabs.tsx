@@ -32,14 +32,14 @@ export const usePanelTabs = () => {
   const nodeMetaData = useNodeMetadata(selectedNode);
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(selectedNode);
-  const isScopeNode = operationInfo?.type.toLowerCase() !== constants.NODE.TYPE.SCOPE;
+  const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
   const parameterValidationErrors = useParameterValidationErrors(selectedNode);
   const settingValidationErrors = useSettingValidationErrors(selectedNode);
 
   const monitoringTabItem = useMemo(
     () => ({
       ...monitoringTab(intl),
-      visible: isScopeNode && isMonitoringView,
+      visible: !isScopeNode && isMonitoringView,
     }),
     [intl, isMonitoringView, isScopeNode]
   );
