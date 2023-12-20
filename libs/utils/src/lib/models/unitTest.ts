@@ -15,6 +15,7 @@ export interface UnitTestDefinition {
 }
 
 export interface AssertionDefintion {
+  id: string;
   name: string;
   description: string;
 }

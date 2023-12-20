@@ -1,7 +1,5 @@
-import type { AssertionUpdateHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
-import { type AssertionDefintion } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -33,14 +31,22 @@ export interface ParameterFieldDetails {
 }
 
 export interface AssertionFieldProps {
-  assertion: AssertionDefintion;
-  onChange?: AssertionUpdateHandler;
+  name: string;
+  description: string;
+  setName: React.Dispatch<React.SetStateAction<string>>;
+  setDescription: React.Dispatch<React.SetStateAction<string>>;
   isEditable?: boolean;
   isReadOnly?: boolean;
 }
 
-export const AssertionField = ({ assertion, onChange, isEditable, isReadOnly }: AssertionFieldProps): JSX.Element => {
-  const { description, name } = assertion;
+export const AssertionField = ({
+  name,
+  description,
+  setName,
+  setDescription,
+  isEditable,
+  isReadOnly,
+}: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
 
   const parameterDetails: ParameterFieldDetails = {
@@ -69,17 +75,11 @@ export const AssertionField = ({ assertion, onChange, isEditable, isReadOnly }: 
   });
 
   const onDescriptionChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    onChange?.({
-      name: name,
-      description: newValue ?? '',
-    });
+    setDescription(newValue ?? '');
   };
 
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    onChange?.({
-      name: newValue ?? '',
-      description: description,
-    });
+    setName(newValue ?? '');
   };
 
   return (
@@ -100,7 +100,7 @@ export const AssertionField = ({ assertion, onChange, isEditable, isReadOnly }: 
             disabled={isReadOnly}
           />
         ) : (
-          <Text className="msla-workflow-assertion-read-only">{name}</Text>
+          <Text className="msla-assertion-field-read-only">{name}</Text>
         )}
       </div>
       <div className="msla-assertion-field">
@@ -117,9 +117,11 @@ export const AssertionField = ({ assertion, onChange, isEditable, isReadOnly }: 
             value={description}
             onChange={onDescriptionChange}
             disabled={isReadOnly}
+            multiline
+            autoAdjustHeight
           />
         ) : (
-          <Text className="msla-assertion-read-only">{description}</Text>
+          <Text className="msla-assertion-field-read-only">{description}</Text>
         )}
       </div>
     </>

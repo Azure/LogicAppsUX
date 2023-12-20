@@ -53,7 +53,13 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
       return <></>;
     }
     return (
-      <Assertion assertion={item} onAssertionDelete={handleDeleteAssertion} onAssertionUpdate={onAssertionUpdate} isInverted={isInverted} />
+      <Assertion
+        key={item.id}
+        assertion={item}
+        onAssertionDelete={handleDeleteAssertion}
+        onAssertionUpdate={onAssertionUpdate}
+        isInverted={isInverted}
+      />
     );
   };
 

@@ -8,13 +8,13 @@ import {
   type CommonPanelProps,
   type AssertionAddEvent,
 } from '@microsoft/designer-ui';
-import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
+import { guid, type AssertionDefintion } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 const getAssertions = (assertions: string[]): AssertionDefintion[] => {
   return assertions.map((assertion) => {
-    return { name: '', description: assertion };
+    return { id: guid(), name: '', description: assertion };
   });
 };
 
@@ -44,7 +44,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   const onAssertionAdd = (event: AssertionAddEvent) => {
-    setAssertions([...assertions, { name: event.name, description: event.description }]);
+    setAssertions([...assertions, { id: guid(), name: event.name, description: event.description }]);
   };
 
   return (

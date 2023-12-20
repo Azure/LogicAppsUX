@@ -40,7 +40,8 @@ export interface AssertionProps {
 export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertionDelete }: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
-  const { name } = assertion;
+  const [name, setName] = useState(assertion.name);
+  const [description, setDescription] = useState(assertion.description);
 
   const handleEdit: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(true);
@@ -49,7 +50,7 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
 
   const handleSave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(false);
-    onAssertionUpdate({ name, description: '' });
+    onAssertionUpdate({ name: name, description: description });
   };
 
   const iconProps: IIconProps = {
@@ -76,10 +77,12 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
           styles={commandBarStyles}
           text={name}
         />
-        <AssertionButtons onEdit={handleEdit} onSave={handleSave} isEditable={isEditable} onDelete={onAssertionDelete} />
+        <AssertionButtons isEditable={isEditable} onEdit={handleEdit} onSave={handleSave} onDelete={onAssertionDelete} />
       </div>
       <div className="msla-workflow-assertion-content">
-        {expanded ? <AssertionField assertion={assertion} onChange={onAssertionUpdate} isEditable={isEditable} /> : null}
+        {expanded ? (
+          <AssertionField name={name} description={description} setName={setName} setDescription={setDescription} isEditable={isEditable} />
+        ) : null}
       </div>
     </div>
   );
