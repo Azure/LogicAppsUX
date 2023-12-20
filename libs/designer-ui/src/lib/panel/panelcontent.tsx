@@ -57,7 +57,7 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
           {tabs.map(({ id, visible, hasErrors, title }) =>
             visible ? (
               <OverflowItem key={id} id={id} priority={id === selectedTabId ? 2 : 1}>
-                <Tab value={id}>
+                <Tab value={id} role={'tab'}>
                   {title}
                   {hasErrors && <Badge size="extra-small" color="danger" style={{ marginLeft: '8px' }} />}
                 </Tab>
