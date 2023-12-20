@@ -30,7 +30,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const OverviewReactFlow = () => {
+export const MapOverview = () => {
   const { fitView } = useReactFlow();
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
