@@ -10,11 +10,11 @@ test('Sanity Check', async ({ page }) => {
   await page.getByTestId('card-Increment variable').getByRole('button', { name: 'Variables connector icon Increment variable' }).click();
   await page.getByLabel('Value').getByRole('paragraph').click();
   await page.getByLabel('Value').press('Escape');
-  await page.getByRole('tab', { name: 'Code View Code View' }).click();
-  await page.getByRole('tab', { name: 'About About' }).click();
-  await page.getByRole('tab', { name: 'Settings Settings' }).click();
-  await page.getByRole('tab', { name: 'Parameters Parameters' }).click();
-  await page.getByRole('tab', { name: 'Settings Settings' }).click();
+  await page.getByRole('tab', { name: 'Code View' }).click();
+  await page.getByRole('tab', { name: 'About' }).click();
+  await page.getByRole('tab', { name: 'Settings' }).click();
+  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await page.getByRole('tab', { name: 'Settings' }).click();
   await page.getByRole('button', { name: 'Collapse Run After Run After' }).click();
   await page.getByRole('button', { name: 'Expand Run After Run After' }).click();
   await page.getByRole('button', { name: 'Collapse Tracking Tracking' }).click();

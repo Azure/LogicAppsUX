@@ -25,7 +25,7 @@ export const TestingPanel: React.FC = () => {
   const { name = selectedNode + 0, staticResultOptions } = parameterStaticResult;
   const properties = useStaticResultProperties(name);
 
-  const saveProperties = useCallback(
+  const savePropertiesCallback = useCallback(
     (properties: OpenAPIV2.SchemaObject, updatedStaticResultOptions: StaticResultOption) => {
       dispatch(updateStaticResults({ id: selectedNode, staticResults: { name, staticResultOptions: updatedStaticResultOptions } }));
       dispatch(updateStaticResultProperties({ name, properties }));
@@ -34,23 +34,25 @@ export const TestingPanel: React.FC = () => {
     [dispatch, name, selectedNode]
   );
 
+  const cancelPropertiesCallback = useCallback(() => {
+    dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
+  }, [dispatch]);
+
   return staticResultSchema ? (
     <StaticResultContainer
       key={`${name}`}
       properties={(properties ?? {}) as OpenAPIV2.SchemaObject}
       staticResultSchema={staticResultSchema}
       enabled={staticResultOptions === StaticResultOption.ENABLED ?? false}
-      savePropertiesCallback={(newPropertyState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) =>
-        saveProperties(newPropertyState, staticResultOption)
-      }
-      cancelPropertiesCallback={() => dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS))}
+      savePropertiesCallback={savePropertiesCallback}
+      cancelPropertiesCallback={cancelPropertiesCallback}
     />
   ) : null;
 };
 
 export const testingTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.TESTING,
   title: intl.formatMessage({ defaultMessage: 'Testing', description: 'The tab label for the testing tab on the operation panel' }),
-  name: constants.PANEL_TAB_NAMES.TESTING,
   description: intl.formatMessage({ defaultMessage: 'Testing Tab', description: 'An accessability label that describes the testing tab' }),
   visible: true,
   content: <TestingPanel />,

@@ -41,8 +41,8 @@ export const AboutTab = () => {
 };
 
 export const aboutTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.ABOUT,
   title: intl.formatMessage({ defaultMessage: 'About', description: 'The tab label for the about tab on the operation panel' }),
-  name: constants.PANEL_TAB_NAMES.ABOUT,
   description: intl.formatMessage({ defaultMessage: 'About Tab', description: 'An accessability label that describes the about tab' }),
   visible: true,
   content: <AboutTab />,

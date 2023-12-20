@@ -1,4 +1,4 @@
-import type { PanelLocation, PanelTab } from '@microsoft/designer-ui';
+import type { PanelLocation } from '@microsoft/designer-ui';
 
 export type PanelMode = 'Operation' | 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Connection';
 
@@ -10,8 +10,7 @@ export interface PanelState {
   panelLocation?: PanelLocation;
   isParallelBranch: boolean;
   relationshipIds: RelationshipIds;
-  registeredTabs: Record<string, PanelTab>;
-  selectedTabName: string | undefined;
+  selectedTabId: string | undefined;
   selectedOperationGroupId: string;
   selectedOperationId: string;
   addingTrigger: boolean;

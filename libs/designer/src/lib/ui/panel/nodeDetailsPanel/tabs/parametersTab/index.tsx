@@ -492,8 +492,8 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 };
 
 export const parametersTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
-  name: constants.PANEL_TAB_NAMES.PARAMETERS,
   description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
   visible: true,
   content: <ParametersTab />,

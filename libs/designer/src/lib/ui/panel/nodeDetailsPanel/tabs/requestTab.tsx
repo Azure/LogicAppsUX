@@ -240,7 +240,7 @@ export const monitorRequestTab: PanelTabFn = (intl) => ({
     defaultMessage: 'Request History',
     description: 'The tab label for the request history tab on the operation panel',
   }),
-  name: constants.PANEL_TAB_NAMES.REQUEST_HISTORY,
+  id: constants.PANEL_TAB_NAMES.REQUEST_HISTORY,
   description: intl.formatMessage({
     defaultMessage: 'View the request history for this operation',
     description: 'The tab description for the request history tab on the operation panel',

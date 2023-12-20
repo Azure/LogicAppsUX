@@ -29,8 +29,8 @@ export const CodeViewTab = () => {
 };
 
 export const codeViewTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.CODE_VIEW,
   title: intl.formatMessage({ defaultMessage: 'Code View', description: 'The tab label for the code view tab on the operation panel' }),
-  name: constants.PANEL_TAB_NAMES.CODE_VIEW,
   description: intl.formatMessage({
     defaultMessage: 'Code View Tab',
     description: 'An accessability label that describes the code view tab',
