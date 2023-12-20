@@ -4,6 +4,7 @@ import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/qu
 import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
+import { clearPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
@@ -230,6 +231,7 @@ export const Designer = (props: DesignerProps) => {
             zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
             translateExtent={clampPan ? translateExtent : undefined}
             onMove={(_e, viewport) => setZoom(viewport.zoom)}
+            onPaneClick={() => dispatch(clearPanel())}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,

@@ -5,9 +5,18 @@ import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import { useNodeDisplayName, useGetAllOperationNodesWithin } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
-import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
-import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
-import { ActionButton, Callout, DirectionalHint, FocusZone } from '@fluentui/react';
+import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
+import {
+  bundleIcon,
+  ArrowBetweenDown24Filled,
+  ArrowBetweenDown24Regular,
+  ArrowSplit24Filled,
+  ArrowSplit24Regular,
+  ClipboardPasteFilled,
+  ClipboardPasteRegular,
+} from '@fluentui/react-icons';
+// import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
+// import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
 import { containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/utils-logic-apps';
@@ -23,6 +32,10 @@ export interface DropZoneProps {
   childId?: string;
   isLeaf?: boolean;
 }
+
+const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
+const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
+const ClipboardIcon = bundleIcon(ClipboardPasteFilled, ClipboardPasteRegular);
 
 export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false }) => {
   const intl = useIntl();
@@ -58,6 +71,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     const newId = guid();
     const relationshipIds = { graphId, childId, parentId };
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
+    setShowCallout(false);
   }, [dispatch, graphId, childId, parentId]);
 
   const handlePasteClicked = useCallback(() => {
@@ -73,12 +87,14 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         })
       );
     }
+    setShowCallout(false);
   }, [graphId, childId, parentId, dispatch, copiedNode]);
 
   const addParallelBranch = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId: undefined, parentId };
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
+    setShowCallout(false);
   }, [dispatch, graphId, parentId]);
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? parentId ?? graphId));
@@ -166,63 +182,65 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         </div>
       )}
       {!isOver && (
-        <>
-          <ActionButtonV2
-            id={buttonId}
-            title={tooltipText}
-            onClick={actionButtonClick}
-            dataAutomationId={normalizeAutomationId(
-              `msla-plus-button-${convertUIElementNameToAutomationId(parentName)}-${
-                convertUIElementNameToAutomationId(childName) || 'undefined'
-              }`
-            )}
-          />
-          {showCallout && (
-            <Callout
-              role="dialog"
-              gapSpace={0}
-              target={`#${buttonId}`}
-              onDismiss={() => setShowCallout(false)}
-              onMouseLeave={() => setShowCallout(false)}
-              directionalHint={DirectionalHint.bottomCenter}
-              setInitialFocus
-            >
-              <FocusZone>
-                <div className="msla-add-context-menu">
-                  <ActionButton
-                    iconProps={{ imageProps: { src: AddNodeIcon } }}
-                    onClick={openAddNodePanel}
-                    data-automation-id={normalizeAutomationId(
-                      `msla-add-action-${convertUIElementNameToAutomationId(parentName)}-${
-                        convertUIElementNameToAutomationId(childName) || 'undefined'
-                      }`
-                    )}
-                  >
-                    {newActionText}
-                  </ActionButton>
-                  {showParallelBranchButton ? (
-                    <ActionButton
-                      iconProps={{ imageProps: { src: AddBranchIcon } }}
-                      onClick={addParallelBranch}
-                      data-automation-id={normalizeAutomationId(
-                        `msla-add-parallel-branch-${convertUIElementNameToAutomationId(parentName)}-${
-                          convertUIElementNameToAutomationId(childName) || 'undefined'
-                        }`
-                      )}
-                    >
-                      {newBranchText}
-                    </ActionButton>
-                  ) : null}
-                  {copiedNode ? (
-                    <ActionButton iconProps={{ iconName: 'Paste' }} onClick={handlePasteClicked}>
-                      {pasteFromClipboard}
-                    </ActionButton>
-                  ) : null}
-                </div>
-              </FocusZone>
-            </Callout>
-          )}
-        </>
+        <Popover
+          open={showCallout}
+          positioning={'after'}
+          closeOnScroll={true}
+          withArrow
+          mouseLeaveDelay={500}
+          onOpenChange={(e, { open }) => setShowCallout(open)}
+        >
+          <PopoverTrigger disableButtonEnhancement>
+            <div tabIndex={-1}>
+              <ActionButtonV2
+                id={buttonId}
+                title={tooltipText}
+                dataAutomationId={normalizeAutomationId(
+                  `msla-plus-button-${convertUIElementNameToAutomationId(parentName)}-${
+                    convertUIElementNameToAutomationId(childName) || 'undefined'
+                  }`
+                )}
+                onClick={actionButtonClick}
+              />
+            </div>
+          </PopoverTrigger>
+          <PopoverSurface style={{ padding: '4px' }}>
+            <MenuList>
+              <MenuItem
+                icon={<AddIcon />}
+                onClick={openAddNodePanel}
+                data-automation-id={normalizeAutomationId(
+                  `msla-add-action-${convertUIElementNameToAutomationId(parentName)}-${
+                    convertUIElementNameToAutomationId(childName) || 'undefined'
+                  }`
+                )}
+              >
+                {newActionText}
+              </MenuItem>
+              {showParallelBranchButton && (
+                <MenuItem
+                  icon={<ParallelIcon />}
+                  onClick={addParallelBranch}
+                  data-automation-id={normalizeAutomationId(
+                    `msla-add-parallel-branch-${convertUIElementNameToAutomationId(parentName)}-${
+                      convertUIElementNameToAutomationId(childName) || 'undefined'
+                    }`
+                  )}
+                >
+                  {newBranchText}
+                </MenuItem>
+              )}
+              {copiedNode && (
+                <>
+                  <MenuDivider />
+                  <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked}>
+                    {pasteFromClipboard}
+                  </MenuItem>
+                </>
+              )}
+            </MenuList>
+          </PopoverSurface>
+        </Popover>
       )}
     </div>
   );
