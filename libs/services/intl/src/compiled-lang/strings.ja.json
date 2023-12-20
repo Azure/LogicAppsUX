@@ -1155,6 +1155,12 @@
       "value": "ロジック アプリで使用されるパラメーターは、デプロイ テンプレートの生成中に Azure Resource Manager テンプレートに変換されます。"
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,

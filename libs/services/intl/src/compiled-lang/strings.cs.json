@@ -1163,6 +1163,12 @@
       "value": "Při generování šablony nasazení se parametry, které se používají v aplikaci Logic Apps, převedou na šablonu Azure Resource Manageru."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,

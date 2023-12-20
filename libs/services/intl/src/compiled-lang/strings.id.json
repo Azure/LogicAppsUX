@@ -1155,6 +1155,12 @@
       "value": "Parameter yang digunakan dalam Aplikasi Logika akan dikonversi menjadi templat Azure Resource Manager selama pembuatan templat penerapan."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,

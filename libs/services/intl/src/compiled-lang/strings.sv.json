@@ -1167,6 +1167,12 @@
       "value": "Parametrar som används i logikappen konverteras till Azure Resource Manager-mall vid skapande av distributionsmallen."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -6748,7 +6754,7 @@
   "gA1dde": [
     {
       "type": 0,
-      "value": "Toggle code view"
+      "value": "Växla kodvy"
     }
   ],
   "gCXOd5": [

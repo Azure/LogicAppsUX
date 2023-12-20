@@ -1139,6 +1139,12 @@
       "value": "Os parâmetros usados no Aplicativo Lógico serão convertidos no modelo do Azure Resource Manager durante a geração do modelo de implantação."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -6776,7 +6782,7 @@
   "gA1dde": [
     {
       "type": 0,
-      "value": "Toggle code view"
+      "value": "Ativar/desativar modo de exibição de código"
     }
   ],
   "gCXOd5": [

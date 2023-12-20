@@ -1155,6 +1155,12 @@
       "value": "Mantıksal Uygulama'da kullanılan parametreler, dağıtım şablonu oluşturma sırasında Azure Resource Manager şablonuna dönüştürülür."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,

@@ -1155,6 +1155,12 @@
       "value": "I parametri usati nell'app per la logica verranno convertiti in un modello di Azure Resource Manager durante la generazione del modello di distribuzione."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,

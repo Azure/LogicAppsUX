@@ -1163,6 +1163,12 @@
       "value": "在部署範本產生期間，Logic Apps 中使用的參數將會轉換成 Azure Resource Manager 範本。"
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -6716,7 +6722,7 @@
   "gA1dde": [
     {
       "type": 0,
-      "value": "Toggle code view"
+      "value": "切換程式碼檢視"
     }
   ],
   "gCXOd5": [
