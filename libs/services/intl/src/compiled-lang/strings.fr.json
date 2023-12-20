@@ -11,12 +11,6 @@
       "value": "Avertissement : le type de nœud d’entrée ne correspond pas au type du nœud de schéma"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Créer une référence de connexion"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -27,6 +21,16 @@
     {
       "type": 0,
       "value": "Protégé"
+    }
+  ],
+  "+7IA0V": [
+    {
+      "type": 0,
+      "value": "Connexions "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "+FcXe9": [
@@ -925,6 +929,12 @@
       "value": "Obligatoire. Cette valeur est l’entier suivant après l’entier le plus grand qui peut être retourné."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Ouvrir une connexion"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1115,12 +1125,6 @@
       "value": "Autorité"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Chargement en cours..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1157,6 +1161,12 @@
     {
       "type": 0,
       "value": "Les paramètres utilisés dans l'application logique sont convertis en modèle Azure Resource Manager pendant la génération du modèle de déploiement."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
     }
   ],
   "5hWg4V": [
@@ -1241,12 +1251,6 @@
     {
       "type": 0,
       "value": "La valeur de délai d’attente n’est pas valide. Elle doit correspondre au format de durée ISO 8601"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Sélectionner la référence de connexion"
     }
   ],
   "6fDYzG": [
@@ -1365,6 +1369,12 @@
     {
       "type": 0,
       "value": "Mettre à jour le schéma source"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Créer une nouvelle connexion"
     }
   ],
   "78Vggn": [
@@ -2182,12 +2192,6 @@
       "value": "Connexion obligatoire"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Créer une connexion"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2408,6 +2412,12 @@
       "value": "Durée"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Sélectionnez une connexion existante ou créez-en une."
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2604,12 +2614,6 @@
     {
       "type": 0,
       "value": "Sélectionnez Oui ou Non"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nom d'affichage de la connexion"
     }
   ],
   "F3IDl8": [
@@ -3001,12 +3005,6 @@
     {
       "type": 0,
       "value": "Quitter le plein écran"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Sélectionnez une connexion existante ou créez-en une nouvelle."
     }
   ],
   "HSJLCu": [
@@ -3856,6 +3854,12 @@
     {
       "type": 0,
       "value": "Entrer un nom de propriété unique"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Créer une connexion"
     }
   ],
   "Nh91qA": [
@@ -5947,6 +5951,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Sélectionnez une référence de connexion existante ou créez-en une."
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6329,10 +6339,16 @@
       "value": "Ignorer les modifications"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Activez la case à cocher pour choisir cette connexion."
+      "value": "Changer la connexion"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "La connexion est valide"
     }
   ],
   "ca/QIc": [
@@ -6649,6 +6665,12 @@
       "value": "Lorsqu’un nouvel élément"
     }
   ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Réattribuer toutes les actions connectées à une nouvelle connexion"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -6753,12 +6775,6 @@
       "value": "Une erreur s'est produite. Réessayez."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Sélectionner la connexion"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6795,6 +6811,12 @@
       "value": "Exécuter le test"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Activer/désactiver l’affichage de code"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6817,12 +6839,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Valeur booléenne qui détermine la valeur que l'expression doit retourner."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nom de la connexion"
     }
   ],
   "gIx5ys": [
@@ -7030,6 +7046,12 @@
     {
       "type": 0,
       "value": "Annuler"
+    }
+  ],
+  "hTZZr+": [
+    {
+      "type": 0,
+      "value": "Actions connectées"
     }
   ],
   "hZqQdt": [
@@ -7885,6 +7907,12 @@
       "value": " », fractionnée sur not dans le tableau."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "La connexion n’est pas valide"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7925,6 +7953,12 @@
     {
       "type": 0,
       "value": "Limitez Logic Apps de sorte qu’aucun en-tête de métadonnées de workflow ne soit inclus dans la demande sortante."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connexions"
     }
   ],
   "mvrlkP": [
@@ -8043,6 +8077,12 @@
     {
       "type": 0,
       "value": "Personnalisé"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Plusieurs actions seront modifiées par cette modification."
     }
   ],
   "nSan4V": [
@@ -8299,6 +8339,12 @@
       "value": "Dans l'application"
     }
   ],
+  "p3K7eM": [
+    {
+      "type": 0,
+      "value": "Actions déconnectées"
+    }
+  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8491,12 +8537,6 @@
     {
       "type": 0,
       "value": "Vérifie si la chaîne se termine par une valeur (culture invariante qui ne respecte pas la casse)"
-    }
-  ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Connexion non valide."
     }
   ],
   "qSejoi": [
@@ -8700,12 +8740,6 @@
     {
       "type": 0,
       "value": "Secret"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "La connexion est-elle non valide"
     }
   ],
   "rNi5Y3": [
@@ -9340,12 +9374,6 @@
       "value": "Date de déclenchement"
     }
   ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Chargement"
-    }
-  ],
   "v39HKj": [
     {
       "type": 0,
@@ -9792,6 +9820,12 @@
       "value": "Valeur"
     }
   ],
+  "xxeu75": [
+    {
+      "type": 0,
+      "value": "Réattribuer toutes les actions déconnectées à une nouvelle connexion"
+    }
+  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9896,12 +9930,6 @@
       "value": "Générer XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Sélectionnez une connexion existante ou créez-en une nouvelle."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9936,12 +9964,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Varsovie, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Passerelle de connexion"
     }
   ],
   "yzqXMp": [

@@ -1006,11 +1006,7 @@ export function generateExpressionFromKey(
   const result = [];
   // NOTE: Use @body for tokens that come from the body path like outputs.$.Body.weather
   let rootMethod = method;
-  if (
-    overrideMethod &&
-    !isInsideArray &&
-    [OutputSource.Body, OutputSource.BodyValue].includes(segments[0]?.value?.toString()?.toLowerCase() ?? '')
-  ) {
+  if (overrideMethod && !isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
     segments.shift();
     rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   }

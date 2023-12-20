@@ -20,7 +20,7 @@ import {
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedNodeId, showDefaultTabs } from '../../core/state/panel/panelSlice';
+import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import {
   useAllOperations,
   useBrandColor,
@@ -32,7 +32,6 @@ import {
   useOperationQuery,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
-import { useStaticResultSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import {
   useIsLeafNode,
   useNodeDescription,
@@ -43,7 +42,6 @@ import {
   useParentRunIndex,
   useRunInstance,
   useShouldNodeFocus,
-  useRetryHistory,
   useParentRunId,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
@@ -85,7 +83,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
-  const runHistory = useRetryHistory(id);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
@@ -174,22 +171,16 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
-  const hasSchema = useStaticResultSchema(operationInfo?.connectorId ?? '', operationInfo?.operationId ?? '');
   const isLeaf = useIsLeafNode(id);
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
   const nodeClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
+    if (nodeSelectCallbackOverride) nodeSelectCallbackOverride(id);
 
-    if (nodeSelectCallbackOverride) {
-      nodeSelectCallbackOverride(id);
-    }
-
-    if (suppressDefaultNodeSelect) return;
-    dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
-  }, [dispatch, hasSchema, id, isMonitoringView, nodeSelectCallbackOverride, runHistory, suppressDefaultNodeSelect]);
+    if (suppressDefaultNodeSelect) dispatch(setSelectedNodeId(id));
+    else dispatch(changePanelNode(id));
+  }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
   const brandColor = useBrandColor(id);
   const iconUri = useIconUri(id);

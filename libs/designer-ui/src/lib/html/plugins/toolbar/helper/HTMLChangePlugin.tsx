@@ -1,35 +1,69 @@
 import type { ValueSegment } from '../../../../editor';
 import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegment';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
-import { cleanHtmlString, decodeSegmentValue, encodeSegmentValue } from './util';
+import {
+  decodeStringSegmentTokensInDomContext,
+  decodeStringSegmentTokensInLexicalContext,
+  encodeStringSegmentTokensInLexicalContext,
+} from '../../../../editor/base/utils/parsesegments';
+import {
+  cleanHtmlString,
+  cleanStyleAttribute,
+  encodeSegmentValueInLexicalContext,
+  getDomFromHtmlEditorString,
+  isAttributeSupportedByLexical,
+  isHtmlStringValueSafeForLexical,
+} from './util';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
 interface HTMLChangePluginProps {
+  isValuePlaintext: boolean;
+  setIsValuePlaintext: (isValuePlaintext: boolean) => void;
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const HTMLChangePlugin = ({ setValue }: HTMLChangePluginProps) => {
+export const HTMLChangePlugin = ({ isValuePlaintext, setIsValuePlaintext, setValue }: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
+    let isNewValuePlaintext = isValuePlaintext;
+
     editorState.read(() => {
-      getChildrenNodes($getRoot(), nodeMap);
+      const editorString = getChildrenNodes($getRoot(), nodeMap);
+      if (!isHtmlStringValueSafeForLexical(editorString, nodeMap)) {
+        isNewValuePlaintext = true;
+        setIsValuePlaintext(isNewValuePlaintext);
+      }
+
+      convertEditorState(editor, nodeMap, { isValuePlaintext: isNewValuePlaintext }).then(setValue);
     });
-    convertEditorState(editor, nodeMap).then(setValue);
   };
   return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
 
-const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSegment>): Promise<ValueSegment[]> => {
+export const convertEditorState = (
+  editor: LexicalEditor,
+  nodeMap: Map<string, ValueSegment>,
+  options: {
+    isValuePlaintext: boolean;
+  }
+): Promise<ValueSegment[]> => {
+  const { isValuePlaintext } = options;
+
   return new Promise((resolve) => {
-    const valueSegments: ValueSegment[] = [];
     editor.update(() => {
-      const htmlEditorString = $generateHtmlFromNodes(editor);
+      let htmlEditorString = isValuePlaintext ? $getRoot().getTextContent() : $generateHtmlFromNodes(editor);
+
+      if (isValuePlaintext) {
+        // If we're in the raw HTML editor, the tokens are not wrapped in <span> and thus have to be encoded before
+        // the string is converted into DOM elements.
+        htmlEditorString = encodeStringSegmentTokensInLexicalContext(htmlEditorString, nodeMap);
+      }
+
       // Create a temporary DOM element to parse the HTML string
-      const tempElement = document.createElement('div');
-      tempElement.innerHTML = htmlEditorString;
+      const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
 
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
@@ -38,32 +72,40 @@ const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSeg
         const attributes = Array.from(element.attributes);
         for (let j = 0; j < attributes.length; j++) {
           const attribute = attributes[j];
-          if (attribute.name !== 'id' && attribute.name !== 'style' && attribute.name !== 'href') {
+          if (!isAttributeSupportedByLexical(element.tagName, attribute.name)) {
             element.removeAttribute(attribute.name);
+            continue;
           }
-          if (attribute.name === 'id') {
-            const idValue = element.getAttribute('id') ?? ''; // e.g., "$[concat(...),concat('&lt;', '"'),#AD008C]$"
-            const encodedIdValue = encodeSegmentValue(idValue); // e.g., "$[concat(...),concat('%26lt;', '%22'),#AD008C]$"
+          if (attribute.name === 'id' && !isValuePlaintext) {
+            // If we're in the rich HTML editor, encoding occurs at the element level since they are all wrapped in <span>.
+            const idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
+            const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "@{concat('%26lt;', '%22')}"
             element.setAttribute('id', encodedIdValue);
+            continue;
+          }
+          if (attribute.name === 'style') {
+            const newAttributeValue = cleanStyleAttribute(attribute.value);
+            newAttributeValue ? element.setAttribute('style', newAttributeValue) : element.removeAttribute(attribute.name);
+            continue;
           }
         }
       }
 
-      // Get the cleaned HTML string
+      // Clean the HTML string and decode the token nodes since `nodeMap` keys are always decoded.
       const cleanedHtmlString = cleanHtmlString(tempElement.innerHTML);
+      const decodedHtmlString = decodeStringSegmentTokensInDomContext(cleanedHtmlString, nodeMap);
+      const decodedLexicalString = decodeStringSegmentTokensInLexicalContext(decodedHtmlString, nodeMap);
 
-      // Regular expression pattern to match <span id="..."></span>
+      // Replace `<span id="..."></span>` with the captured `id` value if it is found in the viable IDs map.
       const spanIdPattern = /<span id="(.*?)"><\/span>/g;
-      // Replace <span id="..."></span> with the captured "id" value if it is found in the viable ids map
-      const removeTokenTags = cleanedHtmlString.replace(spanIdPattern, (match, idValue) => {
-        const decodedIdValue = decodeSegmentValue(idValue);
-        if (nodeMap.get(decodedIdValue)) {
-          return decodedIdValue;
+      const noTokenSpansString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
+        if (nodeMap.get(idValue)) {
+          return idValue;
         } else {
           return match;
         }
       });
-      valueSegments.push(...convertStringToSegments(removeTokenTags, true, nodeMap));
+      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, true, nodeMap);
       resolve(valueSegments);
     });
   });

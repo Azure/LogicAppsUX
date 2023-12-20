@@ -27,15 +27,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";+0cO6t" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Create connection reference]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Crear referencia de conexión]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";+0yxlR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Function display]]></Val>
@@ -50,6 +41,15 @@
           <Val><![CDATA[Protected]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Protegido]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";+7IA0V" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{connectorName} connections]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{connectorName} conexiones]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1314,6 +1314,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";41drjl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Open connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Abrir conexión]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";41eMpW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Waiting]]></Val>
@@ -1575,15 +1584,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";5WhTmH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Loading...]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Cargando...]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";5akc1Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported 'in' value : ''{value}'' in Parameter]]></Val>
@@ -1755,15 +1755,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";6ZviI7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select connection reference]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Seleccionar referencia de conexión]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";6fDYzG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed to load the schema. Please try again.]]></Val>
@@ -1913,6 +1904,15 @@
           <Val><![CDATA[Update source schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Actualizar esquema de origen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";74e2xB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create a new connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Crear una conexión nueva]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3057,15 +3057,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";CPm+OG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Create connection]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Crear conexión]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";CaajcD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+13:00) Samoa]]></Val>
@@ -3336,6 +3327,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";DfXxoX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select an existing connection or create a new one]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Seleccionar una conexión existente o crear una nueva]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Dhu3IS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show mini-map]]></Val>
@@ -3593,15 +3593,6 @@
           <Val><![CDATA[Please select yes or no]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Seleccione Sí o No.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ExaACE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Connection display name]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nombre para mostrar de la conexión]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4157,15 +4148,6 @@
           <Val><![CDATA[Exit full screen]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Salir de pantalla completa]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";HOchry" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an existing connection reference or create a new one.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Seleccione una referencia de conexión existente o cree una nueva.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5351,6 +5333,15 @@
           <Val><![CDATA[Enter unique property name]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Escriba un nombre de propiedad único.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NdOhXD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Create Connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Crear conexión]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8079,6 +8070,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZAdaBl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select an existing connection reference or create a new one]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Seleccione una referencia de conexión existente o cree una nueva]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZBJiuD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Status]]></Val>
@@ -8646,11 +8646,20 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";cUW5m8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";cZXqqf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select the checkbox to choose this connection.]]></Val>
+          <Val><![CDATA[Change Connection]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Active la casilla para elegir esta conexión.]]></Val>
+            <Val><![CDATA[Cambiar conexión]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";cZv9J0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Connection is valid]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[La conexión es válida]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9114,6 +9123,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";evyGYj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Reassign all connected actions to a new connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Reasignar todas las acciones conectadas a una nueva conexión]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";f/lWTW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The objects to check for null.]]></Val>
@@ -9258,15 +9276,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";g/7QyT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select connection]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Seleccionar conexión]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";g076bL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Email]]></Val>
@@ -9321,6 +9330,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";gA1dde" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Toggle code view]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Alternar vista de código]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";gCXOd5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[URI]]></Val>
@@ -9353,15 +9371,6 @@
           <Val><![CDATA[Required. A boolean value that determines which value the expression should return.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obligatorio. Un valor booleano que determina el valor que debería devolver la expresión.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";gIc0YJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Connection name]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nombre de conexión]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9647,6 +9656,15 @@
           <Val><![CDATA[Undo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Deshacer]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";hTZZr+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Connected actions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Acciones conectadas]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10800,6 +10818,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";mUURJW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Connection is invalid]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[La conexión no es válida]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";mYQFtf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.]]></Val>
@@ -10859,6 +10886,15 @@
           <Val><![CDATA[Limit Logic Apps to not include workflow metadata headers in the outgoing request.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la solicitud saliente.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";mlU+AC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Connections]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Conexiones]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11030,6 +11066,15 @@
           <Val><![CDATA[Custom]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Personalizar]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";nSUXtP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Multiple actions will be modified by this change.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Este cambio modificará varias acciones.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -11403,6 +11448,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";p3K7eM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Disconnected actions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Acciones desconectadas]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";p5ZID0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+03:00) Kuwait, Riyadh]]></Val>
@@ -11682,15 +11736,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";qQoQFv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Invalid connection.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[La conexión no es válida.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";qSejoi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if the first argument is less than or equal to the second]]></Val>
@@ -11936,15 +11981,6 @@
           <Val><![CDATA[Secret]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Secreto]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";rDt4Iu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Is connection invalid]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[La conexión no es válida]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -12813,15 +12849,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";v0ENVA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Loading]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Cargando]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";v39HKj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Generates a globally unique string (GUID)]]></Val>
@@ -13479,6 +13506,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";xxeu75" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Reassign all disconnected actions to a new connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Reasignar todas las acciones desconectadas a una nueva conexión]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";y1e9yw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in]]></Val>
@@ -13623,15 +13659,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";yoCi15" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an existing connection or create a new one.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Seleccionar una conexión existente o crear una nueva.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";ypZV9w" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the body for a part in a multipart output of the trigger]]></Val>
@@ -13682,15 +13709,6 @@
           <Val><![CDATA[(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+01:00) Sarajevo, Skopie, Varsovia, Zagreb]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";yyYtZV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Connection gateway]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Puerta de enlace de conexión]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

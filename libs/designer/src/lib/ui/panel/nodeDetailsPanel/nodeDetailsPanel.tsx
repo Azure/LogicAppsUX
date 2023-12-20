@@ -13,15 +13,16 @@ import { deleteGraphNode, deleteOperation } from '../../../core/actions/bjsworkf
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
-import { useOperationErrorInfo, useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
-import { useIsPanelCollapsed, useRegisteredPanelTabs, useSelectedPanelTabName } from '../../../core/state/panel/panelSelectors';
-import { setTabError, expandPanel, selectPanelTab, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
+import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
+import { expandPanel, updatePanelLocation, selectPanelTab } from '../../../core/state/panel/panelSlice';
 import { useIconUri, useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useWorkflowNode, useNodeDescription } from '../../../core/state/workflow/workflowSelectors';
 import { deleteSwitchCase, setNodeDescription, replaceId } from '../../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph, isOperationNameValid } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
+import { usePanelTabs } from './usePanelTabs';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { DeleteNodeModal, PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import { isNullOrUndefined, isScopeOperation, isSubGraphNode } from '@microsoft/utils-logic-apps';
@@ -34,6 +35,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
 
   const readOnly = useReadOnly();
+
+  const panelTabs = usePanelTabs();
+  const selectedTab = useSelectedPanelTabId();
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
@@ -48,11 +52,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
 
-  const registeredTabs = useRegisteredPanelTabs();
-  const selectedPanelTab = useSelectedPanelTabName();
-  const setSelectedTab = (tabName: string | undefined) => {
-    dispatch(selectPanelTab(tabName));
-  };
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
   const iconUri = useIconUri(selectedNode);
@@ -60,12 +59,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
   const errorInfo = useOperationErrorInfo(selectedNode);
-
-  const parameterValidationErrors = useParameterValidationErrors(selectedNode);
-  useEffect(() => {
-    const hasErrors = parameterValidationErrors?.length > 0 || errorInfo?.level === ErrorLevel.Connection;
-    dispatch(setTabError({ tabName: 'parameters', hasErrors, nodeId: selectedNode }));
-  }, [dispatch, errorInfo?.level, parameterValidationErrors?.length, selectedNode]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -154,12 +147,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         isLoading={isLoading}
         panelScope={PanelScope.CardLevel}
         headerMenuItems={headerMenuItems}
-        selectedTab={selectedPanelTab}
         showCommentBox={showCommentBox}
-        tabs={registeredTabs}
+        tabs={panelTabs}
+        selectedTab={selectedTab}
+        selectTab={(tabId: string) => dispatch(selectPanelTab(tabId))}
         nodeId={selectedNode}
         readOnlyMode={readOnly}
-        setSelectedTab={setSelectedTab}
         toggleCollapse={() => {
           // Only run validation when collapsing the panel
           if (!collapsed) {
