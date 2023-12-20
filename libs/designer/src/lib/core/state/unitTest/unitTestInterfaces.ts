@@ -10,8 +10,12 @@ export interface InitDefintionPayload {
   mockResults: { [key: string]: string };
 }
 
-export interface AddAssertionPayload {
+export interface UpdateAssertionsPayload {
   assertions: Record<string, AssertionDefintion>;
+}
+
+export interface UpdateAssertionPayload {
+  assertionToUpdate: AssertionDefintion;
 }
 
 export interface UnitTestState {
